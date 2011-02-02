@@ -3,6 +3,8 @@ package lejos.robotics.navigation;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+
 import lejos.geom.Point;
 import lejos.robotics.Pose;
 import lejos.robotics.RangeReading;
@@ -35,6 +37,8 @@ public class MapPathFinder implements PathFinder {
 	
 	private RangeMap map;;
 	private RangeReadings readings;
+	
+	private ArrayList<WayPointListener> listeners ;
 	
 	public MapPathFinder(RangeMap map, RangeReadings readings) {
 		this.map = map;
@@ -120,4 +124,28 @@ public class MapPathFinder implements PathFinder {
 	    
 	    return new Pose(x,y,heading);
 	}
+	
+	public void addListener(WayPointListener wpl) {
+	    if(listeners == null )listeners = new ArrayList<WayPointListener>();
+	    listeners.add(wpl);
+	  }
+
+	  public void startPathFinding(Pose start, WayPoint end) {
+		  Collection<WayPoint> solution = null;
+		try {
+			solution = findRoute(start, end);
+		} catch (DestinationUnreachableException e) {
+			// TODO Not sure what the proper response is here. All in one.
+			
+		}
+		  if(listeners != null) { 
+			  for(WayPointListener l : listeners) {
+				  Iterator<WayPoint> iterator = solution.iterator(); 
+				  while(iterator.hasNext()) {
+					  l.nextWaypoint(iterator.next());
+				  }
+				  l.pathComplete();
+			  }
+		  }
+	  }
 }

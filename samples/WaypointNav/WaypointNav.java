@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class WaypointNav
 {
-  BasicNavigator nav;
+  NavPathController nav;
   /**
    * Inner class to describe an segment by providing the next end point and wanted velocity for turning and moving.
    */
@@ -61,7 +61,7 @@ public class WaypointNav
    * @param y The starting y position.
    * @param heading The starting heading.
    */
-  public WaypointNav(BasicNavigator navigator) {
+  public WaypointNav(NavPathController navigator) {
     nav = navigator;
   }
 
@@ -111,7 +111,7 @@ public class WaypointNav
     {
       System.out.println("Any button");
       Button.waitForPress();
-      BasicNavigator nav = new BasicNavigator(
+      NavPathController nav = new NavPathController(
               new DifferentialPilot(5.6f, 14.2f, Motor.A, Motor.C));
       WaypointNav wpNav = new WaypointNav(nav);
       wpNav.add(20, 20, 90, 15);
