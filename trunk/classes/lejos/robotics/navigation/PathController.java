@@ -10,18 +10,19 @@ import lejos.robotics.localization.PoseProvider;
 
 /**
  * 
- * The PoseController guides a Pilot to a destination. It can not plan a route, 
+ * The PathController guides a Pilot to a destination. It can not plan a route, 
  * but will navigate to a set of coordinates and possibly avoid obstacles along the way.
  * It uses a collection of waypoints as a queue.
- * The PoseController constructor very likely accepts a MoveController and PoseProvider.
+ * The PathController constructor very likely accepts a MoveController and PoseProvider.
  * 
  * @author NXJ Team
  *
  */
-public interface PoseController
+public interface PathController
 {
 
   /**
+   * This method causes the robot to travel to a new location.
    * If the robot is moving, it stops,  the route is emptied and the destination
    * is added to it. The robot then starts  moving to the coordinates of the
    * destination WayPoint.
@@ -30,6 +31,25 @@ public interface PoseController
    */
   public void goTo(WayPoint destination, boolean immediateReturn);
 
+  /**
+   * This method causes the robot to travel to a new location.
+   * If the robot is moving, it stops,  the route is emptied and the destination
+   * is added to it. The robot then starts  moving to the coordinates of the
+   * destination WayPoint.
+   * @param destination the destination waypoint
+   */
+  public void goTo(WayPoint destination);
+  
+  /**
+   * This method causes the robot to travel to a new location.
+   * If the robot is moving, it stops,  the route is emptied and the destination
+   * is added to it. The robot then starts  moving to the coordinates of the
+   * destination WayPoint.
+   * @param x The x coordinate
+   * @param y The y coordinate
+   */
+  public void goTo(float x, float y);
+  
   /**
    * Moves the robot through the sequence of waypoints
    * contained in the route.
@@ -55,7 +75,7 @@ public interface PoseController
    */
   public void resume();  //following the route after an interruption;
 
-  public void addWaypoint(WayPoint aWayPoint); // adds a WayPoint to the route.
+  public void addWayPoint(WayPoint aWayPoint); // adds a WayPoint to the route.
 
   /**
    * Adds a waypoint listener.
@@ -77,7 +97,7 @@ public interface PoseController
   public PoseProvider getPoseProvider();
 
   /**
-   * Sets a new PoseProvider for the PoseController robot to use.
+   * Sets a new PoseProvider for the PathController robot to use.
    *
    * Example: If the robot moves from one environment (indoors) to another environment (outdoors) it might
    * want to change to another method of localization if a change in environment is detected.
