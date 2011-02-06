@@ -6,40 +6,22 @@ package lejos.robotics;
  */
 
 /**
- * Interface for a regular DC motor with no encoder.
+ * Interface for a regular DC motor.
  * TODO: Reconcile this with lejos.nxt.BasicMotor. Maybe BasicMotor implements this? 
  * @author BB
  *
  */
-public interface DCMotor {
+public interface DCMotor extends BaseMotor{
 
-	/**
-	   * Causes motor to rotate forward until stop is called.
-	   */
-	  void forward();
+    /**
+     * Set the power level 0%-100% to be applied to the motor
+     * @param power new motor power 0-100
+     */
+    public void setPower(int power);
 
-	  /**
-	   * Causes motor to rotate backwards until stop is called.
-	   */
-	  void backward();
-
-	  /**
-	   * Causes motor to stop immediately. It will resist any further motion. Cancels any rotate() orders in progress.
-	   */
-	  void stop();
-
-	  /**
-	   * Motor loses all power, causing the rotor to float freely to a stop.
-	   * This is not the same as stopping, which locks the rotor. 
-	   */   
-	  public void flt();
-	  
-	  /**
-	   * Return if the motor is moving.
-	   * 
-	   * @return true if the motor is currently in motion
-	   */
-	  // TODO: Possibly part of Encoder interface? Depends if encoder used to determine this.
-	  boolean isMoving();
-
+    /**
+     * Returns the current motor power setting.
+     * @return current power 0-100
+     */
+    public int getPower();
 }

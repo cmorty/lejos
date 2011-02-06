@@ -1,6 +1,7 @@
 package lejos.robotics.navigation;
 
 import java.util.*;
+
 import lejos.geom.*;
 import java.awt.geom.Point2D;
 import lejos.robotics.Pose;
@@ -17,6 +18,12 @@ import lejos.robotics.Pose;
  */
 public class ShortestPathFinder implements PathFinder
 {
+	
+	public ShortestPathFinder(ArrayList<Line> map) {
+		// Roger, I had to add this constructor to make this work with PathFinder interface, otherwise no way to feed map data.
+		_map = map;
+	}
+	
 /**
  * This calculate the shortest path
  * @param start  the initial robot pose
@@ -28,7 +35,7 @@ public class ShortestPathFinder implements PathFinder
   {
     return findPath(start.getLocation(), finish, _map);
   }
-
+  
   /**
    * finds the shortest path between start  and finish Points whild avoiding the obstacles
    * in the map
@@ -234,8 +241,33 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
 
   public int getNodeCount(){return _reached.size();}
 
+  public void addListener(WayPointListener wpl) {
+    if(listeners == null )listeners = new ArrayList<WayPointListener>();
+    listeners.add(wpl);
+  }
+  
+  public void startPathFinding(Pose start, WayPoint end) {
+	  Collection<WayPoint> solution = null;
+	  try {
+		  solution = findPath(start.getLocation(), end, _map);
+	  } catch (DestinationUnreachableException e) {
+		  // TODO Not sure how to handle this.
+		  e.printStackTrace();
+	  }
+	  if(listeners != null) { 
+		  for(WayPointListener l : listeners) {
+			  Iterator<WayPoint> iterator = solution.iterator(); 
+			  while(iterator.hasNext()) {
+				  l.nextWaypoint(iterator.next());
+			  }
+			  l.pathComplete();
+		  }
+	  }
+  }
 
   //***********  instance variables in ShortestPathFinder *******************
+  private ArrayList<WayPointListener> listeners ;
+  
   protected    int _count =  0;
   /**
    * set by segmentBlocked() used by findPath()
@@ -366,5 +398,6 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
   public ArrayList<Node> _blocked = new ArrayList<Node>();
  }
 // ****************   end Node class ****************************
+
 } 
 

@@ -15,7 +15,7 @@ public class RotatingRangeScanner implements RangeScanner
    * @param head the motor that rotates the sensor
    * @param port the port to which the sensor is wired
    */
-  public RotatingRangeScanner(TachoMotor head, SensorPort port)
+  public RotatingRangeScanner(RegulatedMotor head, SensorPort port)
   {
     this.head = head;
     sonar = new UltrasonicSensor(port);
@@ -61,6 +61,6 @@ public class RotatingRangeScanner implements RangeScanner
   protected final int ZERO = 2;// correction of sensor zero
   protected RangeReadings readings;;
   protected UltrasonicSensor sonar;
-  protected TachoMotor head;
+  protected RegulatedMotor head;
   protected float[] angles ={0,90};// default
 }

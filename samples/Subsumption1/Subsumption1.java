@@ -1,5 +1,6 @@
 
 import lejos.nxt.*;
+import lejos.robotics.RegulatedMotor;
 
 /**
  * Entry point for the program. Creates an instance of Subsumption
@@ -70,7 +71,7 @@ class Subsumption implements ButtonListener {
 	/**
 	 * Only allow the owner to do stuff, just in case some other task calls us
 	 */	
-	public synchronized void setMotor(Task requestor, Motor motor, int speed, boolean forward) {
+	public synchronized void setMotor(Task requestor, RegulatedMotor motor, int speed, boolean forward) {
 		if (owner == getPriority(requestor)) {
 			motor.setSpeed(speed);
 			if (forward)
@@ -126,8 +127,8 @@ interface Action {
  * Release: Stop running.
  */
 abstract class Task extends Thread {
-	public static final Motor LEFT_MOTOR = Motor.C ;
-	public static final Motor RIGHT_MOTOR = Motor.A;
+	public static final RegulatedMotor LEFT_MOTOR = Motor.C ;
+	public static final RegulatedMotor RIGHT_MOTOR = Motor.A;
 	public static final TouchSensor LEFT_BUMBER = new TouchSensor(SensorPort.S3);;
 	public static final TouchSensor RIGHT_BUMBER = new TouchSensor(SensorPort.S1);
 	public static final boolean FORWARD = true;
@@ -212,7 +213,7 @@ abstract class Task extends Thread {
 	 * they have direct control of the actuators when they are in
 	 * fact gated by the controller.
 	 */	
-	public void setMotor(Motor motor, int speed, boolean forward) {
+	public void setMotor(RegulatedMotor motor, int speed, boolean forward) {
 		Subsumption1.main.setMotor(this, motor, speed, forward);
 	}
 }

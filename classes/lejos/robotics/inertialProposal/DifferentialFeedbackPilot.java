@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import lejos.geom.Point;
 import lejos.robotics.MoveListener;
 import lejos.robotics.Pose;
-import lejos.robotics.TachoMotor;
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.MoveController;
 
@@ -15,8 +15,8 @@ import lejos.robotics.navigation.MoveController;
 public class DifferentialFeedbackPilot implements MoveController
 {
     private ArrayList<MoveListener> moveListeners = new ArrayList<MoveListener>();
-    private TachoMotor leftMotor;
-    private TachoMotor rightMotor;
+    private RegulatedMotor leftMotor;
+    private RegulatedMotor rightMotor;
     private Regulator reg = new Regulator();
     private lejos.robotics.Move currentMove;
     private PoseProvider poseProvider;
@@ -49,12 +49,12 @@ public class DifferentialFeedbackPilot implements MoveController
     private float desiredMoveSpeed = Float.POSITIVE_INFINITY;
     private float maxMoveSpeed = Float.POSITIVE_INFINITY;
 
-    public DifferentialFeedbackPilot(PoseProvider poseProvider, TachoMotor leftMotor, TachoMotor rightMotor)
+    public DifferentialFeedbackPilot(PoseProvider poseProvider, RegulatedMotor leftMotor, RegulatedMotor rightMotor)
     {
         this(poseProvider, leftMotor, rightMotor, false);
     }
 
-    public DifferentialFeedbackPilot(PoseProvider poseReporter, TachoMotor leftMotor, TachoMotor rightMotor, boolean reverse)
+    public DifferentialFeedbackPilot(PoseProvider poseReporter, RegulatedMotor leftMotor, RegulatedMotor rightMotor, boolean reverse)
     {
         this.poseProvider = poseReporter;
         this.leftMotor = leftMotor;

@@ -1,7 +1,6 @@
 package lejos.robotics.inertialProposal;
 
 import lejos.geom.Point;
-import lejos.nxt.Motor;
 import lejos.nxt.addon.GyroDirectionFinder;
 import lejos.robotics.Move;
 import lejos.robotics.Move.MoveType;
@@ -9,18 +8,19 @@ import lejos.robotics.MoveListener;
 import lejos.robotics.MoveProvider;
 import lejos.robotics.Pose;
 import lejos.robotics.localization.PoseProvider;
+import lejos.robotics.RegulatedMotor;
 
 public class GyroPoseProvider implements PoseProvider, MoveListener
 {
     private Regulator reg = new Regulator();
     private GyroDirectionFinder gyro;
-    private Motor driveMotor;
+    private RegulatedMotor driveMotor;
     private float wheelDiameter = 0;
     private long lastTachoCount = 0;
     private Pose pose = new Pose();
     private Move currentMove;
 
-    public GyroPoseProvider(Motor leftMotor, float wheelDiameter, GyroDirectionFinder gyro)
+    public GyroPoseProvider(RegulatedMotor leftMotor, float wheelDiameter, GyroDirectionFinder gyro)
     {
         this.driveMotor = leftMotor;
         this.gyro = gyro;

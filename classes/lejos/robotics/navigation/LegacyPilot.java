@@ -3,7 +3,7 @@ package lejos.robotics.navigation;
 
 
 import lejos.nxt.Battery;
-import lejos.robotics.TachoMotor;
+import lejos.robotics.RegulatedMotor;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -56,23 +56,23 @@ public class LegacyPilot {
 	/**
 	 * Left motor.
 	 */
-	protected final TachoMotor _left;
+	protected final RegulatedMotor _left;
 
 	/**
 	 * Right motor.
 	 */
-	protected final TachoMotor _right;
+	protected final RegulatedMotor _right;
     
     /**
      * The motor at the inside of the turn. set by steer(turnRate) 
      * used by other steer methodsl
      */
-    protected TachoMotor _inside;
+    protected RegulatedMotor _inside;
      /**
      * The motor at the outside of the turn. set by steer(turnRate)
      * used by other steer methodsl
      */
-    protected TachoMotor _outside;
+    protected RegulatedMotor _outside;
     /**
      * ratio of inside/outside motor speeds
      * set by steer(turnRate)
@@ -158,7 +158,7 @@ public class LegacyPilot {
 	 *            The right Motor (e.g., Motor.A).
 	 */
 	public LegacyPilot(final float wheelDiameter, final float trackWidth,
-			final TachoMotor leftMotor, final TachoMotor rightMotor) {
+			final RegulatedMotor leftMotor, final RegulatedMotor rightMotor) {
 		this(wheelDiameter, trackWidth, leftMotor, rightMotor, false);
 	}
 
@@ -181,7 +181,7 @@ public class LegacyPilot {
 	 *            running backward.
 	 */
 	public LegacyPilot(final float wheelDiameter, final float trackWidth,
-			final TachoMotor leftMotor, final TachoMotor rightMotor,
+			final RegulatedMotor leftMotor, final RegulatedMotor rightMotor,
 			final boolean reverse) {
 		this(wheelDiameter, wheelDiameter, trackWidth, leftMotor, rightMotor,
 				reverse);
@@ -221,7 +221,7 @@ public class LegacyPilot {
 	 */
 	public LegacyPilot(final float leftWheelDiameter,
 			final float rightWheelDiameter, final float trackWidth,
-			final TachoMotor leftMotor, final TachoMotor rightMotor,
+			final RegulatedMotor leftMotor, final RegulatedMotor rightMotor,
 			final boolean reverse) {
 		// left
 		_left = leftMotor;
@@ -244,7 +244,7 @@ public class LegacyPilot {
      * Returns the left motor.
 	 * @return left motor.
 	 */
-	public TachoMotor getLeft() {
+	public RegulatedMotor getLeft() {
 		return _left;
 	}
 
@@ -252,7 +252,7 @@ public class LegacyPilot {
      * returns the right motor.
 	 * @return right motor.
 	 */
-	public TachoMotor getRight() {
+	public RegulatedMotor getRight() {
 		return _right;
 	}
 
@@ -272,24 +272,6 @@ public class LegacyPilot {
 	 */
 	public int getRightCount() {
 		return _parity * _right.getTachoCount();
-	}
-
-	/**
-     * Returns the actual speed of the left motor
-	 * @return actual speed of left motor in degrees per second. A negative
-	 *         value if motor is rotating backwards. Updated every 100 ms.
-	 **/
-	public int getLeftActualSpeed() {
-		return _left.getRotationSpeed();
-	}
-
-	/**
-     * Returns the actual speed of right motor
-	 * @return actual speed of right motor in degrees per second. A negative
-	 *         value if motor is rotating backwards. Updated every 100 ms.
-	 **/
-	public int getRightActualSpeed() {
-		return _right.getRotationSpeed();
 	}
 
 	/**
@@ -636,7 +618,7 @@ public class LegacyPilot {
 	 * @return true if either motor actual speed is zero.
 	 */
 	public boolean stalled() {
-		return (0 == _left.getRotationSpeed()) || (0 == _right.getRotationSpeed());
+		return _left.isStalled() || _right.isStalled();
 	}
 
 	/**

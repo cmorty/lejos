@@ -61,8 +61,8 @@ public class LegacyNavigator {
      *             SimpleNavigator. Otherwise the SimpleNavigator needs to know detail it should not care about!
      */
     @Deprecated
-    public LegacyNavigator(float wheelDiameter, float trackWidth, TachoMotor leftMotor, TachoMotor rightMotor, boolean reverse) {
-      // In the signature Motor was not changed to TachoMotor. This method only saves one to write "new TachoPilot" at the
+    public LegacyNavigator(float wheelDiameter, float trackWidth, RegulatedMotor leftMotor, RegulatedMotor rightMotor, boolean reverse) {
+      // In the signature Motor was not changed to RegulatedMotor. This method only saves one to write "new TachoPilot" at the
       // cost of maintaining this method and comments, thus it should not be used!
         pilot = new LegacyPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
     }
@@ -81,8 +81,8 @@ public class LegacyNavigator {
      *             SimpleNavigator. Otherwise the SimpleNavigator needs to know detail it should not care about!
      */
     @Deprecated
-    public LegacyNavigator(float wheelDiameter, float trackWidth, TachoMotor leftMotor, TachoMotor rightMotor) {
-      // In the signature Motor was not changed to TachoMotor. This method only saves one to write "new TachoPilot" at the
+    public LegacyNavigator(float wheelDiameter, float trackWidth, RegulatedMotor leftMotor, RegulatedMotor rightMotor) {
+      // In the signature Motor was not changed to RegulatedMotor. This method only saves one to write "new TachoPilot" at the
       // cost of maintaining this method and comments, thus it should not be used!
         pilot = new LegacyPilot(wheelDiameter, trackWidth, leftMotor, rightMotor);
     }

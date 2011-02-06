@@ -15,62 +15,49 @@ import lejos.robotics.DCMotor;
  */
 public abstract class BasicMotor implements DCMotor
 {
-	public final static int FORWARD = 1;
-	public final static int BACKWARD = 2;
-	public final static int STOP = 3;
-	public final static int FLOAT = 4;
-    public final static int MAX_POWER = 100;
+	protected int mode = MotorPort.FLOAT;
+    protected BasicMotorPort port;
+    protected int power = 0;
 
-	protected int mode = FLOAT;
-	abstract protected void updateState( int newMode);
+    public void setPower(int power)
+    {
+        this.power = power;
+        port.controlMotor(power, mode);
+    }
+
+    public int getPower()
+    {
+        return power;
+    }
+
+    /**
+     * Update the internal state tracking the motor direction
+     * @param newMode
+     */
+    protected void updateState( int newMode)
+    {
+        if (newMode == mode) return;
+        mode = newMode;
+        port.controlMotor(power, newMode);
+    }
 
 	/**
 	 * Causes motor to rotate forward.
 	 */
 	public void forward()
 	{ 
-		updateState( FORWARD);
+		updateState( MotorPort.FORWARD);
 	}
 	  
-	/**
-	 * Return true if motor is forward.
-     *
-     * @return true if the motor is running forwards
-     */
-	public boolean isForward()
-	{
-		return (mode == FORWARD);
-	}
 
 	/**
 	 * Causes motor to rotate backwards.
 	 */
 	public void backward()
 	{
-		updateState( BACKWARD);
+		updateState( MotorPort.BACKWARD);
 	}
 
-	/**
-	 * Return true if motor is backward.
-     *
-     * @return true if the motor is running backwards
-     */
-	public boolean isBackward()
-	{
-		return (mode == BACKWARD);
-	}
-
-	/**
-	 * Reverses direction of the motor. It only has
-	 * effect if the motor is moving.
-	 */
-	public void reverseDirection()
-	{
-		if (mode == FORWARD)
-			backward();
-        else if (mode == BACKWARD)
-			forward();
-	}
 
 	/**
 	 * Returns true iff the motor is in motion.
@@ -79,7 +66,7 @@ public abstract class BasicMotor implements DCMotor
 	 */
 	public boolean isMoving()
 	{
-		return (mode == FORWARD || mode == BACKWARD);   
+		return (mode == MotorPort.FORWARD || mode == MotorPort.BACKWARD);
 	}
 
 	/**
@@ -90,18 +77,9 @@ public abstract class BasicMotor implements DCMotor
 	 */   
 	public void flt()
 	{
-		updateState( FLOAT);
+		updateState( MotorPort.FLOAT);
 	}
 
-	/**
-	 * Returns true iff the motor is in float mode.
-	 * 
-	 * @return true iff the motor is currently in float mode.
-	 */
-	public boolean isFloating()
-	{
-		return mode == FLOAT;	  
-	}
 	  
 	/**
 	 * Causes motor to stop, pretty much
@@ -112,27 +90,8 @@ public abstract class BasicMotor implements DCMotor
 	 */
 	public void stop()
 	{
-		updateState( STOP);
+		updateState( MotorPort.STOP);
 	}
 	  
-	/**
-	 * Return true if motor is stopped.
-     *
-     * @return true if the motor is stopped
-     */
-	public boolean isStopped()
-	{
-		return (mode == STOP);
-	}
-
-	/**
-	 * Returns the mode.
-	 * 
-	 * @return mode 1=forward, 2=backward, 3=stopped, 4=floating
-	 */
-	public int getMode()
-	{ 
-		return mode;
-	}
 }
 

@@ -11,43 +11,22 @@ import lejos.robotics.Encoder;
  * 
  */
 public class NXTMotor extends BasicMotor implements Encoder{
-    TachoMotorPort port;
-    int power;
-    
+    protected Encoder encoderPort;
+
 	public NXTMotor(TachoMotorPort port)
 	{
 		this.port = port;
+        // We use extra var to avoid cost of a cast check later
+        encoderPort = port;
 	}
     
-    public void setPower(int power)
-    {
-        this.power = power;
-        port.controlMotor(power, mode);
-    }
-    
-    public int getPower()
-    {
-        return power;
-    }
-    
-    /**
-     * Update the internal state tracking the motor direction
-     * @param newMode
-     */
-    protected void updateState( int newMode)
-    {
-        if (newMode == mode) return;
-        mode = newMode;
-        port.controlMotor(power, newMode);
-    }
-
     public int getTachoCount()
     {
-        return port.getTachoCount();
+        return encoderPort.getTachoCount();
     }
 
     public void resetTachoCount()
     {
-        port.resetTachoCount();
+        encoderPort.resetTachoCount();
     }
 }

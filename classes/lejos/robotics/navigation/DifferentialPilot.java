@@ -15,7 +15,7 @@ import lejos.robotics.*;
  * backward in a straight line or a circular path or rotate to a new direction.<br>
  * This  class will only work with two independently controlled motors to
  * steer differentially, so it can rotate within its own footprint (i.e. turn on
- * one spot). It registers as a TachoMotorListener with each of its motors.
+ * one spot). It registers as a RegulatedMotorListener with each of its motors.
  * An object of this class assumes that it has exclusive control of
  * its motors.  If any other object makes calls to its motors, the results are
  * unpredictable. <br>
@@ -52,7 +52,7 @@ import lejos.robotics.*;
  *
  **/
 public class DifferentialPilot implements
-       TachoMotorListener, ArcRotateMoveController
+       RegulatedMotorListener, ArcRotateMoveController
 {
 
   /**
@@ -72,7 +72,7 @@ public class DifferentialPilot implements
    *            The right Motor (e.g., Motor.A).
    */
   public DifferentialPilot(final float wheelDiameter, final float trackWidth,
-          final TachoMotor leftMotor, final TachoMotor rightMotor)
+          final RegulatedMotor leftMotor, final RegulatedMotor rightMotor)
   {
     this(wheelDiameter, trackWidth, leftMotor, rightMotor, false);
   }
@@ -96,7 +96,7 @@ public class DifferentialPilot implements
    *            running backward.
    */
   public DifferentialPilot(final float wheelDiameter, final float trackWidth,
-          final TachoMotor leftMotor, final TachoMotor rightMotor,
+          final RegulatedMotor leftMotor, final RegulatedMotor rightMotor,
           final boolean reverse)
   {
     this(wheelDiameter, wheelDiameter, trackWidth, leftMotor, rightMotor,
@@ -137,7 +137,7 @@ public class DifferentialPilot implements
    */
   public DifferentialPilot(final float leftWheelDiameter,
           final float rightWheelDiameter, final float trackWidth,
-          final TachoMotor leftMotor, final TachoMotor rightMotor,
+          final RegulatedMotor leftMotor, final RegulatedMotor rightMotor,
           final boolean reverse)
   {
     _left = leftMotor;
@@ -162,7 +162,7 @@ public class DifferentialPilot implements
    * Returns the left motor.
    * @return left motor.
    */
-  public TachoMotor getLeft()
+  public RegulatedMotor getLeft()
   {
     return _left;
   }
@@ -171,7 +171,7 @@ public class DifferentialPilot implements
    * returns the right motor.
    * @return right motor.
    */
-  public TachoMotor getRight()
+  public RegulatedMotor getRight()
   {
     return _right;
   }
@@ -199,7 +199,7 @@ public class DifferentialPilot implements
   /**
    * Returns the actual speed of the left motor
    * @return actual speed of left motor in degrees per second. A negative
-   *         value if motor is rotating backwards. Updated every 100 ms.
+   *         value if motor is rotating backwards.
    **/
   public int getLeftActualSpeed()
   {
@@ -209,7 +209,7 @@ public class DifferentialPilot implements
   /**
    * Returns the actual speed of right motor
    * @return actual speed of right motor in degrees per second. A negative
-   *         value if motor is rotating backwards. Updated every 100 ms.
+   *         value if motor is rotating backwards.
    **/
   public int getRightActualSpeed()
   {
@@ -757,28 +757,28 @@ public class DifferentialPilot implements
 
 
   /**
-   * called by TachoMotor when a motor rotation is complete
+   * called by RegulatedMotor when a motor rotation is complete
    * calls movementStop() after both motors stop;
    * @param motor
    * @param tachoCount
    * @param  stall : true if motor is sealled
    * @param ts  s time stamp
    */
-  public synchronized void rotationStopped(TachoMotor motor, int tachoCount, boolean stall,long ts)
+  public synchronized void rotationStopped(RegulatedMotor motor, int tachoCount, boolean stall,long ts)
   {
    if(motor.isStalled())stop();
    else if (!isMoving())movementStop();// a motor has stopped
   }
 
   /**
-   * called by TachoMotor when a motor rotation starts
+   * called by RegulatedMotor when a motor rotation starts
    * not used.
    * @param motor
    * @param tachoCount
    * @param stall    true of the motor is stalled
    * @param ts  time stamp
    */
-  public synchronized void rotationStarted(TachoMotor motor, int tachoCount, boolean stall,long ts)
+  public synchronized void rotationStarted(RegulatedMotor motor, int tachoCount, boolean stall,long ts)
   {
   }
 
@@ -871,21 +871,21 @@ public class DifferentialPilot implements
   /**
    * Left motor.
    */
-  protected final TachoMotor _left;
+  protected final RegulatedMotor _left;
   /**
    * Right motor.
    */
-  protected final TachoMotor _right;
+  protected final RegulatedMotor _right;
   /**
    * The motor at the inside of the turn. set by steer(turnRate)
    * used by other steer methodsl
    */
-  protected TachoMotor _inside;
+  protected RegulatedMotor _inside;
   /**
    * The motor at the outside of the turn. set by steer(turnRate)
    * used by other steer methodsl
    */
-  protected TachoMotor _outside;
+  protected RegulatedMotor _outside;
   /**
    * ratio of inside/outside motor speeds
    * set by steer(turnRate)
