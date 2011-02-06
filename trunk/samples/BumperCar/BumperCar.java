@@ -7,7 +7,7 @@ import lejos.nxt.*;
  * 
  * Requires a wheeled vehicle with two independently controlled
  * motors connected to motor ports A and C, and 
- * a touchmsensor connected to sensor  port 1 and
+ * a touch sensor connected to sensor  port 1 and
  * an ultrasonic sensor connected to port 3;
  * 
  * @author Brian Bagnall and Lawrie Griffiths, modified by Roger Glassey
@@ -58,7 +58,7 @@ class DriveForward implements Behavior
     {
       Thread.yield(); //don't exit till suppressed
     }
-    Motor.A.stop(); // not strictly necessary, but good probramming practice
+    Motor.A.stop(); // not strictly necessary, but good programming practice
     Motor.C.stop();
   }
 }
