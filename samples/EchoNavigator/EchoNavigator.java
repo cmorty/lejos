@@ -117,7 +117,7 @@ public void goTo(float x, float y)
   public static void main(String[] args)
   {
     System.out.println("Any Button");
-    ArcRotateMoveController pilot = new DifferentialPilot(5.6f, 12.5f, Motor.A, Motor.C);
+    ArcRotateMoveController pilot = new DifferentialPilot(5.6f, 12.5f, Motor.A, Motor.C, false);
     EchoNavigator  robot  = new EchoNavigator(pilot,SensorPort.S3);
     Button.waitForPress();
     robot.goTo(200,0);
