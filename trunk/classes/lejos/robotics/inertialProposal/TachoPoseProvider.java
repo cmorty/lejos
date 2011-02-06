@@ -6,7 +6,7 @@ import lejos.robotics.Move.MoveType;
 import lejos.robotics.MoveListener;
 import lejos.robotics.MoveProvider;
 import lejos.robotics.Pose;
-import lejos.robotics.TachoMotor;
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.PoseProvider;
 
 public class TachoPoseProvider implements PoseProvider, MoveListener
@@ -15,11 +15,11 @@ public class TachoPoseProvider implements PoseProvider, MoveListener
     private Regulator reg = new Regulator();
     private float wheelDiameter;
     private float wheelRatio;
-    private TachoMotor leftMotor;
-    private TachoMotor rightMotor;
+    private RegulatedMotor leftMotor;
+    private RegulatedMotor rightMotor;
     private Pose pose = new Pose();
 
-    public TachoPoseProvider(TachoMotor leftMotor, TachoMotor rightMotor, float wheelDiameter, float wheelBase)
+    public TachoPoseProvider(RegulatedMotor leftMotor, RegulatedMotor rightMotor, float wheelDiameter, float wheelBase)
     {
         this.leftMotor = leftMotor;
         this.rightMotor = rightMotor;

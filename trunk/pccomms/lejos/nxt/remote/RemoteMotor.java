@@ -1,8 +1,8 @@
 package lejos.nxt.remote;
 
 import java.io.*;
-import lejos.robotics.TachoMotor;
-import lejos.robotics.TachoMotorListener;
+import lejos.robotics.RegulatedMotor;
+import lejos.robotics.RegulatedMotorListener;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -16,7 +16,7 @@ import lejos.robotics.TachoMotorListener;
  * @author <a href="mailto:bbagnall@mts.net">Brian Bagnall</a>
  *
  */
-public class RemoteMotor implements TachoMotor, NXTProtocol {
+public class RemoteMotor implements RegulatedMotor, NXTProtocol {
 	
 	private int id;
 	private byte power;
@@ -223,7 +223,7 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 	}
 	
         /**
-         * TachoMotor for  NXT need this
+         * RegulatedMotor for  NXT need this
          * @return
          */
         public int getLimitAngle()
@@ -303,7 +303,7 @@ public class RemoteMotor implements TachoMotor, NXTProtocol {
 	/**
 	 * Currently not implemented in RemoteMotor!
 	 */
-	public void addListener(TachoMotorListener listener) {
+	public void addListener(RegulatedMotorListener listener) {
 		// TODO Currently has no actual event-listener architecture
 		
 	}

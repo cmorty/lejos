@@ -15,6 +15,11 @@ package lejos.nxt;
 public interface BasicMotorPort {
 	static public final int PWM_FLOAT = 0;
 	static public final int PWM_BRAKE = 1;
+	public final static int FORWARD = 1;
+	public final static int BACKWARD = 2;
+	public final static int STOP = 3;
+	public final static int FLOAT = 4;
+    public final static int MAX_POWER = 100;
 	
 	public void controlMotor(int power, int mode);
 	

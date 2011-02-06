@@ -133,4 +133,14 @@ public class PFMateMotor implements DCMotor {
 	public boolean isMoving() {
 		return moving;
 	}
+
+    public void setPower(int power)
+    {
+        setSpeed((power*7)/100);
+    }
+
+    public int getPower()
+    {
+        return (getSpeed()*100)/7;
+    }
 }

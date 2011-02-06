@@ -189,7 +189,7 @@ public class LCP {
 		// GETOUTPUTSTATE 
 		if (cmdId == GET_OUTPUT_STATE) {
 			byte port = cmd[2]; 
-			Motor m;
+			NXTRegulatedMotor m;
 			if(port == 0)
 				m = Motor.A;
 			else if(port == 1)
@@ -268,7 +268,7 @@ public class LCP {
 			int tacholimit = getInt(cmd, 8);
 					
 			// Initialize motor:
-			Motor m = null;
+			NXTRegulatedMotor m = null;
 		
 			for(int i=0;i<3;i++) 
 			{			

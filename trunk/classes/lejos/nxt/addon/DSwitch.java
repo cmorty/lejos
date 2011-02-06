@@ -9,10 +9,11 @@ import lejos.nxt.*;
  * @author Juan Antonio Brenha Moral
  *
  */
-public class DSwitch extends Motor {
+public class DSwitch extends NXTMotor {
 
 	  public DSwitch(TachoMotorPort port){
 	    super(port);
+        setPower(TachoMotorPort.MAX_POWER);
 	  }
 	  
 	  /**

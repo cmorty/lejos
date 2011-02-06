@@ -15,8 +15,7 @@ public interface Tachometer extends Encoder {
 	
 	
 	  /**
-	   * Returns the actual speed. This value is calculated every 100 ms on the NXT.
-	   * TODO: getRotationSpeed() is an alternate method name, but then we are again competing with Motor.getSpeed()
+	   * Returns the actual speed.
 	   * 
 	   * @return speed in degrees per second, negative value means motor is rotating backward
 	   */

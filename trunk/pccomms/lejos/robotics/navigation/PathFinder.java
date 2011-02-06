@@ -16,4 +16,8 @@ import lejos.robotics.Pose;
  */
 public interface PathFinder {
 	Collection <WayPoint> findRoute(Pose start, WayPoint destination) throws DestinationUnreachableException;
+	
+	public void addListener(WayPointListener wpl);
+	
+	public void startPathFinding(Pose start, WayPoint end);
 }

@@ -13,32 +13,10 @@ import lejos.nxt.BasicMotorPort;
  * 
  */
 public class RCXMotor extends BasicMotor {
-    BasicMotorPort port;
-    int power;
     
 	public RCXMotor(BasicMotorPort port)
 	{
 		this.port = port;
 	}
-    
-    public void setPower(int power)
-    {
-        this.power = power;
-        port.controlMotor(power, mode);
-    }
-    
-    public int getPower()
-    {
-        return power;
-    }
-    
-    /**
-     * Update the internal stack tracking the motor direction
-     * @param newMode
-     */
-    protected void updateState( int newMode)
-    {
-        if (newMode == mode) return;
-        port.controlMotor(power, newMode);
-    }
+
 }

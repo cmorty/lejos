@@ -3,8 +3,8 @@ package lejos.robotics.navigation;
 import lejos.nxt.Motor;
 import lejos.robotics.Move;
 import lejos.robotics.MoveListener;
-import lejos.robotics.TachoMotor;
-import lejos.robotics.TachoMotorListener;
+import lejos.robotics.RegulatedMotor;
+import lejos.robotics.RegulatedMotorListener;
 
 
 /*
@@ -27,9 +27,9 @@ import lejos.robotics.TachoMotorListener;
  * @author BB
  *
  */
-public class SteeringPilot implements ArcMoveController, TachoMotorListener {
+public class SteeringPilot implements ArcMoveController, RegulatedMotorListener {
 
-	private lejos.robotics.TachoMotor driveMotor;
+	private lejos.robotics.RegulatedMotor driveMotor;
 	private float minTurnRadius;
 	private float driveWheelDiameter;
 	private boolean reverseDriveMotor;
@@ -75,8 +75,8 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 	 * @param leftTurnTacho The tachometer the steering motor must turn to in order to turn left with the minimum turn radius.
 	 * @param rightTurnTacho The tachometer the steering motor must turn to in order to turn right with the minimum turn radius.
 	 */
-	public SteeringPilot(float driveWheelDiameter, lejos.robotics.TachoMotor driveMotor, boolean reverseDriveMotor, 
-			lejos.robotics.TachoMotor steeringMotor, float minTurnRadius, int leftTurnTacho, int rightTurnTacho) {
+	public SteeringPilot(float driveWheelDiameter, lejos.robotics.RegulatedMotor driveMotor, boolean reverseDriveMotor,
+			lejos.robotics.RegulatedMotor steeringMotor, float minTurnRadius, int leftTurnTacho, int rightTurnTacho) {
 		this.driveMotor = driveMotor;
 		this.driveMotor.addListener(this);
 		this.driveWheelDiameter = driveWheelDiameter;
@@ -247,7 +247,7 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		return null;
 	}
 
-	public void rotationStarted(TachoMotor motor, int tachoCount, boolean stall, long timeStamp) {
+	public void rotationStarted(RegulatedMotor motor, int tachoCount, boolean stall, long timeStamp) {
 		isMoving = true;
 		oldTacho = tachoCount;
 		
@@ -257,7 +257,7 @@ public class SteeringPilot implements ArcMoveController, TachoMotorListener {
 		}
 	}
 
-	public void rotationStopped(TachoMotor motor, int tachoCount,boolean stall, long timeStamp) {
+	public void rotationStopped(RegulatedMotor motor, int tachoCount,boolean stall, long timeStamp) {
 		isMoving = false;
 		int tachoTotal = tachoCount - oldTacho ;
 		float distance = (float)((tachoTotal/360f) * Math.PI * driveWheelDiameter);
