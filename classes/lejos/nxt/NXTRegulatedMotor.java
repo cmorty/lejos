@@ -139,7 +139,6 @@ public class NXTRegulatedMotor implements RegulatedMotor
     /**
      * @see lejos.nxt.BasicMotor#forward()
      */
-    @Override
     public void forward()
     {
         reg.newMove(speed, acceleration, +NO_LIMIT, true, false);
@@ -148,7 +147,6 @@ public class NXTRegulatedMotor implements RegulatedMotor
     /**
      * @see lejos.nxt.BasicMotor#backward()
      */
-    @Override
     public void backward()
     {
         reg.newMove(speed, acceleration, -NO_LIMIT, true, false);
@@ -158,7 +156,6 @@ public class NXTRegulatedMotor implements RegulatedMotor
      * Set the motor into float mode. This will stop the motor without braking
      * and the position of the motor will not be maintained.
      */
-    @Override
     public void flt()
     {
         reg.newMove(0, acceleration, NO_LIMIT, false, false);
@@ -171,7 +168,6 @@ public class NXTRegulatedMotor implements RegulatedMotor
      * any further motion.
      * Cancels any rotate() orders in progress
      */
-    @Override
     public void stop()
     {
         reg.newMove(0, acceleration, NO_LIMIT, true, false);
@@ -187,7 +183,6 @@ public class NXTRegulatedMotor implements RegulatedMotor
      * be detected  by calling {@link #isStalled()};
      * @return true iff the motor if the motor is attempting to rotate.<br>
      */
-    @Override
     public boolean isMoving()
     {
         return reg.moving;
