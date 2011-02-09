@@ -48,7 +48,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
 {
 
     protected static final int NO_LIMIT = 0x7fffffff;
-    public final Regulator reg;
+    protected final Regulator reg;
     protected TachoMotorPort tachoPort;
     protected boolean stalled = false;
     protected RegulatedMotorListener listener = null;
@@ -72,7 +72,6 @@ public class NXTRegulatedMotor implements RegulatedMotor
      */
     public NXTRegulatedMotor(TachoMotorPort port)
     {
-        super();
         tachoPort = port;
         port.setPWMMode(TachoMotorPort.PWM_BRAKE);
         reg = new Regulator();
