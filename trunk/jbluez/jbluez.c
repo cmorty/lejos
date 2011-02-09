@@ -58,9 +58,10 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
   	char msg[80];
   	char return_str[80] = {0};
   	int num_nxts = 0;
-  	char* name_str;
+  	const char* name_str = NULL;
 
-  	if (jname != NULL) name_str = (char*) (*env)->GetStringUTFChars(env, jname, NULL);
+  	if (jname != NULL)
+  		name_str = (*env)->GetStringUTFChars(env, jname, NULL);
 
   	jclass sclass = (*env)->FindClass(env,"java/lang/String");
 
@@ -88,7 +89,7 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
     	memset(name, 0, sizeof(name));
         if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name),
             name, 0) < 0) strcpy(name, "[unknown]");
-    	if (jname != NULL && strcmp(name,name_str) != 0) continue;
+    	if (name_str != NULL && strcmp(name,name_str) != 0) continue;
         if ((ii+i)->dev_class[1] == 8 && (ii+i)->dev_class[0] == 4)
         	num_nxts++;
     }
@@ -104,7 +105,7 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
         memset(name, 0, sizeof(name));
         if (hci_read_remote_name(sock, &(ii+i)->bdaddr, sizeof(name),
             name, 0) < 0) strcpy(name, "[unknown]");
-        if (jname != NULL && strcmp(name,name_str) != 0) continue;
+        if (name_str != NULL && strcmp(name,name_str) != 0) continue;
         //printf("%s  %s %x %x\n", addr, name, (ii+i)->dev_class[1], (ii+i)->dev_class[0]);
         strcpy(return_str,name);
         strcat(return_str,"::");
@@ -115,7 +116,8 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
         }
     }
 
-    if (jname != NULL) (*env)->ReleaseStringUTFChars(env, jname, name_str);
+    if (jname != NULL && name_str != NULL)
+    	(*env)->ReleaseStringUTFChars(env, jname, name_str);
     free( ii );
     close( sock );
 
@@ -126,10 +128,10 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommBluez_search
 
 bdaddr_t jstr2ba(JNIEnv *env, jstring bdaddr_jstr)
 {
-	char *bdaddr_str;
+	const char *bdaddr_str;
 	bdaddr_t bdaddr;
 
-	bdaddr_str = (char*) (*env)->GetStringUTFChars(env, bdaddr_jstr, NULL);
+	bdaddr_str = (*env)->GetStringUTFChars(env, bdaddr_jstr, NULL);
 	str2ba(bdaddr_str, &bdaddr);
 	(*env)->ReleaseStringUTFChars(env, bdaddr_jstr, bdaddr_str);
 
