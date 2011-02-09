@@ -2,6 +2,10 @@ package lejos.pc.comm;
 
 import java.util.Vector;
 
+import lejos.util.jni.JNIClass;
+import lejos.util.jni.JNIException;
+import lejos.util.jni.JNILoader;
+
 /**
  * Implementation of NXTComm using the the LEGO Fantom API.
  * 
@@ -21,7 +25,7 @@ import java.util.Vector;
  * you are using.
  *
  */
-public class NXTCommFantom extends NXTCommUSB {
+public class NXTCommFantom extends NXTCommUSB implements JNIClass {
     private static final int MIN_TIMEOUT = 5000;
     private static final int MAX_ERRORS = 10;
 	
@@ -78,15 +82,19 @@ public class NXTCommFantom extends NXTCommUSB {
         return (nxt.btResourceString != null);
     }
 	
-	static {
-        try{
-            System.loadLibrary("jfantom");
-        } catch(Exception e)
-        {
-            System.out.println("Caught exception " + e + "while trying to load driver");
-            throw (RuntimeException)e;
-        }
+    private static boolean initialized = false;
+    private static synchronized void initialize0(JNILoader jnil) throws JNIException
+    {
+    	if (!initialized)
+    		jnil.loadLibrary(NXTCommLibnxt.class, "jfantom");
+    	
+    	initialized = true;
+    }
+    
+	public boolean initialize(JNILoader jnil) throws JNIException
+	{
+		initialize0(jnil);
+		return true;
 	}
-
 }
 

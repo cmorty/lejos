@@ -38,7 +38,7 @@
 		<echo message="*** entering scripts project"/>
 		<ant inheritAll="false"	dir="${project.scripts}" antfile="build.xml">
 			<target name="clean"/>
-			<target name="windows"/>
+			<target name="all"/>
 		</ant>
 		<echo message="*** leaving scripts project"/>
 	</target>	

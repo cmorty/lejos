@@ -2,6 +2,10 @@ package lejos.pc.comm;
 
 import java.io.*;
 
+import lejos.util.jni.JNIClass;
+import lejos.util.jni.JNIException;
+import lejos.util.jni.JNILoader;
+
 /**
  * Implementation of NXTComm using the the jbluez library 
  * on Linux or Unix systems. 
@@ -11,7 +15,7 @@ import java.io.*;
  * you are using.
  *
  */
-public class NXTCommBluez implements NXTComm {
+public class NXTCommBluez implements NXTComm, JNIClass {
 
 	private static final String BDADDR_ANY = "00:00:00:00:00:00";
 
@@ -19,10 +23,6 @@ public class NXTCommBluez implements NXTComm {
 	private int lenRemaining = 0;
 	byte[] savedData = null;
 
-	static {
-		System.loadLibrary("jbluez");
-	}
-	
 	public NXTInfo[] search(String name, int protocol) {
 		String[] btString = null;
 		
@@ -263,4 +263,19 @@ public class NXTCommBluez implements NXTComm {
 
 	native private void rcSocketClose(int sk) throws IOException;
 
+	
+    private static boolean initialized = false;
+    private static synchronized void initialize0(JNILoader jnil) throws JNIException
+    {
+    	if (!initialized)
+    		jnil.loadLibrary(NXTCommLibnxt.class, "jbluez");
+    	
+    	initialized = true;
+    }
+    
+	public boolean initialize(JNILoader jnil) throws JNIException
+	{
+		initialize0(jnil);
+		return true;
+	}
 }
