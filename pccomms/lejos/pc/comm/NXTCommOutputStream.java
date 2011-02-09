@@ -19,8 +19,11 @@ public class NXTCommOutputStream extends OutputStream {
 	}
 	
 	public void flush() throws IOException {
-		byte[] b = baos.toByteArray();	
-		nxtComm.write(b);
-		baos.reset();
+        if (baos.size() > 0)
+        {
+            byte[] b = baos.toByteArray();
+            nxtComm.write(b);
+            baos.reset();
+        }
 	}
 }
