@@ -171,13 +171,6 @@ public class LCD
     public static native void clear();
 
     /**
-     * Write graphics from a Java buffer to the display.
-     *
-     * @param buff The contents to write to the display.
-     */
-    public static native void setDisplay(int[] buff);
-
-    /**
      * Provide access to the LCD display frame buffer. Allows both the firmware
      * and Java to make changes.
      * @return byte array that is the frame buffer.
