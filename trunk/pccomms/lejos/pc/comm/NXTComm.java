@@ -1,7 +1,10 @@
 package lejos.pc.comm;
 
-import java.io.*;
-import lejos.nxt.remote.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import lejos.nxt.remote.NXTCommRequest;
 
 /**
  * 

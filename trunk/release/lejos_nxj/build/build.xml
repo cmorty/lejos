@@ -5,10 +5,10 @@
 	
 	<!-- Setting up the global properties for the build -->
 	<property name="lejos.dist.root" value="${basedir}/.."/>
-	<property name="lejos.dist.bin" value="${lejos.dist.root}/bin"/>
 	<property name="lejos.dist.src" value="${lejos.dist.root}/src"/>
 	<property name="lejos.dist.src.jlibnxt" value="${lejos.dist.src}/libnxt"/>
 	<property name="lejos.dist.src.jbluez" value="${lejos.dist.src}/jbluez"/>
+	<property name="lejos.dist.lib.pc" value="${lejos.dist.root}/lib/pc"/>
 	
     <condition property="jni.include.dir" value="${java.home}/../include">
 		<or>
@@ -41,7 +41,16 @@
     	<os name="SunOS"/>
 	</condition>
 	<fail unless="jni.sys.dir">OS not recognized</fail>
-		
+	
+	<java outputproperty="osinfo.path" classname="lejos.util.jni.OSInfo" failonerror="true">
+		<classpath>
+			<fileset dir="${lejos.dist.lib.pc}">
+				<include name="**/*.jar"/>
+			</fileset>
+		</classpath>
+	</java>
+	<property name="lejos.dist.native" value="${lejos.dist.root}/lib/pc/native/${osinfo.path}"/>
+	
 	<!-- cpptasks task & type def -->
 	<taskdef resource="cpptasks.tasks">
 	  <classpath>
@@ -78,8 +87,8 @@ Type "ant all" to build both wrappers.
 	<target name="clean" description="cleans the os dependent parts of the lejos distribution">
 	    <!-- move existing files to *.bak -->
 		<echo message="saving existing files to .bak files"/>
-		<move todir="${lejos.dist.bin}">
-			<fileset dir="${lejos.dist.bin}">
+		<move todir="${lejos.dist.native}">
+			<fileset dir="${lejos.dist.native}">
 				<include name="*.so"/>
 				<include name="*.dylib"/>
 		      	<exclude name="*.bak"/>
@@ -91,14 +100,14 @@ Type "ant all" to build both wrappers.
 	<!-- builds libnxt -->
   	<target name="jlibnxt" description="builds libnxt">
   		<ant antfile="${lejos.dist.src.jlibnxt}/build.xml" dir="${lejos.dist.src.jlibnxt}" inheritall="true" />
-		<copy todir="${lejos.dist.bin}">
+		<copy todir="${lejos.dist.native}">
       		<fileset dir="${lejos.dist.src.jlibnxt}">
       			<include name="libjlibnxt.so"/>
       			<include name="libjlibnxt.dylib"/>
       		</fileset>
 		</copy>		
   		<chmod perm="755">
-  			<fileset dir="${lejos.dist.bin}">
+  			<fileset dir="${lejos.dist.native}">
       			<include name="libjlibnxt.so"/>
       			<include name="libjlibnxt.dylib"/>
   	      	</fileset>
@@ -116,13 +125,13 @@ Type "ant all" to build both wrappers.
   	<target name="jbluez" description="builds jbluez">
   		<fail if="isMacOS">jbluez is not support on Mac OS X</fail>
   		<ant antfile="${lejos.dist.src.jbluez}/build.xml" dir="${lejos.dist.src.jbluez}" inheritall="true" />
-		<copy todir="${lejos.dist.bin}">
+		<copy todir="${lejos.dist.native}">
       		<fileset dir="${lejos.dist.src.jbluez}">
       			<include name="libjbluez.so"/>
       		</fileset>
 		</copy>
   		<chmod perm="755">
-  			<fileset dir="${lejos.dist.bin}">
+  			<fileset dir="${lejos.dist.native}">
       			<include name="libjbluez.so"/>
   	      	</fileset>
   		</chmod>

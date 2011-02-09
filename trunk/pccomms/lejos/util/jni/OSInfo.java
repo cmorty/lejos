@@ -141,4 +141,16 @@ public class OSInfo
 	{
 		return this.arch.equalsIgnoreCase(name);
 	}
+	
+	
+	/**
+	 * @throws IOException 
+	 * @deprecated don't call it, only used for debugging/user assistance
+	 */
+	@Deprecated
+	public static void main(String[] args) throws IOException
+	{
+		OSInfo os = new OSInfo();
+		System.out.println(os.getOS()+"/"+os.getArch());
+	}
 }

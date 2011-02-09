@@ -2,6 +2,10 @@ package lejos.pc.comm;
 
 import java.util.Vector;
 
+import lejos.util.jni.JNIClass;
+import lejos.util.jni.JNIException;
+import lejos.util.jni.JNILoader;
+
 /**
  * Implementation of NXTComm over USB using libnxt.
  * 
@@ -10,7 +14,7 @@ import java.util.Vector;
  * you are using.
  *
  */
-public class NXTCommLibnxt extends NXTCommUSB {	
+public class NXTCommLibnxt extends NXTCommUSB implements JNIClass {	
 	public native String[] jlibnxt_find();
 	public native long jlibnxt_open(String nxt);
 	public native void jlibnxt_close(long nxt);
@@ -50,10 +54,20 @@ public class NXTCommLibnxt extends NXTCommUSB {
     {
         return (nxt.btResourceString != null);
     }
-
-	
-	static {
-		System.loadLibrary("jlibnxt");
+    
+    
+    private static boolean initialized = false;
+    private static synchronized void initialize0(JNILoader jnil) throws JNIException
+    {
+    	if (!initialized)
+    		jnil.loadLibrary(NXTCommLibnxt.class, "jlibnxt");
+    	
+    	initialized = true;
+    }
+    
+	public boolean initialize(JNILoader jnil) throws JNIException
+	{
+		initialize0(jnil);
+		return true;
 	}
-
 }

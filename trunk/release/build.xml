@@ -273,10 +273,7 @@
 		
 		<copy todir="${release.bin}">
       		<fileset dir="${lejos.root}/snapshot/bin">
-        		<include name="jfantom.dll"/>
-      			<include name="jlibnxt.dll"/>
       			<include name="lejos_nxt_rom.bin"/>
-      			<include name="libjfantom.jnilib"/>
       		</fileset>
     	</copy>
 		
@@ -286,6 +283,13 @@
       		</fileset>
     	</copy>
 			
+		<copy todir="${release.pc.libs}">
+      		<fileset dir="${lejos.root}/snapshot/lib/pc">
+      			<include name="native/**/*.dll"/>
+      			<include name="native/**/*.jnilib"/>
+      		</fileset>
+    	</copy>
+		
 		<!-- adjust permissions -->
   		<chmod perm="755">
   			<fileset dir="${release.bin}">
@@ -364,26 +368,27 @@
 	<!-- packages the linux distribution -->
 	<target name="distribution.linux" description="packages the linux distribution">
 		<!-- tar & gzip leJOS Unix distribution -->
-		<tar destfile="${release.dist}/${lejos.linux.version}.tar">
+		<tar destfile="${release.dist}/${lejos.linux.version}.tar.gz" compression="gzip">
 			 <tarfileset dir="${release}" >
 			    <include name="lejos_nxj/RELEASENOTES"/>
 			    <include name="lejos_nxj/README.html"/>
 			    <include name="lejos_nxj/LICENSE"/>
 			    <include name="lejos_nxj/LEGAL"/>
 			    <include name="lejos_nxj/ACKNOWLEDGMENTS"/>
-			    <include name="lejos_nxj/lib/**/*.jar"/>
+			    <include name="lejos_nxj/lib/**"/>
 			    <include name="lejos_nxj/src/**"/>
 			    <include name="lejos_nxj/bin/*"/>
 			 	<include name="lejos_nxj/projects/**"/>
 			 	<exclude name="lejos_nxj/bin/*.xml"/>
 			 	<exclude name="lejos_nxj/bin/*.exe"/>
-			 	<exclude name="lejos_nxj/bin/*.dll"/>
 			 	<exclude name="lejos_nxj/bin/*.bat"/>
+			 	<!--
+			 	<exclude name="lejos_nxj/lib/**/*.dll"/>
+			 	-->
 			 	<include name="lejos_nxj/build/*"/>
 			 	<include name="lejos_nxj/docs/**"/>
 			  </tarfileset>
 		</tar>
-		<gzip zipfile="${release.dist}/${lejos.linux.version}.tar.gz" src="${release.dist}/${lejos.linux.version}.tar"/>
 	</target>
 	
 	<!-- packages the windows distribution -->
@@ -396,13 +401,12 @@
 			 	<include name="lejos_nxj/LICENSE"/>
 			 	<include name="lejos_nxj/LEGAL"/>
 			 	<include name="lejos_nxj/ACKNOWLEDGMENTS"/>
-			    <include name="lejos_nxj/lib/**/*.jar"/>
+			    <include name="lejos_nxj/lib/**"/>
 			 	<include name="lejos_nxj/projects/**"/>
 			    <include name="lejos_nxj/src/**"/>
 			 	<exclude name="lejos_nxj/src/jbluez/**"/>
 			    <include name="lejos_nxj/bin/*"/>
 			 	<exclude name="lejos_nxj/bin/*.xml"/>
-			 	<exclude name="lejos_nxj/bin/*.jnilib"/>
 			 	<exclude name="lejos_nxj/bin/nxj"/>
 			 	<exclude name="lejos_nxj/bin/nxjlink"/>
 			 	<exclude name="lejos_nxj/bin/nxjc"/>
@@ -419,8 +423,11 @@
 			 	<exclude name="lejos_nxj/bin/nxjpc"/>
 			 	<exclude name="lejos_nxj/bin/nxjpcc"/>
 			 	<exclude name="lejos_nxj/bin/nxjcontrol"/>
-			 	<exclude name="lejos_nxj/bin/*.so"/>
+			 	<!--
+			 	<exclude name="lejos_nxj/lib/**/*.so"/>
+			 	<exclude name="lejos_nxj/lib/**/*.jnilib"/>
 			 	<exclude name="lejos_nxj/lib/**/bluecove-gpl.jar"/>
+			 	-->
 			  </fileset>
 		</zip>
 	</target>
@@ -446,16 +453,7 @@
     	     classpath="${release.3rdparty.libs}/bluecove.jar"
              defaultexcludes="yes">
       <fileset dir="${javasrc}/pccomms">
-      		<exclude name="doc/**"/>
-      	    <exclude name="build/**"/>
-      		<exclude name="nbproject/**"/>
-      	    <exclude name="**/pccomm.jar"/>
-      	    <exclude name="**/.*/**"/>
-      		<exclude name="**/*.h"/>
-      		<exclude name="**/*.class"/>
-      	    <exclude name="**/package.html"/>
-      	    <exclude name="**/build.xml"/>
-      		<exclude name="**/copy.xml"/>
+      		<include name="lejos/**/*.java"/>
       </fileset>
     </javadoc>
   </target>

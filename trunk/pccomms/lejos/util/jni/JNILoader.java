@@ -13,12 +13,12 @@ public class JNILoader
 	
 	public JNILoader() throws IOException
 	{
-		this(null);
+		this(null, new OSInfo());
 	}
 
-	public JNILoader(String subdir) throws IOException
+	public JNILoader(String subdir, OSInfo info) throws IOException
 	{
-		this.osinfo = new OSInfo();
+		this.osinfo = info;
 		this.subdir = subdir;
 	}
 
@@ -52,6 +52,11 @@ public class JNILoader
 			}
 		}
 		return tmp.getParentFile();
+	}
+	
+	public OSInfo getOSInfo()
+	{
+		return this.osinfo;
 	}
 
 	public void loadLibrary(Class<?> caller, String libname) throws JNIException

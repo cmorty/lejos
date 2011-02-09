@@ -1,10 +1,18 @@
 package lejos.pc.comm;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
+
+import lejos.util.jni.JNIClass;
+import lejos.util.jni.JNIException;
+import lejos.util.jni.JNILoader;
+import lejos.util.jni.OSInfo;
 
 /**
  * 
@@ -18,12 +26,17 @@ public class NXTCommFactory {
 	public static final int BLUETOOTH = 2;
 	public static final int ALL_PROTOCOLS = USB | BLUETOOTH;
 
-	private static String os = System.getProperty("os.name");
-	private static final String SEP = System.getProperty("file.separator");
-	private static final String USER_HOME = System.getProperty("user.home");
-	private static String propFile;
-	private static String cacheFile = USER_HOME + SEP + "nxj.cache";
-	private static String androidCacheFile = "sdcard/leJOS/nxj.cache";
+	private static final OSInfo osinfo;
+	private static final JNILoader jniloader;
+	
+	static {
+		try {
+			osinfo = new OSInfo();
+			jniloader = new JNILoader("native", osinfo);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}		
+	}
 
 	/**
 	 * Load a comms driver for a protocol (USB or Bluetooth)
@@ -35,61 +48,74 @@ public class NXTCommFactory {
 	 * @throws NXTCommException
 	 */
 	public static NXTComm createNXTComm(int protocol) throws NXTCommException {
-		boolean fantom = false;
 		Properties props = getNXJProperties();
-
-		if ((os.length() >= 7 && os.substring(0, 7).equals("Windows"))
-				|| (os.toLowerCase().startsWith("mac os x"))) {
-			fantom = true;
-		}
 
 		// Look for USB comms driver first
 		if ((protocol & NXTCommFactory.USB) != 0) {
+			boolean fantom = osinfo.isOS(OSInfo.OS_WINDOWS) || osinfo.isOS(OSInfo.OS_MACOSX);
+			String defaultName = fantom ? "lejos.pc.comm.NXTCommFantom"
+					: "lejos.pc.comm.NXTCommLibnxt";
 			String nxtCommName = props.getProperty("NXTCommUSB",
-					(fantom ? "lejos.pc.comm.NXTCommFantom"
-							: "lejos.pc.comm.NXTCommLibnxt"));
+					defaultName);
+			
 			try {
-				Class<?> c = Class.forName(nxtCommName);
-				return (NXTComm) c.newInstance();
+				return newNXTCommInstance(nxtCommName);
 			} catch (Throwable t) {
 				throw new NXTCommException("Cannot load USB driver: ",t);
 			}
 		}
 
-		// Look for a Bluetooth one
-		String defaultDriver = "lejos.pc.comm.NXTCommBluecove";
-
 		if ((protocol & NXTCommFactory.BLUETOOTH) != 0) {
+			// Look for a Bluetooth one
+			String defaultName = isAndroid() ? "lejos.pc.comm.NXTCommAndroid"
+					: "lejos.pc.comm.NXTCommBluecove";
 			String nxtCommName = props.getProperty("NXTCommBluetooth",
-					defaultDriver);
-			
-			if(isAndroid()){
-				nxtCommName="lejos.pc.comm.NXTCommAndroid";
-			}
+					defaultName);
 			
 			try {
-				Class<?> c = Class.forName(nxtCommName);
-				return (NXTComm) c.newInstance();
-			} catch (Throwable t) {
+				return newNXTCommInstance(nxtCommName);
+			} catch (Exception t) {
 				throw new NXTCommException("Cannot load Bluetooth driver", t);
 			}
 		}
+		
 		return null;
+	}
+	
+	private static NXTComm newNXTCommInstance(String classname) throws JNIException, ClassNotFoundException, InstantiationException, IllegalAccessException
+	{
+		Class<?> c = Class.forName(classname);
+		Object o = c.newInstance();
+		
+		if (o instanceof JNIClass)
+		{
+			((JNIClass) o).initialize(jniloader);
+		}
+		
+		return (NXTComm) o;
 	}
 
 	/**
 	 * Form the leJOS NXJ properties file name Get NXJ_HOME from a system
 	 * property, if set, else the environment variable,
 	 */
-	private static void setPropsFile() {
+	private static String getPropsFile() {
 		String home = System.getProperty("nxj.home");
+		if (home == null)
+			return null;
+		
+		return home + File.separatorChar + "bin" + File.separatorChar + "nxj.properties";
+	}
 
-		// try environment variable if system property not set
-		if (home == null) {
-			home = System.getenv("NXJ_HOME");
-		}
-		if (home != null) {
-			propFile = home + SEP + "bin" + SEP + "nxj.properties";
+	private static String getCacheFile() {
+		if (isAndroid())
+			return "sdcard/leJOS/nxj.cache";
+		else {
+			String userHome = System.getProperty("user.home");
+			if (userHome == null)
+				return null;
+			
+			return userHome + File.separatorChar + "nxj.cache";
 		}
 	}
 
@@ -101,12 +127,18 @@ public class NXTCommFactory {
 	 */
 	public static Properties getNXJProperties() throws NXTCommException {
 		Properties props = new Properties();
-		setPropsFile();
+		String propFile = getPropsFile();
 
 		if (propFile != null) {
 			try {
-				props.load(new FileInputStream(propFile));
+				FileInputStream fis = new FileInputStream(propFile);
+				try {
+					props.load(fis);
+				} finally {
+					fis.close();
+				}
 			} catch (FileNotFoundException e) {
+				//ignore
 			} catch (IOException e) {
 				throw new NXTCommException("Cannot read nxj.properties file");
 			}
@@ -122,14 +154,22 @@ public class NXTCommFactory {
 	 */
 	public static Properties getNXJCache() throws NXTCommException {
 		Properties props = new Properties();
+		String cacheFile = getCacheFile();
 
-		try {
-			props.load(new FileInputStream((isAndroid() ? androidCacheFile
-					: cacheFile)));
-
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-			throw new NXTCommException("Cannot read nxj.cache file");
+		if (cacheFile != null)
+		{
+			try {
+				FileInputStream fis = new FileInputStream(cacheFile); 
+				try {
+					props.load(fis);	
+				} finally {
+					fis.close();
+				}
+			} catch (FileNotFoundException e) {
+				//ignore
+			} catch (IOException e) {
+				throw new NXTCommException("Cannot read nxj.cache file");
+			}
 		}
 		return props;
 	}
@@ -145,10 +185,17 @@ public class NXTCommFactory {
 	 */
 	public static void saveNXJProperties(Properties props, String comment)
 			throws IOException {
-		FileOutputStream fos;
-		setPropsFile();
-		fos = new FileOutputStream(propFile);
-		props.store(fos, comment);
+		String propFile = getPropsFile();
+		
+		if (propFile != null)
+		{
+			FileOutputStream fos = new FileOutputStream(propFile);
+			try {
+				props.store(fos, comment);
+			} finally {
+				fos.close();
+			}
+		}
 	}
 
 	/**
@@ -162,22 +209,22 @@ public class NXTCommFactory {
 	 */
 	public static void saveNXJCache(Properties props, String comment)
 			throws IOException {
-		FileOutputStream fos;
-
-		fos = new FileOutputStream((isAndroid() ? androidCacheFile : cacheFile));
-
-		props.store(fos, comment);
+		String cacheFile = getCacheFile();
+		
+		if (cacheFile != null)
+		{
+			FileOutputStream fos = new FileOutputStream(cacheFile);
+			try	{
+				props.store(fos, comment);
+			} finally {
+				fos.close();
+			}
+		}
 	}
 
 	private static boolean isAndroid() {
-		if (os.toLowerCase().indexOf("linux") != -1) {
-			String javaRuntimeName = System.getProperty("java.runtime.name");
-			if ((javaRuntimeName != null)
-					&& (javaRuntimeName.toLowerCase()
-							.indexOf("android runtime") != -1)) {
-				return true;
-			}
-		}
-		return false;
+		String javaRuntimeName = System.getProperty("java.runtime.name");
+		return osinfo.isOS(OSInfo.OS_LINUX) && javaRuntimeName != null &&
+			javaRuntimeName.toLowerCase().indexOf("android runtime") != -1;
 	}
 }
