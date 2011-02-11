@@ -256,14 +256,16 @@ that shows methods called by method number, and allows you to interrupt a runnin
 <p>When an interrupt occurs a thread dump is displayed. It lists the threads
 in you program in reverse order of priority. The thread number, state and the numbers of the last 3 executed
 methods is displayed for each thread. The thread states are:</p>
-<p>R - the thread is runnable<br/>
-S - the thread is sleeping<br/>
-D - the thread is dead<br/>
-N - the thread is new (not yet started)<br/>
-I - the thread has been started but not yet run<br/>
-E - the thread is waiting for a synchronized section<br/>
-W - the thread is waiiting on a monitor object<br/>
-* - this is the running thread (not the debug thread)</p>
+<dl>
+<dt>R</dt><dd>the thread is runnable</dd>
+<dt>S</dt><dd>the thread is sleeping</dd>
+<dt>D</dt><dd>the thread is dead</dd>
+<dt>N</dt><dd>the thread is new (not yet started)</dd>
+<dt>I</dt><dd>the thread has been started but not yet run</dd>
+<dt>E</dt><dd>the thread is waiting for a synchronized section</dd>
+<dt>W</dt><dd>the thread is waiiting on a monitor object</dd>
+<dt>*</dt><dd>this is the running thread (not the debug thread)</dd>
+</dl>
 <p>After a user interrupt or exception, ENTER+ESCAPE shuts down the brick, ESCAPE terminates the user
 program and restarts the menu. Any other key continues the user program.</p>
  
