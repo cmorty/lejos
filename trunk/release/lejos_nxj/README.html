@@ -33,7 +33,7 @@ tiny Java-based operating system that has been ported to the following platforms
 It contains a VM for Java bytecodes and additional software to load and
 run Java programs.</p>
 
-These are some of the features offered:
+<p>These are some of the features offered:</p>
 <ul>
   <li>Object oriented language (Java)</li>
   <li>Preemptive threads (tasks)</li>
@@ -145,7 +145,7 @@ reset button with a paper clip for 4 seconds or more. The NXT brick will start t
 
 <h1><a name="compiling">Compiling and running your first Java code</a> on the NXT</h1>
 
-To compile, link and download the Tune sample:
+<p>To compile, link and download the Tune sample:</p>
 
 <ul>
   <li>Open a command window</li>
@@ -158,19 +158,19 @@ To compile, link and download the Tune sample:
   <li>Type <em>nxj -r Tune</em></li>
  </ul>
  
- <p>If you used the Microsoft Windows Installer to set up leJOS NXJ, the projects folder will be leJOSNXJProjects in your home directory.
+<p>If you used the Microsoft Windows Installer to set up leJOS NXJ, the projects folder will be leJOSNXJProjects in your home directory.
  Your home directory is C:\Users\<em>username</em> on Vista systems and C:\Document and Settings\<em>username</em> on XP systems.
  
- <p>On other systems, of if you used the .zip distribution on Microsoft Windows, the projects folder is a subdirectory of <em>lejos_nxj</em>.</p>
+<p>On other systems, of if you used the .zip distribution on Microsoft Windows, the projects folder is a subdirectory of <em>lejos_nxj</em>.</p>
  
 <p>After a few seconds, you should hear an ascending tone sequence indicating that the program uploaded OK. You will then hear a tune play. When it has finished the leJOS NXJ menu will be displayed.</p>
 
 <p>When you switch your NXT back on, select "Files" and press ENTER and you will see "Tune.nxj" in the files menu</p>
 
 <p>You can navigate through the leJOS NXJ menus using the left and right buttons. You select a menu item by pressing ENTER, and exit from a menu by pressing ESCAPE. There are 3 menus: Files, Bluetooth ands System. 
-To select a program, go to the Files menu, scroll down to your program and press the ENTER button. You will then see a sub-menu that lets you execute or delete the program.</p>
+ To select a program, go to the Files menu, scroll down to your program and press the ENTER button. You will then see a sub-menu that lets you execute or delete the program.</p>
 
- <p>There are lots of other samples you can try in the <em>samples</em> project. You can 
+<p>There are lots of other samples you can try in the <em>samples</em> project. You can 
  import the <em>samples</em> project and other projects from the <em>projects</em> folder into your favorite IDE, such as Eclipse or Netbeans.
  You can then run the samples using the ant build files provided, or using a leJOS NXJ plugin for the IDE. There is more information on this
  in the <a href="http://lejos.sourceforge.net/nxt/nxj/tutorial/index.htm">tutorial</a>.</p>
@@ -196,7 +196,7 @@ To select a program, go to the Files menu, scroll down to your program and press
 </ul>
 
 <p><em>nxj</em>, <em>nxjupload</em> and <em>nxjbrowse</em> can be used over Bluetooth or USB.
-By default they try to use USB first, and if this fails, they try Bluetooth</P>
+By default they try to use USB first, and if this fails, they try Bluetooth</p>
 
 <p>Use the <em>--usb</em> flag to select usb only, or <em>--bluetooth</em> for Bluetooth only.</p>
 
@@ -252,25 +252,25 @@ on <em>nxj</em> or <em>nxjlink</em>.</p>
 <p>The debug monitor is the start of a more fully featured remote debugging
 capability that will be added in a future release. The debug monitor gives
 a more details when an untrapped exception occurs including simple stack trace 
-that shows methods called by method number, and allows you to interrupt a running program by pressing ENTER+ESCAPE.<p>
+that shows methods called by method number, and allows you to interrupt a running program by pressing ENTER+ESCAPE.</p>
 <p>When an interrupt occurs a thread dump is displayed. It lists the threads
 in you program in reverse order of priority. The thread number, state and the numbers of the last 3 executed
-methods is displayed for each thread. The thread states are:-</p>
-R - the thread is runnable<br/>
+methods is displayed for each thread. The thread states are:</p>
+<p>R - the thread is runnable<br/>
 S - the thread is sleeping<br/>
 D - the thread is dead<br/>
 N - the thread is new (not yet started)<br/>
 I - the thread has been started but not yet run<br/>
 E - the thread is waiting for a synchronized section<br/>
 W - the thread is waiiting on a monitor object<br/>
-* - this is the running thread (not the debug thread)<br/>
+* - this is the running thread (not the debug thread)</p>
 <p>After a user interrupt or exception, ENTER+ESCAPE shuts down the brick, ESCAPE terminates the user
 program and restarts the menu. Any other key continues the user program.</p>
  
 <h1><a name="limitations">Known limitations in leJOS</a></h1>
-Due to size constraints, some Java language
+<p>Due to size constraints, some Java language
 features have been omitted. Others just haven't been implemented yet.
-Known limitations with all versions of leJOS are:
+Known limitations with all versions of leJOS are:</p>
 <ul>
   <li>The implementation of java.lang.Class is limited, Class.forName() throws
 ClassNotFoundException at all times. As a consequence, reflection is
@@ -306,18 +306,19 @@ omly necessary one. You can force an inquiry by deleting the file, specifying "*
 </li>
 </ul>
 <h1><a name="documentation">Documentation</a></h1>
-The API docs for leJOS NXJ is included in the download. You can also access them on the leJOS web site.
+<p>The API docs for leJOS NXJ is included in the download. You can also access them on the leJOS web site.</p>
 <h1><a name="license">License</a></h1>
-We are continuing to release under the Mozilla Public License
+<p>We are continuing to release under the Mozilla Public License
 (see the LICENSE file). The nxjflash utility uses David Anderson's libnxt
 which is release under a GPL v2 license (see COPYING in the libnxt directory).
-Bluecove on Linux uses a GPL v3 license. See the LEGAL and ACKNOWLEDGMENTS files for more detail.<h1><a name="questions">Questions and Problems</a></h1>
-Please direct feedback to the lejos-discussion
+Bluecove on Linux uses a GPL v3 license. See the LEGAL and ACKNOWLEDGMENTS files for more detail.</p>
+<h1><a name="questions">Questions and Problems</a></h1>
+<p>Please direct feedback to the lejos-discussion
 mailing list mailto:lejos-discussion@lists.sourceforge.net. <br>
 To subscribe, see <a
- href="http://lists.sourceforge.net/lists/listinfo/lejos-discussion">http://lists.sourceforge.net/lists/listinfo/lejos-discussion</a>.
-<p> Feel free to take a look at the <a href="http://www.lejos.org">leJOS website</a>
- or its <a href="http://sourceforge.net/projects/lejos">project page</a>. </p>
+ href="http://lists.sourceforge.net/lists/listinfo/lejos-discussion">http://lists.sourceforge.net/lists/listinfo/lejos-discussion</a>.</p>
+<p>Feel free to take a look at the <a href="http://www.lejos.org">leJOS website</a>
+ or its <a href="http://sourceforge.net/projects/lejos">project page</a>.</p>
 
 <p>There are forums on the web site that can be used to ask questions, share information on projects, etc.</p>
 </body>
