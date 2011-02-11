@@ -25,9 +25,8 @@ tiny Java-based operating system that has been ported to the following platforms
   <li>LEGO Mindstorms NXT</li>
   <li>LEGO Mindstorms RCX</li>
   <li>Unix (for emulation of leJOS programs only)</li>
-  </a>
 </ul>
-<p>leJOS was originally forked out of the </a><a
+<p>leJOS was originally forked out of the <a
  href="http://tinyvm.sourceforge.net">TinyVM project</a>. 
 It contains a VM for Java bytecodes and additional software to load and
 run Java programs.</p>
@@ -108,7 +107,8 @@ directory.</li>
   <li>On Linux and Unix systems, depending on your privilege settings you might need to
 adjust the execution permissions in the <em>bin</em> directory.</li>
 </ol>
-On Linux and Unix systems other than MAC OS X, you will have to build the distribution first. To do so,
+
+<p>On Linux and Unix systems other than MAC OS X, you will have to build the distribution first. To do so,
 switch to the <em>build</em> folder and run <code>ant</code>. You  will need to ensure that the
 packages that leJOS NXJ is dependent on are on your system. To build the jlibnxt JNI library, which is used for
 USB access, you need the <em>Development files for libusb (libusb-devel)</em>.  Note that leJOS NXJ uses libusb, not libusb1. 
@@ -157,7 +157,7 @@ To compile, link and download the Tune sample:
  </ul>
  
  <p>If you used the Microsoft Windows Installer to set up leJOS NXJ, the projects folder will be leJOSNXJProjects in your home directory.
- Your home directory is C:\Users\<em>username</em> on Vista systems and C:\Document and Settings\<em>username</em> on XP systems.</em>
+ Your home directory is C:\Users\<em>username</em> on Vista systems and C:\Document and Settings\<em>username</em> on XP systems.
  
  <p>On other systems, of if you used the .zip distribution on Microsoft Windows, the projects folder is a subdirectory of <em>lejos_nxj</em>.</p>
  
@@ -268,7 +268,7 @@ program and restarts the menu. Any other key continues the user program.</p>
 <h1><a name="limitations">Known limitations in leJOS</a></h1>
 Due to size constraints, some Java language
 features have been omitted. Others just haven't been implemented yet.
-Known limitations with all versions of leJOS are: </a>
+Known limitations with all versions of leJOS are:
 <ul>
   <li>The implementation of java.lang.Class is limited, Class.forName() throws
 ClassNotFoundException at all times. As a consequence, reflection is
@@ -276,8 +276,6 @@ not supported by leJOS</li>
   <li>Many JDK APIs are unavailable</li>
   <li>Weak references and finalizers are not supported.</li>
   <li>Constant strings are not interned</li>
-
-  </a>
 </ul>
 <h1><a name="nxjbugs">Known bugs and limitations in leJOS NXJ</a></h1>
 <p>The following bugs and limitations apply to the current version of leJOS NXJ:</p>
@@ -314,7 +312,7 @@ which is release under a GPL v2 license (see COPYING in the libnxt directory).
 Bluecove on Linux uses a GPL v3 license. See the LEGAL and ACKNOWLEDGMENTS files for more detail.<h1><a name="questions">Questions and Problems</a></h1>
 Please direct feedback to the lejos-discussion
 mailing list mailto:lejos-discussion@lists.sourceforge.net. <br>
-To subscribe, see </a><a
+To subscribe, see <a
  href="http://lists.sourceforge.net/lists/listinfo/lejos-discussion">http://lists.sourceforge.net/lists/listinfo/lejos-discussion</a>.
 <p> Feel free to take a look at the <a href="http://www.lejos.org">leJOS website</a>
  or its <a href="http://sourceforge.net/projects/lejos">project page</a>. </p>
