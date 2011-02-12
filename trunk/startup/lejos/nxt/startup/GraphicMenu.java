@@ -131,8 +131,8 @@ public class GraphicMenu extends TextMenu{
 				// check for index out of bounds
 				if(selectedIndex >= _length)
 				{
-					//selectedIndex = 0;
-					selectedIndex--;
+					selectedIndex = 0;
+					//selectedIndex--;
 					//_topIndex = 0;
 				}
 				//else if(selectedIndex >= _topIndex + _height)
@@ -149,8 +149,8 @@ public class GraphicMenu extends TextMenu{
 				// check for index out of bounds
 				if(selectedIndex < 0)
 				{
-					//selectedIndex  = _length - 1;
-					selectedIndex++;
+					selectedIndex  = _length - 1;
+					//selectedIndex++;
 					//_topIndex = _length - _height;
 				}
 				//else if(selectedIndex < _topIndex)
@@ -200,18 +200,18 @@ public class GraphicMenu extends TextMenu{
 		//boolean wrap = (length>=5);
 		//Clear Icon Area
 		//if (((index[0] < 0) && wrap) || index[0] >= 0) // Left Most Icon
-		if (index[0] >= 0)	
+		//if (index[0] >= 0)
 			drawIconAtTick(_icons[((index[0]<0)?length+index[0]:index[0])],0,0+animateDirection,tick);
 		//if (((index[1] < 0) && wrap) || index[1] >= 0) // Left Icon
-		if (index[1] >= 0)	
+		//if (index[1] >= 0)
 			drawIconAtTick(_icons[((index[1]<0)?length+index[1]:index[1])],1,1+animateDirection,tick);
 		//Middle Icon
 			drawIconAtTick(_icons[index[2]],2,2+animateDirection,tick);
 		//if (((index[3] >= length) && wrap) || index[3] < length) // Rightd Icon
-		if (index[3] < length)	
+		//if (index[3] < length)
 			drawIconAtTick(_icons[((index[3]>=length)?index[3]-length:index[3])],3,3+animateDirection,tick);
 		//if (((index[4] >= length) && wrap) || index[4] < length) // Right Most Icon
-		if (index[4] < length)	
+		//if (index[4] < length)
 			drawIconAtTick(_icons[((index[4]>=length)?index[4]-length:index[4])],4,4+animateDirection,tick);
 		// Draw Label
 		LCD.drawString(BLANK, 0, labelLine);
