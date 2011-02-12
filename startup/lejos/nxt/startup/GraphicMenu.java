@@ -143,9 +143,9 @@ public class GraphicMenu extends TextMenu{
 				//{
 				//	_topIndex = selectedIndex - _height + 1;
 				//}
-				else{
+				//else{
 					dir = -1;
-				}
+				//}
 			}
 			if(button == Button.ID_LEFT)//scroll backward
 			{
@@ -161,9 +161,9 @@ public class GraphicMenu extends TextMenu{
 				//{
 				//	_topIndex = selectedIndex;
 				//}
-				else{
+				//else{
 					dir = 1;
-				}
+				//}
 			}
 			animate(temp,selectedIndex,dir);
 		}
@@ -206,7 +206,10 @@ public class GraphicMenu extends TextMenu{
 		int length = _length;
 		int[] index = new int[5];
 		for (int i = 0; i < 5; i++)
-			index[i] = selectedIndex + (i-2);
+        {
+			index[i] = (selectedIndex + (i-2)) % length;
+            if (index[i] < 0) index[i] += length;
+        }
 		//boolean wrap = (length>=5);
 		//Clear Icon Area
 		//if (((index[0] < 0) && wrap) || index[0] >= 0) // Left Most Icon
