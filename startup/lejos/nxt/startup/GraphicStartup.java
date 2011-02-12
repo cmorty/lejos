@@ -3,6 +3,7 @@ package lejos.nxt.startup;
 import java.io.File;
 import java.util.Vector;
 
+import javax.bluetooth.DeviceClass;
 import javax.bluetooth.RemoteDevice;
 
 import lejos.nxt.Battery;
@@ -43,6 +44,10 @@ public class GraphicStartup {
     static final String ICSearch = "\u0078\u0084\u001a\r\u0005\u0001\u0001\u0002\u0084\u0078\0\0\0\0\0\0\0\0\u0001\u0002\u0002\u0002\u0002\u0003\u0005\u0009\u0012\u0024\u0048\u0050\u0020\0";
     static final String ICPIN = "\0\0\0\u006c\u0092\u0092\u006c\u0092\u0092\u006c\u0092\u0092\u006c\0\0\0\0\0\u003e\u000b\u000e\0\u0023\u003e\"\u0001\u003e\u000c\u0011\u003e\0\0";
     static final String ICDelete = "\0\0\u0010\u00e8\u0028\u00a8\u0028\u00ac\u0028\u00a8\u0028\u00e8\u0010\0\0\0\0\0\0\u003f\u0040\u005f\u0040\u005f\u0040\u005f\u0040\u003f\0\0\0\0";
+    
+    static final String ICComputer = "\0\0\u00fe\u0002\u0002\u0002\u0002\u0002\u0002\u0002\u0002\u0002\u0002\u00fe\0\0\u0070\u007c\u007f\u007f\u007f\u007f\u005f\u004f\u004f\u005f\u007f\u007f\u007f\u007f\u007c\u0070";
+    static final String ICPhone = "\0\0\0\0\u00f8\u0084\u0084\u0084\u0084\u0086\u00fe\0\0\0\0\0\0\0\0\0\u003f\u006a\u007f\u006a\u007f\u006a\u003f\0\0\0\0\0";
+    static final String ICUnknown = "\0\0\0\0\0\u0018\u001c\u000c\u008c\u00fc\u00f8\0\0\0\0\0\0\0\0\0\0\0\0\u0037\u0037\u0001\0\0\0\0\0\0";
     
     static final String ICFormat = "\0\0\u0080\u0060\u0098\u0024\u0014\u0014\u0014\u0014\u0024\u0098\u0060\u0080\0\0\0\u000c\u0013\u001a\u001a\u001b\u001b\u001b\u0013\u0017\u0013\u0016\u0012\u0013\u000c\0";
     static final String ICSleep = "\0\u0012\u001a\u0096\u0072\u0090\u0024\u0034\u00ac\u00a4\u0008\u0010\u0090\u0060\u0080\0\0\0\0\u0007\u0018\u0020\u0021\u0041\u0058\u0058\u0041\u0021\u0020\u0018\u0007\0";
@@ -549,7 +554,19 @@ public class GraphicStartup {
             {
                 RemoteDevice btrd = devList.elementAt(i);
                 names[i] = btrd.getFriendlyName(false);
-                icons[i] = ICNXT;
+                byte[] devCls = btrd.getDeviceClass();
+                int codRecord = (devCls[0] << 8) + devCls[1];
+				codRecord = (codRecord << 8) + devCls[2];
+				codRecord = (codRecord << 8) + devCls[3];
+				DeviceClass cls = new DeviceClass(codRecord);
+                if (cls.getMajorDeviceClass() == 0x100)
+                	icons[i] = ICComputer;
+                else if (cls.getMajorDeviceClass() == 0x200)
+                	icons[i] = ICPhone;
+                else if (cls.getMajorDeviceClass() == 0x800 && cls.getMinorDeviceClass() == 0x04)
+                	icons[i] = ICNXT;
+                else
+                	icons[i] = ICUnknown;
             }
             GraphicMenu searchMenu = new GraphicMenu(names, icons);
             searchMenu.setParentIcon(ICSearch);
@@ -567,6 +584,13 @@ public class GraphicStartup {
                     newScreen();
                     LCD.drawString(names[selected], 0, 1);
                     LCD.drawString(btrd.getBluetoothAddress(), 0, 2);
+                    byte[] devCls = btrd.getDeviceClass();
+                    int codRecord = (devCls[0] << 8) + devCls[1];
+    				codRecord = (codRecord << 8) + devCls[2];
+    				codRecord = (codRecord << 8) + devCls[3];
+    				DeviceClass cls = new DeviceClass(codRecord);
+                    LCD.drawString(Integer.toString(cls.getMajorDeviceClass()), 0, 3);
+                    LCD.drawString(Integer.toString(cls.getMinorDeviceClass()), 5, 3);
                     int subSelection = getSelection(subMenu, 0);
                     if (subSelection == 0)
                     {
@@ -614,7 +638,19 @@ public class GraphicStartup {
             {
                 RemoteDevice btrd = devList.elementAt(i);
                 names[i] = btrd.getFriendlyName(false);
-                icons[i] = ICNXT;
+                byte[] devCls = btrd.getDeviceClass();
+                int codRecord = (devCls[0] << 8) + devCls[1];
+				codRecord = (codRecord << 8) + devCls[2];
+				codRecord = (codRecord << 8) + devCls[3];
+				DeviceClass cls = new DeviceClass(codRecord);
+				if (cls.getMajorDeviceClass() == 0x100)
+                	icons[i] = ICComputer;
+                else if (cls.getMajorDeviceClass() == 0x200)
+                	icons[i] = ICPhone;
+                else if (cls.getMajorDeviceClass() == 0x800 && cls.getMinorDeviceClass() == 0x04)
+                	icons[i] = ICNXT;
+                else
+                	icons[i] = ICUnknown;
             }
 
             GraphicMenu deviceMenu = new GraphicMenu(names, icons);
@@ -785,6 +821,7 @@ public class GraphicStartup {
         //TextMenu menu = new TextMenu(items, 2, fileName);
         GraphicMenu menu = new GraphicMenu(items,icons,fileName);
         menu.setParentIcon(ICFiles);
+        menu.setYLocation(3);
         int selection = getSelection(menu, 0);
         if (selection >= 0)
         {
@@ -825,6 +862,7 @@ public class GraphicStartup {
         //TextMenu menu = new TextMenu(null, 1);
     	GraphicMenu menu = new GraphicMenu(null,null);
     	menu.setParentIcon(ICFiles);
+    	menu.setYLocation(3);
         int selection = 0;
         do {
             newScreen("Files");
@@ -850,7 +888,7 @@ public class GraphicStartup {
                 	icons[i] = ICSound;
                 else
                 	//TODO Unknown Icon
-                	icons[i] = "";
+                	icons[i] = ICUnknown;
             }
             menu.setItems(fileNames,icons);
             selection = getSelection(menu, selection);

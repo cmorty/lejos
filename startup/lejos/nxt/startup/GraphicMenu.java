@@ -23,15 +23,24 @@ public class GraphicMenu extends TextMenu{
 	private static final byte xOffset = 2;
 	private static final byte yOffset = 0;
 	
-	private static final int interval = 40;
-	private static final int tickCount = 5;
+	private static final int interval = 16; // Time between animation frames in milliseconds (1000ms per 1s)
+	private static final int tickCount = 10; // Number of animation frames used
 	
 	private String _parent = null;
 	
+	/*
+	 * Line where the menu item label is displayed.
+	 */
 	private int labelLine = 4;
+	/*
+	 * The y coordnates where the 
+	 */
 	private int yArea = 40;
-
-	private String[] _icons;
+	
+	/*
+	 * Icon Database
+	 */
+	private byte[][] _icons;
 	
 	/**
 	 * This constructor sets the location of the menu at line 4 by default.
@@ -64,21 +73,16 @@ public class GraphicMenu extends TextMenu{
 	 */
 	public void setItems(String[] items,String[] icons)
 	{
-		_items = items;
-		_icons = icons;
-		
-		if (items == null)
-			_length = 0;
-		else
-		{
-			int i = 0;
-			while(i < items.length && items[i] != null)
-				i++;
-			_length = i;
+		super.setItems(items);
+		if (icons == null){
+			_icons = null;
+			return;
 		}
-		_height = 8 - _topRow;
-		if(_height > _length)
-			_height = _length;		
+		_icons = new byte[icons.length][32];
+		for(int i = 0; i < icons.length;i++){
+			if (icons[i] != null)
+				_icons[i] = Utils.stringToBytes(icons[i]);
+		}
 	}
 	
 	@Override
@@ -165,6 +169,12 @@ public class GraphicMenu extends TextMenu{
 		}
 	}
 	
+	/**
+	 * 
+	 * @param selectedIndex
+	 * @param finalIndex
+	 * @param animateDirection -1=right 1=left
+	 */
 	private void animate(int selectedIndex, int finalIndex,int animateDirection){
 		int count = 1;
 		while (count < tickCount){
@@ -191,7 +201,7 @@ public class GraphicMenu extends TextMenu{
 			LCD.drawString(_title, 0, _topRow);
 		clearArea();
 		if(_parent != null)
-			LCD.bitBlt(Utils.stringToBytes(_parent), 16, 16, 0, 0, xArea+41,yArea+18, 16, 16, LCD.ROP_COPY);
+			LCD.bitBlt(Utils.stringToBytes(_parent), 16, 16, 0, 0, xArea+xOffset+(2*xWidth),yArea+yOffset+18, 16, 16, LCD.ROP_COPY);
 		//Prepare Index Locations
 		int length = _length;
 		int[] index = new int[5];
@@ -233,18 +243,18 @@ public class GraphicMenu extends TextMenu{
 	 * @param eID -1 to 6
 	 * @param tick #0-10
 	 */
-	private void drawIconAtTick(String icon,int sID, int eID,int tick){
+	private void drawIconAtTick(byte[] icon,int sID, int eID,int tick){
 		// Determine sID Coordinates
-		int fx = xArea + xOffset+(sID*xWidth);
+		int fx = xArea + xOffset+sID*xWidth;
 		int fy = yArea + yOffset+(Math.abs(sID-2)*yWidth);
 		// Determine eID Coordinates
-		int sx = xArea + xOffset+(eID*xWidth);
+		int sx = xArea + xOffset+eID*xWidth;
 		int sy = yArea + yOffset+(Math.abs(eID-2)*yWidth);
 		// Determine Icon Offset from sID
 		int ix = (int) (((sx-fx)/10.0)*tick);
 		int iy = (int) (((sy-fy)/10.0)*tick);
 		// Paint Icon
-		LCD.bitBlt(Utils.stringToBytes(icon), 16,16, 0,0, fx+ix,fy+iy, 16,16, LCD.ROP_COPY);
+		LCD.bitBlt(icon, 16,16, 0,0, fx+ix,fy+iy, 16,16, LCD.ROP_COPY);
 	}
 
 	public void setParentIcon(String str) {
