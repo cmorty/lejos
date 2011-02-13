@@ -1,7 +1,5 @@
 package lejos.robotics.navigation;
 
-import lejos.robotics.Pose;
-
 /**
  * Interface for informing listeners that a way point has been reached.
  * 

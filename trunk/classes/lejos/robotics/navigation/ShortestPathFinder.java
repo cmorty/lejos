@@ -1,11 +1,8 @@
 package lejos.robotics.navigation;
 
 import java.util.*;
-
 import lejos.geom.*;
-import java.awt.geom.Point2D;
 import lejos.robotics.Pose;
-// The  library for this project should be set to include  classes.jar from  NXJ_HOME
 
 /**
  * This class calculates the shortest path from a starting point to a finish point.
@@ -141,8 +138,8 @@ public class ShortestPathFinder implements PathFinder
     }
     if (blocked)  // add end points of the blocking segment to  inCandidateSet set
     {
-      Point2D p1 =  line.getP1();
-      Point2D  p2 = line.getP2();
+      Point p1 =  line.getP1();
+      Point  p2 = line.getP2();
       n1 = new Node((float)p1.getX(),(float)p1.getY());
       if(!inReachedSet(n1) &&!inCandidateSet(n1))
       {
