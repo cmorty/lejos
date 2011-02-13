@@ -13,6 +13,12 @@ import lejos.robotics.localization.PoseProvider;
 /**
  * Implementation of the MoveProvider interface that Integrates repeated readings from a GyroSensor & Accelerometer
  * into a continuously updated position & heading. 
+ * 
+ * Sensor should be mounted on the robot directly in the middle of the drive wheels so
+ * that no false lateral movement is recorded during rotations.
+ * 
+ *  ?? Correct Sensor orientation ??
+ * 
  * @author Brent Gardner
  */
 public class InertialPoseProvider implements PoseProvider, MoveListener
