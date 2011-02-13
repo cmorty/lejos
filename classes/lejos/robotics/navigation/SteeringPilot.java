@@ -1,6 +1,5 @@
 package lejos.robotics.navigation;
 
-import lejos.nxt.Motor;
 import lejos.robotics.Move;
 import lejos.robotics.MoveListener;
 import lejos.robotics.RegulatedMotor;
