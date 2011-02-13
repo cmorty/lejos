@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * This class manages a data received from a GPS Device.
+ * This class manages data received from a GPS Device.
  * GPS Class manages the following NMEA Sentences:
  *  
  * GPRMC
