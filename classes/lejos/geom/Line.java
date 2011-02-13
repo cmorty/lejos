@@ -84,5 +84,13 @@ public class Line extends Line2D.Float {
   public float length() {
     return (float) Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
   }
+  
+  public Point getP1() {
+	  return new Point(x1,y1);
+  }
+  
+  public Point getP2() {
+	  return new Point(x2,y2);
+  }
 }
 
