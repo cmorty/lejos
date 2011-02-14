@@ -192,9 +192,7 @@ public class Homer implements RangeScanner {
     }
   }
 
-public void setAngles(float[] angles) {
-	// TODO Auto-generated method stub
-	
-}
+  public void setAngles(float[] angles) {
+  }
 }
 
