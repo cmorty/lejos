@@ -19,8 +19,9 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   private float _x,_y,_heading;
   private float minX, maxX, minY, maxY;
   private double varX, varY, varH;
-  private boolean autoUpdate = false;
   private boolean updated;
+  private boolean debug = false;
+  private float BIG_FLOAT = 1000000f;
 
   public MCLPoseProvider(MoveProvider mp, RangeScanner scanner,
           RangeMap map, int numParticles, int border)
@@ -31,6 +32,14 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
     this.map = map;
     mp.addMoveListener(this);
     updated = false;
+  }
+  
+  /**
+   * Set debugging on or off
+   * @param on true = on, false = off
+   */
+  public void setDebug(boolean on) {
+	  debug = on;
   }
   
   /**
@@ -79,10 +88,6 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   {
     particles.applyMove(event);
     updated = false;
-    if(autoUpdate && event.getMoveType() ==  Move.MoveType.TRAVEL)
-    {
-    	update();
-    }
   }
 
   /**
@@ -113,36 +118,25 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
    */
   public boolean update()
   {
-	if (scanner == null) return false;
+	updated = true;
 	
-    int maxTries = 1;
-    int tries = 0;
-    updated = true;
-    
-    while (tries < maxTries)
-    {
+	// If no scanner, do not attempt an update
+	if (scanner == null) return false;
 
-      RangeReadings rr = scanner.getRangeValues();
-      //if(rr.incomplete())rr = scanner.getRangeValues();
-      if(rr.incomplete())
-      {
-        //System.out.println("READINGS INCOMPLETE");
-        tries = maxTries;
-        break;
-      }
-      if (particles.calculateWeights(rr, map)) break;
-      else  tries++;
+    RangeReadings rr = scanner.getRangeValues();
+
+    if(rr.incomplete())
+    {
+        if (debug) System.out.println("Readings incomplete");
+        return false;
     }
     
-    if(tries == maxTries )
-    {
-      //System.out.println(" sensor data is too improbable from the current pose ");
+    if (!particles.calculateWeights(rr, map)) {
+      if (debug) System.out.println("Sensor data is too improbable from the current pose");
       return false;
     }
 
     particles.resample();
-    //estimatePose();
-//        particles.logParticles(dl);
     return true;
   }
   
@@ -171,6 +165,10 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
     varX = 0;
     varY = 0;
     varH = 0;
+    maxX = 0;
+    maxY = 0;
+    minX = BIG_FLOAT;
+    minY = BIG_FLOAT;
     
     for (int i = 0; i < numParticles; i++)
     {
@@ -295,6 +293,6 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
       varX = dis.readFloat();
       varY = dis.readFloat();
       varH = dis.readFloat();
-      System.out.println("Estimate = " + minX + " , " + maxX + " , " + minY + " , " + maxY);
+      if (debug) System.out.println("Estimate = " + minX + " , " + maxX + " , " + minY + " , " + maxY);
    }
 }
