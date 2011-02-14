@@ -1,7 +1,7 @@
 package lejos.robotics.navigation;
 
 import java.util.ArrayList;
-import lejos.nxt.*;
+import lejos.nxt.Battery;
 import lejos.robotics.*;
 
 /*
