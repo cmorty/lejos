@@ -1,6 +1,5 @@
 package lejos.robotics.navigation;
 
-import lejos.nxt.Motor;
 import lejos.robotics.Move;
 import lejos.robotics.MoveListener;
 import lejos.robotics.RegulatedMotor;
@@ -30,6 +29,7 @@ import lejos.robotics.RegulatedMotorListener;
 public class SteeringPilot implements ArcMoveController, RegulatedMotorListener {
 
 	private lejos.robotics.RegulatedMotor driveMotor;
+	private lejos.robotics.RegulatedMotor steeringMotor;
 	private float minTurnRadius;
 	private float driveWheelDiameter;
 	private boolean reverseDriveMotor;
@@ -78,6 +78,7 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 	public SteeringPilot(float driveWheelDiameter, lejos.robotics.RegulatedMotor driveMotor, boolean reverseDriveMotor,
 			lejos.robotics.RegulatedMotor steeringMotor, float minTurnRadius, int leftTurnTacho, int rightTurnTacho) {
 		this.driveMotor = driveMotor;
+		this.steeringMotor = steeringMotor;
 		this.driveMotor.addListener(this);
 		this.driveWheelDiameter = driveWheelDiameter;
 		this.reverseDriveMotor = reverseDriveMotor;
@@ -111,13 +112,13 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 	 */
 	private float steer(float radius) {
 		if(radius == Float.POSITIVE_INFINITY) {
-			Motor.C.rotateTo(0);
+			this.steeringMotor.rotateTo(0);
 			return Float.POSITIVE_INFINITY;
 		} else if(radius > 0) {
-			Motor.C.rotateTo(minLeft);
+			this.steeringMotor.rotateTo(minLeft);
 			return getMinRadius();
 		} else { // if(radius <= 0)
-			Motor.C.rotateTo(minRight);
+			this.steeringMotor.rotateTo(minRight);
 			return -getMinRadius();
 		}
 	}
