@@ -41,11 +41,11 @@
 	.global menu_length
 	.global flash_start_page
 menu_address:
-	.long	0
+	.ascii "MNUA"
 menu_length:
-	.long	0
+	.ascii "MNUL"
 flash_start_page:
-	.long	0
+	.ascii "FLSP"
 
 @ Flash is always a 1MB
 @ RAM is always at 2MB
