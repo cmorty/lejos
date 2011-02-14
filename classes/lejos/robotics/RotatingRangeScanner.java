@@ -1,26 +1,25 @@
 package lejos.robotics;
 
-import lejos.nxt.*;
 import lejos.util.Delay;
 
 /**
- * Implementation of RangeScanner with a rotating ultrasonic sensor
+ * Implementation of RangeScanner with a rotating ultrasonic sensor or other range finder
  * @author Roger Glassey
  */
 public class RotatingRangeScanner implements RangeScanner
 {
 
   /**
-   * The constructor defines the wiring diagram - the motor port and sensor port used
+   * The constructor specifies the motor and range finder used
    * @param head the motor that rotates the sensor
-   * @param port the port to which the sensor is wired
+   * @param range the range finder
    */
-  public RotatingRangeScanner(RegulatedMotor head, SensorPort port)
+  public RotatingRangeScanner(RegulatedMotor head, RangeFinder rangeFinder)
   {
     this.head = head;
-    sonar = new UltrasonicSensor(port);
-    sonar.continuous();
+    this.rangeFinder = rangeFinder;
   }
+  
   /**
    * Returns a set of Range Readings taken the angles specified.
    * @return the set of range values
@@ -32,12 +31,12 @@ public class RotatingRangeScanner implements RangeScanner
     {
       readings = new RangeReadings(angles.length);
     }
-//    RConsole.println("Scanner getRanges "+angles[0]+" "+angles[1]);
+
     for (int i = 0; i < angles.length; i++)
     {
       head.rotateTo((int) angles[i]);
       Delay.msDelay(50);
-      float range = sonar.getRange() + ZERO;
+      float range = rangeFinder.getRange() + ZERO;
       if (range > MAX_RELIABLE_RANGE_READING)
       {
         range = -1;
@@ -48,7 +47,6 @@ public class RotatingRangeScanner implements RangeScanner
     return readings;
   }
 
-
   /**
    * set the angles to be used by the getRangeValues() method
    * @param angles
@@ -57,10 +55,11 @@ public class RotatingRangeScanner implements RangeScanner
   {
     this.angles = angles.clone();
   }
+  
   protected final int MAX_RELIABLE_RANGE_READING = 180;
   protected final int ZERO = 2;// correction of sensor zero
   protected RangeReadings readings;;
-  protected UltrasonicSensor sonar;
+  protected RangeFinder rangeFinder;
   protected RegulatedMotor head;
   protected float[] angles ={0,90};// default
 }
