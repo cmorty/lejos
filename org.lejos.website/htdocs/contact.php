@@ -1,3 +1,7 @@
+<?php
+	echo '<?xml version="1.0" encoding="UTF-8" ?>';
+?>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
@@ -31,7 +35,7 @@
 		<meta http-equiv="expires" content="0" />
 
 		<!-- WEB EDITOR -->
-		<meta name="author" content="Juan Antonio Breña Moral" />		
+		<meta name="author" content="Juan Antonio BreÃ±a Moral" />		
 		
 		<link rel="stylesheet" href="r_css/lejos.css" type="text/css" />
 
