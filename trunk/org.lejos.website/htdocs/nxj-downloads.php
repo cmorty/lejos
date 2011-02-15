@@ -24,7 +24,7 @@
 		<meta name="resource-type" content="document" />
 		
 		<!-- SEARCH ENGINE -->
-		<meta name="robots" content="all"><!-- CACHE -->
+		<meta name="robots" content="all" /><!-- CACHE -->
 		<meta http-equiv="cache-control" content="no-cache" />
 		<meta http-equiv="pragma" content="no-cache" />
 		<meta http-equiv="expires" content="0" />
@@ -98,7 +98,7 @@
 				          <td valign="top"><b>Win32 leJOS NXJ</b></td>
 				        </tr>
 				        <tr> 
-				          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+				          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
 				        </tr>
 				        <tr> 
 				          <td valign="top">Download <a href="http://sourceforge.net/project/showfiles.php?group_id=9339&amp;package_id=217619"> Click to download from Sourceforge</a></td>
@@ -109,7 +109,7 @@
 				          <td valign="top"><b>Linux/Mac OSX leJOS NXJ</b></td>
 				        </tr>
 				        <tr> 
-				          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+				          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
 				        </tr>
 				        <tr> 
 				          <td valign="top">Download <a href="http://sourceforge.net/project/showfiles.php?group_id=9339&amp;package_id=217618"> Click to download from Sourceforge</a></td>
@@ -119,12 +119,12 @@
 				
 				        </tr>
 				        <tr> 
-				          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+				          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
 				        </tr>
 				        <tr> 
 				          <td valign="top">Other releases, notes, dates and sizes are available 
 				            at the SourceForge <a href="http://sourceforge.net/project/showfiles.php?group_id=9339" target="_blank">download 
-				            area</a>.<br>
+				            area</a>.<br />
 				            &nbsp;</td>
 				        </tr>
 

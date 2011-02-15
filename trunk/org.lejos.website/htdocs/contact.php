@@ -24,7 +24,7 @@
 		<meta name="resource-type" content="document" />
 		
 		<!-- SEARCH ENGINE -->
-		<meta name="robots" content="all"><!-- CACHE -->
+		<meta name="robots" content="all" /><!-- CACHE -->
 		<meta http-equiv="cache-control" content="no-cache" />
 		<meta http-equiv="pragma" content="no-cache" />
 		<meta http-equiv="expires" content="0" />
@@ -101,7 +101,7 @@
           <td><b>Lugnet Message Base</b></td>
         </tr>
         <tr> 
-          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
         </tr>
         <tr> 
           <td>Need a question answered? Try out the Lugnet news group. 
@@ -109,7 +109,7 @@
 
               <li><a href="http://news.lugnet.com/robotics/rcx/java/">Lugnet News Group</a></li>
             </ul>
-            <br>
+            <br />
             &nbsp;</td>
         </tr>
 
@@ -119,7 +119,7 @@
 
         </tr>
         <tr> 
-          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
         </tr>
         <tr> 
           <td>This mailing list is for discussion about the use of leJOS: 
@@ -129,14 +129,14 @@
                 archive</a>, <a href="http://news.gmane.org/gmane.comp.java.lejos" target="_blank">archive on gmane</a></li>
 
             </ul>
-            <br>
+            <br />
             &nbsp;</td>
         </tr>
         <tr> 
           <td valign="top"><b>developers</b></td>
         </tr>
         <tr> 
-          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
 
         </tr>
         <tr> 
@@ -184,7 +184,7 @@
                   <td colspan="3">&nbsp;&nbsp;Initial Developer of leJOS (no longer active)</td>
                 </tr>
                 <tr> 
-                  <td colspan="3"><br>
+                  <td colspan="3"><br />
 
                     <a href="https://sourceforge.net/project/memberlist.php?group_id=9339">View 
                     all members</a></td>
