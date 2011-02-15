@@ -42,7 +42,7 @@
 		<!-- ICON -->
 		<link rel="shortcut icon" href="lejos.ico" type="image/x-icon" />
 
-		<script language="Javascript" src="r_javascript/esmeta/font/fontSizeManager.js"></script>
+		<script type="text/javascript" src="r_javascript/esmeta/font/fontSizeManager.js"></script>
 	</head>
 	<body>	
 		<!-- Level 1: Logo -->
