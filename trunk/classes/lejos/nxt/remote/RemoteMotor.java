@@ -1,6 +1,8 @@
 package lejos.nxt.remote;
 
 import java.io.*;
+
+import lejos.nxt.Battery;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
 
@@ -26,6 +28,7 @@ public class RemoteMotor implements RegulatedMotor, NXTProtocol {
 	private int runState;	
 	private boolean _rotating = false;
 	private NXTCommand nxtCommand;
+	private RemoteBattery battery;
 	
 	public RemoteMotor(NXTCommand nxtCommand, int id) {
 		this.id = id;
@@ -35,6 +38,7 @@ public class RemoteMotor implements RegulatedMotor, NXTProtocol {
 		this.turnRatio = 0; // 0 = even power/speed distro between motors
 		this.runState = MOTOR_RUN_STATE_IDLE;
 		this.nxtCommand = nxtCommand;
+		battery = new RemoteBattery(nxtCommand);
 	}
 	
 	/**
@@ -307,12 +311,19 @@ public class RemoteMotor implements RegulatedMotor, NXTProtocol {
 		// TODO Currently has no actual event-listener architecture
 		
 	}
-        public boolean isStalled()
-        {
-          return false;
-          // TODO can the stall detection be implemented in this class?
-          // in the real Motor, the regulator does it;
-        }
+	
+    public boolean isStalled()
+    {
+      return false;
+      // TODO can the stall detection be implemented in this class?
+      // in the real Motor, the regulator does it;
+    }
 	
 	public void setAcceleration(int acceleration){};
+	
+	public float getMaxSpeed() {
+	    // It is generally assumed, that the maximum accurate speed of Motor is
+	    // 100 degree/second * Voltage
+		return battery.getVoltage() * 100.0f;
+	}
 }

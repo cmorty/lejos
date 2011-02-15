@@ -1,4 +1,5 @@
 package lejos.nxt;
+
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
 import lejos.util.Delay;
@@ -721,4 +722,10 @@ public class NXTRegulatedMotor implements RegulatedMotor
            }	// end keep going loop
         }
     }
+
+	public float getMaxSpeed() {
+	    // It is generally assumed, that the maximum accurate speed of Motor is
+	    // 100 degree/second * Voltage
+		return Battery.getVoltage() * 100.0f;
+	}
 }
