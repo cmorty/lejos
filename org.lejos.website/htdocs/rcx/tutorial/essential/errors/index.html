@@ -1,0 +1,177 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>Essential leJOS Classes</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="../utilities/recycling.html" target="_top"><img src="../../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../toc.html#errors" target="_top"><img src="../../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="../whatnext.html" target="_top"><img src="../../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="../index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1">
+            <b>Trail</b>: Essential leJOS classes<br>
+            <b>Lesson</b>: Finding errors
+        </font>
+
+        <!-- headline -->
+        <h1>Finding errors</h1>
+        As you undoubtedly know, error handling is a very comfortable thing in Java because of the 
+        <pre><code>
+            try {
+                ...
+            } catch(Exception exc) {
+                // handle exception here
+            } // catch
+        </code></pre>
+        mechanism.<br>
+        Finding uncaught exceptions is pretty easy, too, for the in this case virtual machine will display 
+        the <code>Exception</code>'s stack trace, so you can easily identify
+        the program's flow which led to the error in question.
+        <p>
+        You are able to use the try-catch mechanism with leJOS also.
+        <br>For uncaught exceptions, however, the process of finding errors 
+        isn't as easy as you are used to due to the fact that the RCX is limited to five characters
+        which can be displayed at a time.<br>
+        Hence the process of stack tracing is different when such an exception occurs on the RCX:
+        <br>
+        You will see two number on the RCX's display, separated by an "^", e.g.
+        <pre><code>
+            0074^5
+        </code></pre>
+        What does that mean?<br>
+        The first number is the (signature) number of the method the exception occurred in, the second 
+        number is the id of (exception) class that was thrown <b>mod 10</b>.
+        <p>
+        Now how do you assign those number to some actual method or exception, resp.?
+        <br>
+        A list of all the classes, methods and exceptions which are used in the actual leJOS program 
+        can be obtained by calling <code>lejoslink</code> with the <code>-verbose</code> option:
+        <pre><code>
+            lejoslink -verbose [main class]
+        </code></pre>
+        You will get an output the likes of this one:
+        <pre><code>
+            Class 0: java/lang/Object
+            Class 1: java/lang/Thread
+            Class 2: java/lang/String
+            Class 3: java/lang/Integer
+            Class 4: java/lang/Boolean
+            Class 5: java/util/Date
+            ...
+            Class 15: java/util/Vector
+            Class 16: josx/platform/rcx/Motor
+            ...
+            Class 22: MyMainClass
+            Class 23: josx/platform/rcx/Sensor
+            Class 24: java/lang/NullPointerException
+            Class 25: java/lang/ArrayIndexOutOfBoundsException
+            Signature 0: main([Ljava/lang/String;)V
+            Signature 1: run()V
+            ...
+            Signature 74: getElement()V
+            Signature 75: hashCode()I
+        </code></pre>
+        Examining the first number 0074, we can easily detect that the error occurred in the 
+        <code>getElement()</code> method.<br>
+        The second number is 5, so the exception class that was thrown is one of the classes above with
+        last cipher 5; it is easily guessed that  there is only one such candidate, namely 
+        <code>java/lang/ArrayIndexOutOfBoundsException</code>.
+        <p>
+
+        <span class="remark">
+        Even if there is more than one exception class with the same trailing cipher, usually the exception
+        that was actually thrown can be guessed by the content of the method it was thrown by.
+        </span>
+
+        <!-- assertions -->
+        <h2>Assertions</h2>
+        Since leJOS version 2.1.0, there is the <code>josx.util.Assertion</class> class available, which 
+        implements a pattern known from Java 1.4 or JUnit:
+        <br>a boolean condition is checked to be true; if it fails, the program's flow is stopped
+        and an error is thrown, else the program continues.
+        <br>This is rather useful for debugging and testing: if you want to assure that your program 
+        complies with some condition at a certain point of code, use an assertion there.
+        <p>
+        <code>josx.util.Assertion</code> offers two static methods to complete that task:
+        <ul>
+            <li><code>public static void test(String anErrorMessage, boolean aCondition) throws Error</code> 
+                throws a <code>java.lang.Error</code> with the given error message, if the condition is false</li>
+            <li><code>public static void testEQ(String anErrorMessage, int anExpectedValue, int anActualValue) throws Error</code> 
+                throws a <code>java.lang.Error</code> with the given error message, if the the actual value is not equal 
+                to the expected one.</li>
+        </ul>
+        So an actual call might look like this:
+        <pre><code>
+            try {
+                ...
+                // maybe a light sensor
+                int light = Sensor.S1.readValue();
+                Assertion.test("it's too dark around here",value>100);
+                // maybe a touch sensor
+                boolean notTouched = Sensor.S2.readBooleanValue();
+                Assertion.test("ouch!",!notTouched);
+                // maybe some computation
+                int expectedValue = 37;
+                int computedValue = computeSomething();
+                Assertion.testEQ("unexpected value",37,computedValue);
+                ...
+            } catch(Error error) {
+                // do something here
+            } //catch
+        </code></pre>
+
+        <span class="remark">
+        Note that the actual behavior of an assertion is platform dependent:
+        <br>For the time being, if a <code>josx.util.Assertion</code> fails on Windows, it will 
+        just throw an Error, whereas on UNIX the error message is printed to standard out additionally.
+        </span>
+
+        <hr>
+
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="../utilities/recycling.html" target="_top"><img src="../../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../toc.html#errors" target="_top"><img src="../../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="../whatnext.html" target="_top"><img src="../../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="../index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>

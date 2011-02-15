@@ -1,0 +1,216 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>A Sample Application</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="whatislejos.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="toc.html#getstarted" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="problems.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1"><b>Trail</b>: Getting Started</font>
+
+        <!-- headline -->
+        <h1>Lesson: A Sample Application</h1>
+        <p>
+
+        <!-- overview -->
+        In this section we will take a closer look on a simple sample application using the leJOS API
+        and discuss some of its fundamental concepts.<br>
+        We assume your RCX is connected to a motor via a cable mounted on port A.
+
+        <!-- sample -->
+        <h2>The complete program</h2>
+
+        <pre><code>
+            import josx.platform.rcx.*;
+
+            //////////////////////////////////////
+            /**
+            * Represents a simple sample application.
+            *
+            * @author The leJOS Tutorial
+            * @version 1.0 
+            */
+            public class SimpleSample {        
+
+                ////////////////////////////////////////////
+                // public methods
+                ////////////////////////////////////////////
+
+                ////////////////////////////////////////////
+                /**
+                 * main method 
+                 * @throws InterruptedException
+                 */
+                public static void main(String[] args) 
+                    throws InterruptedException {
+
+                    // message
+                    TextLCD.print("DRIVE");
+
+                    // drive forward
+                    Motor.A.forward();
+
+                    // just run until RUN button is pressed again
+                    Button.RUN.waitForPressAndRelease();
+
+                } // main()
+
+            } // class SimpleSample
+        </code></pre>
+
+        <!-- import -->
+        <h2>The import statement</h2>
+        <pre><code>
+            import josx.platform.rcx.*;
+        </code></pre>
+        <p>
+        The basic package, which contains most of the essential leJOS classes, is <code>josx.platform.rcx</code>.
+        The name is somewhat due to historical reasons, for Jose Solarzano was the inventor and first developer of leJOS.
+        <br>
+        For an overview of this package consult the <a href="http://lejos.sourceforge.net/apidocs/index.html">API</a>.
+
+        <!-- main -->
+        <h2>The entry point: main()</h2>
+        <pre><code>
+        public static void main(String[] args) 
+                    throws InterruptedException {
+        </code></pre>
+        <p>
+        As with most Java applications, the entry point of a lejos program is the <code>main()</code> method.
+        <br>
+        In our case, it throws a <code>InterruptedException</code> arising  eventually from the 
+        <code>Button.RUN.waitForPressAndRelease()</code> call below.
+        <br>
+        What will happen when such an exception occurs? 
+        <br>The RCX will stop the execution of the <code>main()</code> method and
+        display some (rather cryptic) error information on its LCD. For details see the section on exceptions
+        later in this tutorial.
+
+        <!-- LCD output -->
+        <h2>Output</h2>
+        <pre><code>
+        TextLCD.print("DRIVE");
+        </code></pre>
+        <p>
+        You might have noticed that the graphical user interface of the RCX is rather limited - 
+        in fact, there's only the little LCD in its middle for such a purpose.<br>
+        Thus the abilities of a leJOS program for visual output are quite weak (compared to Java applications 
+        running on a PC) - a fact that makes debugging in leJOS a somewhat challenging task.<br>
+        After all, there's the possibility to write up to five numbers or letters to the LCD using the static
+        methods of the <code>TextLCD</code> or the <code>LCD</code> class.
+        <p>
+        
+        <span class="remark">
+                There ARE mechanisms, though, to display graphical information to the user: you 
+                might transfer information to the IR tower using the IR sensor
+                in front of the RCX and display it on your PC's screen. However, 
+                this is a more advanced feature - see the specialized trail on communication 
+                contained in this tutorial.
+        </span>
+        <p>
+
+        You already might have noticed two things of importance here:
+        <ol>
+            <li>You can use the well-known <code>java.lang.String</code> class in leJOS.</li>
+            <li>You use static methods of <code>TextLCD</code>. This is a major concept of leJOS:
+            The classes which are directly connected to the actual RCX hardware parts - e.g. motors,
+            sensors, buttons or the LCD - are designed to be static ones. As a result you never will construct
+            any of these but just use the methods of the existing single instance.
+        </ol>
+        
+        <!-- LCD output -->
+        <h2>Running a motor</h2>
+        <pre><code>
+        // drive forward
+        Motor.A.forward();
+        </code></pre>
+        <p>
+        This piece of code runs the motor connected to the RCX's port A in "forward" mode 
+        (the direction the motor actually spins depends on the orientation in which you mounted the 
+        connector).<br>
+        Again note that you use a static instance of the <code>Motor</code> class - to be more precise,
+        a static member (named <code>A</code>) of this class, which refers to "motor connected to port A".
+        As you might have already guessed, the two other motors are referred to as <code>Motor.B</code>
+        and <code>Motor.C</code>, respectively.
+        <br>You see that you don't have to bother with any hardware aspect or electro engineering here -
+        just one single line of code and your motor will run! It's pretty easy, isn't it?
+        <p>
+        If the motor in question is connected to some wheel assembly accurately, your robot will now 
+        drive forward.
+
+        <!-- wait -->
+        <h2>Keep on running</h2>
+        <pre><code>
+        // just run until RUN button is pressed again
+        Button.RUN.waitForPressAndRelease();
+        </code></pre>
+        <p>
+        <em>So, what's the use of this?</em> you might be tempted to ask at this point of time, 
+        <em>Isn't my robot running yet?</em>. <br>
+        The answer is: yes AND no.<br>
+        Let's take a look at the program and assume the last statement would be missing:
+        <ol>
+            <li>The motor is running now and the <code>Motor.forward()</code> method returns immediately, 
+                so the program moves to the next statement.</li> 
+            <li>But there is none, so  <code>main()</code> comes to an end and 
+                returns control to the operating system, which terminates program execution 
+                (for there is no thread left to be executed).</li> 
+            <li>This results, among others, in the motor stopping.</li>
+            <li>Thus, the effect of the missing <code>Button.RUN.waitForPressAndRelease()</code>
+            statement is the motor running for a very short period of time (maybe not noticeable at all,
+            leaving behind a staggered user) and stopping right away.</li>
+        </ol>
+        Regarding this we have to assure that program execution doesn't stop or a least at the point of time
+        we choose it to.<br>
+        As always, there are many ways to accomplish this task. One of the simplest ones, though, is
+        to force the program waiting for the user pressing and releasing the <em>RUN</em> 
+        button which is easily got by <code>Button.RUN.waitForPressAndRelease()</code>.
+
+        <hr>
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="whatislejos.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="toc.html#getstarted" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="problems.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>

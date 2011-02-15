@@ -1,0 +1,369 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>Vision</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="../communication/remotecontrol.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../overview/toc.html#vision" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="../speech/index.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1"><b>Trail</b>: Vision</font>
+
+        <!-- headline -->
+        <h1>Trail: Vision</h1>
+        <p>
+        <em><b>by <a href="http://homepage.ntlworld.com/lawrie.griffiths/">Lawrie Griffiths</a></b></em>
+        <p>
+
+<h1>Overview</h1>
+This a Robotics Vision API for lejos.
+<p>
+It provides motion detection, color detection, light detection and interfacing
+with robots that use the Lego Mindstorms RCX brick, to allow Mindstorms robots
+to respond to what they see.
+<p>
+It supports most of the functions of the Lego Vision Command software, but in 
+an open extensible way that will allow much more sophisticated functionality 
+to be added.
+<p>
+Although it is designed for use for the Lego Cam that comes with the Lego 
+Mindstorms Vision Command product, it will work with most PC Web cameras. 
+It has been with the X10 XCam2 wireless camera. This camera can be mounted 
+on a Lego Robot to avoid the trailing USB wire, which is a problem with the 
+Lego Cam.
+
+<h1>Acknowledgements</h1>
+
+Some of the ideas come from the Robotics SDK produced by the UK Sun Technology 
+Evangelist, Simon Ritter - see 
+<ul>
+    <li><a href="http://www.sun.com/developers/evangcentral/totallytech/jmf.html">
+    Image Capture From Webcams using the Java[tm] Media Framework API</a></li> 
+    <li>and <a href="http://www.sun.com/developers/evangcentral/totallytech/robo-sdk.html"> 
+    Java[tm] Technology Robotics Developers Kit</a>.</li>
+</ul>
+
+Some of the code and ideas come from the projects of Konrad Rzeszutek - 
+see <a href="http://darnok.dhs.org/~konrad/download.html"> Konrad Rzeszutek's Projects</a>.
+
+<h1>Functions supported</h1>
+
+Functions supported include
+<ul>
+    <li>A moving video display on your PC of what the robot sees</li>
+    <li>Definition of regions in the field of view</li>
+    <li>Flipping the image horizontally to fit the type of example best</li>
+    <li>Detecting motion</li>
+    <li>Detection of specific colors</li>
+    <li>Light detection</li>
+    <li>Taking snapshots</li>
+    <li>Recording videos, including sound</li>
+    <li>Playing sound files</li>
+    <li>Sending commands to the RCX</li>
+    <li>GUI control of color and motion sensitivity, region display, etc.</li>
+    <li>Extensibility of the GUI to allow remote control of the robot, etc.</li>
+    <li>The remote control class can also support speech control of the robot</li>
+</ul>
+
+<h1>Regions</h1>
+
+All recognition occurs within a region. Currently only rectangular regions 
+are supported. Regions are numbered from 1, and are their outlines and numbers 
+are overlayed on the moving video display.
+
+<h1>Listeners</h1>
+
+Three types of listeners are currently supported:
+<ul>
+    <li>Motion Listeners - detect motion in a region</li>
+    <li>Color Listeners - detect a specific color in a region</li>
+    <li>Light Listeners - detect bright light in a region</li>
+</ul>
+
+There are three interfaces corresponding to these: 
+<ul>
+    <li>Motion Listener</li>
+    <li>Color Listener</li>
+    <li>Light Listener</li>
+</ul>
+
+<h1>Responding to what is seen</h1>
+
+The various types of listener can respond to what they see in specific regions.
+<p>
+Examples of possible responses, supported by the API, are:
+<ul>
+    <li>Taking a snapshot, e.g. of an Intruder</li>
+    <li>Recoding a video of what is seen</li>
+    <li>Playing sound effects or musical instruments on the PC</li>
+    <li>Sending commands to the RCX to move the camera, turn towards light, avoid 
+   motion etc.</li>
+</ul>
+
+<h1>Remote Command Execution</h1>
+
+Sending remote commands to the PC is done by the josx.rcxcomm remote method 
+execution classes. Client stubs and a server implementation of functions 
+needed for camera and robot movement are provided as part of the vision API.
+
+<h1>Example</h1>
+
+An example program that detects motion, sounds an alarm and takes a snapshot of
+an Intruder:
+<pre><code>
+import josx.vision.*;
+
+public class Motion implements MotionListener {
+  private static int image = 1;
+  long lastPlay = 0;
+
+  public static void main(String [] args) {
+    (new Motion()).run();
+  }
+
+  private void run() {
+    Vision.setImageSize(320, 240);
+    Vision.addRectRegion(1, 0, 0, 320, 240);
+    Vision.addMotionListener(1, this);
+    Vision.startViewer("Intruder Detector");
+  }
+
+  public void motionDetected(int region) {
+    if ((System.currentTimeMillis() - lastPlay) > 1000) {
+      lastPlay = System.currentTimeMillis();
+      Vision.snapshot("Intruder" + image++ + ".jpg");
+      Vision.playSound("../../Effects/Alarm.wav");
+    }   
+  }
+}
+</code></pre>
+
+<h1>Prerequisites</h1>
+
+You need the Java Media framework on your PC to run the lejos Vision System.
+
+<h2>Windows</h2>
+
+This is available from <a href="http://java.sun.com/products/java-media/jmf/"> http://java.sun.com/products/java-media/jmf/</a>.
+<p>
+It is best that your camera is plugged in when you install JMF, as this will 
+ensure that the capture devices for it are put in the JMF registry.
+
+<h2>Linux</h2>
+
+Use a suitable driver for the camera. If you are using the Lego Camera, a driver can be got from <a href="http://qce-ga.sourceforge.net">
+http://qce-ga.sourceforge.net</a>.
+<p>
+This is for the Quickcam which is similar to the Lego Camera. Note that you need to get the source 
+from CVS and checkout the qc-usb module.
+<p>
+The JMF from Sun does not pick up the camera correctly and so you need to use the JMF from
+Blackdown.org. However, at the time of this writing, there was an issue with licensing and Blackdown
+had stopped the downloads but you can still get it from the mirror below:
+<br>
+You can get this from:
+<p>
+<a href="http://www.opennms.org/files/mirrors/blackdown-java/JMF/2.1.1/i386/fcs/">
+http://www.opennms.org/files/mirrors/blackdown-java/JMF/2.1.1/i386/fcs/</a>
+<p>
+You may have problems with the XLibRenderer plugin. If so, you can use the AWTRenderer
+instead.
+
+<h3>Building on Linux and Cygwin</h3>
+Make sure that JMFHOME is defined and pointing at your JMF installation directory.
+
+
+<h1>Configuration</h1>
+Ensure that JMF is on the CLASSPATH by following the JMF installation 
+instructions. 
+<br>
+On Linux, make sure that the $JMFHOME/lib directory is added to LD_LIBRARY_PATH using
+the command:
+<p>
+<code>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JMFHOME/lib</code>
+<p>
+Run the JMStudio application to determine what video and sound capture 
+devices are available on your system.
+<br>
+Look at properties to determine the video and sound capture devices.
+<p>
+If the camera was not on when JMF was installed try doing <em>"Detect capture devices"</em>. 
+<br>
+If this does not work, try calling <code>jmfinit</code> from the JMF bin directory.
+<p>
+Edit the <code>video.properties</code> files in <code>\examples\vision\motion</code>. 
+There is currently a version in each example directory and you need to edit 
+each one to run the example. You need to set <em>video-device-name</em> and 
+<em>sound-device-name</em> to the exact text in the JMF registry. If Direct Sound 
+capture is available on your windows machine, use that, as Java Sound capture 
+does not seem to work on some PCs.
+<p>
+For some of the examples, you need to copy the Effects directory from the 
+Lego Vision Command VCSData and Piano and any other instrument
+directory you want from the <code>VCSData\Instruments</code> directories.
+For a default installation of the Lego Vision Command software
+the full path for VCSData is 
+<br>
+<code>c:\Program Files\LEGO MINDSTORMS\Vision Command\data\hdData\VCSData</code>.
+<br>
+They should be copied to subdirectories of <code>\vision</code>, e.g. <code>c:\vision\Efects</code> 
+and <code>c:\vision\Piano</code>.
+
+<h1>Running the Examples</h1>
+
+<h2>Motion example</h2>
+
+Change directory to <code>\examples\vision\motion</code> and do:
+<p>
+<code>    
+javac Motion.java
+<br>java Motion
+</code>
+<p>
+An alarm is sounded and a file <code>Intruder[n].jpg</code> is produced whenever motion 
+is detected.
+
+<h2>Alarm example</h2>
+
+Change directory to <code>\examples\vision\alarm</code> and do:
+      
+<p>
+<code>    
+javac Alarm.java
+<br>java Alarm
+</code>
+<p>
+This is a security alarm that can be turned off by the correct color being
+detected in region 3. You will probably need to edit the source to change 
+the color to one that is detected by your camera. The current average RGB 
+value is what is being detected in region 3 is displayed on System.out.
+
+<h2>Music example</h2>
+ 
+Change directory to <code>\examples\vision\music</code> and do:
+<p>      
+<code>
+javac Music.java
+<br>java Music Piano
+</code>
+<p>
+You can use other instruments that are available with the Lego Vision Command 
+software, e.g. <em>"Guitar2"</em>
+
+<h2>Light Seeking example</h2>
+
+This example uses the RCX remote control class to respond to what the camera 
+sees.
+<p>
+It is a very simple light seeking example. When it sees light in the central 
+region it moves forward. When it sees light in the left or right regions, it 
+turns towards the light.
+<p>
+It needs the Rover example program running on the RCX. 
+<p>
+Change directory to <code>\examples\vision\light\rcx<\code> and do:
+<p>
+<code>
+lejosc Rover.java
+<br>lejos Rover
+</code>
+<p>
+and press the Run button on the RCX.
+<p>
+You then need to compile and run the PC program. 
+<br>
+To do this, change directory to <code>\examples\vision\light\pc</code> and do:
+<p>
+<code>
+javac Light.java
+<br>java Light
+</code>
+<p>
+Shine a bright light at the camera to move the robot about.
+
+<h2>Remote control example</h2>
+<img src="remote.jpg">
+<br clear=all>
+This example uses the RCX remote control class to control the robot and let 
+the robot respond to what it sees.
+<p>
+It needs the Rover example program running on the RCX. 
+<p>
+Change directory to <code>\examples\vision\light\rcx</code> and do:
+<p>
+<code>
+lejosc Rover.java
+<br>lejos Rover
+</code>
+<p>
+and press the Run button on the RCX.
+<p>
+You then need to compile and run the PC program. 
+<br>
+To do this, change directory to <code>\examples\vision\remote\pc</code> and do:
+<p>
+<code>
+javac *.java
+<br>java RemoteControl
+</code>
+<p>
+You should see a display with the image viewer in the center, remote controls 
+for the robot on the left, and camera and color controls of the right. 
+<p>
+Move the robot about with the remote controls. Flip the camera up and down,
+as necessary, to see what you need to see. When the robot gets near a red 
+object, it will move towards it and attempt to push it forwards. Click on 
+the little Media Properties control at the bottom right of the ImageViewer 
+and choose the Plug-In Settings, to control color sensitivity and the 
+proportion of the region that needs to be filled with the specified color. 
+Edit the RemoteControl.java program and change the color if you need to.
+<p>
+<img src="plugin.jpg">
+<p>
+    Have fun.
+
+        <hr>
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="../communication/remotecontrol.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../overview/toc.html#vision" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="../speech/index.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>

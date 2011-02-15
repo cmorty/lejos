@@ -1,0 +1,199 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>Using the LEGO&reg; remote control</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="protocolstack.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../overview/toc.html#communication" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="../vision/index.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1">
+            <b>Trail</b>: Communication<br>
+            <b>Lesson</b>: Using the LEGO&reg; remote control
+        </font>
+
+        <!-- headline -->
+        <h1>Using the LEGO&reg; remote control</h1>
+        <p>
+        <em><b>by <a href="http://mp.scholz.bei.t-online.de/">Matthias Paul Scholz</a></b></em>
+        <p>
+        
+        <img src="remote.jpg">
+        <br>
+
+        <p>
+        <span class="remark">
+            Note that this lesson already refers to the actual re-organization of the remotecontrol package in the CVS: in future
+            the package will be part of <code>josx.rcxcomm</code> whereas in the actual leJOS release 2.1.0 it's located in
+            <code>josx.platform.rcx</code> yet.
+        </span>
+
+        <!-- overview -->
+        <h1>Overview</h1>
+        The <code>josx.rcxcomm.remotecontrol</code> package is mainly supposed to be used in connection with the LEGO&reg;
+        remote control contained in the <a href="http://mindstorms.lego.com/products/uas/index.asp" target="_parent">
+        <img src="uas.gif" border=0></a> (however, as we will see, there is also a class which enables you to simulate
+        commands sent by it).
+        
+        <!-- architecture -->
+        <h1>Architecture</h1>
+        The package consists of some classes that are running on the RCX whose task it is 
+        <ol>
+            <li>to listen for messages coming in from the remote control</li>
+            <li>to identify the command associated with the message</li>
+            <li>to execute on the RCX the command in question depending on the code the user associated with it</li>
+        </ol>
+
+        <!-- listening for incoming messages -->
+        <h2>Listening for incoming messages</h2>
+        The component responsible to detect messages set forth by the remote control is 
+        <code>josx.rcxcomm.remotecontrol.RemoteControlSensor</code>.
+        <br>
+        Internally it's built on top of leJOS' <code>josx.platform.rcx.SerialListener</code>, which constantly checks
+        the <a href="../essential/hardware/ir.html">IR sensor</a> on front of the RCX for incoming IR signals.
+        <br>If such a signal is detected, the remote control sensor decides if the message is one emitted by the 
+        LEGO&reg; remote control; if so, all the registered listeners (see below) are notified.
+
+        <!-- listener -->
+        <h2>Listeners</h2>
+        As often with Java and leJOS, a listener serves as the bridge between the sensor and the code to be executed on events:  
+        it's specified by the <code>josx.rcxcomm.remotecontrol.RemoteControlListener</code> interface which declares the following 
+        methods that correspond to the buttons of the remote control:
+        <ul>
+            <li>public void message1Pressed()</li>
+            <li>public void message2Pressed()</li>
+            <li>public void message3Pressed()</li>
+            <li>public void program1Pressed()</li>
+            <li>public void program2Pressed()</li>
+            <li>public void program3Pressed()</li>
+            <li>public void program4Pressed()</li>
+            <li>public void program5Pressed()</li>
+            <li>public void motorDownPressed(Motor aMotor)</li>
+            <li>public void motorUpPressed(Motor aMotor)</li>
+            <li>public void soundPressed()</li>
+            <li>public void stopPressed()</li>
+        </ul>
+
+        A class implemeting this interface is added by the sensor's
+        <pre><code>
+        public void addRemoteControlListener(RemoteControlListener aListener)
+        </code></pre>
+        method.
+        <br>
+        Any time an according message is emitted by the remote control, the sensor notifies all added listeners calling the 
+        corresponding listener's method.
+        
+        <p>
+        <span class="remark">
+            One of the drawbacks of the usage of infrared signals by LEGO MINDSTORMS&trade; instead of, say, radio waves, is 
+            that the IR sensor of the RCX has to point straight to the remote control when pressing a button - else the signal will 
+            never arrive at the sensor and will simply get lost. Sometimes, though, it might help to point the remote control 
+            towards the ceiling of the room.
+        </span>
+
+        <!-- using the package -->
+        <h1>Using the LEGO&reg; remote control with leJOS</h1>
+        It ought to be clear now what you have to do to use your LEGO&reg; remote control with leJOS:
+        <ol>
+            <li>Instantiate a <code>josx.rcxcomm.remotecontrol.RemoteControlSensor</code> somewhere in the code running on your RCX</li>
+            <li>Write a class implementing the methods of the <code>josx.rcxcomm.remotecontrol.RemoteControlListener</code> interface:
+                add to the body of each of its methods the code that may be executed when the associated button on the remote control
+                is pressed. A natural implementation for the <code>soundPressed()</code> method, for example, might be to play a sound
+                by calling <code>Sound.beep()</code>; after all, you are completely free in the action your program takes as a reaction
+                to any remote control command!
+        </ol>
+
+        <p>
+        <span class="remark">
+            If your application is interested only in a part of the messages of the remote control, you can just extend the
+            <code>josx.rcxcomm.remotecontrol.RemoteControlAdapter</code> (that implements the listener interface with empty
+            method bodies) and override only the methods you are interested in.
+        </span>
+
+        <!-- using the messagner -->
+        <h1>Simulating the LEGO&reg; remote control</h1>
+        Those who want to use the PC to send LEGO&reg; remote control commands may do this 
+        by the class <code>josx.rcxcomm.remotecontrol.RemoteControlMessenger</code> that is - as all the communication classes supposed 
+        to run rather on the PC than on the RCX - contained in the <code>pcrcxcomm.jar</code>.
+        <br>It offers the method 
+        <pre><code>
+            public void send(byte[] aMessageCode) 
+        </code></pre>
+        method, where <code>aMessageCode</code> has to be one of the public <code>RemoteControlMessenger</code> message opcode 
+        constants (see there).
+
+        <p>
+        <span class="remark">
+            Note there is a ready-made tool available which simulates the LEGO&reg; remote control on the PC either as a Java&trade; 
+            application or as a JSP web page, named <a href="http://mp.scholz.bei.t-online.de/lejos/">Maroc</a>.
+        </span>
+
+        <p>
+        <span class="remark">
+            Of course you are free to use the <a href="rcxcomm.html">rcxcomm</a> classes to send messages to the remote control
+            sensor by yourself. The <code>RemoteControlSensor</code> accepts not only native message bytes sent by the
+            LEGO&reg; remote control but also the F7 LEGO firmware protocol, which means that you can use <code>josx.rcxcomm.RCXF7Port</code>
+            as well. 
+            <br>Keep in mind, though, that the remote control sensor class will respond to opcodes belonging to
+            LEGO&reg; remote control commands only.
+        </span>
+
+        <!-- examples -->
+        <h1>A complete example which uses the remotecontrol package</h1>
+        is <b>RemoteControlTest.java</b> which may be found in the <code>examples/comms/remotectl</code> 
+        section of the leJOS tree.
+
+        <!-- API -->
+        <h1>The remotecontrol API</h1>
+        may be found <a href="http://lejos.sourceforge.net/apidocs/josx/rcx/remotecontrol"
+        target="_top">here</a>.
+
+        <hr>
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="protocolstack.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../overview/toc.html#communication" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="../vision/index.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>

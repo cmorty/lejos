@@ -1,0 +1,123 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>Solutions to the Exercises</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="exercises.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="toc.html#getstarted" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="end.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1"><b>Trail</b>: Getting Started</font>
+
+        <!-- headline -->
+        <h1>Solutions to the Exercises: Getting Started</h1>
+        <p>
+
+        <!-- exercises -->
+        <font color=red>Exercise 1</font>: What is leJOS?
+        <ul>
+            <li>a: a graphical front end for LEGO MINDSTORMS&trade;</li>
+            <li>b: an operating system and Java-based language for the RCX</li>
+            <li>c: an IDE for the LEGO MINDSTORMS&trade; programming language</li>
+            <li>d: a toolkit for building LEGO MINDSTORMS&trade; robots</li>
+        </ul>
+        <font color=green>Answer</font>: (b) leJOS is an operating system and Java-based language for the RCX.
+        <p>
+        
+        <font color=red>Exercise 2</font>: What is the entry point for a leJOS program running
+        on the RCX?
+        <ul>
+            <li>a: public static void main(String[] args)</li>
+            <li>b: public static void initRCXProgram()</li>
+            <li>c: public static void mainRCX(RCXParams[] args)</li>
+        </ul>
+        <font color=green>Answer</font>: (a) the entry point for a leJOS program running on the RCX is
+        <code>public static void main(String[] args)</code>.
+        <p>
+        
+        <font color=red>Exercise 3</font>: Where can I find additional information regarding leJOS?
+        <br>
+        <font color=green>Answer</font>: there are several resources, e.g.
+        <ul>
+            <li><a href="http://www.lejos.org" target="_blank">The leJOS project</a></li>
+            <li><a href="http://lejos.sourceforge.net/faq.html" target="_blank">leJOS FAQ pages</a></li>
+            <li><a href="http://sourceforge.net/mailarchive/forum.php?forum_id=552" target="_blank">The leJOS discussion forum</a></li>
+            <li><a HREF="http://www.amazon.com/exec/obidos/ASIN/0130093645/lejos0e-20" target="_blank"> 
+                Core LEGO MINDSTORMS Programming</a> by Brian Bagnall</li>
+            <li><a HREF="http://www.amazon.com/exec/obidos/ASIN/1928994555/lejos0e-20" target="_blank"> 
+                Programming Lego Mindstorms with Java</a> by Dario Laverde (ed.)</li>
+        </ul>
+
+        <p>
+
+        <font color=red>Exercise 4</font>: What is the correct constructor call?
+        <ul>
+            <li>a: Motor motor = new Motor(Motor.A);</li>
+            <li>b: Motor motor = new Motor('A');</li>
+            <li>c: Motor motor = new MotorA();</li>
+            <li>d: none of these</li>
+        </ul>
+        <font color=green>Answer</font>: (d) the Motor class has no public constructor, but offers several static methods.
+        <p>
+
+        <font color=red>Exercise 5</font>: Change the <a href="sample.html">simple sample application</a> 
+        so that it displays "LEJOS" on the LCD.
+        <br>
+        <font color=green>Answer</font>: change the line <br><code>TextLCD.print("DRIVE");</code>
+        <br>to<br> <code>TextLCD.print("LEJOS");</code>
+        <p>
+
+        <font color=red>Exercise 6</font>: Change the <a href="sample.html">simple sample application</a> 
+        so that the motor runs backwards.
+        <br>
+        <font color=green>Answer</font>: change the line <br><code>Motor.A.forward();</code>
+        <br>to<br> <code>Motor.A.backward();</code>
+        <p>
+
+        <hr>
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="exercises.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="toc.html#getstarted" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="end.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>
