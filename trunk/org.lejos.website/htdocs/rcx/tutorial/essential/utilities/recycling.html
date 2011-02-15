@@ -1,0 +1,154 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>Utilities: Recycling</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="timer.html" target="_top"><img src="../../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../toc.html#utilities" target="_top"><img src="../../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="../errors/index.html" target="_top"><img src="../../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="../index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1">
+            <b>Trail</b>: Essential leJOS classes<br>
+            <b>Lesson</b>: Utilities
+        </font>
+
+        <!-- headline -->
+        <h1>Utilities: Recycling</h1>
+        <p>
+
+        <!-- overview -->
+        Other than on the PC with its constantly enlarging sizes of RAM, Memory is precious on small devices 
+        like the RCX.
+        <br>Since there is no mechanism on Java to free memory at a determined point of time, and particularly 
+        with the lack of a garbage collector with leJOS, allocating objects on the heap is liable to set forth
+        some kind of "out of memory" behavior of your robot. In peculiar, memory consuming collections like arrays
+        are prone to make itself a nuisance.
+        <p>
+        
+        <!-- classes -->
+        To help this, some new <code>josx.util</code> package located classes have been introduced in 
+        leJOS' version 2.1.0 with the task of providing a recycling mechanism:
+        <ul>
+            <li><code>Recyclable</code> an interface for an recyclable object</li>
+            <li><code>AbstractRecycable</code> an abstract base class for Recyclables which implements
+                some of <code>Recyclable</code> methods</li>
+            <li><code>RecyclableArray</code> a recyclable array implementing the <code>Recyclable</code> interface</li>
+            <li><code>Recycler</code> an abstract base class which is able to recycle Recyclables</li>
+            <li><code>ArrayRecycler</code> an array recycler</li>
+        </ul>
+	The idea is simple but effective: instead of creating every new instance of your object with its constructor 
+	using <code>new()</code>, you order such a new instance by a <code>Recycler</code>, which may be thought as a
+	factory that stores currently unused objects and delivers them on order. 
+	<br>All the user has to do is 
+	<ol>
+		<li>to implement the <code>Recyclable</code> interface for the classes he wants to be recycled that way,</li>
+		<li>to order such objects from the recycler by calling <code>Recycler.allocate()</code>,
+		<li>to hand them out back to the recycler when they are no longer needed (by calling 
+		<code>Recycler.recycle([recyclable object])) and</li>
+		<li>to extend the abstract <code>Recycler</code> class in overwriting its <code>createInstance()</code>
+		method (don't worry: as a rule that requires no more than creating a new instance of your recyclable class using 
+            	<code>new</code>).</li>
+	</ol>
+
+        <!-- recycable -->
+        <h2>Declaring instances of a class to be recycable</h2>
+        For the instances of a class to be recycable, the class should extend the abstract 
+        <code>josx.util.AbstractRecyclable</code> class; this means, it has to implement the following two 
+        methods:
+        <ul>
+            <li><code>public void init()</code> called, when an instance is allocated by the recycler</li>
+            <li><code>public void release()</code> called by the user when the instance is no longer needed; you should 
+                release any resources here, including nested Recyclables.</li>
+        </ul>
+
+        <span class="remark">Of course you are free to implement the <code>Recyclable</code> directly; in this case you
+        have to implement also the <code>getNextRecyclable()</code> and <code>setNextRecyclable()</code> by
+        yourself.
+        </span>
+
+        <!-- recycler -->
+        <h2>Building a Recycler</h2>
+        To recycle recyclable instances, you need a recycler which manages the process of allocating and releasing
+        the memory for these instances. This is most easily done by extending the abstract 
+        <code>josx.util.Recycler</code> class, which means that your recycler has to to implement the 
+        <pre><code>
+            public Recyclable createInstance()
+        </code></pre>
+        method and adapt it to create an instance of your particular recyclable class.
+        <p>
+
+        <span class="remark">Of course you can build your own recycler, which means that you have to take care
+        of the complete recycling process by yourself.
+        </span>
+
+        <!-- recyclable -->
+        <h2>Recycling array entries</h2>
+        For recycable arrays there exists the <code>josx.util.RecyclableArray</code> class already,
+        which delivers all the basic functionalities you would expect from an array like get(), put() and
+        getLength().
+        <br>
+        The associated recycler is <code>josx.util.ArrayRecycler</code> which 
+        extends <code>josx.util.Recycler</code> and implements its abstract methods
+        - ready to be used.
+ 
+        <!-- example -->
+        <h2>Two complete examples that use the Recycling classes</h2>
+        are <b>ObjectRecyclingSample.java</b> and <b>ArrayRecyclingSample.java</b> 
+        which may be found in the <code>examples/test/recycling</code> 
+        section of the leJOS tree.
+
+        <!-- api -->
+        <h2>The Recycling API</h2>
+        may be found <a href="http://lejos.sourceforge.net/apidocs/josx/util/package-summary.html"
+        target="_top">here</a>.
+
+
+        <hr>
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="timer.html" target="_top"><img src="../../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../toc.html#utilities" target="_top"><img src="../../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="../errors/index.html" target="_top"><img src="../../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="../index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>
