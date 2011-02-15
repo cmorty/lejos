@@ -1,12 +1,10 @@
-import java.awt.Rectangle;
-import java.io.PrintStream;
 import java.util.Collection;
 import lejos.geom.Line;
+import lejos.geom.Rectangle;
 import lejos.nxt.Button;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;
-import lejos.nxt.comm.RConsole;
 import lejos.robotics.Pose;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.RangeScanner;
@@ -18,7 +16,6 @@ import lejos.robotics.navigation.DestinationUnreachableException;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.MapPathFinder;
 import lejos.robotics.navigation.PathFinder;
-import lejos.robotics.navigation.PathController;
 import lejos.robotics.navigation.WayPoint;
 import lejos.robotics.localization.MCLPoseProvider;
 
