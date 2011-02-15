@@ -1,8 +1,6 @@
 package lejos.robotics.mapping;
 
-import java.awt.Rectangle;
 import lejos.geom.*;
-
 import java.io.*;
 import lejos.robotics.*;
 import lejos.robotics.mapping.RangeMap;
@@ -109,10 +107,10 @@ public class LineMap implements RangeMap {
         dos.writeFloat(lines[i].y2);
         dos.flush();
       }  
-      dos.writeInt(boundingRect.x);
-      dos.writeInt(boundingRect.y);
-      dos.writeInt(boundingRect.width);
-      dos.writeInt(boundingRect.height);
+      dos.writeFloat(boundingRect.x);
+      dos.writeFloat(boundingRect.y);
+      dos.writeFloat(boundingRect.width);
+      dos.writeFloat(boundingRect.height);
       dos.flush();
   }
   /**
@@ -130,7 +128,7 @@ public class LineMap implements RangeMap {
         float y2 = dis.readFloat();
         lines[i] = new Line(x1,y1,x2,y2);
       }     
-      boundingRect = new Rectangle(dis.readInt(),dis.readInt(),dis.readInt(),dis.readInt());
+      boundingRect = new Rectangle(dis.readFloat(),dis.readFloat(),dis.readFloat(),dis.readFloat());
   }
 }
 

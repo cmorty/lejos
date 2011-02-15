@@ -1,11 +1,11 @@
 package lejos.robotics.navigation;
 
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
 import lejos.geom.Point;
+import lejos.geom.Rectangle;
 import lejos.robotics.Pose;
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
