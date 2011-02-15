@@ -119,7 +119,7 @@
 Java on your LEGO Mindstorms NXT</a> 
                 by Hu Jun &amp; Christoph Bartneck</li>
 				<li><a href="http://www.juanantonio.info/jab_cms.php?id=206" target="_blank">Develop leJOS programs Step by Step</a> 
-                by Juan Antonio Bre�a Moral</li>				
+                by Juan Antonio Breña Moral</li>				
             </ul>
 </p>
 </div>
