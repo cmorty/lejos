@@ -19,7 +19,7 @@
 
 		<!-- OTROS METADATOS -->
 		<meta name="VW96.objecttype" content="Document" />
-		<META NAME="DC.Language" SCHEME="RFC1766" CONTENT="English" />
+		<meta name="DC.Language" scheme="RFC1766" content="English" />
 		<meta name="distribution" content="global" />
 		<meta name="resource-type" content="document" />
 		
@@ -30,7 +30,7 @@
 		<meta http-equiv="expires" content="0" />
 
 		<!-- WEB EDITOR -->
-		<META name="author" CONTENT="Juan Antonio Breña Moral" />
+		<meta name="author" content="Juan Antonio Breña Moral" />
 
 		<link rel="stylesheet" href="r_css/lejos.css" type="text/css" />
 
@@ -122,10 +122,10 @@ These are some of the features offered:
 
 
             <ul>
-              <li><A HREF="http://lejos.sourceforge.net/tutorial/index.html" target="_blank">The leJOS Tutorial</A> by Matthias Paul Scholz et.al.</li>
-              <li><A HREF="http://www.informatik.fh-muenchen.de/~schieder/usinglejos/" target="_blank">An Introduction to leJOS</A> by Reinhard Schiedermeier, Munich University of Applied Sciences</li>
+              <li><a href="http://lejos.sourceforge.net/tutorial/index.html" target="_blank">The leJOS Tutorial</a> by Matthias Paul Scholz et.al.</li>
+              <li><a href="http://www.informatik.fh-muenchen.de/~schieder/usinglejos/" target="_blank">An Introduction to leJOS</a> by Reinhard Schiedermeier, Munich University of Applied Sciences</li>
 
-              <li><A HREF="http://dudley.wellesley.edu/~anderson/robots/lejos/" target="_blank">leJOS Documentation</A> by Scott Anderson, Wellesley College</li>
+              <li><a href="http://dudley.wellesley.edu/~anderson/robots/lejos/" target="_blank">leJOS Documentation</a> by Scott Anderson, Wellesley College</li>
             </ul>
 
 </p>

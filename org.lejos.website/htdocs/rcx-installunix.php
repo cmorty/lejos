@@ -19,7 +19,7 @@
 
 		<!-- OTROS METADATOS -->
 		<meta name="VW96.objecttype" content="Document" />
-		<META NAME="DC.Language" SCHEME="RFC1766" CONTENT="English" />
+		<meta name="DC.Language" scheme="RFC1766" content="English" />
 		<meta name="distribution" content="global" />
 		<meta name="resource-type" content="document" />
 		
@@ -30,7 +30,7 @@
 		<meta http-equiv="expires" content="0" />
 
 		<!-- WEB EDITOR -->
-		<META name="author" CONTENT="Juan Antonio Breña Moral" />
+		<meta name="author" content="Juan Antonio Breña Moral" />
 
 		<link rel="stylesheet" href="r_css/lejos.css" type="text/css" />
 
@@ -94,7 +94,7 @@
 					<div id="content">
 
             <ul>
-              <li>Make sure the JDK's bin directory is in your PATH.</LI>
+              <li>Make sure the JDK's bin directory is in your PATH.</li>
               <li>Run <code>make</code>.</li>
               <li>Set <b>RCXTTY</b> to the IR serial port (e.g. <code>/dev/ttyS0</code>).</li>
 

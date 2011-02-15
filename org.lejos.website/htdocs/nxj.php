@@ -19,7 +19,7 @@
 
 		<!-- OTROS METADATOS -->
 		<meta name="VW96.objecttype" content="Document" />
-		<META NAME="DC.Language" SCHEME="RFC1766" CONTENT="English" />
+		<meta name="DC.Language" scheme="RFC1766" content="English" />
 		<meta name="distribution" content="global" />
 		<meta name="resource-type" content="document" />
 		
@@ -30,7 +30,7 @@
 		<meta http-equiv="expires" content="0" />
 
 		<!-- WEB EDITOR -->
-		<META name="author" CONTENT="Juan Antonio Breña Moral" />
+		<meta name="author" content="Juan Antonio Breña Moral" />
 
 		<link rel="stylesheet" href="r_css/lejos.css" type="text/css" />
 
@@ -99,7 +99,7 @@
 leJOS (pronounced like the Spanish word "lejos" for "far") is a tiny Java Virtual Machine. In 2006 it was ported to the <a href="http://www.mindstorms.com">LEGO NXT brick</a>.
 </p>
 <p>
-<b>leJOS NXJ</b> includes all the classes in the <A href="nxt/nxj/api/index.html">NXJ API</A> as well as the tools used to upload code to the NXT brick.<br/><br/>
+<b>leJOS NXJ</b> includes all the classes in the <a href="nxt/nxj/api/index.html">NXJ API</a> as well as the tools used to upload code to the NXT brick.<br/><br/>
 
 leJOS NXJ offers the following:
 <ul>

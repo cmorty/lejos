@@ -19,7 +19,7 @@
 
 		<!-- OTROS METADATOS -->
 		<meta name="VW96.objecttype" content="Document" />
-		<META NAME="DC.Language" SCHEME="RFC1766" CONTENT="English" />
+		<meta name="DC.Language" scheme="RFC1766" content="English" />
 		<meta name="distribution" content="global" />
 		<meta name="resource-type" content="document" />
 		
@@ -30,7 +30,7 @@
 		<meta http-equiv="expires" content="0" />
 
 		<!-- WEB EDITOR -->
-		<META name="author" CONTENT="Juan Antonio Breña Moral" />
+		<meta name="author" content="Juan Antonio Breña Moral" />
 
 		<link rel="stylesheet" href="r_css/lejos.css" type="text/css" />
 
@@ -100,20 +100,20 @@
               <li><a href="http://sourceforge.net/projects/lejos/">leJOS Project 
                 Homepage</a> @ Sourceforge</li>
 
-              <li><A HREF="http://tinyvm.sourceforge.net/" target="_blank">TinyVM</A> 
+              <li><a href="http://tinyvm.sourceforge.net/" target="_blank">TinyVM</a> 
                 (Jose Solorzano)</li>
-              <li><A HREF="http://news.lugnet.com/robotics/rcx/java/" target="_blank">LUGNET 
-                News (rcx/robotics/java)</A></li>
-              <li><A HREF="http://www.cs.ukc.ac.uk/people/staff/djb/rcx/" target="_blank">An Alternate Java API using leJOS</A> by David J. Barnes, University of Kent</li>
-              <li><A HREF="http://www.slewis.com/rcxport/" target="_blank">RCXPort 
-                - Java Interface to the Lego RCX</A> by Scott B. Lewis</li>
+              <li><a href="http://news.lugnet.com/robotics/rcx/java/" target="_blank">LUGNET 
+                News (rcx/robotics/java)</a></li>
+              <li><a href="http://www.cs.ukc.ac.uk/people/staff/djb/rcx/" target="_blank">An Alternate Java API using leJOS</a> by David J. Barnes, University of Kent</li>
+              <li><a href="http://www.slewis.com/rcxport/" target="_blank">RCXPort 
+                - Java Interface to the Lego RCX</a> by Scott B. Lewis</li>
 
-              <li><A HREF="http://www.escape.com/~dario/java/rcx/" target="_blank">RCXLoader</A> 
+              <li><a href="http://www.escape.com/~dario/java/rcx/" target="_blank">RCXLoader</a> 
                 by Dario Laverde</li>
-				<li><A HREF="http://www.bartneck.de/work/education/masterClassLego/javaInstallNXT/index.html" target="_blank">Step-by-step instructions on how to install and run
-Java on your LEGO Mindstorms NXT</A> 
+				<li><a href="http://www.bartneck.de/work/education/masterClassLego/javaInstallNXT/index.html" target="_blank">Step-by-step instructions on how to install and run
+Java on your LEGO Mindstorms NXT</a> 
                 by Hu Jun & Christoph Bartneck</li>
-				<li><A HREF="http://www.juanantonio.info/jab_cms.php?id=206" target="_blank">Develop leJOS programs Step by Step</A> 
+				<li><a href="http://www.juanantonio.info/jab_cms.php?id=206" target="_blank">Develop leJOS programs Step by Step</a> 
                 by Juan Antonio Breña Moral</li>				
             </ul>
 </p>

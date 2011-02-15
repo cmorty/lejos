@@ -19,7 +19,7 @@
 
 		<!-- OTROS METADATOS -->
 		<meta name="VW96.objecttype" content="Document" />
-		<META NAME="DC.Language" SCHEME="RFC1766" CONTENT="English" />
+		<meta name="DC.Language" scheme="RFC1766" content="English" />
 		<meta name="distribution" content="global" />
 		<meta name="resource-type" content="document" />
 		
@@ -30,7 +30,7 @@
 		<meta http-equiv="expires" content="0" />
 
 		<!-- WEB EDITOR -->
-		<META name="author" CONTENT="Juan Antonio Breña Moral" />
+		<meta name="author" content="Juan Antonio Breña Moral" />
 
 		<link rel="stylesheet" href="r_css/lejos.css" type="text/css" />
 
@@ -98,10 +98,10 @@
 				          <td valign="top"><b>Win32 leJOS NXJ</b></td>
 				        </tr>
 				        <tr> 
-				          <td valign="top" bgcolor="#FFF021" style="background-color:#FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+				          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
 				        </tr>
 				        <tr> 
-				          <td valign="top">Download <a href="http://sourceforge.net/project/showfiles.php?group_id=9339&package_id=217619"> Click to download from Sourceforge</a></td>
+				          <td valign="top">Download <a href="http://sourceforge.net/project/showfiles.php?group_id=9339&amp;package_id=217619"> Click to download from Sourceforge</a></td>
 				
 				        </tr>
 				        
@@ -109,22 +109,22 @@
 				          <td valign="top"><b>Linux/Mac OSX leJOS NXJ</b></td>
 				        </tr>
 				        <tr> 
-				          <td valign="top" bgcolor="#FFF021" style="background-color:#FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+				          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
 				        </tr>
 				        <tr> 
-				          <td valign="top">Download <a href="http://sourceforge.net/project/showfiles.php?group_id=9339&package_id=217618"> Click to download from Sourceforge</a></td>
+				          <td valign="top">Download <a href="http://sourceforge.net/project/showfiles.php?group_id=9339&amp;package_id=217618"> Click to download from Sourceforge</a></td>
 				        </tr>
 				        <tr> 
 				          <td valign="top"><b>Download Area at Sourceforge</b></td>
 				
 				        </tr>
 				        <tr> 
-				          <td valign="top" bgcolor="#FFF021" style="background-color:#FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+				          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
 				        </tr>
 				        <tr> 
 				          <td valign="top">Other releases, notes, dates and sizes are available 
 				            at the SourceForge <a href="http://sourceforge.net/project/showfiles.php?group_id=9339" target="_blank">download 
-				            area</a>.<BR>
+				            area</a>.<br>
 				            &nbsp;</td>
 				        </tr>
 

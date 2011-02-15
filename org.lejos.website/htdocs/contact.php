@@ -19,7 +19,7 @@
 
 		<!-- OTROS METADATOS -->
 		<meta name="VW96.objecttype" content="Document" />
-		<META NAME="DC.Language" SCHEME="RFC1766" CONTENT="English" />
+		<meta name="DC.Language" scheme="RFC1766" content="English" />
 		<meta name="distribution" content="global" />
 		<meta name="resource-type" content="document" />
 		
@@ -30,7 +30,7 @@
 		<meta http-equiv="expires" content="0" />
 
 		<!-- WEB EDITOR -->
-		<META name="author" CONTENT="Juan Antonio Breña Moral" />		
+		<meta name="author" content="Juan Antonio Breña Moral" />		
 		
 		<link rel="stylesheet" href="r_css/lejos.css" type="text/css" />
 
@@ -101,15 +101,15 @@
           <td><b>Lugnet Message Base</b></td>
         </tr>
         <tr> 
-          <td valign="top" bgcolor="#FFF021" style="background-color:#FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
         </tr>
         <tr> 
           <td>Need a question answered? Try out the Lugnet news group. 
             <ul>
 
-              <li><A HREF="http://news.lugnet.com/robotics/rcx/java/">Lugnet News Group</A></li>
+              <li><a href="http://news.lugnet.com/robotics/rcx/java/">Lugnet News Group</a></li>
             </ul>
-            <BR>
+            <br>
             &nbsp;</td>
         </tr>
 
@@ -119,24 +119,24 @@
 
         </tr>
         <tr> 
-          <td valign="top" bgcolor="#FFF021" style="background-color:#FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
         </tr>
         <tr> 
           <td>This mailing list is for discussion about the use of leJOS: 
             <ul>
-              <li><A HREF="http://lists.sourceforge.net/lists/listinfo/lejos-discussion">Subscribe/Unsubscribe/Preferences</A></li>
-              <li><A HREF="http://sourceforge.net/mailarchive/forum.php?forum_id=552">lejos-discussion 
-                archive</A>, <A HREF="http://news.gmane.org/gmane.comp.java.lejos" target="_blank">archive on gmane</A></li>
+              <li><a href="http://lists.sourceforge.net/lists/listinfo/lejos-discussion">Subscribe/Unsubscribe/Preferences</a></li>
+              <li><a href="http://sourceforge.net/mailarchive/forum.php?forum_id=552">lejos-discussion 
+                archive</a>, <a href="http://news.gmane.org/gmane.comp.java.lejos" target="_blank">archive on gmane</a></li>
 
             </ul>
-            <BR>
+            <br>
             &nbsp;</td>
         </tr>
         <tr> 
           <td valign="top"><b>developers</b></td>
         </tr>
         <tr> 
-          <td valign="top" bgcolor="#FFF021" style="background-color:#FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
 
         </tr>
         <tr> 
@@ -147,50 +147,50 @@
                 <tr> 
                   <td><a name="andrews" href="#andrews" onclick="a='@'; this.href='mail'+'to:mpandrews'+a+'users.sourceforge.net'">Paul Andrews</a> </td>
                   <td>&nbsp;&nbsp;Developer</td>
-                <td>&nbsp;&nbsp;<A HREF="http://www.jools.net/" target="_blank">Web</A></td>
+                <td>&nbsp;&nbsp;<a href="http://www.jools.net/" target="_blank">Web</a></td>
                 </tr>
                 <tr> 
                   <td><a name="stuber" href="#stuber" onclick="a='@'; this.href='mail'+'to:starblue'+a+'users.sourceforge.net'">J&uuml;rgen Stuber</a></td>
                   <td>&nbsp;&nbsp;Developer</td>
-                	<td>&nbsp;&nbsp;<A HREF="http://www.jstuber.net/" target="_blank">Web</A></td>
+                	<td>&nbsp;&nbsp;<a href="http://www.jstuber.net/" target="_blank">Web</a></td>
                 </tr>
                 <tr> 
                   <td><a name="griffiths" href="#griffiths" onclick="a='@'; this.href='mail'+'to:lawrie.griffiths'+a+'ntlworld.com'">Lawrie Griffiths</a></td>
                   <td>&nbsp;&nbsp;Developer</td>
-                	<td>&nbsp;&nbsp;<A HREF="http://homepage.ntlworld.com/lawrie.griffiths/" target="_blank">Web</A></td>
+                	<td>&nbsp;&nbsp;<a href="http://homepage.ntlworld.com/lawrie.griffiths/" target="_blank">Web</a></td>
                 </tr>
                 <tr> 
                   <td><a name="bagnall" href="#bagnall" onclick="a='@'; this.href='mail'+'to:bbagnall'+a+'users.sourceforge.net'">Brian Bagnall</a></td>
                   <td>&nbsp;&nbsp;Developer/Webmaster</td>
-                  <td>&nbsp;&nbsp;<A HREF="http://www.mts.net/~kbagnall/mindstorms" target="_blank">Web</A></td>
+                  <td>&nbsp;&nbsp;<a href="http://www.mts.net/~kbagnall/mindstorms" target="_blank">Web</a></td>
                  </tr>
                 <tr> 
                   <td><a name="scholz" href="#scholz" onclick="a='@'; this.href='mail'+'to:mpscholz'+a+'users.sourceforge.net'">Matthias Paul Scholz</a></td>
                   <td>&nbsp;&nbsp;Developer/Webmaster</td>
-                  <td>&nbsp;&nbsp;<A HREF="http://mynxt.matthiaspaulscholz.eu" target="_blank">Web</A></td>
+                  <td>&nbsp;&nbsp;<a href="http://mynxt.matthiaspaulscholz.eu" target="_blank">Web</a></td>
                  </tr>
                 <tr> 
                   <td><a name="rinkens" href="#rinkens" onclick="a='@'; this.href='mail'+'to:rinkens'+a+'users.sourceforge.net'">Tim Rinkens</a></td>
                   <td>&nbsp;&nbsp;Webmaster</td>
-                 <td>&nbsp;&nbsp;<A HREF="http://rcxtools.sourceforge.net/" target="_blank">Web</A></td>
+                 <td>&nbsp;&nbsp;<a href="http://rcxtools.sourceforge.net/" target="_blank">Web</a></td>
                  </tr>
                 <tr> 
                   <td><a name="rinkens" href="#jab" onclick="l'+'to:esmetaman'+a+'users.sourceforge.net'">Juan Antonio Bre&ntilde;a Moral</a></td>
                   <td>&nbsp;&nbsp;Webmaster/Developer</td>
-                 <td>&nbsp;&nbsp;<A HREF="http://www.juanantonio.info" target="_blank">Web</A></td>
+                 <td>&nbsp;&nbsp;<a href="http://www.juanantonio.info" target="_blank">Web</a></td>
                  </tr>
                 <tr> 
                   <td><a name="solorzano" href="#solorzano" onclick="a='@'; this.href='mail'+'to:jhsolorz'+a+'users.sourceforge.net'">Jose Solorzano</a></td>
                   <td colspan="3">&nbsp;&nbsp;Initial Developer of leJOS (no longer active)</td>
                 </tr>
                 <tr> 
-                  <td colspan="3"><BR>
+                  <td colspan="3"><br>
 
-                    <A HREF="https://sourceforge.net/project/memberlist.php?group_id=9339">View 
-                    all members</A></td>
+                    <a href="https://sourceforge.net/project/memberlist.php?group_id=9339">View 
+                    all members</a></td>
                 </tr>
               </table>
-            </DIR>
+            </dir>
           </td>
         </tr>
       </table>

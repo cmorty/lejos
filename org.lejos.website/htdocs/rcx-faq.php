@@ -19,7 +19,7 @@
 
 		<!-- OTROS METADATOS -->
 		<meta name="VW96.objecttype" content="Document" />
-		<META NAME="DC.Language" SCHEME="RFC1766" CONTENT="English" />
+		<meta name="DC.Language" scheme="RFC1766" content="English" />
 		<meta name="distribution" content="global" />
 		<meta name="resource-type" content="document" />
 		
@@ -30,7 +30,7 @@
 		<meta http-equiv="expires" content="0" />
 
 		<!-- WEB EDITOR -->
-		<META name="author" CONTENT="Juan Antonio Breña Moral" />
+		<meta name="author" content="Juan Antonio Breña Moral" />
 
 		<link rel="stylesheet" href="r_css/lejos.css" type="text/css" />
 
@@ -96,7 +96,7 @@
       <table width="495" border="0" cellpadding="0" cellspacing="2">
 
         <tr> 
-          <td valign="top" colspan="2"><I>Note: The regular Wiki FAQ was lost when Sourceforge upgraded their systems and many questions were lost.</I> <BR>
+          <td valign="top" colspan="2"><i>Note: The regular Wiki FAQ was lost when Sourceforge upgraded their systems and many questions were lost.</i> <br>
             &nbsp;</td>
         </tr>
         <tr valign="top"> 
@@ -111,7 +111,7 @@
             a Lego robot with Java!</td>
         </tr>
         <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color:#FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
 
         </tr>
         <tr> 
@@ -125,13 +125,13 @@
           <td>A:</td>
 
           <td>In English, the word is similar to Legos, except there is a J for 
-            Java, so the correct pronunciation would be Ley-J-oss.<BR>
+            Java, so the correct pronunciation would be Ley-J-oss.<br>
             If you are brave and want to pronounce the name in Spanish, there 
             is a word "lejos" which means far, and it is pronounced Lay-hoss.</td>
         </tr>
 
 <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color:#FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
         </tr>
 
 <tr valign="top"> 
@@ -141,11 +141,11 @@
         </tr>
         <tr valign="top"> 
           <td>A:</td>
-          <td>There are several options. If you are good with Java you can study the <A HREF="http://lejos.sourceforge.net/apidocs/index.html">API</A>. You can check out the examples folder that is included with leJOS. You can also read a <A HREF="http://www.amazon.com/exec/obidos/ASIN/0130093645/lejos0e-20">book</A> on leJOS programming.</tr>
+          <td>There are several options. If you are good with Java you can study the <a href="http://lejos.sourceforge.net/apidocs/index.html">API</a>. You can check out the examples folder that is included with leJOS. You can also read a <a href="http://www.amazon.com/exec/obidos/ASIN/0130093645/lejos0e-20">book</a> on leJOS programming.</tr>
 
 
         <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color:#FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
         </tr>
         <tr> 
           <td valign="top" colspan="2"><img src="assets/images/spacer.gif" width="2" height="8" border="0"></td>
@@ -157,11 +157,11 @@
         </tr>
         <tr valign="top"> 
           <td>A:</td>
-          <td>The same way as Java standard edition:<BR>
+          <td>The same way as Java standard edition:<br>
             &nbsp; &nbsp; <code>long free = Runtime.getRuntime().freeMemory();</code></td>
         </tr>
         <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color:#FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
 
         </tr>
         <tr> 
@@ -181,7 +181,7 @@
         </tr>
 
         <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color:#FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
         </tr>
 
         <tr> 
