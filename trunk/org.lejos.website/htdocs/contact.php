@@ -180,7 +180,7 @@
                  <td>&nbsp;&nbsp;<a href="http://rcxtools.sourceforge.net/" target="_blank">Web</a></td>
                  </tr>
                 <tr> 
-                  <td><a name="rinkens" href="#jab" onclick="l'+'to:esmetaman'+a+'users.sourceforge.net'">Juan Antonio Bre&ntilde;a Moral</a></td>
+                  <td><a name="rinkens" href="#jab" onclick="a='@'; this.href='mail'+'to:esmetaman'+a+'users.sourceforge.net'">Juan Antonio Bre&ntilde;a Moral</a></td>
                   <td>&nbsp;&nbsp;Webmaster/Developer</td>
                  <td>&nbsp;&nbsp;<a href="http://www.juanantonio.info" target="_blank">Web</a></td>
                  </tr>
