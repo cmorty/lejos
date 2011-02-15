@@ -1,7 +1,6 @@
 package lejos.robotics.navigation;
 
 import java.util.ArrayList;
-import lejos.nxt.Battery;
 import lejos.robotics.*;
 
 /*
@@ -254,9 +253,7 @@ public class DifferentialPilot implements
 
   public float getMaxTravelSpeed()
   {
-    // it is generally assumed, that the maximum accurate speed of Motor is
-    // 100 degree/second * Voltage
-    return Battery.getVoltage() * 100.0f / Math.max(_leftDegPerDistance, _rightDegPerDistance);
+    return Math.min(_left.getMaxSpeed(), _right.getMaxSpeed()) / Math.max(_leftDegPerDistance, _rightDegPerDistance);
     // max degree/second divided by degree/unit = unit/second
   }
 
@@ -279,10 +276,7 @@ public class DifferentialPilot implements
 
   public float getMaxRotateSpeed()
   {
-    // it is generally assumed, that the maximum accurate speed of that can
-//    be reliably maintained Motor is
-    // 100 degree/second * Voltage
-    return Battery.getVoltage() * 100.0f / Math.max(_leftTurnRatio, _rightTurnRatio);
+    return Math.min(_left.getMaxSpeed(), _right.getMaxSpeed()) / Math.max(_leftTurnRatio, _rightTurnRatio);
     // max degree/second divided by degree/unit = unit/second
   }
 

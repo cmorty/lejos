@@ -81,11 +81,18 @@ public interface RegulatedMotor extends BaseMotor, Tachometer {
   int getSpeed();
  
   /**
+   * Returns the maximim speed of the motor.
+   * 
+   * @return the maximum speed of the Motor in degrees per second.
+   */
+  float getMaxSpeed();
+  
+  /**
    * returns true if motor is stalled
    * @return true if stalled
    */
-
    boolean isStalled();
+   
    /**
     * Set the required rate of acceleration degrees/s/s
     * @param acceleration

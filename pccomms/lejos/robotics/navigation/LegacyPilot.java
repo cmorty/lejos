@@ -1,8 +1,5 @@
 package lejos.robotics.navigation;
 
-
-
-import lejos.nxt.Battery;
 import lejos.robotics.RegulatedMotor;
 
 /*
@@ -348,9 +345,7 @@ public class LegacyPilot {
 	 * @see lejos.robotics.navigation.Pilot#getTravelMaxSpeed()
 	 */
 	public float getMaxTravelSpeed() {
-		// it is generally assumed, that the maximum accurate speed of Motor is
-		// 100 degree/second * Voltage
-		return Battery.getVoltage() * 100.0f
+		return Math.min(_left.getMaxSpeed(), _right.getMaxSpeed())
 				/ Math.max(_leftDegPerDistance, _rightDegPerDistance);
 		// max degree/second divided by degree/unit = unit/second
 	}
@@ -360,9 +355,7 @@ public class LegacyPilot {
 	 */
         @Deprecated
 	public float getMoveMaxSpeed() {
-		// it is generally assumed, that the maximum accurate speed of Motor is
-		// 100 degree/second * Voltage
-		return Battery.getVoltage() * 100.0f
+		return Math.min(_left.getMaxSpeed(), _right.getMaxSpeed())
 				/ Math.max(_leftDegPerDistance, _rightDegPerDistance);
 		// max degree/second divided by degree/unit = unit/second
 	}
@@ -403,9 +396,7 @@ public class LegacyPilot {
 	 * @see lejos.robotics.navigation.Pilot#getRotateMaxSpeed()
 	 */
 	public float getMaxRotateSpeed() {
-		// it is generally assumed, that the maximum accurate speed of Motor is
-		// 100 degree/second * Voltage
-		return Battery.getVoltage() * 100.0f
+		return Math.min(_left.getMaxSpeed(), _right.getMaxSpeed())
 				/ Math.max(_leftTurnRatio, _rightTurnRatio);
 		// max degree/second divided by degree/unit = unit/second
 	}
