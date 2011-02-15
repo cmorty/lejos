@@ -13,7 +13,7 @@ public class Assertion {
 	 * @param s A string that may be printed along with any other
 	 *          error text.
 	 * @param flag if true then an Error will be thrown, otherwise
-	 *             nothing will happend.
+	 *             nothing will happen.
 	 * @throws Error if 'flag' is false.
 	 */
 	public static void test(String s, boolean flag)

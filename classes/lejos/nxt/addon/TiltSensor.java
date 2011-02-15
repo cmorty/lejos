@@ -2,6 +2,7 @@ package lejos.nxt.addon;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
+import lejos.robotics.Accelerometer;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -12,7 +13,7 @@ import lejos.nxt.I2CSensor;
  * This class works with HiTechnic or Mindsensors acceleration (tilt) sensor.
  * 
  */
-public class TiltSensor extends I2CSensor {
+public class TiltSensor extends I2CSensor implements Accelerometer {
 	byte[] buf = new byte[2];
 	byte[] buf2 = new byte[1];
 	
