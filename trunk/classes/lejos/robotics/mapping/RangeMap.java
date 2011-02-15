@@ -1,6 +1,5 @@
 package lejos.robotics.mapping;
 
-import java.awt.Rectangle;
 import lejos.geom.*;
 import lejos.robotics.Pose;
 
