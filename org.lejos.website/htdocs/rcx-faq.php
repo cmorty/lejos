@@ -24,7 +24,7 @@
 		<meta name="resource-type" content="document" />
 		
 		<!-- SEARCH ENGINE -->
-		<meta name="robots" content="all"><!-- CACHE -->
+		<meta name="robots" content="all" /><!-- CACHE -->
 		<meta http-equiv="cache-control" content="no-cache" />
 		<meta http-equiv="pragma" content="no-cache" />
 		<meta http-equiv="expires" content="0" />
@@ -96,7 +96,7 @@
       <table width="495" border="0" cellpadding="0" cellspacing="2">
 
         <tr> 
-          <td valign="top" colspan="2"><i>Note: The regular Wiki FAQ was lost when Sourceforge upgraded their systems and many questions were lost.</i> <br>
+          <td valign="top" colspan="2"><i>Note: The regular Wiki FAQ was lost when Sourceforge upgraded their systems and many questions were lost.</i> <br />
             &nbsp;</td>
         </tr>
         <tr valign="top"> 
@@ -111,11 +111,11 @@
             a Lego robot with Java!</td>
         </tr>
         <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
 
         </tr>
         <tr> 
-          <td valign="top" colspan="2"><img src="assets/images/spacer.gif" width="2" height="8" border="0"></td>
+          <td valign="top" colspan="2"><img src="assets/images/spacer.gif" width="2" height="8" border="0" /></td>
         </tr>
         <tr valign="top"> 
           <td>Q:</td>
@@ -125,13 +125,13 @@
           <td>A:</td>
 
           <td>In English, the word is similar to Legos, except there is a J for 
-            Java, so the correct pronunciation would be Ley-J-oss.<br>
+            Java, so the correct pronunciation would be Ley-J-oss.<br />
             If you are brave and want to pronounce the name in Spanish, there 
             is a word "lejos" which means far, and it is pronounced Lay-hoss.</td>
         </tr>
 
 <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
         </tr>
 
 <tr valign="top"> 
@@ -145,10 +145,10 @@
 
 
         <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
         </tr>
         <tr> 
-          <td valign="top" colspan="2"><img src="assets/images/spacer.gif" width="2" height="8" border="0"></td>
+          <td valign="top" colspan="2"><img src="assets/images/spacer.gif" width="2" height="8" border="0" /></td>
         </tr>
         <tr valign="top"> 
           <td>Q:</td>
@@ -157,15 +157,15 @@
         </tr>
         <tr valign="top"> 
           <td>A:</td>
-          <td>The same way as Java standard edition:<br>
+          <td>The same way as Java standard edition:<br />
             &nbsp; &nbsp; <code>long free = Runtime.getRuntime().freeMemory();</code></td>
         </tr>
         <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
 
         </tr>
         <tr> 
-          <td valign="top" colspan="2"><img src="assets/images/spacer.gif" width="2" height="8" border="0"></td>
+          <td valign="top" colspan="2"><img src="assets/images/spacer.gif" width="2" height="8" border="0" /></td>
         </tr>
         <tr valign="top"> 
           <td>Q:</td>
@@ -174,18 +174,18 @@
         <tr valign="top"> 
           <td>A:</td>
 
-          <td>There are three possibilities:<br>
-1. If the code is tightly bound to a robot model then the Robots section would be a great place.<br>
-2. If it improves the leJOS API then you might want to join the leJOS team and upload it to CVS.<br>
+          <td>There are three possibilities:<br />
+1. If the code is tightly bound to a robot model then the Robots section would be a great place.<br />
+2. If it improves the leJOS API then you might want to join the leJOS team and upload it to CVS.<br />
 3. If it is an example that demonstrates an aspect of the leJOS API then it can be uploaded to the examples section of CVS.</td>
         </tr>
 
         <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0"></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
         </tr>
 
         <tr> 
-          <td valign="top" colspan="2"><img src="assets/images/spacer.gif" width="2" height="8" border="0"></td>
+          <td valign="top" colspan="2"><img src="assets/images/spacer.gif" width="2" height="8" border="0" /></td>
         </tr>
       </table>
       </div>

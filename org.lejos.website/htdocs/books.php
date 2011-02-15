@@ -24,7 +24,7 @@
 		<meta name="resource-type" content="document" />
 		
 		<!-- SEARCH ENGINE -->
-		<meta name="robots" content="all"><!-- CACHE -->
+		<meta name="robots" content="all" /><!-- CACHE -->
 		<meta http-equiv="cache-control" content="no-cache" />
 		<meta http-equiv="pragma" content="no-cache" />
 		<meta http-equiv="expires" content="0" />
@@ -95,9 +95,9 @@
 <!-- **** BOOK LIST **** -->
 <p>
 <td>
-			<a href="http://www.amazon.com/exec/obidos/ASIN/0973864958/lejos0e-20">Maximum LEGO NXT: Building Robots with Java Brains<br> Second Edition</a> <br> by Brian Bagnall<br><br>
+			<a href="http://www.amazon.com/exec/obidos/ASIN/0973864958/lejos0e-20">Maximum LEGO NXT: Building Robots with Java Brains<br /> Second Edition</a> <br /> by Brian Bagnall<br /><br />
 The revised second edition features updated instructions for the improved LEGO NXT 2.0 kit and the new leJOS NXJ software. This accessible manual is the perfect guide to LEGO Mindstorms NXT, an incredible kit for building and programming your own robots. Using Java, the most popular and easy-to-use programming language available, this manual helps engineers and amateurs alike design and build their own customized robots, programmed however they desire. Complete with a diverse set of projects, building tips, programming codes, 3D-rendered building instructions, and hundreds of illustrations, this useful handbook is the perfect complement to the LEGO NXT kit. The NXT intelligent brick's Bluetooth capabilities are introduced as well as the newest available parts, including the gyro and the RFID sensor.
-<br>
+<br />
 
 <li>564 pages
 <li>Softcover, glossy

@@ -24,7 +24,7 @@
 		<meta name="resource-type" content="document" />
 		
 		<!-- SEARCH ENGINE -->
-		<meta name="robots" content="all"><!-- CACHE -->
+		<meta name="robots" content="all" /><!-- CACHE -->
 		<meta http-equiv="cache-control" content="no-cache" />
 		<meta http-equiv="pragma" content="no-cache" />
 		<meta http-equiv="expires" content="0" />
@@ -112,7 +112,7 @@
                 by Dario Laverde</li>
 				<li><a href="http://www.bartneck.de/work/education/masterClassLego/javaInstallNXT/index.html" target="_blank">Step-by-step instructions on how to install and run
 Java on your LEGO Mindstorms NXT</a> 
-                by Hu Jun & Christoph Bartneck</li>
+                by Hu Jun &amp; Christoph Bartneck</li>
 				<li><a href="http://www.juanantonio.info/jab_cms.php?id=206" target="_blank">Develop leJOS programs Step by Step</a> 
                 by Juan Antonio Breña Moral</li>				
             </ul>
