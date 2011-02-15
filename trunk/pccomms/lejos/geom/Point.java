@@ -1,7 +1,5 @@
 package lejos.geom;
 
-
-
 import java.awt.geom.*;
 
 /**
