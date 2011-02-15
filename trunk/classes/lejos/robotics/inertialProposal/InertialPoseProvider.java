@@ -1,9 +1,8 @@
 package lejos.robotics.inertialProposal;
 
-
 import lejos.geom.Point;
 import lejos.nxt.addon.GyroDirectionFinder;
-import lejos.nxt.addon.TiltSensor;
+import lejos.robotics.Accelerometer;
 import lejos.robotics.Move;
 import lejos.robotics.MoveListener;
 import lejos.robotics.MoveProvider;
@@ -30,14 +29,14 @@ public class InertialPoseProvider implements PoseProvider, MoveListener
 
     private Regulator reg = new Regulator();
     private GyroDirectionFinder gyro;
-    private TiltSensor accelerometer;
+    private Accelerometer accelerometer;
     private Point accelerometerCalibration = new Point(0, 0);
     private boolean calibrating = false;
     private long calibrationReadingCount = 0;
     private Point calibrationSum = new Point(0, 0);
     private boolean moving = false;
 
-    public InertialPoseProvider(TiltSensor accelerometer, GyroDirectionFinder gyro)
+    public InertialPoseProvider(Accelerometer accelerometer, GyroDirectionFinder gyro)
     {
         this.accelerometer = accelerometer;
         this.gyro = gyro;
