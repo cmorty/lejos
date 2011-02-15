@@ -1,7 +1,11 @@
 #!/bin/bash
 
-rsync -aP --delete \
+USER="$1"
+shift 1
+
+rsync -aP --delete "$@" \
 	--exclude=**/CVS \
+	--exclude=**/.svn \
 	--exclude=**/Thumbs.db \
 	--exclude=Assets_old \
 	--exclude=apidocs \
@@ -16,5 +20,5 @@ rsync -aP --delete \
 	--exclude=rcx/api \
 	--exclude=tools \
 	--exclude=tutorial \
-	skoehler,lejos@web.sourceforge.net:htdocs/ htdocs/
+	"$USER",lejos@web.sourceforge.net:htdocs/ htdocs/
 
