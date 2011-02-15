@@ -19,7 +19,7 @@
 
 		<!-- OTROS METADATOS -->
 		<meta name="VW96.objecttype" content="Document" />
-		<META NAME="DC.Language" SCHEME="RFC1766" CONTENT="English" />
+		<meta name="DC.Language" scheme="RFC1766" content="English" />
 		<meta name="distribution" content="global" />
 		<meta name="resource-type" content="document" />
 		
@@ -30,7 +30,7 @@
 		<meta http-equiv="expires" content="0" />
 
 		<!-- WEB EDITOR -->
-		<META name="author" CONTENT="Juan Antonio Breña Moral" />		
+		<meta name="author" content="Juan Antonio Breña Moral" />		
 
 		<link rel="stylesheet" href="r_css/lejos.css" type="text/css" />
 
@@ -185,7 +185,7 @@ For configuration and usage, consult the <em>leJOS NXJ</em> topic in Eclipse's <
 							<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 							<td class="n3t2r">
 							<b>November 15, 2008 11:36 AM</b><br />
-The new <b>leJOS NXJ 0.7</b> is now available for <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/downloads.php" class="simpleLink">download</a>. This version includes a Windows installer to make installation a breeze for new users (the compressed-file distribution is also still available). New features include better USB support, no more using a paper clip to upload firmware, faster garbage collection, three new GUI tools, a brand new <a href="http://lejos.sourceforge.net/nxt/nxj/tutorial/index.htm">Tutorial</a>, support for many new sensors, bug fixes and much more <a href="https://sourceforge.net/project/shownotes.php?group_id=9339&release_id=639759"> (full change log)</a>. We also have preliminary packages for the incredible Monte Carlo Localization technique, plus mobile phone remote control. (These packages are still undergoing changes and are not yet supported. For the brave only!) As usual, if you find any bugs please report them to our <a href="http://lejos.sourceforge.net/forum/">forums</a>.<br>
+The new <b>leJOS NXJ 0.7</b> is now available for <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/downloads.php" class="simpleLink">download</a>. This version includes a Windows installer to make installation a breeze for new users (the compressed-file distribution is also still available). New features include better USB support, no more using a paper clip to upload firmware, faster garbage collection, three new GUI tools, a brand new <a href="http://lejos.sourceforge.net/nxt/nxj/tutorial/index.htm">Tutorial</a>, support for many new sensors, bug fixes and much more <a href="https://sourceforge.net/project/shownotes.php?group_id=9339&amp;release_id=639759"> (full change log)</a>. We also have preliminary packages for the incredible Monte Carlo Localization technique, plus mobile phone remote control. (These packages are still undergoing changes and are not yet supported. For the brave only!) As usual, if you find any bugs please report them to our <a href="http://lejos.sourceforge.net/forum/">forums</a>.<br>
 <br>
 							</td>
 						</tr>
@@ -196,7 +196,7 @@ The new <b>leJOS NXJ 0.7</b> is now available for <a href="http://lejos.sourcefo
 							<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 							<td class="n3t2r">
 							<b>May 06, 2008 4:58 PM</b><br />
-<b>NXJ Version 0.6</b> is available for <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/downloads.php" class="simpleLink">download</a>. Along with numerous bug fixes, this version includes: Full <b>Mac OSX support</b>, output using System.out and System.err, switch statements, Bluetooth GPS, Bluetooth keyboard (SPP not HID), preliminary javax.bluetooth API, auto-run a program and many more (see <a href="http://sourceforge.net/project/shownotes.php?release_id=597314&group_id=9339" class="simpleLink">notes</a>).  Please report any bugs to the <a href="http://lejos.sourceforge.net/forum" class="simpleLink">forums</a>.
+<b>NXJ Version 0.6</b> is available for <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/downloads.php" class="simpleLink">download</a>. Along with numerous bug fixes, this version includes: Full <b>Mac OSX support</b>, output using System.out and System.err, switch statements, Bluetooth GPS, Bluetooth keyboard (SPP not HID), preliminary javax.bluetooth API, auto-run a program and many more (see <a href="http://sourceforge.net/project/shownotes.php?release_id=597314&amp;group_id=9339" class="simpleLink">notes</a>).  Please report any bugs to the <a href="http://lejos.sourceforge.net/forum" class="simpleLink">forums</a>.
 <br>
 <br>
 							</td>
