@@ -279,7 +279,7 @@ New versions of <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/dow
 							<td class="n3t2r"><a href="http://www.variantpress.com/books/maximum-lego-nxt"><img src="r_media/images/newsIcons/maximum_nxt_thumb.jpg" /></a></td>
 							<td class="n3t2r">
 							<b>April 18, 2007 6:10 PM</b><br />
-Announcing <a href="http://www.variantpress.com/books/maximum-lego-nxt" class="simpleLink">Maximum LEGO NXT: Building Robots with Java Brains</a>, a new book for LEGO NXT programmers. This is a follow-up to <b>Core LEGO MINDSTORMS Programming</b>. The book includes 14 complete robot plans and over two dozen projects, with a foreword by the Director of LEGO MINDSTORMS, S�ren Lund. Maximum LEGO NXT will be available from the publisher April 25, 2007 or from book stores and online retailers about a week later. For more information visit the <a href="http://www.variantpress.com/books/maximum-lego-nxt" class="simpleLink">website</a>.<br />
+Announcing <a href="http://www.variantpress.com/books/maximum-lego-nxt" class="simpleLink">Maximum LEGO NXT: Building Robots with Java Brains</a>, a new book for LEGO NXT programmers. This is a follow-up to <b>Core LEGO MINDSTORMS Programming</b>. The book includes 14 complete robot plans and over two dozen projects, with a foreword by the Director of LEGO MINDSTORMS, Søren Lund. Maximum LEGO NXT will be available from the publisher April 25, 2007 or from book stores and online retailers about a week later. For more information visit the <a href="http://www.variantpress.com/books/maximum-lego-nxt" class="simpleLink">website</a>.<br />
 <br />
 							</td>
 						</tr>
