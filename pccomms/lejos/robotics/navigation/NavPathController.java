@@ -41,6 +41,10 @@ public class NavPathController implements PathController
 
   public NavPathController(MoveController pilot, PoseProvider poseProvider, PathFinder pathFinder) {
 	  this(pilot, poseProvider);
+	  setPathFinder(pathFinder);
+  }
+  
+  public void setPathFinder(PathFinder pathFinder) {
 	  this.pathFinder = pathFinder; 
 	  final PathController pc = this; // Grab reference to NavPathController object for inner class
 	  pathFinder.addListener(new WayPointListener() {
@@ -52,7 +56,11 @@ public class NavPathController implements PathController
 		  public void pathComplete() {
 			  // Nothing to do. PathController keeps waiting for more Waypoints in queue.
 		  }
-	  });
+	  });	  
+  }
+  
+  public PathFinder getPathFinder() {
+	  return pathFinder;
   }
   
   /** returns <code> false </code> if the the final waypoint has been reached or interrupt() has been called
