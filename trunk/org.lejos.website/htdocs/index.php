@@ -1,3 +1,7 @@
+<?php
+	echo '<?xml version="1.0" encoding="UTF-8" ?>';
+?>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
@@ -31,7 +35,7 @@
 		<meta http-equiv="expires" content="0" />
 
 		<!-- WEB EDITOR -->
-		<meta name="author" content="Juan Antonio Breña Moral" />		
+		<meta name="author" content="Juan Antonio BreÃ±a Moral" />		
 
 		<link rel="stylesheet" href="r_css/lejos.css" type="text/css" />
 
@@ -275,7 +279,7 @@ New versions of <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/dow
 							<td class="n3t2r"><a href="http://www.variantpress.com/books/maximum-lego-nxt"><img src="r_media/images/newsIcons/maximum_nxt_thumb.jpg" /></a></td>
 							<td class="n3t2r">
 							<b>April 18, 2007 6:10 PM</b><br />
-Announcing <a href="http://www.variantpress.com/books/maximum-lego-nxt" class="simpleLink">Maximum LEGO NXT: Building Robots with Java Brains</a>, a new book for LEGO NXT programmers. This is a follow-up to <b>Core LEGO MINDSTORMS Programming</b>. The book includes 14 complete robot plans and over two dozen projects, with a foreword by the Director of LEGO MINDSTORMS, Søren Lund. Maximum LEGO NXT will be available from the publisher April 25, 2007 or from book stores and online retailers about a week later. For more information visit the <a href="http://www.variantpress.com/books/maximum-lego-nxt" class="simpleLink">website</a>.<br />
+Announcing <a href="http://www.variantpress.com/books/maximum-lego-nxt" class="simpleLink">Maximum LEGO NXT: Building Robots with Java Brains</a>, a new book for LEGO NXT programmers. This is a follow-up to <b>Core LEGO MINDSTORMS Programming</b>. The book includes 14 complete robot plans and over two dozen projects, with a foreword by the Director of LEGO MINDSTORMS, Sï¿½ren Lund. Maximum LEGO NXT will be available from the publisher April 25, 2007 or from book stores and online retailers about a week later. For more information visit the <a href="http://www.variantpress.com/books/maximum-lego-nxt" class="simpleLink">website</a>.<br />
 <br />
 							</td>
 						</tr>
