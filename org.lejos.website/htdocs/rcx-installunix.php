@@ -74,9 +74,9 @@
 							<li><a href="lejos.php" class="menuLinkSelected">leJOS RCX</a>
 							<ul class="menu_l2">
 								<li><a href="rcx/api/index.html" class="menuLink" target="_blank">API</a></li>
-								<li><a href="rcx-downloads.php" class="menuLinkSelected">Download</a></li>
-								<li><a class="menuLink" href="rcx-faq.php" >FAQ</a></li>
 								<li><a href="rcx/tutorial/index.html" class="menuLink" target="_blank">Tutorial</a></li>
+								<li><a href="rcx-downloads.php" class="menuLinkSelected">Downloads</a></li>
+								<li><a class="menuLink" href="rcx-faq.php" >FAQ</a></li>
 							</ul></li>	
 						</ul></li>
 						<li><a href="http://lejos.sourceforge.net/forum/" class="menuLink" target="_blank">Forum</a></li>
