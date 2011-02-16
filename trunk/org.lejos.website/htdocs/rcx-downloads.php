@@ -59,27 +59,27 @@
 					<!-- MENU -->
 					<ul class="menu">
 						<li><a href="index.php" class="menuLink">Home</a></li>
-						<li>NXT Brick</li>
+						<li>NXT Brick
 						<ul class="menu_l1">
-							<li><a class="menuLink" href="nxj.php" >leJOS NXJ</a></li>
+							<li><a class="menuLink" href="nxj.php" >leJOS NXJ</a>
 							<ul class="menu_l2">
 								<li><a href="nxt/nxj/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="nxt/pc/api/index.html" class="menuLink" target="_blank">PC API</a></li>
 								<li><a href="nxt/nxj/tutorial/index.htm" class="menuLink" target="_blank">Tutorial</a></li>								
 								<li><a href="nxj-downloads.php" class="menuLink" >Downloads</a></li>
-							</ul>
-						</ul>
-						<li class="selected">RCX Brick</li>
+							</ul></li>
+						</ul></li>
+						<li class="selected">RCX Brick
 						<ul class="menu_l1">
-							<li><a href="rcx.php" class="menuLinkSelected">leJOS RCX</a></li>
+							<li><a href="rcx.php" class="menuLinkSelected">leJOS RCX</a>
 							<ul class="menu_l2">
 								<li><a href="rcx/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="rcx/tutorial/index.html" class="menuLink" target="_blank">Tutorial</a></li>
 								<li class="selected">Downloads</li>
 								<li><a class="menuLink" href="rcx-faq.php" >FAQ</a></li>
 
-							</ul>		
-						</ul>
+							</ul></li>	
+						</ul></li>
 						<li><a href="http://lejos.sourceforge.net/forum/" class="menuLink" target="_blank">Forum</a></li>
 						<li><a class="menuLink" href="links.php">Links</a></li>
 						<li><a class="menuLink" href="contact.php">Contact</a></li>
@@ -101,7 +101,7 @@
 
 					<table width="100%">
 
-        </tr>
+        <tr>
           <td valign="top"><b>Win32 leJOS</b></td>
 
         </tr>
@@ -175,9 +175,8 @@
         </tr>
         <tr> 
           <td valign="top"> 
-	    leJOS 3 will be the final release for the RCX, incorporating all the enhancements to lejOS made since the 2.1.0 release in 2003.
-	    <p>
-            Release Candidate 2 (17<sup>th</sup> of September, 2006):
+	    <p>leJOS 3 will be the final release for the RCX, incorporating all the enhancements to lejOS made since the 2.1.0 release in 2003.</p>
+	    <p>Release Candidate 2 (17<sup>th</sup> of September, 2006):</p>
             <ul>
    				<li><a href="http://lejos.sourceforge.net/tools/lejos3/lejos.3.0.0-RC2.tar.gz" target="_blank">leJOS 3.0 RC2 for Linux</a> [3.2 m]</li>
 

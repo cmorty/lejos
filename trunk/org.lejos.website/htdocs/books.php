@@ -59,26 +59,26 @@
 				<!-- MENU -->
 					<ul class="menu">
 						<li><a href="index.php" class="menuLink">Home</a></li>
-						<li>NXT Brick</li>
+						<li>NXT Brick
 						<ul class="menu_l1">
-							<li><a href="nxj.php"  class="menuLink">leJOS NXJ</a></li>
+							<li><a href="nxj.php"  class="menuLink">leJOS NXJ</a>
 							<ul class="menu_l2">
 								<li><a href="nxt/nxj/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="nxt/pc/api/index.html" class="menuLink">PC API</a></li>
 								<li><a href="nxt/nxj/tutorial/index.htm" class="menuLink" target="_blank">Tutorial</a></li>								
 								<li><a href="nxj-downloads.php" class="menuLink" >Downloads</a></li>
-							</ul>
-						</ul>
-						<li>RCX Brick</li>
+							</ul></li>
+						</ul></li>
+						<li>RCX Brick
 						<ul class="menu_l1">
-							<li><a href="rcx.php"  class="menuLink">leJOS RCX</a></li>
+							<li><a href="rcx.php"  class="menuLink">leJOS RCX</a>
 							<ul class="menu_l2">
 								<li><a href="rcx/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="rcx/tutorial/index.html" class="menuLink" target="_blank">Tutorial</a></li>
 								<li><a href="rcx-downloads.php" class="menuLink" >Downloads</a></li>
 								<li><a href="rcx-faq.php"  class="menuLink">FAQ</a></li>
-							</ul>		
-						</ul>
+							</ul></li>	
+						</ul></li>
 						<li><a href="http://lejos.sourceforge.net/forum/" class="menuLink" target="_blank">Forum</a></li>
 						<li class="selected">Books</li>
 						<li><a href="links.php" class="menuLink">Links</a></li>
@@ -98,27 +98,28 @@
 						</tr>
 				
 <!-- **** BOOK LIST **** -->
-<p>
+<tr>
 <td>
-			<a href="http://www.amazon.com/exec/obidos/ASIN/0973864958/lejos0e-20">Maximum LEGO NXT: Building Robots with Java Brains<br /> Second Edition</a> <br /> by Brian Bagnall<br /><br />
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0973864958/lejos0e-20">Maximum LEGO NXT: Building Robots with Java Brains<br /> Second Edition</a> <br /> by Brian Bagnall</p>
+<p>			
 The revised second edition features updated instructions for the improved LEGO NXT 2.0 kit and the new leJOS NXJ software. This accessible manual is the perfect guide to LEGO Mindstorms NXT, an incredible kit for building and programming your own robots. Using Java, the most popular and easy-to-use programming language available, this manual helps engineers and amateurs alike design and build their own customized robots, programmed however they desire. Complete with a diverse set of projects, building tips, programming codes, 3D-rendered building instructions, and hundreds of illustrations, this useful handbook is the perfect complement to the LEGO NXT kit. The NXT intelligent brick's Bluetooth capabilities are introduced as well as the newest available parts, including the gyro and the RFID sensor.
-<br />
-
-<li>564 pages
-<li>Softcover, glossy
-<li>7" by 9.25"
-<li>ISBN 0973864958
-<li>Available July 15, 2009
-<p>
-<a href="http://www.amazon.com/exec/obidos/ASIN/0973864958/lejos0e-20">Preorder from Amazon</a>
 </p>
+
+<ul>
+<li>564 pages</li>
+<li>Softcover, glossy</li>
+<li>7" by 9.25"</li>
+<li>ISBN 0973864958</li>
+<li>Available July 15, 2009</li>
+</ul>
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0973864958/lejos0e-20">Preorder from Amazon</a></p>
 </td>
 
 <td>
 <a href="http://www.amazon.com/exec/obidos/ASIN/0973864958/lejos0e-20"><img src="r_media/images/books/maximum_NXT_second.jpg" /></a>
 </td>
+</tr>
 
-</p>
 <!-- **** END BOOK LIST -->
 
 	</table>

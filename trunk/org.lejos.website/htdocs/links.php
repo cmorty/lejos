@@ -59,26 +59,26 @@
 				<!-- MENU -->
 					<ul class="menu">
 						<li><a href="index.php" class="menuLink">Home</a></li>
-						<li>NXT Brick</li>
+						<li>NXT Brick
 						<ul class="menu_l1">
-							<li><a href="nxj.php"  class="menuLink">leJOS NXJ</a></li>
+							<li><a href="nxj.php"  class="menuLink">leJOS NXJ</a>
 							<ul class="menu_l2">
 								<li><a href="nxt/nxj/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="nxt/pc/api/index.html" class="menuLink" target="_blank">PC API</a></li>
 								<li><a href="nxt/nxj/tutorial/index.htm" class="menuLink" target="_blank">Tutorial</a></li>								
 								<li><a href="nxj-downloads.php" class="menuLink" >Downloads</a></li>
-							</ul>
-						</ul>
-						<li>RCX Brick</li>
+							</ul></li>
+						</ul></li>
+						<li>RCX Brick
 						<ul class="menu_l1">
-							<li><a href="rcx.php"  class="menuLink">leJOS RCX</a></li>
+							<li><a href="rcx.php"  class="menuLink">leJOS RCX</a>
 							<ul class="menu_l2">
 								<li><a href="rcx/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="rcx/tutorial/index.html" class="menuLink" target="_blank">Tutorial</a></li>
 								<li><a href="rcx-downloads.php" class="menuLink">Downloads</a></li>
 								<li><a href="rcx-faq.php"  class="menuLink">FAQ</a></li>
-							</ul>		
-						</ul>
+							</ul></li>
+						</ul></li>
 						<li><a href="http://lejos.sourceforge.net/forum/" class="menuLink" target="_blank">Forum</a></li>
 						<li><a href="books.php" class="menuLink">Books</a></li>
 						<li class="selected">Links</li>
@@ -100,7 +100,6 @@
 					<div id="content">
 				
 
-					<p>
 			<ul>
               <li><a href="http://sourceforge.net/projects/lejos/">leJOS Project 
                 Homepage</a> @ Sourceforge</li>
@@ -121,7 +120,6 @@ Java on your LEGO Mindstorms NXT</a>
 				<li><a href="http://www.juanantonio.info/jab_cms.php?id=206" target="_blank">Develop leJOS programs Step by Step</a> 
                 by Juan Antonio Breña Moral</li>				
             </ul>
-</p>
 </div>
 <!-- GO TOP -->
 <div align="right"><a href="#top" class="top">Top</a></div><br />

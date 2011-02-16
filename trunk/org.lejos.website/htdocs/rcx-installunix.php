@@ -59,26 +59,26 @@
 					<!-- MENU -->
 					<ul class="menu">
 						<li><a href="index.php" class="menuLink">Home</a></li>
-						<li>NXT Brick</li>
+						<li>NXT Brick
 						<ul class="menu_l1">
-							<li><a class="menuLink" href="nxj.php" >leJOS NXJ</a></li>
+							<li><a class="menuLink" href="nxj.php" >leJOS NXJ</a>
 							<ul class="menu_l2">
 								<li><a href="nxt/nxj/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="nxt/pc/api/index.html" class="menuLink" target="_blank">PC API</a></li>
 								<li><a href="nxt/nxj/tutorial/index.htm" class="menuLink" target="_blank">Tutorial</a></li>								
 								<li><a href="nxj-downloads.php" class="menuLink" >Downloads</a></li>
-							</ul>
-						</ul>
-						<li class="selected">RCX Brick</li>
+							</ul></li>
+						</ul></li>
+						<li class="selected">RCX Brick
 						<ul class="menu_l1">
-							<li><a href="lejos.php" class="menuLinkSelected">leJOS RCX</a></li>
+							<li><a href="lejos.php" class="menuLinkSelected">leJOS RCX</a>
 							<ul class="menu_l2">
 								<li><a href="rcx/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="rcx-downloads.php" class="menuLinkSelected">Download</a></li>
 								<li><a class="menuLink" href="rcx-faq.php" >FAQ</a></li>
 								<li><a href="rcx/tutorial/index.html" class="menuLink" target="_blank">Tutorial</a></li>
-							</ul>		
-						</ul>
+							</ul></li>	
+						</ul></li>
 						<li><a href="http://lejos.sourceforge.net/forum/" class="menuLink" target="_blank">Forum</a></li>
 						<li><a class="menuLink" href="links.php">Links</a></li>
 						<li><a class="menuLink" href="contact.php">Contact</a></li>
