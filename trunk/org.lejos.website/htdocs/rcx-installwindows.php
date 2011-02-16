@@ -68,11 +68,6 @@
 								<li><a href="nxt/nxj/tutorial/index.htm" class="menuLink" target="_blank">Tutorial</a></li>								
 								<li><a href="nxj-downloads.php" class="menuLink" >Downloads</a></li>
 							</ul></li>
-							<li><a href="icommand.php" class="menuLink">iCommand</a>
-							<ul class="menu_l2">
-								<li><a href="nxt/icommand/api/index.html" class="menuLink" target="_blank">API</a></li>
-								<li><a href="icommand-downloads.php" class="menuLink">Downloads</a></li>
-							</ul></li>
 						</ul></li>
 						<li class="selected">RCX Brick
 						<ul class="menu_l1">
@@ -80,7 +75,7 @@
 							<ul class="menu_l2">
 								<li><a href="rcx/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="rcx/tutorial/index.html" class="menuLink" target="_blank">Tutorial</a></li>
-								<li><a href="rcx-downloads.php" class="menuLinkSelected">Download</a></li>
+								<li><a href="rcx-downloads.php" class="menuLinkSelected">Downloads</a></li>
 								<li><a href="rcx-faq.php" class="menuLink">FAQ</a></li>
 							</ul></li>		
 						</ul></li>
