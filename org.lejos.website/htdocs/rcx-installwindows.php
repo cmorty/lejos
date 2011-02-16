@@ -59,31 +59,31 @@
 					<!-- MENU -->
 					<ul class="menu">
 						<li><a href="index.php" class="menuLink">Home</a></li>
-						<li>NXT Brick</li>
+						<li>NXT Brick
 						<ul class="menu_l1">
-							<li><a class="menuLink" href="nxj.php" >leJOS NXJ</a></li>
+							<li><a class="menuLink" href="nxj.php" >leJOS NXJ</a>
 							<ul class="menu_l2">
 								<li><a href="nxt/nxj/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="nxt/pc/api/index.html" class="menuLink" target="_blank">PC API</a></li>
 								<li><a href="nxt/nxj/tutorial/index.htm" class="menuLink" target="_blank">Tutorial</a></li>								
 								<li><a href="nxj-downloads.php" class="menuLink" >Downloads</a></li>
-							</ul>
-							<li><a href="icommand.php" class="menuLink">iCommand</a></li>
+							</ul></li>
+							<li><a href="icommand.php" class="menuLink">iCommand</a>
 							<ul class="menu_l2">
 								<li><a href="nxt/icommand/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="icommand-downloads.php" class="menuLink">Downloads</a></li>
-							</ul>
-						</ul>
-						<li class="selected">RCX Brick</li>
+							</ul></li>
+						</ul></li>
+						<li class="selected">RCX Brick
 						<ul class="menu_l1">
-							<li><a href="rcx.php" class="menuLinkSelected">leJOS RCX</a></li>
+							<li><a href="rcx.php" class="menuLinkSelected">leJOS RCX</a>
 							<ul class="menu_l2">
 								<li><a href="rcx/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="rcx/tutorial/index.html" class="menuLink" target="_blank">Tutorial</a></li>
 								<li><a href="rcx-downloads.php" class="menuLinkSelected">Download</a></li>
 								<li><a href="rcx-faq.php" class="menuLink">FAQ</a></li>
-							</ul>		
-						</ul>
+							</ul></li>		
+						</ul></li>
 						<li><a href="http://lejos.sourceforge.net/forum/" class="menuLink" target="_blank">Forum</a></li>
 						<li><a class="menuLink" href="links.php">Links</a></li>
 						<li><a class="menuLink" href="contact.php">Contact</a></li>
@@ -111,20 +111,20 @@
             the Unix distribution, or run <code>make</code>.</p>
 
             <p>
-            To install leJOS:
+            To install leJOS:</p>
             <ul>
             <li>Unzip the file you downloaded. A top directory, <code>lejos</code>, is already provided.</li>
             <li>Set <b>RCXTTY</b> to the IR serial port, e.g. <code>set RCXTTY=COM2</code>.</li>
 
             <li>Both the JDK's and  leJOS' <code>bin</code> directories should be in your <b>PATH</b>.</li>
             </ul>
-            Under Windows 95/98, you might want to create a batch file that sets these
+            <p>Under Windows 95/98, you might want to create a batch file that sets these
             variables, and specify that batch file in the <code>Program</code> properties
             of a DOS console shortcut; or set them in C:\AUTOEXEC.BAT.</p>
 
-            <p><h3>Testing the Release</h3>
-            To run the <code>View</code> example, go to the
-            <code>lejos</code> directory and type:
+            <h3>Testing the Release</h3>
+            <p>To run the <code>View</code> example, go to the
+            <code>lejos</code> directory and type:</p>
 
             <pre>
             lejosfirmdl
@@ -134,7 +134,7 @@
             lejos View
             </pre>
 
-            Press <code>Run</code> to start the program.
+            <p>Press <code>Run</code> to start the program.
             This example allows you to test sensors
             and motors. Press <code>View</code> to select a
             sensor or motor. Press <code>Run</code> to activate or

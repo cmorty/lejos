@@ -59,28 +59,28 @@
 					<!-- MENU -->
 					<ul class="menu">
 						<li><a href="index.php" class="menuLink">Home</a></li>
-						<li class="selected">NXT Brick</li>
+						<li class="selected">NXT Brick
 						<ul class="menu_l1">
-							<li class="selected">leJOS NXJ</li>
+							<li class="selected">leJOS NXJ
 							<ul class="menu_l2">
 								<li><a href="nxt/nxj/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="nxt/pc/api/index.html" class="menuLink" target="_blank">PC API</a></li>
 								<li><a href="nxt/nxj/tutorial/index.htm" class="menuLink" target="_blank">Tutorial</a></li>								
 								<li><a href="nxj-downloads.php" class="menuLink" >Downloads</a></li>								
-							</ul>
-						</ul>
-						<li>RCX Brick</li>
+							</ul></li>
+						</ul></li>
+						<li>RCX Brick
 						<ul class="menu_l1">
-							<li><a class="menuLink" href="rcx.php">leJOS RCX</li>
+							<li><a class="menuLink" href="rcx.php">leJOS RCX</a>
 							<ul class="menu_l2">
 								<li><a href="rcx/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="rcx/tutorial/index.html" class="menuLink" target="_blank">Tutorial</a></li>
 								<li><a href="rcx-downloads.php" class="menuLink" >Downloads</a></li>
 								<li><a href="rcx-faq.php" class="menuLink">FAQ</a></li>
-							</ul>		
-						</ul>
+							</ul></li>
+						</ul></li>
 						<li><a href="http://lejos.sourceforge.net/forum/" class="menuLink" target="_blank">Forum</a></li>
-						<li><a class="menuLink" href="books.php">Books</a>
+						<li><a class="menuLink" href="books.php">Books</a></li>
 						<li><a class="menuLink" href="links.php">Links</a></li>
 						<li><a class="menuLink" href="contact.php">Contact</a></li>
 					</ul>
@@ -106,7 +106,7 @@ leJOS (pronounced like the Spanish word "lejos" for "far") is a tiny Java Virtua
 <p>
 <b>leJOS NXJ</b> includes all the classes in the <a href="nxt/nxj/api/index.html">NXJ API</a> as well as the tools used to upload code to the NXT brick.<br/><br/>
 
-leJOS NXJ offers the following:
+leJOS NXJ offers the following:</p>
 <ul>
   <li>Object oriented language (Java)</li>
   <li>Preemptive threads (tasks)</li>
@@ -118,7 +118,6 @@ leJOS NXJ offers the following:
   <li>Most of the java.lang, java.util and java.io classes</li>
   <li>A Well-documented Robotics API</li>
 </ul>
-</p>
 </div>
 <!-- GO TOP -->
 <div align="right"><a href="#top" class="top">Top</a></div><br />

@@ -57,26 +57,26 @@
 				<td rowspan="3" class="n2t1r1c1">
 					<ul class="menu">
 						<li>Home</li>
-						<li>NXT Brick</li>
+						<li>NXT Brick
 						<ul class="menu_l1">
-							<li><a href="nxj.php"  class="menuLink">leJOS NXJ</a></li>
+							<li><a href="nxj.php"  class="menuLink">leJOS NXJ</a>
 							<ul class="menu_l2">
 								<li><a href="nxt/nxj/api/index.html" class="menuLink">API</a></li>
 								<li><a href="nxt/pc/api/index.html" class="menuLink">PC API</a></li>
 								<li><a href="nxt/nxj/tutorial/index.htm" class="menuLink" target="_blank">Tutorial</a></li>
 								<li><a href="nxj-downloads.php" class="menuLink" >Downloads</a></li>
-							</ul>
-						</ul>
-						<li>RCX Brick</li>
+							</ul></li>
+						</ul></li>
+						<li>RCX Brick
 						<ul class="menu_l1">
-							<li><a href="rcx.php"  class="menuLink">leJOS RCX</a></li>
+							<li><a href="rcx.php"  class="menuLink">leJOS RCX</a>
 							<ul class="menu_l2">
 								<li><a href="rcx/api/index.html" class="menuLink">API</a></li>
 								<li><a href="rcx/tutorial/index.html" class="menuLink">Tutorial</a></li>
 								<li><a class="menuLink" href="rcx-downloads.php" >Downloads</a></li>
 								<li><a href="rcx-faq.php"  class="menuLink">FAQ</a></li>
-							</ul>		
-						</ul>
+							</ul></li>
+						</ul></li>
 						<li><a href="http://lejos.sourceforge.net/forum/" class="menuLink">Forum</a></li>
 						<li><a href="books.php" class="menuLink">Books</a></li>
 						<li><a href="links.php" class="menuLink">Links</a></li>
@@ -138,7 +138,6 @@ See the <a href="http://sourceforge.net/projects/lejos/files/lejos-NXJ-win32/0.8
 <ul>
 <li><em>Name</em>: leJOS NXJ (or whatever you like)</li>
 <li><em>URL</em>: <a href="http://lejos.sourceforge.net/tools/eclipse/plugin/nxj/" class="simpleLink">http://lejos.sourceforge.net/tools/eclipse/plugin/nxj/</a></li>
-</li>
 </ul>
 For configuration and usage, consult the <em>leJOS NXJ</em> topic in Eclipse's <em>Help-&gt;Help contents</em> view after installation.
 <br />
@@ -179,7 +178,6 @@ For configuration and usage, consult the <em>leJOS NXJ</em> topic in Eclipse's <
 <ul>
 <li><em>Name</em>: leJOS NXJ (or whatever you like)</li>
 <li><em>URL</em>: <a href="http://lejos.sourceforge.net/tools/eclipse/plugin/nxj/" class="simpleLink">http://lejos.sourceforge.net/tools/eclipse/plugin/nxj/</a></li>
-</li>
 </ul>
 For configuration and usage, consult the <em>leJOS NXJ</em> topic in Eclipse's <em>Help-&gt;Help contents</em> view after installation.
 <br />
@@ -218,7 +216,6 @@ Use Eclipse's Update manager to install it from the remote update site as follow
 <ul>
 <li><em>Name</em>: leJOS NXJ (or whatever you like)</li>
 <li><em>URL</em>: <a href="http://lejos.sourceforge.net/tools/eclipse/plugin/nxj/" class="simpleLink">http://lejos.sourceforge.net/tools/eclipse/plugin/nxj/</a></li>
-</li>
 </ul>
 For configuration and usage, consult the <em>leJOS NXJ</em> topic in Eclipse's <em>Help-&gt;Help contents</em> view after installation.
 <br />
@@ -357,7 +354,7 @@ leJOS NXJ Alpha 0.2 is now available. This release  contains preliminary Bluetoo
 				the final release for the RCX, incorporating all the enhancements made
 				to leJOS since the last official release (2.1.0) in 2003 (before we
 				hit the road for Java support for the RCX's successor, the NXT). Be
-				sure to check it out in the <a href="p_technologies/rcx/downloads.php" class="simpleLink"/>downloads section</a> and provide feedback to the
+				sure to check it out in the <a href="p_technologies/rcx/downloads.php" class="simpleLink">downloads section</a> and provide feedback to the
 				authors.
 							</td>
 						</tr>
@@ -366,7 +363,7 @@ leJOS NXJ Alpha 0.2 is now available. This release  contains preliminary Bluetoo
 							<td valign="top"><img src="r_media/images/newsIcons/nxt_robot.jpg" /></td>
 							<td valign="top">
 							<b>January 5, 2006 9:53 AM</b><br />
-At the January CES, Lego announced the next generation of Lego Mindstorms, called <a href="http://mindstorms.lego.com/" class="simpleLink"/>Lego NXT</a>. 
+At the January CES, Lego announced the next generation of Lego Mindstorms, called <a href="http://mindstorms.lego.com/" class="simpleLink">Lego NXT</a>. 
 The kit is scheduled for launch in September 2006 but they will be releasing 100 developer kits in February. We hope members of the leJOS team will receive these kits, and if we do we will be porting leJOS for the NXT so people can continue to develop their next generation robots in Java!
 							</td>
 						</tr>					

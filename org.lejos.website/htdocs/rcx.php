@@ -59,26 +59,26 @@
 					<!-- MENU -->
 					<ul class="menu">
 						<li><a href="index.php" class="menuLink">Home</a></li>
-						<li>NXT Brick</li>
+						<li>NXT Brick
 						<ul class="menu_l1">
-							<li><a class="menuLink" href="../nxt/nxj/nxj.php" >leJOS NXJ</a></li>
+							<li><a class="menuLink" href="../nxt/nxj/nxj.php" >leJOS NXJ</a>
 							<ul class="menu_l2">
 								<li><a href="nxt/nxj/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="nxt/pc/api/index.html" class="menuLink">PC API</a></li>
 								<li><a href="nxt/nxj/tutorial/index.htm" class="menuLink" target="_blank">Tutorial</a></li>								
 								<li><a href="nxj-downloads.php" class="menuLink">Downloads</a></li>
-							</ul>
-						</ul>
-						<li class="selected">RCX Brick</li>
+							</ul></li>
+						</ul></li>
+						<li class="selected">RCX Brick
 						<ul class="menu_l1">
-							<li class="selected">leJOS RCX</li>
+							<li class="selected">leJOS RCX
 							<ul class="menu_l2">
 								<li><a href="rcx/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="rcx/tutorial/index.html" class="menuLink" target="_blank">Tutorial</a></li>
 								<li><a href="rcx-downloads.php" class="menuLink" >Downloads</a></li>
 								<li><a href="rcx-faq.php" class="menuLink" >FAQ</a></li>
-							</ul>		
-						</ul>
+							</ul></li>
+						</ul></li>
 						<li><a href="http://lejos.sourceforge.net/forum/" class="menuLink" target="_blank">Forum</a></li>
 						<li><a class="menuLink" href="links.php">Links</a></li>
 						<li><a class="menuLink" href="contact.php">Contact</a></li>
@@ -101,14 +101,14 @@
 					<b><a name="what_is_lejos">What is leJOS?</a></b><br />
 
 leJOS (pronounced like the Spanish word "lejos" for "far") is a 
-tiny Java Virtual Machine for the Lego Mindstorms RCX.<br/><br/>
+tiny Java Virtual Machine for the Lego Mindstorms RCX.</p>
 
-leJOS was originally forked out of the </a><a
+<p>leJOS was originally forked out of the <a
  href="http://tinyvm.sourceforge.net" target="_blank">TinyVM project</a>. <br />
 It contains a VM for Java bytecodes and additional software to load and
-run Java programs. <br/><br/>
+run Java programs.</p>
 
-These are some of the features offered:
+<p>These are some of the features offered:</p>
 <ul>
   <li>Object oriented language (Java)</li>
   <li>Preemptive threads (tasks)</li>
@@ -123,7 +123,7 @@ These are some of the features offered:
 
 
             <p>
-            	<b>Documentation and Tutorials</b><br />
+            	<b>Documentation and Tutorials</b></p>
 
 
             <ul>
@@ -133,7 +133,6 @@ These are some of the features offered:
               <li><a href="http://dudley.wellesley.edu/~anderson/robots/lejos/" target="_blank">leJOS Documentation</a> by Scott Anderson, Wellesley College</li>
             </ul>
 
-</p>
 </div>
 <!-- GO TOP -->
 <div align="right"><a href="#top" class="top">Top</a></div><br />

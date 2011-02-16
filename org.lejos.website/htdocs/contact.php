@@ -59,26 +59,26 @@
 				<!-- MENU -->
 					<ul class="menu">
 						<li><a href="index.php" class="menuLink">Home</a></li>
-						<li>NXT Brick</li>
+						<li>NXT Brick
 						<ul class="menu_l1">
-							<li><a href="nxj.php"  class="menuLink">leJOS NXJ</a></li>
+							<li><a href="nxj.php"  class="menuLink">leJOS NXJ</a>
 							<ul class="menu_l2">
 								<li><a href="nxt/nxj/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="nxt/pc/api/index.html" class="menuLink">PC API</a></li>
 								<li><a href="nxt/nxj/tutorial/index.htm" class="menuLink" target="_blank">Tutorial</a></li>								
 								<li><a href="nxj-downloads.php" class="menuLink" >Downloads</a></li>
-							</ul>
-						</ul>
-						<li>RCX Brick</li>
+							</ul></li>
+						</ul></li>
+						<li>RCX Brick
 						<ul class="menu_l1">
-							<li><a href="rcx.php"  class="menuLink">leJOS RCX</a></li>
+							<li><a href="rcx.php"  class="menuLink">leJOS RCX</a>
 							<ul class="menu_l2">
 								<li><a href="rcx/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="rcx/tutorial/index.html" class="menuLink" target="_blank">Tutorial</a></li>
 								<li><a href="rcx-downloads.php" class="menuLink">Downloads</a></li>
 								<li><a href="rcx-faq.php"  class="menuLink">FAQ</a></li>
-							</ul>		
-						</ul>
+							</ul></li>
+						</ul></li>
 						<li><a href="http://lejos.sourceforge.net/forum/" class="menuLink" target="_blank">Forum</a></li>
 						<li><a href="books.php" class="menuLink">Books</a></li>
 						<li><a href="links.php" class="menuLink">Links</a></li>
@@ -195,7 +195,6 @@
                     all members</a></td>
                 </tr>
               </table>
-            </dir>
           </td>
         </tr>
       </table>
