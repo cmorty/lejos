@@ -105,6 +105,12 @@ public class NavPathController implements PathController
     if(listeners == null )listeners = new ArrayList<WayPointListener>();
     listeners.add(aListener);
   }
+  
+  public void addTargetListener(WayPointListener targetListener)
+  {
+    if(targetListeners == null )targetListeners = new ArrayList<WayPointListener>();
+    targetListeners.add(targetListener);
+  }
 
   /**
    * Returns a reference to the MoveController.
@@ -240,6 +246,12 @@ public class NavPathController implements PathController
               l.nextWaypoint(new WayPoint(poseProvider.getPose()));
           }
           
+          if(targetListeners != null)
+          { 
+            for(WayPointListener l : targetListeners)
+              l.nextWaypoint(_destination);
+          }
+                    
           if (_keepGoing && 0 < _route.size()) {_route.remove(0);}
           _keepGoing = _keepGoing && 0 < _route.size();
           Thread.yield();
@@ -251,7 +263,8 @@ public class NavPathController implements PathController
 
   protected Nav _nav ;
   protected ArrayList<WayPoint> _route  = new ArrayList<WayPoint>() ;
-  protected ArrayList<WayPointListener> listeners ;
+  protected ArrayList<WayPointListener> listeners;
+  protected ArrayList<WayPointListener> targetListeners;
   protected boolean _keepGoing = false;
   protected MoveController _pilot;
   protected PoseProvider poseProvider;
