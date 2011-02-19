@@ -1,10 +1,14 @@
 package lejos.robotics.localization;
 
+
+
 import java.util.Random;
 import lejos.robotics.*;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.Move;
 import lejos.geom.*;
+import lejos.nxt.comm.RConsole;
+
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -29,7 +33,12 @@ public class MCLParticle {
   // Instance variables (kept to minimum to allow maximum number of particles)
   private Pose pose;
   private float weight = 0;
+  private  static  boolean debug = false;
 
+  public static void setDebug(boolean yes)
+  {
+    debug = yes;
+  }
   /**
    * Create a particle with a specific pose
    * 
@@ -83,6 +92,7 @@ public class MCLParticle {
       float range = map.range(tempPose);
       if (range < 0) {
     	  weight = 0;
+          if(debug) RConsole.println("zero wt"+tempPose);
     	  return;
       }
       float diff = robotReading - range;
