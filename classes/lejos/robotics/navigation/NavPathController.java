@@ -18,14 +18,20 @@ public class NavPathController implements PathController
 {
 	
   /**
-   * Can use any pilot that implements the ArcMoveController interface
+   * Can use any pilot that implements the ArcMoveController interface. 
    * @param pilot
    */
   public NavPathController(MoveController pilot )
   {
     this(pilot,null);
   }
-
+  
+  /**
+   * Creates a PathController using a custom poseProvider, rather than the default tachometer pose
+   * provider.
+   * @param pilot
+   * @param poseProvider
+   */
   public NavPathController(MoveController  pilot, PoseProvider poseProvider )
   {
     _pilot = pilot;
@@ -39,7 +45,14 @@ public class NavPathController implements PathController
     _nav.start();
   }  
 
-  public NavPathController(MoveController pilot, PoseProvider poseProvider, PathFinder pathFinder) {
+  /**
+   * Creates a PathController which will navigate to a point via goTo() using a PathFinder to provide 
+   * assistance to create a path. 
+   * @param pilot
+   * @param poseProvider
+   * @param pathFinder
+   */
+   public NavPathController(MoveController pilot, PoseProvider poseProvider, PathFinder pathFinder) {
 	  this(pilot, poseProvider);
 	  setPathFinder(pathFinder);
   }
@@ -77,7 +90,11 @@ public class NavPathController implements PathController
     if(immediateReturn)return;
     else while(_keepGoing) Thread.yield();
   }
-  
+ 
+  /**
+   * This method will navigate to a point. If a PathFinder was used in the constructor, it will rely
+   * on it to calculate a series of waypoints to get to the destination.
+   */
   public void goTo(WayPoint destination, boolean immediateReturn)
   {
     // Check if using PathFinder:
@@ -91,11 +108,20 @@ public class NavPathController implements PathController
     }
   }
 
+  /**
+   * This method will navigate to a point. If a PathFinder was used in the constructor, it will rely
+   * on it to calculate a series of waypoints to get to the destination.
+   */
   public void goTo(WayPoint destination) {
+   
 	  goTo(destination, false);
 
   }
 
+  /**
+   * This method will navigate to a point. If a PathFinder was used in the constructor, it will rely
+   * on it to calculate a series of waypoints to get to the destination.
+   */
   public void goTo(float x, float y) {
 	  goTo(new WayPoint(x, y));
   }
