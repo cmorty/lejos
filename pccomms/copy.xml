@@ -125,6 +125,7 @@
   				<include name="lejos/util/Matrix.java"/>
   				<include name="lejos/util/LUDecomposition.java"/>
   				<include name="lejos/util/KalmanFilter.java"/>
+  				<include name="lejos/util/Stopwatch.java"/>
   				<include name="lejos/robotics/package.html"/>
   			</fileset>
   		</copy>

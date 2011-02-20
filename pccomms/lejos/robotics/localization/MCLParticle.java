@@ -29,7 +29,12 @@ public class MCLParticle {
   // Instance variables (kept to minimum to allow maximum number of particles)
   private Pose pose;
   private float weight = 0;
+  private  static  boolean debug = false;
 
+  public static void setDebug(boolean yes)
+  {
+    debug = yes;
+  }
   /**
    * Create a particle with a specific pose
    * 
@@ -83,6 +88,7 @@ public class MCLParticle {
       float range = map.range(tempPose);
       if (range < 0) {
     	  weight = 0;
+          if(debug) System.out.println("zero wt"+tempPose);
     	  return;
       }
       float diff = robotReading - range;
