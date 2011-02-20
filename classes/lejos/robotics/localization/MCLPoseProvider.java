@@ -10,7 +10,6 @@ import lejos.robotics.RangeScanner;
 import lejos.robotics.Move;
 import java.awt.Rectangle;
 import lejos.robotics.localization.PoseProvider;
-import lejos.nxt.comm.RConsole;
 import java.io.*;
 
 import lejos.util.Stopwatch;
@@ -70,7 +69,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
    */
   public void setInitialPose(RangeReadings readings,float sigma)
   {
-    if(debug) RConsole.println("MCLPP set Initial pose called ");
+    if(debug) System.out.println("MCLPP set Initial pose called ");
     float minWeight = 0.1f;
     particles = new MCLParticleSet(map, numParticles,border,readings, 2*sigma*sigma,minWeight  );
     updated = true; 
@@ -146,11 +145,11 @@ public boolean  update()
    */
   public Pose getPose()
   {
-    if(debug) RConsole.println("MCLPP getPose updated "+updated);
+    if(debug) System.out.println("MCLPP getPose updated "+updated);
     if (!updated)
     {
     while(busy)Thread.yield();
-      if(debug) RConsole.println("Mcl call update; updated? "+updated);
+      if(debug) System.out.println("Mcl call update; updated? "+updated);
       if(!updated)updater.update();
     }
     estimatePose();
@@ -378,7 +377,7 @@ public RangeScanner getScanner()
     {
       updater.event = theEvent;
       moveStopped = true;
-      if(debug) RConsole.println("Updater move stop "+theEvent.getMoveType());
+      if(debug) System.out.println("Updater move stop "+theEvent.getMoveType());
     }
  /**
    * Updates the estimated pose using Monte Carlo method applied to particles.
@@ -397,13 +396,12 @@ public RangeScanner getScanner()
     while(busy)Thread.yield();
     busy = true;
     readings = scanner.getRangeValues();
-    if(debug) RConsole.println("mcl Update: range readings " + readings.getNumReadings());
+    if(debug) System.out.println("mcl Update: range readings " + readings.getNumReadings());
     if (readings.incomplete())
     {
       if (debug)
       {
         System.out.println("Readings incomplete");
-        RConsole.println("Readings incomplete");
       }
       busy = false;
       return false;
@@ -412,7 +410,7 @@ public RangeScanner getScanner()
     {
       if (debug)
       {
-        RConsole.println("Sensor data is too improbable from the current pose");
+        System.out.println("Sensor data is too improbable from the current pose");
       }
       busy = false;
       return false;
@@ -431,16 +429,16 @@ public RangeScanner getScanner()
         {
          busy = true;
           moveStopped = false;
-          if(debug)RConsole.println("Update run move stopped "+event.getMoveType()+" "+autoUpdate );
+          if(debug)System.out.println("Update run move stopped "+event.getMoveType()+" "+autoUpdate );
           sw.reset();
-           if(debug)RConsole.println("Updater apply move ");
+           if(debug) System.out.println("Updater apply move ");
           particles.applyMove(event);      
           if (autoUpdate && event.getMoveType() == Move.MoveType.TRAVEL)
           {
             busy = false;
             update();
             updated = true;
-            if (debug) RConsole.println("MCL run update complete time "+sw.elapsed());
+            if (debug) System.out.println("MCL run update complete time "+sw.elapsed());
           }
           busy = false;
         }

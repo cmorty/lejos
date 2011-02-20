@@ -1,14 +1,10 @@
 package lejos.robotics.localization;
 
-
-
 import java.util.Random;
 import lejos.robotics.*;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.Move;
 import lejos.geom.*;
-import lejos.nxt.comm.RConsole;
-
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -92,7 +88,7 @@ public class MCLParticle {
       float range = map.range(tempPose);
       if (range < 0) {
     	  weight = 0;
-          if(debug) RConsole.println("zero wt"+tempPose);
+          if(debug) System.out.println("zero wt"+tempPose);
     	  return;
       }
       float diff = robotReading - range;
