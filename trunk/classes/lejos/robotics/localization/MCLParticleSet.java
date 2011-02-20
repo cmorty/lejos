@@ -1,15 +1,12 @@
 package lejos.robotics.localization;
 
-
-
-
 import lejos.geom.*;
 import java.io.*;
 import lejos.robotics.*;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.Move;
 import java.util.Random;
-import lejos.nxt.comm.RConsole;
+
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
@@ -184,7 +181,6 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
       {
         if (debug){
           System.out.println("Lost: count = " + count);
-          RConsole.println("Lost: count = " + count);
         }
 
         if (count > 0) { // Duplicate the ones we have so far
@@ -269,12 +265,12 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
    * @param rr the robot range readings
    */
   public boolean  calculateWeights(RangeReadings rr, RangeMap map) {
-   if(debug) RConsole.print(" calc weights using ranges:  "+rr.getRange(0)+" "+rr.getRange(1)+" "
+   if(debug) System.out.print(" calc weights using ranges:  "+rr.getRange(0)+" "+rr.getRange(1)+" "
            +rr.getRange(2)+" A "
            +rr.getAngle(0)+" "+rr.getAngle(1)+" "+rr.getAngle(2));
    if(rr.incomplete())  
    {
-     if(debug) RConsole.println("range set incomplete");
+     if(debug) System.out.println("range set incomplete");
      return false;
    }
     maxWeight = 0f;
@@ -286,7 +282,7 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
       }
     }
 
-   if(debug) RConsole.println("Calc Weights Max wt " +maxWeight);
+   if(debug) System.out.println("Calc Weights Max wt " +maxWeight);
      if(maxWeight < .1)return false;
 // normalize so maximum weight = 1  for mor efficient resampling.
 // TO DO   normalize to sum of weights = 1;    multiply new by old'
@@ -302,7 +298,7 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
    * @param move the move to apply
    */
   public void applyMove(Move move) {
-    if(debug)RConsole.println("particles applyMove "+move.getMoveType());
+    if(debug)System.out.println("particles applyMove "+move.getMoveType());
 	maxWeight = 0f;
     for (int i = 0; i < numParticles; i++) {
       particles[i].applyMove(move, distanceNoiseFactor, angleNoiseFactor);
