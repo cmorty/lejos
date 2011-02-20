@@ -78,11 +78,17 @@ public interface PathController
   public void addWayPoint(WayPoint aWayPoint); // adds a WayPoint to the route.
 
   /**
-   * Adds a waypoint listener.
+   * Adds a waypoint listener that will be notified with the actual waypoint it reached.
    * @param aListener
    */
   public void addListener(WayPointListener aListener);
 
+  /**
+   * Adds a waypoint listener that will be notified with the theoretical target waypoint it reached.
+   * @param targetListener
+   */
+  public void addTargetListener(WayPointListener targetListener);
+  
   /**
    * Note: There is no corresponding setMoveController() method because the type of robot vehicle could
    * not change after the program starts, unless it was physically a transformer robot.

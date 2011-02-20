@@ -23,10 +23,10 @@ public class MCLParticleSet {
   private static final float BIG_FLOAT = 10000f;
   // Static variables
   public static int maxIterations = 1000;
-  private float twoSigmaSquared = 200f; // was 250
+  private float twoSigmaSquared = 200f; // was 250 200
   // Instance variables
   private float distanceNoiseFactor = 0.1f;
-  private float angleNoiseFactor = 2.5f;
+  private float angleNoiseFactor = 2f;
   private int numParticles;
   private MCLParticle[] particles;
   private RangeMap map;
@@ -51,7 +51,6 @@ public class MCLParticleSet {
     for (int i = 0; i < numParticles; i++) {
       particles[i] = generateParticle();
     }
-//    resetEstimate();
   }
 /**
  * generates a circular cloud of particles centered on initialPose with random 
@@ -62,7 +61,29 @@ public class MCLParticleSet {
  * @param radiusNoise  standard deviation of radius
  * @param headingNoise standard deviation of heading noise
  */
-  public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
+  public MCLParticleSet(RangeMap map, int numParticles, int border,
+          RangeReadings readings, float divisor, float minWeight)
+  {
+    this.map = map;
+    this.numParticles = numParticles;
+    this.border = border;
+    boundingRect = map.getBoundingRect();
+    particles = new MCLParticle[numParticles];
+    MCLParticle particle;
+    int i = 0;
+    while ( i < numParticles)
+    {
+      particle = generateParticle();
+      particle.calculateWeight(readings, map, divisor);
+      if(minWeight < particle.getWeight())
+      {
+        particles[i]=particle;
+        i++;
+        System.out.println(i);
+      }
+    }
+  }
+public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
           float radiusNoise, float headingNoise)
   {
     this.map = map;
@@ -158,7 +179,10 @@ public class MCLParticleSet {
       iterations++;
       if (iterations >= maxIterations)
       {
-        if (debug) System.out.println("Lost: count = " + count);
+        if (debug){
+          System.out.println("Lost: count = " + count);
+        }
+
         if (count > 0) { // Duplicate the ones we have so far
           for (int i = count; i < numParticles; i++) {
             particles[i] = new MCLParticle(particles[i % count].getPose());
@@ -189,64 +213,16 @@ public class MCLParticleSet {
         }
       }
     }
-//    estimatePose();
     return false;
   }
-  /**
-   * Resample the set picking those with higher weights.
-   * 
-   * Note that the new set has multiple instances of the particles with higher
-   * weights.
-   * 
-   * @return true iff lost
-   */
-  public boolean resampleBasic() {
-    // Rename particles as oldParticles and create a new set
-    MCLParticle[] oldParticles = particles;
-    particles = new MCLParticle[numParticles];
 
-    // Continually pick a random number and select the particles with
-    // weights greater than or equal to it until we have a full
-    // set of particles.
-    int count = 0;
-    int iterations = 0;
-
-    while (count < numParticles)
-    {
-      if (iterations >= maxIterations)
-      {
-        return false;
-
-      } // exceeded max iterations
-      count = 0;
-      while( count < numParticles )
-      {
-        iterations++;
-//      for (int i = 0; i < numParticles && count < numParticles; i++) {
-        int i = random.nextInt(numParticles);
-        float w = oldParticles[i].getWeight();
-        if (w >= random.nextFloat() * maxWeight)
-        {
-          Pose p = oldParticles[i].getPose();
-          float x = p.getX();
-          float y = p.getY();
-          float angle = p.getHeading();
-          // Create a new instance of the particle and set its weight
-          particles[count] = new MCLParticle(new Pose(x, y, angle));
-          particles[count].setWeight(oldParticles[i].getWeight());
-          count++;
-        }
-      }
-    }
-    return false;
-  }
   /**
     Thrun Low variance resampling algorithm pg 110 table 4.4
    */
   public void resampleLowVar()
   {
-//    RConsole.println("mcl resample total weight "+ totalWeight);
-    //  table 4.4 line numbers
+    // does not work well ??
+
     MCLParticle[] oldParticles = particles; // line 2
     particles = new MCLParticle[numParticles];
     float np_1 = 1.0f/ numParticles;
@@ -280,33 +256,39 @@ public class MCLParticleSet {
         k++;
       }
     } //  end  for  line 13
-// RConsole.println("Resample old particles used "+k);
   }
 
 
   /**
    * Calculate the weight for each particle
-   * 
+   *  Normalize to sum = 1.0
    * @param rr the robot range readings
    */
   public boolean  calculateWeights(RangeReadings rr, RangeMap map) {
-//   RConsole.print(" calc weights using vals:  "+rr.getRange(0)+" "+rr.getRange(1)+" "
-//           +rr.getAngle(0)+" "+rr.getAngle(1));
-   if(rr.incomplete()) return false;
+   if(debug) System.out.print(" calc weights using ranges:  "+rr.getRange(0)+" "+rr.getRange(1)+" "
+           +rr.getRange(2)+" A "
+           +rr.getAngle(0)+" "+rr.getAngle(1)+" "+rr.getAngle(2));
+   if(rr.incomplete())  
+   {
+     if(debug) System.out.println("range set incomplete");
+     return false;
+   }
     maxWeight = 0f;
-    totalWeight = 0f;
-    float minWeight = .001f /numParticles;
     for (int i = 0; i < numParticles; i++) {
       particles[i].calculateWeight(rr, map, twoSigmaSquared);
       float weight = particles[i].getWeight();
-      if(weight < minWeight) weight = minWeight;
       if (weight > maxWeight) {
         maxWeight = weight;
       }
-      totalWeight += weight;
     }
-//    RConsole.println("MCL  MAX W " + maxWeight +" TotalWeignt "+totalWeight);
-    if(maxWeight < 0.1f )return false;
+
+   if(debug) System.out.println("Calc Weights Max wt " +maxWeight);
+     if(maxWeight < .1)return false;
+// normalize so maximum weight = 1  for mor efficient resampling.
+// TO DO   normalize to sum of weights = 1;    multiply new by old'
+    for (int i = 0; i < numParticles; i++){
+      particles[i].setWeight(particles[i].getWeight()/ maxWeight);
+    } 
     return true;
   }
   
@@ -316,12 +298,11 @@ public class MCLParticleSet {
    * @param move the move to apply
    */
   public void applyMove(Move move) {
-//    RConsole.println("particles applyMove "+move.getMoveType()+" NrP "+numParticles);
+    if(debug)System.out.println("particles applyMove "+move.getMoveType());
 	maxWeight = 0f;
     for (int i = 0; i < numParticles; i++) {
       particles[i].applyMove(move, distanceNoiseFactor, angleNoiseFactor);
     }
-//    RConsole.println("particles apply move est pose ");
   }
   
   /**
