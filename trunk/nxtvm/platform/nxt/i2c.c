@@ -14,6 +14,7 @@
 #include <string.h>
 //Sizes etc.
 #define I2C_CLOCK 9600
+#define I2C_HS_CLOCK 125000
 #define I2C_MAX_PARTIAL_TRANSACTIONS 5
 #define I2C_N_PORTS 4
 #define I2C_BUF_SIZE 32
@@ -22,6 +23,7 @@
 #define I2C_LEGO_MODE 1
 #define I2C_ALWAYS_ACTIVE 2
 #define I2C_NO_RELEASE 4
+#define I2C_HIGH_SPEED 8
 
 // Delay used when in Lego mode
 #define I2C_LEGO_DELAY 5
@@ -98,6 +100,17 @@
 // 1. Start the transaction.
 // 2. Wait for the transaction to complete.
 // 3. Read the results.
+//
+// High Speed mode 02/2011
+// I've added the option of using a high speed transfer mode whic operates at
+// 125KHz instead of the Lego standard 9.6KHz. This basically just drives the
+// pins using a timed busy wait loop (driven by a hardware timer). This will
+// hog the cpu during the transaction, but should overall actually use less
+// cpu time (since we do not have the interrupt overhead). I've tested the 
+// speed with a number of i2c based sensors and all but the Lego sesnor seem
+// to work at this speed. I did experiment with an optimised version of the
+// state machine (which could run faster), but had a large number of errors,
+// so have reverted back to the standard state machine (which saves spece).
 
 
 struct i2c_partial_transaction {
@@ -159,6 +172,7 @@ typedef struct {
   U8 lego_mode:1;
   U8 always_active:1;
   U8 no_release:1;
+  U8 high_speed:1;
   U8 port_bit;
   U16 read_len;
 } i2c_port;
@@ -179,21 +193,15 @@ static U32 i2c_port_busy = 0;
 
 extern void i2c_timer_isr_entry(void);
 
-void
-i2c_timer_isr_C(void)
+static void
+i2c_doio(i2c_port *p)
 {
-  U32 dummy = *AT91C_TC0_SR;
-  i2c_port **ap;
-  i2c_port *p;
-//*AT91C_PIOA_SODR = 1<<29;
-  for(ap = active_list; (p = *ap); ap++){
     switch (p->state) {
     default:
     case I2C_DISABLED:
     case I2C_IDLE:		// Not in a transaction
     case I2C_ACTIVEIDLE:	// Not in a transaction but active
     case I2C_COMPLETE:          // Transaction completed
-      continue;
       break;
     case I2C_BEGIN:		
       // Start new transaction
@@ -317,8 +325,12 @@ i2c_timer_isr_C(void)
       p->state = I2C_RXDATA2;
       break;
     case I2C_RXDATA2:
+      *AT91C_PIOA_ODR = p->scl_pin;
       // Take SCL High
       *AT91C_PIOA_SODR = p->scl_pin;
+      if(!(*AT91C_PIOA_PDSR & p->scl_pin))
+        break;
+      *AT91C_PIOA_OER = p->scl_pin;
       // Receive a bit.
       p->bits <<= 1;
       if(*AT91C_PIOA_PDSR & p->sda_pin)
@@ -426,7 +438,15 @@ i2c_timer_isr_C(void)
       p->state = I2C_COMPLETE;
       break;
     }
-  }
+}
+
+void
+i2c_timer_isr_C(void)
+{
+  U32 dummy = *AT91C_TC0_SR;
+  i2c_port **ap;
+  for(ap = active_list; *ap; ap++)
+    i2c_doio(*ap);
 }
 
 static
@@ -445,7 +465,7 @@ build_active_list()
   i2c_port **ap = new_list;
   // build the list
   for(i=0; i < I2C_N_PORTS; i++)
-    if (i2c_ports[i] && i2c_ports[i]->state > I2C_IDLE)
+    if (i2c_ports[i] && i2c_ports[i]->state > I2C_IDLE && !i2c_ports[i]->high_speed)
       *ap++ = i2c_ports[i];
   *ap = NULL;
   // If there are no active ports then we can just disable things
@@ -518,8 +538,10 @@ int i2c_enable(int port, int mode)
     *AT91C_PIOA_PPUDR = pinmask;
     /* If we are always active, we never drop below the ACTIVEIDLE state */
     p->lego_mode = ((mode & I2C_LEGO_MODE) ? 1 : 0);
+    p->lego_mode = 0;
     p->no_release = ((mode & I2C_NO_RELEASE) ? 1 : 0);
     p->always_active = ((mode & I2C_ALWAYS_ACTIVE) ? 1 : 0);
+    p->high_speed = ((mode & I2C_HIGH_SPEED) ? 1 : 0);
     p->port_bit = 1 << port;
     if (p->always_active) {
       p->state = I2C_ACTIVEIDLE;
@@ -551,18 +573,25 @@ i2c_init(void)
   
   istate = interrupts_get_and_disable();
   
-  /* Set up Timer Counter 0 */
+  /* Set up Timer Counter 0 to drive standard speed i2c */
   *AT91C_PMC_PCER = (1 << AT91C_ID_TC0);    /* Power enable */
     
   *AT91C_TC0_CCR = AT91C_TC_CLKDIS; /* Disable */
   *AT91C_TC0_IDR = ~0;
   dummy = *AT91C_TC0_SR;
   *AT91C_TC0_CMR = AT91C_TC_CLKS_TIMER_DIV1_CLOCK|AT91C_TC_CPCTRG; /* MCLK/2, RC compare trigger */
-  *AT91C_TC0_RC = (CLOCK_FREQUENCY/2)/(2 * I2C_CLOCK);
+  *AT91C_TC0_RC = ((CLOCK_FREQUENCY/2)/(2 * I2C_CLOCK))/1;
   *AT91C_TC0_IER = AT91C_TC_CPCS;
   aic_mask_off(AT91C_ID_TC0);
   aic_set_vector(AT91C_ID_TC0, AIC_INT_LEVEL_NORMAL, (int)i2c_timer_isr_entry);
   aic_mask_on(AT91C_ID_TC0);
+  /* Setup timer counter 2 to drive high speed i2c */
+  *AT91C_PMC_PCER = (1 << AT91C_ID_TC2);    /* Power enable */
+  *AT91C_TC2_CCR = AT91C_TC_CLKDIS; /* Disable */
+  *AT91C_TC2_IDR = ~0;
+  dummy = *AT91C_TC0_SR;
+  *AT91C_TC2_CMR = AT91C_TC_CLKS_TIMER_DIV1_CLOCK|AT91C_TC_CPCTRG; /* MCLK/2, RC compare trigger */
+  *AT91C_TC2_RC = ((CLOCK_FREQUENCY/2)/(2 * I2C_HS_CLOCK))/1;
   
   if(istate)
     interrupts_enable();
@@ -652,6 +681,17 @@ i2c_start(int port,
   p->state = I2C_BEGIN;
   if (!p->always_active)
     build_active_list();
+  if (p->high_speed)
+  {
+    *AT91C_TC2_CCR = AT91C_TC_CLKEN; /* Enable */
+    *AT91C_TC2_CCR = AT91C_TC_SWTRG; /* Software trigger */
+    while(p->state != I2C_COMPLETE)
+    {
+      i2c_doio(p);
+      while(!(*AT91C_TC2_SR & AT91C_TC_CPCS)) ;
+    }
+    *AT91C_TC2_CCR = AT91C_TC_CLKDIS; /* Enable */
+  }
   return 0;
 }
 
