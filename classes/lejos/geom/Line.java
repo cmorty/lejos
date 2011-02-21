@@ -1,7 +1,9 @@
 package lejos.geom;
 
-import java.awt.geom.*;
 
+
+import lejos.geom.*;
+import java.awt.geom.*;
 /**
  * Represents a line and supports calculating the point of intersection of two
  * line segments.
@@ -75,7 +77,23 @@ public class Line extends Line2D.Float {
     if (x2 < x1 && x >= x2 && x <= x1) return true;
     return false;
   }
+/**
+ *  Make this line longer by an amouat delta at each end.
+ * Used by DijkstraPathPlanner to use the same LineMap as the a RangeScanner
+ * in MCL navigation.
+ * @param line to be streatched 
+ * @param delta  the amount added to each end
+ */
+  public void lengthen( float delta)
+  {
+    double  angle = Math.atan2(y2 - y1,x2- x1);
+    x1 = x1 - delta * (float)Math.cos(angle);
+    y1 = y1 - delta * (float)Math.sin(angle);
+    x2 = x2 + delta * (float)Math.cos(angle);
+    y2 = y2 + delta * (float)Math.sin(angle);
 
+
+  }
   /**
    * Return the length of the line
    * 
