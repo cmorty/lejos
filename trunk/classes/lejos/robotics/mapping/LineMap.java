@@ -130,5 +130,9 @@ public class LineMap implements RangeMap {
       }     
       boundingRect = new Rectangle(dis.readFloat(),dis.readFloat(),dis.readFloat(),dis.readFloat());
   }
+  
+  public Line[] getLines() {
+	  return lines;
+  }
 }
 
