@@ -241,12 +241,12 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
         i++;  // line 9
         if (i == numParticles)
         {
-//          RConsole.println("Resample " + i + " m " + m + " weight " +
+//          System.out.println("Resample " + i + " m " + m + " weight " +
 //                  oldParticles[i - 1].getWeight() / totalWeight);
           i = 0;// avoid array out of bounds
         }
         float w = oldParticles[i].getWeight() / totalWeight;
-//        if( w < .01/numParticles )RConsole.println("w "+w+" i "+i+" c "+c+" u "+u);
+//        if( w < .01/numParticles )System.out.println("w "+w+" i "+i+" c "+c+" u "+u);
         c += oldParticles[i].getWeight() / totalWeight; // line 10
       }// end while  // line 11
       particles[m] = oldParticles[i];// line 12
