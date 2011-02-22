@@ -27,7 +27,7 @@ import lejos.robotics.mapping.RangeMap;
  * @author Lawrie Griffiths
  *
  */
-public class MapPathFinder implements PathFinder {	
+public class RandomPathFinder implements PathFinder {	
 	private static final long serialVersionUID = 1L;
 	private static final int MAX_ITERATIONS = 1000;
 	private static final float MAX_DISTANCE = 40;
@@ -40,7 +40,7 @@ public class MapPathFinder implements PathFinder {
 	
 	private ArrayList<WayPointListener> listeners ;
 	
-	public MapPathFinder(RangeMap map, RangeReadings readings) {
+	public RandomPathFinder(RangeMap map, RangeReadings readings) {
 		this.map = map;
 		this.readings = readings;
 	}
