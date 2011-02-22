@@ -43,7 +43,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
     particles = new MCLParticleSet(map, numParticles, border);
     this.scanner = scanner;
     this.map = map;
-    mp.addMoveListener(this);
+    if (mp != null) mp.addMoveListener(this);
     updated = false;
     updater.start();
   }
