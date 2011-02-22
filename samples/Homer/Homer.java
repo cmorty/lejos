@@ -14,7 +14,7 @@ import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.navigation.NavPathController;
 import lejos.robotics.navigation.DestinationUnreachableException;
 import lejos.robotics.navigation.DifferentialPilot;
-import lejos.robotics.navigation.MapPathFinder;
+import lejos.robotics.navigation.RandomPathFinder;
 import lejos.robotics.navigation.PathFinder;
 import lejos.robotics.navigation.WayPoint;
 import lejos.robotics.localization.MCLPoseProvider;
@@ -90,7 +90,7 @@ public class Homer implements RangeScanner {
   
     // Find a route home
     Pose home = new Pose(50, 300, -90);
-    PathFinder pf = new MapPathFinder(map, readings);
+    PathFinder pf = new RandomPathFinder(map, readings);
     NavPathController pc = new  NavPathController(pilot, mcl);
     
     System.out.println("Located: (" + (int) start.getX() + "," + (int) start.getY() + ")");
