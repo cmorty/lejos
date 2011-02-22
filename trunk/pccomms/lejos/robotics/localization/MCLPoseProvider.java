@@ -429,9 +429,8 @@ public RangeScanner getScanner()
         {
          busy = true;
           moveStopped = false;
-          if(debug)System.out.println("Update run move stopped "+event.getMoveType()+" "+autoUpdate );
+          if(debug)System.out.println("Update run move stopped "+event.getMoveType());
           sw.reset();
-           if(debug) System.out.println("Updater apply move ");
           particles.applyMove(event);      
           if (autoUpdate && event.getMoveType() == Move.MoveType.TRAVEL)
           {
