@@ -28,7 +28,7 @@ public abstract class RemoteFrame extends JPanel implements ActionListener, Mous
    * Create a frame to display the panel in
    */
   public static JFrame openInJFrame(Container content, int width, int height,
-      String title, Color bgColor) {
+                                    String title, Color bgColor) {
     JFrame frame = new JFrame(title);
     frame.setBackground(bgColor);
     content.setBackground(bgColor);
@@ -41,20 +41,6 @@ public abstract class RemoteFrame extends JPanel implements ActionListener, Mous
     });
     frame.setVisible(true);
     return (frame);
-  }
-
-  /**
-   * Paint the panel
-   */
-  public void paintComponent(Graphics g) {
-    clear(g);
-  }
-
-  /**
-   * Clear the panel
-   */
-  protected void clear(Graphics g) {
-    super.paintComponent(g);
   }
 
   /**
@@ -119,10 +105,10 @@ public abstract class RemoteFrame extends JPanel implements ActionListener, Mous
   }
   
   protected JButton createButton(String text) {
-	  JButton button = new JButton(text);
-	  add(button);
-	  button.addActionListener(this);
-	  return button;
+	JButton button = new JButton(text);
+	add(button);
+	button.addActionListener(this);
+	return button;
   }
 }
 
