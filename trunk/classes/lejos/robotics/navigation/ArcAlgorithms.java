@@ -12,7 +12,7 @@ import lejos.robotics.Pose;
  * @version November 2009
  *
  */
-public class ArcAlgorithms { // TODO Make package level when done testing?
+public class ArcAlgorithms { // TODO Change access from public to package level when done testing?
 	
 	private ArcAlgorithms(){} // Make sure no one instantiates this as an object.
 	
