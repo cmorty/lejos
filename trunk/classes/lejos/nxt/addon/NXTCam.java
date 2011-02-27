@@ -105,6 +105,23 @@ public class NXTCam extends I2CSensor {
 	}
 	
 	/**
+	 * Returns the NXTCam firmware version.
+	 * @return version number as a string
+	 */
+	public String getFirmwareVersion() {
+		sendCommand('V');
+		byte mem_loc = 0x42;
+		// NXTCam V1.1 appears to need a delay here otherwise it doesn't refresh the memory 
+		// at location 0x42 the first time. 50 ms is not enough, 100 ms works:
+		try {  
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return fetchString(mem_loc, 12);
+	}
+	
+	/**
 	 * Get the rectangle containing a tracked object
 	 * 
 	 * @param id the object number (starting at zero)
