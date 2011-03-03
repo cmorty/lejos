@@ -24,10 +24,11 @@ public class NXTCommException extends Exception {
 	}
 
 	public String getMessage() {
+		//TODO get rid of this, and output cause-message at appropriate places
 		if((getCause()!=null)&&(getCause().getMessage()!=null))
 			return getCause().getMessage();
-		else
-			return super.getMessage();
+		
+		return super.getMessage();
 	}
 	
 }
