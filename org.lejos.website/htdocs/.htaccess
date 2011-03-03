@@ -1,0 +1,4 @@
+#RedirectMatch ^/+forum/ /maintenance.html
+
+#RewriteEngine on
+#RewriteRule ^forum/ /maintenance.html
