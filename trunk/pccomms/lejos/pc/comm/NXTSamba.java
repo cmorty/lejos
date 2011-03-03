@@ -133,7 +133,7 @@ public class NXTSamba {
 			try {
                 nxtComm = (NXTCommUSB) NXTCommFactory.createNXTComm(NXTCommFactory.USB);
 			} catch (NXTCommException e) {
-				throw new NXTCommException("Cannot load a comm driver", e);
+				throw e;
 			}
 
 			if (nxtComm == null) {
