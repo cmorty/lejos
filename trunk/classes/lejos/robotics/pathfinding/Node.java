@@ -8,7 +8,8 @@ import lejos.robotics.navigation.WayPoint;
 /**
  * TODO: Might need OpenNodeSet (interface and algorithms) and ClosedNodeSet (class)? 
  * OpenNodeSet replaces NodeGenerator???
- * TODO: Overkill to extend WayPoint?
+ * TODO: Overkill to extend WayPoint? Needs to use very little memory! Just x, y and neighbors! Minimal. Maybe some
+ * static methods for handling nodes. Methods for getting waypoints. Extend Point2D instead?
  * @author BB
  *
  */
@@ -17,7 +18,7 @@ public class Node extends WayPoint {
 	private float h_score = 0;
 	private float g_score = 0;
 	private Node cameFrom = null;
-	private ArrayList <Node> neighbors = new ArrayList();
+	private ArrayList <Node> neighbors = new ArrayList<Node>();
 	private String id = null;
 	
 	public Node(String id, float x, float y) {
@@ -30,15 +31,28 @@ public class Node extends WayPoint {
 		return neighbors;
 	}
 	
-	public int getNumberOfNeighbors() {
+	/**
+	 * Indicates the number of neighbors (nodes connected to this node).
+	 * @return int Number of neighbors.
+	 */
+	public int neighbors() {
 		return neighbors.size();
 	}
 	
 	// Note: You have to add this node to neighbor, and then add neighbor to this node. This method doesn't do both.
 	public void addNeighbor(Node neighbor) {
-		// TODO: Maybe code here should add each other as neighbors? Should also check make sure isn't added twice.
+		// TODO: Maybe code here should add each other as neighbors?
+		// TODO: Check to make sure same isn't added twice?
+		// TODO: Check to make sure doesn't add itself? Return boolean.
 		neighbors.add(neighbor);
 	}
+	
+	// Note: You have to add this node to neighbor, and then add neighbor to this node. This method doesn't do both.
+	public boolean removeNeighbor(Node neighbor) {
+		// TODO: Maybe code here should add each other as neighbors? Should also check make sure isn't added twice.
+		return neighbors.remove(neighbor);
+	}
+	
 	
 	public String getId() {
 		return id;

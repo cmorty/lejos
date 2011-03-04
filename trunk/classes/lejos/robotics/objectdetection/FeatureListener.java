@@ -5,6 +5,7 @@ import lejos.robotics.RangeReading;
 /**
  * Any class implementing this interface and registering with a FeatureDetector will receieve
  *  notifications when a feature is detected. 
+ *  @see lejos.robotics.objectdetection.FeatureDetector#addListener(FeatureListener)
  *
  */
 public interface FeatureListener {
