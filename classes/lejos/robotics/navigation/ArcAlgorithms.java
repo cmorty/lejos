@@ -321,7 +321,7 @@ public class ArcAlgorithms { // TODO Change access from public to package level 
 		float arcLength = ArcAlgorithms.getTriangleAngle(p1, p2, pa);
 		arcLength *= -2;
 		//System.out.println("arclength: " + arcLength);
-		// TODO: Bit of a hack here. Math should be able to do it without if-branches
+		// TODO: Bit of a hack here. Math should be able to do it without conditional if-branches
 		if(radius < 0) arcLength = 360 + arcLength;
 		if(!forward) {
 			// TODO: This 'if' could really be amalgamated with the if(radius < 0) branch 
@@ -459,7 +459,7 @@ public class ArcAlgorithms { // TODO Change access from public to package level 
 	 */
 	public static Point findCircleCenter(Point p1, float radius, float heading) {
 		// I accidently got the radius sign confused. +ve radius is supposed to have circle center to left of robot:
-		radius = -radius; // Kludge. Should really correct my equations.
+		radius = -radius; // TODO: Kludge. Should really correct my equations.
 				
 		double t = heading - 90; // TODO: Need to check if > 360 or < 0? Think cos/sin handle it.
 		

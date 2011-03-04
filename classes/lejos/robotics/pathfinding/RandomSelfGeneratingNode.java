@@ -56,7 +56,7 @@ public class RandomSelfGeneratingNode extends Node {
 				goal.addNeighbor(this);
 			}
 			
-			int nodes_to_add = connections - super.getNumberOfNeighbors();
+			int nodes_to_add = connections - super.neighbors();
 			for(int i=0;i<nodes_to_add;i++) {
 				// Generate new node with random direction and distance from this one.
 				float rand_x = (float)(Math.random() * maxDist);

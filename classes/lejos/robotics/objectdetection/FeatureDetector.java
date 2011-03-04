@@ -4,6 +4,7 @@ package lejos.robotics.objectdetection;
  * A FeatureDetector is capable of detecting objects and notifying listeners when it detects something. A Feature is
  * a term for any property that can be added to map data. The FeatureListeneer is notified when an object is detected,
  * even if it has previously detected the same object.
+ * @see lejos.robotics.objectdetection.FeatureListener
  *
  */
 public interface FeatureDetector {

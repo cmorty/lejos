@@ -5,14 +5,20 @@ import java.util.*;
 import lejos.robotics.navigation.ArcAlgorithms;
 import lejos.robotics.navigation.WayPoint;
 
+// TODO: Problem with this code keeping the Node properties right in the Node object is that the same Node set
+// (aka Navigation Mesh) might conceivably (probably) be used repeatedly for many different searches. So things
+// like setPredecessor() and setCost() should be temporary, not part of Node object?
+// If do this way, then get rid of Node, use WayPoint?
 public class AstarSearchAlgorithm implements SearchAlgorithm{
+	
+	private final String STRING_NAME = "A*";
 	
 	public Collection <WayPoint> findPath(Node start, Node goal) {
 		
-	     ArrayList <Node> closedset = new ArrayList(); // The set of nodes already evaluated. Empty at start.     
-	     ArrayList <Node> openset = new ArrayList(); // The set of tentative nodes to be evaluated. 
+	     ArrayList <Node> closedset = new ArrayList<Node>(); // The set of nodes already evaluated. Empty at start.     
+	     ArrayList <Node> openset = new ArrayList<Node>(); // The set of tentative nodes to be evaluated. 
 	     openset.add(start); // openset contains startNode at start.
-	     ArrayList <Node> path = new ArrayList(); // came_from := the empty map // The map of navigated nodes.
+	     //ArrayList <Node> path = new ArrayList<Node>(); // came_from := the empty map // The map of navigated nodes.
 	     start.setCost(0); // Distance from start along optimal path. Zero by definition since at start. g(start)
 	     start.setHeuristicEstimate(ArcAlgorithms.distBetweenPoints(start, goal)); // h(start)
 	     
@@ -21,7 +27,7 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 	         System.out.println("Node " + x.getId() + " F score " + x.getFScore());
 	         if(x == goal) {
 	             //return reconstructPath(goal); // reconstruct_path(came_from, came_from[goal])
-	         	 ArrayList <WayPoint> final_path = new ArrayList();
+	         	 ArrayList <WayPoint> final_path = new ArrayList<WayPoint>();
 	             Node.reconstructPath(goal, start, final_path);
 	             return final_path;
 	         }
@@ -68,6 +74,10 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 				best = cur;
 		}
 		return best;
+	}
+
+	public String getSearchName() {
+		return STRING_NAME;
 	}
 }
 
