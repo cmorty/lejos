@@ -2,19 +2,19 @@ import lejos.nxt.*;
 import lejos.util.Delay;
 import java.util.Random;
 import java.io.IOException;
-import lejos.nxt.addon.NXTrtc;
+import lejos.nxt.addon.RealTimeClock;
 
 public class RTCTest {
 
 	/**
-	 * Test of NXTrtc class
+	 * Test of RealTimeClock class
 	 */
 	public static void main(String[] args) {
 		UpDown[] dateVals = new UpDown[7];
 		byte[] ramTest = new byte[56];
 		Random r = new Random();
 		int i;
-		NXTrtc clock = new NXTrtc(SensorPort.S1);
+		RealTimeClock clock = new RealTimeClock(SensorPort.S1);
 		int cur = 0;
 
 		try {
