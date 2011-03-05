@@ -144,8 +144,8 @@ public class FourWayGridMesh implements NavigationMesh {
 		Iterator <Node> it = coll.iterator();
 		while(it.hasNext()) {
 			Node neighbor = it.next();
-			neighbor.removeNeighbor(node);
-			node.removeNeighbor(neighbor);
+			// TODO neighbor.removeNeighbor(node);
+			// TODO node.removeNeighbor(neighbor);
 		}
 		
 		return mesh.remove(node);
