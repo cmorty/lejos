@@ -70,7 +70,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   public void setInitialPose(RangeReadings readings,float sigma)
   {
     if(debug) System.out.println("MCLPP set Initial pose called ");
-    float minWeight = 0.1f;
+    float minWeight = 0.3f;
     particles = new MCLParticleSet(map, numParticles,border,readings, 2*sigma*sigma,minWeight  );
     updated = true; 
   }
@@ -162,10 +162,10 @@ public boolean  update()
    */
   private void estimatePose()
   {
-    if (scanner == null)
-    {
-      return;
-    }
+//    if (scanner == null)
+//    {
+//      return;
+//    }
     float totalWeights = 0;
     float estimatedX = 0;
     float estimatedY = 0;
