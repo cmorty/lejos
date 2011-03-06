@@ -70,6 +70,28 @@ public class Line extends Line2D.Float {
   }
   
   /**
+   * Returns the minimum distance between two line segments--this line segment and another. If they intersect 
+   * the distance is 0. Lines can be parallel or skewed (non-parallel).
+   * @param seg The other line segment.
+   * @return The distance between the two line segments.
+   */
+  public double segDist(Line seg) {
+	  if(this.intersectsLine(seg))
+		  return 0;
+	  double a = Line.ptSegDist(this.getX1(), this.getY1(), this.getX2(), this.getY2(), seg.getX1(), seg.getY1());
+	  double b = Line.ptSegDist(this.getX1(), this.getY1(), this.getX2(), this.getY2(), seg.getX2(), seg.getY2());
+	  double c = Line.ptSegDist(seg.getX1(), seg.getY1(), seg.getX2(), seg.getY2(), this.getX1(), this.getY1());
+	  double d = Line.ptSegDist(seg.getX1(), seg.getY1(), seg.getX2(), seg.getY2(), this.getX2(), this.getY2());
+	  
+	  double minDist = a;
+	  minDist = (b<minDist?b:minDist);
+	  minDist = (c<minDist?c:minDist);
+	  minDist = (d<minDist?d:minDist);
+	  
+	  return minDist;
+  }
+  
+  /**
    * Return true iff x is between x1 and x2
    */
   private boolean between(float x, float x1, float x2) {
