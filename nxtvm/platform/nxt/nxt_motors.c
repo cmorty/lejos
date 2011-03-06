@@ -3,7 +3,6 @@
 #include "nxt_avr.h"
 #include "aic.h"
 #include "interrupts.h"
-
 #include "AT91SAM7.h"
 
 #define MA0 15
@@ -16,10 +15,11 @@
 #define MOTOR_PIN_MASK 		((1 << MA0) | (1<<MA1) | (1<<MB0) | (1<<MB1) | (1<<MC0) | (1<<MC1))
 #define MOTOR_INTERRUPT_PINS 	((1 << MA0) | (1<<MB0) | (1<<MC0))
 
+// define to use full 720 counts per rev
+//#define USE_FULL_DECODE
 
 static struct motor_struct {
   int current_count;
-  int target_count;
   int speed_percent;
   U32 last;
 } motor[NXT_N_MOTORS];
@@ -68,16 +68,6 @@ void nxt_motor_reset_all()
 }
 
 void
-nxt_motor_command(U32 n, int cmd, int target_count, int speed_percent)
-{
-  if (n < NXT_N_MOTORS) {
-    motor[n].target_count = target_count;
-    motor[n].speed_percent = speed_percent;
-  }
-}
-
-
-void
 nxt_motor_1kHz_process(void)
 {
   if (nxt_motor_initialised) {
@@ -86,33 +76,33 @@ nxt_motor_1kHz_process(void)
   }
 
 }
+#ifdef USE_FULL_DECODE
+/*
+ * This table provides full quad decode giving 720 counts per rotation
+static const S8 quad_lookup[4][4] = 
+*/
+  {{0, 1, -1, 0},
+  {-1, 0, 0, 1},
+  {1, 0, 0, -1},
+  {0, -1, 1, 0}};
+#else
+/*
+ * This version provides half decode giving 360 counts per rotation
+ */
+static const S8 quad_lookup[4][4] = 
+  {{0, 1, 0, -1},
+  {-1, 0, 1, 0},
+  {0, 1, 0, -1},
+  {-1, 0, 1, 0}};
+#endif
 
 void
 nxt_motor_quad_decode(struct motor_struct *m, U32 value)
 {
-#if 0
-  if (m->last != value) {
-    if ((m->last + 1) & 3 == value)
-      m->current_count--;
-    else if ((value + 1) & 3 == m->last)
-      m->current_count++;
+  if (value != m->last)
+  {
+    m->current_count += quad_lookup[m->last][value];
     m->last = value;
-  }
-#endif
-
-  U32 dir = value & 2;
-  U32 edge = value & 1;
-
-  if (edge != m->last) {
-    if (edge && !dir)
-      m->current_count++;
-    else if (edge && dir)
-      m->current_count--;
-    else if (!edge && dir)
-      m->current_count++;
-    else if (!edge && !dir)
-      m->current_count--;
-    m->last = edge;
   }
 }
 
@@ -171,9 +161,17 @@ nxt_motor_init(void)
 		 nxt_motor_isr_entry);
   aic_mask_on(AT91C_ID_PIOA);
 
+#ifdef USE_FULL_DECODE
+  *AT91C_PIOA_IER = MOTOR_PIN_MASK;
+#else
   *AT91C_PIOA_IER = MOTOR_INTERRUPT_PINS;
+#endif
 
   nxt_motor_initialised = 1;
+  U32 currentPins = *AT91C_PIOA_PDSR;	// Read pins
+  motor[0].last = ((currentPins >> MA0) & 1) | ((currentPins >> (MA1 - 1)) & 2);
+  motor[1].last = ((currentPins >> MB0) & 1) | ((currentPins >> (MB1 - 1)) & 2);
+  motor[2].last = ((currentPins >> MC0) & 1) | ((currentPins >> (MC1 - 1)) & 2);
 
 
 }
