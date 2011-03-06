@@ -90,6 +90,9 @@ public class NXTRegulatedMotor implements RegulatedMotor
         // Putting the motor into float mode disables regulation. note
         // that we wait for the operation to complete.
         reg.newMove(0, acceleration, NO_LIMIT, false, true);
+        // Now wait for the motor to become inactive
+        while (reg.active)
+            Delay.msDelay(1);
         return true;
     }
 
@@ -259,7 +262,8 @@ public class NXTRegulatedMotor implements RegulatedMotor
     {
         synchronized(reg)
         {
-            stop();
+            // Make sure we are stopped!
+            reg.newMove(0, acceleration, NO_LIMIT, true, true);
             tachoPort.resetTachoCount();
             reg.reset();
         }
