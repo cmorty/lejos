@@ -7,7 +7,7 @@ package lejos.robotics;
 
 /**
  * Abstraction for a range finder sensor that returns the distance to the nearest object
- * 
+ * @see lejos.robotics.RangeScanner
  * @author Lawrie Griffiths
  */
 public interface RangeFinder {

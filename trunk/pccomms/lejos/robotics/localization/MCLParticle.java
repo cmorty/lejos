@@ -28,7 +28,7 @@ public class MCLParticle {
  
   // Instance variables (kept to minimum to allow maximum number of particles)
   private Pose pose;
-  private float weight = 0;
+  private float weight = 1;
   private  static  boolean debug = false;
 
   public static void setDebug(boolean yes)

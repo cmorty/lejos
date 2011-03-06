@@ -51,6 +51,7 @@ public class MCLParticleSet {
     for (int i = 0; i < numParticles; i++) {
       particles[i] = generateParticle();
     }
+    normalize();
   }
 /**
  * generates a circular cloud of particles centered on initialPose with random 
@@ -64,6 +65,7 @@ public class MCLParticleSet {
   public MCLParticleSet(RangeMap map, int numParticles, int border,
           RangeReadings readings, float divisor, float minWeight)
   {
+     int k = 1;
     this.map = map;
     this.numParticles = numParticles;
     this.border = border;
@@ -73,15 +75,17 @@ public class MCLParticleSet {
     int i = 0;
     while ( i < numParticles)
     {
+      k++;
       particle = generateParticle();
       particle.calculateWeight(readings, map, divisor);
       if(minWeight < particle.getWeight())
       {
         particles[i]=particle;
         i++;
-        System.out.println(i);
       }
     }
+    normalize();
+    System.out.println("particles generated " + k);
   }
 public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
           float radiusNoise, float headingNoise)
@@ -100,6 +104,7 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
       float heading = initialPose.getHeading() + headingNoise * (float) random.nextGaussian();
       particles[i] = new MCLParticle((new Pose(x,y,heading)));
     }
+    normalize();
   }
 
   /**
@@ -111,7 +116,6 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
     float x, y, angle;
     Rectangle innerRect = new Rectangle(boundingRect.x + border, boundingRect.y + border,
         boundingRect.width - border * 2, boundingRect.height - border * 2);
-
     // Generate x, y values in bounding rectangle
     for (;;) { // infinite loop that we break out of when we have
                // generated a particle within the mapped area
@@ -188,16 +192,18 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
             particles[i] = new MCLParticle(particles[i % count].getPose());
             particles[i].setWeight(particles[i % count].getWeight());
           }
+          normalize();
           return false;
         } else { // Completely lost - generate a new set of particles
           for (int i = 0; i < numParticles; i++) {
             particles[i] = generateParticle();
           }
 //          resetEstimate();
+          normalize();
           return true;
         }
       }
-      float rand = (float) Math.random();
+      float rand = maxWeight *(float) Math.random();
       for (int i = 0; i < numParticles && count < numParticles; i++)
       {
         if (oldParticles[i].getWeight() >= rand)
@@ -241,12 +247,9 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
         i++;  // line 9
         if (i == numParticles)
         {
-//          System.out.println("Resample " + i + " m " + m + " weight " +
-//                  oldParticles[i - 1].getWeight() / totalWeight);
           i = 0;// avoid array out of bounds
         }
         float w = oldParticles[i].getWeight() / totalWeight;
-//        if( w < .01/numParticles )System.out.println("w "+w+" i "+i+" c "+c+" u "+u);
         c += oldParticles[i].getWeight() / totalWeight; // line 10
       }// end while  // line 11
       particles[m] = oldParticles[i];// line 12
@@ -276,11 +279,12 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
     maxWeight = 0f;
     for (int i = 0; i < numParticles; i++) {
       particles[i].calculateWeight(rr, map, twoSigmaSquared);
-      float weight = particles[i].getWeight();
-      if (weight > maxWeight) {
-        maxWeight = weight;
-      }
     }
+    normalize();
+    for (int i = 0; i < numParticles; i++) {
+      float weight = particles[i].getWeight();
+      if (weight > maxWeight) maxWeight = weight;
+      }
 
    if(debug) System.out.println("Calc Weights Max wt " +maxWeight);
      if(maxWeight < .1)return false;
@@ -387,7 +391,20 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
     }
     return index;
   }
-  
+  private void normalize()
+  {
+    totalWeight  = 0;
+    for (int i = 0; i< numParticles; i++ )
+    {
+       totalWeight += particles[i].getWeight();
+    }
+     for (int i = 0; i< numParticles; i++ )
+    {
+       float w = particles[i].getWeight()/totalWeight;
+       particles[i].setWeight(w);
+    }
+    totalWeight = 1;
+  }
   /**
    * Serialize the particle set to a data output stream
    * 
