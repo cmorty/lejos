@@ -4,7 +4,7 @@
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
             <classpath>
-                <pathelement path="lib/pctools.jar;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
+                <pathelement path="lib/pctools.jar;../snapshot/lib/pc/pccomm.jar;../snapshot/lib/pc/3rdparty/bluecove-gpl.jar;../snapshot/lib/pc/3rdparty/bluecove.jar;../snapshot/lib/pc/3rdparty/commons-cli.jar;../snapshot/lib/pc/jtools.jar"/>
             </classpath>
         </java>
     </target>
