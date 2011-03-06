@@ -1,7 +1,6 @@
 package lejos.nxt.addon;
 
 
-import lejos.nxt.LCD;
 import lejos.nxt.MotorPort;
 import lejos.util.Delay;
 
