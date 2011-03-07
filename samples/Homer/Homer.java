@@ -8,6 +8,7 @@ import lejos.nxt.UltrasonicSensor;
 import lejos.robotics.Pose;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.RangeScanner;
+import lejos.robotics.FixedRangeScanner;
 import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.mapping.RangeMap;
@@ -33,7 +34,7 @@ import lejos.robotics.localization.MCLPoseProvider;
  * @author Lawrie Griffiths
  *
  */
-public class Homer implements RangeScanner {
+public class Homer {
   // Tyre diameter and wheel base
   private static final float TYRE_DIAMETER = 5.6f;
   private static final float WHEEL_BASE = 16.0f;
@@ -63,6 +64,7 @@ public class Homer implements RangeScanner {
   private DifferentialPilot pilot;
   private MCLParticleSet particles;
   private MCLPoseProvider mcl;
+  private RangeScanner scanner;
   
   public static void main(String[] args) {
     Homer simpson = new Homer();
@@ -81,9 +83,11 @@ public class Homer implements RangeScanner {
     // Create the robot and MCL pose provider and get its particle set
     pilot = new DifferentialPilot( 
         TYRE_DIAMETER, WHEEL_BASE, Motor.B, Motor.C, true);
-    mcl = new MCLPoseProvider(pilot,this, map, NUM_PARTICLES, BORDER);
+    scanner = new FixedRangeScanner(pilot,range);
+    mcl = new MCLPoseProvider(pilot,scanner, map, NUM_PARTICLES, BORDER);
     particles = mcl.getParticles();
     particles.setDebug(true);
+
     
     // Make random moves until we know where we are
     Pose start = localize(); 
@@ -118,34 +122,12 @@ public class Homer implements RangeScanner {
     return readings;
   }
   
-  /**
-   * Take a single range reading
-   * 
-   */
-  private void takeReading(float angle, int i) {
-    int rangeByte = (int) range.getRange();
-    float range;
-
-    if (rangeByte > MAX_RELIABLE_RANGE_READING) range = -1f;
-    else range = ((float) rangeByte);
-    readings.setRange(i,angle, range);
-  }
   
   /**
    * Take a set of 3 readings
    */
   public void takeReadings() {
-    // Take forward reading
-    takeReading(0f, FORWARD_READING);
-
-    // Take left reading
-    pilot.rotate(-RANGE_READING_ANGLE);
-    takeReading(-RANGE_READING_ANGLE, 0);
-
-    // Take right reading
-    pilot.rotate(2 * RANGE_READING_ANGLE);
-    takeReading(RANGE_READING_ANGLE, 2);
-    pilot.rotate(-RANGE_READING_ANGLE);
+    scanner.getRangeValues();
   }
   
   /**
