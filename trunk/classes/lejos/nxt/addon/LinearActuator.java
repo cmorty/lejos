@@ -8,9 +8,8 @@ import lejos.util.Delay;
 
 /** A Linear Actuator class that provides non-blocking actions and stall detection. Developed for the Firgelli L12-NXT-50 and L12-NXT-100
  * but may work for others. These linear actuators are self contained units which include an electric motor and encoder. They will push 
- * up to 25N and move at 12mm/s unloaded. See www.firgelli.com.
+ * up to 25N and move at 12mm/s unloaded. See <a href="http://www.firgelli.com">www.firgelli.com.</a>.
  * @author Kirk P. Thompson &lt;lejos@mosen.net&gt;
- * @version 1.0
  */
 public class LinearActuator {
     private final int FORWARD = 1;
@@ -47,9 +46,12 @@ public class LinearActuator {
         doWait(100);
     }
 
-    /** Sets the power for the actuator. Values below 50 will be set as 50. Using lower power values and pushing/pulling
+    /** Sets the power for the actuator. This must be called before the <tt>extend()</tt> and <tt>retract()</tt> methods are called.
+     * Values below 50 will be set as 50. Using lower power values and pushing/pulling
      * an excessive load may cause a stall. Stall detection will stop the current actuator action.
      * @param power power setting: 50 - 100
+     * @see #extend
+     * @see #retract
      */
     public void setPower(int power){
         this._power = (power>100)?100:power;
@@ -70,7 +72,7 @@ public class LinearActuator {
     }
     
     private void doAction(boolean immediateReturn){
-        if (_killThread) return;
+        if (_killThread || (_power==0)) return;
         // signal any current action to cease and wait until cleared
         _killCurrentAction=true;
         while(_killCurrentAction) Thread.yield();
