@@ -55,7 +55,16 @@ public class RotatingRangeScanner implements RangeScanner
   {
     this.angles = angles.clone();
   }
-  
+
+/**
+ * returns the rangeFinder - allows other objects to get a range value.
+ * @return the range finder
+ */
+  public RangeFinder getRangeFinder()
+  {
+    return rangeFinder;
+  }
+
   protected final int MAX_RELIABLE_RANGE_READING = 180;
   protected final int ZERO = 2;// correction of sensor zero
   protected RangeReadings readings;;
