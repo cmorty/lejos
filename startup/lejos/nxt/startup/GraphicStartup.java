@@ -53,6 +53,9 @@ public class GraphicStartup {
     static final String ICSleep = "\0\u0012\u001a\u0096\u0072\u0090\u0024\u0034\u00ac\u00a4\u0008\u0010\u0090\u0060\u0080\0\0\0\0\u0007\u0018\u0020\u0021\u0041\u0058\u0058\u0041\u0021\u0020\u0018\u0007\0";
     static final String ICAutoRun = "\u0040\u0050\u0050\u0050\u0010\u0080\u0060\u0050\u0050\u0050\u0070\u0050\u0070\u00d0\u0070\0\u0005\u0005\u0001\0\u000e\u0009\u0008\u0008\u0008\u0008\u0008\u0008\u0006\u0001\0\0";
     
+    static final String ICYes = "\0\u0080\u00c0\u0080\0\0\0\u0080\u00c0\u00e0\u00f0\u00f8\u00fc\u007c\u0038\u0010\u0003\u0007\u000f\u001f\u003f\u007e\u003f\u001f\u000f\u0007\u0003\u0001\0\0\0\0";
+    static final String ICNo = "\0\u000c\u001e\u003e\u007c\u00f8\u00f0\u00e0\u00e0\u00f0\u00f8\u007c\u003e\u001e\u000c\0\0\u0030\u0078\u007c\u003e\u001f\u000f\u0007\u0007\u000f\u001f\u003e\u007c\u0078\u0030\0";
+    
 	static final int POWER = 6;
 	static final int VISIBILITY = 7;
 	static final int SEARCH = 8;
@@ -571,7 +574,7 @@ public class GraphicStartup {
             GraphicMenu searchMenu = new GraphicMenu(names, icons);
             searchMenu.setParentIcon(ICSearch);
             // TODO Make Pair Icon
-            GraphicMenu subMenu = new GraphicMenu(new String[]{"Pair"}, new String[]{ICNXT});
+            GraphicMenu subMenu = new GraphicMenu(new String[]{"Pair"}, new String[]{ICYes});
             subMenu.setParentIcon(ICSearch);
             int selected = 0;
             do
@@ -584,13 +587,6 @@ public class GraphicStartup {
                     newScreen();
                     LCD.drawString(names[selected], 0, 1);
                     LCD.drawString(btrd.getBluetoothAddress(), 0, 2);
-                    byte[] devCls = btrd.getDeviceClass();
-                    int codRecord = (devCls[0] << 8) + devCls[1];
-    				codRecord = (codRecord << 8) + devCls[2];
-    				codRecord = (codRecord << 8) + devCls[3];
-    				DeviceClass cls = new DeviceClass(codRecord);
-                    LCD.drawString(Integer.toString(cls.getMajorDeviceClass()), 0, 3);
-                    LCD.drawString(Integer.toString(cls.getMinorDeviceClass()), 5, 3);
                     int subSelection = getSelection(subMenu, 0);
                     if (subSelection == 0)
                     {
@@ -887,7 +883,6 @@ public class GraphicStartup {
                 else if (ext.equals("wav"))
                 	icons[i] = ICSound;
                 else
-                	//TODO Unknown Icon
                 	icons[i] = ICUnknown;
             }
             menu.setItems(fileNames,icons);
@@ -958,7 +953,9 @@ public class GraphicStartup {
      */
     private int getYesNo(String prompt, boolean yes)
     {
-        TextMenu menu = new TextMenu(new String[]{"No", "Yes"}, 6, prompt);
+    	//newScreen();
+        GraphicMenu menu = new GraphicMenu(new String[]{"No", "Yes"},new String[]{ICNo,ICYes},prompt);
+        menu.setYLocation(5);
         return getSelection(menu, yes ? 1 : 0);
     }
 
