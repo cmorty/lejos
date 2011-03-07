@@ -60,7 +60,16 @@ public class FixedRangeScanner implements RangeScanner
     if(angle > 180 )angle -= 360;
     return angle;
   }
-    
+
+  /**
+ * returns the rangeFinder - allows other objects to get a range value.
+ * @return the range finder
+ */
+  public RangeFinder getRangeFinder()
+  {
+    return rangeFinder;
+  }
+
   protected RangeFinder rangeFinder;
   protected RotateMoveController pilot;
   protected float[] angles;
