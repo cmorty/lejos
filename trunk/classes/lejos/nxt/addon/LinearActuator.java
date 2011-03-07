@@ -1,15 +1,16 @@
 package lejos.nxt.addon;
 
-
+//import lejos.nxt.Button;
+//import lejos.nxt.LCD;
 import lejos.nxt.MotorPort;
 import lejos.util.Delay;
 
 
 /** A Linear Actuator class that provides non-blocking actions and stall detection. Developed for the Firgelli L12-NXT-50 and L12-NXT-100
  * but may work for others. These linear actuators are self contained units which include an electric motor and encoder. They will push 
- * up to 25N and move at 12mm/s unloaded. See <a href="http://www.firgelli.com">www.firgelli.com</a>.
- * 
+ * up to 25N and move at 12mm/s unloaded. See www.firgelli.com.
  * @author Kirk P. Thompson &lt;lejos@mosen.net&gt;
+ * @version 1.0
  */
 public class LinearActuator {
     private final int FORWARD = 1;
@@ -37,6 +38,7 @@ public class LinearActuator {
         this._motorPort= motorPort;
         // set up the threads
         moveDetector = new Thread(new MoveDetector());
+        moveDetector.setPriority(Thread.MAX_PRIORITY - 1);
         moveDetector.setDaemon(true);
         moveDetector.start();
         actuator = new Thread(new Actuator());
@@ -55,7 +57,8 @@ public class LinearActuator {
         // calc encoder tick/ms based on my testing. y=mm/sec, x=power
         // y = 0.000043x3 - 0.009243x2 + 0.770185x - 15.223827
         // R2 = 0.997733
-        _tick_wait = (int)(500/(0.000043f*Math.pow(power,3)-0.009243f*Math.pow(power,2)+0.770185f*power-15.223827f));        
+        // + 20%
+        _tick_wait = (int)((500/(0.000043f*Math.pow(power,3)-0.009243f*Math.pow(power,2)+0.770185f*power-15.223827f))*1.2f);        
 //        LCD.drawString(this._power + "," + _tick_wait + " ",0,7);
     }
 
@@ -73,8 +76,9 @@ public class LinearActuator {
         while(_killCurrentAction) Thread.yield();
         // initiate the action
         _doActuate=true;
-        // wait 5 _tick_waits to let motor run and MoveDetector() pick it up
-        waitForMovement(5);
+        // wait until the MoveDetector thread sets _isMoving
+        while(!_isMoving) Thread.yield();
+        // if told to block, wait until the actuator thread calls stopActuator() (via toExtent())
         if (!immediateReturn) {while(_doActuate) Thread.yield();}
     }
 
@@ -156,54 +160,69 @@ public class LinearActuator {
     /** This thread determines if the actuator is moving.
      */
     private class MoveDetector implements Runnable{
-        private final int STALL_COUNT = 10;
-        private int begTacho, endTacho;
-        private int stallCounter = 0;
+        private final int STALL_COUNT = 3; // FORWARD requires 3
+        private final int WAIT_PERIOD = _tick_wait/4;
+        private int begTacho;
+        private long begTime;
+        private boolean initActuate = true;
+        
         public void run() {
-            begTacho = _motorPort.getTachoCount();
             while (!_killThread) {                
-                Delay.msDelay(_tick_wait/3);
-                endTacho = _motorPort.getTachoCount();
-                if(begTacho-endTacho==0) {
-                    stallCounter++;
+                Delay.msDelay(WAIT_PERIOD);
+                // start the logic when an actuator action is initiated from doAction()
+                if (_doActuate) {
+                    // on initial actuator action...
+                    if (initActuate) {
+                        _isMoving = true;
+                        initActuate = false;
+//                        LCD.drawString("mv=t ",0,4);
+                        // set begin tacho and time
+                        begTacho = _motorPort.getTachoCount();
+                        begTime = System.currentTimeMillis();
+                    }
+                    // if no tacho change...
+                    if (begTacho==_motorPort.getTachoCount()) {
+                        // ...and we exceed STALL_COUNT wait periods, it probably means we have stalled
+                        if (System.currentTimeMillis()- begTime>_tick_wait*STALL_COUNT) {
+                            // so set this so toExtent() will exit it's tacho monitor loop and call stopActuator()
+                            _isMoving = false;
+//                            LCD.drawString("stall ",6,4);
+                        }
+                    } else {
+                        // The tacho is moving, get the current point and time for comparision
+                        begTacho = _motorPort.getTachoCount();
+                        begTime = System.currentTimeMillis();
+                    }
                 } else {
-                    begTacho=endTacho;
-                    stallCounter=0;
-                    if (!_isMoving) _isMoving = true;
+                    // no actuator action has been specified...
+                    _isMoving = false;
+                    initActuate = true;
                 }
-                // if not tacho change in n cycles, we have stalled
-                if (stallCounter>=STALL_COUNT){
-                    if(_isMoving) _isMoving = false;
-                    stallCounter=0;
-                }
+//                if (Button.ESCAPE.isPressed()) { // TODO remove after testing
+//                    stopActuator();
+//                    Delay.msDelay(333);
+//                }
             }
         }
     }
 
-    private void waitForMovement(int ticks){
-        for (int i=0;i<ticks;i++){
-            doWait(_tick_wait);
-            if(_isMoving) {
-               break;
-            }
-        }
-    }
-    
     private synchronized void toExtent(int direction, int ticks) {
+        // the MoveDetector thread sets _isMoving. The MoveDetector does this when _doActuate is set true. _doActuate is
+        // set by doAction() which is called for extend or retract. The Actuatro thread calls this method when _doActuate=true
         int power = _power;
-        _motorPort.resetTachoCount();
-         _motorPort.controlMotor(_power, direction);
-         // give 4 trys for motor to come up to speed and thus have the MoveDetector thread set _isMoving
-        waitForMovement(4);
         int tacho=0;
+        _motorPort.resetTachoCount();
+        _motorPort.controlMotor(_power, direction);
+//        LCD.drawString("startActuator ",0,5);
+//        LCD.drawString("      ",6,4);
         while (_isMoving && !_killCurrentAction) {
             tacho = Math.abs(getTachoCount());
             //             LCD.drawString("t=" + tacho + " ",0,4);
              // reduce speed when near destination when at higher speeds
             if (ticks-tacho<=4&&_power>80) _motorPort.controlMotor(70, direction);
-            // exit loop if dest is reached
+            // exit loop if destination is reached
             if (tacho>=ticks) break;
-            // if power changed during this run....
+            // if power changed during this run.... (used only if immediateReturn=true)
             if (power!=_power) {
                 power = _power;
                 _motorPort.controlMotor(power, direction);
@@ -230,7 +249,9 @@ public class LinearActuator {
         _killCurrentAction = true;
         _doActuate = false;
         _motorPort.controlMotor(0, STOP);
+        doWait(20);
         _motorPort.controlMotor(0, FLOAT);
+//        LCD.drawString("stopActuator  ",0,5);
     }
 
     /**Returns the tachometer (encoder) count. The Firgelli L12-NXT-50 & 100 use 0.5 mm/encoder tick. eg: 200 ticks=100 mm.
