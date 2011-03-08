@@ -24,7 +24,7 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 	     
 	     while (!openset.isEmpty()) {
 	         Node x = getLowestCost(openset); // get the node in openset having the lowest f_score[] value
-	         System.out.println("Node " + x.getId() + " F score " + x.getFScore());
+	         //System.out.println("Node " + x.getId() + " F score " + x.getFScore()); // TODO: DELETE 
 	         if(x == goal) {
 	             //return reconstructPath(goal); // reconstruct_path(came_from, came_from[goal])
 	         	 ArrayList <WayPoint> final_path = new ArrayList<WayPoint>();
@@ -76,7 +76,7 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 		return best;
 	}
 
-	public String getSearchName() {
+	public String toString() {
 		return STRING_NAME;
 	}
 }

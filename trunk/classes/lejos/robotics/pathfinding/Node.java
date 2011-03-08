@@ -19,11 +19,11 @@ public class Node extends WayPoint {
 	private float g_score = 0;
 	private Node cameFrom = null;
 	private ArrayList <Node> neighbors = new ArrayList<Node>();
-	private String id = null;
+	//private String id = null;
 	
-	public Node(String id, float x, float y) {
+	public Node(float x, float y) {
 		super(x, y);
-		this.id = id;
+		//this.id = id;
 		// TODO: Get rid of string id? Kind of a memory hog with lots of generated nodes.
 	}
 	
@@ -41,22 +41,22 @@ public class Node extends WayPoint {
 	
 	// Note: You have to add this node to neighbor, and then add neighbor to this node. This method doesn't do both.
 	public void addNeighbor(Node neighbor) {
-		// TODO: Maybe code here should add each other as neighbors?
+		// TODO: OPTION - Maybe code here should add each other as neighbors?
 		// TODO: Check to make sure same isn't added twice?
 		// TODO: Check to make sure doesn't add itself? Return boolean.
 		neighbors.add(neighbor);
 	}
 	
-	// Note: You have to add this node to neighbor, and then add neighbor to this node. This method doesn't do both.
+	// Note: You have to remove this node from neighbor, and then remove neighbor from this node. This method doesn't do both.
 	public boolean removeNeighbor(Node neighbor) {
-		// TODO: Maybe code here should add each other as neighbors? Should also check make sure isn't added twice.
+		// TODO: Maybe code here should remove each other as neighbors?
 		return neighbors.remove(neighbor);
 	}
 	
-	
+	/*
 	public String getId() {
-		return id;
-	}
+		return id; // TODO: Just use toString()? Extending Point2D includes toString by the way. Huge memory. 
+	}*/
 	
 	public void setHeuristicEstimate(float h) {
 		h_score = h;

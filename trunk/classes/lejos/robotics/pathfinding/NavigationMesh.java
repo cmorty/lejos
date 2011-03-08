@@ -1,5 +1,7 @@
 package lejos.robotics.pathfinding;
 
+import java.util.Collection;
+
 /**
  * An interface for classes which build navigation meshes. 
  * TODO: Consider making it abstract with common methods if any develop?
@@ -9,7 +11,7 @@ package lejos.robotics.pathfinding;
  *
  */
 public interface NavigationMesh {
-	// TODO: Fill in some methods here? Or is it up to use how he wants to do this. Isn't like the NavigationMesh is
+	// TODO: Fill in some methods here? Or is it up to use how he wants to do this. It isn't like the NavigationMesh is
 	// actually used by a class, is it? Unless it can be used to build meshes dynamically too. That's an option.
 	
 	
@@ -31,5 +33,10 @@ public interface NavigationMesh {
 	
 	public boolean disconnect(Node node1, Node node2);
 	
+	// Note: Not used by NodePathFinder but seemed like a conspicuously absent method. 
+	public Collection <Node> getMesh();
+	
+	// Note: Not used by NodePathFinder but seems useful for GUIs and such when parameters changed.
+	public void regenerate();
 	
 }
