@@ -18,19 +18,35 @@ public class FourWayGridMesh implements NavigationMesh {
 	private float gridspace;
 	
 	public FourWayGridMesh(LineMap map, float gridSpace, float clearance) {
-		this.map = map;
-		this.clearance = clearance;
-		this.gridspace = gridSpace;
-		// TODO: Maybe generate called here? If called later, someone could  add a node before it was
+		setMap(map);
+		setClearance(clearance);
+		setGridSpacing(gridSpace);
+		// TODO: OPTION 1: Generate now (predictable) or later (allows changes to be made to map? Nah.) 
+		// Maybe generate called here? If called later, someone could  add a node before it was
 		// generated and expect it to be connected, which it won't be.
 	}
 	
 	public Collection <Node> getMesh(){
-		if(mesh == null) generate();
+		if(mesh == null) regenerate();
 		return mesh;
 	}
 	
-	public void generate() {
+	// NOTE: When grid space value is changed, this class does not regenerate the navigation mesh until regenerate() is explicitly called.
+	public void setGridSpacing(float gridSpace) {
+		this.gridspace = gridSpace;
+	}
+	
+	// NOTE: When clearance value is changed, this class does not regenerate the navigation mesh until regenerate() is explicitly called.
+	public void setClearance(float clearance) {
+		this.clearance = clearance;
+	}
+	
+	// NOTE: When Map changed, does not regenerate the navigation mesh until regenerate() is explicitly called. 
+	public void setMap(LineMap map) {
+		this.map = map;
+	}
+	
+	public void regenerate() {
 		long startNanoT = System.nanoTime();
 		long startFreeMem = Runtime.getRuntime().freeMemory();
 		
@@ -48,12 +64,15 @@ public class FourWayGridMesh implements NavigationMesh {
 		int x_grid_squares = 0;
 		int y_grid_squares = 0;
 		
+		System.out.println("Grid space: " + gridspace);
+		
+		
 		for(float y = starty;y<endy;y+=gridspace) {
 			y_grid_squares += 1;
 			for(float x = startx;x<endx;x+=gridspace) {
 				x_grid_squares += 1;
-				mesh.add(new Node("(" + x + ", " + y + ")", x, y));
-				// TODO: Why not use addNode for each subsequent node?!
+				mesh.add(new Node(x, y));
+				// TODO: Why not use addNode for each subsequent node?! Because it tries to connect it to others.
 			}
 		}
 		x_grid_squares /= y_grid_squares;
@@ -87,9 +106,12 @@ public class FourWayGridMesh implements NavigationMesh {
 	}
 	
 	public boolean connect(Node node1, Node node2) {
-		// TODO: Check if both nodes are within map bounding area?
 		
 		if(map != null) {
+			// Check if nodes are within bounding box:
+			if(!map.getBoundingRect().contains(node1)) return false;
+			if(!map.getBoundingRect().contains(node2)) return false;
+			
 			Line connection = new Line(node1.x, node1.y, node2.x, node2.y);
 			Line [] lines = map.getLines();
 			for(int i=0;i<lines.length;i++) {
@@ -104,7 +126,9 @@ public class FourWayGridMesh implements NavigationMesh {
 	}
 	
 	public boolean disconnect(Node node1, Node node2) {
-		// TODO: Return true if nodes were previously connected.
+		// TODO: Return true if nodes were previously connected? Or return void.
+		node1.removeNeighbor(node2);
+		node2.removeNeighbor(node1);
 		return true;
 	}
 	
@@ -112,7 +136,7 @@ public class FourWayGridMesh implements NavigationMesh {
 	// Returns 0 if no connections made, making this an orphaned node. Probably the x, y of the node you tried to add
 	// was outside of the bounded area of the map.
 	public int addNode(Node node, int neighbors) {
-		if(mesh == null) generate();
+		if(mesh == null) regenerate();
 		
 		int total = 0;
 		
@@ -139,17 +163,34 @@ public class FourWayGridMesh implements NavigationMesh {
 	// NOTE: There is no guarantee it is disconnecting from only nodes in this mesh. It disconnects from all nodes
 	// it currently has registered as neighbors.
 	public boolean removeNode(Node node) {
-		
+		//System.out.print("MAIN NODE ");
+		//outputNodeData(node);
 		Collection <Node> coll = node.getNeighbors();
-		Iterator <Node> it = coll.iterator();
-		while(it.hasNext()) {
-			Node neighbor = it.next();
-			// TODO neighbor.removeNeighbor(node);
-			// TODO node.removeNeighbor(neighbor);
+		ArrayList <Node> arr = new ArrayList <Node> (coll);
+		for(int i=0;i<arr.size();i++) {
+			Node neighbor = arr.get(i);
+			//System.out.print("NEIGHBOR NODE ");
+			//outputNodeData(neighbor);
+			neighbor.removeNeighbor(node);
+			node.removeNeighbor(neighbor); // Could remove all of them after with one call!
 		}
 		
+		//System.out.print("POST MAIN NODE ");
+		//outputNodeData(node);
+				
 		return mesh.remove(node);
-	}	
+	}
+	
+	// TODO: DELETE WHEN DONE TESTING
+	static public void outputNodeData(Node node) {
+		System.out.println("Name: " + node);
+		Collection <Node> coll = node.getNeighbors();
+		ArrayList <Node> arr = new ArrayList <Node> (coll);
+		for(int i=0;i<arr.size();i++)
+			System.out.println("Neighbor " + i + ": " + arr.get(i));
+	}
+	
+	
 }
 
 

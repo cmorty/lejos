@@ -19,14 +19,14 @@ public class RandomSelfGeneratingNode extends Node {
 	
 	static Node goal = null; // TODO: Of course, this blows apart the possibility of using two sets of nodes with different goals.
 	
-	public RandomSelfGeneratingNode(String id, float x, float y, float maxDist, int connections) {
-		super(id, x, y);
+	public RandomSelfGeneratingNode(float x, float y, float maxDist, int connections) {
+		super(x, y);
 		this.maxDist = maxDist;
 		this.connections = connections;
 	}
 	
-	public RandomSelfGeneratingNode(String id, float x, float y, float maxDist, int connections, Node goal) {
-		this(id, x, y, maxDist, connections);
+	public RandomSelfGeneratingNode(float x, float y, float maxDist, int connections, Node goal) {
+		this(x, y, maxDist, connections);
 		RandomSelfGeneratingNode.goal = goal;
 	}
 	
@@ -65,8 +65,8 @@ public class RandomSelfGeneratingNode extends Node {
 				if(Math.random() < 0.5) rand_y*= -1;
 				float new_x = this.x + rand_x;
 				float new_y = this.y + rand_y;
-				String new_id = "(" + new_x + ", " + new_y + ")";
-				RandomSelfGeneratingNode newNode = new RandomSelfGeneratingNode(new_id, new_x, new_y, maxDist, connections);
+				//String new_id = "(" + new_x + ", " + new_y + ")";
+				RandomSelfGeneratingNode newNode = new RandomSelfGeneratingNode(new_x, new_y, maxDist, connections);
 				
 				// Add parent node (this) and add new to this.
 				newNode.addNeighbor(this);

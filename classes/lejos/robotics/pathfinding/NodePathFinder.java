@@ -14,12 +14,20 @@ public class NodePathFinder implements PathFinder{
 	private NavigationMesh mesh = null;
 	
 	public NodePathFinder(SearchAlgorithm alg) {
-		this.alg = alg;
+		setSearchAlgorithm(alg);
 	}
 	
 	public NodePathFinder(SearchAlgorithm alg, NavigationMesh mesh) {
 		this(alg);
+		setNavMesh(mesh);
+	}
+	
+	public void setNavMesh(NavigationMesh mesh) {
 		this.mesh = mesh;
+	}
+	
+	public void setSearchAlgorithm(SearchAlgorithm alg) {
+		this.alg = alg;
 	}
 	
 	public void addListener(WayPointListener wpl) {
@@ -30,8 +38,8 @@ public class NodePathFinder implements PathFinder{
 	public Collection<WayPoint> findRoute(Pose start, WayPoint goal)
 			throws DestinationUnreachableException {
 		// Step 1: Make nodes out of start and destination
-		Node startNode = new Node("start", start.getX(), start.getY());
-		Node goalNode = new Node("start", (float)goal.getX(), (float)goal.getY());
+		Node startNode = new Node(start.getX(), start.getY());
+		Node goalNode = new Node((float)goal.getX(), (float)goal.getY());
 		// Step 2: If Mesh is not null, add them to set? 
 		if(mesh != null) {
 			mesh.addNode(startNode, 4);
