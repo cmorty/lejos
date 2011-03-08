@@ -861,7 +861,6 @@ public class GraphicStartup {
     	menu.setYLocation(3);
         int selection = 0;
         do {
-            newScreen("Files");
             File[] files = File.listFiles();
             int len = 0;
             for (int i = 0; i < files.length && files[i] != null; i++)
@@ -871,6 +870,7 @@ public class GraphicStartup {
                 msg("No files found");
                 return;
             }
+            newScreen("Files");
             String fileNames[] = new String[len];
             String[] icons = new String[len];
             for (int i = 0; i < len; i++){

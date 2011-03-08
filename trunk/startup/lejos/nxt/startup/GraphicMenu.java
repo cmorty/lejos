@@ -26,7 +26,7 @@ public class GraphicMenu extends TextMenu{
 	private static final int interval = 16; // Time between animation frames in milliseconds (1000ms per 1s)
 	private static final int tickCount = 10; // Number of animation frames used
 	
-	private String _parent = null;
+	private byte[] _parent = null;
 	
 	/*
 	 * Line where the menu item label is displayed.
@@ -203,7 +203,7 @@ public class GraphicMenu extends TextMenu{
 			LCD.drawString(_title, 0, labelLine-1);
 		clearArea();
 		if(_parent != null)
-			LCD.bitBlt(Utils.stringToBytes(_parent), 16, 16, 0, 0, xArea+xOffset+(2*xWidth),yArea+yOffset+18, 16, 16, LCD.ROP_COPY);
+			LCD.bitBlt(_parent, 16, 16, 0, 0, xArea+xOffset+(2*xWidth),yArea+yOffset+18, 16, 16, LCD.ROP_COPY);
 		//Prepare Index Locations
 		int length = _length;
 		int[] index = new int[5];
@@ -266,6 +266,9 @@ public class GraphicMenu extends TextMenu{
 	}
 
 	public void setParentIcon(String str) {
-		_parent = str;
+		if (str == null)
+			_parent = null;
+		else
+			_parent = Utils.stringToBytes(str);
 	}
 }
