@@ -548,73 +548,74 @@ public class GraphicStartup {
 	    	indiBT.decCount();
 	    }
         if (devList.size() <= 0)
-            msg("No devices found");
-        else
         {
-            String[] names = new String[devList.size()];
-            String[] icons = new String[devList.size()];
-            for (int i = 0; i < devList.size(); i++)
-            {
-                RemoteDevice btrd = devList.elementAt(i);
-                names[i] = btrd.getFriendlyName(false);
-                byte[] devCls = btrd.getDeviceClass();
-                int codRecord = (devCls[0] << 8) + devCls[1];
-				codRecord = (codRecord << 8) + devCls[2];
-				codRecord = (codRecord << 8) + devCls[3];
-				DeviceClass cls = new DeviceClass(codRecord);
-                if (cls.getMajorDeviceClass() == 0x100)
-                	icons[i] = ICComputer;
-                else if (cls.getMajorDeviceClass() == 0x200)
-                	icons[i] = ICPhone;
-                else if (cls.getMajorDeviceClass() == 0x800 && cls.getMinorDeviceClass() == 0x04)
-                	icons[i] = ICNXT;
-                else
-                	icons[i] = ICUnknown;
-            }
-            GraphicMenu searchMenu = new GraphicMenu(names, icons);
-            searchMenu.setParentIcon(ICSearch);
-            // TODO Make Pair Icon
-            GraphicMenu subMenu = new GraphicMenu(new String[]{"Pair"}, new String[]{ICYes});
-            subMenu.setParentIcon(ICSearch);
-            int selected = 0;
-            do
-            {
-                newScreen("Found");
-                selected = getSelection(searchMenu, selected);
-                if (selected >= 0)
-                {
-                    RemoteDevice btrd = devList.elementAt(selected);
-                    newScreen();
-                    LCD.drawString(names[selected], 0, 1);
-                    LCD.drawString(btrd.getBluetoothAddress(), 0, 2);
-                    int subSelection = getSelection(subMenu, 0);
-                    if (subSelection == 0)
-                    {
-                        newScreen("Pairing");
-                        Bluetooth.addDevice(btrd);
-                        // !! Assuming 4 length
-                        byte[] pin = { '0', '0', '0', '0' };
-                        if (!enterNumber("PIN for " + btrd.getFriendlyName(false), pin, pin.length))
-                        	break;
-                        LCD.drawString("Please wait...", 0, 6);
-                        BTConnection connection = Bluetooth.connect(btrd.getDeviceAddr(), 0, pin);
-                        // Indicate Success or failure:
-                        if (connection != null)
-                        {
-                            LCD.drawString("Paired!      ", 0, 6);
-                            connection.close();
-                        }
-                        else
-                        {
-                            LCD.drawString("UNSUCCESSFUL  ", 0, 6);
-                            Bluetooth.removeDevice(btrd);
-                        }
-                        LCD.drawString("Press any key", 0, 7);
-                        getButtonPress();
-                    }
-                }
-            } while (selected >= 0);
+            msg("No devices found");
+            return;
         }
+        
+        String[] names = new String[devList.size()];
+        String[] icons = new String[devList.size()];
+        for (int i = 0; i < devList.size(); i++)
+        {
+            RemoteDevice btrd = devList.elementAt(i);
+            names[i] = btrd.getFriendlyName(false);
+            byte[] devCls = btrd.getDeviceClass();
+            int codRecord = (devCls[0] << 8) + devCls[1];
+			codRecord = (codRecord << 8) + devCls[2];
+			codRecord = (codRecord << 8) + devCls[3];
+			DeviceClass cls = new DeviceClass(codRecord);
+            if (cls.getMajorDeviceClass() == 0x100)
+            	icons[i] = ICComputer;
+            else if (cls.getMajorDeviceClass() == 0x200)
+            	icons[i] = ICPhone;
+            else if (cls.getMajorDeviceClass() == 0x800 && cls.getMinorDeviceClass() == 0x04)
+            	icons[i] = ICNXT;
+            else
+            	icons[i] = ICUnknown;
+        }
+        GraphicMenu searchMenu = new GraphicMenu(names, icons);
+        searchMenu.setParentIcon(ICSearch);
+        // TODO Make Pair Icon
+        GraphicMenu subMenu = new GraphicMenu(new String[]{"Pair"}, new String[]{ICYes});
+        subMenu.setParentIcon(ICSearch);
+        int selected = 0;
+        do
+        {
+            newScreen("Found");
+            selected = getSelection(searchMenu, selected);
+            if (selected >= 0)
+            {
+                RemoteDevice btrd = devList.elementAt(selected);
+                newScreen();
+                LCD.drawString(names[selected], 0, 1);
+                LCD.drawString(btrd.getBluetoothAddress(), 0, 2);
+                int subSelection = getSelection(subMenu, 0);
+                if (subSelection == 0)
+                {
+                    newScreen("Pairing");
+                    Bluetooth.addDevice(btrd);
+                    // !! Assuming 4 length
+                    byte[] pin = { '0', '0', '0', '0' };
+                    if (!enterNumber("PIN for " + btrd.getFriendlyName(false), pin, pin.length))
+                    	break;
+                    LCD.drawString("Please wait...", 0, 6);
+                    BTConnection connection = Bluetooth.connect(btrd.getDeviceAddr(), 0, pin);
+                    // Indicate Success or failure:
+                    if (connection != null)
+                    {
+                        LCD.drawString("Paired!      ", 0, 6);
+                        connection.close();
+                    }
+                    else
+                    {
+                        LCD.drawString("UNSUCCESSFUL  ", 0, 6);
+                        Bluetooth.removeDevice(btrd);
+                    }
+                    LCD.drawString("Press any key", 0, 7);
+                    getButtonPress();
+                }
+            }
+        } while (selected >= 0);
     }
 
     /**
@@ -623,59 +624,60 @@ public class GraphicStartup {
     private void bluetoothDevices()
     {
         Vector<RemoteDevice> devList = Bluetooth.getKnownDevicesList();
-        newScreen("Devices");
         if (devList.size() <= 0)
-            msg("No known devices");
-        else
         {
-            String[] names = new String[devList.size()];
-            String[] icons = new String[devList.size()];
-            for (int i = 0; i < devList.size(); i++)
-            {
-                RemoteDevice btrd = devList.elementAt(i);
-                names[i] = btrd.getFriendlyName(false);
-                byte[] devCls = btrd.getDeviceClass();
-                int codRecord = (devCls[0] << 8) + devCls[1];
-				codRecord = (codRecord << 8) + devCls[2];
-				codRecord = (codRecord << 8) + devCls[3];
-				DeviceClass cls = new DeviceClass(codRecord);
-				if (cls.getMajorDeviceClass() == 0x100)
-                	icons[i] = ICComputer;
-                else if (cls.getMajorDeviceClass() == 0x200)
-                	icons[i] = ICPhone;
-                else if (cls.getMajorDeviceClass() == 0x800 && cls.getMinorDeviceClass() == 0x04)
-                	icons[i] = ICNXT;
-                else
-                	icons[i] = ICUnknown;
-            }
+            msg("No known devices");
+            return;
+        }
+        
+        newScreen("Devices");
+        String[] names = new String[devList.size()];
+        String[] icons = new String[devList.size()];
+        for (int i = 0; i < devList.size(); i++)
+        {
+            RemoteDevice btrd = devList.elementAt(i);
+            names[i] = btrd.getFriendlyName(false);
+            byte[] devCls = btrd.getDeviceClass();
+            int codRecord = (devCls[0] << 8) + devCls[1];
+			codRecord = (codRecord << 8) + devCls[2];
+			codRecord = (codRecord << 8) + devCls[3];
+			DeviceClass cls = new DeviceClass(codRecord);
+			if (cls.getMajorDeviceClass() == 0x100)
+            	icons[i] = ICComputer;
+            else if (cls.getMajorDeviceClass() == 0x200)
+            	icons[i] = ICPhone;
+            else if (cls.getMajorDeviceClass() == 0x800 && cls.getMinorDeviceClass() == 0x04)
+            	icons[i] = ICNXT;
+            else
+            	icons[i] = ICUnknown;
+        }
 
-            GraphicMenu deviceMenu = new GraphicMenu(names, icons);
-            deviceMenu.setParentIcon(ICNXT);
-            //TextMenu subMenu = new TextMenu(new String[] {"Remove"}, 6);
-            GraphicMenu subMenu = new GraphicMenu(new String[] {"Remove"},new String[]{ICDelete});
-            subMenu.setParentIcon(ICNXT);
-            int selected = 0;
-            do
+        GraphicMenu deviceMenu = new GraphicMenu(names, icons);
+        deviceMenu.setParentIcon(ICNXT);
+        //TextMenu subMenu = new TextMenu(new String[] {"Remove"}, 6);
+        GraphicMenu subMenu = new GraphicMenu(new String[] {"Remove"},new String[]{ICDelete});
+        subMenu.setParentIcon(ICNXT);
+        int selected = 0;
+        do
+        {
+            newScreen();
+            selected = getSelection(deviceMenu, selected);
+            if (selected >= 0)
             {
                 newScreen();
-                selected = getSelection(deviceMenu, selected);
-                if (selected >= 0)
+                RemoteDevice btrd = devList.elementAt(selected);
+                LCD.drawString(btrd.getFriendlyName(false), 0, 2);
+                LCD.drawString(btrd.getBluetoothAddress(), 0, 3);
+                for (int i = 0; i < 4; i++)
+                    LCD.drawInt(btrd.getDeviceClass()[i], 3, i * 4, 4);
+                int subSelection = getSelection(subMenu, 0);
+                if (subSelection == 0)
                 {
-                    newScreen();
-                    RemoteDevice btrd = devList.elementAt(selected);
-                    LCD.drawString(btrd.getFriendlyName(false), 0, 2);
-                    LCD.drawString(btrd.getBluetoothAddress(), 0, 3);
-                    for (int i = 0; i < 4; i++)
-                        LCD.drawInt(btrd.getDeviceClass()[i], 3, i * 4, 4);
-                    int subSelection = getSelection(subMenu, 0);
-                    if (subSelection == 0)
-                    {
-                        Bluetooth.removeDevice(btrd);
-                        break;
-                    }
+                    Bluetooth.removeDevice(btrd);
+                    break;
                 }
-            } while (selected >= 0);
-        }
+            }
+        } while (selected >= 0);
     }
 
     /**
@@ -965,22 +967,21 @@ public class GraphicStartup {
      */
     private void systemAutoRun()
     {
-    	newScreen("Auto Run");
     	File f = getDefaultProgram();
     	if (f == null)
     	{
        		msg("No default set");
+       		return;
     	}
-    	else
-    	{
-        	LCD.drawString("Default Program:", 0, 2);
-        	LCD.drawString(f.getName(), 1, 3);
-        	
-        	String current = Settings.getProperty(defaultProgramAutoRunProperty, "");
-            int selection = getYesNo("Run at power up?", current.equals("ON"));
-            if (selection >= 0)
-            	Settings.setProperty(defaultProgramAutoRunProperty, selection == 0 ? "OFF" : "ON");
-    	}
+    	
+    	newScreen("Auto Run");
+    	LCD.drawString("Default Program:", 0, 2);
+    	LCD.drawString(f.getName(), 1, 3);
+    	
+    	String current = Settings.getProperty(defaultProgramAutoRunProperty, "");
+        int selection = getYesNo("Run at power up?", current.equals("ON"));
+        if (selection >= 0)
+        	Settings.setProperty(defaultProgramAutoRunProperty, selection == 0 ? "OFF" : "ON");
     }
 
     /**
