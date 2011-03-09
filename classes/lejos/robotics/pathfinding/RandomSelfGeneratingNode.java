@@ -1,5 +1,6 @@
 package lejos.robotics.pathfinding;
 
+import java.awt.geom.Point2D;
 import java.util.Collection;
 
 import lejos.robotics.navigation.ArcAlgorithms;
@@ -50,7 +51,7 @@ public class RandomSelfGeneratingNode extends Node {
 			// need to scrutinize every previous node generated. Either backtrack using Node.getPredecessor() or keep another
 			// list of all nodes generated so far.
 			// See if goal node is in range. Yes? Add.
-			float goal_dist = ArcAlgorithms.distBetweenPoints(goal, this);
+			float goal_dist = (float)Point2D.distance(goal.x, goal.y, this.x, this.y);
 			if(goal_dist <= maxDist) {
 				this.addNeighbor(goal);
 				goal.addNeighbor(this);

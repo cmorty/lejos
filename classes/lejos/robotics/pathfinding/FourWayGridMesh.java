@@ -2,8 +2,6 @@ package lejos.robotics.pathfinding;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-
 import lejos.geom.Line;
 import lejos.geom.Rectangle;
 import lejos.robotics.mapping.LineMap;
@@ -109,8 +107,8 @@ public class FourWayGridMesh implements NavigationMesh {
 		
 		if(map != null) {
 			// Check if nodes are within bounding box:
-			if(!map.getBoundingRect().contains(node1)) return false;
-			if(!map.getBoundingRect().contains(node2)) return false;
+			if(!map.getBoundingRect().contains(node1.x, node1.y)) return false;
+			if(!map.getBoundingRect().contains(node2.x, node2.y)) return false;
 			
 			Line connection = new Line(node1.x, node1.y, node2.x, node2.y);
 			Line [] lines = map.getLines();
