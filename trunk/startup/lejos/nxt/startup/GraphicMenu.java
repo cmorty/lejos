@@ -12,7 +12,7 @@ import lejos.util.TextMenu;
  * the icons are drawn and can be defined with the method setYLocation().  Other 
  * than the label location, nothing can be changed about the location of the menu.
  * 
- * @author Legoabram
+ * @author Abram Early
  *
  */
 public class GraphicMenu extends TextMenu{
@@ -41,13 +41,14 @@ public class GraphicMenu extends TextMenu{
 	 * Icon Database
 	 */
 	private byte[][] _icons;
+	private int _titleLine;
 	
 	/**
-	 * This constructor sets the location of the menu at line 4 by default.
+	 * This constructor sets the location of the menu to the parameter line
 	 */
-	public GraphicMenu( String[] items,String[] icons)
+	public GraphicMenu( String[] items,String[] icons,int line)
 	{
-		this(items,icons, null);
+		this(items,icons,line, null,1);
 	}
 	
 	/**
@@ -56,15 +57,13 @@ public class GraphicMenu extends TextMenu{
 	 * @param items  -  string array containing the menu items. No items beyond the first null will be displayed.
 	 * @param icons  -  string array containing the icon data in the form of a string instead of a byte[].
 	 */	
-	public GraphicMenu(String[] items,String[] icons, String title)
+	public GraphicMenu(String[] items,String[] icons,int line, String title, int titleLine)
 	{
 		super(items,1,title);
+		this._titleLine = titleLine;
 		this.setItems(items,icons);
-	}
-	
-	public void setYLocation (int charLine){
-		labelLine = charLine;
-		yArea = (charLine+1)*8;
+		labelLine = line;
+		yArea = (line+1)*8;
 	}
 	
 	/**
@@ -200,7 +199,7 @@ public class GraphicMenu extends TextMenu{
 	protected void display(int selectedIndex, int animateDirection, int tick)
 	{
 		if(_title != null)
-			LCD.drawString(_title, 0, labelLine-1);
+			LCD.drawString(_title, 0, _titleLine);
 		clearArea();
 		if(_parent != null)
 			LCD.bitBlt(_parent, 16, 16, 0, 0, xArea+xOffset+(2*xWidth),yArea+yOffset+18, 16, 16, LCD.ROP_COPY);
