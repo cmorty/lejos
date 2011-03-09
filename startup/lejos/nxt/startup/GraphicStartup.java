@@ -21,7 +21,6 @@ import lejos.nxt.comm.LCPResponder;
 import lejos.nxt.comm.NXTCommConnector;
 import lejos.nxt.comm.NXTCommDevice;
 import lejos.nxt.comm.USB;
-import lejos.util.TextMenu;
 
 public class GraphicStartup {
 	static final String defaultProgramProperty = "lejos.default_program";
@@ -73,7 +72,7 @@ public class GraphicStartup {
     IconIndicator indiBT = new IconIndicator(Config.ICON_BT_POS, Config.ICON_DISABLE_X, Config.ICON_BT_WIDTH);
     private Responder usb = new Responder(USB.getConnector(), indiUSB);
     private Responder bt = new Responder(Bluetooth.getConnector(), indiBT);
-    private TextMenu curMenu = null;
+    private GraphicMenu curMenu = null;
     
 	static class TuneThread extends Thread
 	{
@@ -451,7 +450,7 @@ public class GraphicStartup {
      * @param cur Initial item to select.
      * @return Selected item or < 0 for escape etc.
      */
-    private int getSelection(TextMenu menu, int cur)
+    private int getSelection(GraphicMenu menu, int cur)
     {
     	this.setCurMenu(menu);
     	
@@ -469,7 +468,7 @@ public class GraphicStartup {
         return selection;
     }
     
-    synchronized void setCurMenu(TextMenu menu)
+    synchronized void setCurMenu(GraphicMenu menu)
     {
     	this.curMenu = menu;
     }
@@ -573,10 +572,10 @@ public class GraphicStartup {
             else
             	icons[i] = ICUnknown;
         }
-        GraphicMenu searchMenu = new GraphicMenu(names, icons);
+        GraphicMenu searchMenu = new GraphicMenu(names, icons,4);
         searchMenu.setParentIcon(ICSearch);
         // TODO Make Pair Icon
-        GraphicMenu subMenu = new GraphicMenu(new String[]{"Pair"}, new String[]{ICYes});
+        GraphicMenu subMenu = new GraphicMenu(new String[]{"Pair"}, new String[]{ICYes},4);
         subMenu.setParentIcon(ICSearch);
         int selected = 0;
         do
@@ -652,10 +651,10 @@ public class GraphicStartup {
             	icons[i] = ICUnknown;
         }
 
-        GraphicMenu deviceMenu = new GraphicMenu(names, icons);
+        GraphicMenu deviceMenu = new GraphicMenu(names, icons,4);
         deviceMenu.setParentIcon(ICNXT);
         //TextMenu subMenu = new TextMenu(new String[] {"Remove"}, 6);
-        GraphicMenu subMenu = new GraphicMenu(new String[] {"Remove"},new String[]{ICDelete});
+        GraphicMenu subMenu = new GraphicMenu(new String[] {"Remove"},new String[]{ICDelete},4);
         subMenu.setParentIcon(ICNXT);
         int selected = 0;
         do
@@ -734,7 +733,7 @@ public class GraphicStartup {
     private void bluetoothMenu()
     {
         int selection = 0;
-        GraphicMenu menu = new GraphicMenu(null,null);
+        GraphicMenu menu = new GraphicMenu(null,null,4);
         menu.setParentIcon(ICBlue);
         boolean visible;
         do
@@ -817,9 +816,8 @@ public class GraphicStartup {
         LCD.drawString("Size:", 0, 2);
         LCD.drawString(Long.toString(file.length()), 5, 2);
         //TextMenu menu = new TextMenu(items, 2, fileName);
-        GraphicMenu menu = new GraphicMenu(items,icons,fileName);
+        GraphicMenu menu = new GraphicMenu(items,icons,3,fileName,1);
         menu.setParentIcon(ICFiles);
-        menu.setYLocation(3);
         int selection = getSelection(menu, 0);
         if (selection >= 0)
         {
@@ -858,9 +856,8 @@ public class GraphicStartup {
     private void filesMenu()
     {
         //TextMenu menu = new TextMenu(null, 1);
-    	GraphicMenu menu = new GraphicMenu(null,null);
+    	GraphicMenu menu = new GraphicMenu(null,null,3);
     	menu.setParentIcon(ICFiles);
-    	menu.setYLocation(3);
         int selection = 0;
         do {
             File[] files = File.listFiles();
@@ -902,7 +899,7 @@ public class GraphicStartup {
     {
         String[] soundMenuData = new String[]{"Volume:    ", "Key click: "};
         String[] soundMenuData2 = new String[soundMenuData.length];
-        TextMenu menu = new TextMenu(soundMenuData2, 2);
+        GraphicMenu menu = new GraphicMenu(soundMenuData2, new String[] {ICSound,ICSound},3);
         int[][] Volumes =
         {
             {
@@ -956,8 +953,7 @@ public class GraphicStartup {
     private int getYesNo(String prompt, boolean yes)
     {
     	//newScreen();
-        GraphicMenu menu = new GraphicMenu(new String[]{"No", "Yes"},new String[]{ICNo,ICYes},prompt);
-        menu.setYLocation(5);
+        GraphicMenu menu = new GraphicMenu(new String[]{"No", "Yes"},new String[]{ICNo,ICYes},5,prompt,4);
         return getSelection(menu, yes ? 1 : 0);
     }
 
@@ -994,7 +990,7 @@ public class GraphicStartup {
         String[] menuData = {"Format", "", "Auto Run", "Unset default"};
         String[] iconData = {ICFormat,ICSleep,ICAutoRun,ICDefault};
         //TextMenu menu = new TextMenu(menuData, 4);
-        GraphicMenu menu = new GraphicMenu(menuData,iconData);
+        GraphicMenu menu = new GraphicMenu(menuData,iconData,4);
         menu.setParentIcon(ICNXT);
         int selection = 0;
         do {
@@ -1066,8 +1062,7 @@ public class GraphicStartup {
         GraphicMenu menu = new GraphicMenu(new String[]
                 {
                     "Run Default", "Files", "Bluetooth", "Sound", "System", "Version"
-                },new String[] {ICDefault,ICFiles,ICBlue,ICSound,ICNXT,ICLeJOS});
-        menu.setYLocation(3);
+                },new String[] {ICDefault,ICFiles,ICBlue,ICSound,ICNXT,ICLeJOS},3);
         int selection = 0;
         do
         {
