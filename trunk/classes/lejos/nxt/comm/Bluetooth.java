@@ -1178,7 +1178,7 @@ public class Bluetooth extends NXTCommDevice
 	 * 
 	 * @return Vector with List of known Devices
 	 */
-	public static Vector getKnownDevicesList() {
+	public static Vector<RemoteDevice> getKnownDevicesList() {
 		//1 RConsole.print("getKnownDevicesList\n");
 		synchronized(Bluetooth.sync)
 		{
@@ -1219,7 +1219,7 @@ public class Bluetooth extends NXTCommDevice
 	public static RemoteDevice getKnownDevice(String fName) {
 		RemoteDevice btd = null;
 		//look the name up in List of Known Devices
-		Vector devList = getKnownDevicesList();
+		Vector<RemoteDevice> devList = getKnownDevicesList();
 		if (devList.size() > 0) {
 			for (int i = 0; i < devList.size(); i++) {
 				btd = (RemoteDevice) devList.elementAt(i);
@@ -1410,7 +1410,7 @@ public class Bluetooth extends NXTCommDevice
 	 * @param cod the class of device to look for
 	 * @return a vector of all the devices found
 	 */
-	public static Vector inquire(int maxDevices,  int timeout, byte[] cod) {
+	public static Vector<RemoteDevice> inquire(int maxDevices,  int timeout, byte[] cod) {
 		Vector<RemoteDevice> retVec = new Vector<RemoteDevice>();
 		byte[] device = new byte[ADDRESS_LEN];
 		byte[] name = new byte[NAME_LEN];

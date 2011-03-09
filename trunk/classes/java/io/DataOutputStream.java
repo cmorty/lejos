@@ -150,7 +150,50 @@ public class DataOutputStream extends FilterOutputStream implements DataOutput
 	public final void writeUTF(String s) throws IOException
 	{
 		//TODO implement writeUTF
-		throw new UnsupportedOperationException("not yet implemented");
+		//throw new UnsupportedOperationException("not yet implemented");
+		long utfCount = countUTFBytes(s);
+		  if (utfCount > 65535) {
+			  throw new IOException("UTF Format Error"); //$NON-NLS-1$
+		  }
+		  byte[] buffer = new byte[(int)utfCount + 2];
+		  int offset = 0;
+		  buffer[0] = (byte)(utfCount >>> 8);
+		  buffer[1] = (byte)utfCount;
+		  offset = writeUTFBytesToBuffer(s, (int) utfCount, buffer, offset);
+		  write(buffer, 0, offset);
+	}
+	long countUTFBytes(String str) {
+		int utfCount = 0, length = str.length();
+		for (int i = 0; i < length; i++) {
+			int charValue = str.charAt(i);
+			if (charValue > 0 && charValue <= 127) {
+				utfCount++;
+			} else if (charValue <= 2047) {
+				utfCount += 2;
+		  	} else {
+		  		utfCount += 3;
+		  	}
+		}
+		return utfCount;
+	}
+	
+	int writeUTFBytesToBuffer(String str, long count,
+		byte[] buffer, int offset) throws IOException {
+		int length = str.length();
+		for (int i = 0; i < length; i++) {
+			int charValue = str.charAt(i);
+			if (charValue > 0 && charValue <= 127) {
+				buffer[offset++] = (byte) charValue;
+			} else if (charValue <= 2047) {
+				buffer[offset++] = (byte) (0xc0 | (0x1f & (charValue >> 6)));
+				buffer[offset++] = (byte) (0x80 | (0x3f & charValue));
+			} else {
+				buffer[offset++] = (byte) (0xe0 | (0x0f & (charValue >> 12)));
+				buffer[offset++] = (byte) (0x80 | (0x3f & (charValue >> 6)));
+				buffer[offset++] = (byte) (0x80 | (0x3f & charValue));
+			}
+		}
+		return offset;
 	}
 }
 	
