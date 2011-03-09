@@ -6,14 +6,14 @@ import java.util.Collection;
 import lejos.robotics.navigation.WayPoint;
 
 /**
- * TODO: Might need OpenNodeSet (interface and algorithms) and ClosedNodeSet (class)? 
- * OpenNodeSet replaces NodeGenerator???
- * TODO: Overkill to extend WayPoint? Needs to use very little memory! Just x, y and neighbors! Minimal. Maybe some
- * static methods for handling nodes. Methods for getting waypoints. Extend Point2D instead?
+ * 
  * @author BB
  *
  */
-public class Node extends WayPoint {
+public class Node  { // extends Point2D.Float
+	
+	public float x;
+	public float y;
 	
 	private float h_score = 0;
 	private float g_score = 0;
@@ -22,9 +22,9 @@ public class Node extends WayPoint {
 	//private String id = null;
 	
 	public Node(float x, float y) {
-		super(x, y);
-		//this.id = id;
-		// TODO: Get rid of string id? Kind of a memory hog with lots of generated nodes.
+		//super(x, y);
+		this.x = x; 
+		this.y = y;
 	}
 	
 	public Collection <Node> getNeighbors() {
@@ -40,11 +40,14 @@ public class Node extends WayPoint {
 	}
 	
 	// Note: You have to add this node to neighbor, and then add neighbor to this node. This method doesn't do both.
-	public void addNeighbor(Node neighbor) {
+	public boolean addNeighbor(Node neighbor) {
 		// TODO: OPTION - Maybe code here should add each other as neighbors?
-		// TODO: Check to make sure same isn't added twice?
-		// TODO: Check to make sure doesn't add itself? Return boolean.
+		// Check to make sure same isn't added twice. (Assuming ArrayList doesn't do this already?)
+		if(neighbors.contains(neighbor)) return false;
+		// Check to make sure doesn't add itself
+		if(neighbor == this) return false;
 		neighbors.add(neighbor);
+		return true;
 	}
 	
 	// Note: You have to remove this node from neighbor, and then remove neighbor from this node. This method doesn't do both.
@@ -52,11 +55,6 @@ public class Node extends WayPoint {
 		// TODO: Maybe code here should remove each other as neighbors?
 		return neighbors.remove(neighbor);
 	}
-	
-	/*
-	public String getId() {
-		return id; // TODO: Just use toString()? Extending Point2D includes toString by the way. Huge memory. 
-	}*/
 	
 	public void setHeuristicEstimate(float h) {
 		h_score = h;
@@ -83,13 +81,13 @@ public class Node extends WayPoint {
 		cameFrom = orig;
 	}
 	 
-	// They want recursion here according to Wikipedia algorithm.
+	// TODO: Move this somewhere else appropriate once Node and NodeMetaData split? Unique to A*.
 	public static void reconstructPath(Node current_node, Node start, Collection <WayPoint> path){
 		if(current_node == start) {
-			path.add(current_node);
+			path.add(new WayPoint(current_node.x, current_node.y));
 			return; 
 		} else reconstructPath(current_node.getPredecessor(), start, path);
-		path.add(current_node);
+		path.add(new WayPoint(current_node.x, current_node.y));
 		return;
 	}
 

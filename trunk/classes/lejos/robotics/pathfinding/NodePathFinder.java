@@ -47,6 +47,7 @@ public class NodePathFinder implements PathFinder{
 		}
 		// Step 3: Use alg to find path.
 		Collection <WayPoint> path = alg.findPath(startNode, goalNode);
+		if(path == null) throw new DestinationUnreachableException();
 		
 		// Step 4: If mesh is not null, remove them from set?
 		if(mesh != null) {
@@ -62,11 +63,12 @@ public class NodePathFinder implements PathFinder{
 		try {
 			solution = findRoute(start, end);
 		} catch (DestinationUnreachableException e) {
-			// TODO Not sure what the proper response is here. All in one. Perhaps call pathComplete() with false?
+			// TODO: Call pathComplete() on all listeners with false if unable to find route.
+			// l.pathComplete(false); // Code should be below. Mark boolean success as false here.
 		}
 		if(listeners != null) { 
 			for(WayPointListener l : listeners) {
-				Iterator<WayPoint> iterator = solution.iterator(); 
+				Iterator<WayPoint> iterator = solution.iterator(); // TODO: If solution null, this can crash here.
 				while(iterator.hasNext()) {
 					l.nextWaypoint(iterator.next());
 				}
