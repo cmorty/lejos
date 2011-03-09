@@ -8,9 +8,6 @@ package java.io;
  */
 public class DataInputStream extends FilterInputStream implements DataInput
 {
-	private byte bytearr[] = new byte[80];
-    private char chararr[] = new char[80];
-    
 	public DataInputStream(InputStream in)
 	{
 		super(in); 
@@ -125,81 +122,59 @@ public class DataInputStream extends FilterInputStream implements DataInput
 	
 	public static final String readUTF(DataInput in) throws IOException
 	{
-		//TODO implement readUTF
-		//throw new UnsupportedOperationException("not yet implemented");
 		int utflen = in.readUnsignedShort();
-		byte[] bytearr = null;
-		char[] chararr = null;
-		if (in instanceof DataInputStream) {
-			DataInputStream dis = (DataInputStream)in;
-			if (dis.bytearr.length < utflen){
-				dis.bytearr = new byte[utflen*2];
-				dis.chararr = new char[utflen*2];
-			}
-			chararr = dis.chararr;
-			bytearr = dis.bytearr;
-		} else {
-			bytearr = new byte[utflen];
-			chararr = new char[utflen];
-		}
-
-		int c, char2, char3;
+		StringBuilder sb = new StringBuilder(utflen / 3);
+		
 		int count = 0;
-		int chararr_count=0;
-
-		in.readFully(bytearr, 0, utflen);
-
-		while (count < utflen) {
-			c = (int) bytearr[count] & 0xff;      
-			if (c > 127) break;
-			count++;
-			chararr[chararr_count++]=(char)c;
-		}
-
-		while (count < utflen) {
-			c = (int) bytearr[count] & 0xff;
-			switch (c >> 4) {
-			case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-				/* 0xxxxxxx*/
+		while (count < utflen)
+		{
+			int c1 = in.readUnsignedByte();
+		
+			if (c1 < 0x80)
+			{
+				// ASCII character
+				sb.append((char) c1);
 				count++;
-				chararr[chararr_count++]=(char)c;
-				break;
-			case 12: case 13:
-				/* 110x xxxx   10xx xxxx*/
-				count += 2;
-				if (count > utflen)
-					throw new IOException(
-							"malformed input: partial character at end");
-				char2 = (int) bytearr[count-1];
-				if ((char2 & 0xC0) != 0x80)
-					throw new IOException(
-							"malformed input around byte " + count); 
-				chararr[chararr_count++]=(char)(((c & 0x1F) << 6) | 
-						(char2 & 0x3F));  
-				break;
-			case 14:
-				/* 1110 xxxx  10xx xxxx  10xx xxxx */
-				count += 3;
-				if (count > utflen)
-					throw new IOException(
-							"malformed input: partial character at end");
-				char2 = (int) bytearr[count-2];
-				char3 = (int) bytearr[count-1];
-				if (((char2 & 0xC0) != 0x80) || ((char3 & 0xC0) != 0x80))
-					throw new IOException(
-							"malformed input around byte " + (count-1));
-				chararr[chararr_count++]=(char)(((c     & 0x0F) << 12) |
-						((char2 & 0x3F) << 6)  |
-						((char3 & 0x3F) << 0));
-				break;
-			default:
-				/* 10xx xxxx,  1111 xxxx */
-				throw new IOException(
-						"malformed input around byte " + count);
+			}
+			else switch (c1 >> 4)
+			{
+				case 0x0C:
+				case 0x0D:
+				{
+					/* 110x xxxx  10xx xxxx*/
+					count += 2;
+					if (count > utflen)
+						throw new IOException("malformed input: partial character at end");
+					
+					int c2 = in.readUnsignedByte();
+					if ((c2 & 0xC0) != 0x80)
+						throw new IOException("malformed input"); 
+					
+					sb.append((char)(((c1 & 0x1F) << 6) | (c2 & 0x3F)));
+					break;
+				}
+				case 0x0E:
+				{
+					/* 1110 xxxx  10xx xxxx  10xx xxxx */
+					count += 3;
+					if (count > utflen)
+						throw new IOException("malformed input: partial character at end");
+					
+					int c2 = in.readUnsignedByte();
+					int c3 = in.readUnsignedByte();
+					
+					if (((c2 & 0xC0) != 0x80) || ((c3 & 0xC0) != 0x80))
+						throw new IOException("malformed input");
+					
+					sb.append((char)(((c1 & 0x0F) << 12) | ((c2 & 0x3F) << 6) | (c3 & 0x3F)));
+					break;
+				}
+				default:
+					throw new IOException("malformed input");
 			}
 		}
-		// The number of chars produced may be less than utflen
-		return new String(chararr, 0, chararr_count);
+		
+		return sb.toString();
 	}
 	
 	public final int skipBytes(int n) throws IOException
