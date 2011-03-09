@@ -141,7 +141,7 @@ public class DataInputStream extends FilterInputStream implements DataInput
 				case 0x0C:
 				case 0x0D:
 				{
-					/* 110x xxxx  10xx xxxx*/
+					// 110x xxxx  10xx xxxx
 					count += 2;
 					if (count > utflen)
 						throw new IOException("malformed input: partial character at end");
@@ -155,7 +155,7 @@ public class DataInputStream extends FilterInputStream implements DataInput
 				}
 				case 0x0E:
 				{
-					/* 1110 xxxx  10xx xxxx  10xx xxxx */
+					// 1110 xxxx  10xx xxxx  10xx xxxx
 					count += 3;
 					if (count > utflen)
 						throw new IOException("malformed input: partial character at end");
