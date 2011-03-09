@@ -5,11 +5,15 @@ package lejos.nxt.addon;
 import lejos.nxt.MotorPort;
 import lejos.util.Delay;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
 
 /** A Linear Actuator class that provides non-blocking actions and stall detection. Developed for the Firgelli L12-NXT-50 and L12-NXT-100
  * but may work for others. These linear actuators are self contained units which include an electric motor and encoder. They will push 
  * up to 25N and move at 12mm/s unloaded. See <a href="http://www.firgelli.com">www.firgelli.com.</a>.
- * @author Kirk P. Thompson &lt;lejos@mosen.net&gt;
+ * @author Kirk P. Thompson, 3/3/2011 &lt;lejos@mosen.net&gt;
  */
 public class LinearActuator {
     private final int FORWARD = 1;
