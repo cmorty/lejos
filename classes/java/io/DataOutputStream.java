@@ -174,7 +174,8 @@ public class DataOutputStream extends FilterOutputStream implements DataOutput
 		return count;
 	}
 	
-	private void writeUTFBytes(String str) throws IOException {
+	private void writeUTFBytes(String str) throws IOException
+	{
 		int len = str.length();
 		for (int i = 0; i < len; i++)
 		{
