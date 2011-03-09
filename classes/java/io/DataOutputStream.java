@@ -161,9 +161,9 @@ public class DataOutputStream extends FilterOutputStream implements DataOutput
 		for (int i = 0; i < len; i++)
 		{
 			int c = str.charAt(i);
-			if (c > 0 && c <= 127)
+			if (c > 0 && c < 128)
 				count++;
-			else if (c <= 2047)
+			else if (c < 2048)
 				count += 2;
 		  	else
 		  		count += 3;
