@@ -4,13 +4,19 @@ import java.awt.geom.Point2D;
 import java.util.*;
 import lejos.robotics.navigation.WayPoint;
 
-// TODO: Problem with this code keeping the Node properties right in the Node object is that the same Node set
+// TODO: This works, but this code keeps the Node properties right in the Node object. The same Node set
 // (aka Navigation Mesh) might conceivably (probably) be used repeatedly for many different searches. So things
-// like setPredecessor() and setCost() should be temporary, not part of Node object?
+// like setPredecessor() and setG_Score() should be temporary, not part of Node object?
 
+/**
+ * This is an implementation of the A* search algorithm. Typically this object would be instantiated and then used
+ * in a NodePathFinder constructor, along with a set of connected nodes.
+ * @see lejos.robotics.pathfinding.NodePathFinder
+ * @author BB 
+ */
 public class AstarSearchAlgorithm implements SearchAlgorithm{
 
-	private final String STRING_NAME = "A*";
+	private static final String STRING_NAME = "A*";
 
 	public Collection <WayPoint> findPath(Node start, Node goal) {
 		
@@ -18,8 +24,8 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 		ArrayList <Node> openset = new ArrayList<Node>(); // The set of tentative nodes to be evaluated. 
 		openset.add(start); // openset contains startNode at start.
 		//ArrayList <Node> path = new ArrayList<Node>(); // came_from := the empty map // The map of navigated nodes.
-		start.setCost(0); // Distance from start along optimal path. Zero by definition since at start. g(start)
-		start.setHeuristicEstimate((float)Point2D.distance(start.x, start.y, goal.x, goal.y)); // h(start)
+		start.setG_Score(0); // Distance from start along optimal path. Zero by definition since at start. g(start)
+		start.setH_Score((float)Point2D.distance(start.x, start.y, goal.x, goal.y)); // h(start)
 
 		while (!openset.isEmpty()) {
 			Node x = getLowestCost(openset); // get the node in openset having the lowest f_score[] value
@@ -40,13 +46,13 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 				Node y = yIter.next();
 				if(closedset.contains(y)) continue;  // if y in closedset already, go to next one
 
-				float tentative_g_score = x.getCost() + (float)Point2D.distance(x.x, x.y, y.x, y.y); // g_score[x] + dist_between(x,y)
+				float tentative_g_score = x.getG_Score() + (float)Point2D.distance(x.x, x.y, y.x, y.y); // g_score[x] + dist_between(x,y)
 				boolean tentative_is_better = false;
 
 				if (!openset.contains(y)) { // if y not in openset
 					openset.add(y); // add y to openset
 					tentative_is_better = true;
-				} else if(tentative_g_score < y.getCost()) { // if tentative_g_score < g_score[y]
+				} else if(tentative_g_score < y.getG_Score()) { // if tentative_g_score < g_score[y]
 					tentative_is_better = true;
 				} else
 					tentative_is_better = false;
@@ -55,8 +61,8 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 					y.setPredecessor(x); // came_from[y] := x
 				}
 
-				y.setCost(tentative_g_score);
-				y.setHeuristicEstimate((float)Point2D.distance(y.x, y.y, goal.x, goal.y)); // heuristic_estimate_of_distance(y, goal)
+				y.setG_Score(tentative_g_score);
+				y.setH_Score((float)Point2D.distance(y.x, y.y, goal.x, goal.y)); // heuristic_estimate_of_distance(y, goal)
 				// Update(closedset,y)  This might mean update the values of y in closedset and openset? Unneeded I assume.
 				// Update(openset,y)  
 			} // while(yIter.hasNext()
@@ -64,12 +70,21 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 		return null; // TODO return failure. I suppose null could indicate failure? Or boolean and use object in constructor.
 	} // method end
 
+	/**
+	 * Finds the node within a set of neighbors with the least cost (potentially shortest distance to goal). 
+	 * @return The node with the least cost.
+	 */
 	private static Node getLowestCost(Collection <Node> nodeSet) {
+		/* TODO: This method has potential for optimization. Called very frequently. Probably best to 
+		 * move this method to Node (not NavigationMesh), then can optimize individually based on mesh 
+		 * type (e.g. integer grid or float navigation mesh). Mesh would probably be preferable, but 
+		 * SearchAlgorithm has no access to the mesh, just individual nodes. Perhaps alternate findPath()
+		 * or set method for accepting mesh? (float or int is optimization concern) */ 
 		Iterator <Node> nodeIterator = nodeSet.iterator();
 		Node best = nodeIterator.next();
 		while(nodeIterator.hasNext()) {
 			Node cur = nodeIterator.next();
-			if(cur.getFScore() < best.getFScore())
+			if(cur.getF_Score() < best.getF_Score())
 				best = cur;
 		}
 		return best;
