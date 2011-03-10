@@ -4,6 +4,7 @@ import java.util.Collection;
 import lejos.robotics.navigation.WayPoint;
 
 /**
+ * An interface for defining generic node search algorithms.
  * NOTE: Implementations of this interface should override Object.toString() with the name of the algorithm. 
  * e.g. "A*", "Dijkstra", "Best-First", "D* Lite"
  * @author BB
@@ -12,11 +13,12 @@ import lejos.robotics.navigation.WayPoint;
 public interface SearchAlgorithm {
 	
 	/**
-	 * This method returns the name of this algorithm. The purpose of this method is for GUI front ends
-	 * which allow the user to pick an algorithm from a collection of possible algorithms. 
-	 * @return The string representation of the algorithm. e.g. "A*", "Dijkstra", "Best-First", "D* Lite"
+	 * Method accepts a start node and a goal node, and returns a path consisting of a collection of waypoints which
+	 * includes the startNode coordinates as the first waypoint, and the goal node coordinates as the final waypoint.
+	 * Note: The startNode must be connected with other nodes (neighbors) that eventually connect to the goalNode.
+	 * @param startNode
+	 * @param goalNode
+	 * @return A collection of waypoints 
 	 */
-	public String toString(); // TODO Redundant? Doesn't truly force user to implement this since Object does.
-	
-	public Collection <WayPoint> findPath(Node startNode, Node endNode);
+	public Collection <WayPoint> findPath(Node startNode, Node goalNode);
 }

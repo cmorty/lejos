@@ -6,15 +6,27 @@ import lejos.geom.Line;
 import lejos.geom.Rectangle;
 import lejos.robotics.mapping.LineMap;
 
-// TODO: Recursion might be used when collecting all nodes for a set given one node.
-// Generates a node set once at the beginning of user program, then uses same set for all subsequent navigation.
+/**
+ * Generates a grid of nodes. Spacing between the grid nodes and clearance around map geometry can be specified. 
+ * This set can be generated once at the beginning of a user program, and the same node set can be used for all 
+ * subsequent navigation.
+ * @author BB
+ *
+ */
 public class FourWayGridMesh implements NavigationMesh {
 
-	ArrayList <Node> mesh = null;
-	LineMap map = null;
+	private ArrayList <Node> mesh = null;
+	private LineMap map = null;
 	private float clearance;
 	private float gridspace;
 	
+	/**
+	 * Instantiates a grid mesh of nodes which won't interconnect between any map geometry. Will also keep away
+	 * the set parameter from map geometry. Grid spacing is adjustable via the constructor. 
+	 * @param map The map containing geometry.
+	 * @param gridSpace The size of each grid square.
+	 * @param clearance The safety zone between all nodes/connections and the map geometry.
+	 */
 	public FourWayGridMesh(LineMap map, float gridSpace, float clearance) {
 		setMap(map);
 		setClearance(clearance);
@@ -29,17 +41,30 @@ public class FourWayGridMesh implements NavigationMesh {
 		return mesh;
 	}
 	
-	// NOTE: When grid space value is changed, this class does not regenerate the navigation mesh until regenerate() is explicitly called.
+	/**
+	 * Change the size of each grid square. NOTE: When grid space value is changed, this class does not regenerate 
+	 * the navigation mesh until regenerate() is explicitly called.
+	 * @param gridSpace The unit size of each grid square.
+	 */
 	public void setGridSpacing(float gridSpace) {
 		this.gridspace = gridSpace;
 	}
 	
-	// NOTE: When clearance value is changed, this class does not regenerate the navigation mesh until regenerate() is explicitly called.
+	/**
+	 * Changes the safety zone between all nodes/connections and map geometry. This leaves a margin of error between
+	 * potential object collisions and the robot. NOTE: When clearance value is changed, 
+	 * this class does not regenerate the navigation mesh until regenerate() is explicitly called.	
+	 * @param clearance The safety clearance between nodes/connections and map geometry. 
+	 */
 	public void setClearance(float clearance) {
 		this.clearance = clearance;
 	}
 	
-	// NOTE: When Map changed, does not regenerate the navigation mesh until regenerate() is explicitly called. 
+	/**
+	 * Feeds this class a new map. NOTE: When Map is changed, this class does not regenerate the navigation mesh 
+	 * until regenerate() is explicitly called. 
+	 * @param map The new map data.
+	 */
 	public void setMap(LineMap map) {
 		this.map = map;
 	}
@@ -92,15 +117,17 @@ public class FourWayGridMesh implements NavigationMesh {
 			cur = rightNode;
 		}
 		
-		// TODO: At this point I could optionally remove nodes that are too close to geometry. Pretty quick.
+		// TODO: At this point I could optionally remove nodes that are too close to geometry. Pretty quick. Currently
+		// it leaves them in the mesh set unconnected to anything. Probably better that way.
 		
+		/*
 		long totalNanoT = System.nanoTime() - startNanoT;
 		long endFreeMem = Runtime.getRuntime().freeMemory();
 		
 		System.out.println("Mesh time " + (totalNanoT/1000000D) + " ms");
 		System.out.print("Free Memory start: " + startFreeMem);
 		System.out.print(" end: " + endFreeMem);
-		System.out.println(" used: " + (startFreeMem - endFreeMem));
+		System.out.println(" used: " + (startFreeMem - endFreeMem)); */
 	}
 	
 	public boolean connect(Node node1, Node node2) {
@@ -130,9 +157,15 @@ public class FourWayGridMesh implements NavigationMesh {
 		return true;
 	}
 	
-	// TODO: Okay, if 4 is used, connect to 4. If >4 used, only 4 still. If 2 used, quit after 2. If 0 used, don't connect to any.
-	// Returns 0 if no connections made, making this an orphaned node. Probably the x, y of the node you tried to add
-	// was outside of the bounded area of the map.
+	/**
+	 * Adds a node to this set and connects it with a number of neighboring nodes. If it is unable to find any
+	 * neighbors it will return 0. This might occur because the node is outside of the bounded area of the map. 
+	 * Note: The most FourWayGridMesh can connect a node to is four. If you select a number larger than four, a maximum of
+	 * four neighbors will be connected with the node. 
+	 * @param node The unconnected node to add to this mesh. Will be connected with others in the set.
+	 * @param neighbors The maximum number of neighbors to attempt to connect with.
+	 * @return the number of neighboring nodes it was able to connect with
+	 */
 	public int addNode(Node node, int neighbors) {
 		if(mesh == null) regenerate();
 		
@@ -157,9 +190,6 @@ public class FourWayGridMesh implements NavigationMesh {
 		return total;
 	}
 
-	// Removes it from this set and disconnects it from all neighbors.
-	// NOTE: There is no guarantee it is disconnecting from only nodes in this mesh. It disconnects from all nodes
-	// it currently has registered as neighbors.
 	public boolean removeNode(Node node) {
 		//System.out.print("MAIN NODE ");
 		//outputNodeData(node);
@@ -172,23 +202,7 @@ public class FourWayGridMesh implements NavigationMesh {
 			neighbor.removeNeighbor(node);
 			node.removeNeighbor(neighbor); // Could remove all of them after with one call!
 		}
-		
-		//System.out.print("POST MAIN NODE ");
-		//outputNodeData(node);
-				
+			
 		return mesh.remove(node);
-	}
-	
-	// TODO: DELETE WHEN DONE TESTING
-	static public void outputNodeData(Node node) {
-		System.out.println("Name: " + node);
-		Collection <Node> coll = node.getNeighbors();
-		ArrayList <Node> arr = new ArrayList <Node> (coll);
-		for(int i=0;i<arr.size();i++)
-			System.out.println("Neighbor " + i + ": " + arr.get(i));
-	}
-	
-	
+	}		
 }
-
-
