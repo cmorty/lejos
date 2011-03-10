@@ -19,7 +19,7 @@ class NXJUploadCommandLineParser extends AbstractCommandLineParser
 		options.addOption("h", "help", false, "help");
 		options.addOption("b", "bluetooth", false, "use bluetooth");
 		options.addOption("u", "usb", false, "use usb");
-		options.addOption("r", "run", false, "run program");
+		options.addOption("r", "run", false, "start program (last file)");
 
 		Option nameOption = new Option("n", "name", true, "look for named NXT");
 		nameOption.setArgName("name");
@@ -45,9 +45,6 @@ class NXJUploadCommandLineParser extends AbstractCommandLineParser
 		if (result.getArgs().length == 0)
 			throw new ParseException("No file name specified");
 		
-		if (result.getArgs().length > 1)
-			throw new ParseException("Only one file name allowed");
-
 		assert result != null : "Postconditon: result != null";
 		return result;
 	}

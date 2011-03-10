@@ -48,7 +48,7 @@ public class NXJUpload {
 	 * @throws NXJUploadException
 	 */
 	private int run(String[] args) throws NXJUploadException {
-		NXJUploadCommandLineParser fParser = new NXJUploadCommandLineParser(NXJUpload.class, "[options] filename");
+		NXJUploadCommandLineParser fParser = new NXJUploadCommandLineParser(NXJUpload.class, "[options] filename [more filenames]");
 		CommandLine commandLine;
 		
 		try
@@ -74,14 +74,18 @@ public class NXJUpload {
 		String name = commandLine.getOptionValue("n");
 		String address = commandLine.getOptionValue("d");
 		
-		String fileName = commandLine.getArgs()[0];
-		File inputFile = new File(fileName);
-		String nxtFileName = inputFile.getName();
-		
 		if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;
 		if (usb) protocols |= NXTCommFactory.USB;
-		
-		fUpload.upload(name, address, protocols, inputFile, nxtFileName, run);
+
+		String[] files = commandLine.getArgs();
+		for (int i=0; i<files.length; i++)
+		{
+			File inputFile = new File(files[i]);
+			String nxtFileName = inputFile.getName();
+			
+			//TODO improve dirty hack: open connection only once and reuse it
+			fUpload.upload(name, address, protocols, inputFile, nxtFileName, run && (i == files.length - 1));
+		}
 		return 0;
 	}	
 	
