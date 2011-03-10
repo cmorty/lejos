@@ -133,8 +133,8 @@ public class DataInputStream extends FilterInputStream implements DataInput
 			if (c1 < 0x80)
 			{
 				// ASCII character
-				sb.append((char) c1);
 				count++;
+				sb.append((char) c1);
 			}
 			else switch (c1 >> 4)
 			{
