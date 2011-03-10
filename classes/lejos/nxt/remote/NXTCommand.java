@@ -441,33 +441,34 @@ public class NXTCommand implements NXTProtocol {
 	 * @throws IOException
 	 */
 	public String uploadFile(File file, String nxtFileName) throws IOException {
-	    byte[] data = new byte[MAX_BUFFER_SIZE];
-	    int len;
-	    byte handle;
-	    FileInputStream in = null;
-
 	    long millis = System.currentTimeMillis();
-
-	    try {
-	      in = new FileInputStream(file);
-	    } catch (FileNotFoundException e) {
-	    	throw new IOException("File not found");
+	    FileInputStream in = new FileInputStream(file);
+	    try
+	    {
+			byte handle = openWrite(nxtFileName, (int) file.length());
+			try
+			{
+				byte[] data = new byte[MAX_BUFFER_SIZE];
+				int len;
+				while ((len = in.read(data)) > 0)
+				{
+					byte[] sendData = new byte[len];
+					System.arraycopy(data, 0, sendData, 0, len);
+					writeFile(handle, sendData);
+				}
+			}
+			catch (IOException ioe)
+			{
+				throw new IOException("Failed to upload");
+			}
+			setVerify(true);
+			closeFile(handle);
+			return "Upload successful in " + (System.currentTimeMillis() - millis) + " milliseconds";
 	    }
-
-	    handle = openWrite(nxtFileName, (int) file.length());
-
-	    try {
-	      while ((len = in.read(data)) > 0) {
-	        byte[] sendData = new byte[len];
-	        for(int i=0;i<len;i++) sendData[i] = data[i];
-	        writeFile(handle, sendData);
-	      }
-	    } catch (IOException ioe) {
-	    	throw new IOException("Failed to upload");
+	    finally
+	    {
+	    	in.close();
 	    }
-	    setVerify(true);
-	    closeFile(handle);
-	    return "Upload successful in " + (System.currentTimeMillis() - millis) + " milliseconds";
 	}
 
 	/**
