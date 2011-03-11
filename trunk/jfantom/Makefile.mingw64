@@ -30,12 +30,12 @@ fantom.lib: fantom.def
 jfantom.h:
 	javah -o "$@" -classpath ../pccomms/build lejos.pc.comm.NXTCommFantom 
 
-jfantom.dll: jfantom.cpp jfantom.h fantom.lib
+jfantom.dll: jfantom.cpp fantom.lib | jfantom.h 
 	"$(LEJOS_NXT_WIN32_GCC)" $(LEJOS_NXT_WIN32_CFLAGS) \
 		-I"$(LEJOS_NXT_WIN32_JDK)/include" \
 		-I"$(LEJOS_NXT_WIN32_JDK)/include/win32" \
 		-I"$(LEJOS_NXT_WIN32_FANTOMINC)" \
-		-shared -Wl,-s,--kill-at -o "$@" "$<" fantom.lib
+		-shared -Wl,-s,--kill-at -o "$@" $^
 
 ### only needed for mingw32
 #		-D_JNI_IMPLEMENTATION_ \
