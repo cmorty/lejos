@@ -1,4 +1,6 @@
-package lejos.robotics.navigation;
+package lejos.robotics.navigation; // TODO: Move to lejos.geom?
+
+import java.awt.geom.*;
 
 import lejos.geom.*;
 import lejos.robotics.Move;
@@ -398,8 +400,10 @@ public class ArcAlgorithms { // TODO Change access from public to package level 
 	 * @return The distance between points a and b.
 	 */
 	public static float distBetweenPoints(Point a, Point b) {
-		double z = Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2);
-		return (float)Math.sqrt(z);
+		// TODO: Should delete this method, just use Point2D.
+		return (float) Point2D.distance(a.x, a.y, b.x, b.y);
+		//double z = Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2);
+		//return (float)Math.sqrt(z);
 	}
 	
 	/**
