@@ -17,6 +17,9 @@ public class Converter {
 
 	private final static int WHITE = 0xffffffff;
 	private final static int BLACK = 0;
+	
+	public final static int BIT_8 = 0;
+	public final static int BIT_16 = 1;
 
 	public static BufferedImage removeColor(BufferedImage colorImage, int threshold) {
 		if (colorImage.getType() == BufferedImage.TYPE_BYTE_BINARY) {
@@ -66,48 +69,87 @@ public class Converter {
 		return data;
 	}
 
-	public static String getImageCreateString(byte[] data, Dimension size) {
-		StringBuilder sb = new StringBuilder("new Image(");
+	public static String getImageCreateString(byte[] data, Dimension size,int mode) {
+		StringBuilder sb = new StringBuilder("");
 		// width and height
-		sb.append(size.width).append(", ").append(size.height).append(", ");
+		//sb.append(size.width).append(", ").append(size.height).append(", ");
 		// new byte[]
-		sb.append("new byte[] {");
-		for (byte b : data) {
- 			sb.append("(byte) 0x");
-			String hex = Integer.toHexString(0xff & (int)b);
-			if (hex.length() < 2) {
-				sb.append('0');
+		sb.append("(");
+		sb.append(size.width).append(",").append(size.height);
+		sb.append(")");
+		for (int i = 0; i < data.length; i+=(mode+1)){
+			byte one = data[i];
+			String hexOne = Integer.toHexString(0xff & (int)one);
+			if (mode == BIT_8){
+				if (one == (byte)0x00)
+					sb.append("\\0");
+				else{
+					sb.append("\\u00");
+					if (hexOne.length() < 2)
+						sb.append("0");
+					sb.append(hexOne);
+				}
 			}
-			sb.append(hex);
-			sb.append(", ");
+			else if (mode == BIT_16){
+				byte two = data[i+1];
+				String hexTwo = Integer.toHexString(0xff & (int)two);
+				if (one == (byte)0x00 && two == (byte)0x00)
+					sb.append("\\0");
+				else{
+					sb.append("\\u");
+					if (hexOne.length() < 2)
+						sb.append("0");
+					sb.append(hexOne);
+					if (hexTwo.length() < 2)
+						sb.append("0");
+					sb.append(hexTwo);
+				}
+			}
 		}
-
-		sb.append("})");
 
 		return sb.toString();
 	}
 
-	public static BufferedImage getImageFromNxtImageCreateString(String string) {
-		Pattern statePattern = Pattern.compile(".*\\s*new\\s+Image\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*new\\s+byte\\s*\\[\\s*\\]\\s*" +
-			"\\{\\s*([^}]*)\\s*\\}\\s*\\)\\s*[;]?\\s*", Pattern.MULTILINE);
-		Matcher stateMatcher = statePattern.matcher(string);
-		if (!stateMatcher.matches()) {
-			return null;
-		}
-		int w = Integer.parseInt(stateMatcher.group(1));
-		int h = Integer.parseInt(stateMatcher.group(2));
-		String byteArray = stateMatcher.group(3);
-		Pattern byteDigitalPattern = Pattern.compile("\\s*(\\(\\s*byte\\s*\\))?\\s*((0x)?[0-9A-Fa-f]+)\\s*[,]?\\s*");
-		Matcher byteDigitalMatcher = byteDigitalPattern.matcher(byteArray);
-		int start = 0;
-		int end = 0;
+	public static BufferedImage getImageFromNxtImageCreateString(String string,int mode) {
 		List<Byte> byteList = new LinkedList<Byte>();
-		while (byteDigitalMatcher.find(end)) {
-			start = byteDigitalMatcher.start(2);
-			end = byteDigitalMatcher.end(2);
-			String str = byteArray.substring(start, end);
-			int i = str.startsWith("0x") ? Integer.parseInt(str.substring(2), 16) : str.startsWith("0") ? Integer.parseInt(str, 8) : Integer.parseInt(str);
-			byteList.add((byte) i);
+		int index = 0;
+		int w = 0;
+		int h = 0;
+		try{
+		for (int i = 0; i < string.length(); i++){
+			char chr = string.charAt(i);
+			if (chr == '\\'){
+				if (string.charAt(i+1) == 'u'){
+					if (mode == BIT_16)
+						byteList.add(Integer.decode("0X"+string.substring(i+2, i+4)).byteValue());
+					byteList.add(Integer.decode("0X"+string.substring(i+4,i+6)).byteValue());
+					i+=5;
+				}
+				else{
+					// TODO Add More Escape Character Convertors
+					if (string.charAt(i+1) == '0'){
+						if (mode == BIT_16)
+							byteList.add((byte)0x00);
+						byteList.add((byte)0x00);
+						i+=1;
+					}
+				}
+			}
+			else if (chr == '('){ // Process Height/Width
+				String dim = string.substring(i+1, string.indexOf(")",i));
+				String[] split = dim.split(",");
+				w = Integer.parseInt(split[0]);
+				h = Integer.parseInt(split[1]);
+				i = string.indexOf(")",i);
+			}
+			else{
+				if (mode == BIT_16)
+					byteList.add((byte)0x00);
+				byteList.add((byte)chr);
+			}
+		}
+		}catch(Exception e){
+			return null;
 		}
 
 		return NxtImageData2Image(byteList, w, h);

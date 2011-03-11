@@ -39,7 +39,7 @@ import javax.swing.filechooser.FileFilter;
 
 
 public class MainPanel extends JPanel {
-	
+	private int mode = Converter.BIT_8;
 	//implement JDK-1.6-like FileNameExtensionFilter
 	private static class FileNameExtensionFilter extends FileFilter	{
 		private final String message;
@@ -100,17 +100,17 @@ public class MainPanel extends JPanel {
 	protected void updateNxtPart() {
 		currSize = this.picPanel.getImageSize();
 		currData = this.picPanel.getNxtImageData();
-		String text = Converter.getImageCreateString(currData, currSize);
+		String text = Converter.getImageCreateString(currData, currSize,mode);
 		this.codePanel.setCode(text);
 	}
 
 	protected void updateImageFromCode() {
 		String code = this.codePanel.getCode();
-		BufferedImage image = Converter.getImageFromNxtImageCreateString(code);
+		BufferedImage image = Converter.getImageFromNxtImageCreateString(code,mode);
 		if (image == null) {
 			String message = "<html>Code format error!<br />" +
 					"Please use format like below:<br />" +
-					"<code>new Image(w, h, new byte[] {(byte)0xXX, (byte)0xXX, ...}</code>" +
+					"<code>(w,h)\\uXXXX\\0\\uXXXX...</code>" +
 					"</html>";
 			JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
 		} else {
@@ -195,13 +195,38 @@ public class MainPanel extends JPanel {
 	}
 
 	public JMenuBar getMenuBar(final JPanel panel) {
-		JMenu menu;
+		JMenu menu, modeM;
 		JMenuBar menuBar = new JMenuBar();
 
 		// image menu
 		menu = new JMenu("Image");
+		modeM = new JMenu("Mode");
 		menu.setMnemonic(KeyEvent.VK_I);
 		menuBar.add(menu);
+		menuBar.add(modeM);
+		
+		Action mode16Action = new AbstractAction("16 Bit Mode"){
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent arg0) {
+				mode = Converter.BIT_16;				
+			}
+		};
+		Action mode8Action = new AbstractAction("8 Bit Mode"){
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -7948282904817247677L;
+
+			public void actionPerformed(ActionEvent arg0) {
+				mode = Converter.BIT_8;
+			}
+		};
+		modeM.add(mode16Action);
+		modeM.add(mode8Action);
 
 		// Import
 		Action importFileAction = new AbstractAction("Import Image...") {
