@@ -8,12 +8,25 @@ import lejos.util.Delay;
 
 public class Utils
 {
-	public static byte[] stringToBytes(String str)
+	public static byte[] stringToBytes8(String str)
 	{
 		int len = str.length();
 		byte[] r = new byte[len];
 		for (int i = 0; i < len; i++)
 			r[i] = (byte) str.charAt(i);
+		return r;
+	}
+
+	public static byte[] stringToBytes16(String str, int off, int len)
+	{
+		byte[] r = new byte[len << 1];
+		for (int i = 0; i < len; i++)
+		{
+			char c = str.charAt(off + i);
+			int j = i << 1;
+			r[j] = (byte)(c >> 8);
+			r[j+1] = (byte)c;
+		}
 		return r;
 	}
 
