@@ -125,18 +125,12 @@ public class NXJImageConverter {
 		switch (c)
 		{
 			case '\0':
-				sb.append("\\0");
-				break;
 			case '\r':
-				sb.append("\\r");
-				break;
 			case '\n':
-				sb.append("\\n");
-				break;
 			case '\\':
 			case '"':
 				sb.append('\\');
-				sb.append((char) c);
+				sb.append(Integer.toOctalString(c));
 				break;
 			default:
 				sb.append("\\u");
@@ -195,26 +189,25 @@ public class NXJImageConverter {
 		int stringlen = string.length();
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		try{
-			for (int i = 0; i < string.length(); i++){
-				char chr = string.charAt(i);
+			for (int i = 0; i < string.length();){
+				char chr = string.charAt(i++);
 				if (chr == '\\')
 				{
-					i++;
 					if (i >= stringlen)
 						//TODO report whether string is too short
 						return null;
 					
-					char chr2 = string.charAt(i); 
+					char chr2 = string.charAt(i++); 
 					switch (chr2)
 					{
 						case 'u':
-							int j = i+5;
+							int j = i+4;
 							if (j > stringlen)
 								//TODO report whether string is too short
 								return null;
 							
-							chr = (char)Integer.parseInt(string.substring(i+1, j), 16);
-							i+=4;
+							chr = (char)Integer.parseInt(string.substring(i, j), 16);
+							i = j;
 							break;
 						case '0':
 						case '1':
@@ -225,8 +218,8 @@ public class NXJImageConverter {
 						case '6':
 						case '7':
 							// see http://java.sun.com/docs/books/jls/second_edition/html/lexical.doc.html#101089
-							int end = i + 1;
-							int maxend = Math.min(i + ((chr2 < '4') ? 3 : 2), stringlen);
+							int end = i;
+							int maxend = Math.min(i + ((chr2 < '4') ? 2 : 1), stringlen);
 							while (end < maxend)
 							{
 								int chr3 = string.charAt(end);
@@ -235,7 +228,8 @@ public class NXJImageConverter {
 								
 								end++;
 							}
-							chr = (char)Integer.parseInt(string.substring(i, end), 8);
+							chr = (char)Integer.parseInt(string.substring(i - 1, end), 8);
+							i = end;
 							break;
 						case 'b':
 							chr = '\b';
