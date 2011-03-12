@@ -99,7 +99,7 @@ public class NXJImageMainPanel extends JPanel {
 
 	protected void updateNxtPart() {
 		String text;
-		if (this.picPanel == null)
+		if (!this.picPanel.hasPic())
 			text = "";
 		else
 		{
