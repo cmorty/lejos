@@ -20,6 +20,8 @@ public class Converter {
 	public final static int BIT_8 = 0;
 	public final static int BIT_16 = 1;
 	public final static int BYTEA = 2;
+	
+	private static final Pattern STRING_PATTERN = Pattern.compile("\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)((([^\"]|\\\\\")*)|\\s*\"(([^\"]|\\\\\")*)\"\\s*)");
 
 	public static BufferedImage removeColor(BufferedImage colorImage, int threshold) {
 		if (colorImage.getType() == BufferedImage.TYPE_BYTE_BINARY) {
@@ -101,7 +103,7 @@ public class Converter {
 		sb.append(size.width);
 		sb.append(",");
 		sb.append(size.height);
-		sb.append(")");
+		sb.append(") \"");
 		for (int i = 0; i < data.length; i++){
 			int one = data[i] & 0xFF;
 			if (mode == BIT_8){
@@ -113,6 +115,8 @@ public class Converter {
 				appendChar(sb, (one << 8) | two);
 			}
 		}
+		sb.append('"');
+		
 		return sb.toString();
 	}
 	
@@ -172,57 +176,91 @@ public class Converter {
 	public static BufferedImage getImageFromNxtImageCreateString(String string,int mode) {
 		if (mode == BYTEA)
 			return getImageFromNxtImageCreateString(string);
-		int w = 0;
-		int h = 0;
+		
+		Matcher m = STRING_PATTERN.matcher(string);
+		if (!m.matches())
+			//TODO properly report error
+			return null;
+		
+		int w = Integer.parseInt(m.group(1));
+		int h = Integer.parseInt(m.group(2));
+		
+//		for (int i=0; i<=m.groupCount(); i++)
+//			System.out.println(i+" "+m.group(i));
+		
+		string = m.group(4);
+		if (string == null)
+			string = m.group(6);
+		
+		int stringlen = string.length();
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		try{
-			CHARLOOP:
 			for (int i = 0; i < string.length(); i++){
 				char chr = string.charAt(i);
-				switch (chr)
+				if (chr == '\\')
 				{
-					case '\\':
+					i++;
+					if (i >= stringlen)
 						//TODO report whether string is too short
-						char chr2 = string.charAt(++i); 
-						switch (chr2)
-						{
-							case 'u':
+						return null;
+					
+					char chr2 = string.charAt(i); 
+					switch (chr2)
+					{
+						case 'u':
+							int j = i+5;
+							if (j > stringlen)
 								//TODO report whether string is too short
-								chr = (char)Integer.parseInt(string.substring(i+1, i+5), 16);
-								i+=4;
-								break;
-							case 'r':
-								chr = '\r';
-								break;
-							case 'n':
-								chr = '\n';
-								break;
-							case 't':
-								chr = 't';
-								break;
-							case '0':
-								chr = '\0';
-								break;
-							case '\\':
-							case '\'':
-							case '"':
-								chr = chr2;
-								break;
-							default:
-								//TODO check that list is complete
-								//TODO report unknown escape
-						}
-						break;
-					case '(':
-						// Process Height/Width
-						//TODO report if ) is not found
-						int j = string.indexOf(")",i+1);
-						String dim = string.substring(i+1, j);
-						String[] split = dim.split(",");
-						w = Integer.parseInt(split[0]);
-						h = Integer.parseInt(split[1]);
-						i = j;
-						continue CHARLOOP;
+								return null;
+							
+							chr = (char)Integer.parseInt(string.substring(i+1, j), 16);
+							i+=4;
+							break;
+						case '0':
+						case '1':
+						case '2':
+						case '3':
+						case '4':
+						case '5':
+						case '6':
+						case '7':
+							// see http://java.sun.com/docs/books/jls/second_edition/html/lexical.doc.html#101089
+							int end = i + 1;
+							int maxend = Math.min(i + ((chr2 < '4') ? 3 : 2), stringlen);
+							while (end < maxend)
+							{
+								int chr3 = string.charAt(end);
+								if (chr3 < '0' || chr3 > '7')
+									break;
+								
+								end++;
+							}
+							chr = (char)Integer.parseInt(string.substring(i, end), 8);
+							break;
+						case 'b':
+							chr = '\b';
+							break;
+						case 't':
+							chr = 't';
+							break;
+						case 'n':
+							chr = '\n';
+							break;
+						case 'f':
+							chr = '\f';
+							break;
+						case 'r':
+							chr = '\r';
+							break;
+						case '"':
+						case '\'':
+						case '\\':
+							chr = chr2;
+							break;
+						default:
+							//TODO report unknown escape
+							return null;
+					}
 				}
 				
 				if (mode == BIT_16)
