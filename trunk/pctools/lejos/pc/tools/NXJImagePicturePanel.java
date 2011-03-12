@@ -103,6 +103,11 @@ public class NXJImagePicturePanel extends JPanel {
 			this.firePropertyChange(IMAGE_UPDATE_PROP, false, true);
 		}
 	}
+	
+	public BufferedImage getBlackAndWhiteImage()
+	{
+		return this.blackwhiteImage;
+	}
 
 	public byte[] getNxtImageData() {
 		return NXJImageConverter.nxtImageConvert(this.blackwhiteImage);

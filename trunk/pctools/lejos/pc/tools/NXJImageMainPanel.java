@@ -268,38 +268,21 @@ public class NXJImageMainPanel extends JPanel {
 			private static final long serialVersionUID = -1915349463841717491L;
 
 			public void actionPerformed(ActionEvent evt) {
-				JFileChooser dialog = new JFileChooser(lastDir);
-				if (dialog.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
-					String errorMsg = null;
-					lastDir = dialog.getCurrentDirectory();
-					try {
-						BufferedImage image = ImageIO.read(dialog.getSelectedFile());
-						if (image == null) {
-							errorMsg = "Not an image file or file format not supported. ";
-						} else {
-							boolean canReadImage = true;
-							if (image.getWidth() * image.getHeight() > 100 * 64 * 2) {
-								String message = "<html>NXT can only display images smaller than <font color='blue'>100x64</font>. <br>" +
-									"But the image you are importing is <font color='red'>" + image.getWidth() + "x" + image.getHeight() + "</font>.<br>" +
-									"Are you sure you want to import this image? <br>" +
-									"(This may also cause a performance issue!)</html>";
-								canReadImage = JOptionPane.showConfirmDialog(NXJImageMainPanel.this, message, "Confirm", JOptionPane.YES_NO_OPTION | JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
-							}
-							if (canReadImage) {
-								NXJImageMainPanel.this.readImage(image);
-							}
-						}
-					} catch (IOException e) {
-						errorMsg = "Error occured when reading file: " + e.getMessage();
-					}
-					if (errorMsg != null) {
-						JOptionPane.showMessageDialog(NXJImageMainPanel.this, errorMsg, "Error", JOptionPane.ERROR_MESSAGE);
-					}
-				}
+				importImage(panel);
+			}
+		};
+		// Export
+		final Action exportFileAction = new AbstractAction("Export Image...") {
+			/**SN*/
+			private static final long serialVersionUID = -1915349463841717491L;
+
+			public void actionPerformed(ActionEvent evt) {
+				exportImage(panel);
 			}
 		};
 
 		menu.add(importFileAction);
+		menu.add(exportFileAction);
 		menu.addSeparator();
 
 		// Open lni (LeJOS NXT Image) file
@@ -308,65 +291,22 @@ public class NXJImageMainPanel extends JPanel {
 			private static final long serialVersionUID = 3458676330985853465L;
 
 			public void actionPerformed(ActionEvent evt) {
-				JFileChooser dialog = new JFileChooser(lastDir);
-				dialog.setFileFilter(new FileNameExtensionFilter("LeJOS NXT Image File (*." + EXT + ")", EXT));
-				dialog.setAcceptAllFileFilterUsed(false);
-				if (dialog.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
-					lastDir = dialog.getCurrentDirectory();
-					File file = dialog.getSelectedFile();
-					try {
-						NXJImageMainPanel.this.readNxtImage(file);
-					} catch (IOException e) {
-						JOptionPane.showMessageDialog(panel, "<html>Error occured when reading file.<br><font color='red'>" + e.getMessage() + "</font></html>", "Error", JOptionPane.ERROR_MESSAGE);
-					}
-				}
+				openFile(panel);
 			}
 		};
 
-		menu.add(openFileAction);
-
 		// Export
-		final Action exportFileAction = new AbstractAction("Export LeJOS NXT Image File...") {
+		final Action saveFileAction = new AbstractAction("Export LeJOS NXT Image File...") {
 			/**SN*/
 			private static final long serialVersionUID = 3458676330985853465L;
 
 			public void actionPerformed(ActionEvent evt) {
-				JFileChooser dialog = new JFileChooser(lastDir);
-				dialog.setFileFilter(new FileNameExtensionFilter("LeJOS NXT Image File (*." + EXT + ")", EXT));
-				dialog.setAcceptAllFileFilterUsed(false);
-				if (dialog.showSaveDialog(panel) == JFileChooser.APPROVE_OPTION) {
-					lastDir = dialog.getCurrentDirectory();
-					File file = dialog.getSelectedFile();
-					if (file.exists()) {
-						if (JOptionPane.showConfirmDialog(panel, "File exists. Overwrite?", "Confirm", JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
-							return;
-						}
-					}
-					try {
-						if (!file.exists()) {
-							String fname = file.getPath();
-							if (!fname.endsWith("." + EXT)) {
-								if (!fname.endsWith(".")) {
-									fname += ".";
-								}
-								file = new File(fname + EXT);
-							}
-							file.createNewFile();
-						}
-						if (!file.canWrite()) {
-							JOptionPane.showMessageDialog(panel, "File cannot be written!", "Error", JOptionPane.ERROR_MESSAGE | JOptionPane.OK_OPTION);
-							return;
-						}
-						NXJImageMainPanel.this.saveImage(file);
-					} catch (IOException e) {
-						JOptionPane.showMessageDialog(panel, "<html>Error occured when write data into file.<br><font color='red'>" + e.getMessage() + "</font></html>", "Error", JOptionPane.ERROR_MESSAGE);
-						e.printStackTrace();
-					}
-				}
+				saveFile(panel);
 			}
 		};
 
-		menu.add(exportFileAction);
+		menu.add(openFileAction);
+		menu.add(saveFileAction);
 
 		menu.addSeparator();
 
@@ -390,11 +330,129 @@ public class NXJImageMainPanel extends JPanel {
 				//nothing
 			}
 			public void menuSelected(MenuEvent e) {
-				exportFileAction.setEnabled(NXJImageMainPanel.this.currData != null && NXJImageMainPanel.this.currSize != null);
+				boolean b = NXJImageMainPanel.this.currData != null && NXJImageMainPanel.this.currSize != null;
+				saveFileAction.setEnabled(b);
+				exportFileAction.setEnabled(b);
 			}
 		});
 
 		return menuBar;
+	}
+
+	private void importImage(final JPanel panel)
+	{
+		JFileChooser dialog = new JFileChooser(lastDir);
+		if (dialog.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
+			String errorMsg = null;
+			lastDir = dialog.getCurrentDirectory();
+			try {
+				BufferedImage image = ImageIO.read(dialog.getSelectedFile());
+				if (image == null) {
+					errorMsg = "Not an image file or file format not supported. ";
+				} else {
+					boolean canReadImage = true;
+					if (image.getWidth() * image.getHeight() > 100 * 64 * 2) {
+						String message = "<html>NXT can only display images smaller than <font color='blue'>100x64</font>. <br>" +
+							"But the image you are importing is <font color='red'>" + image.getWidth() + "x" + image.getHeight() + "</font>.<br>" +
+							"Are you sure you want to import this image? <br>" +
+							"(This may also cause a performance issue!)</html>";
+						canReadImage = JOptionPane.showConfirmDialog(NXJImageMainPanel.this, message, "Confirm", JOptionPane.YES_NO_OPTION | JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
+					}
+					if (canReadImage) {
+						NXJImageMainPanel.this.readImage(image);
+					}
+				}
+			} catch (IOException e) {
+				errorMsg = "Error occured when reading file: " + e.getMessage();
+			}
+			if (errorMsg != null) {
+				JOptionPane.showMessageDialog(NXJImageMainPanel.this, errorMsg, "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	private void exportImage(final JPanel panel)
+	{
+		JFileChooser dialog = new JFileChooser(lastDir);
+		if (dialog.showSaveDialog(panel) == JFileChooser.APPROVE_OPTION) {
+			lastDir = dialog.getCurrentDirectory();
+			File file = dialog.getSelectedFile();
+			if (file.exists()) {
+				if (JOptionPane.showConfirmDialog(panel, "File exists. Overwrite?", "Confirm", JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+					return;
+				}
+			}
+			String errorMsg = null;
+			try {
+				String name = file.getName();
+				int i = name.lastIndexOf('.');
+				if (i < 0)
+					errorMsg = "no file extension";
+				else
+				{
+					String ext = name.substring(i+1);
+					//TODO not really correct: using extension as format name
+					ImageIO.write(picPanel.getBlackAndWhiteImage(), ext, file);
+				}
+			} catch (IOException e) {
+				errorMsg = "Error occured when reading file: " + e.getMessage();
+			}
+			if (errorMsg != null) {
+				JOptionPane.showMessageDialog(NXJImageMainPanel.this, errorMsg, "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	private void saveFile(final JPanel panel)
+	{
+		JFileChooser dialog = new JFileChooser(lastDir);
+		dialog.setFileFilter(new FileNameExtensionFilter("LeJOS NXT Image File (*." + EXT + ")", EXT));
+		dialog.setAcceptAllFileFilterUsed(false);
+		if (dialog.showSaveDialog(panel) == JFileChooser.APPROVE_OPTION) {
+			lastDir = dialog.getCurrentDirectory();
+			File file = dialog.getSelectedFile();
+			if (file.exists()) {
+				if (JOptionPane.showConfirmDialog(panel, "File exists. Overwrite?", "Confirm", JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+					return;
+				}
+			}
+			try {
+				if (!file.exists()) {
+					String fname = file.getPath();
+					if (!fname.endsWith("." + EXT)) {
+						if (!fname.endsWith(".")) {
+							fname += ".";
+						}
+						file = new File(fname + EXT);
+					}
+					file.createNewFile();
+				}
+				if (!file.canWrite()) {
+					JOptionPane.showMessageDialog(panel, "File cannot be written!", "Error", JOptionPane.ERROR_MESSAGE | JOptionPane.OK_OPTION);
+					return;
+				}
+				NXJImageMainPanel.this.saveImage(file);
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(panel, "<html>Error occured when write data into file.<br><font color='red'>" + e.getMessage() + "</font></html>", "Error", JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void openFile(final JPanel panel)
+	{
+		JFileChooser dialog = new JFileChooser(lastDir);
+		dialog.setFileFilter(new FileNameExtensionFilter("LeJOS NXT Image File (*." + EXT + ")", EXT));
+		dialog.setAcceptAllFileFilterUsed(false);
+		if (dialog.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
+			lastDir = dialog.getCurrentDirectory();
+			File file = dialog.getSelectedFile();
+			try {
+				NXJImageMainPanel.this.readNxtImage(file);
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(panel, "<html>Error occured when reading file.<br><font color='red'>" + e.getMessage() + "</font></html>", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 
 
