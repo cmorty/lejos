@@ -223,18 +223,18 @@ public class NXJImageConverter {
 						case '6':
 						case '7':
 							// see http://java.sun.com/docs/books/jls/second_edition/html/lexical.doc.html#101089
-							int end = i;
-							int maxend = Math.min(i + ((chr2 < '4') ? 2 : 1), stringlen);
-							while (end < maxend)
+							int r = chr2 - '0';
+							int maxend = Math.min(i + (r < 4 ? 2 : 1), stringlen);
+							while (i < maxend)
 							{
-								int chr3 = string.charAt(end);
+								int chr3 = string.charAt(i);
 								if (chr3 < '0' || chr3 > '7')
 									break;
 								
-								end++;
+								i++;
+								r = (r << 3) + chr3 - '0';
 							}
-							chr1 = (char)Integer.parseInt(string.substring(i - 1, end), 8);
-							i = end;
+							chr1 = (char)r;
 							break;
 						case 'b':
 							chr1 = '\b';
