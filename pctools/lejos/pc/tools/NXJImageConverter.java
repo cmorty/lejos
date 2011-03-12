@@ -12,7 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Converter {
+public class NXJImageConverter {
 
 	private final static int WHITE = 0xffffffff;
 	private final static int BLACK = 0;
