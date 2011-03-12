@@ -8,8 +8,7 @@
 package lejos.pc.tools;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.ByteArrayOutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,7 +69,7 @@ public class Converter {
 		return data;
 	}
 	
-	public static String getImageCreateString(byte[] data, Dimension size) {
+	private static String getImageCreateString(byte[] data, Dimension size) {
 		StringBuilder sb = new StringBuilder("new Image(");
 		// width and height
 		sb.append(size.width).append(", ").append(size.height).append(", ");
@@ -78,7 +77,7 @@ public class Converter {
 		sb.append("new byte[] {");
 		for (byte b : data) {
  			sb.append("(byte) 0x");
-			String hex = Integer.toHexString(0xff & (int)b);
+			String hex = Integer.toHexString(0xff & b);
 			if (hex.length() < 2) {
 				sb.append('0');
 			}
@@ -94,47 +93,57 @@ public class Converter {
 	public static String getImageCreateString(byte[] data, Dimension size,int mode) {
 		if (mode == BYTEA)
 			return getImageCreateString(data,size);
-		StringBuilder sb = new StringBuilder("");
+		StringBuilder sb = new StringBuilder();
 		// width and height
 		//sb.append(size.width).append(", ").append(size.height).append(", ");
 		// new byte[]
 		sb.append("(");
-		sb.append(size.width).append(",").append(size.height);
+		sb.append(size.width);
+		sb.append(",");
+		sb.append(size.height);
 		sb.append(")");
-		for (int i = 0; i < data.length; i+=(mode+1)){
-			byte one = data[i];
-			String hexOne = Integer.toHexString(0xff & (int)one);
+		for (int i = 0; i < data.length; i++){
+			int one = data[i] & 0xFF;
 			if (mode == BIT_8){
-				if (one == (byte)0x00)
-					sb.append("\\0");
-				else{
-					sb.append("\\u00");
-					if (hexOne.length() < 2)
-						sb.append("0");
-					sb.append(hexOne);
-				}
+				appendChar(sb, one);
 			}
 			else if (mode == BIT_16){
-				byte two = data[i+1];
-				String hexTwo = Integer.toHexString(0xff & (int)two);
-				if (one == (byte)0x00 && two == (byte)0x00)
-					sb.append("\\0");
-				else{
-					sb.append("\\u");
-					if (hexOne.length() < 2)
-						sb.append("0");
-					sb.append(hexOne);
-					if (hexTwo.length() < 2)
-						sb.append("0");
-					sb.append(hexTwo);
-				}
+				i++;
+				int two = (i < data.length) ? data[i] & 0xFF : 0;
+				appendChar(sb, (one << 8) | two);
 			}
 		}
-
 		return sb.toString();
 	}
 	
-	public static BufferedImage getImageFromNxtImageCreateString(String string) {
+	private static void appendChar(StringBuilder sb, int c)
+	{
+		switch (c)
+		{
+			case '\0':
+				sb.append("\\0");
+				break;
+			case '\r':
+				sb.append("\\r");
+				break;
+			case '\n':
+				sb.append("\\n");
+				break;
+			case '\\':
+			case '"':
+				sb.append('\\');
+				sb.append((char) c);
+				break;
+			default:
+				sb.append("\\u");
+				String hex = Integer.toHexString(c & 0xFFFF);
+				for (int i=hex.length(); i<4; i++)
+					sb.append('0');
+				sb.append(hex);
+		}
+	}
+	
+	private static BufferedImage getImageFromNxtImageCreateString(String string) {
 		Pattern statePattern = Pattern.compile(".*\\s*new\\s+Image\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*new\\s+byte\\s*\\[\\s*\\]\\s*" +
 			"\\{\\s*([^}]*)\\s*\\}\\s*\\)\\s*[;]?\\s*", Pattern.MULTILINE);
 		Matcher stateMatcher = statePattern.matcher(string);
@@ -148,64 +157,85 @@ public class Converter {
 		Matcher byteDigitalMatcher = byteDigitalPattern.matcher(byteArray);
 		int start = 0;
 		int end = 0;
-		List<Byte> byteList = new LinkedList<Byte>();
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		while (byteDigitalMatcher.find(end)) {
 			start = byteDigitalMatcher.start(2);
 			end = byteDigitalMatcher.end(2);
 			String str = byteArray.substring(start, end);
 			int i = str.startsWith("0x") ? Integer.parseInt(str.substring(2), 16) : str.startsWith("0") ? Integer.parseInt(str, 8) : Integer.parseInt(str);
-			byteList.add((byte) i);
+			os.write(i);
 		}
 
-		return NxtImageData2Image(byteList, w, h);
+		return nxtImageData2Image(os.toByteArray(), w, h);
 	}
 
 	public static BufferedImage getImageFromNxtImageCreateString(String string,int mode) {
 		if (mode == BYTEA)
 			return getImageFromNxtImageCreateString(string);
-		List<Byte> byteList = new LinkedList<Byte>();
 		int w = 0;
 		int h = 0;
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		try{
-		for (int i = 0; i < string.length(); i++){
-			char chr = string.charAt(i);
-			if (chr == '\\'){
-				if (string.charAt(i+1) == 'u'){
-					if (mode == BIT_16)
-						byteList.add(Integer.decode("0X"+string.substring(i+2, i+4)).byteValue());
-					byteList.add(Integer.decode("0X"+string.substring(i+4,i+6)).byteValue());
-					i+=5;
+			CHARLOOP:
+			for (int i = 0; i < string.length(); i++){
+				char chr = string.charAt(i);
+				switch (chr)
+				{
+					case '\\':
+						//TODO report whether string is too short
+						char chr2 = string.charAt(++i); 
+						switch (chr2)
+						{
+							case 'u':
+								//TODO report whether string is too short
+								chr = (char)Integer.parseInt(string.substring(i+1, i+5), 16);
+								i+=4;
+								break;
+							case 'r':
+								chr = '\r';
+								break;
+							case 'n':
+								chr = '\n';
+								break;
+							case 't':
+								chr = 't';
+								break;
+							case '0':
+								chr = '\0';
+								break;
+							case '\\':
+							case '\'':
+							case '"':
+								chr = chr2;
+								break;
+							default:
+								//TODO check that list is complete
+								//TODO report unknown escape
+						}
+						break;
+					case '(':
+						// Process Height/Width
+						//TODO report if ) is not found
+						String dim = string.substring(i+1, string.indexOf(")",i));
+						String[] split = dim.split(",");
+						w = Integer.parseInt(split[0]);
+						h = Integer.parseInt(split[1]);
+						i = string.indexOf(")",i);
+						continue CHARLOOP;
 				}
-				else{
-					// TODO Add More Escape Character Convertors
-					if (string.charAt(i+1) == '0'){
-						if (mode == BIT_16)
-							byteList.add((byte)0x00);
-						byteList.add((byte)0x00);
-						i+=1;
-					}
-				}
-			}
-			else if (chr == '('){ // Process Height/Width
-				String dim = string.substring(i+1, string.indexOf(")",i));
-				String[] split = dim.split(",");
-				w = Integer.parseInt(split[0]);
-				h = Integer.parseInt(split[1]);
-				i = string.indexOf(")",i);
-			}
-			else{
+				
 				if (mode == BIT_16)
-					byteList.add((byte)0x00);
-				byteList.add((byte)chr);
+					os.write(chr >> 8);
+				os.write(chr);
 			}
-		}
-		return NxtImageData2Image(byteList, w, h);
 		}catch(Exception e){
+			//TODO properly report error to caller
 			return null;
 		}
+		return nxtImageData2Image(os.toByteArray(), w, h);
 	}
 
-	public static BufferedImage NxtImageData2Image(List<Byte> byteList, int w, int h) {
+	public static BufferedImage nxtImageData2Image(byte[] byteList, int w, int h) {
 		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_BINARY);
 		int x = 0;
 		int y = 0;
@@ -232,14 +262,9 @@ public class Converter {
 
 	private static int getH(int argb) {
 		int b = (argb & 0xff);
-		argb >>>= 8;
-		int g = (argb & 0xff);
-		argb >>>= 8;
-		int r = (argb & 0xff);
-		r <<= 16;
-		g <<= 16;
-		b <<= 16;
-		int h = (r>>2) + (r>>4) + (g>>1) + (g>>4) + (b>>3);
+		int g = ((argb >>> 8) & 0xff);
+		int r = ((argb >>> 16) & 0xff);
+		int h = (r<<14) + (r<<12) + (g<<15) + (g<<12) + (b<<13);
 		return h >> 16;
 	}
 }

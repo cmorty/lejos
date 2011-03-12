@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -169,9 +170,9 @@ public class MainPanel extends JPanel {
 
 	protected void readNxtImage(File file) throws IOException {
 		DataInputStream in = new DataInputStream(new FileInputStream(file));
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		int w;
 		int h;
-		List<Byte> byteList = new LinkedList<Byte>();
 		try {
 			// byte size -> int size.
 //			w = in.read();
@@ -196,18 +197,15 @@ public class MainPanel extends JPanel {
 			}
 			do {
 				i = in.read();
-				if (i >= 0) {
-					byteList.add((byte) i);
-				} else {
+				if (i < 0)
 					break;
-				}
+				
+				os.write(i);
 			} while (i >= 0);
-		} catch (IOException e) {
-			throw e;
 		} finally {
 			in.close();
 		}
-		BufferedImage image = Converter.NxtImageData2Image(byteList, w, h);
+		BufferedImage image = Converter.nxtImageData2Image(os.toByteArray(), w, h);
 		this.readImage(image);
 	}
 	
