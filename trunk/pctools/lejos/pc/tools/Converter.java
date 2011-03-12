@@ -20,6 +20,7 @@ public class Converter {
 	
 	public final static int BIT_8 = 0;
 	public final static int BIT_16 = 1;
+	public final static int BYTEA = 2;
 
 	public static BufferedImage removeColor(BufferedImage colorImage, int threshold) {
 		if (colorImage.getType() == BufferedImage.TYPE_BYTE_BINARY) {
@@ -68,8 +69,31 @@ public class Converter {
 
 		return data;
 	}
+	
+	public static String getImageCreateString(byte[] data, Dimension size) {
+		StringBuilder sb = new StringBuilder("new Image(");
+		// width and height
+		sb.append(size.width).append(", ").append(size.height).append(", ");
+		// new byte[]
+		sb.append("new byte[] {");
+		for (byte b : data) {
+ 			sb.append("(byte) 0x");
+			String hex = Integer.toHexString(0xff & (int)b);
+			if (hex.length() < 2) {
+				sb.append('0');
+			}
+			sb.append(hex);
+			sb.append(", ");
+		}
+
+		sb.append("})");
+
+		return sb.toString();
+	}
 
 	public static String getImageCreateString(byte[] data, Dimension size,int mode) {
+		if (mode == BYTEA)
+			return getImageCreateString(data,size);
 		StringBuilder sb = new StringBuilder("");
 		// width and height
 		//sb.append(size.width).append(", ").append(size.height).append(", ");
@@ -109,10 +133,37 @@ public class Converter {
 
 		return sb.toString();
 	}
+	
+	public static BufferedImage getImageFromNxtImageCreateString(String string) {
+		Pattern statePattern = Pattern.compile(".*\\s*new\\s+Image\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*new\\s+byte\\s*\\[\\s*\\]\\s*" +
+			"\\{\\s*([^}]*)\\s*\\}\\s*\\)\\s*[;]?\\s*", Pattern.MULTILINE);
+		Matcher stateMatcher = statePattern.matcher(string);
+		if (!stateMatcher.matches()) {
+			return null;
+		}
+		int w = Integer.parseInt(stateMatcher.group(1));
+		int h = Integer.parseInt(stateMatcher.group(2));
+		String byteArray = stateMatcher.group(3);
+		Pattern byteDigitalPattern = Pattern.compile("\\s*(\\(\\s*byte\\s*\\))?\\s*((0x)?[0-9A-Fa-f]+)\\s*[,]?\\s*");
+		Matcher byteDigitalMatcher = byteDigitalPattern.matcher(byteArray);
+		int start = 0;
+		int end = 0;
+		List<Byte> byteList = new LinkedList<Byte>();
+		while (byteDigitalMatcher.find(end)) {
+			start = byteDigitalMatcher.start(2);
+			end = byteDigitalMatcher.end(2);
+			String str = byteArray.substring(start, end);
+			int i = str.startsWith("0x") ? Integer.parseInt(str.substring(2), 16) : str.startsWith("0") ? Integer.parseInt(str, 8) : Integer.parseInt(str);
+			byteList.add((byte) i);
+		}
+
+		return NxtImageData2Image(byteList, w, h);
+	}
 
 	public static BufferedImage getImageFromNxtImageCreateString(String string,int mode) {
+		if (mode == BYTEA)
+			return getImageFromNxtImageCreateString(string);
 		List<Byte> byteList = new LinkedList<Byte>();
-		int index = 0;
 		int w = 0;
 		int h = 0;
 		try{
@@ -148,11 +199,10 @@ public class Converter {
 				byteList.add((byte)chr);
 			}
 		}
+		return NxtImageData2Image(byteList, w, h);
 		}catch(Exception e){
 			return null;
 		}
-
-		return NxtImageData2Image(byteList, w, h);
 	}
 
 	public static BufferedImage NxtImageData2Image(List<Byte> byteList, int w, int h) {
