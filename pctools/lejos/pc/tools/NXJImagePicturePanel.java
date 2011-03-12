@@ -59,7 +59,7 @@ public class NXJImagePicturePanel extends JPanel {
 			public void stateChanged(ChangeEvent e) {
 				int v = NXJImagePicturePanel.this.thresholdSlider.getValue();
 				NXJImagePicturePanel.this.setThreshold(v);
-				NXJImagePicturePanel.this.thresholdSpinnerModel.setValue(v);
+				NXJImagePicturePanel.this.thresholdSpinnerModel.setValue(Integer.valueOf(v));
 			}
 		});
 		this.thresholdSpinner.addChangeListener(new ChangeListener() {
