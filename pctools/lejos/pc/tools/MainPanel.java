@@ -116,12 +116,12 @@ public class MainPanel extends JPanel {
 			if (mode == Converter.BIT_8)
 				message = "<html>Code format error!<br />" +
 					"Please use format like below:<br />" +
-					"<code>(w,h)\\u00XX\\0\\u00XX...</code>" +
+					"<code>(w,h) \"\\u00XX\\0\\u00XX...\"</code>" +
 					"</html>";
 			else if (mode == Converter.BIT_16)
 				message = "<html>Code format error!<br />" +
 						"Please use format like below:<br />" +
-						"<code>(w,h)\\uXXXX\\0\\uXXXX...</code>" +
+						"<code>(w,h) \"\\uXXXX\\0\\uXXXX...\"</code>" +
 						"</html>";
 			else if (mode == Converter.BYTEA)
 				message = "<html>Code format error!<br />" +
