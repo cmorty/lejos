@@ -190,8 +190,8 @@ public class NXJImageConverter {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		try{
 			for (int i = 0; i < string.length();){
-				char chr = string.charAt(i++);
-				if (chr == '\\')
+				char chr1 = string.charAt(i++);
+				if (chr1 == '\\')
 				{
 					if (i >= stringlen)
 						//TODO report whether string is too short
@@ -206,7 +206,12 @@ public class NXJImageConverter {
 								//TODO report whether string is too short
 								return null;
 							
-							chr = (char)Integer.parseInt(string.substring(i, j), 16);
+							int tmp = Integer.parseInt(string.substring(i, j), 16);
+							if (tmp < 0)
+								//TODO report whether string is too short
+								return null;
+							
+							chr1 = (char)tmp;
 							i = j;
 							break;
 						case '0':
@@ -228,28 +233,28 @@ public class NXJImageConverter {
 								
 								end++;
 							}
-							chr = (char)Integer.parseInt(string.substring(i - 1, end), 8);
+							chr1 = (char)Integer.parseInt(string.substring(i - 1, end), 8);
 							i = end;
 							break;
 						case 'b':
-							chr = '\b';
+							chr1 = '\b';
 							break;
 						case 't':
-							chr = 't';
+							chr1 = 't';
 							break;
 						case 'n':
-							chr = '\n';
+							chr1 = '\n';
 							break;
 						case 'f':
-							chr = '\f';
+							chr1 = '\f';
 							break;
 						case 'r':
-							chr = '\r';
+							chr1 = '\r';
 							break;
 						case '"':
 						case '\'':
 						case '\\':
-							chr = chr2;
+							chr1 = chr2;
 							break;
 						default:
 							//TODO report unknown escape
@@ -258,8 +263,8 @@ public class NXJImageConverter {
 				}
 				
 				if (mode == BIT_16)
-					os.write(chr >> 8);
-				os.write(chr);
+					os.write(chr1 >> 8);
+				os.write(chr1);
 			}
 		}catch(Exception e){
 			//TODO properly report error to caller
