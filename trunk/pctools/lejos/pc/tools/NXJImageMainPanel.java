@@ -112,21 +112,35 @@ public class NXJImageMainPanel extends JPanel {
 
 	protected void updateImageFromCode() {
 		String code = this.codePanel.getCode();
-		BufferedImage image = NXJImageConverter.getImageFromNxtImageCreateString(code,mode);
+		
+		String error;
+		BufferedImage image;
+		try
+		{
+			image = NXJImageConverter.getImageFromNxtImageCreateString(code,mode);
+			error = null;
+		}
+		catch (Exception e)
+		{
+			image = null;
+			error = e.getMessage();
+		}
+		
+		//TODO properly convert error string to HTML
 		if (image == null) {
 			String message;
 			if (mode == NXJImageConverter.BIT_8)
-				message = "<html>Code format error!<br />" +
+				message = "<html>Code format error: "+error+"<br />" +
 					"Please use format like below:<br />" +
 					"<code>(w,h) \"\\u00XX\\0\\u00XX...\"</code>" +
 					"</html>";
 			else if (mode == NXJImageConverter.BIT_16)
-				message = "<html>Code format error!<br />" +
+				message = "<html>Code format error: "+error+"<br />" +
 						"Please use format like below:<br />" +
 						"<code>(w,h) \"\\uXXXX\\0\\uXXXX...\"</code>" +
 						"</html>";
 			else if (mode == NXJImageConverter.BYTEA)
-				message = "<html>Code format error!<br />" +
+				message = "<html>Code format error: "+error+"<br />" +
 				"Please use format like below:<br />" +
 				"<code>new Image(w,h,new byte[]{(byte) 0xXX,(byte) 0xXX, ... })</code>" +
 				"</html>";

@@ -40,9 +40,9 @@ public class NXJImageConverter {
 	}
 
 	public static byte[] nxtImageConvert(BufferedImage image) {
-		if (image == null || image.getType() != BufferedImage.TYPE_BYTE_BINARY) {
-			return null;
-		}
+		if (image == null || image.getType() != BufferedImage.TYPE_BYTE_BINARY)
+			throw new IllegalArgumentException();
+		
 		int w = image.getWidth();
 		int h = image.getHeight();
 		int n = h >> 3;
@@ -148,9 +148,9 @@ public class NXJImageConverter {
 		Pattern statePattern = Pattern.compile(".*\\s*new\\s+Image\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*new\\s+byte\\s*\\[\\s*\\]\\s*" +
 			"\\{\\s*([^}]*)\\s*\\}\\s*\\)\\s*[;]?\\s*", Pattern.MULTILINE);
 		Matcher stateMatcher = statePattern.matcher(string);
-		if (!stateMatcher.matches()) {
-			return null;
-		}
+		if (!stateMatcher.matches())
+			throw new NumberFormatException("illegal format");
+		
 		int w = Integer.parseInt(stateMatcher.group(1));
 		int h = Integer.parseInt(stateMatcher.group(2));
 		String byteArray = stateMatcher.group(3);
@@ -288,8 +288,7 @@ public class NXJImageConverter {
 		
 		Matcher m = STRING_PATTERN.matcher(string);
 		if (!m.matches())
-			//TODO properly report error
-			return null;
+			throw new NumberFormatException("illegal format");
 		
 		int w = Integer.parseInt(m.group(1));
 		int h = Integer.parseInt(m.group(2));
