@@ -216,11 +216,12 @@ public class Converter {
 					case '(':
 						// Process Height/Width
 						//TODO report if ) is not found
-						String dim = string.substring(i+1, string.indexOf(")",i));
+						int j = string.indexOf(")",i+1);
+						String dim = string.substring(i+1, j);
 						String[] split = dim.split(",");
 						w = Integer.parseInt(split[0]);
 						h = Integer.parseInt(split[1]);
-						i = string.indexOf(")",i);
+						i = j;
 						continue CHARLOOP;
 				}
 				
