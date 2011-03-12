@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-public class CodePanel extends JPanel {
+public class NXJImageCodePanel extends JPanel {
 	/** SN */
 	private static final long serialVersionUID = -551193589723841126L;
 
@@ -29,7 +29,7 @@ public class CodePanel extends JPanel {
 	private final static String EDIT_LABEL = "Edit";
 	private final static String EXEC_LABEL = "Execute";
 
-	public CodePanel() {
+	public NXJImageCodePanel() {
 		super();
 		this.allocateComponents();
 	}
@@ -45,10 +45,10 @@ public class CodePanel extends JPanel {
 
 		this.editExecButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (EDIT_LABEL.equals(CodePanel.this.editExecButton.getText())) {
-					CodePanel.this.setEditEnable(true);
+				if (EDIT_LABEL.equals(NXJImageCodePanel.this.editExecButton.getText())) {
+					NXJImageCodePanel.this.setEditEnable(true);
 				} else {
-					CodePanel.this.firePropertyChange(CodePanel.CODE_UPDATE_PROP, true, false);
+					NXJImageCodePanel.this.firePropertyChange(NXJImageCodePanel.CODE_UPDATE_PROP, true, false);
 				}
 			}
 		});

@@ -21,7 +21,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 
-public class PicturePanel extends JPanel {
+public class NXJImagePicturePanel extends JPanel {
 	/** SN */
 	private static final long serialVersionUID = -5041297685815342536L;
 
@@ -37,7 +37,7 @@ public class PicturePanel extends JPanel {
 	private BufferedImage originImage;
 	private BufferedImage blackwhiteImage;
 
-	public PicturePanel() {
+	public NXJImagePicturePanel() {
 		super();
 		this.allocateComponents();
 	}
@@ -57,16 +57,16 @@ public class PicturePanel extends JPanel {
 		this.imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		this.thresholdSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				int v = PicturePanel.this.thresholdSlider.getValue();
-				PicturePanel.this.setThreshold(v);
-				PicturePanel.this.thresholdSpinnerModel.setValue(v);
+				int v = NXJImagePicturePanel.this.thresholdSlider.getValue();
+				NXJImagePicturePanel.this.setThreshold(v);
+				NXJImagePicturePanel.this.thresholdSpinnerModel.setValue(v);
 			}
 		});
 		this.thresholdSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				int v = PicturePanel.this.thresholdSpinnerModel.getNumber().intValue();
-				PicturePanel.this.setThreshold(v);
-				PicturePanel.this.thresholdSlider.setValue(v);
+				int v = NXJImagePicturePanel.this.thresholdSpinnerModel.getNumber().intValue();
+				NXJImagePicturePanel.this.setThreshold(v);
+				NXJImagePicturePanel.this.thresholdSlider.setValue(v);
 			}
 		});
 	}
@@ -92,7 +92,7 @@ public class PicturePanel extends JPanel {
 
 	protected void convertImage() {
 		if (this.originImage != null) {
-			this.blackwhiteImage = Converter.removeColor(this.originImage, this.thresholdSlider.getValue());
+			this.blackwhiteImage = NXJImageConverter.removeColor(this.originImage, this.thresholdSlider.getValue());
 		}
 	}
 
@@ -105,7 +105,7 @@ public class PicturePanel extends JPanel {
 	}
 
 	public byte[] getNxtImageData() {
-		return Converter.nxtImageConvert(this.blackwhiteImage);
+		return NXJImageConverter.nxtImageConvert(this.blackwhiteImage);
 	}
 
 	public Dimension getImageSize() {

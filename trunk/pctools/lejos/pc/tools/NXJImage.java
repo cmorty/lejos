@@ -12,14 +12,14 @@ import javax.swing.SwingUtilities;
 
 
 
-public class ImageConverter {
+public class NXJImage {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		final JFrame frame = new JFrame("LeJOS NXT Image Convertor");
-		MainPanel panel = new MainPanel();
+		NXJImageMainPanel panel = new NXJImageMainPanel();
 		frame.getContentPane().add(panel);
 		frame.setJMenuBar(panel.getMenuBar(panel));
 		frame.setLocationRelativeTo(null);

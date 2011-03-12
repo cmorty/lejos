@@ -39,9 +39,9 @@ import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileFilter;
 
 
-public class MainPanel extends JPanel {
+public class NXJImageMainPanel extends JPanel {
 	
-	private int mode = Converter.BIT_8;
+	private int mode = NXJImageConverter.BIT_8;
 	//implement JDK-1.6-like FileNameExtensionFilter
 	private static class FileNameExtensionFilter extends FileFilter	{
 		private final String message;
@@ -68,15 +68,15 @@ public class MainPanel extends JPanel {
 
 	private static final String EXT = "lni";
 
-	private PicturePanel picPanel = new PicturePanel();
-	private CodePanel codePanel = new CodePanel();
+	private NXJImagePicturePanel picPanel = new NXJImagePicturePanel();
+	private NXJImageCodePanel codePanel = new NXJImageCodePanel();
 
 	private File lastDir = null;
 
 	private byte[] currData;
 	private Dimension currSize;
 
-	public MainPanel() {
+	public NXJImageMainPanel() {
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, false);
 		splitPane.setLeftComponent(this.picPanel);
 		splitPane.setRightComponent(this.codePanel);
@@ -86,15 +86,15 @@ public class MainPanel extends JPanel {
 		this.setLayout(new BorderLayout());
 		this.add(splitPane, BorderLayout.CENTER);
 
-		this.picPanel.addPropertyChangeListener(PicturePanel.IMAGE_UPDATE_PROP, new PropertyChangeListener() {
+		this.picPanel.addPropertyChangeListener(NXJImagePicturePanel.IMAGE_UPDATE_PROP, new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
-				MainPanel.this.updateNxtPart();
+				NXJImageMainPanel.this.updateNxtPart();
 			}
 		});
 
-		this.codePanel.addPropertyChangeListener(CodePanel.CODE_UPDATE_PROP, new PropertyChangeListener(){
+		this.codePanel.addPropertyChangeListener(NXJImageCodePanel.CODE_UPDATE_PROP, new PropertyChangeListener(){
 			public void propertyChange(PropertyChangeEvent evt) {
-				MainPanel.this.updateImageFromCode();
+				NXJImageMainPanel.this.updateImageFromCode();
 			}
 		});
 	}
@@ -103,27 +103,27 @@ public class MainPanel extends JPanel {
 		try{
 		currSize = this.picPanel.getImageSize();
 		currData = this.picPanel.getNxtImageData();
-		String text = Converter.getImageCreateString(currData, currSize,mode);
+		String text = NXJImageConverter.getImageCreateString(currData, currSize,mode);
 		this.codePanel.setCode(text);
 		}catch (NullPointerException ex){}
 	}
 
 	protected void updateImageFromCode() {
 		String code = this.codePanel.getCode();
-		BufferedImage image = Converter.getImageFromNxtImageCreateString(code,mode);
+		BufferedImage image = NXJImageConverter.getImageFromNxtImageCreateString(code,mode);
 		if (image == null) {
 			String message;
-			if (mode == Converter.BIT_8)
+			if (mode == NXJImageConverter.BIT_8)
 				message = "<html>Code format error!<br />" +
 					"Please use format like below:<br />" +
 					"<code>(w,h) \"\\u00XX\\0\\u00XX...\"</code>" +
 					"</html>";
-			else if (mode == Converter.BIT_16)
+			else if (mode == NXJImageConverter.BIT_16)
 				message = "<html>Code format error!<br />" +
 						"Please use format like below:<br />" +
 						"<code>(w,h) \"\\uXXXX\\0\\uXXXX...\"</code>" +
 						"</html>";
-			else if (mode == Converter.BYTEA)
+			else if (mode == NXJImageConverter.BYTEA)
 				message = "<html>Code format error!<br />" +
 				"Please use format like below:<br />" +
 				"<code>new Image(w,h,new byte[]{(byte) 0xXX,(byte) 0xXX, ... })</code>" +
@@ -205,7 +205,7 @@ public class MainPanel extends JPanel {
 		} finally {
 			in.close();
 		}
-		BufferedImage image = Converter.nxtImageData2Image(os.toByteArray(), w, h);
+		BufferedImage image = NXJImageConverter.nxtImageData2Image(os.toByteArray(), w, h);
 		this.readImage(image);
 	}
 	
@@ -228,7 +228,7 @@ public class MainPanel extends JPanel {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent arg0) {
-				mode = Converter.BIT_16;
+				mode = NXJImageConverter.BIT_16;
 				updateNxtPart();
 				modeLabel.setText("Mode: 16 Bit");
 			}
@@ -240,7 +240,7 @@ public class MainPanel extends JPanel {
 			private static final long serialVersionUID = -7948282904817247677L;
 
 			public void actionPerformed(ActionEvent arg0) {
-				mode = Converter.BIT_8;
+				mode = NXJImageConverter.BIT_8;
 				updateNxtPart();
 				modeLabel.setText("Mode: 8 Bit");
 			}
@@ -252,7 +252,7 @@ public class MainPanel extends JPanel {
 			private static final long serialVersionUID = -7684693417480716472L;
 
 			public void actionPerformed(ActionEvent arg0){
-				mode = Converter.BYTEA;
+				mode = NXJImageConverter.BYTEA;
 				updateNxtPart();
 				modeLabel.setText("Mode: byte[]");
 			}
@@ -282,17 +282,17 @@ public class MainPanel extends JPanel {
 									"But the image you are importing is <font color='red'>" + image.getWidth() + "x" + image.getHeight() + "</font>.<br>" +
 									"Are you sure you want to import this image? <br>" +
 									"(This may also cause a performance issue!)</html>";
-								canReadImage = JOptionPane.showConfirmDialog(MainPanel.this, message, "Confirm", JOptionPane.YES_NO_OPTION | JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
+								canReadImage = JOptionPane.showConfirmDialog(NXJImageMainPanel.this, message, "Confirm", JOptionPane.YES_NO_OPTION | JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
 							}
 							if (canReadImage) {
-								MainPanel.this.readImage(image);
+								NXJImageMainPanel.this.readImage(image);
 							}
 						}
 					} catch (IOException e) {
 						errorMsg = "Error occured when reading file: " + e.getMessage();
 					}
 					if (errorMsg != null) {
-						JOptionPane.showMessageDialog(MainPanel.this, errorMsg, "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(NXJImageMainPanel.this, errorMsg, "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
@@ -314,7 +314,7 @@ public class MainPanel extends JPanel {
 					lastDir = dialog.getCurrentDirectory();
 					File file = dialog.getSelectedFile();
 					try {
-						MainPanel.this.readNxtImage(file);
+						NXJImageMainPanel.this.readNxtImage(file);
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(panel, "<html>Error occured when reading file.<br><font color='red'>" + e.getMessage() + "</font></html>", "Error", JOptionPane.ERROR_MESSAGE);
 					}
@@ -356,7 +356,7 @@ public class MainPanel extends JPanel {
 							JOptionPane.showMessageDialog(panel, "File cannot be written!", "Error", JOptionPane.ERROR_MESSAGE | JOptionPane.OK_OPTION);
 							return;
 						}
-						MainPanel.this.saveImage(file);
+						NXJImageMainPanel.this.saveImage(file);
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(panel, "<html>Error occured when write data into file.<br><font color='red'>" + e.getMessage() + "</font></html>", "Error", JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
@@ -389,7 +389,7 @@ public class MainPanel extends JPanel {
 				//nothing
 			}
 			public void menuSelected(MenuEvent e) {
-				exportFileAction.setEnabled(MainPanel.this.currData != null && MainPanel.this.currSize != null);
+				exportFileAction.setEnabled(NXJImageMainPanel.this.currData != null && NXJImageMainPanel.this.currSize != null);
 			}
 		});
 
