@@ -1056,7 +1056,7 @@ public class StartUpText
         LCD.setAutoRefresh(false);
         LCD.setContrast(0);
         
-        byte[] logo_data = Utils.stringToBytes(Config.LOGO_DATA);
+        byte[] logo_data = Utils.stringToBytes8(Config.LOGO_DATA);
     	byte[] text_data = Utils.textToBytes("leJOS "+Utils.versionToString(VERSION));
     	byte[] display = LCD.getDisplay();
     	

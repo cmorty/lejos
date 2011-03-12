@@ -80,7 +80,7 @@ public class GraphicMenu extends TextMenu{
 		_icons = new byte[icons.length][32];
 		for(int i = 0; i < icons.length;i++){
 			if (icons[i] != null)
-				_icons[i] = Utils.stringToBytes(icons[i]);
+				_icons[i] = Utils.stringToBytes8(icons[i]);
 		}
 	}
 	
@@ -268,6 +268,6 @@ public class GraphicMenu extends TextMenu{
 		if (str == null)
 			_parent = null;
 		else
-			_parent = Utils.stringToBytes(str);
+			_parent = Utils.stringToBytes8(str);
 	}
 }
