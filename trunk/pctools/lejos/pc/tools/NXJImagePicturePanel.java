@@ -111,4 +111,9 @@ public class NXJImagePicturePanel extends JPanel {
 	public Dimension getImageSize() {
 		return new Dimension(this.blackwhiteImage.getWidth(), this.blackwhiteImage.getHeight());
 	}
+
+	public boolean hasPic()
+	{
+		return this.blackwhiteImage != null;
+	}
 }
