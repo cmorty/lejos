@@ -22,8 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -100,12 +98,16 @@ public class NXJImageMainPanel extends JPanel {
 	}
 
 	protected void updateNxtPart() {
-		try{
-		currSize = this.picPanel.getImageSize();
-		currData = this.picPanel.getNxtImageData();
-		String text = NXJImageConverter.getImageCreateString(currData, currSize,mode);
+		String text;
+		if (this.picPanel == null)
+			text = "";
+		else
+		{
+			currSize = this.picPanel.getImageSize();
+			currData = this.picPanel.getNxtImageData();
+			text = NXJImageConverter.getImageCreateString(currData, currSize,mode);
+		}
 		this.codePanel.setCode(text);
-		}catch (NullPointerException ex){}
 	}
 
 	protected void updateImageFromCode() {
@@ -138,12 +140,11 @@ public class NXJImageMainPanel extends JPanel {
 
 	public boolean setFile(File file) throws IOException {
 		BufferedImage image = ImageIO.read(file);
-		if (image != null) {
-			this.picPanel.setImage(image);
-			return true;
-		} else {
+		if (image == null)
 			return false;
-		}
+		
+		this.picPanel.setImage(image);
+		return true;
 	}
 
 	public void readImage(BufferedImage image) {
