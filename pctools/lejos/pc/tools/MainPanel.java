@@ -39,6 +39,7 @@ import javax.swing.filechooser.FileFilter;
 
 
 public class MainPanel extends JPanel {
+	
 	private int mode = Converter.BIT_8;
 	//implement JDK-1.6-like FileNameExtensionFilter
 	private static class FileNameExtensionFilter extends FileFilter	{
@@ -98,20 +99,36 @@ public class MainPanel extends JPanel {
 	}
 
 	protected void updateNxtPart() {
+		try{
 		currSize = this.picPanel.getImageSize();
 		currData = this.picPanel.getNxtImageData();
 		String text = Converter.getImageCreateString(currData, currSize,mode);
 		this.codePanel.setCode(text);
+		}catch (NullPointerException ex){}
 	}
 
 	protected void updateImageFromCode() {
 		String code = this.codePanel.getCode();
 		BufferedImage image = Converter.getImageFromNxtImageCreateString(code,mode);
 		if (image == null) {
-			String message = "<html>Code format error!<br />" +
+			String message;
+			if (mode == Converter.BIT_8)
+				message = "<html>Code format error!<br />" +
 					"Please use format like below:<br />" +
-					"<code>(w,h)\\uXXXX\\0\\uXXXX...</code>" +
+					"<code>(w,h)\\u00XX\\0\\u00XX...</code>" +
 					"</html>";
+			else if (mode == Converter.BIT_16)
+				message = "<html>Code format error!<br />" +
+						"Please use format like below:<br />" +
+						"<code>(w,h)\\uXXXX\\0\\uXXXX...</code>" +
+						"</html>";
+			else if (mode == Converter.BYTEA)
+				message = "<html>Code format error!<br />" +
+				"Please use format like below:<br />" +
+				"<code>new Image(w,h,new byte[]{(byte) 0xXX,(byte) 0xXX, ... })</code>" +
+				"</html>";
+			else
+				message = "ERROR";
 			JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
 		} else {
 			this.readImage(image);
@@ -193,17 +210,18 @@ public class MainPanel extends JPanel {
 		BufferedImage image = Converter.NxtImageData2Image(byteList, w, h);
 		this.readImage(image);
 	}
+	
+	public JMenu modeLabel = new JMenu("Mode: 8 Bit");
 
 	public JMenuBar getMenuBar(final JPanel panel) {
-		JMenu menu, modeM;
+		JMenu menu;
 		JMenuBar menuBar = new JMenuBar();
 
 		// image menu
 		menu = new JMenu("Image");
-		modeM = new JMenu("Mode");
 		menu.setMnemonic(KeyEvent.VK_I);
 		menuBar.add(menu);
-		menuBar.add(modeM);
+		menuBar.add(modeLabel);
 		
 		Action mode16Action = new AbstractAction("16 Bit Mode"){
 			/**
@@ -212,7 +230,9 @@ public class MainPanel extends JPanel {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent arg0) {
-				mode = Converter.BIT_16;				
+				mode = Converter.BIT_16;
+				updateNxtPart();
+				modeLabel.setText("Mode: 16 Bit");
 			}
 		};
 		Action mode8Action = new AbstractAction("8 Bit Mode"){
@@ -223,10 +243,25 @@ public class MainPanel extends JPanel {
 
 			public void actionPerformed(ActionEvent arg0) {
 				mode = Converter.BIT_8;
+				updateNxtPart();
+				modeLabel.setText("Mode: 8 Bit");
 			}
 		};
-		modeM.add(mode16Action);
-		modeM.add(mode8Action);
+		Action modeBAction = new AbstractAction("Byte[] Mode"){
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -7684693417480716472L;
+
+			public void actionPerformed(ActionEvent arg0){
+				mode = Converter.BYTEA;
+				updateNxtPart();
+				modeLabel.setText("Mode: byte[]");
+			}
+		};
+		modeLabel.add(mode8Action);
+		modeLabel.add(mode16Action);
+		modeLabel.add(modeBAction);
 
 		// Import
 		Action importFileAction = new AbstractAction("Import Image...") {
