@@ -124,13 +124,16 @@ public class NXJImageConverter {
 	{
 		switch (c)
 		{
-			case '\0':
 			case '\r':
+				sb.append("\\r");
+				break;
 			case '\n':
+				sb.append("\\n");
+				break;
 			case '\\':
 			case '"':
 				sb.append('\\');
-				sb.append(Integer.toOctalString(c));
+				sb.append(c);
 				break;
 			default:
 				sb.append("\\u");
@@ -166,8 +169,120 @@ public class NXJImageConverter {
 
 		return nxtImageData2Image(os.toByteArray(), w, h);
 	}
+	
+	private static String decodeUnicodeEscapes(String s) throws NumberFormatException
+	{
+		StringBuilder sb = new StringBuilder();
+		int len = s.length();
+		
+		for (int i=0; i<len;)
+		{
+			char c1 = s.charAt(i++);
+			if (c1 != '\\' || i >= len)
+				sb.append(c1);
+			else
+			{
+				char c2 = s.charAt(i++);
+				if (c2 != 'u')
+				{
+					sb.append(c1);
+					sb.append(c2);
+				}
+				else
+				{
+					int j = i+4;
+					if (j > len)
+						throw new NumberFormatException("incomplete unicode escape");
+					
+					int tmp = Integer.parseInt(s.substring(i, j), 16);
+					if (tmp < 0)
+						throw new NumberFormatException("illegal unicode escape");
+					
+					i = j;
+					sb.append((char)tmp);
+				}
+			}
+		}
+		return sb.toString();
+	}
+	
+	private static String decodeOtherEscapes(String s) throws NumberFormatException
+	{
+		StringBuilder sb = new StringBuilder();
+		int len = s.length();
+		
+		for (int i = 0; i < s.length();){
+			char chr1 = s.charAt(i++);
+			if (chr1 == '\\')
+			{
+				if (i >= len)
+					throw new NumberFormatException("incomplete escape sequence");
+				
+				char chr2 = s.charAt(i++); 
+				switch (chr2)
+				{
+					case '0':
+					case '1':
+					case '2':
+					case '3':
+					case '4':
+					case '5':
+					case '6':
+					case '7':
+						// see http://java.sun.com/docs/books/jls/second_edition/html/lexical.doc.html#101089
+						int r = chr2 - '0';
+						int maxend = Math.min(i + (r < 4 ? 2 : 1), len);
+						while (i < maxend)
+						{
+							int chr3 = s.charAt(i);
+							if (chr3 < '0' || chr3 > '7')
+								break;
+							
+							i++;
+							r = (r << 3) + chr3 - '0';
+						}
+						chr1 = (char)r;
+						break;
+					case 'b':
+						chr1 = '\b';
+						break;
+					case 't':
+						chr1 = 't';
+						break;
+					case 'n':
+						chr1 = '\n';
+						break;
+					case 'f':
+						chr1 = '\f';
+						break;
+					case 'r':
+						chr1 = '\r';
+						break;
+					case '"':
+					case '\'':
+					case '\\':
+						chr1 = chr2;
+						break;
+					default:
+						throw new NumberFormatException("unknown escape character");
+				}
+			}
+			
+			sb.append(chr1);
+		}
+		return sb.toString();
+	}
 
-	public static BufferedImage getImageFromNxtImageCreateString(String string,int mode) {
+	public static BufferedImage getImageFromNxtImageCreateString(String string, int mode)
+	{
+		/**
+		 * Note: AFAIK, the Java language specification explains, that decoding has to be done
+		 * in two stages: first decode the unicode-escapes and then all other escapes. During
+		 * first state, the unicode-escapes may decode to backslashes, line feeds, quotes, and
+		 * other characters, which are considered as normal character during second state, that
+		 * is when decoding other escapes like \r, \n, \123, etc. 
+		 */
+		string = decodeUnicodeEscapes(string);
 		if (mode == BYTEA)
 			return getImageFromNxtImageCreateString(string);
 		
@@ -186,90 +301,22 @@ public class NXJImageConverter {
 		if (string == null)
 			string = m.group(6);
 		
-		int stringlen = string.length();
+		string = decodeOtherEscapes(string);
+		
+		int len = string.length();
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		try{
-			for (int i = 0; i < string.length();){
-				char chr1 = string.charAt(i++);
-				if (chr1 == '\\')
-				{
-					if (i >= stringlen)
-						//TODO report whether string is too short
-						return null;
-					
-					char chr2 = string.charAt(i++); 
-					switch (chr2)
-					{
-						case 'u':
-							int j = i+4;
-							if (j > stringlen)
-								//TODO report whether string is too short
-								return null;
-							
-							int tmp = Integer.parseInt(string.substring(i, j), 16);
-							if (tmp < 0)
-								//TODO report whether string is too short
-								return null;
-							
-							chr1 = (char)tmp;
-							i = j;
-							break;
-						case '0':
-						case '1':
-						case '2':
-						case '3':
-						case '4':
-						case '5':
-						case '6':
-						case '7':
-							// see http://java.sun.com/docs/books/jls/second_edition/html/lexical.doc.html#101089
-							int r = chr2 - '0';
-							int maxend = Math.min(i + (r < 4 ? 2 : 1), stringlen);
-							while (i < maxend)
-							{
-								int chr3 = string.charAt(i);
-								if (chr3 < '0' || chr3 > '7')
-									break;
-								
-								i++;
-								r = (r << 3) + chr3 - '0';
-							}
-							chr1 = (char)r;
-							break;
-						case 'b':
-							chr1 = '\b';
-							break;
-						case 't':
-							chr1 = 't';
-							break;
-						case 'n':
-							chr1 = '\n';
-							break;
-						case 'f':
-							chr1 = '\f';
-							break;
-						case 'r':
-							chr1 = '\r';
-							break;
-						case '"':
-						case '\'':
-						case '\\':
-							chr1 = chr2;
-							break;
-						default:
-							//TODO report unknown escape
-							return null;
-					}
-				}
-				
-				if (mode == BIT_16)
-					os.write(chr1 >> 8);
-				os.write(chr1);
-			}
-		}catch(Exception e){
-			//TODO properly report error to caller
-			return null;
+		for (int i=0; i<len; i++)
+		{
+			char c = string.charAt(i);
+			
+			if (mode == BIT_16)
+				os.write(c >> 8);
+			else if (c >= 0x100)
+				throw new NumberFormatException("16 bit character found");
+			
+			os.write(c);
 		}
+		
 		return nxtImageData2Image(os.toByteArray(), w, h);
 	}
 
