@@ -3,20 +3,21 @@
 class SimpleLock
 {
 private:
-	pthread_mutexattr_t mutexattr;
 	pthread_mutex_t mutex;
 public:
 	SimpleLock()
 	{
+		pthread_mutexattr_t mutexattr;
+
 		pthread_mutexattr_init(&mutexattr);
 		pthread_mutexattr_settype(&mutexattr, PTHREAD_MUTEX_RECURSIVE);
 		pthread_mutex_init(&mutex, &mutexattr);
+		pthread_mutexattr_destroy(&mutexattr);
 	}
 
 	~SimpleLock()
 	{
 		pthread_mutex_destroy(&mutex);
-		pthread_mutexattr_destroy(&mutexattr);
 	}
 
 	void lock()
