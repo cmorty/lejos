@@ -115,14 +115,12 @@
   				<include name="lejos/robotics/pathfinding/package.html"/>
   			</fileset>
   		</copy>
-  		<mkdir dir="lejos/robotics/proposal"/>
-  		<delete dir="lejos/robotics/proposal" includes="*.java, package.html"/>
+  		<mkdir dir="lejos/robotics/objectdetection"/>
+  		<delete dir="lejos/robotics/objectdetection" includes="*.java, package.html"/>
   		<copy overwrite="true"  todir=".">
   			<fileset dir="../classes">
-  				<include name="lejos/robotics/proposal/*.java"/>
-  				<exclude name="lejos/robotics/proposal/GPSPoseProvider.java"/>
-  				<exclude name="lejos/robotics/proposal/InertialMoveProvider.java"/>
-  				<include name="lejos/robotics/proposal/package.html"/>
+  				<include name="lejos/robotics/objectdetection/*.java"/>
+  				<include name="lejos/robotics/objectdetection/package.html"/>
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/util/"/>
