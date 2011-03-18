@@ -35,16 +35,16 @@ if "%OS%" == "Windows_NT" goto :winnt
 	call :build_classpath NXJ_CP_NXT "%NXJ_HOME%\lib\nxt"
 
 	if not "%LEJOS_NXT_JAVA_HOME%" == "" (
-		set "JAVA=%LEJOS_NXT_JAVA_HOME%/bin/java"
-		set "JAVAC=%LEJOS_NXT_JAVA_HOME%/bin/javac"
+		set "JAVA=%LEJOS_NXT_JAVA_HOME%\bin\java"
+		set "JAVAC=%LEJOS_NXT_JAVA_HOME%\bin\javac"
 	) else if not "%JAVA_HOME%" == "" (
-		set "JAVA=%JAVA_HOME%/bin/java"
-		set "JAVAC=%JAVA_HOME%/bin/javac"
+		set "JAVA=%JAVA_HOME%\bin\java"
+		set "JAVAC=%JAVA_HOME%\bin\javac"
 	) else (
 		set "JAVA=java"
 		set "JAVAC=javac"
 	)
 
 
-"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjimage" -Djava.library.path="%NXJ_BIN%" -classpath "%NXJ_CP_PC%" lejos.pc.tools.ImageConverter  %*
+"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjimage" -Djava.library.path="%NXJ_BIN%" -classpath "%NXJ_CP_PC%" lejos.pc.tools.NXJImage  %*
 :eof
