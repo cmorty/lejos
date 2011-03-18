@@ -391,6 +391,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
         float baseCnt = 0;
         float curCnt = 0;
         float curAcc = 0;
+        float curStopAcc = 0;
         float curTargetVelocity = 0;
         int curLimit = NO_LIMIT;
         boolean curHold = true;
@@ -437,6 +438,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
             baseTime = now;
             curTargetVelocity = (limit - curCnt >= 0 ? speed : -speed);
             curAcc = curTargetVelocity - curVelocity >= 0 ? absAcc : -absAcc;
+            curStopAcc = curTargetVelocity >= 0 ? absAcc : -absAcc;
             accTime = Math.round(((curTargetVelocity - curVelocity) / curAcc) * 1000);
             accCnt = (curVelocity + curTargetVelocity) * accTime / (2 * 1000);
             baseCnt = curCnt;
@@ -444,6 +446,9 @@ public class NXTRegulatedMotor implements RegulatedMotor
             curHold = hold;
             curLimit = limit;
             moving = curTargetVelocity != 0 || baseVelocity != 0;
+            LCD.drawInt((int)curTargetVelocity, 8, 0, 4);
+            LCD.drawInt((int)curAcc, 8, 8, 4);
+            LCD.drawInt((int)accTime, 8, 0, 5);
         }
 
         /**
@@ -616,7 +621,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
                 if (checkLimit)
                 {
                     float acc = (curVelocity*curVelocity)/(2*(curLimit - curCnt));
-                    if (curAcc/acc < 1.0)
+                    if (curStopAcc/acc < 1.0)
                         startSubMove(0, acc, NO_LIMIT, curHold);
                 }
             } else if (curHold)
