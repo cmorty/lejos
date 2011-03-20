@@ -206,7 +206,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
      */
     public void setSpeed(int speed)
     {
-        this.speed = speed;
+        this.speed = Math.abs(speed);
         reg.adjustSpeed(speed);
     }
 
@@ -220,7 +220,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
      */
     public void setSpeed(float speed)
     {
-        this.speed = speed;
+        this.speed = Math.abs(speed);
         reg.adjustSpeed(speed);
     }
 
@@ -446,9 +446,6 @@ public class NXTRegulatedMotor implements RegulatedMotor
             curHold = hold;
             curLimit = limit;
             moving = curTargetVelocity != 0 || baseVelocity != 0;
-            LCD.drawInt((int)curTargetVelocity, 8, 0, 4);
-            LCD.drawInt((int)curAcc, 8, 8, 4);
-            LCD.drawInt((int)accTime, 8, 0, 5);
         }
 
         /**
