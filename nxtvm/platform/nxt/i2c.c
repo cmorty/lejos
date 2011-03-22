@@ -538,7 +538,6 @@ int i2c_enable(int port, int mode)
     *AT91C_PIOA_PPUDR = pinmask;
     /* If we are always active, we never drop below the ACTIVEIDLE state */
     p->lego_mode = ((mode & I2C_LEGO_MODE) ? 1 : 0);
-    p->lego_mode = 0;
     p->no_release = ((mode & I2C_NO_RELEASE) ? 1 : 0);
     p->always_active = ((mode & I2C_ALWAYS_ACTIVE) ? 1 : 0);
     p->high_speed = ((mode & I2C_HIGH_SPEED) ? 1 : 0);
