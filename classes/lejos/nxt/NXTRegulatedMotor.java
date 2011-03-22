@@ -226,7 +226,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
 
     /**
      * sets the acceleration rate of this motor in degrees/sec/sec <br>
-     * The default value is 1000; Smaller values will make speeding up. or stopping
+     * The default value is 6000; Smaller values will make speeding up. or stopping
      * at the end of a rotate() task, smoother;
      * @param acceleration
      */
