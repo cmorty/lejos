@@ -2,7 +2,6 @@ package lejos.pc.tools;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -124,7 +123,7 @@ public class NXJFlashUpdate {
 	 * @return Memory image ready to be flashed to the device.
 	 */
 	public byte[] createFirmwareImage(File vmName, File menuName,
-			String leJOSHomeDir) throws IOException, FileNotFoundException {
+			String leJOSHomeDir) throws IOException {
 		ui.message("Building firmware image.");
 		byte[] memoryImage = new byte[MAX_FIRMWARE_PAGES * NXTSamba.PAGE_SIZE];
 		String home = leJOSHomeDir;
@@ -150,7 +149,7 @@ public class NXJFlashUpdate {
 		// We store the length and location of the Menu in special locations
 		// that are known to the firmware.
 		int loc = findMagicChars(memoryImage, MENU_ADDRESS_LOC, MENU_ADDRESS_SEARCH_RADIUS, 4, MENU_ADDRESS_STRING);
-		ui.message("Magic string found at offset "+Integer.toHexString(loc));
+		ui.message("Magic string found at offset 0x"+Integer.toHexString(loc));
 		storeWord(memoryImage, loc, menuStart + NXTSamba.FLASH_BASE);
 		storeWord(memoryImage, loc+4, menuLen);
 		storeWord(memoryImage, loc+8, MAX_FIRMWARE_PAGES);
