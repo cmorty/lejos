@@ -1,9 +1,17 @@
 package lejos.pc.tools;
 
-import lejos.pc.comm.*;
-import lejos.nxt.remote.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
-import java.io.*;
+import lejos.nxt.remote.NXTCommand;
+import lejos.pc.comm.NXTComm;
+import lejos.pc.comm.NXTCommException;
+import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTInfo;
+import lejos.pc.comm.NXTSamba;
 
 /**
  * Class to allow the updating and verification of the leJOS firmware.
@@ -17,8 +25,8 @@ public class NXJFlashUpdate {
 	private static final int SETTINGS_PAGES = 1;
 	private static final int DIRECTORY_PAGES = 2;
 	private static final int MENU_ADDRESS_LOC = 0x40;
-	private static final int MENU_LENGTH_LOC = MENU_ADDRESS_LOC + 4;
-	private static final int FLASH_START_PAGE_LOC = MENU_LENGTH_LOC + 4;
+	private static final int MENU_ADDRESS_SEARCH_RADIUS = 0x20;
+	private static final String MENU_ADDRESS_STRING = "MNUAMNULFLSP";
 	private static final String VM = "lejos_nxt_rom.bin";
 	private static final String MENU = "StartUpText.bin";
 	
@@ -38,11 +46,43 @@ public class NXJFlashUpdate {
 	 * @param val
 	 *            The value to be stored.
 	 */
-	void storeWord(byte[] mem, int offset, int val) {
-		mem[offset++] = (byte) (val & 0xff);
-		mem[offset++] = (byte) ((val >> 8) & 0xff);
-		mem[offset++] = (byte) ((val >> 16) & 0xff);
-		mem[offset++] = (byte) ((val >> 24) & 0xff);
+	private void storeWord(byte[] mem, int offset, int val)
+	{
+		// little endian
+		mem[offset] = (byte) val;
+		mem[offset+1] = (byte) (val >>> 8);
+		mem[offset+2] = (byte) (val >>> 16);
+		mem[offset+3] = (byte) (val >>> 24);
+	}
+	
+	private int findMagicChars(byte[] mem, int offset, int radius, int align, String chars)
+	{
+		if (verifyMagicChars(mem, offset, chars))
+			return offset;
+		
+		for (int j=1; j<=radius; j+=align)
+		{
+			int p1 = offset+j;
+			if (verifyMagicChars(mem, p1, chars))
+				return p1;
+			
+			int p2 = offset-j;
+			if (verifyMagicChars(mem, p2, chars))
+				return p2;
+		}
+		
+		throw new RuntimeException("magic string not found");
+	}
+	
+	private boolean verifyMagicChars(byte[] mem, int offset, String chars)
+	{
+		int len = chars.length();
+		for (int i=0; i<len; i++)
+		{
+			if (chars.charAt(i) != (mem[offset+i] & 0xff))
+					return false;
+		}
+		return true;
 	}
 	
 	private static int readWholeFile(File src, byte[] dst, int off, int maxlen) throws IOException
@@ -109,10 +149,11 @@ public class NXJFlashUpdate {
 		int menuLen = readWholeFile(menuName, memoryImage, menuStart, memoryImage.length - menuStart);
 		// We store the length and location of the Menu in special locations
 		// that are known to the firmware.
-		storeWord(memoryImage, MENU_LENGTH_LOC, menuLen);
-		storeWord(memoryImage, MENU_ADDRESS_LOC, menuStart
-				+ NXTSamba.FLASH_BASE);
-		storeWord(memoryImage, FLASH_START_PAGE_LOC, MAX_FIRMWARE_PAGES);
+		int loc = findMagicChars(memoryImage, MENU_ADDRESS_LOC, MENU_ADDRESS_SEARCH_RADIUS, 4, MENU_ADDRESS_STRING);
+		ui.message("Magic string found at offset "+Integer.toHexString(loc));
+		storeWord(memoryImage, loc, menuStart + NXTSamba.FLASH_BASE);
+		storeWord(memoryImage, loc+4, menuLen);
+		storeWord(memoryImage, loc+8, MAX_FIRMWARE_PAGES);
 		// Check overall size allow for size/length markers in last block.
 		if (menuStart + menuLen >= memoryImage.length) {
 			throw new IOException("Combined size of VM and Menu > "
