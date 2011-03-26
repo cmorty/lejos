@@ -2,7 +2,6 @@ package lejos.nxt.addon;
 
 import lejos.robotics.DirectionFinder;
 
-
 /**
  * Implementation of the DirectionFinder interface that Integrates repeated rate-of-turn readings from a GyroSensor
  * into a continuously updated heading. This class is very similar to CompassSensor, 
@@ -16,17 +15,31 @@ public class GyroDirectionFinder implements DirectionFinder
     private float heading = 0;
     private float acceleration;
 
+    private boolean calibrating = false;
+    private float gyroCalibration = 0F;
+    private long calibrationReadingCount = 0;
+    private float calibrationSum = 0F;
+
     private Regulator reg = new Regulator();
     private GyroSensor gyro;
 
-    /** Create a <tt>GyroDirectionFinder</tt> instance.
-     * Use this constructor to assign an instantiated <tt>GyroSensor</tt> 
-     * @param gyro
-     */
     public GyroDirectionFinder(GyroSensor gyro)
+    {
+        this(gyro, false);
+    }
+
+    public GyroDirectionFinder(GyroSensor gyro, boolean calibrate)
     {
         this.gyro = gyro;
         reg.start();
+        if(calibrate == false)
+            return;
+
+        // Optional calibration
+        startCalibration();
+        try { Thread.sleep(50); }
+        catch(Exception ex) { }
+        stopCalibration();
     }
 
     /**
@@ -54,7 +67,7 @@ public class GyroDirectionFinder implements DirectionFinder
      */
     public float getAngularVelocity()
     {
-        return gyro.readRawValue();
+        return (float)gyro.readValue() - gyroCalibration;
     }
 
     /**
@@ -92,17 +105,23 @@ public class GyroDirectionFinder implements DirectionFinder
     }
 
     /**
-     * Calls the GyroSensor.initBias() method.
-     * @see GyroSensor#initBias()
+     * Begins averaging readings to find bias of gyro while at rest
      */
-    public void startCalibration() {
-        gyro.initBias();
+    public void startCalibration()
+    {
+        gyroCalibration = 0F;
+        calibrationReadingCount = 0;
+        calibrationSum = 0F;
+        calibrating = true;
     }
 
-    /** Does nothing since GyroSensor has auto-bias calculation.
-     * @see GyroSensor#initBias()
+    /**
+     * Sets the bias of the gyro based on readings observed since call to startCalibration()
      */
-    public void stopCalibration() {
+    public void stopCalibration()
+    {
+        calibrating = false;
+        gyroCalibration = calibrationSum / calibrationReadingCount;
     }
 
     /**
@@ -112,7 +131,7 @@ public class GyroDirectionFinder implements DirectionFinder
     {
         protected Regulator()
         {
-            this.setDaemon(true);
+            setDaemon(true);
         }
 
         @Override
@@ -120,18 +139,24 @@ public class GyroDirectionFinder implements DirectionFinder
         {
             float lastDegreesPerSecond = 0F;
             long lastUpdate = System.currentTimeMillis();
-            float degreesPerSecond;
-            float secondsSinceLastReading;
-            long now;
-            
             while (true)
             {
-                this.yield();
-                now = System.currentTimeMillis();
-                if(now - lastUpdate<3)
+                Thread.yield();
+                long now = System.currentTimeMillis();
+                if(now - lastUpdate == 0)
                     continue;
-                degreesPerSecond = gyro.readValue();
-                secondsSinceLastReading = (float)(now - lastUpdate) / 1000.0f;
+                float degreesPerSecond = (float)gyro.readValue();
+
+                // Calibration
+                if(calibrating)
+                {
+                    calibrationSum += degreesPerSecond;
+                    calibrationReadingCount++;
+                }
+
+                // Integration
+                degreesPerSecond -= gyroCalibration;
+                float secondsSinceLastReading = (float)(now - lastUpdate) / 1000F;
                 heading += degreesPerSecond * secondsSinceLastReading;
                 acceleration = (degreesPerSecond - lastDegreesPerSecond) / secondsSinceLastReading;
 
