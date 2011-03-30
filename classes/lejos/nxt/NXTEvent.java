@@ -19,6 +19,8 @@ package lejos.nxt;
  * @author andy
  */
 public class NXTEvent {
+    // Note the following fields are all shared with the the firmware
+    // and should not be modified without care!
     private volatile int state;
     private NXTEvent sync;
     private int updatePeriod;
