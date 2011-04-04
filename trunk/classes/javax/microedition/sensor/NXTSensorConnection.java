@@ -24,8 +24,7 @@ public class NXTSensorConnection implements SensorConnection {
 	/**
 	 * Create a sensor connection
 	 * 
-	 * @param name the sensor ID
-	 * @param i2cSensor a generic I2C sensor object for the port
+	 * @param url the sensor url
 	 * @throws IOException
 	 */
 	public NXTSensorConnection(String url) throws IOException {	

@@ -411,7 +411,7 @@ public class Graphics
      * color is requested. On the NXT LCD and value that is not black will be
      * treated as white.
      * @param color
-     * @return
+     * @return the display color
      */
     public int getDisplayColor(int color)
     {

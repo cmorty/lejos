@@ -466,8 +466,6 @@ public abstract class Line2D implements Shape, Cloneable {
      * @param px the x coordinate of the point
      * @param py the y coordinate of the point
      * @return the square of the distance from the point to the segment
-     * @see #ptSegDist(double, double, double, double, double, double)
-     * @see #ptLineDistSq(double, double, double, double, double, double)
      */
     public static double ptSegDistSq(double x1, double y1, double x2, double y2,
                                      double px, double py)
@@ -517,8 +515,6 @@ public abstract class Line2D implements Shape, Cloneable {
      * @param px the x coordinate of the point
      * @param py the y coordinate of the point
      * @return the distance from the point to the segment
-     * @see #ptSegDistSq(double, double, double, double, double, double)
-     * @see #ptLineDist(double, double, double, double, double, double)
      */
     public static double ptSegDist(double x1, double y1, double x2, double y2,
                                    double px, double py)
