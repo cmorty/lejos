@@ -9,7 +9,7 @@ package javax.microedition.sensor;
 public abstract class NXTChannelInfo implements ChannelInfo {	
 	/**
 	 * Get the register that returns channel data for an I2C channel
-	 * @return
+	 * @return the register
 	 */
 	public int getRegister() {
 		return 0x42;

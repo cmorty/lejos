@@ -748,7 +748,7 @@ public class Font
     // fonts. Using them requires less memory than getFont.
     /**
      * Return the small font.
-     * @return
+     * @return the small font
      */
     public static synchronized Font getSmallFont()
     {
@@ -759,7 +759,7 @@ public class Font
 
     /**
      * Return the large font.
-     * @return
+     * @return the large font
      */
     public static synchronized Font getLargeFont()
     {
