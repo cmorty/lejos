@@ -30,6 +30,10 @@ public class GraphicStartup {
     static final int defaultSleepTime = 2;
     static final int maxSleepTime = 10;
     
+    static final String ICMProgram = "\u0030\u0070\u0060\u006b\u0063\u007f\u003e";
+    static final String ICMSound = "\u0000\u0030\u003e\u0002\u0019\u001f\u0000";
+    static final String ICMFile = "\u0000\u00ef\u0041\u0047\u0046\u007c\u0000";
+    
     static final String ICDefault = "\u00fe\u0001\u0001\u0001\u0001\u0001\u0061\u0099\u0045\u0031\u0001\u0001\u0001\u0001\u0001\u00fe\u007f\u0080\u009d\u00bf\u00b7\u008f\u0080\u0095\u0095\u0091\u0094\u0085\u0083\u0080\u0080\u007f";
     static final String ICProgram = "\u00fe\u0001\u0001\u0001\u0001\u0001\u0061\u0099\u0045\u0031\u0001\u0001\u0001\u0001\u0001\u00fe\u007f\u0080\u0080\u0090\u0091\u0095\u0095\u0095\u0095\u0091\u0094\u0085\u0083\u0080\u0080\u007f";
     static final String ICFiles = "\u00f0\u0068\u0068\u0058\u0048\u0044\u0042\u0081\u0002\u0006\n\u0012\"\u004a\u00d4\u00f8\u007f\u0080\u0080\u0080\u0080\u0080\u0080\u0080\u0081\u0081\u0081\u00c5\u00ab\u00d5\u00ab\u007f";
@@ -856,8 +860,7 @@ public class GraphicStartup {
     private void filesMenu()
     {
         //TextMenu menu = new TextMenu(null, 1);
-    	GraphicMenu menu = new GraphicMenu(null,null,3);
-    	menu.setParentIcon(ICFiles);
+    	GraphicListMenu menu = new GraphicListMenu(null,null);
         int selection = 0;
         do {
             File[] files = File.listFiles();
@@ -875,14 +878,12 @@ public class GraphicStartup {
             for (int i = 0; i < len; i++){
                 fileNames[i] = files[i].getName();
                 String ext = Utils.getExtension(files[i].getName());
-                if(getDefaultProgram() != null && getDefaultProgram().getName().equals(fileNames[i]))
-                	icons[i] = ICDefault;
-                else if (ext.equals("nxj") || ext.equals("bin"))
-                	icons[i] = ICProgram;
+               if (ext.equals("nxj") || ext.equals("bin"))
+                	icons[i] = ICMProgram;
                 else if (ext.equals("wav"))
-                	icons[i] = ICSound;
+                	icons[i] = ICMSound;
                 else
-                	icons[i] = ICUnknown;
+                	icons[i] = ICMFile;
             }
             menu.setItems(fileNames,icons);
             selection = getSelection(menu, selection);
