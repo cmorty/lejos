@@ -18,7 +18,9 @@ import javax.microedition.lcdui.game.Sprite;
  */
 public class Image
 {
-
+	// header is LNI0 => 0x4c4e4930 (big endian)
+	private static final int LNI0_HEADER = 0x4c4e4930;
+	
     private final int width;
     private final int height;
     private final byte[] data;
@@ -97,18 +99,16 @@ public class Image
     public static Image createImage(InputStream s) throws IOException
     {
         DataInputStream in = new DataInputStream(s);
-        int w;
-        int h;
-        w = in.readInt();
-        h = in.readInt();
-        int i = in.read();
-        if (w <= 0 || h <= 0 || i != 0)
-        {
+        int p, w, h;
+        p = in.readInt();
+        w = in.readUnsignedShort();
+        h = in.readUnsignedShort();
+        if (p != LNI0_HEADER)
             throw new IOException("File format error!");
-        }
+        
         byte[] imageData = new byte[w * ((h + 7) / 8)];
-        if (in.read(imageData) != imageData.length)
-            throw new IOException("File format error");
+        in.readFully(imageData);
+        
         return new Image(w, h, imageData);
     }
 

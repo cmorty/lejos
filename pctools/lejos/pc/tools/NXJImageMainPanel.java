@@ -39,6 +39,9 @@ import javax.swing.filechooser.FileFilter;
 
 public class NXJImageMainPanel extends JPanel {
 	
+	// header is LNI0 => 0x4c4e4930 (big endian)
+	private static final int LNI0_HEADER = 0x4c4e4930;
+	
 	private int mode = NXJImageConverter.BIT_8;
 	//implement JDK-1.6-like FileNameExtensionFilter
 	private static class FileNameExtensionFilter extends FileFilter	{
@@ -168,13 +171,9 @@ public class NXJImageMainPanel extends JPanel {
 	protected void saveImage(File file) throws IOException {
 		DataOutputStream out = new DataOutputStream(new FileOutputStream(file, false));
 		try {
-			// byte size -> int size.
-//			out.write(this.currSize.width);
-//			out.write(this.currSize.height);
-//			out.write(0);
-			out.writeInt(this.currSize.width);
-			out.writeInt(this.currSize.height);
-			out.writeByte(0);
+			out.writeInt(LNI0_HEADER);
+			out.writeShort(this.currSize.width);
+			out.writeShort(this.currSize.height);
 			out.write(this.currData);
 		} catch (IOException e) {
 			throw e;
@@ -185,9 +184,8 @@ public class NXJImageMainPanel extends JPanel {
 
 	protected void readNxtImage(File file) throws IOException {
 		DataInputStream in = new DataInputStream(new FileInputStream(file));
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		int w;
-		int h;
+		byte[] data;
+		int p, w, h;
 		try {
 			// byte size -> int size.
 //			w = in.read();
@@ -199,28 +197,24 @@ public class NXJImageMainPanel extends JPanel {
 //				throw new IOException("File format error!");
 //			}
 			try {
-				w = in.readInt();
-				h = in.readInt();
+				p = in.readInt();
+				w = in.readUnsignedShort();
+				h = in.readUnsignedShort();
 			} catch (EOFException e) {
 				IOException e2 = new IOException("File format error!");
 				e2.initCause(e);
 				throw e2;
 			}
-			int i = in.read();
-			if (i != 0) {
+			
+			if (p != LNI0_HEADER)
 				throw new IOException("File format error!");
-			}
-			do {
-				i = in.read();
-				if (i < 0)
-					break;
-				
-				os.write(i);
-			} while (i >= 0);
+			
+			data = new byte[w * ((h + 7) / 8)];
+			in.readFully(data);
 		} finally {
 			in.close();
 		}
-		BufferedImage image = NXJImageConverter.nxtImageData2Image(os.toByteArray(), w, h);
+		BufferedImage image = NXJImageConverter.nxtImageData2Image(data, w, h);
 		this.readImage(image);
 	}
 	
