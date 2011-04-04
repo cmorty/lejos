@@ -43,7 +43,7 @@ public class TextMenu
 	/**
  	 *identifies the currently selected item
  	 */
-	private static final char SEL_CHAR = '>';
+	protected static final char SEL_CHAR = '>';
 	
 	/**
 	 * a blank line

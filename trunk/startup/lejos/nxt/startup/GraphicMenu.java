@@ -26,12 +26,12 @@ public class GraphicMenu extends TextMenu{
 	private static final int interval = 16; // Time between animation frames in milliseconds (1000ms per 1s)
 	private static final int tickCount = 10; // Number of animation frames used
 	
-	private byte[] _parent = null;
+	protected byte[] _parent = null;
 	
 	/*
 	 * Line where the menu item label is displayed.
 	 */
-	private int labelLine = 4;
+	protected int labelLine = 4;
 	/*
 	 * The y coordnates where the 
 	 */
@@ -40,8 +40,8 @@ public class GraphicMenu extends TextMenu{
 	/*
 	 * Icon Database
 	 */
-	private byte[][] _icons;
-	private int _titleLine;
+	protected byte[][] _icons;
+	protected int _titleLine;
 	
 	/**
 	 * This constructor sets the location of the menu to the parameter line
@@ -77,7 +77,7 @@ public class GraphicMenu extends TextMenu{
 			_icons = null;
 			return;
 		}
-		_icons = new byte[icons.length][32];
+		_icons = new byte[icons.length][getIconSize()];
 		for(int i = 0; i < icons.length;i++){
 			if (icons[i] != null)
 				_icons[i] = Utils.stringToBytes8(icons[i]);
@@ -250,7 +250,7 @@ public class GraphicMenu extends TextMenu{
 	 * @param eID -1 to 6
 	 * @param tick #0-10
 	 */
-	private void drawIconAtTick(byte[] icon,int sID, int eID,int tick){
+	protected void drawIconAtTick(byte[] icon,int sID, int eID,int tick){
 		// Determine sID Coordinates
 		int fx = xArea + xOffset+sID*xWidth;
 		int fy = yArea + yOffset+(Math.abs(sID-2)*yWidth);
@@ -270,4 +270,6 @@ public class GraphicMenu extends TextMenu{
 		else
 			_parent = Utils.stringToBytes8(str);
 	}
+	
+	protected int getIconSize(){return 32;}
 }
