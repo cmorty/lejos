@@ -340,7 +340,7 @@
 	<!-- copies the example project -->
 	<target name="example" depends="create.folders" description="copies the example project">
 		<copy todir="${release.projects}/org.lejos.example">
-      		<fileset dir="${lejos.root}/example">
+      		<fileset dir="${lejos.root}/org.lejos.example">
       			<exclude name="**/*.nxj"/>
       			<exclude name="**/.svn"/>
       			<exclude name=".settings/**"/>
