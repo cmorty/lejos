@@ -7,7 +7,7 @@ To create a new release of leJOS NXJ in Eclipse on Linux, please perform the fol
 
 1. Update release/lejos_nxj/README.html, RELEASENOTES and other documentation for the release.
 2. Update nxtvm/platform/nxt/version.mak with the version number for the firmware.
-3. Update startup/StartupText.java with the version of the menu.
+3. Update startup/GraphicStartup.java and StartupText.java with the version of the menu.
 4. Ensure you have the latest firmware, and the Windows DLLs up to date in the snapshot directory. The release build file does not rebuild them.
 5. Ensure that the MAC OS X library,libjfantom.jnilib, is up to date in the jfantom project. The release build file does not build this.
 6. Test that all the samples and pcsamples run successfully.
