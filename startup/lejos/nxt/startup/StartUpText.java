@@ -47,7 +47,7 @@ public class StartUpText
     static final int maxSleepTime = 10;
     
     static final String REVISION = "$Revision$";
-    static final int VERSION = 0x000805;
+    static final int VERSION = 0x000900;
 
     private int timeout;
     private boolean btPowerOn;

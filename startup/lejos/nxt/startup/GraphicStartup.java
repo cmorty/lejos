@@ -65,7 +65,7 @@ public class GraphicStartup {
 	static final int PIN = 9;
     
     static final String REVISION = "$Revision: 3967 $";
-    static final int VERSION = 0x000805;
+    static final int VERSION = 0x000900;
 
     private int timeout;
     private boolean btPowerOn;
