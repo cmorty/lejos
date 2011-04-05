@@ -332,7 +332,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
 
     /**
      * Return true if the motor is currently stalled.
-     * @return
+     * @return true if the motor is stalled, else false
      */
     public boolean isStalled()
     {

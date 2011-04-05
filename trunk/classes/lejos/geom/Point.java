@@ -20,9 +20,9 @@ public class Point extends Point2D.Float {
     }
 
 /**
- * Returns the direction angle from this point to the Point p p
- * @param p
- * @return
+ * Returns the direction angle from this point to the Point p
+ * @param p the Point to determine the angle to
+ * @return the angle
  */
     public float angleTo(Point p)
     {
@@ -241,9 +241,9 @@ public class Point extends Point2D.Float {
      /**
      * Returns a new point at the specified distance in the direction angle  from
      * this point.
-     * @param distance
-     * @param angle
-     * @return
+     * @param distance the distance to the new point
+     * @param angle the angle to the new point
+     * @return the new point
      */
     public Point pointAt(float distance, float angle)
     {
