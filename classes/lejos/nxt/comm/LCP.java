@@ -3,8 +3,6 @@ package lejos.nxt.comm;
 import java.io.*;
 import lejos.nxt.*;
 import java.util.*;
-import lejos.util.Delay;
-
 /**
  * 
  * Implements the Lego Communication Protocol,
@@ -22,7 +20,8 @@ public class LCP {
     private static FileInputStream in = null;
     private static int numFiles;	
 	private static char[] charBuffer = new char[20];
-	public static Queue[] inBoxes = new Queue[20];
+	@SuppressWarnings("unchecked")
+	public static Queue<String>[] inBoxes = (Queue<String>[]) new Queue[20];
     
 	// Command types constants. Indicates type of packet being sent or received.
 	public static byte DIRECT_COMMAND_REPLY = 0x00;
@@ -534,7 +533,7 @@ public class LCP {
 		
 		// MESSAGE READ		
 		if (cmdId == MESSAGE_READ) {
-			Queue inBox = inBoxes[cmd[2]];
+			Queue<String> inBox = inBoxes[cmd[2]];
 			reply[3] = cmd[3];
 			if (inBox == null || inBox.empty()) {
 				reply[2] = MAILBOX_EMPTY;
@@ -562,7 +561,7 @@ public class LCP {
 	
 	public static void messageWrite(int mailbox, String msg) {
 		if (mailbox < inBoxes.length) {
-			if (inBoxes[mailbox] == null) inBoxes[mailbox] = new Queue();
+			if (inBoxes[mailbox] == null) inBoxes[mailbox] = new Queue<String>();
 			inBoxes[mailbox].push(msg);			
 		}
 	}
