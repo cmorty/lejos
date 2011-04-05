@@ -107,6 +107,12 @@ ${template.linux.parser}
 		<linux-parser file="nxjpc">
 			"$JAVA" $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
 		</linux-parser>
+<!--
+		Alternative version similar to the windows script, for testing purpose
+		<linux-run file="nxjpc">
+			"$JAVA" $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -Xbootclasspath/a:"$NXJ_CP_PC" "$@"
+		</linux-run>
+-->
 	</target>
 	
 	<target name="windows" description="generated batch scripts">
