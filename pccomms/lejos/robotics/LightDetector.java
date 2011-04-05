@@ -43,14 +43,13 @@ public interface LightDetector {
 	
 	/**
 	 * The highest raw light value this sensor can return from intense bright light.
-	 * @return
+	 * @return the high value
 	 */
 	public int getHigh();
 
 	/**
 	 * The lowest raw light value this sensor can return in pitch black darkness.
-	 * @return
+	 * @return the low value
 	 */
-
 	public int getLow();
 }

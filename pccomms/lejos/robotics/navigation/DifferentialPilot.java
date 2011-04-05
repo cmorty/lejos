@@ -240,7 +240,7 @@ public class DifferentialPilot implements
   }
 
   /**
-   * sets the accelration of both motors.
+   * sets the acceleration of both motors.
    * @param accel
    * @see lejos.nxt.Motor#setAcceleration(int acceleration)
    */

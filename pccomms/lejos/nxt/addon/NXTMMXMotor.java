@@ -58,8 +58,8 @@ public class NXTMMXMotor {
 	/**
 	 * Constructor, you don't have to worry about this its called two times by the constructor
 	 * in the NXTMMX class to create each motor instance. 
-	 * @param mux
-	 * @param motor
+	 * @param mux the motor multiplexor
+	 * @param motor the index of the motor
 	 */
 	public NXTMMXMotor (NXTMMX mux, int motor){
 		this.mux = mux;
@@ -124,7 +124,7 @@ public class NXTMMXMotor {
 	
 	/**
 	 * Return the angle that a Motor is rotating to.
-	 * @return 
+	 * @return the limit angle
 	 */
 	public int getLimitAngle(){
 		mux.getData(REG_RotateTo, buffer, 4);
@@ -133,7 +133,7 @@ public class NXTMMXMotor {
 	
 	/**
 	 * Returns the mode
-	 * @return
+	 * @return the mode
 	 * : 1 = forward, 2= backward, 3 = stop, 4 = float
 	 */
 	public int getMode(){
@@ -147,9 +147,8 @@ public class NXTMMXMotor {
 	}
 	
 	/**
-	 * 
-	 * @return
-	 * true if speed control is on.
+	 * Determine whether speed control is on or not
+	 * @return true if speed control is on, else false
 	 */
 	public boolean isRegulating(){
 		return controlSpeed;
@@ -158,8 +157,7 @@ public class NXTMMXMotor {
 	
 	/**
 	 * Returns true if the motor is in motion.
-	 * @return
-	 *  true if the motor is currently in motion
+	 * @return true if the motor is currently in motion, else false
 	 */
 	public boolean isMoving() {
 		int status;
@@ -173,8 +171,7 @@ public class NXTMMXMotor {
 	
 	/**
 	 * Determines if the motor is stalled or not
-	 * @return
-	 * true if stalled
+	 * @return true if stalled, else false
 	 */
 	
 	public boolean isStalled(){
@@ -185,8 +182,7 @@ public class NXTMMXMotor {
 	
 	/**
 	 * Determines if the motor stalled due to over load.
-	 * @return
-	 * true if overload
+	 * @return true if overload, else false
 	 */
 	public boolean isOverloaded(){
 		int status = getStatus();
@@ -196,7 +192,7 @@ public class NXTMMXMotor {
 	
 	/**
 	 * Determines if the motor is running a task. this does not mean the motor is moving.
-	 * @return
+	 * @return true if the motor is running a task, else false
 	 */
 	public boolean isTaskRunning(){
 		mux.getData(REG_Tasks, buffer, 1);
@@ -214,8 +210,7 @@ public class NXTMMXMotor {
 
 	/**
 	 * Returns the tachometer count.
-	 * @return
-	 * tachometer count in degrees
+	 * @return tachometer count in degrees
 	 */
 	public int getTachoCount() {
 		int output = 0;
@@ -247,8 +242,7 @@ public class NXTMMXMotor {
 	
 	/**
 	 * return the set speed of the motor.
-	 * @return
-	 * 0 - 100 has nothing to do with rpm or rps
+	 * @return 0 - 100 has nothing to do with rpm or rps
 	 */
 	public int getSpeed() {
 		int speed;
@@ -273,8 +267,7 @@ public class NXTMMXMotor {
 	 * should be within +- 2 degrees on the NXT. This method does not return until 
 	 * the rotation is completed. 
 	 * 
-	 * @param
-	 * deg - by which the motor will rotate.
+	 * @param deg - by which the motor will rotate.
 	 */
 	public void rotate(int deg) {
 		command = 0;
@@ -302,10 +295,8 @@ public class NXTMMXMotor {
 	/**
 	 * same as rotate but returns immediately
 	 * 
-	 * @param
-	 * deg - number of deg to rotate.
-	 * immediateReturn - does not matter if true or false it will return after mux
-	 *  is programmed.
+	 * @param deg - number of deg to rotate.
+	 * @param immediateReturn - does not matter if true or false it will return after mux is programmed.
 	 */
 	public void rotate(int deg, boolean immediateReturn) {
 		command = 0;
@@ -325,8 +316,7 @@ public class NXTMMXMotor {
 
 	/**
 	 * rotates to the tacho position indicated.
-	 * @param
-	 * deg - the tacho position that you want.
+	 * @param deg - the tacho position that you want.
 	 */
 	public void rotateTo(int deg) {
 		int status = 0;
@@ -430,7 +420,7 @@ public class NXTMMXMotor {
 	 * sets motor speed. this has nothing to do with rpm or rps its just
 	 *  a percentage speed type of value
 	 * 
-	 * @param 0 - 100
+	 * @param speed 0 - 100
 	 */
 	public void setSpeed(int speed) {
 		if(speed < 0) speed = 0;
@@ -440,7 +430,7 @@ public class NXTMMXMotor {
 
 	/**
 	 * enables and disables speed ramping
-	 * @param - true turns it on false turns it off
+	 * @param rampUp true turns it on false turns it off
 	 */
 	public void smoothAcceleration(boolean rampUp) {
 		this.rampUp = rampUp;
@@ -448,7 +438,7 @@ public class NXTMMXMotor {
 	
 	/**
 	 * Determines if speed ramping is enabled
-	 * @return
+	 * @return true if smooth acceleration is on, else false
 	 */
 	public boolean isSmoothAcceleration(){
 		return this.rampUp;
@@ -458,7 +448,7 @@ public class NXTMMXMotor {
 	 * Determines if the motor is ramping up or down. This is different
 	 *  than isSmoothAcceleration() as it returns the current status
 	 *   not what is enabled.
-	 * @return
+	 * @return if ramping up or down, else false
 	 */
 	public boolean isRamping(){
 		int status;
@@ -472,7 +462,7 @@ public class NXTMMXMotor {
 	 * when using this bit after tacho methods force feed back
 	 *  will be used to hold the motor in place. if the motor is 
 	 *  moved it will move back to the specified position.
-	 * @param tachoLock -true turns it on
+	 * @param tachoLock true turns it on
 	 */
 	public void setTachoLock(boolean tachoLock){
 		this.tachoLock = tachoLock;
@@ -480,7 +470,7 @@ public class NXTMMXMotor {
 	
 	/**
 	 * when this bit is set after tacho methods the motor will break.
-	 * @param tachoBreak - turns it on.
+	 * @param tachoBreak turns it on.
 	 */
 	public void setTachoBreak(boolean tachoBreak){
 		this.tachoBreak = tachoBreak;

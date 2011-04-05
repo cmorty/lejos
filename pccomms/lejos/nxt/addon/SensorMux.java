@@ -15,7 +15,7 @@ public class SensorMux extends I2CSensor {
 	
 	/**
 	 * Constructor
-	 * @param port
+	 * @param port the port
 	 */
 	public SensorMux(I2CPort port) {
 		super(port, 0x08, I2CPort.LEGO_MODE, TYPE_LOWSPEED_9V);
@@ -23,7 +23,7 @@ public class SensorMux extends I2CSensor {
    
    /**
     * Return the type
-    * @return
+    * @return the type
     */
    public int getType() {
    	   byte[] buf = new byte[1];
@@ -33,7 +33,7 @@ public class SensorMux extends I2CSensor {
 
    /**
     * Method used to get if battery status is low.
-    * @return
+    * @return true if the battery is low, else false
     */
    public boolean isBatteryLow(){
 	  byte[] buf = new byte[1];
@@ -87,8 +87,8 @@ public class SensorMux extends I2CSensor {
     * This method return the value from a digital sensor.
     * Currently, SMux supports Ultrasonic Sensors
     * 
-    * @param channel
-    * @return
+    * @param channel the index of the channel
+    * @return the digital value 
     */
    private int getDigitalValue(int channel){
 	   byte[] buf = new byte[1];
@@ -102,8 +102,8 @@ public class SensorMux extends I2CSensor {
     * This method return the value from a analogic sensor.
     * Currently, SMux supports Touch sensor and Sound sensor
     * 
-    * @param channel
-    * @return
+    * @param channel the index of the channel
+    * @return the analog value
     */
    private int getAnalogValue(int channel){
 	   byte[] buf = new byte[1];
@@ -136,8 +136,8 @@ public class SensorMux extends I2CSensor {
    
    /**
     * Method used to use a US with the sensor and get the distances
-    * @param channel
-    * @return
+    * @param channel the index of the channel
+    * @return the distance
     */
    public int getDistance(int channel){
 	   int distance = 0;
@@ -148,8 +148,8 @@ public class SensorMux extends I2CSensor {
    /**
     * Method used to manage a Touch Sensor
     * 
-    * @param channel
-    * @return
+    * @param channel the index of the channel
+    * @return true if the sensor is presed, else false
     */
    public int isPressed(int channel){
 	   int pressed = 0;
