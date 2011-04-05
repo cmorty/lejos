@@ -46,5 +46,5 @@ if "%OS%" == "Windows_NT" goto :winnt
 	)
 
 
-"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjmonitor" -Djava.library.path="%NXJ_BIN%" -classpath "%NXJ_CP_PC%" lejos.pc.tools.NXJMonitor  %*
+"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjmonitor" -classpath "%NXJ_CP_PC%" lejos.pc.tools.NXJMonitor  %*
 :eof

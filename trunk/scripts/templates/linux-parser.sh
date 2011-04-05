@@ -2,17 +2,12 @@
 
 # set classpath to . by default (matches behaviour of java and javac)
 NXJ_CMDLINE_CP="$NXJ_CP_PC$SEP."
-NXJ_CMDLINE_LP="$NXJ_BIN"
 for (( i=1; i<=$#; i++ )); do
 	case "${!i}" in
 		#handle classpath parameters
 		-cp|-classpath)
 			(( i++ ))
 			NXJ_CMDLINE_CP="$NXJ_CP_PC$SEP${!i}"
-			;;
-		#handle -Djava.library.path=
-		-Djava.library.path=*)
-			NXJ_CMDLINE_LP="$NXJ_BIN$SEP${!i:20}"
 			;;
 		#handle other parameters that accept arguments
 		-sourcepath|-bootclasspath|-extdirs|-endorseddirs|-processor|-processorpath|-d|-s|-encoding|-source|-target|-Xmaxerrs|-Xmaxwarns|-Xstdout)
