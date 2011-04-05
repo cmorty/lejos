@@ -8,7 +8,8 @@ package lejos.robotics;
 /**
  * This interface defines the methods of a generic ColorDetector object.
  * 
- * @see {@link lejos.nxt.ColorSensor}, {@link lejos.nxt.addon.ColorSensorHT} 
+ * @see lejos.nxt.ColorSensor
+ * @see lejos.nxt.addon.ColorSensorHT
  */
 public interface ColorDetector {
 

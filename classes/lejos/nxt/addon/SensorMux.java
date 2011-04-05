@@ -165,8 +165,8 @@ public class SensorMux extends I2CSensor {
    /**
     * Method used to receive data from a Sound Sensor
     * 
-    * @param channel
-    * @return
+    * @param channel the index of the channel
+    * @return the value
     */
    public int readValue(int channel){
 	   int value = 0;
