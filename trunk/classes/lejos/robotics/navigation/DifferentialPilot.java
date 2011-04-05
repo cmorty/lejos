@@ -240,7 +240,7 @@ public class DifferentialPilot implements
   }
 
   /**
-   * sets the accelration of both motors.
+   * sets the acceleration of both motors.
    * @param accel
    * @see lejos.nxt.Motor#setAcceleration(int acceleration)
    */
@@ -422,12 +422,9 @@ public class DifferentialPilot implements
    */
   public void stop()
   {
-    _left.stop();
-    _right.stop();
-    while (isMoving())
-    {
-      Thread.yield();
-    }
+    _left.stop(true);
+    _right.stop(true);
+    waitComplete();
     Thread.yield(); // give other threads a chance to react 
   }
 
@@ -474,7 +471,7 @@ public class DifferentialPilot implements
     _left.rotate((int) (_parity * distance * _leftDegPerDistance), true);
     _right.rotate((int) (_parity * distance * _rightDegPerDistance),
             immediateReturn);
-    if (!immediateReturn) while (isMoving()) Thread.yield();
+    if (!immediateReturn) waitComplete();
   }
 
   public void arcForward(final float radius)
@@ -514,7 +511,7 @@ public class DifferentialPilot implements
       forward();
     }
     steer(turnRate(radius), angle, immediateReturn);// type and move started called by steer()
-    if (!immediateReturn) while(isMoving())Thread.yield();
+    if (!immediateReturn) waitComplete();
   }
 
   public  void  travelArc(float radius, float distance)
@@ -718,7 +715,7 @@ public class DifferentialPilot implements
     {
       return;
     }
-     while (isMoving()) Thread.yield();
+     waitComplete();
     _inside.setSpeed(_outside.getSpeed());
   }
 
@@ -807,6 +804,17 @@ public class DifferentialPilot implements
     return _left.isMoving() || _right.isMoving();
   }
 
+  /**
+   * wait for the current operation on both motors to complete
+   */
+  protected void waitComplete()
+  {
+    while(isMoving())
+    {
+      _left.waitComplete();
+      _right.waitComplete();
+    }
+  }
   public boolean isStalled()
   {
     return _left.isStalled() || _right.isStalled();

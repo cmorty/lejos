@@ -58,8 +58,8 @@ class DriveForward implements Behavior
     {
       Thread.yield(); //don't exit till suppressed
     }
-    Motor.A.stop(); // not strictly necessary, but good programming practice
-    Motor.C.stop();
+    Motor.A.stop(true); // not strictly necessary, but good programming practice
+    Motor.C.stop(true);
   }
 }
 

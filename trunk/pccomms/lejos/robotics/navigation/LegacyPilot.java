@@ -458,8 +458,8 @@ public class LegacyPilot {
 	 * Stops the NXT robot.
 	 */
 	public void stop() {
-		_left.stop();
-		_right.stop();
+		_left.stop(true);
+		_right.stop(true);
 	}
 
 	/**
