@@ -45,7 +45,7 @@ public class ShapefileLoader {
 	
 	/**
 	 * Retrieves a LineMap object from the Shapefile input stream.
-	 * @return
+	 * @return the line map
 	 * @throws IOException
 	 */
 	public LineMap readLineMap() throws IOException {
