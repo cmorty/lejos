@@ -232,14 +232,15 @@ public class RemoteMotor implements RegulatedMotor, NXTProtocol {
 		rotate(limitAngle - tachometer, returnNow);
 	}
 	
-        /**
-         * RegulatedMotor for  NXT need this
-         * @return
-         */
-        public int getLimitAngle()
-        {
-          return 0;
-        }
+    /**
+     * RegulatedMotor for  NXT need this
+     * @return the limit angle
+     */
+    public int getLimitAngle()
+    {
+    	return 0;
+    }
+        
 	public void resetTachoCount() {
 		try {
 			nxtCommand.resetMotorPosition(this.id, false);

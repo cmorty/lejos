@@ -97,7 +97,7 @@ public class DebugInterface
     /**
      * Start a program to be monitored, running in a new thread.
      * @param progId The program number
-     * @return
+     * @return the status
      */
     public final int startProgram(final int progId)
     {
