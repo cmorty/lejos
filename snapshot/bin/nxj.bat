@@ -46,5 +46,5 @@ if "%OS%" == "Windows_NT" goto :winnt
 	)
 
 
-"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxj" -Djava.library.path="%NXJ_BIN%" -classpath "%NXJ_CP_PC%" lejos.pc.tools.NXJLinkAndUpload --writeorder "LE" --bootclasspath "%NXJ_CP_NXT%" --classpath "." %*
+"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxj" -classpath "%NXJ_CP_PC%" lejos.pc.tools.NXJLinkAndUpload --writeorder "LE" --bootclasspath "%NXJ_CP_NXT%" --classpath "." %*
 :eof

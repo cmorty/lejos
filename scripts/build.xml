@@ -32,7 +32,7 @@
 		<attribute name="class"/>
 		<sequential>
 			<linux-run file="@{file}">
-				"$JAVA" $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -DCOMMAND_NAME="$NXJ_COMMAND" -Djava.library.path="$NXJ_BIN" -classpath "$NXJ_CP_PC" @{class} @{args} "$@"
+				"$JAVA" $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -DCOMMAND_NAME="$NXJ_COMMAND" -classpath "$NXJ_CP_PC" @{class} @{args} "$@"
 			</linux-run>
 		</sequential>
 	</macrodef>
@@ -71,7 +71,7 @@ ${template.linux.parser}
 		<attribute name="class"/>
 		<sequential>
 			<win-run file="@{file}">
-				"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="@{file}" -Djava.library.path="%NXJ_BIN%" -classpath "%NXJ_CP_PC%" @{class} @{args} %*
+				"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="@{file}" -classpath "%NXJ_CP_PC%" @{class} @{args} %*
 			</win-run>
 		</sequential>
 	</macrodef>
@@ -105,7 +105,7 @@ ${template.linux.parser}
 			"$JAVAC" -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
 		</linux-parser>
 		<linux-parser file="nxjpc">
-			"$JAVA" $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -Djava.library.path="$NXJ_CMDLINE_LP" -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
+			"$JAVA" $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
 		</linux-parser>
 	</target>
 	
@@ -138,7 +138,7 @@ ${template.linux.parser}
 			"%JAVAC%" -Xbootclasspath/a:"%NXJ_CP_PC%" %*
 		</win-run>
 		<win-run file="nxjpc">
-			"%JAVA%" -Dnxj.home="%NXJ_HOME%" -Djava.library.path="%NXJ_BIN%" -Xbootclasspath/a:"%NXJ_CP_PC%" %*
+			"%JAVA%" -Dnxj.home="%NXJ_HOME%" -Xbootclasspath/a:"%NXJ_CP_PC%" %*
 		</win-run>
 	</target>
 	
