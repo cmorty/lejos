@@ -1222,7 +1222,7 @@ public class Bluetooth extends NXTCommDevice
 		Vector<RemoteDevice> devList = getKnownDevicesList();
 		if (devList.size() > 0) {
 			for (int i = 0; i < devList.size(); i++) {
-				btd = (RemoteDevice) devList.elementAt(i);
+				btd = devList.elementAt(i);
 				if (btd.getFriendlyName(false).equals(fName)) {
 					return btd; 
 				}
