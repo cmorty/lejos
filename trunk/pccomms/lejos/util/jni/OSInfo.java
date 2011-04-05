@@ -36,8 +36,8 @@ public class OSInfo
 	
 	private static Map<?, ?> loadProperties() throws IOException
 	{
-		String path = OSInfo.class.getName().replace('.', '/') + ".properties";
-		URL u = OSInfo.class.getClassLoader().getResource(path);
+		String path = '/' + OSInfo.class.getName().replace('.', '/') + ".properties";
+		URL u = OSInfo.class.getResource(path);
 		InputStream is = u.openStream();
 		try
 		{
