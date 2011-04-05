@@ -1,3 +1,105 @@
+leJOS NXJ 0.9.0 beta
+-------------------
+Lawrie Griffiths, Roger Glassey and Brian Bagnall have made some major revisions
+to the leJOS Robotics API and class structure. These changes provide a more generic
+interface and allow greater flexibility in the way the classes may be
+combined.
+
+In addition there have been many other changes...
+
+Sven Koehler:
+- Much improved Math and Random classes, improved String/Integer/Byte/Long.
+- Added generics, for vector, stack etc.
+- Improved Eclipse plugin
+- Improved path resolution for linux shell scripts and a new command line
+  parser, command line tools now report exit status.
+- Simplified native method implementation and build system
+- Improved Java i2c interface
+- Changed sensor interface to use getInterface factory method
+- Allow flashing of NXT with recent Linux systems
+- Improved and updated image editor
+
+Andy Shaw:
+- New memory allocator, large objects can now be moved to avoid fragmentation
+- Added new Event system, converted Bluetooth/USB/I2C/Buttons/RCommand to
+  use it.
+- Fixed Lego light sensor implementation, improved timing and color
+  recognition.
+- Enhanced exception handling/debugging, stack trace is now generated, and
+  symbolic trace can be displayed by RConsole.
+- Improved firmware startup and shutdown, allow return to the menu after
+  program error, clean up after crash
+- Improved i2c inteface, new address format, reduced cpu usage.
+- Improved handling of USB errors
+- Allow constant strings greater than 256 characters in length and with
+  16bit values
+- Allow access to LCD contrast setting, changed startup menu to use it
+- Allowed playback of sound samples from RAM
+- Restructured LCD and Display classes. Moved higher level code to standard
+  javax classes, improved LCD graphics interface, new fonts, images,
+  rotation (see updated image sample).
+- Added new image conversion tool (nxjimage) based on code from user Programus
+- Added support for Mindsesnsors port splitter
+- Added support for Mindsensors TouchMux
+- Added high speed i2c operating mode (125Kbps instead of standard 9.6Kbps)
+- Improved motor regulation
+
+Roger Glassey:
+- Fixed bugs in compass pilot
+- Improved behavioural tutorial
+- Fixed bugs in motor control, added acceleration and deceleration
+- Added RemotePilot test program
+- Added ArcNavigator test program
+- Re-worked large parts of the Pilot/Motor/Pose implementations to allow
+  navigators and notifiers
+- Implemented various proposed robotics class prototypes
+
+Brian Bagnall:
+- Restructured light and color sensor classes added new interfaces
+- Added new Timer and TimerTask classes, improved Thread class
+- Improved Arc steering code, added SteeringPilot code and ArcPoseController
+- Added new path finding implementation
+
+
+Lawrie Griffiths:
+- NXJControl added drag and drop
+- Added support for javax.microedition.sensor
+- Added support for HiTechnics Gyro sensor and created test program
+- Added sensor integration
+- Added support for IRSeeker based on code from forum user Eric
+- Added support for Mindsensors RTC based on Robert Kramers class
+- Support sending data to RCX with IRLink
+- Added RTC and IRLink samples
+- Improvements to NXTMMX based on code from Mike Smith
+- Clean up up examples etc to work with new robotics code
+
+Shawn Brown:
+- Cleaned up build process for comms etc.
+- Modified PC code to allow it to begin to run on Android
+- Improved diagnostics from PC comms
+- Improved eclipse linker error handling
+- Improved Mac documentation and build system
+
+Brent Gardener:
+- Added GyroDirectionFinder and InertialMoveProvider
+- Added DirectionFinder interface and GyroPoseProvidor prototypes
+
+Abram Early:
+- Improved menu status bar
+- New graphics menu system
+- Startup menu improvements
+
+Kirk Thompson:
+- PID control classes
+- Linear actuator driver
+
+esmetaman
+- Added class to support NXTLineLeader based on code from Eric Pascual
+- Support for Dswitch
+- Added support for hitechnics sensor mux
+
+
+
 leJOS NXJ 0.85 beta
 -------------------
 
