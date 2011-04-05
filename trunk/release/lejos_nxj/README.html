@@ -192,7 +192,8 @@ reset button with a paper clip for 4 seconds or more. The NXT brick will start t
 <li><em>nxjconsoleviewer</em> - GUI version of nxjconsole</li>
 <li><em>nxjdataviewer</em> - remote viewer for Datalogger files</li>
 <li><em>nxjproxyserver</em> - proxy server for Socket and SocketServer connections</li>
-<li><em>nxjcontrol</em> - a GUI tool that combines the functions of nxjbrowse, nxjconsoleviewer, nxjdataviewer and nxjmonitor.</li>
+<li><em>nxjcontrol</em> - a GUI tool that combines the functions of nxjbrowse, nxjconsoleviewer, nxjdataviewer and nxjmonitor</li>
+<li><em>nxjimage</em> - a GUI tool that can be used to convert images for use within leJOS programs</li>
 </ul>
 
 <p><em>nxj</em>, <em>nxjupload</em> and <em>nxjbrowse</em> can be used over Bluetooth or USB.
@@ -244,6 +245,10 @@ openBluetooth(0) can be used instead of openUSB(0). </p>
 
 <p><em>nxjproxyserver</em> runs a proxy server that can be used to support Socket and SocketServer connections between
 programs running on the NXT and Java programs on a PC or across the Internet - see the SocketTest, SocketServer and TimeTest samples.</p>
+
+<p><em>nxjimage</em> can be used to convert a PNG image to the leJOS NXJ image format. The format is understood by our
+implemenation of <code>javax.microedition.lcdui.Image</code>. Further more, it can be used to convert an image to a string
+representation, that allows efficient storage of images within a leJOS Java program.</p>
 
 <h1><a name="debugmonitor">Using the debug monitor</a></h1>
 <p>At this release it is possible to include a debug monitor thread 
