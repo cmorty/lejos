@@ -233,7 +233,7 @@ public class NXTEvent {
 
     /**
      * Return the current filter settings.
-     * @return
+     * @return the filter
      */
     public synchronized int getFilter()
     {

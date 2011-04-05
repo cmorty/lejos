@@ -47,7 +47,7 @@ public class ColorSensor implements LampLightDetector, ColorDetector, SensorCons
 
         /**
          * Return the background light level reading
-         * @return
+         * @return the background light level
          */
         public int getBackground()
         {
