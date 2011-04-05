@@ -33,7 +33,7 @@ public class GraphicListMenu extends GraphicMenu {
 	}
 	@Override
 	public void clearArea(){
-		LCD.bitBlt(new byte[400], 30, 100, 0, 0, 0, 16, 30, 100, LCD.ROP_COPY);
+		LCD.bitBlt(null, 30, 100, 0, 0, 0, 16, 30, 100, LCD.ROP_CLEAR);
 	}
 	
 	@Override
