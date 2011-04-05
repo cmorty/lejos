@@ -26,8 +26,8 @@ public class JNILoader
 	{
 		// getName also works as expected for nested classes (returns package.Outer$Inner)
 		String clname = caller.getName();
-		String clpath = clname.replace('.', '/') + ".class";
-		URL url = caller.getClassLoader().getResource(clpath);
+		String clpath = '/' + clname.replace('.', '/') + ".class";
+		URL url = caller.getResource(clpath);
 		if (url == null)
 			throw new JNIException(clpath + " not found in classpath");
 			
