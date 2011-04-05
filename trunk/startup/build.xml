@@ -57,7 +57,7 @@
 			<arg value="--writeorder" />
 			<arg value="LE" />
 			<arg value="-o"/>
-			<arg path="${startup.bin}"/>
+			<arg file="${startup.bin}"/>
 			<arg value="-v"/>
 			<arg value="${startup.class}"/>
 			<classpath>
