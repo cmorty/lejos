@@ -170,7 +170,7 @@ public class RemoteMotor implements RegulatedMotor, NXTProtocol {
 			//return status;
 		} else {
 			// Check if mode is moving until done
-			while(isMoving()) {Thread.yield();}
+			waitComplete();
 			//return status;
 		}
 	}
@@ -185,6 +185,12 @@ public class RemoteMotor implements RegulatedMotor, NXTProtocol {
 			return false;
 		}
 	}
+
+    public void waitComplete()
+    {
+        while (isMoving())
+            Thread.yield();
+    }
 	
 	/**
 	 * CURRENTLY NOT IMPLEMENTED! Use isMoving() for now.
@@ -267,8 +273,7 @@ public class RemoteMotor implements RegulatedMotor, NXTProtocol {
 		}
 		return 0;
 	}
-	
-	public void stop() {
+	public void stop(boolean returnNow) {
 		this.runState = MOTOR_RUN_STATE_RUNNING;
 		//this.regulationMode = REGULATION_MODE_MOTOR_SPEED;
 		try {
@@ -278,9 +283,16 @@ public class RemoteMotor implements RegulatedMotor, NXTProtocol {
 			System.out.println(ioe.getMessage());
 			//return -1;
 		}
+        if (!returnNow)
+            waitComplete();
+	}
+
+	
+	public void stop() {
+        stop(true);
 	}
 	
-	public void flt() {
+	public void flt(boolean returnNow) {
 		this.runState = MOTOR_RUN_STATE_IDLE;
 		//this.regulationMode = REGULATION_MODE_MOTOR_SPEED;
 		this.mode = MOTOR_RUN_STATE_IDLE;
@@ -289,8 +301,14 @@ public class RemoteMotor implements RegulatedMotor, NXTProtocol {
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
 		}
+        if (!returnNow)
+            waitComplete();
 	}
-	
+
+	public void flt() {
+        flt(true);
+    }
+
 	public void regulateSpeed(boolean yes) {
 		// TODO Currently a dummy for remote motors.
 	}

@@ -24,13 +24,14 @@ import lejos.robotics.navigation.DifferentialPilot;
  */ 
 public class PilotTester
 {
-	static DifferentialPilot robot = new DifferentialPilot(4.3f,13.8f,Motor.B, Motor.C,false);
+	static DifferentialPilot robot = new DifferentialPilot(4.96f,13f,Motor.B, Motor.C,false);
  
 	public static void main(String[] args ) throws Exception
 	{
         // Wait for user to press ENTER
         LCD.drawString("M " + robot.getMaxTravelSpeed(), 0, 0);
 		Button.waitForPress();
+        robot.setAcceleration(4000);
 		robot.setTravelSpeed(20); // cm/sec
 		robot.setRotateSpeed(180); // deg/sec
 		robot.forward();

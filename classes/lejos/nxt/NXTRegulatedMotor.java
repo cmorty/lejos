@@ -161,7 +161,17 @@ public class NXTRegulatedMotor implements RegulatedMotor
      */
     public void flt()
     {
-        reg.newMove(0, acceleration, NO_LIMIT, false, false);
+        reg.newMove(0, acceleration, NO_LIMIT, false, true);
+    }
+    
+    /**
+     * Set the motor into float mode. This will stop the motor without braking
+     * and the position of the motor will not be maintained.
+     * @param immediateReturn If true do not wait for the motor to actually stop
+     */
+    public void flt(boolean immediateReturn)
+    {
+        reg.newMove(0, acceleration, NO_LIMIT, false, !immediateReturn);
     }
 
     /**
@@ -173,7 +183,20 @@ public class NXTRegulatedMotor implements RegulatedMotor
      */
     public void stop()
     {
-        reg.newMove(0, acceleration, NO_LIMIT, true, false);
+        reg.newMove(0, acceleration, NO_LIMIT, true, true);
+    }
+
+    /**
+     * Causes motor to stop, pretty much
+     * instantaneously. In other words, the
+     * motor doesn't just stop; it will resist
+     * any further motion.
+     * Cancels any rotate() orders in progress
+     * @param immediateReturn if true do not wait for the motor to actually stop
+     */
+    public void stop(boolean immediateReturn)
+    {
+        reg.newMove(0, acceleration, NO_LIMIT, true, !immediateReturn);
     }
 
     /**
@@ -184,11 +207,24 @@ public class NXTRegulatedMotor implements RegulatedMotor
      * axle may continue to rotate by inertia.
      * If the motor is stalled, isMoving()  will return <b> true. </b> . A stall can
      * be detected  by calling {@link #isStalled()};
-     * @return true iff the motor if the motor is attempting to rotate.<br>
+     * @return true iff the motor is attempting to rotate.<br>
      */
     public boolean isMoving()
     {
         return reg.moving;
+    }
+
+    /**
+     * Wait until the current movement operation is complete (this can include
+     * the motor stalling).
+     */
+    public void waitComplete()
+    {
+        synchronized(reg)
+        {
+            while(reg.moving)
+                try {reg.wait();} catch(InterruptedException e){}
+        }
     }
 
     public void rotateTo(int limitAngle, boolean immediateReturn)
@@ -327,7 +363,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
     @Deprecated
     public void lock(int power)
     {
-        stop();
+        stop(false);
     }
 
     /**
