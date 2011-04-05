@@ -51,7 +51,7 @@
 			<arg value="--writeorder" />
 			<arg value="LE" />
 			<arg value="-o" />
-			<arg value="${build}/${binary}" />
+			<arg file="${build}/${binary}" />
 			<arg value="-v" />
 			<arg value="${main.class}" />
 		</java>
@@ -62,7 +62,7 @@
 			<jvmarg value="-Djava.library.path=${nxj.library.path}" />
 			<jvmarg value="-Dnxj.home=${nxj.home}" />
 			<classpath refid="lejos.pc" />
-			<arg value="${build}/${binary}" />
+			<arg file="${build}/${binary}" />
 		</java>
 	</target>
 
@@ -72,7 +72,7 @@
 			<jvmarg value="-Dnxj.home=${nxj.home}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-r" />
-			<arg value="${build}/${binary}" />
+			<arg file="${build}/${binary}" />
 		</java>
 	</target>
 
