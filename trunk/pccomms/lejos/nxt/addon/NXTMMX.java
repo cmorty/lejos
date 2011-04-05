@@ -102,8 +102,8 @@ public class NXTMMX extends I2CSensor{
 	}
 	
 	/**
-	 * returns the voltage in mili amps
-	 * @return
+	 * returns the voltage in milliamps
+	 * @return the voltage in milliamps
 	 */
 	public int getVoltage(){
 		 getData(REG_MuxCommand, buffer, 1);
