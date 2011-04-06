@@ -10,8 +10,9 @@ In addition there have been many other changes...
 Sven Koehler:
 - Much improved Math and Random classes, improved String/Integer/Byte/Long.
 - Added generics, for vector, stack etc.
-- Improved path resolution in Linux/OSX shell and Windows batch scripts
+- Improved path resolution in Linux/OSX shell scripts
 - Command line parser for nxjpc and nxjpcc shell scripts
+- Removed Windows 9x/ME support from Windows batch scripts
 - Command line tools now report exit status in case of an error
 - Simplified native method implementation and build system
 - Improved Java i2c interface
