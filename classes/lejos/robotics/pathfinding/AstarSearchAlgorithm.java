@@ -30,7 +30,7 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 	
 	public Collection <WayPoint> findPath(Node start, Node goal) {
 		
-		long startNanoT = System.nanoTime();
+		//long startNanoT = System.nanoTime();
 				
 		ArrayList <Node> closedset = new ArrayList<Node>(); // The set of nodes already evaluated. Empty at start.     
 		ArrayList <Node> openset = new ArrayList<Node>(); // The set of tentative nodes to be evaluated. 
@@ -48,15 +48,15 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 			if(x == goal) {
 				ArrayList <WayPoint> final_path = new ArrayList<WayPoint>();
 				
-				long totalNanoT = System.nanoTime() - startNanoT;
-				long reconNanoT = System.nanoTime();
+				//long totalNanoT = System.nanoTime() - startNanoT;
+				//long reconNanoT = System.nanoTime();
 				reconstructPath(goal, start, final_path);
-				long totalReconT = System.nanoTime() - reconNanoT;
-				System.out.println("Path time " + (totalNanoT/1000000D) + " ms");
-				System.out.println("Recon time " + (totalReconT/1000000D) + " ms");
-				System.out.println("MAIN LOOPS: " + main_loop);
-				System.out.println("NEIGHB LOOPS: " + neighbor_loop);
-				Button.ESCAPE.waitForPressAndRelease();
+				//long totalReconT = System.nanoTime() - reconNanoT;
+				//System.out.println("Path time " + (totalNanoT/1000000D) + " ms");
+				//System.out.println("Recon time " + (totalReconT/1000000D) + " ms");
+				//System.out.println("MAIN LOOPS: " + main_loop);
+				//System.out.println("NEIGHB LOOPS: " + neighbor_loop);
+				//Button.ESCAPE.waitForPressAndRelease();
 				return final_path;
 			}
 			openset.remove(x); // remove x from openset
