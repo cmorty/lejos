@@ -145,8 +145,11 @@ ioloop: while (offset < len)
 		}
         //if (offset != 0) LCD.drawInt(offset, 4, 0, 1);
         // Send the data. If there is a problem report that the data was not sent.
-        if (flushBuffer(wait) < 0) disconnected();
-        if (state < CS_CONNECTED) return -1;
+        if (flushBuffer(wait) < 0)
+        {
+            disconnected();
+            return -1;
+        }
         return offset;
 	}
 
