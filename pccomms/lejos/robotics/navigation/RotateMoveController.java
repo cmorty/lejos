@@ -35,9 +35,10 @@ public interface RotateMoveController extends MoveController {
    * @param speed in degrees per second
    */
   public void setRotateSpeed(float speed);
+  
   /**
-   * returns the value of the rotion speed
-   * @return
+   * Returns the value of the rotion speed
+   * @return the rotate speed
    */
   public float getRotateSpeed();
 

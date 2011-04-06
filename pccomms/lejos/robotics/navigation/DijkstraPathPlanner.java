@@ -44,7 +44,7 @@ public DijkstraPathPlanner(LineMap map)
  * in the constructor.
  * @param start  the initial robot pose
  * @param finish the final robot location
- * @param map  the LineMap of obstacles
+ * @param theMap  the LineMap of obstacles
  * @return the shortest route
  * @throws DestinationUnreachableException  if, for example, you nave not called setMap();
  */

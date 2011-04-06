@@ -54,13 +54,14 @@ public class MCLParticleSet {
     normalize();
   }
 /**
- * generates a circular cloud of particles centered on initialPose with random 
+ * Generates a circular cloud of particles centered on initialPose with random 
  * radius  and angle
- * @param map
- * @param numParticles
- * @param initialPose
- * @param radiusNoise  standard deviation of radius
- * @param headingNoise standard deviation of heading noise
+ * @param map the map
+ * @param numParticles the number of particles
+ * @param border the border
+ * @param readings the set of readings
+ * @param divisor the divisor
+ * @param minWeight the minimum weight
  */
   public MCLParticleSet(RangeMap map, int numParticles, int border,
           RangeReadings readings, float divisor, float minWeight)

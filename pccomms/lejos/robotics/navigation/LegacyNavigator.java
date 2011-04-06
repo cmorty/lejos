@@ -35,6 +35,7 @@ import lejos.robotics.*;
  * @see lejos.robotics.navigation.PathController
  *
  */
+@Deprecated
 public class LegacyNavigator {
 
 
@@ -146,7 +147,7 @@ public float getAngle()
  }
  /**
   * Returns a new updated Pose
-  * @return
+  * @return the pose
   */
   public Pose getPose()
   {

@@ -13,7 +13,7 @@ public interface DetectableFeature {
 	/**
 	 * Returns the RangeReading for this particular detected feature.
 	 * 
-	 * @returns RangeReading object containing angle and range.
+	 * @return RangeReading object containing angle and range.
 	 */
 	public RangeReading getRangeReading();
 }

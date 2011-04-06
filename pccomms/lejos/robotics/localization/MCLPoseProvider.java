@@ -231,8 +231,8 @@ public boolean  update()
     _heading = estimatedAngle;
   }
   /**
-   * returns most recent range readings
-   * @return
+   * Returns most recent range readings
+   * @return the range readings
    */
   public RangeReadings getRangeReadings()
   {
@@ -312,8 +312,8 @@ public boolean  update()
   }
   
 /**
- * returns the range scanner
- * @return
+ * Returns the range scanner
+ * @return the range scanner
  */
 public RangeScanner getScanner()
 {
