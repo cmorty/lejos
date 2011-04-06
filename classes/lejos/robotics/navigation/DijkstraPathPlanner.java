@@ -61,7 +61,8 @@ public DijkstraPathPlanner(LineMap map)
    * @param theMap  that contains the obstacles
    * @return an array list of waypoints.  If no path exists, returns null
    */
-  public ArrayList<WayPoint> findPath(Point start, Point finish, ArrayList<Line> theMap)throws DestinationUnreachableException
+  
+  private ArrayList<WayPoint> findPath(Point start, Point finish, ArrayList<Line> theMap)throws DestinationUnreachableException
   {
     _map = theMap;
     initialize(); // in case this method has already been called before
