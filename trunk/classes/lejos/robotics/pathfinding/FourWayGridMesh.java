@@ -87,20 +87,15 @@ public class FourWayGridMesh implements NavigationMesh {
 		int x_grid_squares = 0;
 		int y_grid_squares = 0;
 		
-		System.out.println("Grid space: " + gridspace);
-		
-		
 		for(float y = starty;y<endy;y+=gridspace) {
 			y_grid_squares += 1;
 			for(float x = startx;x<endx;x+=gridspace) {
 				x_grid_squares += 1;
-				mesh.add(new Node(x, y));
+				mesh.add(new GridNode(x, y, gridspace));
 				// TODO: Why not use addNode for each subsequent node?! Because it tries to connect it to others.
 			}
 		}
 		x_grid_squares /= y_grid_squares;
-		
-		System.out.println(x_grid_squares + " by " + y_grid_squares);
 		
 		// Start connecting neighbors in upper left, connect to one to right and one down
 		Node cur = mesh.get(0);
@@ -120,23 +115,28 @@ public class FourWayGridMesh implements NavigationMesh {
 		// TODO: At this point I could optionally remove nodes that are too close to geometry. Pretty quick. Currently
 		// it leaves them in the mesh set unconnected to anything. Probably better that way.
 		
-		/*
 		long totalNanoT = System.nanoTime() - startNanoT;
 		long endFreeMem = Runtime.getRuntime().freeMemory();
 		
 		System.out.println("Mesh time " + (totalNanoT/1000000D) + " ms");
 		System.out.print("Free Memory start: " + startFreeMem);
 		System.out.print(" end: " + endFreeMem);
-		System.out.println(" used: " + (startFreeMem - endFreeMem)); */
+		System.out.println(" used: " + (startFreeMem - endFreeMem));
 	}
 	
 	public boolean connect(Node node1, Node node2) {
 		
+		// If there is map data to check against, do it:
 		if(map != null) {
 			// Check if nodes are within bounding box:
 			if(!map.getBoundingRect().contains(node1.x, node1.y)) return false;
 			if(!map.getBoundingRect().contains(node2.x, node2.y)) return false;
 			
+			/* TODO: Might speed things up here for larger maps if you do preliminary check
+			   to see if point is within bounding box or something. Less expensive calculation
+			   to verify it is worth doing deeper calculation. */
+			
+			// Now check if connection comes too close to any map geometry:
 			Line connection = new Line(node1.x, node1.y, node2.x, node2.y);
 			Line [] lines = map.getLines();
 			for(int i=0;i<lines.length;i++) {
