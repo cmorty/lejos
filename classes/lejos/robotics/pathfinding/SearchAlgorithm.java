@@ -18,7 +18,7 @@ public interface SearchAlgorithm {
 	 * Note: The startNode must be connected with other nodes (neighbors) that eventually connect to the goalNode.
 	 * @param startNode
 	 * @param goalNode
-	 * @return A collection of waypoints 
+	 * @return A collection of waypoints. Returns null if it fails to find a path.
 	 */
 	public Collection <WayPoint> findPath(Node startNode, Node goalNode);
 }
