@@ -315,8 +315,6 @@ public class LegacyPilot {
 	}
         /**
 	 * also sets _motorSpeed
-	 *
-	 * @see lejos.robotics.navigation.Pilot#setTravelSpeed(float)
 	 */
 	public void setTravelSpeed(float travelSpeed) {
 		_robotTravelSpeed = travelSpeed;
@@ -327,7 +325,6 @@ public class LegacyPilot {
 	}
 
 	/**
-	 * @see lejos.robotics.navigation.Pilot#getTravelSpeed()
 	 */
 	public float getTravelSpeed() {
 		return _robotTravelSpeed;
@@ -340,8 +337,7 @@ public class LegacyPilot {
 		return _robotTravelSpeed;
 	}
 
-        /**
-	 * @see lejos.robotics.navigation.Pilot#getTravelMaxSpeed()
+     /**
 	 */
 	public float getMaxTravelSpeed() {
 		return Math.min(_left.getMaxSpeed(), _right.getMaxSpeed())
@@ -384,15 +380,13 @@ public class LegacyPilot {
 	}
 
 
-        /**
-	 * @see lejos.robotics.navigation.Pilot#getRotateSpeed()
+    /**
 	 */
 	public float getRotateSpeed() {
 		return _robotRotateSpeed;
 	}
 
 	/**
-	 * @see lejos.robotics.navigation.Pilot#getRotateMaxSpeed()
 	 */
 	public float getMaxRotateSpeed() {
 		return Math.min(_left.getMaxSpeed(), _right.getMaxSpeed())

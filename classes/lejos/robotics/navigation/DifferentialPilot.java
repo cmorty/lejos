@@ -233,16 +233,15 @@ public class DifferentialPilot implements
     setSpeed(Math.round(travelSpeed * _leftDegPerDistance), Math.round(travelSpeed * _rightDegPerDistance));
   }
 
-
   public float getTravelSpeed()
   {
     return _robotTravelSpeed;
   }
 
   /**
-   * sets the acceleration of both motors.
+   * Sets the acceleration of both motors.
    * @param accel
-   * @see lejos.nxt.Motor#setAcceleration(int acceleration)
+   * @see lejos.robotics.RegulatedMotor#setAcceleration(int acceleration)
    */
   public void setAcceleration(int accel)
   {

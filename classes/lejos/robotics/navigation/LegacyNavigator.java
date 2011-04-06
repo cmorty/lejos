@@ -146,7 +146,7 @@ public float getAngle()
  }
  /**
   * Returns a new updated Pose
-  * @return
+  * @return the pose
   */
   public Pose getPose()
   {
