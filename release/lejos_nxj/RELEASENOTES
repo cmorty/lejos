@@ -25,7 +25,7 @@ Sven Koehler:
 
 Andy Shaw:
 - New memory allocator, large objects can now be moved to avoid fragmentation
-- Added new Event system, converted Bluetooth/USB/I2C/Buttons/RCommand to
+- Added new Event system, converted Bluetooth/USB/I2C/Buttons/RConsole to
   use it.
 - Fixed Lego light sensor implementation, improved timing and color
   recognition.
@@ -46,7 +46,7 @@ Andy Shaw:
 - Added support for Mindsesnsors port splitter
 - Added support for Mindsensors TouchMux
 - Added high speed i2c operating mode (125Kbps instead of standard 9.6Kbps)
-- Improved motor regulation
+- Improved motor regulation & restructured motor classes
 
 Roger Glassey:
 - Fixed bugs in compass pilot
