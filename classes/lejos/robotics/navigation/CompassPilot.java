@@ -18,6 +18,7 @@ import lejos.util.Delay;
 // TODO: Note @deprecated message above, I'm not sure PoseProvider is exactly right place to point users to yet.
 // Need to explain this more when we are sure how this will replace CompassPilot. - BB
 
+@Deprecated
 public class CompassPilot extends DifferentialPilot
 {
 

@@ -35,6 +35,7 @@ import lejos.robotics.*;
  * @see lejos.robotics.navigation.PathController
  *
  */
+@Deprecated
 public class LegacyNavigator {
 
 

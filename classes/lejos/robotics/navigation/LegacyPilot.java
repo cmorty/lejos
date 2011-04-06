@@ -47,6 +47,7 @@ import lejos.robotics.RegulatedMotor;
  * @deprecated  This class will disappear in NXJ version 1.0. Use an implementing class of MoveController instead. 
  * @see lejos.robotics.navigation.MoveController
  */
+@Deprecated
 public class LegacyPilot {
 
 	/**
