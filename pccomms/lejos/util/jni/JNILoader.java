@@ -8,6 +8,8 @@ import java.net.URL;
 
 public class JNILoader
 {
+	private static final String NATIVEDIR_PROPERTY = "org.lejos.jniloader.basedir";
+	
 	private final OSInfo osinfo;
 	private final String subdir;
 	
@@ -16,14 +18,18 @@ public class JNILoader
 		this(null, new OSInfo());
 	}
 
-	public JNILoader(String subdir, OSInfo info) throws IOException
+	public JNILoader(String subdir, OSInfo info)
 	{
 		this.osinfo = info;
 		this.subdir = subdir;
 	}
 
-	private File getBaseFolder(Class<?> caller) throws JNIException, URISyntaxException
+	private static File getBaseFolder(Class<?> caller, String subdir) throws JNIException, URISyntaxException
 	{
+		String s = System.getProperty(NATIVEDIR_PROPERTY);
+		if (s != null)
+			return new File(s);
+		
 		// getName also works as expected for nested classes (returns package.Outer$Inner)
 		String clname = caller.getName();
 		String clpath = '/' + clname.replace('.', '/') + ".class";
@@ -51,7 +57,11 @@ public class JNILoader
 				tmp = tmp.getParentFile();
 			}
 		}
-		return tmp.getParentFile();
+		tmp = tmp.getParentFile();
+		if (subdir != null)
+			tmp = new File(tmp, subdir);
+
+		return tmp;
 	}
 	
 	public OSInfo getOSInfo()
@@ -64,15 +74,12 @@ public class JNILoader
 		File basefolder;
 		try
 		{
-			basefolder = getBaseFolder(caller);
+			basefolder = getBaseFolder(caller, this.subdir);
 		}
 		catch (URISyntaxException e)
 		{
 			throw new JNIException("internal error", e);
 		}
-
-		if (this.subdir != null)
-			basefolder = new File(basefolder, this.subdir);
 
 		String libfile = System.mapLibraryName(libname);
 		String arch = osinfo.getArch();
