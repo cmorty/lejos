@@ -59,6 +59,7 @@ public class I2CSensor implements SensorConstants {
 	{
 		port.setTypeAndMode(type, NXTProtocol.RAWMODE);
 		this.port = (byte)port.getId();
+        this.address = address;
 		// Flushes out any existing data
 		try {
 			nxtCommand.LSGetStatus(this.port); 
