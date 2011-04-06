@@ -8,7 +8,7 @@ public interface WayPointListener
 {
   /**
    * Called when the class providing waypoints has another waypoint to report.
-   * @param thePose the actual estimated pose of the robot when the waypoint has
+   * @param wp the actual estimated pose of the robot when the waypoint has
    * been approximately reached.
    */
   public void nextWaypoint(WayPoint wp);
