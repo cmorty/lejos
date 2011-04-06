@@ -11,13 +11,17 @@ Sven Koehler:
 - Much improved Math and Random classes, improved String/Integer/Byte/Long.
 - Added generics, for vector, stack etc.
 - Improved Eclipse plugin
-- Improved path resolution for linux shell scripts and a new command line
-  parser, command line tools now report exit status.
+- Improved path resolution for Linux/OSX shell scripts and a new command line
+  parser
+- Command line tools now report exit status in case of an error
 - Simplified native method implementation and build system
 - Improved Java i2c interface
 - Changed sensor interface to use getInterface factory method
 - Allow flashing of NXT with recent Linux systems
-- Improved and updated image editor
+- Improved and updated image convertor
+- Implemented a loader for JNI libraries
+  (no need to set java.library.path anymore)
+- New directory structure: JARs have been moved to $NXJ_HOME/lib/nxt and $NXJ_HOME/lib/pc
 
 Andy Shaw:
 - New memory allocator, large objects can now be moved to avoid fragmentation
