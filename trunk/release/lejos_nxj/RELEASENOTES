@@ -33,7 +33,7 @@ Andy Shaw:
   symbolic trace can be displayed by RConsole.
 - Improved firmware startup and shutdown, allow return to the menu after
   program error, clean up after crash
-- Improved i2c inteface, new address format, reduced cpu usage.
+- Improved i2c interface, new address format, reduced cpu usage.
 - Improved handling of USB errors
 - Allow constant strings greater than 256 characters in length and with
   16bit values
@@ -101,6 +101,12 @@ esmetaman
 - Added class to support NXTLineLeader based on code from Eric Pascual
 - Support for Dswitch
 - Added support for hitechnics sensor mux
+
+Dan Rollo:
+- Set up continuous build system that aids development
+
+John Tangney:
+Updated the Eclipse plugin and update site to support Eclipse Galileo and later
 
 
 
