@@ -108,7 +108,7 @@ public interface PathController
    * Example: If the robot moves from one environment (indoors) to another environment (outdoors) it might
    * want to change to another method of localization if a change in environment is detected.
    *
-   * @param replacement the new PoseProvider
+   * @param aProvider the new PoseProvider
    */
   public void setPoseProvider(PoseProvider aProvider);
 }

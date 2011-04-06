@@ -12,7 +12,7 @@ public class RotatingRangeScanner implements RangeScanner
   /**
    * The constructor specifies the motor and range finder used
    * @param head the motor that rotates the sensor
-   * @param range the range finder
+   * @param rangeFinder the range finder
    */
   public RotatingRangeScanner(RegulatedMotor head, RangeFinder rangeFinder)
   {

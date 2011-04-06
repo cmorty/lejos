@@ -30,7 +30,7 @@ public class ArcAlgorithms { // TODO Change access from public to package level 
 	 * @param turnRadius1 The turning radius for the first arc.
 	 * @param destination The destination Pose
 	 * @param turnRadius2 The turning radius for the final arc
-	 * @return
+	 * @return the sequence of moves
 	 */
 	public static Move [] getBestPath(Pose start, float turnRadius1, Pose destination, float turnRadius2) {
 		// Get all paths TODO: This can probably be streamlined with arrays. Sort out Path (Move) container first.
@@ -60,7 +60,7 @@ public class ArcAlgorithms { // TODO Change access from public to package level 
 	 * @param turnRadius1 The turning radius for the first arc
 	 * @param destination The destination Pose
 	 * @param turnRadius2 The turning radius for the final arc
-	 * @return
+	 * @return the sequence of moves
 	 */
 	public static Move [][] getAvailablePaths(Pose start, float turnRadius1, Pose destination, float turnRadius2) {
 		
@@ -196,7 +196,7 @@ public class ArcAlgorithms { // TODO Change access from public to package level 
 	 * 
 	 * @param start The starting Pose
 	 * @param destination The destination Point
-	 * @param turnRadius The turn radius
+	 * @param radius The turn radius
 	 * @return The shortest available path (given the parameters).
 	 */
 	public static Move [] getBestPath(Pose start, Point destination, float radius) {
@@ -338,7 +338,7 @@ public class ArcAlgorithms { // TODO Change access from public to package level 
 	/**
 	 * Quick calculation of reverse arc instead of going through getArcLength() math again.
 	 * @param forwardArc
-	 * @return
+	 * @return the backward arc
 	 */
 	public static float getArcBackward(float forwardArc) {
 		float backwardArc = 0;

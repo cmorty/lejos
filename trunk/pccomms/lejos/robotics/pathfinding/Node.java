@@ -100,7 +100,7 @@ public class Node  {
 	
 	/**
 	 * Method used by A* to calculate search score.
-	 * @return
+	 * @return the search score
 	 */
 	protected float getG_Score(){
 		return g_score;
@@ -116,7 +116,7 @@ public class Node  {
 	
 	/**
 	 * Used by A* search. Stores the node that the search came from prior to this node. 
-	 * @return
+	 * @return the predecessor node
 	 */
 	protected Node getPredecessor() {
 		return cameFrom;

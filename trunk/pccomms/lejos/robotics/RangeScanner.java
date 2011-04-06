@@ -25,9 +25,10 @@ public interface RangeScanner {
      * @param angles
      */
      public void setAngles(float[] angles);
-/**
- * return the range finder for use by other classes
- * @return
- */
+     
+     /**
+      * Return the range finder for use by other classes
+      * @return the range finder
+      */
      public RangeFinder getRangeFinder();
 }
