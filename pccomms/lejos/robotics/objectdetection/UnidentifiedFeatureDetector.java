@@ -73,7 +73,8 @@ public class UnidentifiedFeatureDetector implements FeatureDetector {
 
 		public void run() {
 			while(true) {
-				
+				/* TODO: Andy has a suggestion of moving the code in this thread out into the API so that users could override
+				this if they want to use multiple sensors or other types of sensors. Sounds good to me. - BB */
 				float range = range_finder.getRange();
 				if(range > 0 & range < max_dist) {
 					int angle = 0;
