@@ -174,7 +174,7 @@ public class GraphicMenu extends TextMenu{
 	 * @param finalIndex
 	 * @param animateDirection -1=right 1=left
 	 */
-	private void animate(int selectedIndex, int finalIndex,int animateDirection){
+	protected void animate(int selectedIndex, int finalIndex,int animateDirection){
 		int count = 1;
 		while (count < tickCount){
 			display(selectedIndex,animateDirection,(int) ((10.0/tickCount)*count));

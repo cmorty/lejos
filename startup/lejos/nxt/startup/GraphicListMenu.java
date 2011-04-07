@@ -14,6 +14,12 @@ public class GraphicListMenu extends GraphicMenu {
 	}
 	
 	@Override
+	protected void animate(int selectedIndex, int finalIndex, int animateDirection)
+	{
+		this.display(finalIndex, animateDirection, 0);
+	}
+	
+	@Override
 	protected void display(int selectedIndex, int animateDirection, int tick)
 	{
 		//LCD.asyncRefreshWait();
