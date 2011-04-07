@@ -128,24 +128,23 @@ public class GraphicMenu extends TextMenu{
 				return -1; //Escape
 			int temp = selectedIndex;
 			int dir = 0;
-			if(button == Button.ID_RIGHT && !(_length <= 2 && selectedIndex > 0))//scroll forward
+			if(button == Button.ID_RIGHT && (!(_length <= 2 && selectedIndex > 0) || get2IconMode()))//scroll forward
 			{
 				selectedIndex++;
 				// check for index out of bounds
 				if(selectedIndex >= _length)
 				{
 					selectedIndex = 0;
-					//_topIndex = 0;
+					_topIndex = 0;
 				}
-				//else if(selectedIndex >= _topIndex + _height)
-				//{
-				//	_topIndex = selectedIndex - _height + 1;
-				//}
+				else if(selectedIndex >= _topIndex + _height){
+					_topIndex = selectedIndex - _height + 1;
+				}
 				//else{
 				dir = -1;
 				//}
 			}
-			if(button == Button.ID_LEFT && !(_length <= 2 && selectedIndex < _length-1))//scroll backward
+			if(button == Button.ID_LEFT && (!(_length <= 2 && selectedIndex < _length-1) || get2IconMode()))//scroll backward
 			{
 				selectedIndex --;
 				// check for index out of bounds
@@ -155,12 +154,11 @@ public class GraphicMenu extends TextMenu{
 					selectedIndex  = _length - 1;
 
 					//selectedIndex++;
-					//_topIndex = _length - _height;
+					_topIndex = _length - _height;
 				}
-				//else if(selectedIndex < _topIndex)
-				//{
-				//	_topIndex = selectedIndex;
-				//}
+				else if(selectedIndex < _topIndex){
+					_topIndex = selectedIndex;
+				}
 				//else{
 					dir = 1;
 				//}
@@ -272,4 +270,6 @@ public class GraphicMenu extends TextMenu{
 	}
 	
 	protected int getIconSize(){return 32;}
+	
+	protected boolean get2IconMode(){return false;}// Do Not Wrap With 2 Icons
 }

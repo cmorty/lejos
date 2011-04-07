@@ -38,4 +38,7 @@ public class GraphicListMenu extends GraphicMenu {
 	
 	@Override
 	protected int getIconSize(){return 7;}
+	
+	@Override
+	protected boolean get2IconMode(){return true;}// Do Not Wrap With 2 Icons
 }
