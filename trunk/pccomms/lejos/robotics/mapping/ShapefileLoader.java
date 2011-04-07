@@ -13,23 +13,36 @@ import lejos.geom.Rectangle;
  * have created a map, export it as Shapefile. This will produce three files ending in .shp .shx and 
  * .dbf. The only file used by this class is .shp.</p>  
  * 
- * <p>This class can currently load polylines, polygons, points, and multipoints. However, a LineMap object
- * currently can't deal with points so points and multipoints are discarded.</p>
- * 
  * <p>NOTE: Shapefiles can only contain one type of shape data (polygon or polyline, not both). A single file can't
  * mix polylines with polygons.</p>
+ * 
+ * <p>This class' code can parse points and multipoints. However, a LineMap object can't deal with 
+ * points (only lines) so points and multipoints are discarded.</p>
  *  
  * @author BB
  *
  */
 public class ShapefileLoader {
 
+	/* OTHER POTENTIAL MAP FILE FORMATS TO ADD:
+	 * (none have really been researched yet for viability)
+	 * KML
+	 * GML
+	 * WMS? (more of a service than a file)
+	 * MIF/MID (MapInfo)
+	 * SVG (Scalable Vector Graphics)
+	 * EPS (Encapsulated Post Script)
+	 * DXF (Autodesk)
+	 * AI (Adobe Illustrator)
+	 * 
+	 */
+	
 	// 2D shape types types:
-	public static final byte NULL_SHAPE = 0;
-	public static final byte POINT = 1;
-	public static final byte POLYLINE = 3;
-	public static final byte POLYGON = 5;
-	public static final byte MULTIPOINT = 8;
+	private static final byte NULL_SHAPE = 0;
+	private static final byte POINT = 1;
+	private static final byte POLYLINE = 3;
+	private static final byte POLYGON = 5;
+	private static final byte MULTIPOINT = 8;
 	
 	private final int SHAPEFILE_ID = 0x0000270a;
 	DataInputStream data_is = null;
@@ -54,11 +67,11 @@ public class ShapefileLoader {
 		int fileCode = data_is.readInt(); // Big Endian
 		if(fileCode != SHAPEFILE_ID) throw new IOException("File is not a Shapefile");
 		data_is.skipBytes(20); // Five int32 unused by Shapefile
-		int fileLength = data_is.readInt();
+		/*int fileLength =*/ data_is.readInt();
 		//System.out.println("Length: " + fileLength); // TODO: Docs say length is in 16-bit words. Unsure if this is strictly correct. Seems higher than what hex editor shows.
-        int version = readLEInt();
+        /*int version =*/ readLEInt();
         //System.out.println("Version: " + version); 
-        int shapeType = readLEInt();
+        /*int shapeType =*/ readLEInt();
         //System.out.println("Shape type: " + shapeType);
         // These x and y min/max values define bounding rectangle:        
         double xMin = readLEDouble();
@@ -67,10 +80,10 @@ public class ShapefileLoader {
         double yMax = readLEDouble();
         // Create bounding rectangle:
         Rectangle rect = new Rectangle((float)xMin, (float)yMin, (float)(xMax - xMin), (float)(yMax - yMin));
-        double zMin = readLEDouble();
-        double zMax = readLEDouble();
-        double mMin = readLEDouble();
-        double mMax = readLEDouble();
+        /*double zMin =*/ readLEDouble();
+        /*double zMax =*/ readLEDouble();
+        /*double mMin =*/ readLEDouble();
+        /*double mMax =*/ readLEDouble();
         // TODO These values seem to be rounded down to nearest 0.5. Must round them up?
         //System.out.println("Xmin " + xMin + "  Ymin " + yMin);
         //System.out.println("Xmax " + xMax + "  Ymax " + yMax);
@@ -80,47 +93,37 @@ public class ShapefileLoader {
         
         // NOW ONTO READING INDIVIDUAL SHAPES:
         // Record Header (2 values):
-        int recordNum = data_is.readInt();
-        //System.out.println("Record number: " + recordNum);
+        /*int recordNum =*/ data_is.readInt();
         int recordLen = data_is.readInt(); // TODO: in 16-bit words. Might cause bug if number of shapes gets bigger than 16-bit short?
-        //System.out.println("Record length: " + recordLen); 
         
         // Record (variable length depending on shape type):
         int recShapeType = readLEInt();
-        //System.out.println("Record shape type: " + recShapeType);
         
         // Now to read the actual shape data
         switch (recShapeType) {
         	case NULL_SHAPE:
-        		//System.out.println("Null shape");
         		break;
         	case POINT:
         		// DO WE REALLY NEED TO DEAL WITH POINT? Feature might use them possibly.
         		/*double pointX =*/ readLEDouble(); // TODO: skip bytes instead
                 /*double pointY =*/ readLEDouble();
-                //System.out.println("Point: " + pointX + ", " + pointY);
-        		break;
+                break;
         	case POLYLINE:
-        		//System.out.println("Polyline");
         		// NOTE: Data structure for polygon/polyline is identical. Code should work for both.
         	case POLYGON:
         		// Polygons can contain multiple polygons, such as a donut with outer ring and inner ring for hole.
-        		//System.out.println("Polygon");
         		// Max bounding rect: 4 doubles in a row. TODO: Discard bounding rect. values and skip instead.
-        		double polyxMin = readLEDouble();
-                double polyyMin = readLEDouble();
-                double polyxMax = readLEDouble();
-                double polyyMax = readLEDouble();
+        		/*double polyxMin =*/ readLEDouble();
+                /*double polyyMin =*/ readLEDouble();
+                /*double polyxMax =*/ readLEDouble();
+                /*double polyyMax =*/ readLEDouble();
                 int numParts = readLEInt();
                 int numPoints = readLEInt();
-                //System.out.println("Number of parts in polygon " + numParts); // 
-                //System.out.println("Total number of points " + numPoints);
                 
                 // Retrieve array of indexes for each part in the polygon
                 int [] partIndex = new int[numParts];
                 for(int i=0;i<numParts;i++) {
                 	partIndex[i] = readLEInt();
-                	//System.out.println("Shape number " + i + " index is " + partIndex[i]);
                 }
                 
                 // Now go through numParts times pulling out points
@@ -130,7 +133,6 @@ public class ShapefileLoader {
                 	// Could check here if onto new polygon (i = next index). If so, do something with line formation.
                 	for(int j=0;j<numParts;j++) {
                 		if(i == partIndex[j]) {
-                			//System.out.println("It's a new part!");
                 			firstX = readLEDouble();
                         	firstY = readLEDouble();
                 			continue;
@@ -140,7 +142,6 @@ public class ShapefileLoader {
                 	double secondX = readLEDouble();
                 	double secondY = readLEDouble();
                 	Line myLine = new Line((float)firstX, (float)firstY, (float)secondX, (float)secondY);
-                	//System.out.println("Line " + i + ": " + firstX + ", " + firstY + "  " + secondX + ", " + secondY);
                 	lines.add(myLine);
                 	firstX = secondX;
                 	firstY = secondY;
@@ -149,11 +150,10 @@ public class ShapefileLoader {
         		break;
         	case MULTIPOINT:
         		// TODO: DO WE REALLY NEED TO DEAL WITH MULTIPOINT? Comment out and skip bytes?
-        		//System.out.println("Multipoint");
-        		double multixMin = readLEDouble();
-                double multiyMin = readLEDouble();
-                double multixMax = readLEDouble();
-                double multiyMax = readLEDouble();
+        		/*double multixMin = */readLEDouble();
+                /*double multiyMin = */readLEDouble();
+                /*double multixMax = */readLEDouble();
+                /*double multiyMax = */readLEDouble();
                 int multiPoints = readLEInt();
                 double [] xVals = new double[multiPoints];
                 double [] yVals = new double[multiPoints];
@@ -170,7 +170,7 @@ public class ShapefileLoader {
 	    
         } // END OF WHILE
         } catch(EOFException e) {
-        	//System.out.println("The file has ended.");
+        	// End of File, just needs to continue
         }
         Line [] arrList = new Line [lines.size()];
         return new LineMap(lines.toArray(arrList), rect);
@@ -224,5 +224,4 @@ public class ShapefileLoader {
         return (byte8 << 56) + (byte7 << 48) + (byte6 << 40) + (byte5 << 32)
                 + (byte4 << 24) + (byte3 << 16) + (byte2 << 8) + byte1;
     }
-
 }
