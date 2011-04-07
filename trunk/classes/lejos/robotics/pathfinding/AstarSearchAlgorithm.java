@@ -1,9 +1,6 @@
 package lejos.robotics.pathfinding;
 
-import java.awt.geom.Point2D;
 import java.util.*;
-
-import lejos.nxt.Button;
 import lejos.robotics.navigation.WayPoint;
 
 // TODO: This works, but this code keeps the Node properties right in the Node object. The same Node set
