@@ -56,6 +56,9 @@ public class GraphicStartup {
     static final String ICMComp = "\u0060\u007f\u0051\u0071\u0053\u005f\u0060";
     static final String ICMPhone = "\0\u003e\u0069\u0059\u0069\u003f\0";
     static final String ICMBlueU = "\0\"\u0014\u007f\u002a\u0014\0";
+    static final String ICMLAN = "\u0068\u0058\u006b\r\u006b\u0058\u0068";
+    static final String ICMImaging = "\u0038\u0044\u007c\u006c\u007e\u004a\u003e";
+    static final String ICMHID = "\u003c\u004a\u004f\u004b\u003d\u0001\u000e";
     
     static final String ICFormat = "\0\0\u0080\u0060\u0098\u0024\u0014\u0014\u0014\u0014\u0024\u0098\u0060\u0080\0\0\0\u000c\u0013\u001a\u001a\u001b\u001b\u001b\u0013\u0017\u0013\u0016\u0012\u0013\u000c\0";
     static final String ICSleep = "\0\u0012\u001a\u0096\u0072\u0090\u0024\u0034\u00ac\u00a4\u0008\u0010\u0090\u0060\u0080\0\0\0\0\u0007\u0018\u0020\u0021\u0041\u0058\u0058\u0041\u0021\u0020\u0018\u0007\0";
@@ -532,17 +535,27 @@ public class GraphicStartup {
         } while (button != Button.ID_ESCAPE && System.currentTimeMillis() - start < 2000);
     }
     
-    private String getDeviceIcon(DeviceClass cls){
-    	if (cls.getMajorDeviceClass() == 0x100)
-        	return ICMComp;
-        else if (cls.getMajorDeviceClass() == 0x200)
-        	return ICMPhone;
-        else if (cls.getMajorDeviceClass() == 0x400)
-        	return ICMSound;
-        else if (cls.getMajorDeviceClass() == 0x800 && cls.getMinorDeviceClass() == 0x04)
-        	return ICMNXT;
-        else
-        	return ICMBlueU;
+    /**
+     * Returns the icons that represents the bluetooth device class given.
+     * @param devCls Bluetooth Device Class
+     * @return Icon
+     */
+    private String getDeviceIcon(byte[] devCls){
+    	int codRecord = (devCls[0] << 8) + devCls[1];
+		codRecord = (codRecord << 8) + devCls[2];
+		codRecord = (codRecord << 8) + devCls[3];
+		DeviceClass cls = new DeviceClass(codRecord);
+		switch(cls.getMajorDeviceClass()){
+			case(0x100):return ICMComp; // Computer Device
+			case(0x200):return ICMPhone; // Telephone Device
+			case(0x300):return ICMLAN; // LAN Networking Device
+			case(0x400):return ICMSound; // Audio/Video Device
+			case(0x500):return ICMHID; // Peripheral Device
+			case(0x600):return ICMImaging; // Imaging Device
+			case(0x800):if (cls.getMinorDeviceClass() == 0x04) 
+				        return ICMNXT; // LEGO NXT
+		}
+		return ICMBlueU;
     }
 
     /**
@@ -580,12 +593,7 @@ public class GraphicStartup {
         {
             RemoteDevice btrd = devList.elementAt(i);
             names[i] = btrd.getFriendlyName(false);
-            byte[] devCls = btrd.getDeviceClass();
-            int codRecord = (devCls[0] << 8) + devCls[1];
-			codRecord = (codRecord << 8) + devCls[2];
-			codRecord = (codRecord << 8) + devCls[3];
-			DeviceClass cls = new DeviceClass(codRecord);
-            icons[i] = getDeviceIcon(cls);
+            icons[i] = getDeviceIcon(btrd.getDeviceClass());
         }
         GraphicListMenu searchMenu = new GraphicListMenu(names, icons);
         searchMenu.setParentIcon(ICSearch);
@@ -601,11 +609,13 @@ public class GraphicStartup {
             {
                 RemoteDevice btrd = devList.elementAt(selected);
                 newScreen();
-                LCD.drawString(names[selected], 0, 1);
-                LCD.drawString(btrd.getBluetoothAddress(), 0, 2);
+                LCD.bitBlt(
+                	Utils.stringToBytes8(getDeviceIcon(btrd.getDeviceClass()))
+                	, 7, 7, 0, 0, 2, 16, 7, 7, LCD.ROP_COPY);
+                LCD.drawString(names[selected], 2, 2);
+                LCD.drawString(btrd.getBluetoothAddress(), 0, 3);
                 int subSelection = getSelection(subMenu, 0);
-                if (subSelection == 0)
-                {
+                if (subSelection == 0){
                     newScreen("Pairing");
                     Bluetooth.addDevice(btrd);
                     // !! Assuming 4 length
@@ -651,12 +661,7 @@ public class GraphicStartup {
         {
             RemoteDevice btrd = devList.elementAt(i);
             names[i] = btrd.getFriendlyName(false);
-            byte[] devCls = btrd.getDeviceClass();
-            int codRecord = (devCls[0] << 8) + devCls[1];
-			codRecord = (codRecord << 8) + devCls[2];
-			codRecord = (codRecord << 8) + devCls[3];
-			DeviceClass cls = new DeviceClass(codRecord);
-            icons[i] = getDeviceIcon(cls);
+            icons[i] = getDeviceIcon(btrd.getDeviceClass());
         }
 
         GraphicListMenu deviceMenu = new GraphicListMenu(names, icons);
@@ -673,7 +678,10 @@ public class GraphicStartup {
             {
                 newScreen();
                 RemoteDevice btrd = devList.elementAt(selected);
-                LCD.drawString(btrd.getFriendlyName(false), 0, 2);
+                LCD.bitBlt(
+                    	Utils.stringToBytes8(getDeviceIcon(btrd.getDeviceClass()))
+                    	, 7, 7, 0, 0, 2, 16, 7, 7, LCD.ROP_COPY);
+                LCD.drawString(btrd.getFriendlyName(false), 2, 2);
                 LCD.drawString(btrd.getBluetoothAddress(), 0, 3);
                 for (int i = 0; i < 4; i++)
                     LCD.drawInt(btrd.getDeviceClass()[i], 3, i * 4, 4);
