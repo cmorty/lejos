@@ -13,7 +13,7 @@ import lejos.nxt.rcxcomm.LLC;
  * 
  * @author Lawrie Griffiths
  *
- */public class LLCMonitor {
+ */public class RCXLLCMonitor {
 	public static void main(String[] args) throws Exception {
 		LLC.init(SensorPort.S1);
 		
