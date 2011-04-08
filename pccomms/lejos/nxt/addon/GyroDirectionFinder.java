@@ -8,45 +8,44 @@ import lejos.robotics.DirectionFinder;
  * except that the direction returned does not convey true heading (north, south, etc) but rather
  * relative heading change since the last time setDegrees() or resetCartesianZero() was called.
  * @author Brent Gardner
+ * @author Kirk P. Thompson
  */
 public class GyroDirectionFinder implements DirectionFinder
 {
     private float cartesianCalibrate = 0;
     private float heading = 0;
     private float acceleration;
-
     private boolean calibrating = false;
-    private float gyroCalibration = 0F;
-    private long calibrationReadingCount = 0;
-    private float calibrationSum = 0F;
-
     private Regulator reg = new Regulator();
     private GyroSensor gyro;
 
-    public GyroDirectionFinder(GyroSensor gyro)
-    {
+    /** Creates and initializes a new <code>GyroDirectionFinder</code> using passed <code>GyroSensor</code> 
+     * @param gyro
+     * @see GyroSensor
+     */
+    public GyroDirectionFinder(GyroSensor gyro) {
         this(gyro, false);
     }
 
-    public GyroDirectionFinder(GyroSensor gyro, boolean calibrate)
-    {
+    /** Creates and initializes a new <code>GyroDirectionFinder</code> using passed <code>GyroSensor</code> and does
+     * the <code>GyroSensor.setOffset()</code> method.
+     * @param gyro
+     * @see GyroSensor#setOffset()
+     * @see #startCalibration
+     */
+    public GyroDirectionFinder(GyroSensor gyro, boolean calibrate) {
         this.gyro = gyro;
         reg.start();
-        if(calibrate == false)
-            return;
+        if(calibrate == false) return;
 
         // Optional calibration
         startCalibration();
-        try { Thread.sleep(50); }
-        catch(Exception ex) { }
-        stopCalibration();
     }
 
     /**
      * Resets the current heading to a desired value
      */
-    public void setDegrees(float heading)
-    {
+    public void setDegrees(float heading) {
         this.heading = heading;
     }
 
@@ -56,8 +55,7 @@ public class GyroDirectionFinder implements DirectionFinder
      * if the robot has done multiple rotations since the last call to resetCartesianZero()
      * @return Heading in degrees.
      */
-    public float getDegrees()
-    {
+    public float getDegrees() {
         return heading;
     }
 
@@ -65,17 +63,15 @@ public class GyroDirectionFinder implements DirectionFinder
      * Returns the current rate-of-turn in degrees, as read by the GyroSensor
      * @return Angular velocity in degrees.
      */
-    public float getAngularVelocity()
-    {
-        return (float)gyro.readValue() - gyroCalibration;
+    public float getAngularVelocity() {
+        return (float)gyro.getAngularVelocity();
     }
 
     /**
      * Returns the current rate at which the angular velocity is increasing or decreasing in degrees-per-second, per second
      * @return Angular acceleration in degrees-per-second per second.
      */
-    public float getAngularAcceleration()
-    {
+    public float getAngularAcceleration() {
         return acceleration;
     }
 
@@ -83,80 +79,75 @@ public class GyroDirectionFinder implements DirectionFinder
      * Returns the current rate-of-turn in degrees, as read by the GyroSensor
      * @return Heading in degrees.
      */
-    public float getDegreesCartesian()
-    {
+    public float getDegreesCartesian() {
         return cartesianCalibrate - getDegrees();
     }
 
     /**
      * Resets the current heading to a desired value
      */
-    public void setDegreesCartesian(float heading)
-    {
+    public void setDegreesCartesian(float heading) {
         this.heading = cartesianCalibrate - heading;
     }
 
     /**
      * Resets the current heading to zero
      */
-    public void resetCartesianZero()
-    {
+    public void resetCartesianZero() {
         cartesianCalibrate = getDegrees();
     }
 
     /**
-     * Begins averaging readings to find bias of gyro while at rest
+     * Find bias of gyro while at rest (ensure it is at rest). This is done by calling the <code>setOffset()</code> method of 
+     * the GyroSensor class
+     * passed in the constructor. This takes 5 seconds.
+     * 
+     * @see GyroSensor#setOffset()
      */
-    public void startCalibration()
-    {
-        gyroCalibration = 0F;
-        calibrationReadingCount = 0;
-        calibrationSum = 0F;
+    public void startCalibration() {
         calibrating = true;
     }
 
     /**
-     * Sets the bias of the gyro based on readings observed since call to startCalibration()
+     * NO FUNCTIONALITY EQUIVALENT for GyroSensor so implemented just to satisfy the <code>DirectionFinder</code> interface. 
+     * Does nothing.
      */
-    public void stopCalibration()
-    {
+    public void stopCalibration() {
         calibrating = false;
-        gyroCalibration = calibrationSum / calibrationReadingCount;
     }
 
     /**
      * This is a private thread class that is used to continously integrate sucessive readings from the gyro
      */
-    private class Regulator extends Thread
-    {
-        protected Regulator()
-        {
+    private class Regulator extends Thread {
+        protected Regulator() {
             setDaemon(true);
         }
 
         @Override
-        public void run()
-        {
+        public void run() {
             float lastDegreesPerSecond = 0F;
-            long lastUpdate = System.currentTimeMillis();
-            while (true)
-            {
+            long lastUpdate = System.currentTimeMillis(), now;
+            float degreesPerSecond, secondsSinceLastReading;
+            while (true) {
                 Thread.yield();
-                long now = System.currentTimeMillis();
-                if(now - lastUpdate == 0)
-                    continue;
-                float degreesPerSecond = (float)gyro.readValue();
+                now = System.currentTimeMillis();
+                if(now - lastUpdate<4) continue;
+                degreesPerSecond=(float)gyro.getAngularVelocity();
+                
+                // reduce "perceived" drift since the sensor resolution is 1 deg/sec. This will increase error...
+                // Ccomment or remove if this behavior is undesired. I don't know if Brent required a wandering value but
+                // doing this presents better to the human observer (no perceived drift). KPT 4/7/11
+                if (Math.abs(degreesPerSecond)<1.0)degreesPerSecond=0;
 
-                // Calibration
-                if(calibrating)
-                {
-                    calibrationSum += degreesPerSecond;
-                    calibrationReadingCount++;
+                // Calibration flagged...
+                if(calibrating) {
+                    gyro.setOffset(); // 5 seconds consumed here
+                    calibrating = false;
                 }
 
                 // Integration
-                degreesPerSecond -= gyroCalibration;
-                float secondsSinceLastReading = (float)(now - lastUpdate) / 1000F;
+                secondsSinceLastReading = (float)(now - lastUpdate) / 1000F;
                 heading += degreesPerSecond * secondsSinceLastReading;
                 acceleration = (degreesPerSecond - lastDegreesPerSecond) / secondsSinceLastReading;
 
