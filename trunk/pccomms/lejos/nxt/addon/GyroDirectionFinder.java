@@ -21,17 +21,10 @@ public class GyroDirectionFinder implements DirectionFinder
     private Regulator reg = new Regulator();
     private GyroSensor gyro;
 
-<<<<<<< .mine
     /** Creates and initializes a new <code>GyroDirectionFinder</code> using passed <code>GyroSensor</code> 
      * @param gyro A <code>{@link GyroSensor}</code> instance
      * @see GyroSensor
-=======
-    /** Creates and initializes a new <code>GyroDirectionFinder</code> using passed <code>GyroSensor</code> 
-     * @param gyro
->>>>>>> .r4407
-     * @see GyroSensor
      */
-<<<<<<< .mine
     public GyroDirectionFinder(GyroSensor gyro) {
         this(gyro, false);
     }
@@ -43,19 +36,6 @@ public class GyroDirectionFinder implements DirectionFinder
      * @see #startCalibration
      */
     public GyroDirectionFinder(GyroSensor gyro, boolean calibrate) {
-=======
-    public GyroDirectionFinder(GyroSensor gyro) {
-        this(gyro, false);
-    }
-
-    /** Creates and initializes a new <code>GyroDirectionFinder</code> using passed <code>GyroSensor</code> and does
-     * the <code>GyroSensor.recalibrateOffset()</code> method.
-     * @param gyro
-     * @see GyroSensor#recalibrateOffset()
-     * @see #startCalibration
-     */
-    public GyroDirectionFinder(GyroSensor gyro, boolean calibrate) {
->>>>>>> .r4407
         this.gyro = gyro;
         reg.start();
         if(calibrate == false) return;
@@ -123,32 +103,18 @@ public class GyroDirectionFinder implements DirectionFinder
     }
 
     /**
-<<<<<<< .mine
      * Find offset/bias of gyro while at rest (<u>ensure it is at rest</u>). This is done by calling the <code>recalibrateOffset()</code> method of 
      * the <code>GyroSensor</code> instance passed in the constructor. This takes 5 seconds.
      * 
      * @see GyroSensor#recalibrateOffset()
-=======
-     * Find bias of gyro while at rest (ensure it is at rest). This is done by calling the <code>recalibrateOffset()</code> method of 
-     * the GyroSensor class
-     * passed in the constructor. This takes 5 seconds.
-     * 
-     * @see GyroSensor#recalibrateOffset()
->>>>>>> .r4407
      */
     public void startCalibration() {
         calibrating = true;
     }
 
-<<<<<<< .mine
     /**
      * NO FUNCTIONALITY EQUIVALENT for <code>GyroSensor</code> so implemented just to satisfy the <code>DirectionFinder</code> interface. 
      * Does nothing.
-=======
-    /**
-     * NO FUNCTIONALITY EQUIVALENT for GyroSensor so implemented just to satisfy the <code>DirectionFinder</code> interface. 
-     * Does nothing.
->>>>>>> .r4407
      */
     public void stopCalibration() {
         calibrating = false;
@@ -170,7 +136,6 @@ public class GyroDirectionFinder implements DirectionFinder
             while (true) {
                 Thread.yield();
                 now = System.currentTimeMillis();
-<<<<<<< .mine
                 if(now - lastUpdate<5) continue; // was 4
                 degreesPerSecond=gyro.getAngularVelocity();
                 
@@ -187,24 +152,6 @@ public class GyroDirectionFinder implements DirectionFinder
 
                 // Integration
                 secondsSinceLastReading = (float)(now - lastUpdate) / 1000F;
-=======
-                if(now - lastUpdate<4) continue; // was 4
-                degreesPerSecond=gyro.getAngularVelocity();
-                
-                // reduce "perceived" drift since the sensor resolution is 1 deg/sec. This will increase error...
-                // Comment or remove if this behavior is undesired. I don't know if Brent required a wandering value but
-                // doing this presents better to the human observer (no perceived drift). KPT 4/7/11
-                if (Math.abs(degreesPerSecond)<1.0)degreesPerSecond=0.0f;
-
-                // Calibration flagged...
-                if(calibrating) {
-                    gyro.recalibrateOffset(); // 5 seconds consumed here
-                    calibrating = false;
-                }
-
-                // Integration
-                secondsSinceLastReading = (float)(now - lastUpdate) / 1000F;
->>>>>>> .r4407
                 heading += degreesPerSecond * secondsSinceLastReading;
                 acceleration = (degreesPerSecond - lastDegreesPerSecond) / secondsSinceLastReading;
 
