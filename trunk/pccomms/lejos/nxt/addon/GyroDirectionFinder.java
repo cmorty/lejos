@@ -28,9 +28,9 @@ public class GyroDirectionFinder implements DirectionFinder
     }
 
     /** Creates and initializes a new <code>GyroDirectionFinder</code> using passed <code>GyroSensor</code> and does
-     * the <code>GyroSensor.setOffset()</code> method.
+     * the <code>GyroSensor.recalibrateOffset()</code> method.
      * @param gyro
-     * @see GyroSensor#setOffset()
+     * @see GyroSensor#recalibrateOffset()
      * @see #startCalibration
      */
     public GyroDirectionFinder(GyroSensor gyro, boolean calibrate) {
@@ -64,7 +64,7 @@ public class GyroDirectionFinder implements DirectionFinder
      * @return Angular velocity in degrees.
      */
     public float getAngularVelocity() {
-        return (float)gyro.getAngularVelocity();
+        return gyro.getAngularVelocity();
     }
 
     /**
@@ -98,11 +98,11 @@ public class GyroDirectionFinder implements DirectionFinder
     }
 
     /**
-     * Find bias of gyro while at rest (ensure it is at rest). This is done by calling the <code>setOffset()</code> method of 
+     * Find bias of gyro while at rest (ensure it is at rest). This is done by calling the <code>recalibrateOffset()</code> method of 
      * the GyroSensor class
      * passed in the constructor. This takes 5 seconds.
      * 
-     * @see GyroSensor#setOffset()
+     * @see GyroSensor#recalibrateOffset()
      */
     public void startCalibration() {
         calibrating = true;
@@ -117,7 +117,7 @@ public class GyroDirectionFinder implements DirectionFinder
     }
 
     /**
-     * This is a private thread class that is used to continously integrate sucessive readings from the gyro
+     * This is the private thread class that is used to continously integrate successive readings from the gyro
      */
     private class Regulator extends Thread {
         protected Regulator() {
@@ -132,17 +132,17 @@ public class GyroDirectionFinder implements DirectionFinder
             while (true) {
                 Thread.yield();
                 now = System.currentTimeMillis();
-                if(now - lastUpdate<4) continue;
-                degreesPerSecond=(float)gyro.getAngularVelocity();
+                if(now - lastUpdate<4) continue; // was 4
+                degreesPerSecond=gyro.getAngularVelocity();
                 
                 // reduce "perceived" drift since the sensor resolution is 1 deg/sec. This will increase error...
-                // Ccomment or remove if this behavior is undesired. I don't know if Brent required a wandering value but
+                // Comment or remove if this behavior is undesired. I don't know if Brent required a wandering value but
                 // doing this presents better to the human observer (no perceived drift). KPT 4/7/11
-                if (Math.abs(degreesPerSecond)<1.0)degreesPerSecond=0;
+                if (Math.abs(degreesPerSecond)<1.0)degreesPerSecond=0.0f;
 
                 // Calibration flagged...
                 if(calibrating) {
-                    gyro.setOffset(); // 5 seconds consumed here
+                    gyro.recalibrateOffset(); // 5 seconds consumed here
                     calibrating = false;
                 }
 
