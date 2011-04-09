@@ -3,10 +3,12 @@ package lejos.nxt.addon;
 import lejos.robotics.DirectionFinder;
 
 /**
- * Implementation of the DirectionFinder interface that Integrates repeated rate-of-turn readings from a GyroSensor
- * into a continuously updated heading. This class is very similar to CompassSensor, 
+ * Implementation of the <code>DirectionFinder</code> interface that integrates repeated rate-of-turn readings from a 
+ * <code>{@link GyroSensor}</code>
+ * into a continuously updated heading. This class is very similar to <code>{@link CompassSensor}</code>, 
  * except that the direction returned does not convey true heading (north, south, etc) but rather
- * relative heading change since the last time setDegrees() or resetCartesianZero() was called.
+ * relative heading change since the last time <code>setDegrees()</code> or <code>resetCartesianZero()</code> was called.
+ * @see GyroSensor
  * @author Brent Gardner
  * @author Kirk P. Thompson
  */
@@ -20,7 +22,7 @@ public class GyroDirectionFinder implements DirectionFinder
     private GyroSensor gyro;
 
     /** Creates and initializes a new <code>GyroDirectionFinder</code> using passed <code>GyroSensor</code> 
-     * @param gyro
+     * @param gyro A <code>{@link GyroSensor}</code> instance
      * @see GyroSensor
      */
     public GyroDirectionFinder(GyroSensor gyro) {
@@ -29,7 +31,7 @@ public class GyroDirectionFinder implements DirectionFinder
 
     /** Creates and initializes a new <code>GyroDirectionFinder</code> using passed <code>GyroSensor</code> and does
      * the <code>GyroSensor.recalibrateOffset()</code> method.
-     * @param gyro
+     * @param gyro A <code>{@link GyroSensor}</code> instance
      * @see GyroSensor#recalibrateOffset()
      * @see #startCalibration
      */
@@ -43,7 +45,8 @@ public class GyroDirectionFinder implements DirectionFinder
     }
 
     /**
-     * Resets the current heading to a desired value
+     * Resets the current heading to a desired value.
+     * @see #getDegrees
      */
     public void setDegrees(float heading) {
         this.heading = heading;
@@ -52,23 +55,25 @@ public class GyroDirectionFinder implements DirectionFinder
     /**
      * Returns the directional heading in degrees. Includes "winding",
      * so the value could be greater than 360 or less than 0
-     * if the robot has done multiple rotations since the last call to resetCartesianZero()
+     * if the robot has done multiple rotations since the last call to <code>resetCartesianZero()</code>.
      * @return Heading in degrees.
+     * @see #setDegrees
      */
     public float getDegrees() {
         return heading;
     }
 
     /**
-     * Returns the current rate-of-turn in degrees, as read by the GyroSensor
+     * Returns the current rate-of-turn in degrees/second, as read by the <code>GyroSensor</code> instance passed in the constructor.
      * @return Angular velocity in degrees.
+     * @see GyroSensor
      */
     public float getAngularVelocity() {
         return gyro.getAngularVelocity();
     }
 
     /**
-     * Returns the current rate at which the angular velocity is increasing or decreasing in degrees-per-second, per second
+     * Returns the current rate at which the angular velocity is increasing or decreasing in degrees-per-second, per second.
      * @return Angular acceleration in degrees-per-second per second.
      */
     public float getAngularAcceleration() {
@@ -76,7 +81,7 @@ public class GyroDirectionFinder implements DirectionFinder
     }
 
     /**
-     * Returns the current rate-of-turn in degrees, as read by the GyroSensor
+     * Returns the current rate-of-turn in degrees, as read by the <code>GyroSensor</code>.
      * @return Heading in degrees.
      */
     public float getDegreesCartesian() {
@@ -84,23 +89,22 @@ public class GyroDirectionFinder implements DirectionFinder
     }
 
     /**
-     * Resets the current heading to a desired value
+     * Resets the current heading to a desired value.
      */
     public void setDegreesCartesian(float heading) {
         this.heading = cartesianCalibrate - heading;
     }
 
     /**
-     * Resets the current heading to zero
+     * Resets the current heading to zero.
      */
     public void resetCartesianZero() {
         cartesianCalibrate = getDegrees();
     }
 
     /**
-     * Find bias of gyro while at rest (ensure it is at rest). This is done by calling the <code>recalibrateOffset()</code> method of 
-     * the GyroSensor class
-     * passed in the constructor. This takes 5 seconds.
+     * Find offset/bias of gyro while at rest (<u>ensure it is at rest</u>). This is done by calling the <code>recalibrateOffset()</code> method of 
+     * the <code>GyroSensor</code> instance passed in the constructor. This takes 5 seconds.
      * 
      * @see GyroSensor#recalibrateOffset()
      */
@@ -109,7 +113,7 @@ public class GyroDirectionFinder implements DirectionFinder
     }
 
     /**
-     * NO FUNCTIONALITY EQUIVALENT for GyroSensor so implemented just to satisfy the <code>DirectionFinder</code> interface. 
+     * NO FUNCTIONALITY EQUIVALENT for <code>GyroSensor</code> so implemented just to satisfy the <code>DirectionFinder</code> interface. 
      * Does nothing.
      */
     public void stopCalibration() {
@@ -132,7 +136,7 @@ public class GyroDirectionFinder implements DirectionFinder
             while (true) {
                 Thread.yield();
                 now = System.currentTimeMillis();
-                if(now - lastUpdate<4) continue; // was 4
+                if(now - lastUpdate<5) continue; // was 4
                 degreesPerSecond=gyro.getAngularVelocity();
                 
                 // reduce "perceived" drift since the sensor resolution is 1 deg/sec. This will increase error...
