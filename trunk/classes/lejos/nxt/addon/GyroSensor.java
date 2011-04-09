@@ -14,16 +14,26 @@ import lejos.util.Delay;
 /**
  * Support the HiTechnic Gyro sensor. Provides raw <code>int</code> (with optional offset) and <code>float</code> angular velocity in degrees/sec.
  * <p>
- * <b>Note:</b> You may want to use <code>setSpeed()</code> on any motor you will be using before instantiating so the AD sensor voltage stablizes. 
+ * <b>Notes:</b> 
+ * <ul>
+ * <li>You may want to use <code>setSpeed()</code> on any motor you will be using before instantiating so the AD sensor voltage stablizes. 
  * Otherwise, the offset
  * may be skewed. See LeJOS forum post <a href="http://lejos.sourceforge.net/forum/viewtopic.php?f=7&t=2276">"motor setSpeed() 
  * changes AD sensor value"</a>
- * 
- * <h3>Assumptions:</h3>
+ * <li>The <code>getAngularVelocity()</code> method uses statistical analysis to continuously determine the offset/bias to apply to 
+ * the raw sensor value
+ * to be able to calculate the "true" degrees per second the sensor is rotating at. It is important that this is called frequently 
+ * enough to ensure the sample population
+ * is adequate. This could have been done in a dedicated sampling thread but most use cases (such as <code>{@link GyroDirectionFinder}</code>)
+ * would be calling the <code>getAngularVelocity()</code> method on fast periodic basis to support integration, etc. that it was
+ * felt a dedicated thread would be redundant.
+ * </ul>
+ * <b>Assumptions:</b>
  * <ul>
  * <li>The HiTechnic Gyro sensor NGY1044 (or equivalent) is being used. (<a href="http://www.hitechnic.com/" target=-"_blank">
  * http://www.hitechnic.com/</a>)
- * <li>If used, the <code>{@link #getAngularVelocity}</code> method call rate is at least 100 times/sec.
+ * <li>If used, the <code>{@link #getAngularVelocity}</code> method call rate is at least 100 times/sec. If slower rates are
+ * used, the offset/bias drift value may not reliably be detected.
  * </ul>
  * 
  * @author Lawrie Griffiths
@@ -31,7 +41,9 @@ import lejos.util.Delay;
  *
  */
 public class GyroSensor implements SensorConstants, Gyroscope {
-	protected ADSensorPort port;
+    /** The <code>ADSensorPort</code> passed in the constructor.
+     */
+    protected ADSensorPort port;
 	private int offset = 0;
     private float gsRawTotal =0f;
     private float gsvarianceTotal =0f;
@@ -93,10 +105,15 @@ public class GyroSensor implements SensorConstants, Gyroscope {
      * @see #recalibrateOffset
      */
     public float getAngularVelocity() {
+        final int REBASELINE_INTERVAL=5000; // time in ms before rebaselining sample populations. Allows for drift to be managed
+        final int CONSECUTIVE_REPR_SAMPLS=10; // # of consecutive samples < STDDEV_ENVELOPE to assume static sensor
+        final float STDDEV_ENVELOPE=.55f; // the standard deviation determined to limit the offset/bias population. Assumes 
+                                          // initial sample population was done with non-moving sensor
         int gsVal;
         float stdev;
         float gsvarianceTemp;
-        // get sensor raw value (note that offset was zeroed in recalibrateOffset()  but could be changed by user)
+        
+        // get sensor raw value (note that offset was zeroed in recalibrateOffset() but could be changed by user)
         gsVal=readValue();
         // calc variance
         gsvarianceTemp=(float)Math.pow(gsVal-(gsRawTotal+gsVal)/(samples+1),2);
@@ -104,19 +121,20 @@ public class GyroSensor implements SensorConstants, Gyroscope {
         stdev=(float)Math.sqrt((gsvarianceTotal + gsvarianceTemp)/(samples+1));
         // if less than x standard deviation from maintained offset population and somewhat consecutive, allow to 
         // be used in the offset/bias population
-        if(stdev<.55f)consecutiveStdv++; else consecutiveStdv=0; 
+        if(stdev<STDDEV_ENVELOPE)consecutiveStdv++; else consecutiveStdv=0; 
         // assume consecutive stdevs within defined range provide representative sample of non-moving sensor
-        if (consecutiveStdv>10||calibrating) {
+        // or, if told to run because we are calibrating...
+        if (consecutiveStdv>CONSECUTIVE_REPR_SAMPLS||calibrating) {
             consecutiveStdv=0;
-            // add value to sample pop
+            // add sensor raw value to sample population
             gsRawTotal+=gsVal;
             samples++; 
             // add variance to variance population so we can do standard deviation calc in future iterations
             gsvarianceTotal+=Math.pow(gsVal-gsRawTotal/samples, 2);
         }
         
-        // re-baseline every 5 seconds
-        if (System.currentTimeMillis()-timestamp>5000) {
+        // re-baseline every 5 seconds. This allows for drift to be assimilated
+        if (System.currentTimeMillis()-timestamp>REBASELINE_INTERVAL) {
             timestamp = System.currentTimeMillis();
 //            LCD.drawString("mean:" + (gsRawTotal/samples) + " ", 0, 1);
             stdev=(float)Math.sqrt(gsvarianceTotal/samples);
@@ -146,7 +164,7 @@ public class GyroSensor implements SensorConstants, Gyroscope {
         // populate bias population for 5 seconds
         calibrating=true;
         for (int i=0;i<1000;i++) {
-            getAngularVelocity();
+            getAngularVelocity(); 
             Delay.msDelay(5);
         }
         calibrating=false;
