@@ -55,10 +55,14 @@ public class MotorPort implements TachoMotorPort {
     }
 
 	/**
-	 * Low-level method to control a motor.
+	 * Low-level method to control a motor. 
 	 * 
 	 * @param power power from 0-100
-	 * @param mode 1=forward, 2=backward, 3=stop, 4=float
+	 * @param mode defined in <code>BasicMotorPort</code>. 1=forward, 2=backward, 3=stop, 4=float.
+     * @see BasicMotorPort#FORWARD
+     * @see BasicMotorPort#BACKWARD
+     * @see BasicMotorPort#FLOAT
+     * @see BasicMotorPort#STOP
 	 */
 	public void controlMotor(int power, int mode)
 	{
