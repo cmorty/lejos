@@ -14,16 +14,16 @@ public class RCXMuxTest{
 		
 		while(true){
 			mux.setChannelOne();
-			LCD.drawInt(light.readValue(), 4, 0, 0);
+			LCD.drawInt(light.getLightValue(), 4, 0, 0);
 			Thread.sleep(250);
 			mux.setChannelTwo();
-			LCD.drawInt(light.readValue(), 4, 0, 0);
+			LCD.drawInt(light.getLightValue(), 4, 0, 0);
 			Thread.sleep(250);
 			mux.setChannelThree();
-			LCD.drawInt(light.readValue(), 4, 0, 0);
+			LCD.drawInt(light.getLightValue(), 4, 0, 0);
 			Thread.sleep(250);
 			mux.setChannelFour();
-			LCD.drawInt(light.readValue(), 4, 0, 0);
+			LCD.drawInt(light.getLightValue(), 4, 0, 0);
 			Thread.sleep(250);
 
 		}
