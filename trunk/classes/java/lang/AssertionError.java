@@ -4,42 +4,52 @@ public class AssertionError extends Error
 {
 	public AssertionError()
 	{
-		//FIXME generate proper messages
-		super("assertion failed");
+		super();
+	}
+	
+	public AssertionError(String message)
+	{
+		super(message);
 	}
 
 	public AssertionError(boolean message)
 	{
-		this();
+		this(String.valueOf(message));
 	}
 
 	public AssertionError(char message)
 	{
-		this();
+		this(String.valueOf(message));
 	}
 
 	public AssertionError(double message)
 	{
-		this();
+		this(String.valueOf(message));
 	}
 
 	public AssertionError(float message)
 	{
-		this();
+		this(String.valueOf(message));
 	}
 
 	public AssertionError(int message)
 	{
-		this();
+		this(String.valueOf(message));
 	}
 
 	public AssertionError(long message)
 	{
-		this();
+		this(String.valueOf(message));
 	}
 
 	public AssertionError(Object message)
 	{
-		this();
+		this(String.valueOf(message));
+		
+		if (message instanceof Throwable)
+		{
+			//TODO init cause
+			//this.initCause((Throwable) message);
+		}
 	}
 }
