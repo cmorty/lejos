@@ -8,8 +8,6 @@ package java.util;
  */
 abstract class AbstractCollection<E> implements Collection<E>
 {
-	//TODO toString
-	
 	public boolean addAll(Collection<? extends E> c)
 	{
 		boolean r = false;
@@ -82,4 +80,25 @@ abstract class AbstractCollection<E> implements Collection<E>
 		return dest;
 	}
 
+    @Override
+	public String toString()
+    {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append('[');
+    	
+    	Iterator<?> it = this.iterator();
+    	if (it.hasNext())
+    	{
+    		sb.append(it.next());
+    		while (it.hasNext())
+    		{
+    			//Note: if <code>this</code> is returned by the iterator, the JDK appends "(this Collection)"
+    			//However: this is not documented anywhere, and it workarounds a stack overflow only for very simple scenarios.
+    			sb.append(", ");
+    			sb.append(it.next());
+			}
+    	}
+    	sb.append(']');
+    	return sb.toString();
+    }
 }

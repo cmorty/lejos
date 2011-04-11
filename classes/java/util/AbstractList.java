@@ -8,8 +8,6 @@ package java.util;
  */
 abstract class AbstractList<E> extends AbstractCollection<E> implements List<E>
 {
-	//TODO hashCode
-	
 	public boolean contains(Object o)
 	{
 		return this.indexOf(o) >= 0;
@@ -46,6 +44,16 @@ abstract class AbstractList<E> extends AbstractCollection<E> implements List<E>
 		return n1 == n2;
 	}
 
+	@Override
+	public int hashCode()
+	{
+		int r = 1;
+		for (Object o : this)
+			r = 31 * r + (o == null ? 0 : o.hashCode());
+		
+		return r;
+	}
+	
 	public Iterator<E> iterator()
 	{
 		return this.listIterator();
