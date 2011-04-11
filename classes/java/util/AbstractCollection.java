@@ -94,6 +94,7 @@ abstract class AbstractCollection<E> implements Collection<E>
     		{
     			//Note: if <code>this</code> is returned by the iterator, the JDK appends "(this Collection)"
     			//However: this is not documented anywhere, and it workarounds a stack overflow only for very simple scenarios.
+    			//Also related: http://stackoverflow.com/questions/995477/why-does-java-tostring-loop-infinitely-on-indirect-cycles
     			sb.append(", ");
     			sb.append(it.next());
 			}
