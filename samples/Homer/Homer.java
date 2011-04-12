@@ -43,6 +43,7 @@ public class Homer {
   private static final int NUM_PARTICLES = 200;
   private static final int MAX_RELIABLE_RANGE_READING = 150;
   private static final float RANGE_READING_ANGLE = 45;
+  private static final float[] ANGLES = {-RANGE_READING_ANGLE, 0, RANGE_READING_ANGLE};
   private static final int FORWARD_READING = 1;
   private static final int MAX_DISTANCE = 40;
   
@@ -71,24 +72,20 @@ public class Homer {
     simpson.run();
   }
   
-  public Homer()
-  {
-	  range.continuous();
-  }
-  
   public void run() {  
     //RConsole.openBluetooth(0);
     //System.setOut(new PrintStream(RConsole.openOutputStream()));
     
+	range.continuous();
     // Create the robot and MCL pose provider and get its particle set
     pilot = new DifferentialPilot( 
-        TYRE_DIAMETER, WHEEL_BASE, Motor.B, Motor.C, true);
+        TYRE_DIAMETER, WHEEL_BASE, Motor.A, Motor.C, true);
     scanner = new FixedRangeScanner(pilot,range);
+    scanner.setAngles(ANGLES);
     mcl = new MCLPoseProvider(pilot,scanner, map, NUM_PARTICLES, BORDER);
     particles = mcl.getParticles();
     particles.setDebug(true);
 
-    
     // Make random moves until we know where we are
     Pose start = localize(); 
   
@@ -116,19 +113,6 @@ public class Homer {
     }
     Button.waitForPress();
   }
-
-  public RangeReadings getRangeValues() {
-    takeReadings();
-    return readings;
-  }
-  
-  
-  /**
-   * Take a set of 3 readings
-   */
-  public void takeReadings() {
-    scanner.getRangeValues();
-  }
   
   /**
    * Make a random move
@@ -138,6 +122,8 @@ public class Homer {
     float distance = (float) Math.random() * MAX_DISTANCE;
     
     if (angle > 180f) angle -= 360f;
+    
+    readings = scanner.getRangeValues();
 
     // Get forward range
     float forwardRange = readings.getRange(1);
@@ -169,9 +155,6 @@ public class Homer {
       if (goodEstimate(pose)) return pose;
       else randomMove();
     }
-  }
-
-  public void setAngles(float[] angles) {
   }
 }
 
