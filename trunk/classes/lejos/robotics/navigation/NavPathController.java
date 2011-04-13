@@ -2,6 +2,8 @@ package lejos.robotics.navigation;
 
 import lejos.robotics.localization.DeadReckonerPoseProvider;
 import lejos.robotics.localization.PoseProvider;
+import lejos.robotics.pathfinding.PathFinder;
+
 import java.util.*;
 import lejos.robotics.*;
 
