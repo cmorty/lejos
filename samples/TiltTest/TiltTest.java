@@ -1,4 +1,3 @@
-
 import lejos.nxt.*;
 import lejos.nxt.addon.*;
 
@@ -14,7 +13,8 @@ import lejos.nxt.addon.*;
 public class TiltTest {
 	
 	public static void main(String[] args) throws Exception {
-		TiltSensor tilt = new TiltSensor(SensorPort.S1);
+		//AccelMindSensor tilt = new AccelMindSensor(SensorPort.S1);
+		AccelHTSensor tilt = new AccelHTSensor(SensorPort.S1);
 			
 		while(!Button.ESCAPE.isPressed()) {
 			LCD.clear();
