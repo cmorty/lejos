@@ -1,6 +1,10 @@
-package lejos.robotics.navigation;
+package lejos.robotics.pathfinding;
 
 import lejos.robotics.mapping.LineMap;
+import lejos.robotics.navigation.DestinationUnreachableException;
+import lejos.robotics.navigation.WayPoint;
+import lejos.robotics.navigation.WayPointListener;
+
 import java.util.*;
 import lejos.geom.*;
 import lejos.robotics.Pose;
@@ -17,12 +21,12 @@ import lejos.robotics.Pose;
  *
  * @author Roger Glassey
  */
-public class DijkstraPathPlanner implements PathFinder
+public class DijkstraPathFinder implements PathFinder
 {
 
 
 
-public DijkstraPathPlanner(LineMap map)
+public DijkstraPathFinder(LineMap map)
 {
   setMap(map);
 }

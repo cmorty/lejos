@@ -15,9 +15,9 @@ import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.navigation.NavPathController;
 import lejos.robotics.navigation.DestinationUnreachableException;
 import lejos.robotics.navigation.DifferentialPilot;
-import lejos.robotics.navigation.RandomPathFinder;
-import lejos.robotics.navigation.PathFinder;
 import lejos.robotics.navigation.WayPoint;
+import lejos.robotics.pathfinding.PathFinder;
+import lejos.robotics.pathfinding.RandomPathFinder;
 import lejos.robotics.localization.MCLPoseProvider;
 
 /**
