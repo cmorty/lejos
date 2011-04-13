@@ -109,6 +109,6 @@ public class LCPResponder extends Thread {
     {
         running = false;
         connector.cancel();
-        disconnect();
+        if (conn != null) disconnect();
     }
 }
