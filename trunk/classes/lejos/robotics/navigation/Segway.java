@@ -12,8 +12,8 @@ import lejos.nxt.addon.GyroSensor;
  * <p>To start the robot balancing:
  * <li>1. Run the program. You will be prompted to lay it down.
  * <li>2. Lay it down (orientation doesn't matter). It will automatically calibrate the gyro sensor.
- * <li>3. When the beeping begins, stand it up vertically so it feels balanced in your hands.
- * <li>4. When the beeping stops, let go and it will begin balancing.</p>
+ * <li>3. When the beeping begins, stand it up so it is vertically balanced.
+ * <li>4. When the beeping stops, let go and it will begin balancing on its own.</p>
  * 
  * <p>Alternately you can lean the robot against a wall and run the program. After the gyro 
  * calibration, the robot backs up against the wall until it falls forward. When it detects the
@@ -148,13 +148,13 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 	 *  <li>NXT 1.0 wheels = 5.6 cm
 	 *  <li>NXT 2.0 wheels = 4.32 cm
 	 *  <li>RCX "motorcycle" wheels = 8.16 cm
-	 *  
-	 * @param right
-	 * @param left
-	 * @param gyro
+	 * 
+	 * @param left The left motor. An unregulated motor.
+	 * @param right The right motor. An unregulated motor.
+	 * @param gyro A HiTechnic gyro sensor
 	 * @param wheelDiameter diameter of wheel, preferably use cm (printed on side of LEGO tires in mm)
 	 */
-	public Segway(NXTMotor right, NXTMotor left, GyroSensor gyro, double wheelDiameter) {
+	public Segway(NXTMotor left, NXTMotor right, GyroSensor gyro, double wheelDiameter) {
 		this.left_motor = left;
 		this.right_motor = right;
 		// Optional code to accept BasicMotor: this.right_motor = (NXTMotor)right;
@@ -392,8 +392,7 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 		int power;
 		long tMotorPosOK;
 		long cLoop = 0;
-		//long timeSum = 0; // TODO: DELETE ME
-
+		
 		LCD.clear();
 		LCD.drawString("leJOS NXJ Segway", 0, 1);
 		LCD.drawString("Balancing", 0, 4);
