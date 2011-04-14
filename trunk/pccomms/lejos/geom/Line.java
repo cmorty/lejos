@@ -98,7 +98,7 @@ public class Line extends Line2D.Float {
   }
 /**
  *  Make this line longer by an amount delta at each end.
- * Used by DijkstraPathPlanner to use the same LineMap as the a RangeScanner
+ * Used by DijkstraPathFinder to use the same LineMap as the a RangeScanner
  * in MCL navigation.
  * @param delta  the amount added to each end
  */

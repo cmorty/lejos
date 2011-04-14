@@ -1,4 +1,4 @@
-package lejos.robotics.navigation;
+package lejos.robotics.pathfinding;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +10,9 @@ import lejos.robotics.Pose;
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.mapping.RangeMap;
+import lejos.robotics.navigation.DestinationUnreachableException;
+import lejos.robotics.navigation.WayPoint;
+import lejos.robotics.navigation.WayPointListener;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
