@@ -10,7 +10,8 @@ import lejos.nxt.addon.*;
  */
 public class AccelDemo {
 	public static void main(String [] args) throws Exception {
-		TiltSensor a = new TiltSensor(SensorPort.S1);
+		AccelMindSensor a = new AccelMindSensor(SensorPort.S1);
+		//AccelHTSensor a = new AccelHTSensor(SensorPort.S1);
 		
 		System.out.println("Prod ID " + a.getProductID());
 		System.out.println("Port Type " + a.getSensorType());
