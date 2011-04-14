@@ -21,12 +21,12 @@ import lejos.robotics.Pose;
  *
  * @author Roger Glassey
  */
-public class DijkstraPathFinder implements PathFinder
+public class ShortestPathFinder implements PathFinder
 {
 
 
 
-public DijkstraPathFinder(LineMap map)
+public ShortestPathFinder(LineMap map)
 {
   setMap(map);
 }
