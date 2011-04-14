@@ -1,7 +1,10 @@
-package lejos.robotics.navigation;
+package lejos.robotics.pathfinding;
 
 import java.util.Collection;
 import lejos.robotics.Pose;
+import lejos.robotics.navigation.DestinationUnreachableException;
+import lejos.robotics.navigation.WayPoint;
+import lejos.robotics.navigation.WayPointListener;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
