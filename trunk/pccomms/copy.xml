@@ -97,6 +97,7 @@
   			<fileset dir="../classes">
   				<include name="lejos/robotics/navigation/*.java"/>
   				<include name="lejos/robotics/navigation/package.html"/>
+  				<exclude name="lejos/robotics/navigation/Segway.java"/>
   			</fileset>
   		</copy>
   		<mkdir dir="lejos/robotics/mapping"/>

@@ -16,11 +16,6 @@ import lejos.util.Delay;
  * @author Kirk P. Thompson, 3/3/2011 &lt;lejos@mosen.net&gt;
  */
 public class LinearActuator {
-    private final int FORWARD = 1;
-    private final int BACKWARD = 2;
-    private final int STOP = 3;
-    private final int FLOAT = 4;
-     
     private MotorPort _motorPort;
     private int _power =0;
     private int _tick_wait=40; // this is calculated in setPower() to fit the power setting. Variable because lower powers move it slower.
@@ -29,7 +24,7 @@ public class LinearActuator {
     private volatile boolean _doActuate = false;;
     private Thread moveDetector;
     private Thread actuator;
-    private int _direction = FORWARD;
+    private int _direction = MotorPort.FORWARD;
     private int _distanceTicks;
     private boolean _killCurrentAction;
 
@@ -107,7 +102,7 @@ public class LinearActuator {
      */
     public void extend(int distance, boolean immediateReturn ){
         // set globals
-        _direction = FORWARD;
+        _direction = MotorPort.FORWARD;
         _distanceTicks = distance;
          // initiate the action
         doAction(immediateReturn);
@@ -132,7 +127,7 @@ public class LinearActuator {
      */
     public void retract(int distance, boolean immediateReturn ){
         // set globals
-        _direction = BACKWARD;
+        _direction = MotorPort.BACKWARD;
         _distanceTicks = distance;
          // initiate the action
         doAction(immediateReturn);
@@ -254,9 +249,9 @@ public class LinearActuator {
     public void stopActuator() {
         _killCurrentAction = true;
         _doActuate = false;
-        _motorPort.controlMotor(0, STOP);
+        _motorPort.controlMotor(0, MotorPort.STOP);
         doWait(20);
-        _motorPort.controlMotor(0, FLOAT);
+        _motorPort.controlMotor(0, MotorPort.FLOAT);
 //        LCD.drawString("stopActuator  ",0,5);
     }
 
