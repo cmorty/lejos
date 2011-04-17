@@ -46,6 +46,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="PFLinkTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="PFMateTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="PFTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="PilotParams"/>
 	<classpathentry excluding="build.xml" kind="src" path="PilotTester"/>
 	<classpathentry excluding="build.xml" kind="src" path="RCNavigator"/>
 	<classpathentry excluding="build.xml" kind="src" path="RCPilot"/>
