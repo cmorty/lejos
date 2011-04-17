@@ -1,5 +1,9 @@
+import java.util.Properties;
+
 import lejos.nxt.*;
 import lejos.util.Delay;
+import lejos.util.PilotProps;
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**
@@ -24,11 +28,19 @@ import lejos.robotics.navigation.DifferentialPilot;
  */ 
 public class PilotTester
 {
-	static DifferentialPilot robot = new DifferentialPilot(4.96f,13f,Motor.B, Motor.C,false);
+	static PilotProps pp = new PilotProps();
+	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "4.96"));
+	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "13"));
+	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
+	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("leftMotor", "C"));
+	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
+	
+	static DifferentialPilot robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor, Motor.C,reverse);
  
 	public static void main(String[] args ) throws Exception
 	{
         // Wait for user to press ENTER
+		System.out.println("wheel=" + wheelDiameter);
         LCD.drawString("M " + robot.getMaxTravelSpeed(), 0, 0);
 		Button.waitForPress();
         robot.setAcceleration(4000);
