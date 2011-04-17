@@ -1,5 +1,7 @@
 import lejos.nxt.*;
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.*;
+import lejos.util.PilotProps;
 import lejos.nxt.comm.*;
 
 /**
@@ -27,7 +29,13 @@ import lejos.nxt.comm.*;
  */
 public class MonitorTest 
 {
-	static DifferentialPilot robot = new DifferentialPilot(5.6f,16.0f,Motor.A, Motor.C,true);
+	static PilotProps pp = new PilotProps();
+	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "5.6"));
+	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "16"));
+	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
+	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
+	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
+	static DifferentialPilot robot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
 	
 	public static void main(String[] args ) throws Exception 
 	{

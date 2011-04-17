@@ -1,7 +1,9 @@
 import lejos.nxt.*;
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.subsumption.*;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.RotateMoveController;
+import lejos.util.PilotProps;
 
 /**
  * Demonstration of use of the Behavior and Pilot classes to
@@ -18,6 +20,13 @@ import lejos.robotics.navigation.RotateMoveController;
  */
 public class Line {
 	
+	static PilotProps pp = new PilotProps();
+	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "4.96"));
+	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "13"));
+	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
+	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
+	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
+	
 	public static void main (String[] aArg)
 	throws Exception
 	{
@@ -25,7 +34,7 @@ public class Line {
 		// direction you want to be "forward" for your vehicle.
 		// The wheel and axle dimension parameters should be
 		// set for your robot, but are not critical.
-		final RotateMoveController pilot = new DifferentialPilot(5.6f,16.0f,Motor.A, Motor.C, true);
+		final RotateMoveController pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, true);
 		final LightSensor light = new LightSensor(SensorPort.S1);
                 pilot.setRotateSpeed(180);
         /**

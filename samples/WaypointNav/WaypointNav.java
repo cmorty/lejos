@@ -1,5 +1,7 @@
 import lejos.robotics.Pose;
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.*;
+import lejos.util.PilotProps;
 import lejos.nxt.*;
 import java.util.ArrayList;
 
@@ -103,6 +105,14 @@ public class WaypointNav
       segments.remove(0);
     }
   }
+  
+	static PilotProps pp = new PilotProps();
+	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "4.96"));
+	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "13"));
+	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
+	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
+	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
+	
   /**
    * test of WaypointNav
    * @param args
@@ -112,7 +122,7 @@ public class WaypointNav
       System.out.println("Any button");
       Button.waitForPress();
       NavPathController nav = new NavPathController(
-              new DifferentialPilot(5.6f, 14.2f, Motor.A, Motor.C));
+              new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse));
       WaypointNav wpNav = new WaypointNav(nav);
       wpNav.add(20, 20, 90, 15);
       wpNav.add(20,0,180,30);

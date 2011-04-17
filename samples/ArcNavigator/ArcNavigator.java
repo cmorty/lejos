@@ -1,7 +1,9 @@
 import lejos.nxt.*;
 import lejos.robotics.Pose;
+import lejos.robotics.RegulatedMotor;
 import lejos.geom.Point;
 import lejos.robotics.navigation.*;
+import lejos.util.PilotProps;
 
 /**
  *Testing an algorithm for making arc turns to reach a destination
@@ -72,13 +74,20 @@ public class ArcNavigator
   if(angle > 180)angle -=360;
   return angle;
 }
+ 
+	static PilotProps pp = new PilotProps();
+	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "2.16"));
+	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "5.42"));
+	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "A"));
+	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "B"));
+	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
     /**
      * Tests the arc steering code
      * @param args the command line arguments
      */
     public static void main(String[] args)
     {
-      DifferentialPilot pilot = new DifferentialPilot(2.16f, 5.42f, Motor.A, Motor.B);
+      DifferentialPilot pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
       float minimumRadius = 5;
       ArcNavigator nav = new ArcNavigator(pilot,minimumRadius);
       Button.waitForPress();

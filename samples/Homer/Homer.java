@@ -9,6 +9,7 @@ import lejos.robotics.Pose;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.RangeScanner;
 import lejos.robotics.FixedRangeScanner;
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.mapping.RangeMap;
@@ -19,6 +20,7 @@ import lejos.robotics.navigation.WayPoint;
 import lejos.robotics.pathfinding.PathFinder;
 import lejos.robotics.pathfinding.RandomPathFinder;
 import lejos.robotics.localization.MCLPoseProvider;
+import lejos.util.PilotProps;
 
 /**
  * Test of Monte Carlo Localisation, Pose Controllers and Path finders.
@@ -36,8 +38,12 @@ import lejos.robotics.localization.MCLPoseProvider;
  */
 public class Homer {
   // Tyre diameter and wheel base
-  private static final float TYRE_DIAMETER = 5.6f;
-  private static final float WHEEL_BASE = 16.0f;
+  static PilotProps pp = new PilotProps();
+  static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "4.96"));
+  static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "13"));
+  static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
+  static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
+  static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
 
   private static final int BORDER = 10; 
   private static final int NUM_PARTICLES = 200;
@@ -79,7 +85,7 @@ public class Homer {
 	range.continuous();
     // Create the robot and MCL pose provider and get its particle set
     pilot = new DifferentialPilot( 
-        TYRE_DIAMETER, WHEEL_BASE, Motor.A, Motor.C, true);
+        wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
     scanner = new FixedRangeScanner(pilot,range);
     scanner.setAngles(ANGLES);
     mcl = new MCLPoseProvider(pilot,scanner, map, NUM_PARTICLES, BORDER);
