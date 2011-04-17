@@ -4,6 +4,9 @@ import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.NavPathController;
 import lejos.nxt.*;
 import lejos.robotics.Pose;
+import lejos.robotics.RegulatedMotor;
+import lejos.util.PilotProps;
+
 import java.util.Random;
 
 /**
@@ -78,6 +81,13 @@ public class BumpNavigator {
         pilot.stop();
         return  side;  // watch for hit while moving forward
     }
+    
+	static PilotProps pp = new PilotProps();
+	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "5.6"));
+	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "14.2"));
+	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "A"));
+	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
+	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
 
     /**
      * test of BumpNavitator. destination is 200 cm  directly ahead.
@@ -85,7 +95,7 @@ public class BumpNavigator {
      */
     public static void main(String[] args) {
 
-        DifferentialPilot p = new DifferentialPilot(5.6f, 14.2f, Motor.A, Motor.C);
+        DifferentialPilot p = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
         NavPathController nav = new NavPathController(p);
         BumpNavigator robot = new BumpNavigator(nav, SensorPort.S1, SensorPort.S4);
         robot.pilot = p;

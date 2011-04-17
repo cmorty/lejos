@@ -10,6 +10,7 @@ import lejos.nxt.*;
 import lejos.util.*;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.*;
 
 /**
@@ -140,14 +141,20 @@ public class RCPilot implements RemotePilotMethod
       Sound.beepSequence();
       }
     }
-
+   
+	static PilotProps pp = new PilotProps();
+	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "2.2"));
+	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "5.2"));
+	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "A"));
+	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
+	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args)
     {
-      DifferentialPilot p = new DifferentialPilot(2.2f, 5.2f, Motor.A, Motor.C);
+      DifferentialPilot p = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
       RCPilot pilot = new RCPilot(p);
       pilot.go();
     }

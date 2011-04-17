@@ -32,7 +32,7 @@ public class PilotTester
 	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "4.96"));
 	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "13"));
 	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
-	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("leftMotor", "C"));
+	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
 	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
 	
 	static DifferentialPilot robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor, Motor.C,reverse);

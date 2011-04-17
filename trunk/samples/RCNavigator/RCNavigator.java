@@ -6,6 +6,8 @@ import lejos.robotics.localization.DeadReckonerPoseProvider;
 import lejos.robotics.navigation.ArcRotateMoveController;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.Pose;
+import lejos.robotics.RegulatedMotor;
+import lejos.util.PilotProps;
 import lejos.geom.Point;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
@@ -25,13 +27,21 @@ public class RCNavigator
       pilot.setTravelSpeed(20);
       pilot.setRotateSpeed(180);
     }
+   
+	static PilotProps pp = new PilotProps();
+	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "4.96"));
+	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "13"));
+	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
+	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
+	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
+	
 /**
  * wheel diameter and track width in cm.
  * @param args
  */
    public static void main(String[] args)
     {
-      DifferentialPilot pilot = new DifferentialPilot(5.6f, 14.3f, Motor.A, Motor.C);
+      DifferentialPilot pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
       new RCNavigator(pilot).go();
     }
 /**

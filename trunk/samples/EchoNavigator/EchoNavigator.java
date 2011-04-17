@@ -3,9 +3,11 @@ import lejos.robotics.localization.DeadReckonerPoseProvider;
 import lejos.robotics.navigation.ArcRotateMoveController;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.Pose;
+import lejos.robotics.RegulatedMotor;
 import lejos.geom.Point;
 import java.util.Random;
 import lejos.util.Delay;
+import lejos.util.PilotProps;
 
 /**
  * EchoNavigator is a obstacle avoiding  robot that attempts reach its destination.
@@ -109,6 +111,13 @@ public void goTo(float x, float y)
     pilot.stop();
     return clear;
   }
+  
+	static PilotProps pp = new PilotProps();
+	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "5.6"));
+	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "14.2"));
+	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "A"));
+	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
+	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
 
   /**
    * assumes UltrasonicSensor is on port S3;
@@ -117,7 +126,7 @@ public void goTo(float x, float y)
   public static void main(String[] args)
   {
     System.out.println("Any Button");
-    ArcRotateMoveController pilot = new DifferentialPilot(5.6f, 12.5f, Motor.A, Motor.C, false);
+    ArcRotateMoveController pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
     EchoNavigator  robot  = new EchoNavigator(pilot,SensorPort.S3);
     Button.waitForPress();
     robot.goTo(200,0);
