@@ -29,6 +29,7 @@ public class RemoteMotor implements RegulatedMotor, NXTProtocol {
 	private boolean _rotating = false;
 	private NXTCommand nxtCommand;
 	private RemoteBattery battery;
+    protected RegulatedMotorListener listener = null;
 	
 	public RemoteMotor(NXTCommand nxtCommand, int id) {
 		this.id = id;
@@ -190,6 +191,7 @@ public class RemoteMotor implements RegulatedMotor, NXTProtocol {
     {
         while (isMoving())
             Thread.yield();
+        listener.rotationStarted(this, getTachoCount(), false, System.currentTimeMillis());
     }
 	
 	/**
@@ -324,10 +326,10 @@ public class RemoteMotor implements RegulatedMotor, NXTProtocol {
 	}
 
 	/**
-	 * Currently not implemented in RemoteMotor!
+	 * Currently not completely implemented in RemoteMotor!
 	 */
 	public void addListener(RegulatedMotorListener listener) {
-		// TODO Currently has no actual event-listener architecture
+		this.listener = listener;
 		
 	}
 	
