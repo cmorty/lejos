@@ -15,7 +15,8 @@ import lejos.robotics.DCMotor;
  */
 public abstract class BasicMotor implements DCMotor
 {
-	protected int mode = MotorPort.FLOAT;
+    protected static int INVALID_MODE = -1;
+	protected int mode = INVALID_MODE;
     protected BasicMotorPort port;
     protected int power = 0;
 
