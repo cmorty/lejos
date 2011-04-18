@@ -1,9 +1,11 @@
 package lejos.robotics.navigation;
 
-import lejos.nxt.Motor;
-import lejos.nxt.Sound;
-import lejos.nxt.addon.GyroSensor;
-import lejos.robotics.UnregulatedMotor;
+// TODO: Get rid of platform dependencies.
+import lejos.nxt.LCD; // TODO: Use System.out instead. Alt constructor to suppress visual info.
+import lejos.nxt.Motor; // TODO: Andy might be able to make NXTMotor wake up motor controller chip.
+import lejos.nxt.Sound; // TODO: Visual count-down only, no sound.
+import lejos.nxt.addon.GyroSensor; // TODO: Use Gyroscope interface. Returns degrees/second velocity.
+import lejos.robotics.EncoderMotor;
 
 /**
  * <p>This class balances a two-wheeled Segway-like robot. It works with almost any construction 
@@ -13,7 +15,7 @@ import lejos.robotics.UnregulatedMotor;
  * 
  * <p>To start the robot balancing:
  * <li>1. Run the program. You will be prompted to lay it down.
- * <li>2. Lay it down (orientation doesn't matter). It will automatically calibrate the gyro sensor.
+ * <li>2. Lay it down (orientation doesn't matter). When it detects it is not moving it will automatically calibrate the gyro sensor.
  * <li>3. When the beeping begins, stand it up so it is vertically balanced.
  * <li>4. When the beeping stops, let go and it will begin balancing on its own.</p>
  * 
@@ -32,8 +34,8 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 
 	// Motors and gyro:
 	private GyroSensor gyro; 
-	protected UnregulatedMotor left_motor;
-	protected UnregulatedMotor right_motor;
+	protected EncoderMotor left_motor;
+	protected EncoderMotor right_motor;
 	
 	//=====================================================================
 	// Balancing constants
@@ -156,7 +158,7 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 	 * @param gyro A HiTechnic gyro sensor
 	 * @param wheelDiameter diameter of wheel, preferably use cm (printed on side of LEGO tires in mm)
 	 */
-	public Segway(UnregulatedMotor left, UnregulatedMotor right, GyroSensor gyro, double wheelDiameter) {
+	public Segway(EncoderMotor left, EncoderMotor right, GyroSensor gyro, double wheelDiameter) {
 		this.left_motor = left;
 		this.right_motor = right;
 		// Optional code to accept BasicMotor: this.right_motor = (NXTMotor)right;
@@ -191,19 +193,18 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 		double gSum;
 		int  i, gMin, gMax, g;
 
-		//LCD.clear();
-		//LCD.drawString("leJOS NXJ Segway",0,1);
+		LCD.clear();
+		LCD.drawString("leJOS NXJ Segway",0,1);
 
-		//LCD.drawString("Lay robot down", 0, 4);
-		//LCD.drawString("flat to get gyro", 0, 5);
-		//LCD.drawString("offset.", 0, 6);
+		LCD.drawString("Lay robot down", 0, 4);
+		LCD.drawString("flat to get gyro", 0, 5);
+		LCD.drawString("offset.", 0, 6);
 
 		// Ensure that the motor controller is active since this affects the gyro values.
 		// TODO: Could try running the motors at very low power, which is what it normally runs at.
-		//left_motor.flt(); These methods don't do it for some reason.
-		//right_motor.flt();
-		Motor.A.flt(); // Must use these for it to work for some reason.
-		Motor.C.flt();
+		//left_motor.flt(); //These methods don't do it for some reason.
+		
+		Motor.A.flt(); // Must use this for it to work for some reason.
 		
 		do {
 			gSum = 0.0;
@@ -236,13 +237,13 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 	 * Warn user the Segway is about to start balancing. 
 	 */
 	private void startBeeps() {
-		//LCD.clear();
-		//LCD.drawString("leJOS NXJ Segway", 0, 1);
-		//LCD.drawString("Balance in", 0, 3);
+		LCD.clear();
+		LCD.drawString("leJOS NXJ Segway", 0, 1);
+		LCD.drawString("Balance in", 0, 3);
 
 		// Play warning beep sequence to indicate balance about to start
 		for (int c=5; c>=0;c--) {
-			//LCD.drawInt(c, 5, 4);
+			LCD.drawInt(c, 5, 4);
 			Sound.playTone(440,100);
 			try { Thread.sleep(1000);
 			} catch (InterruptedException e) {}
@@ -397,9 +398,9 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 		long tMotorPosOK;
 		long cLoop = 0;
 		
-		//LCD.clear();
-		//LCD.drawString("leJOS NXJ Segway", 0, 1);
-		//LCD.drawString("Balancing", 0, 4);
+		LCD.clear();
+		LCD.drawString("leJOS NXJ Segway", 0, 1);
+		LCD.drawString("Balancing", 0, 4);
 
 		tMotorPosOK = System.currentTimeMillis();
 
@@ -451,10 +452,10 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 		left_motor.flt();
 		right_motor.flt();
 
-		Sound.buzz();
-		//LCD.drawString("Oops... I fell", 0, 4);
-		//LCD.drawString("tInt ms:", 0, 8);
-		//LCD.drawInt((int)tInterval*1000, 9, 8);
+		Sound.beepSequenceUp();
+		LCD.drawString("Oops... I fell", 0, 4);
+		LCD.drawString("tInt ms:", 0, 8);
+		LCD.drawInt((int)tInterval*1000, 9, 8);
 	} // END OF BALANCING THREAD CODE
 
 	/**
@@ -465,8 +466,8 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 	 * to rotate backwards. Values between -200 and 200 are good. If values are too high it can make the
 	 * robot balance unstable.
 	 * 
-	 * @param left_wheel The relative control power to the left wheel. 0 to 200 are good numbers.
-	 * @param right_wheel The relative control power to the right wheel. 0 to 200 are good numbers.
+	 * @param left_wheel The relative control power to the left wheel. -200 to 200 are good numbers.
+	 * @param right_wheel The relative control power to the right wheel. -200 to 200 are good numbers.
 	 */
 	
 	public void wheelDriver(int left_wheel, int right_wheel) {
