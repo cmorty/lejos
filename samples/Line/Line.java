@@ -15,6 +15,10 @@ import lejos.util.PilotProps;
  * 
  * Press ENTER to start the robot.
  * 
+ * You can run the PilotParams sample to create a property file which 
+ * sets the parameters of the Pilot to the dimensions
+ * and motor connections for your robot.
+ * 
  * @author Lawrie Griffiths
  *
  */

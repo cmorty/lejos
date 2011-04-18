@@ -24,6 +24,10 @@ import lejos.nxt.comm.*;
  * you will see values for the motor tachometer readings 
  * in the motor gauges for A and C.
  * 
+ * You can run the PilotParams sample to create a property file which 
+ * sets the parameters of the Pilot to the dimensions
+ * and motor connections for your robot.
+ * 
  * @author Lawrie Griffiths
  *
  */
