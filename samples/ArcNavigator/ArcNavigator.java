@@ -6,8 +6,12 @@ import lejos.robotics.navigation.*;
 import lejos.util.PilotProps;
 
 /**
- *Testing an algorithm for making arc turns to reach a destination
+ * Testing an algorithm for making arc turns to reach a destination
  *
+ * You can run the PilotParams sample to create a property file which 
+ * sets the parameters of the Pilot to the dimensions
+ * and motor connections for your robot.
+ * 
  * @author Roger Glassey
  */
 public class ArcNavigator

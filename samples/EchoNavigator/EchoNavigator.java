@@ -16,6 +16,11 @@ import lejos.util.PilotProps;
  * Since it relies on dead reckoning to keep track of its
  * location, the accuracy of navigation degrades with each obstacle.  Does not
  * map the obstacles, but uses a randomized avoiding strategy.
+ * 
+ * You can run the PilotParams sample to create a property file which 
+ * sets the parameters of the Pilot to the dimensions
+ * and motor connections for your robot.
+ * 
  * @author Roger Glassey
  */
 public class EchoNavigator
