@@ -1,9 +1,11 @@
 import java.io.PrintStream;
 import java.util.Random;
 
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.util.KalmanFilter;
 import lejos.util.Matrix;
+import lejos.util.PilotProps;
 import lejos.nxt.*;
 import lejos.nxt.comm.RConsole;
 
@@ -31,8 +33,13 @@ import lejos.nxt.comm.RConsole;
  */
 public class KalmanTest {  
   // Tyre diameter and distance between wheels 
-  private static final float TYRE_DIAMETER = 5.6f;
-  private static final float AXLE_TRACK = 16.0f;
+	  
+  static PilotProps pp = new PilotProps();
+  static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "5.6"));
+  static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "16.0"));
+  static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
+  static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
+  static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
   
   public static void main(String[] args) throws InterruptedException {
     UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S1);
@@ -54,7 +61,7 @@ public class KalmanTest {
     
     // Create the pilot
     DifferentialPilot pilot = new DifferentialPilot( 
-        TYRE_DIAMETER, AXLE_TRACK, Motor.A, Motor.C, true);
+        wheelDiameter, trackWidth, leftMotor,rightMotor,reverse);
     
     //Create the filter
     KalmanFilter filter = new KalmanFilter(a,b,c,q,r);

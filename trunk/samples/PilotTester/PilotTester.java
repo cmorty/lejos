@@ -1,5 +1,3 @@
-import java.util.Properties;
-
 import lejos.nxt.*;
 import lejos.util.Delay;
 import lejos.util.PilotProps;
@@ -7,13 +5,14 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**
- * Test of the Pilot class.
+ * Test of the DifferentialPilot class.
  * 
  * Requires a wheeled vehicle with two independently controlled
  * motors to steer differentially, so it can rotate within its 
  * own footprint (i.e. turn on one spot).
  * 
- * Adjust the parameters of the Pilot to the dimensions
+ * You can run the PilotParams sample to create a property file which 
+ * sets the parameters of the Pilot to the dimensions
  * and motor connections for your robot.
  * 
  * The vehicle will go through a series of manoeuvres and
@@ -30,18 +29,16 @@ public class PilotTester
 {
 	static PilotProps pp = new PilotProps();
 	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "4.96"));
-	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "13"));
+	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "13.0"));
 	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
 	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
 	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
 	
-	static DifferentialPilot robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor, Motor.C,reverse);
+	static DifferentialPilot robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
  
 	public static void main(String[] args ) throws Exception
 	{
         // Wait for user to press ENTER
-		System.out.println("wheel=" + wheelDiameter);
-        LCD.drawString("M " + robot.getMaxTravelSpeed(), 0, 0);
 		Button.waitForPress();
         robot.setAcceleration(4000);
 		robot.setTravelSpeed(20); // cm/sec

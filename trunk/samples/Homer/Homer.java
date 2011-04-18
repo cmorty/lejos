@@ -2,7 +2,6 @@ import java.util.Collection;
 import lejos.geom.Line;
 import lejos.geom.Rectangle;
 import lejos.nxt.Button;
-import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;
 import lejos.robotics.Pose;
@@ -33,6 +32,10 @@ import lejos.util.PilotProps;
  * The robot is an robot that is supported by the DifferentialPilot class.
  * A range scanner located above the robot's center of rotation is required.
  * 
+ * You can run the PilotParams sample to create a property file which 
+ * sets the parameters of the Pilot to the dimensions
+ * and motor connections for your robot.
+ * 
  * @author Lawrie Griffiths
  *
  */
@@ -47,10 +50,8 @@ public class Homer {
 
   private static final int BORDER = 10; 
   private static final int NUM_PARTICLES = 200;
-  private static final int MAX_RELIABLE_RANGE_READING = 150;
   private static final float RANGE_READING_ANGLE = 45;
   private static final float[] ANGLES = {-RANGE_READING_ANGLE, 0, RANGE_READING_ANGLE};
-  private static final int FORWARD_READING = 1;
   private static final int MAX_DISTANCE = 40;
   
   // Distance from ultrasonic sensor to front of robot in cm

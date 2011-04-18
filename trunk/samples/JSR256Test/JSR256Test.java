@@ -1,6 +1,4 @@
 import java.io.IOException;
-import java.io.PrintStream;
-
 import javax.microedition.io.Connector;
 import javax.microedition.sensor.Channel;
 import javax.microedition.sensor.ChannelInfo;
@@ -10,15 +8,22 @@ import javax.microedition.sensor.Data;
 import javax.microedition.sensor.LimitCondition;
 import javax.microedition.sensor.SensorConnection;
 import javax.microedition.sensor.SensorInfo;
-
 import lejos.nxt.Button;
-import lejos.nxt.Motor;
 import lejos.nxt.comm.RConsole;
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.DifferentialPilot;
-import lejos.robotics.navigation.LegacyPilot;
+import lejos.util.PilotProps;
 
 public class JSR256Test implements ConditionListener {
-	DifferentialPilot pilot = new DifferentialPilot(5.6f,16.0f,Motor.B, Motor.C,true);
+	
+	static PilotProps pp = new PilotProps();
+	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "5.6"));
+	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "16.0"));
+	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
+	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
+	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
+	
+	DifferentialPilot pilot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
 	
 	public void run() throws InterruptedException {
 		RConsole.openBluetooth(0);	

@@ -16,6 +16,11 @@ import java.util.Random;
  * pose,  the accuracy of navigation degrades with each obstacle.  Does not
  * map the obstacles, but uses a randomized avoiding strategy..
  * Classes used:   DifferentialPilot, NavPathController
+ * 
+ * You can run the PilotParams sample to create a property file which 
+ * sets the parameters of the Pilot to the dimensions
+ * and motor connections for your robot.
+ * 
  * @author Roger Glasssey
  */
 public class BumpNavigator {
