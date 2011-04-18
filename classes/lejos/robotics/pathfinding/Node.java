@@ -118,16 +118,16 @@ public class Node  {
 	/**
 	 * Calculates the distance to a neighbor node. This method is used to optimize the algorithm.
 	 * @param neighbor
-	 * @return
+	 * @return the distance to neighbor
 	 */
 	protected float calculateG(Node neighbor) {
 		return (float)Point2D.distance(this.x, this.y, neighbor.x, neighbor.y);
 	}
 	
 	/**
-	 * Calculates the distance to a neighbor node. This method is used to optimize the algorithm.
+	 * Calculates the distance to the goal node. This method is used to optimize the algorithm.
 	 * @param goal
-	 * @return
+	 * @return the distance to goal
 	 */
 	protected float calculateH(Node goal) {
 		return calculateG(goal);

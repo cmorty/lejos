@@ -1,7 +1,7 @@
 package lejos.nxt;
 
 import lejos.robotics.Encoder;
-import lejos.robotics.UnregulatedMotor;
+import lejos.robotics.EncoderMotor;
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
@@ -11,7 +11,7 @@ import lejos.robotics.UnregulatedMotor;
  * Abstraction for an NXT motor with no speed regulation.
  * 
  */
-public class NXTMotor extends BasicMotor implements UnregulatedMotor {
+public class NXTMotor extends BasicMotor implements EncoderMotor {
     protected Encoder encoderPort;
 
     /**
