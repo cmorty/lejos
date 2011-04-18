@@ -15,6 +15,11 @@ import lejos.nxt.comm.Bluetooth;
 /**
  *Example of a navigating robot  operating under remote control
  * uses Command  enum  to decode incoming messages
+ * 
+ * You can run the PilotParams sample to create a property file which 
+ * sets the parameters of the Pilot to the dimensions
+ * and motor connections for your robot.
+ * 
  * @author Roger Glassey
  */
 public class RCNavigator

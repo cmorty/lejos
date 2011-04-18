@@ -14,6 +14,17 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.util.PilotProps;
 
+/**
+ * 
+ * Test of JSR256 - javax.microedition.sensor.
+ * 
+ * You can run the PilotParams sample to create a property file which 
+ * sets the parameters of the Pilot to the dimensions
+ * and motor connections for your robot.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class JSR256Test implements ConditionListener {
 	
 	static PilotProps pp = new PilotProps();

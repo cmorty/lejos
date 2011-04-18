@@ -9,6 +9,9 @@ import java.util.ArrayList;
  * The WaypointNav class uses  the SimpleNavigator to execute the
  * individual segments
  *
+ * You can run the PilotParams sample to create a property file which 
+ * sets the parameters of the Pilot to the dimensions
+ * and motor connections for your robot.
  * 
  * @author Dirk Sturzebecher - 20090131 - initial version
  * revised 20090701  to use instead of extend  a SimpleNavigator.

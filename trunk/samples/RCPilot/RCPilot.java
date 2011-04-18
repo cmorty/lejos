@@ -16,9 +16,14 @@ import lejos.robotics.navigation.*;
 /**
  * Enables remote control of a pilot object using Bluetooth. Communicates with
  * RemotePilotControl running on PC or other device
- * Recieves commands from the controller and calls the corresponding methods
- * on the pilot; when the methos returns, sends a reply to the controller
- * @author Roger
+ * Receives commands from the controller and calls the corresponding methods
+ * on the pilot; when the method returns, sends a reply to the controller.
+ * 
+ * You can run the PilotParams sample to create a property file which 
+ * sets the parameters of the Pilot to the dimensions
+ * and motor connections for your robot.
+ * 
+ * @author Roger Glassey
  */
 public class RCPilot implements RemotePilotMethod
 {
