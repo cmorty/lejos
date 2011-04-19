@@ -11,12 +11,12 @@
 
     <artifactId>junit-lejos</artifactId>
 
-    <name>${artifactId} : Unit Test library for lejos</name>
+    <name>${project.artifactId} : Unit Test library for lejos</name>
     <description>Unit Test library for lejos based on junit for running tests on the NXT hardware.</description>
 
     <scm>
-        <connection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/leJOSlab/junit</connection>  <!-- @todo rearrange tree to ...trunk/${artifactId} -->
-        <developerConnection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/leJOSlab/junit</developerConnection>  <!-- @todo rearrange tree to ...trunk/${artifactId} -->
+        <connection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/leJOSlab/junit</connection>  <!-- @todo rearrange tree to ...trunk/${project.artifactId} -->
+        <developerConnection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/leJOSlab/junit</developerConnection>  <!-- @todo rearrange tree to ...trunk/${project.artifactId} -->
     </scm>
     <url>http://lejos.sourceforge.net/</url>
 

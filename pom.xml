@@ -6,7 +6,7 @@
     <artifactId>lejos-parent</artifactId>
     <version>0.85-SNAPSHOT</version>
 
-    <name>${artifactId} : Lejos parent project</name>
+    <name>${project.artifactId} : Lejos parent project</name>
     <description>Lejos parent project, containing child modules.</description>
 
     <scm>
