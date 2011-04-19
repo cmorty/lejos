@@ -51,7 +51,7 @@ For details, see:
 http://maven.apache.org/guides/mini/guide-ide-eclipse.html
 
 IDEA:
-ItelliJ IDEA (http://www.jetbrains.com/) can use the pom.xml as a project definition, via File -> Open Project and
+IntelliJ IDEA (http://www.jetbrains.com/) can use the pom.xml as a project definition, via File -> Open Project and
 opening the pom.xml file.
 
 Netbeans:
