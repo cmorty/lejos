@@ -1,7 +1,6 @@
 package lejos.robotics.navigation;
 
 import java.util.ArrayList;
-
 import lejos.nxt.addon.GyroSensor; // TODO: Purely for constructor. SegwayPilot code doesn't use GyroSensor. Use Gyroscope interface. 
 import lejos.robotics.EncoderMotor;
 import lejos.robotics.Move;
@@ -10,18 +9,21 @@ import lejos.robotics.MoveListener;
 /* DEVELOPER NOTES:
  * TODO: Technically AnyWay and HTWay motors must be backwards because forward motion makes the
  * tachometers go negative. Should allow users to switch direction of motors.
- * TODO: It might be possible to reduce this code greatly. The STOP code that keeps wheels seeking targets 
- * might be able to also seek new tacho targets on its own. Speed it pursues the goal should be related to 
- * the distance it is away from the targets.
+ * TODO: It might be possible to reduce this code greatly. The STOP code in the inner class MoveControlRegulator 
+ * that keeps wheels hovering over one spot might be able to also seek new tacho targets on its own. The speed it 
+ * pursues the goal should be related to the distance it is away from the targets.
  * TODO: The whole movement scheme works by assuming a move will be allowed to complete, or it will be interrupted
- * with a call to stop(). It user calls a different move method like arc() while travel() is occurring, it won't 
+ * with a call to stop(). If a user calls a different move method like arc() while travel() is occurring, it won't 
  * work properly.
  */
 
 /**
- * Allow standard moves with a Segway robot.
+ * <p>Allow standard moves with a Segway robot. Currently the robot has a 5 second delay between moves to allow
+ * it some time to rebalance and straighten out uneven tacho rotations. This can be changed with setMoveDelay().</p>
+ *  
+ * <p>The default speed is 80, which can be changed with setTravelSpeed().</p>  
  * 
- * Make sure the battery is <b>fully charged</b>. The robot is more stable on carpet than hardwood at higher speeds.  
+ * <p>Make sure the battery is <b>fully charged</b>. The robot is more stable on carpet than hardwood at higher speeds.</p>  
  * 
  * @see lejos.robotics.navigation.Segway
  * @author BB
@@ -43,6 +45,8 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 	 */
 	public static final double WHEEL_SIZE_RCX  = 8.16;
 
+	private int move_delay = 5000; // amount to delay between moves
+	
 	private double wheelDiameter; // used for calculating travel distances
 	private double trackWidth; // used for calculating differential rotation angle of whole robot
 
@@ -76,6 +80,9 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 
 		// Start move control thread
 		new MoveControlRegulator().start();
+		
+		// Sit still for a few seconds at start to establish good balance:
+		try {Thread.sleep(move_delay);} catch (InterruptedException e) {}
 	}
 
 	/**
@@ -170,12 +177,13 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 
 		// TODO: Assumes user won't go straight from travel to say rotate and assumes stop lasts at least MONITOR_INTERVAL.
 		if(!immediateReturn) while(move_mode != STOP);
+		try {Thread.sleep(move_delay);} catch (InterruptedException e) {}
 
 	}
 
 	private int angle_parity = 1;
 
-	public void  arc(float radius, float angle, boolean immediateReturn) {
+	public void arc(float radius, float angle, boolean immediateReturn) {
 		for(MoveListener ml:listeners) 
 			ml.moveStarted(new Move(true, angle, radius), this); // TODO: Hasn't really been tested
 
@@ -201,7 +209,15 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 
 	// TODO: Possible setDelay() method to delay between each movement to recover. Assume will use some default
 	// value unless it performs extraordinarily stable between movement.
-
+	
+	/**
+	 * Set the delay between movements which allows the Segway to recover balance. Default value is 
+	 * five seconds (5000 millis).
+	 */
+	public void setMoveDelay(int millis) {
+		move_delay = millis;
+	}
+	
 	private long arc_target_tacho_avg; // Global for the target, used by calcXxxNotify()
 	private float arc_target_angle; // Global for the target, used by calcArcNotify()
 
@@ -229,6 +245,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 			calcArcNotify();
 		else
 			calcTravelNotify();
+		//try {Thread.sleep(move_delay);} catch (InterruptedException e) {}
 	}
 
 	/**
@@ -251,7 +268,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 	 * This method calculates the distance and angle change of an arc.
 	 */
 	private void calcArcNotify() {
-		// TODO: NOTE: If user tries to do an infinite arc distance then this is unlikely
+		// TODO: NOTE: If user tries to do an infinite arc distance then this is not going
 		// to work because it calculates the final angle based on the original target angle.
 		
 		// Calculate distance moved--average of both motors
@@ -334,6 +351,8 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 
 		// The MoveControlRegulator will switch to stop mode when the targets are reached. Wait here if immediateReturn = false.
 		if(!immediateReturn) while(move_mode != STOP);
+		
+		try {Thread.sleep(move_delay);} catch (InterruptedException e) {}
 	}
 
 	public void rotate(float degrees, boolean immediateReturn) {
@@ -366,11 +385,12 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 
 		// Wait here until move completes if immediateReturn = false:
 		if(!immediateReturn) while(move_mode != STOP);
+		
+		try {Thread.sleep(move_delay);} catch (InterruptedException e) {}
 	}
 
 	public float getMaxTravelSpeed() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 200; // TODO: Find some other theoretical top speed
 	}
 
 	public float getMovementIncrement() {
@@ -379,13 +399,20 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 	}
 
 	public float getTravelSpeed() {
-		// TODO Auto-generated method stub
-		return 0;
+		return SPEED;
 	}
 
-	public void setTravelSpeed(float arg0) {
-		// TODO Auto-generated method stub
-
+	/**
+	 * Currently this method isn't properly implemented with the proper units. Speed is just
+	 * an arbitrary number up to about 200. At higher speed values it can be unstable. Currently it
+	 * uses a default of 80 which is near the unstable speed.
+	 * 
+	 * Will need to make this method use units/second. 
+	 * @param speed The speed to travel.
+	 */
+	public void setTravelSpeed(float speed) {
+		// TODO Use actual units per second
+		SPEED = (int)speed;
 	}
 
 	public boolean isMoving() {
@@ -473,7 +500,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 	private long right_tacho_target;
 
 	// TODO: Integrate this into method for setting speed. Make lower case.
-	public int SPEED = 100;
+	public int SPEED = 80;
 
 	public static final int STOP = 0;
 	public static final int FORWARD_T = 1;
@@ -506,7 +533,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 		}
 
 		public void run() {
-
+			
 			while(true) { // TODO: Could use crash monitoring code to flip conditional to false when it keels over
 
 				switch(move_mode) {
@@ -524,7 +551,6 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 					break;
 				case ARC_F:
 				case FORWARD_T:
-
 					// Monitor until it gets to target.
 					long left_diff = left_motor.getTachoCount() - left_tacho_target;
 					long right_diff = right_motor.getTachoCount() - right_tacho_target;
@@ -564,6 +590,9 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 							calcArcNotify();
 					}
 					break;
+				// TODO: Possible strategy for better rotations--use some sort of equation that watches the tachos for
+				// each motor and can determine when they have made it rotate xx degrees, even if one ahead of the other.
+				// Also, the 7ms delay between balance loop probably means this can miss the target by a bit.
 				case ROTATE_L:
 					// Monitor until it gets to target.
 					left_diff = left_motor.getTachoCount() - left_tacho_target;
@@ -572,6 +601,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 					if(left_diff > 0 && right_diff < 0) {
 						wheelDriver(0,0);
 						move_mode = STOP;
+						Thread.yield();
 						calcRotateNotify();
 					}
 					break;
@@ -579,9 +609,11 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 					// Monitor until it gets to target.
 					left_diff = left_motor.getTachoCount() - left_tacho_target;
 					right_diff = right_motor.getTachoCount() - right_tacho_target;
+					
 					if(left_diff < 0 && right_diff > 0) {
 						wheelDriver(0,0);
 						move_mode = STOP;
+						Thread.yield();
 						calcRotateNotify();
 					}
 					break;
