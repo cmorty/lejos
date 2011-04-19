@@ -6,6 +6,7 @@
         <groupId>lejos</groupId>
         <artifactId>lejos-parent</artifactId>
         <version>0.85-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>junit-lejos</artifactId>
