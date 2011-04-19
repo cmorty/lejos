@@ -10,12 +10,12 @@
 
     <artifactId>classes-test</artifactId>
 
-    <name>${artifactId} : Unit Tests of Core java classes</name>
+    <name>${project.artifactId} : Unit Tests of Core java classes</name>
     <description>Unit Tests Core java classes for lejos jvm which execute natively on the NXT hardware.</description>
 
     <scm>
-        <connection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/${artifactId}</connection>
-        <developerConnection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/${artifactId}</developerConnection>
+        <connection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/${project.artifactId}</connection>
+        <developerConnection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/${project.artifactId}</developerConnection>
     </scm>
     <url>http://lejos.sourceforge.net/</url>
     

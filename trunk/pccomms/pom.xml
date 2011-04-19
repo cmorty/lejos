@@ -10,12 +10,12 @@
 
     <artifactId>pccomms</artifactId>
 
-    <name>${artifactId} : Remote classes that execute on a PC.</name>
+    <name>${project.artifactId} : Remote classes that execute on a PC.</name>
     <description>Remote classes that execute on a PC and communicate with the lejos jvm NXT hardware.</description>
 
     <scm>
-        <connection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/${artifactId}</connection>
-        <developerConnection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/${artifactId}</developerConnection>
+        <connection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/${project.artifactId}</connection>
+        <developerConnection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/${project.artifactId}</developerConnection>
     </scm>
     <url>http://lejos.sourceforge.net/</url>
     
