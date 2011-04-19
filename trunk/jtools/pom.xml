@@ -5,7 +5,7 @@
     <parent>
         <groupId>lejos</groupId>
         <artifactId>lejos-parent</artifactId>
-        <version>0.85-SNAPSHOT</version>
+        <version>0.9-SNAPSHOT</version>
     </parent>
 
     <artifactId>jtools</artifactId>
