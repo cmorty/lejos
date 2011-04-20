@@ -14,7 +14,7 @@ public interface MoveProvider {
 	 * Returns the move made since the move started, but before it has completed. This method is used
 	 * by GUI maps to display the movement of a robot in real time. The robot must be capable of determining
 	 * the move while it is in motion.  	
-	 * @return
+	 * @return The move made since the move started.
 	 */
 	public Move getMovement();
   
