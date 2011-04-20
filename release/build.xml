@@ -243,10 +243,6 @@
     	<mkdir dir="${release.lib}"/>
     	<mkdir dir="${release.src}"/>
     	<mkdir dir="${release.projects}"/>
- 		<mkdir dir="${release.projects}/nxtvm"/>
- 		<mkdir dir="${release.projects}/nxtvm/javavm"/>
- 		<mkdir dir="${release.projects}/nxtvm/platform"/>
- 		<mkdir dir="${release.projects}/nxtvm/platform/nxt"/>
   	</target>
 	
 	<!-- build scripts -->
@@ -405,6 +401,7 @@
 			 	<include name="lejos_nxj/projects/**"/>
 			    <include name="lejos_nxj/src/**"/>
 			 	<exclude name="lejos_nxj/src/jbluez/**"/>
+			 	<exclude name="lejos_nxj/src/libnxt/**"/>
 			    <include name="lejos_nxj/bin/*"/>
 			 	<exclude name="lejos_nxj/bin/*.xml"/>
 			 	<exclude name="lejos_nxj/bin/nxj"/>
@@ -423,6 +420,7 @@
 			 	<exclude name="lejos_nxj/bin/nxjpc"/>
 			 	<exclude name="lejos_nxj/bin/nxjpcc"/>
 			 	<exclude name="lejos_nxj/bin/nxjcontrol"/>
+			 	<exclude name="lejos_nxj/bin/nxjimage"/>
 			 	<!--
 			 	<exclude name="lejos_nxj/lib/**/*.so"/>
 			 	<exclude name="lejos_nxj/lib/**/*.jnilib"/>
