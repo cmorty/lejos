@@ -44,6 +44,7 @@ public class NavPathController implements PathController
     
     _radius = (_pilot instanceof ArcMoveController ? ((ArcMoveController) _pilot).getMinRadius() : 0);
     _nav = new Nav();
+    _nav.setDaemon(true);
     _nav.start();
   }  
 
@@ -205,7 +206,6 @@ public class NavPathController implements PathController
 
     public void run()
     { 
-      setDaemon(true);
       while (more)
       {
         while (_keepGoing)// && _route != null && _route.size()>0)
