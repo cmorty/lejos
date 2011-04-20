@@ -9,7 +9,7 @@ import lejos.robotics.*;
  */
 
 /**
- * The DifferentialPilot1 class is a software abstraction of the Pilot mechanism of a
+ * The DifferentialPilot class is a software abstraction of the Pilot mechanism of a
  * NXT robot. It contains methods to control robot movements: travel forward or
  * backward in a straight line or a circular path or rotate to a new direction.<br>
  * This  class will only work with two independently controlled motors to
@@ -30,7 +30,7 @@ import lejos.robotics.*;
  * <br> Example of use of come common methods:
  * <p>
  * <code><pre>
- * DifferentialPilot1 pilot = new DifferentialPilot1(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
+ * DifferentialPilot pilot = new DifferentialPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
  * pilot.setRobotSpeed(10);  // inches per second
  * pilot.travel(12);         // inches
  * pilot.rotate(-90);        // degree clockwise
@@ -55,7 +55,7 @@ public class DifferentialPilot implements
 {
 
   /**
-   * Allocates a DifferentialPilot1 object, and sets the physical parameters of the
+   * Allocates a DifferentialPilot object, and sets the physical parameters of the
    * NXT robot.<br>
    * Assumes Motor.forward() causes the robot to move forward.
    *
@@ -77,7 +77,7 @@ public class DifferentialPilot implements
   }
 
   /**
-   * Allocates a DifferentialPilot1 object, and sets the physical parameters of the
+   * Allocates a DifferentialPilot object, and sets the physical parameters of the
    * NXT robot.<br>
    *
    * @param wheelDiameter
@@ -103,7 +103,7 @@ public class DifferentialPilot implements
   }
 
   /**
-   * Allocates a DifferentialPilot1 object, and sets the physical parameters of the
+   * Allocates a DifferentialPilot object, and sets the physical parameters of the
    * NXT robot.<br>
    *
    * @param leftWheelDiameter

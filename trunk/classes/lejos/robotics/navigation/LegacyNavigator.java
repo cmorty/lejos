@@ -10,14 +10,15 @@ import lejos.robotics.*;
  */
 
 /**
- * The SimpleNavigator class uses dead reckoning to  keep track of its robot pose (the location in the plane
+ * The LegacyNavigator class is a renamed version of SimpleNavigator in the 0.85 release.
+ * It uses dead reckoning to  keep track of its robot pose (the location in the plane
  * and its heading -  the direction in which it moves).  While dead reckoning is relatively
  * easy to implement and very quick to calculate,  its disadvantage
  * is that errors in the estimated pose accumulate.<br>
- * SimpleNavigator can perform  three elementary movements  in a plane:  travel in  a straight line,
+ * LegacyNavigator can perform  three elementary movements  in a plane:  travel in  a straight line,
  * move in the arc of a circle, and a rotate  in place.  The movement commands
  * have an immediate return option which is useful, for example, for a client
- * class that uses s SimpleNavigataor to detect obstacles or monitor incoming messages while moving.
+ * class that uses s LegacyNavigataor to detect obstacles or monitor incoming messages while moving.
  *  <br>
  * This class uses a private Pilot  object to execute these moves.  The Pilot directly
  * controls the hardware, which must be able to  turn in place,
@@ -40,7 +41,7 @@ public class LegacyNavigator {
 
 
     /**
-     * Allocates a SimpleNavigator with a Pilot that you supply.
+     * Allocates a LegacyNavigator with a Pilot that you supply.
      * @param  pilot can be  any class that implements the pilot interface
      */
     public LegacyNavigator(LegacyPilot pilot) {
@@ -48,7 +49,7 @@ public class LegacyNavigator {
     }
 
     /**
-     * Allocates a SimpleNavigator object and initializes it with a new TachoPilot <br>
+     * Allocates a LegacyNavigator object and initializes it with a new TachoPilot <br>
      * If you want to use a different Pilot class, use the single parameter constructor.
      * @param wheelDiameter The diameter of the wheel, usually printed on the Lego tire.
      *  Use any units you wish (e.g. 56 mm = 5.6 cm = 2.36 in)
@@ -59,7 +60,7 @@ public class LegacyNavigator {
      * @param reverse  If motor.forward() dives the robot backwards, set this parameter true.
      *
      * @deprecated The correct way is to create the Pilot in advance and to use that in construction of the
-     *             SimpleNavigator. Otherwise the SimpleNavigator needs to know detail it should not care about!
+     *             LegacyNavigator. Otherwise the LegacyNavigator needs to know detail it should not care about!
      */
     @Deprecated
     public LegacyNavigator(float wheelDiameter, float trackWidth, RegulatedMotor leftMotor, RegulatedMotor rightMotor, boolean reverse) {
@@ -69,7 +70,7 @@ public class LegacyNavigator {
     }
 
     /**
-     * Allocates a SimpleNavigator object and initializes it with a new TachoPilot.<br>
+     * Allocates a LegacyNavigator object and initializes it with a new TachoPilot.<br>
      * If you want to use a different Pilot class, use the single parameter constructor.
      * @param wheelDiameter The diameter of the wheel, usually printed on the Lego tire.
      *  Use any units you wish (e.g. 56 mm = 5.6 cm = 2.36 in)
@@ -79,7 +80,7 @@ public class LegacyNavigator {
      * @param leftMotor The motor used to drive the left wheel e.g. Motor.A
      *
      * @deprecated The correct way is to create the Pilot in advance and to use that in construction of the
-     *             SimpleNavigator. Otherwise the SimpleNavigator needs to know detail it should not care about!
+     *             LegacyNavigator. Otherwise the LegacyNavigator needs to know detail it should not care about!
      */
     @Deprecated
     public LegacyNavigator(float wheelDiameter, float trackWidth, RegulatedMotor leftMotor, RegulatedMotor rightMotor) {

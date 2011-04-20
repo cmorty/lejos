@@ -14,6 +14,7 @@ import lejos.robotics.*;
  * It can use either a differential pilot or steering pilot.
  * It also uses a PoseProvider to keep its pose updated, and calls its WayPoint Listeners
  * when a way point is reached.
+ * 
  * @author Roger Glassey
  */
 public class NavPathController implements PathController
