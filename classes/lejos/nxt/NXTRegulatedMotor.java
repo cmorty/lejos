@@ -30,17 +30,17 @@ import lejos.util.Delay;
  * <p>
  * Example:<p>
  * <code><pre>
- *   Motor1.A.setSpeed(720);// 2 RPM
- *   Motor1.C.setSpeed(720);
- *   Motor1.A.forward();
- *   Motor1.C.forward();
+ *   Motor.A.setSpeed(720);// 2 RPM
+ *   Motor.C.setSpeed(720);
+ *   Motor.A.forward();
+ *   Motor.C.forward();
  *   Thread.sleep (1000);
- *   Motor1.A.stop();
- *   Motor1.C.stop();
- *   Motor1.A.rotateTo( 360);
- *   Motor1.A.rotate(-720,true);
- *   while(Motor1.A.isRotating() :Thread.yield();
- *   int angle = Motor1.A.getTachoCount(); // should be -360
+ *   Motor.A.stop();
+ *   Motor.C.stop();
+ *   Motor.A.rotateTo( 360);
+ *   Motor.A.rotate(-720,true);
+ *   while(Motor.A.isRotating() :Thread.yield();
+ *   int angle = Motor.A.getTachoCount(); // should be -360
  *   LCD.drawInt(angle,0,0);
  * </pre></code>
  * @author Roger Glassey/Andy Shaw
