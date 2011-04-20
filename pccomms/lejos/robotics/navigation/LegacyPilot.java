@@ -8,15 +8,16 @@ import lejos.robotics.RegulatedMotor;
  */
 
 /**
- * The TachoPilot class is a software abstraction of a NXT robot with two
- * independently controlled wheels, on opposite sides of the robot, with colinear axels.
+ * The LegacyPilot class is a renamed version the TachoPilot class in the 0.85 release.
+ * It is a software abstraction of a NXT robot with two
+ * independently controlled wheels, on opposite sides of the robot, with colinear axles.
  * This design permits the robot to rotate within its own footprint (i.e. turn on
  * one spot without changing its location).<br>
  * It contains methods to control basic  robot movements: travel forward or
  * backward in a straight line or a circular path or rotate to a new direction.<br>
  * It can be used with robots that have reversed motor design: the robot moves
  * in the direction opposite to the the direction of motor rotation. <br>
- * About angles:  TachoPilot uses the Navigation package  standard mathematical convention for angles in
+ * About angles:  LegacyPilot uses the Navigation package  standard mathematical convention for angles in
  * the plane. The direction  of the X axis is 0 degrees, the direction  of
  * the Y axis is 90 degrees.  Therefore, a positive angle is a counter clockwise change of direction,
  * and a negative angle is clockwise.<br>
@@ -26,7 +27,7 @@ import lejos.robotics.RegulatedMotor;
  Example:
  * <p>
  * <code><pre>
- * Pilot pilot = new TachoPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
+ * LegacyPilot pilot = new LegacyPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
  * pilot.setTravelSpeed(10);                                           // inches per second
  * pilot.travel(12);                                                  // inches
  * pilot.rotate(-90);                                                 // degree clockwise
@@ -41,8 +42,8 @@ import lejos.robotics.RegulatedMotor;
  * </p>
  * 
  * Note: if you are sure you do not want to use any other part of navigation you
- * can as well use "TachoPilot pilot = new TachoPilot(...)" instead of
- * "Pilot pilot = new TachoPilot(...)"
+ * can as well use "LegacyPilot pilot = new LegacyPilot(...)" instead of
+ * "LegacyPilot pilot = new LegacyPilot(...)"
  * 
  * @deprecated  This class will disappear in NXJ version 1.0. Use an implementing class of MoveController instead. 
  * @see lejos.robotics.navigation.MoveController
@@ -62,12 +63,12 @@ public class LegacyPilot {
     
     /**
      * The motor at the inside of the turn. set by steer(turnRate) 
-     * used by other steer methodsl
+     * used by other steer methods
      */
     protected RegulatedMotor _inside;
      /**
      * The motor at the outside of the turn. set by steer(turnRate)
-     * used by other steer methodsl
+     * used by other steer methods
      */
     protected RegulatedMotor _outside;
     /**
@@ -139,7 +140,7 @@ public class LegacyPilot {
 	protected final float _rightWheelDiameter;
 
 	/**
-	 * Allocates a TachoPilot object, and sets the physical parameters of the
+	 * Allocates a LegacyPilot object, and sets the physical parameters of the
 	 * NXT robot.<br>
 	 * Assumes Motor.forward() causes the robot to move forward.
 	 * 
@@ -160,7 +161,7 @@ public class LegacyPilot {
 	}
 
 	/**
-	 * Allocates a TachoPilot object, and sets the physical parameters of the
+	 * Allocates a LegacyPilot object, and sets the physical parameters of the
 	 * NXT robot.<br>
 	 * 
 	 * @param wheelDiameter
@@ -185,7 +186,7 @@ public class LegacyPilot {
 	}
 
 	/**
-	 * Allocates a TachoPilot object, and sets the physical parameters of the
+	 * Allocates a LegacyPilot object, and sets the physical parameters of the
 	 * NXT robot.<br>
 	 * 
 	 * @param leftWheelDiameter
@@ -254,7 +255,7 @@ public class LegacyPilot {
 	}
 
 	/**
-     * Returnsthe tachoCount of the left motor
+     * Returns the tachoCount of the left motor
 	 * @return tachoCount of left motor. Positive value means motor has moved
 	 *         the robot forward.
 	 */
