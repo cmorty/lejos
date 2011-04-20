@@ -148,13 +148,11 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 	 *
 	 * <p>
 	 * The <code>turnRate</code> specifies the sharpness of the turn. Use values between -200 and +200.<br>
-	 * For details about how this parameter works, see {@link #steer(float turnRate) }
 	 * <p>
 	 * The robot will stop when its heading has changed by the amount of the  <code>angle</code> parameter.<br>
 	 * If <code>angle</code> is positive, the robot will move in the direction that increases its heading (it turns left).<br>
 	 * If <code>angle</code> is negative, the robot will move in the direction that decreases its heading (turns right).<br>
 	 * If <code>angle</code> is zero, the robot will not move and the method returns immediately.<br>
-	 * For more details about this parameter, see {@link #steer(float turnRate, float angle)}
 	 * <p>
 	 * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
 	 *
