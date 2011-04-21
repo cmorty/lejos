@@ -94,6 +94,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     private int type, mode;
     private NXTEvent i2cEvent;
     private int i2cSensorCnt = 0;
+    private boolean i2cHighSpeed = false;
     /**
      * The event filter for a sensor port allows for less than and greater
      * then a target value (with a +/- tolerance).
@@ -1144,6 +1145,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
             i2cEnableById(iPortId, mode);
             // Allocate the i2c wait event
             i2cEvent = NXTEvent.allocate(NXTEvent.I2C_PORTS, 1 << iPortId, 1);
+            i2cHighSpeed = (mode & HIGH_SPEED) != 0;
         }
     }
 
@@ -1168,7 +1170,9 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      */
     public void i2cWaitIOComplete()
     {
-        i2cEvent.waitEvent(I2C_IO_COMPLETE << iPortId, NXTEvent.WAIT_FOREVER);
+        // No need to wait for high speed ports
+        if (!i2cHighSpeed)
+            i2cEvent.waitEvent(I2C_IO_COMPLETE << iPortId, NXTEvent.WAIT_FOREVER);
     }
     
     /**
