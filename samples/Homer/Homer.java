@@ -41,7 +41,7 @@ import lejos.util.PilotProps;
  */
 public class Homer {
   // Tyre diameter and wheel base
-  static PilotProps pp = new PilotProps();
+  static PilotProps pp = PilotProps.loadProperties();
   static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "4.96"));
   static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "13"));
   static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));

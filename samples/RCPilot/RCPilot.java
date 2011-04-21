@@ -147,7 +147,7 @@ public class RCPilot implements RemotePilotMethod
       }
     }
    
-	static PilotProps pp = new PilotProps();
+	static PilotProps pp = PilotProps.loadProperties();
 	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "2.2"));
 	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "5.2"));
 	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "A"));
