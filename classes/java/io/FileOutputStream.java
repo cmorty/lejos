@@ -48,6 +48,11 @@ public class FileOutputStream extends OutputStream {
 	public FileOutputStream(File f, boolean append) throws FileNotFoundException {
         file = f;
 		buff = new byte[Flash.BYTES_PER_PAGE];
+		
+		// make sure that file is re-created, so that the pages for the file
+		// are allocated at the end of the filesystem.
+		if (!append && file.exists())
+			file.delete();
 
 		// create file, in case it does not exist
 		// Note: createNewFile does nothing, when file already exists.
