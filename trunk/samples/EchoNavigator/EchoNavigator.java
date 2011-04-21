@@ -117,7 +117,7 @@ public void goTo(float x, float y)
     return clear;
   }
   
-	static PilotProps pp = new PilotProps();
+	static PilotProps pp = PilotProps.loadProperties();
 	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "5.6"));
 	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "14.2"));
 	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "A"));

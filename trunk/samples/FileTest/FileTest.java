@@ -116,13 +116,6 @@ public class FileTest {
         
         try{
             f = new File(fileName);
-            if(!f.exists()){
-                f.createNewFile();
-            }else{
-            	f.delete();         	
-            	f.createNewFile();
-            }
-            	
             fos = new  FileOutputStream(f);
             
             text = getKML();

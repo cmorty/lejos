@@ -33,7 +33,7 @@ import lejos.nxt.comm.*;
  */
 public class MonitorTest 
 {
-	static PilotProps pp = new PilotProps();
+	static PilotProps pp = PilotProps.loadProperties();
 	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "5.6"));
 	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "16"));
 	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));

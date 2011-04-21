@@ -79,7 +79,7 @@ public class ArcNavigator
   return angle;
 }
  
-	static PilotProps pp = new PilotProps();
+	static PilotProps pp = PilotProps.loadProperties();
 	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "2.16"));
 	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "5.42"));
 	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "A"));
