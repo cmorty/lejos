@@ -259,7 +259,7 @@ public class NXTLineLeader extends I2CSensor {
 	 * Set KI value
 	 */
 	public void setKI(int KI) {
-		sendData(LL_KP, (byte) KI);
+		sendData(LL_KI, (byte) KI);
 	}
 
 	/**
@@ -337,7 +337,7 @@ public class NXTLineLeader extends I2CSensor {
 	 * 
 	 * @param index
 	 *            sensor index (must be in range [1..8])
-	 * @return sensor reading (in range [0..255]), or -1 if reading error
+	 * @return sensor reading (in range [0..100]), or -1 if reading error
 	 * @throws IllegalArgumentException
 	 *             if index not in range
 	 */

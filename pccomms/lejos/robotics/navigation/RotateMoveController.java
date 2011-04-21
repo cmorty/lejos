@@ -30,15 +30,15 @@ public interface RotateMoveController extends MoveController {
   public float getAngleIncrement();
 
   /**
-   * sets the rotation speed of the robot (the angular velocity of the roatate()
+   * sets the rotation speed of the robot (the angular velocity of the rotate()
    * methods)
    * @param speed in degrees per second
    */
   public void setRotateSpeed(float speed);
   
   /**
-   * Returns the value of the rotion speed
-   * @return the rotate speed
+   * Returns the value of the rotation speed
+   * @return the rotate speed in degrees per second
    */
   public float getRotateSpeed();
 

@@ -44,12 +44,25 @@ public interface MoveController extends MoveProvider {
    */
   public void travel(float distance, boolean immediateReturn);
   
-  public float getMovementIncrement();
-  
+  /**
+   * Sets the speed at which the robot will travel forward and backward (and to some extent arcs, although actual arc speed
+   * is slightly less). Speed is measured in units/second. e.g. If wheel diameter is cm, then speed is cm/sec.
+   * @param speed In chosen units per second (e.g. cm/sec)
+   */
   public void setTravelSpeed(float speed);
   
+  /**
+   * Returns the speed at which the robot will travel forward and backward (and to some extent arcs, although actual arc speed
+   * is slightly less). Speed is measured in units/second. e.g. If wheel diameter is cm, then speed is cm/sec.
+   * @return Speed in chosen units per second (e.g. cm/sec)
+   */
   public float getTravelSpeed();
   
+  /**
+   * Returns the maximum speed at which this robot is capable of traveling forward and backward.
+   * Speed is measured in units/second. e.g. If wheel diameter is cm, then speed is cm/sec.
+   * @return Speed in chosen units per second (e.g. cm/sec)
+   */
   public float getMaxTravelSpeed();
   
 }
