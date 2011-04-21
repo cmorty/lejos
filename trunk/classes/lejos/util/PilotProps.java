@@ -28,15 +28,11 @@ public class PilotProps extends Properties {
 	   * @param reverse true iff rhe Motors are connected so the motor forward drives the robot backwards
 	   * @throws IOException if there is a problem writing the property file
 	   */
-	  public PilotProps(final float wheelDiameter, final float trackWidth,
+	  public static void storeProperties(final float wheelDiameter, final float trackWidth,
 	          final String leftMotor, final String rightMotor,
 	          final boolean reverse) throws IOException {
 		  
-          File f = new File(fileName);
-                 	  
-          if(f.exists()) f.delete();         	
-          f.createNewFile();
-          
+          File f = new File(fileName);       
     	  FileOutputStream fos = new  FileOutputStream(f);
     	  PrintStream ps = new PrintStream(fos);
     	  
@@ -50,10 +46,7 @@ public class PilotProps extends Properties {
     	  fos.close(); 
 	  }
 	  
-	  /**
-	   * Read the property file as a set of properties
-	   */
-	  public PilotProps() {
+	  private PilotProps() {
 		  File f = new File(fileName);
 		  FileInputStream fis = null;
 
@@ -61,6 +54,13 @@ public class PilotProps extends Properties {
 			fis = new FileInputStream(f);
 			load(fis);
 		  } catch (IOException e) {} // silently ignore failure to read
+	  }
+	  
+	  /**
+	   * Read the property file as a set of properties
+	   */
+	  public static PilotProps loadProperties() {
+		  return new PilotProps();
 	  }
 	  
 	  /**
