@@ -9,7 +9,14 @@ import lejos.robotics.Move;
  * @author nxj team
  */
 public interface MoveProvider {
-  public Move getMovement();
+  
+	/**
+	 * Returns the move made since the move started, but before it has completed. This method is used
+	 * by GUI maps to display the movement of a robot in real time. The robot must be capable of determining
+	 * the move while it is in motion.  	
+	 * @return The move made since the move started.
+	 */
+	public Move getMovement();
   
   /**
    * Adds a MoveListener that will be notified of all movement events.
