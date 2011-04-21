@@ -205,15 +205,6 @@
           	</fileset>
 		</copy>
 		
-		<copy todir="${release.src}/jbluez">
-          	<fileset dir="${src}/jbluez">
-            	<include name="**/*.c"/>
-            	<include name="**/*.h"/>
-          		<include name="Makefile"/>
-          		<include name="build.xml"/>
-          	</fileset>
-		</copy>
-		
 		<copy todir="${release.src}/jfantom">
           	<fileset dir="${src}/jfantom">
             	<include name="**/*.cpp"/>
@@ -400,7 +391,6 @@
 			    <include name="lejos_nxj/lib/**"/>
 			 	<include name="lejos_nxj/projects/**"/>
 			    <include name="lejos_nxj/src/**"/>
-			 	<exclude name="lejos_nxj/src/jbluez/**"/>
 			 	<exclude name="lejos_nxj/src/libnxt/**"/>
 			    <include name="lejos_nxj/bin/*"/>
 			 	<exclude name="lejos_nxj/bin/*.xml"/>
