@@ -76,6 +76,8 @@
 	<classpathentry excluding="build.xml" kind="src" path="USBReceive"/>
 	<classpathentry excluding="build.xml" kind="src" path="View"/>
 	<classpathentry excluding="build.xml" kind="src" path="WaypointNav"/>
+	<classpathentry kind="src" path="SegwayPilotDemo"/>
+	<classpathentry kind="src" path="SteerNavDemo"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/classes"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
