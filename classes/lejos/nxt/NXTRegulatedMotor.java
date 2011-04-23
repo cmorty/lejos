@@ -236,28 +236,24 @@ public class NXTRegulatedMotor implements RegulatedMotor
      * Sets desired motor speed , in degrees per second;
      * The maximum reliably sustainable velocity is  100 x battery voltage under
      * moderate load, such as a direct drive robot on the level.
-     * If the parameter is larger than that, the maximum sustainable value will
-     * be used instead.
      * @param speed value in degrees/sec
      */
     public void setSpeed(int speed)
     {
         this.speed = Math.abs(speed);
-        reg.adjustSpeed(speed);
+        reg.adjustSpeed(this.speed);
     }
 
     /**
      * Sets desired motor speed , in degrees per second;
      * The maximum reliably sustainable velocity is  100 x battery voltage under
      * moderate load, such as a direct drive robot on the level.
-     * If the parameter is larger than that, the maximum sustainable value will
-     * be used instead.
      * @param speed value in degrees/sec
      */
     public void setSpeed(float speed)
     {
         this.speed = Math.abs(speed);
-        reg.adjustSpeed(speed);
+        reg.adjustSpeed(this.speed);
     }
 
     /**
