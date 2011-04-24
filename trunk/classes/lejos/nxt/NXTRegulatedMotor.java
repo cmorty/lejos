@@ -57,7 +57,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
     protected int acceleration = 6000;
     protected int limitAngle = 0;
     protected int stallLimit = 50;
-    protected int stallCnt = 0;
+    protected int stallTime = 1000;
     protected static final Controller cont = new Controller();
 
     static {
@@ -372,6 +372,18 @@ public class NXTRegulatedMotor implements RegulatedMotor
     }
 
     /**
+     * Set the parameters for detecting a stalled motor. A motor will be recognised
+     * as stalled if the movement error (the amount the motor lags the regulated
+     * position) is greater than error for a period longer than time.
+     * @param error The error threshold
+     * @param time The time that the error threshold needs to be exceeded for.
+     */
+    public void setStallThreshold(int error, int time)
+    {
+        this.stallLimit = error;
+        this.stallTime = time/Controller.UPDATE_PERIOD;
+    }
+    /**
      * Return the current velocity.
      * @return current velocity in degrees/s
      */
@@ -442,6 +454,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
         public int power;
         int mode;
         boolean active = false;
+        int stallCnt = 0;
 
         /**
          * Reset the tachometer readings
@@ -639,7 +652,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
                 if (Math.abs(error) > stallLimit)
                 {
                     baseTime += delta;
-                    if (stallCnt++ > 1000) endMove(true);
+                    if (stallCnt++ > stallTime) endMove(true);
                 }
                 else
                 {
