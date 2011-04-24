@@ -61,6 +61,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="RemoteNXTTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="RFIDTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="RTCTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="SegwayPilotDemo"/>
 	<classpathentry excluding="build.xml" kind="src" path="SensorMuxTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="SignalTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="Sniffer"/>
@@ -68,6 +69,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="SonicTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="SoundSample"/>
 	<classpathentry excluding="build.xml" kind="src" path="SpeedTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="SteerNavDemo"/>
 	<classpathentry excluding="build.xml" kind="src" path="Subsumption1"/>
 	<classpathentry excluding="build.xml" kind="src" path="Subsumption2"/>
 	<classpathentry excluding="build.xml" kind="src" path="TiltTest"/>
@@ -76,8 +78,6 @@
 	<classpathentry excluding="build.xml" kind="src" path="USBReceive"/>
 	<classpathentry excluding="build.xml" kind="src" path="View"/>
 	<classpathentry excluding="build.xml" kind="src" path="WaypointNav"/>
-	<classpathentry kind="src" path="SegwayPilotDemo"/>
-	<classpathentry kind="src" path="SteerNavDemo"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/classes"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
