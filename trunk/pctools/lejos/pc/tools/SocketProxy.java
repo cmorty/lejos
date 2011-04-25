@@ -168,8 +168,11 @@ public class SocketProxy {
 		// Listen for incoming data from socket
 		new Forward(sock, inFromSocket, outToNXT);
 
-		// Listen for incoming data from NXT
-		new ForwardNXT(sock, inFromNXT, outToSocket);
+		// Send data to NXT
+		ForwardNXT fn = new ForwardNXT(sock, inFromNXT, outToSocket);
+		
+		// Wait for socket to close	and the forward to NXT thread top die
+		while (!sock.isClosed() || fn.isAlive()) Thread.yield();
 	}
 
 	/**
