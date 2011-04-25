@@ -33,10 +33,10 @@ public class SocketProxy
 	 * There are several problem with this proxy. First of all, a socket
 	 * consists of two streams, which can be closed separately. However,
 	 * currently the proxy does not support to close the streams independently.
-	 * Also, if the peer closes one of the stream, it is not possible to signal
+	 * Also, if the peer closes the InputStream, it is not possible to signal
 	 * EOF to the NXT. Escape sequences are only allowed in one direction, which
 	 * is one of the main causes of this problem. Also, there does not seem to be
-	 * any way of reporting errors back to NXT.
+	 * any way of reporting errors back to NXT in case connecting or writing fails.
 	 */
 	
 
