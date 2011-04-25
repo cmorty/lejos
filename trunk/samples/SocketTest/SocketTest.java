@@ -26,8 +26,8 @@ public class SocketTest {
 			System.exit(1);
 		}
 		while(true){
-			ins = sock.getDataInputStream();
-			outs = sock.getDataOutputStream();
+			ins = new DataInputStream(sock.getInputStream());
+			outs = new DataOutputStream(sock.getOutputStream());
 			try {
 				String s = readLine();
 				System.out.println(s);
