@@ -71,24 +71,6 @@ public class Socket{
 	}
 
 	/**
-	 * Returns the data input stream of the socket
-	 * @return The data input stream of the socket
-	 * @throws IOException
-	 */
-	public DataInputStream getDataInputStream() throws IOException {
-		return new DataInputStream(getInputStream());
-	}
-
-	/**
-	 * Returns the data output stream of the socket
-	 * @return The data output stream of the socket
-	 * @throws IOException
-	 */
-	public DataOutputStream getDataOutputStream() throws IOException {
-		return new DataOutputStream(getOutputStream());
-	}
-	
-	/**
 	 * Returns the output stream associated with this socket
 	 * @return The output stream
 	 * @throws IOException
