@@ -17,36 +17,33 @@ public class UpDown {
 
 	public void setActive(boolean act) {
 		active = act;
-		//LCD.bitBlt(r, c, nDigits*LCD.CELL_WIDTH, LCD.CELL_HEIGHT, LCD.ROP_CLEAR);
-		LCD.drawString(""+val, r, c, active);
+		redraw();
 	}
 
 	public void setValue(int v) {
 		val = v;
-		//LCD.bitBlt(r, c, nDigits*LCD.CELL_WIDTH, LCD.CELL_HEIGHT, LCD.ROP_CLEAR);
-		LCD.drawString(""+val, r, c, active);
+		redraw();
 	}
 
 	public void increment() {
 		val++;
-		if (val > maxVal)
-			val = minVal;
-
-		//LCD.bitBlt(r, c, nDigits*LCD.CELL_WIDTH, LCD.CELL_HEIGHT, LCD.ROP_CLEAR);
-		LCD.drawString(""+val, r, c, active);
+		if (val > maxVal) val = minVal;
+		redraw();
 	}
 
 	public void decrement() {
 		val--;
-		if (val < minVal)
-			val = maxVal;
-		
-		//LCD.bitBlt(r, c, nDigits*LCD.CELL_WIDTH, LCD.CELL_HEIGHT, LCD.ROP_CLEAR);
-		LCD.drawString(""+val, r, c, active);
+		if (val < minVal) val = maxVal;
+		redraw();
 	}
 
 	public int getVal() {
 		return val;
+	}
+	
+	private void redraw() {
+		LCD.clear(r, c, nDigits);
+		LCD.drawString(""+val, r, c, active);		
 	}
 }
 
