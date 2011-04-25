@@ -71,7 +71,7 @@ public class DistanceTest {
 		dm.echo(label);
 		dm.echo(" ");
 		dm.echo("Distance: ");
-		dm.echo("" +distance+ " Km.");
+		dm.echo("" +distance/1000 + " Km.");
 		dm.echo(" ");
 		dm.echo("Azimuth: ");
 		dm.echo(""+azimuth + " Deg.");
