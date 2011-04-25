@@ -20,8 +20,8 @@ public class TimeTest {
 
 	public TimeTest() throws Exception{
 		connect();
-		ins = sock.getDataInputStream();
-		outs = sock.getDataOutputStream();
+		ins = new DataInputStream(sock.getInputStream());
+		outs = new DataOutputStream(sock.getOutputStream());
 		StringBuffer sb = new StringBuffer();
 		char c;
 		int b;
