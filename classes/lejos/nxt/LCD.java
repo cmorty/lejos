@@ -257,6 +257,26 @@ public class LCD
         LCD.bitBlt(null, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0, SCREEN_HEIGHT - CELL_HEIGHT,
                 SCREEN_WIDTH, CELL_HEIGHT, ROP_CLEAR);
     }
+    
+    /**
+     * Clear a contiguous set of characters
+     * @param x the x character coordinate
+     * @param y the y character coordinate
+     * @param n the number of characters
+     */
+    public static void clear(int x, int y, int n) {
+    	LCD.bitBlt(null, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, x * CELL_WIDTH, y * CELL_HEIGHT,
+                n * CELL_WIDTH, CELL_HEIGHT, ROP_CLEAR);
+    }
+    
+    /**
+     * Clear an LCD display row
+     * @param y the row to clear
+     */
+    public static void clear(int y) {
+        LCD.bitBlt(null, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0, y * CELL_HEIGHT,
+                SCREEN_WIDTH, CELL_HEIGHT, ROP_CLEAR);    	
+    }
 
     /**
      * Set the LCD contrast.
