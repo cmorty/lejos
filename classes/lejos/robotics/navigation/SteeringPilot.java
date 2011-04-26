@@ -10,6 +10,13 @@ import lejos.robotics.RegulatedMotorListener;
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 
+/*
+ * DEV NOTES: Should add an optional method to auto-calibrate the steering. With low power, rotate steering all 
+ * the way to the left and record tacho limit, then all the way to the right and record tacho limit. Assumes
+ * symmetrical steering values and estimates straight tacho value as average of two tacho counts. Make alternate
+ * constructor that doesn't use leftTacho and rightTacho values but calls auto calibrate method.
+ */
+
 /**
  * Vehicles that are controlled by the SteeringPilot class use a similar steering mechanism to a car, in which the 
  * front wheels pivot from side to side to control direction.
@@ -164,7 +171,7 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 		
 		
 		// TODO: This if() block is a temporary kludge due to Motor.rotate() bug with Integer.MIN_VALUE:
-		// Remove this if Roger fixes Motor.rotate() bug.
+		// Remove this if Roger changes Motor.rotate().
 		if((distance == Float.NEGATIVE_INFINITY & !this.reverseDriveMotor) | (distance == Float.POSITIVE_INFINITY & this.reverseDriveMotor)) {
 			driveMotor.backward();
 			//return moveEvent;

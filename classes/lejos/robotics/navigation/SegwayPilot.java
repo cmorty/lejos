@@ -7,23 +7,33 @@ import lejos.robotics.Move;
 import lejos.robotics.MoveListener;
 
 /* DEVELOPER NOTES:
- * TODO: Technically AnyWay and HTWay motors must be backwards because forward motion makes the
- * tachometers go negative. Should allow users to switch direction of motors.
+ * TODO: Currently no option to build Segway with opposite motor directions. I assume you can just flip the gyro to
+ * the opposite side of the robot (right to left) and it will balance. Technically AnyWay and HTWay motors 
+ * must be backwards because forward motion makes the tachometers go negative. Should allow users to switch direction
+ * of motors.
  * TODO: It might be possible to reduce this code greatly. The STOP code in the inner class MoveControlRegulator 
  * that keeps wheels hovering over one spot might be able to also seek new tacho targets on its own. The speed it 
  * pursues the goal should be related to the distance it is away from the targets.
  * TODO: The whole movement scheme works by assuming a move will be allowed to complete, or it will be interrupted
  * with a call to stop(). If a user calls a different move method like arc() while travel() is occurring, it won't 
  * work properly.
+ * TODO: Strategies for improving rotate:
+ * 1. Try to keep motors moving in sync by monitoring the differences in rotation between them and upping the juice
+ * to the lagging motor. This will prevent one motor from getting ahead of the other. Altar values in controlDriver().
+ * 2. Simple: Stop one motor when it gets to destination. Wait for other to get there. (Seems unstable.) This solution 
+ * won't matter if 1. is implemented properly.
+ * 
  */
 
 /**
  * <p>Allow standard moves with a Segway robot. Currently the robot has a 5 second delay between moves to allow
  * it some time to rebalance and straighten out uneven tacho rotations. This can be changed with setMoveDelay().</p>
  *  
+ * <p>This code will work with any Segway robot, but tall Segway robots will have problems balancing when the robot
+ * is moving. To counteract this, use larger wheels and/or slow down the speed using setTravelSpeed(). Make sure the 
+ * battery is <b>fully charged</b>. The robot is more stable on carpet than hardwood at higher speeds.</p> 
+ *  
  * <p>The default speed is 80, which can be changed with setTravelSpeed().</p>  
- * 
- * <p>Make sure the battery is <b>fully charged</b>. The robot is more stable on carpet than hardwood at higher speeds.</p>  
  * 
  * @see lejos.robotics.navigation.Segway
  * @author BB
@@ -148,11 +158,13 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 	 *
 	 * <p>
 	 * The <code>turnRate</code> specifies the sharpness of the turn. Use values between -200 and +200.<br>
+	 * For details about how this parameter works, see {@link lejos.robotics.navigation.DifferentialPilot#steer(float, float)}
 	 * <p>
 	 * The robot will stop when its heading has changed by the amount of the  <code>angle</code> parameter.<br>
 	 * If <code>angle</code> is positive, the robot will move in the direction that increases its heading (it turns left).<br>
 	 * If <code>angle</code> is negative, the robot will move in the direction that decreases its heading (turns right).<br>
 	 * If <code>angle</code> is zero, the robot will not move and the method returns immediately.<br>
+	 * For more details about this parameter, see {@link lejos.robotics.navigation.DifferentialPilot#steer(float, float)}
 	 * <p>
 	 * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
 	 *
@@ -497,8 +509,8 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 	private long left_tacho_target;
 	private long right_tacho_target;
 
-	// TODO: Integrate this into method for setting speed. Make lower case.
-	public int SPEED = 80;
+	// TODO: PROPERLY Integrate this into method for setting speed (units/sec). Make lower case.
+	public int SPEED = 50;
 
 	public static final int STOP = 0;
 	public static final int FORWARD_T = 1;

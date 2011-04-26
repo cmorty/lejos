@@ -460,10 +460,12 @@ public class DifferentialPilot implements
     if (distance == Float.POSITIVE_INFINITY)
     {
       forward();
+      return;
     }
     if ((distance == Float.NEGATIVE_INFINITY))
     {
       backward();
+      return;
     }
     movementStart(immediateReturn);
     setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math.round(_robotTravelSpeed * _rightDegPerDistance));
@@ -508,9 +510,10 @@ public class DifferentialPilot implements
     if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY)
     {
       forward();
+      return;
     }
     steer(turnRate(radius), angle, immediateReturn);// type and move started called by steer()
-    if (!immediateReturn) waitComplete();
+    // if (!immediateReturn) waitComplete(); redundant I think - BB
   }
 
   public  void  travelArc(float radius, float distance)
@@ -761,15 +764,15 @@ public class DifferentialPilot implements
   }
 
   /**
-   * called by RegulatedMotor when a motor rotation starts
-   * not used.
+   * MotorListener interface method is called by RegulatedMotor when a motor rotation starts.
+   * 
    * @param motor
    * @param tachoCount
    * @param stall    true of the motor is stalled
    * @param ts  time stamp
    */
   public synchronized void rotationStarted(RegulatedMotor motor, int tachoCount, boolean stall,long ts)
-  {
+  { // Not used
   }
 
   /**
@@ -871,83 +874,92 @@ public class DifferentialPilot implements
   private float _turnRadius = 0;
   /**
    * Left motor.
+   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  protected final RegulatedMotor _left;
+  @Deprecated protected final RegulatedMotor _left;
   /**
    * Right motor.
+   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  protected final RegulatedMotor _right;
+  @Deprecated protected final RegulatedMotor _right;
   /**
    * The motor at the inside of the turn. set by steer(turnRate)
    * used by other steer methodsl
    */
-  protected RegulatedMotor _inside;
+  private RegulatedMotor _inside;
   /**
    * The motor at the outside of the turn. set by steer(turnRate)
    * used by other steer methodsl
+   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  protected RegulatedMotor _outside;
+  @Deprecated protected RegulatedMotor _outside;
   /**
    * ratio of inside/outside motor speeds
    * set by steer(turnRate)
    * used by other steer methods;
    */
-  protected float _steerRatio;
-  protected boolean _steering = false;
+  private float _steerRatio;
+  private boolean _steering = false;
   /**
    * Left motor degrees per unit of travel.
+   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  protected final float _leftDegPerDistance;
+  @Deprecated protected final float _leftDegPerDistance;
   /**
    * Right motor degrees per unit of travel.
+   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  protected final float _rightDegPerDistance;
+  @Deprecated protected final float _rightDegPerDistance;
   /**
    * Left motor revolutions for 360 degree rotation of robot (motors running
    * in opposite directions). Calculated from wheel diameter and track width.
    * Used by rotate() and steer() methods.
    **/
-  protected final float _leftTurnRatio;
+  private final float _leftTurnRatio;
   /**
    * Right motor revolutions for 360 degree rotation of robot (motors running
    * in opposite directions). Calculated from wheel diameter and track width.
    * Used by rotate() and steer() methods.
    **/
-  protected final float _rightTurnRatio;
+  private final float _rightTurnRatio;
   /**
    * Speed of robot for moving in wheel diameter units per seconds. Set by
    * setSpeed(), setTravelSpeed()
    */
-  protected float _robotTravelSpeed;
+  private float _robotTravelSpeed;
   /**
    * Speed of robot for turning in degree per seconds.
    */
-  protected float _robotRotateSpeed;
+  private float _robotRotateSpeed;
   /**
    * Motor speed degrees per second. Used by forward(),backward() and steer().
    */
-  public int _motorSpeed;
+  private int _motorSpeed;
   /**
    * Motor rotation forward makes robot move forward if parity == 1.
    */
-  protected byte _parity;
+  private byte _parity;
   /**
    * Distance between wheels. Used in steer() and rotate().
    */
-  protected final float _trackWidth;
+  private final float _trackWidth;
   /**
    * Diameter of left wheel.
    */
-  protected final float _leftWheelDiameter;
+  private final float _leftWheelDiameter;
   /**
    * Diameter of right wheel.
    */
-  protected final float _rightWheelDiameter;
+  private final float _rightWheelDiameter;
 
-  protected  int _leftTC; // left tacho count
-  protected  int _rightTC; //right tacho count
+  private  int _leftTC; // left tacho count
+  private  int _rightTC; //right tacho count
 
-  protected ArrayList<MoveListener> _listeners= new ArrayList<MoveListener>();
-  protected Move.MoveType _type;
+  private ArrayList<MoveListener> _listeners= new ArrayList<MoveListener>();
+  
+  /**
+   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
+   */
+  @Deprecated protected Move.MoveType _type;
 
 }
