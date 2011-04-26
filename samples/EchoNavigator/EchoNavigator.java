@@ -5,6 +5,8 @@ import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.Pose;
 import lejos.robotics.RegulatedMotor;
 import lejos.geom.Point;
+
+import java.io.IOException;
 import java.util.Random;
 import lejos.util.Delay;
 import lejos.util.PilotProps;
@@ -117,19 +119,20 @@ public void goTo(float x, float y)
     return clear;
   }
   
-	static PilotProps pp = PilotProps.loadProperties();
-	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "5.6"));
-	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "14.2"));
-	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "A"));
-	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
-	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
-
   /**
    * assumes UltrasonicSensor is on port S3;
    * @param args
+ * @throws IOException 
    */
-  public static void main(String[] args)
+  public static void main(String[] args) throws IOException
   {
+  	PilotProps pp = PilotProps.loadDefaultProperties();
+	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "5.6"));
+	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "14.2"));
+	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "A"));
+	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
+	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
+	
     System.out.println("Any Button");
     ArcRotateMoveController pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
     EchoNavigator  robot  = new EchoNavigator(pilot,SensorPort.S3);

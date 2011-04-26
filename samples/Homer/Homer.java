@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Collection;
 import lejos.geom.Line;
 import lejos.geom.Rectangle;
@@ -40,14 +41,6 @@ import lejos.util.PilotProps;
  *
  */
 public class Homer {
-  // Tyre diameter and wheel base
-  static PilotProps pp = PilotProps.loadProperties();
-  static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "4.96"));
-  static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "13"));
-  static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
-  static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
-  static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
-
   private static final int BORDER = 10; 
   private static final int NUM_PARTICLES = 200;
   private static final float RANGE_READING_ANGLE = 45;
@@ -74,15 +67,22 @@ public class Homer {
   private MCLPoseProvider mcl;
   private RangeScanner scanner;
   
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     Homer simpson = new Homer();
     simpson.run();
   }
   
-  public void run() {  
+  public void run() throws IOException {  
     //RConsole.openBluetooth(0);
     //System.setOut(new PrintStream(RConsole.openOutputStream()));
     
+   	PilotProps pp = PilotProps.loadDefaultProperties();
+	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "4.96"));
+	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "13.0"));
+	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
+	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
+	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
+	
 	range.continuous();
     // Create the robot and MCL pose provider and get its particle set
     pilot = new DifferentialPilot( 

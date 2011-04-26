@@ -10,6 +10,6 @@ public class PilotParams {
 	
 	public static void main(String[] args) throws IOException {
 		// Change this to match your robot
-		PilotProps.storeProperties(5.6f,16f,"A","C",true);
+		PilotProps.storeDefaultProperties(5.6f,16f,"A","C",true);
 	}
 }

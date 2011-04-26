@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 import lejos.nxt.*;
 import lejos.robotics.Pose;
 import lejos.robotics.RegulatedMotor;
@@ -79,18 +81,19 @@ public class ArcNavigator
   return angle;
 }
  
-	static PilotProps pp = PilotProps.loadProperties();
-	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "2.16"));
-	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "5.42"));
-	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "A"));
-	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "B"));
-	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
     /**
      * Tests the arc steering code
      * @param args the command line arguments
      */
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
+    	PilotProps pp = PilotProps.loadDefaultProperties();
+    	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "2.16"));
+    	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "5.42"));
+    	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "A"));
+    	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "B"));
+    	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
+    	
       DifferentialPilot pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
       float minimumRadius = 5;
       ArcNavigator nav = new ArcNavigator(pilot,minimumRadius);

@@ -38,14 +38,14 @@ import lejos.nxt.comm.RConsole;
 public class KalmanTest {  
   // Tyre diameter and distance between wheels 
 	  
-  static PilotProps pp = PilotProps.loadProperties();
-  static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "5.6"));
-  static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "16.0"));
-  static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
-  static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
-  static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
-  
-  public static void main(String[] args) throws InterruptedException {
+  public static void main(String[] args) throws Exception {
+   	PilotProps pp = PilotProps.loadDefaultProperties();
+	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "5.6"));
+	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "16.0"));
+	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
+	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
+	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
+	
     UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S1);
     Random rand = new Random();
     Matrix a = new Matrix(new double[][]{{1}}); // Position is only changed by control

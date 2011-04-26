@@ -27,15 +27,13 @@ import lejos.util.PilotProps;
  */
 public class JSR256Test implements ConditionListener {
 	
-	static PilotProps pp = PilotProps.loadProperties();
-	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "5.6"));
-	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "16.0"));
-	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
-	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
-	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
+	private DifferentialPilot pilot;
 	
-	DifferentialPilot pilot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
-	
+	public JSR256Test(DifferentialPilot pilot)
+	{
+		this.pilot = pilot;
+	}
+
 	public void run() throws InterruptedException {
 		RConsole.openBluetooth(0);	
 		System.setOut(RConsole.getPrintStream());
@@ -74,8 +72,17 @@ public class JSR256Test implements ConditionListener {
 		Button.waitForPress();
 	}
 
-	public static void main(String[] args) throws InterruptedException {
-		new JSR256Test().run();
+	public static void main(String[] args) throws Exception {
+     	PilotProps pp = PilotProps.loadDefaultProperties();
+    	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "5.6"));
+    	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "16.0"));
+    	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
+    	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
+    	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
+    	
+    	DifferentialPilot pilot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
+    	
+		new JSR256Test(pilot).run();
 	}
 
 	public void conditionMet(SensorConnection sensor, Data data, Condition condition) {
