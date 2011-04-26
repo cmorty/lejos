@@ -32,7 +32,8 @@ public class PilotTester
 		
 	public static void main(String[] args ) throws Exception
 	{
-     	PilotProps pp = PilotProps.loadDefaultProperties();
+    	PilotProps pp = new PilotProps();
+    	pp.loadPersistentValues();
     	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "4.96"));
     	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "13.0"));
     	leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));

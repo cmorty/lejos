@@ -10,6 +10,13 @@ public class PilotParams {
 	
 	public static void main(String[] args) throws IOException {
 		// Change this to match your robot
-		PilotProps.storeDefaultProperties(5.6f,16f,"A","C",true);
+		PilotProps p = new PilotProps();
+		p.setProperty(PilotProps.KEY_WHEELDIAMETER, "5.6");
+		p.setProperty(PilotProps.KEY_TRACKWIDTH, "16.0");
+		p.setProperty(PilotProps.KEY_LEFTMOTOR, "A");
+		p.setProperty(PilotProps.KEY_RIGHTMOTOR, "C");
+		p.setProperty(PilotProps.KEY_REVERSE, "true");
+		
+		p.storePersistentValues();
 	}
 }
