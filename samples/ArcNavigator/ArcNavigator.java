@@ -86,7 +86,8 @@ public class ArcNavigator
      */
     public static void main(String[] args) throws IOException
     {
-    	PilotProps pp = PilotProps.loadDefaultProperties();
+    	PilotProps pp = new PilotProps();
+    	pp.loadPersistentValues();
     	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "2.16"));
     	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "5.42"));
     	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "A"));

@@ -41,7 +41,8 @@ import lejos.nxt.comm.RConsole;
  */
 public class KalmanTest2 {  
   public static void main(String[] args) throws Exception {
-   	PilotProps pp = PilotProps.loadDefaultProperties();
+   	PilotProps pp = new PilotProps();
+	pp.loadPersistentValues();
 	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "5.6"));
 	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "16.0"));
 	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));

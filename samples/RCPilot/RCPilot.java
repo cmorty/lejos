@@ -153,7 +153,8 @@ public class RCPilot implements RemotePilotMethod
      */
     public static void main(String[] args) throws IOException
     {
-    	PilotProps pp = PilotProps.loadDefaultProperties();
+    	PilotProps pp = new PilotProps();
+    	pp.loadPersistentValues();
     	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "2.2"));
     	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "5.2"));
     	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "A"));

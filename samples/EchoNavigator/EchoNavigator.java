@@ -126,7 +126,8 @@ public void goTo(float x, float y)
    */
   public static void main(String[] args) throws IOException
   {
-  	PilotProps pp = PilotProps.loadDefaultProperties();
+  	PilotProps pp = new PilotProps();
+	pp.loadPersistentValues();
 	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "5.6"));
 	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "14.2"));
 	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "A"));
