@@ -1,6 +1,6 @@
-package lejos.robotics;
+package lejos.robotics.navigation;
 
-import lejos.robotics.Move;
+import lejos.robotics.navigation.Move;
 
 /**
  * Should be implemented by a Pilot that provides a partial movement to a pose

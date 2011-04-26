@@ -6,11 +6,11 @@ import java.util.Iterator;
 
 import lejos.geom.Point;
 import lejos.geom.Rectangle;
-import lejos.robotics.Pose;
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.navigation.DestinationUnreachableException;
+import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.WayPoint;
 import lejos.robotics.navigation.WayPointListener;
 

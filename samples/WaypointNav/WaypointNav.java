@@ -1,4 +1,3 @@
-import lejos.robotics.Pose;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.*;
 import lejos.util.PilotProps;

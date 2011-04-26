@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import lejos.robotics.Pose;
 import lejos.robotics.navigation.*;
 
 /**

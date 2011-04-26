@@ -1,7 +1,6 @@
 import java.io.IOException;
 
 import lejos.nxt.*;
-import lejos.robotics.Pose;
 import lejos.robotics.RegulatedMotor;
 import lejos.geom.Point;
 import lejos.robotics.navigation.*;

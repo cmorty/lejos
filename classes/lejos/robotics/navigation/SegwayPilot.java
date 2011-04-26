@@ -3,8 +3,6 @@ package lejos.robotics.navigation;
 import java.util.ArrayList;
 import lejos.nxt.addon.GyroSensor; // TODO: Purely for constructor. SegwayPilot code doesn't use GyroSensor. Use Gyroscope interface. 
 import lejos.robotics.EncoderMotor;
-import lejos.robotics.Move;
-import lejos.robotics.MoveListener;
 
 /* DEVELOPER NOTES:
  * TODO: Currently no option to build Segway with opposite motor directions. I assume you can just flip the gyro to

@@ -1,6 +1,6 @@
-package lejos.robotics;
+package lejos.robotics.navigation;
 
-import lejos.robotics.Move;
+import lejos.robotics.navigation.Move;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.

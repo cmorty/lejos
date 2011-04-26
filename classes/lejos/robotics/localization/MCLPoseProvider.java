@@ -1,13 +1,13 @@
 package lejos.robotics.localization;
 
 
-import lejos.robotics.Pose;
 import lejos.robotics.mapping.RangeMap;
-import lejos.robotics.MoveListener;
-import lejos.robotics.MoveProvider;
+import lejos.robotics.navigation.Move;
+import lejos.robotics.navigation.MoveListener;
+import lejos.robotics.navigation.MoveProvider;
+import lejos.robotics.navigation.Pose;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.RangeScanner;
-import lejos.robotics.Move;
 import java.awt.Rectangle;
 import lejos.robotics.localization.PoseProvider;
 import java.io.*;
