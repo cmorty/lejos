@@ -3,7 +3,8 @@ package lejos.robotics.localization;
 import java.util.Random;
 import lejos.robotics.*;
 import lejos.robotics.mapping.RangeMap;
-import lejos.robotics.Move;
+import lejos.robotics.navigation.Move;
+import lejos.robotics.navigation.Pose;
 import lejos.geom.*;
 
 /*

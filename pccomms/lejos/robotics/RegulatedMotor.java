@@ -91,7 +91,9 @@ public interface RegulatedMotor extends BaseMotor, Tachometer {
   public int getLimitAngle();
 
   /**
-   * Set motor speed. As a rule of thumb 100 degrees per second are possible for each volt on an NXT motor.
+   * Set motor speed. As a rule of thumb 100 degrees per second are possible for each volt on an NXT motor. Therefore,
+   * disposable alkaline batteries can achieve a top speed of 900 deg/sec, while a rechargable lithium battery pack can achieve
+   * 740 deg/sec. 
    * 
    * @param speed in degrees per second.
    */

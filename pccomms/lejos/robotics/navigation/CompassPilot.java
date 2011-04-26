@@ -2,7 +2,6 @@ package lejos.robotics.navigation;
 
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.DirectionFinder;
-import lejos.robotics.Move;
 import lejos.util.Delay;
 
 /*

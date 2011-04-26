@@ -1,8 +1,8 @@
 package lejos.robotics.pathfinding;
 
 import java.util.Collection;
-import lejos.robotics.Pose;
 import lejos.robotics.navigation.DestinationUnreachableException;
+import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.WayPoint;
 import lejos.robotics.navigation.WayPointListener;
 

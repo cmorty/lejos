@@ -3,8 +3,6 @@ package lejos.robotics.navigation; // TODO: Move to lejos.geom?
 import java.awt.geom.*;
 
 import lejos.geom.*;
-import lejos.robotics.Move;
-import lejos.robotics.Pose;
 
 /**
  * The static methods in this class can be used to to calculate theoretical routes and for displaying graphical representations of

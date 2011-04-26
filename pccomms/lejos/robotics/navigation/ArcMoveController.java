@@ -111,7 +111,7 @@ public interface ArcMoveController extends MoveController {
 	public void arc(float radius, float angle, boolean immediateReturn);
 
 	/**
-	 * Moves the NXT robot a specified distance along an arc mof specified radius,
+	 * Moves the NXT robot a specified distance along an arc of specified radius,
 	 * after which the robot stops moving. This method does not return until the robot has
 	 * completed moving <code>distance</code> along the arc. The units (inches, cm) for <code>distance</code> 
 	 * must be the same as the units used for <code>radius</code>.
@@ -122,12 +122,11 @@ public interface ArcMoveController extends MoveController {
 	 * <p>
 	 * The robot will stop when it has moved along the arc <code>distance</code> units.<br> 
 	 * If <code>distance</code> is positive, the robot will move travel forwards.<br>
-	 * If <code>distance</code> is negative, the robot will move travel backwards.
+	 * If <code>distance</code> is negative, the robot will move travel backwards.<br>
 	 * If <code>distance</code> is zero, the robot will not move and the method returns immediately.
 	 * <p>
 	 * Postcondition: Motor speeds are unpredictable.
 	 * <p>
-	 * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
 	 * 
 	 * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	 *          side of the robot is on the outside of the turn.
@@ -142,22 +141,19 @@ public interface ArcMoveController extends MoveController {
 	 * after which the robot stops moving. This method has the ability to return immediately
 	 * by using the <code>immediateReturn</code> parameter.  
 	 * The units (inches, cm) for <code>distance</code> should be the same as the units used for <code>radius</code>.
-	 * <b>Warning: Your code <i>must</i> call updatePostion() when the robot has stopped, 
-	 * otherwise, the robot position is lost.</b>
 	 * 
 	 * <p>
 	 * If <code>radius</code> is positive, the robot arcs left, and the center of the turning circle is on the left side of the robot.<br>
 	 * If <code>radius</code> is negative, the robot arcs right, and the center of the turning circle is on the right side of the robot.<br>
-	 * If <code>radius</code> is zero, ...
+	 * If <code>radius</code> is zero, the robot rotates in place.
 	 * <p>
 	 * The robot will stop when it has moved along the arc <code>distance</code> units.<br> 
 	 * If <code>distance</code> is positive, the robot will move travel forwards.<br>
-	 * If <code>distance</code> is negative, the robot will move travel backwards.
+	 * If <code>distance</code> is negative, the robot will move travel backwards.<br>
 	 * If <code>distance</code> is zero, the robot will not move and the method returns immediately.
 	 * <p>
 	 * Postcondition: Motor speeds are unpredictable.
 	 * <p>
-	 * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
 	 * 
 	 * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	 *          side of the robot is on the outside of the turn.

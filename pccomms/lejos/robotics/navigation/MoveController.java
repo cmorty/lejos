@@ -1,6 +1,5 @@
 package lejos.robotics.navigation;
 
-import lejos.robotics.MoveProvider;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.

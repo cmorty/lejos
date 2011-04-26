@@ -1,10 +1,10 @@
 package lejos.robotics.localization;
 
 import lejos.geom.Point;
-import lejos.robotics.MoveListener;
-import lejos.robotics.Move;
-import lejos.robotics.MoveProvider;
-import lejos.robotics.Pose;
+import lejos.robotics.navigation.Move;
+import lejos.robotics.navigation.MoveListener;
+import lejos.robotics.navigation.MoveProvider;
+import lejos.robotics.navigation.Pose;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.

@@ -1,6 +1,5 @@
 package lejos.robotics.navigation;
 
-import lejos.robotics.Pose;
 import lejos.geom.Point;
 import lejos.robotics.*;
 

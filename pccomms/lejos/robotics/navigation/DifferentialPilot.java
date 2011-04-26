@@ -157,30 +157,30 @@ public class DifferentialPilot implements
     setRotateSpeed(.8f * getMaxRotateSpeed());
   }
 
-  /**
+  /*
    * Returns the left motor.
    * @return left motor.
    */
-  public RegulatedMotor getLeft()
+  /*public RegulatedMotor getLeft()
   {
     return _left;
-  }
+  }*/
 
-  /**
+  /*
    * returns the right motor.
    * @return right motor.
    */
-  public RegulatedMotor getRight()
+  /*public RegulatedMotor getRight()
   {
     return _right;
-  }
+  }*/
 
   /**
-   * Returnsthe tachoCount of the left motor
+   * Returns the tachoCount of the left motor
    * @return tachoCount of left motor. Positive value means motor has moved
    *         the robot forward.
    */
-  public int getLeftCount()
+  private int getLeftCount()
   {
     return _parity * _left.getTachoCount();
   }
@@ -190,31 +190,30 @@ public class DifferentialPilot implements
    * @return tachoCount of the right motor. Positive value means motor has
    *         moved the robot forward.
    */
-  public int getRightCount()
+  private int getRightCount()
   {
     return _parity * _right.getTachoCount();
   }
 
-  /**
+  /*
    * Returns the actual speed of the left motor
    * @return actual speed of left motor in degrees per second. A negative
    *         value if motor is rotating backwards.
    **/
-  public int getLeftActualSpeed()
+  /*public int getLeftActualSpeed()
   {
     return _left.getRotationSpeed();
-  }
+  }*/
 
-  /**
+  /*
    * Returns the actual speed of right motor
    * @return actual speed of right motor in degrees per second. A negative
    *         value if motor is rotating backwards.
    **/
-  public int getRightActualSpeed()
+  /*public int getRightActualSpeed()
   {
     return _right.getRotationSpeed();
-  }
-
+  }*/
 
   private void setSpeed(final int leftSpeed, final int rightSpeed)
   {
@@ -407,13 +406,13 @@ public class DifferentialPilot implements
     if (!immediateReturn)  while (isMoving()) Thread.yield();
   }
 
-  /**
+  /*
    * This method can be overridden by subclasses to stop the robot if a hazard
    * is detected
    */
-  protected void  continueMoving()
-  {
-  }
+  //protected void  continueMoving()
+  //{
+  //}
 
   /**
    * Stops the NXT robot.
@@ -460,10 +459,12 @@ public class DifferentialPilot implements
     if (distance == Float.POSITIVE_INFINITY)
     {
       forward();
+      return;
     }
     if ((distance == Float.NEGATIVE_INFINITY))
     {
       backward();
+      return;
     }
     movementStart(immediateReturn);
     setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math.round(_robotTravelSpeed * _rightDegPerDistance));
@@ -508,9 +509,10 @@ public class DifferentialPilot implements
     if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY)
     {
       forward();
+      return;
     }
     steer(turnRate(radius), angle, immediateReturn);// type and move started called by steer()
-    if (!immediateReturn) waitComplete();
+    // if (!immediateReturn) waitComplete(); redundant I think - BB
   }
 
   public  void  travelArc(float radius, float distance)
@@ -722,8 +724,9 @@ public class DifferentialPilot implements
    * helper method used by steer(float) and steer(float,float,boolean)
    * sets _outsideSpeed, _insideSpeed, _steerRatio
    * @param turnRate
+   * @deprecated Access to this method will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  protected void steerPrep(final float turnRate)
+  @Deprecated protected void steerPrep(final float turnRate)
   {
 
     float rate = turnRate;
@@ -761,21 +764,22 @@ public class DifferentialPilot implements
   }
 
   /**
-   * called by RegulatedMotor when a motor rotation starts
-   * not used.
+   * MotorListener interface method is called by RegulatedMotor when a motor rotation starts.
+   * 
    * @param motor
    * @param tachoCount
    * @param stall    true of the motor is stalled
    * @param ts  time stamp
    */
   public synchronized void rotationStarted(RegulatedMotor motor, int tachoCount, boolean stall,long ts)
-  {
+  { // Not used
   }
 
   /**
    * called at start of a movement to inform the listeners  that a movement has started
+   * @deprecated Access to this method will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  protected void movementStart(boolean alert)
+  @Deprecated protected void movementStart(boolean alert)
   {
     if (isMoving())  movementStop();
     reset();
@@ -788,7 +792,7 @@ public class DifferentialPilot implements
    * called by Arc() ,travel(),rotate(),stop() rotationStopped()
    * calls moveStopped on listener
    */
-  protected synchronized void movementStop()
+  private synchronized void movementStop()
   {
     for(MoveListener ml : _listeners)
       ml.moveStopped(new Move(_type,
@@ -806,7 +810,7 @@ public class DifferentialPilot implements
   /**
    * wait for the current operation on both motors to complete
    */
-  protected void waitComplete()
+  private void waitComplete()
   {
     while(isMoving())
     {
@@ -845,14 +849,25 @@ public class DifferentialPilot implements
     return _turnRadius;
   }
 
-  public float getMovementIncrement()
+  /**
+   * @deprecated Access to this method will be private in NXJ version 1.0 when the CompassPilot is removed
+   * and ArcNavigator sample will need to be updated to not use these methods.
+   * @return The move distance since it last started moving
+   */
+  @Deprecated public float getMovementIncrement()
   {
     float left = (getLeftCount() - _leftTC)/ _leftDegPerDistance;
     float right = (getRightCount() - _rightTC) / _rightDegPerDistance;
     return /*_parity * */ (left + right) / 2.0f;
   }
 
-  public float getAngleIncrement()
+  /**
+   * @deprecated Access to this method will be private in NXJ version 1.0 when the CompassPilot is removed
+   * and ArcNavigator sample will need to be updated to not use these methods.
+   * @return The angle rotated since rotation began.
+   * 
+   */
+  @Deprecated public float getAngleIncrement()
   {
     return /*_parity * */(((getRightCount() - _rightTC) / _rightTurnRatio) -
             ((getLeftCount()  - _leftTC) / _leftTurnRatio)) / 2.0f;
@@ -871,83 +886,92 @@ public class DifferentialPilot implements
   private float _turnRadius = 0;
   /**
    * Left motor.
+   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  protected final RegulatedMotor _left;
+  @Deprecated protected final RegulatedMotor _left;
   /**
    * Right motor.
+   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  protected final RegulatedMotor _right;
+  @Deprecated protected final RegulatedMotor _right;
   /**
    * The motor at the inside of the turn. set by steer(turnRate)
    * used by other steer methodsl
    */
-  protected RegulatedMotor _inside;
+  private RegulatedMotor _inside;
   /**
    * The motor at the outside of the turn. set by steer(turnRate)
    * used by other steer methodsl
+   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  protected RegulatedMotor _outside;
+  @Deprecated protected RegulatedMotor _outside;
   /**
    * ratio of inside/outside motor speeds
    * set by steer(turnRate)
    * used by other steer methods;
    */
-  protected float _steerRatio;
-  protected boolean _steering = false;
+  private float _steerRatio;
+  private boolean _steering = false;
   /**
    * Left motor degrees per unit of travel.
+   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  protected final float _leftDegPerDistance;
+  @Deprecated protected final float _leftDegPerDistance;
   /**
    * Right motor degrees per unit of travel.
+   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  protected final float _rightDegPerDistance;
+  @Deprecated protected final float _rightDegPerDistance;
   /**
    * Left motor revolutions for 360 degree rotation of robot (motors running
    * in opposite directions). Calculated from wheel diameter and track width.
    * Used by rotate() and steer() methods.
    **/
-  protected final float _leftTurnRatio;
+  private final float _leftTurnRatio;
   /**
    * Right motor revolutions for 360 degree rotation of robot (motors running
    * in opposite directions). Calculated from wheel diameter and track width.
    * Used by rotate() and steer() methods.
    **/
-  protected final float _rightTurnRatio;
+  private final float _rightTurnRatio;
   /**
    * Speed of robot for moving in wheel diameter units per seconds. Set by
    * setSpeed(), setTravelSpeed()
    */
-  protected float _robotTravelSpeed;
+  private float _robotTravelSpeed;
   /**
    * Speed of robot for turning in degree per seconds.
    */
-  protected float _robotRotateSpeed;
+  private float _robotRotateSpeed;
   /**
    * Motor speed degrees per second. Used by forward(),backward() and steer().
    */
-  public int _motorSpeed;
+  private int _motorSpeed;
   /**
    * Motor rotation forward makes robot move forward if parity == 1.
    */
-  protected byte _parity;
+  private byte _parity;
   /**
    * Distance between wheels. Used in steer() and rotate().
    */
-  protected final float _trackWidth;
+  private final float _trackWidth;
   /**
    * Diameter of left wheel.
    */
-  protected final float _leftWheelDiameter;
+  private final float _leftWheelDiameter;
   /**
    * Diameter of right wheel.
    */
-  protected final float _rightWheelDiameter;
+  private final float _rightWheelDiameter;
 
-  protected  int _leftTC; // left tacho count
-  protected  int _rightTC; //right tacho count
+  private  int _leftTC; // left tacho count
+  private  int _rightTC; //right tacho count
 
-  protected ArrayList<MoveListener> _listeners= new ArrayList<MoveListener>();
-  protected Move.MoveType _type;
+  private ArrayList<MoveListener> _listeners= new ArrayList<MoveListener>();
+  
+  /**
+   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
+   */
+  @Deprecated protected Move.MoveType _type;
 
 }
