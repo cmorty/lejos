@@ -1,4 +1,3 @@
-import lejos.robotics.Pose;
 import lejos.robotics.navigation.*;
 import lejos.nxt.*;
 

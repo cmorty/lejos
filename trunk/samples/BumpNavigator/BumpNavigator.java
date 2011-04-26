@@ -1,9 +1,9 @@
 
+import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.WayPoint;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.NavPathController;
 import lejos.nxt.*;
-import lejos.robotics.Pose;
 import lejos.robotics.RegulatedMotor;
 import lejos.util.PilotProps;
 

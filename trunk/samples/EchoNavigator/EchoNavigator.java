@@ -2,7 +2,7 @@ import lejos.nxt.*;
 import lejos.robotics.localization.DeadReckonerPoseProvider;
 import lejos.robotics.navigation.ArcRotateMoveController;
 import lejos.robotics.navigation.DifferentialPilot;
-import lejos.robotics.Pose;
+import lejos.robotics.navigation.Pose;
 import lejos.robotics.RegulatedMotor;
 import lejos.geom.Point;
 

@@ -1,4 +1,4 @@
-package lejos.robotics;
+package lejos.robotics.navigation;
 
 
 
