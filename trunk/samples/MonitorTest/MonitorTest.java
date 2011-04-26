@@ -33,21 +33,22 @@ import lejos.nxt.comm.*;
  */
 public class MonitorTest 
 {
-	static PilotProps pp = PilotProps.loadProperties();
-	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "5.6"));
-	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "16"));
-	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
-	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
-	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
-	static DifferentialPilot robot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
-	
 	public static void main(String[] args ) throws Exception 
 	{
+	   	PilotProps pp = PilotProps.loadDefaultProperties();
+		float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "5.6"));
+		float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "16.0"));
+		RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
+		RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
+		boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
+		
+		DifferentialPilot robot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
+		
         LCPBTResponder lcpThread = new LCPBTResponder();
         lcpThread.setDaemon(true);
         lcpThread.start();
         
-        LightSensor light = new LightSensor(SensorPort.S1);
+        // LightSensor light = new LightSensor(SensorPort.S1);
    
 		LCP.messageWrite(0, "Waiting for ENTER to be pressed");
 		
@@ -61,28 +62,28 @@ public class MonitorTest
 		robot.forward();
 		pause(1000);
 		robot.stop();
-		showCount(0);
+		showCount(robot, 0);
 		robot.backward();
 		pause(1000);
 		robot.stop();
 		LCP.messageWrite(0, "Stopped");
-		showCount(1);
+		showCount(robot, 1);
 		LCP.messageWrite(0, "Traveling 10 units");
 		robot.travel(10,true);
 		while(robot.isMoving())Thread.yield();
 		LCP.messageWrite(0, "Finished traveling");
-		showCount(2);
+		showCount(robot, 2);
 		LCP.messageWrite(0, "Traveling back 10 units");
 		robot.travel(-10);
 		LCP.messageWrite(0, "Finished traveling back");
-		showCount(3);
+		showCount(robot, 3);
 		for(int i = 0; i<4; i++)
 		{
 			LCP.messageWrite(0, "Rotating 90");
 			robot.rotate(90);
 		}
 		LCP.messageWrite(0, "Finished rotating");
-		showCount(4);
+		showCount(robot, 4);
 		for(int i = 0; i<4; i++)
 		{
 			LCP.messageWrite(0, "Rotating Back 90");
@@ -90,20 +91,20 @@ public class MonitorTest
 			while(robot.isMoving())Thread.yield();
 		}
 		LCP.messageWrite(0, "Finished rotating back");
-		showCount(5);
+		showCount(robot, 5);
 		LCP.messageWrite(0, "Steering right");
 		robot.steer(-50,180,true);
 		while(robot.isMoving())Thread.yield();
 		LCP.messageWrite(0, "Steering back");
 		robot.steer(-50,-180);
 		LCP.messageWrite(0, "Finished steering");
-		showCount(6);
+		showCount(robot, 6);
 		LCP.messageWrite(0, "Steering left");
 		robot.steer(50,180);
 		LCP.messageWrite(0, "Steering back");
 		robot.steer(50, -180);
 		LCP.messageWrite(0, "Finished steering");
-		showCount(7);
+		showCount(robot, 7);
 		LCP.messageWrite(0, "Traveling forward a bit");
 		robot.travel(10,true);
 		pause(500);
@@ -121,12 +122,11 @@ public class MonitorTest
 		
 	public static void pause(int time)
 	{
-		try{ Thread.sleep(time);
-	}
+		try{ Thread.sleep(time); }
 		catch(InterruptedException e){}
 	}
 	
-	public static void showCount(int i)
+	public static void showCount(DifferentialPilot robot, int i)
 	{
 		LCD.drawInt(robot.getLeftCount(),0,i);
 		LCD.drawInt(robot.getRightCount(),7,i);

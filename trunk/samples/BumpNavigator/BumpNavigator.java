@@ -7,6 +7,7 @@ import lejos.robotics.Pose;
 import lejos.robotics.RegulatedMotor;
 import lejos.util.PilotProps;
 
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -87,19 +88,19 @@ public class BumpNavigator {
         return  side;  // watch for hit while moving forward
     }
     
-	static PilotProps pp = PilotProps.loadProperties();
-	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "5.6"));
-	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "14.2"));
-	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "A"));
-	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
-	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
-
     /**
      * test of BumpNavitator. destination is 200 cm  directly ahead.
      * @param args
+     * @throws IOException 
      */
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws IOException {
+    	PilotProps pp = PilotProps.loadDefaultProperties();
+    	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "5.6"));
+    	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "14.2"));
+    	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "A"));
+    	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
+    	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
+    	
         DifferentialPilot p = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
         NavPathController nav = new NavPathController(p);
         BumpNavigator robot = new BumpNavigator(nav, SensorPort.S1, SensorPort.S4);

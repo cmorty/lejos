@@ -24,21 +24,21 @@ import lejos.util.PilotProps;
  */
 public class Line {
 	
-	static PilotProps pp = PilotProps.loadProperties();
-	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "4.96"));
-	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "13"));
-	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
-	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
-	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
-	
 	public static void main (String[] aArg)
 	throws Exception
 	{
+     	PilotProps pp = PilotProps.loadDefaultProperties();
+    	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "4.96"));
+    	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "13.0"));
+    	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
+    	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
+    	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
+    	
 		// Change last parameter of Pilot to specify on which 
 		// direction you want to be "forward" for your vehicle.
 		// The wheel and axle dimension parameters should be
 		// set for your robot, but are not critical.
-		final RotateMoveController pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, true);
+		final RotateMoveController pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
 		final LightSensor light = new LightSensor(SensorPort.S1);
                 pilot.setRotateSpeed(180);
         /**

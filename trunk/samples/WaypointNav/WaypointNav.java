@@ -3,6 +3,8 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.*;
 import lejos.util.PilotProps;
 import lejos.nxt.*;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -109,19 +111,20 @@ public class WaypointNav
     }
   }
   
-	static PilotProps pp = PilotProps.loadProperties();
-	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "4.96"));
-	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "13"));
-	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
-	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
-	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
-	
-  /**
-   * test of WaypointNav
-   * @param args
-   */
-     public static void main(String[] args)
+    /**
+     * test of WaypointNav
+     * @param args
+     * @throws IOException 
+     */
+    public static void main(String[] args) throws IOException
     {
+     	PilotProps pp = PilotProps.loadDefaultProperties();
+    	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "4.96"));
+    	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "13.0"));
+    	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
+    	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
+    	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
+    	
       System.out.println("Any button");
       Button.waitForPress();
       NavPathController nav = new NavPathController(

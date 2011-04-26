@@ -33,19 +33,20 @@ public class RCNavigator
       pilot.setRotateSpeed(180);
     }
    
-	static PilotProps pp = PilotProps.loadProperties();
-	static Float wheelDiameter = Float.parseFloat(pp.getProperty("wheelDiameter", "4.96"));
-	static Float trackWidth = Float.parseFloat(pp.getProperty("trackWidth", "13"));
-	static RegulatedMotor leftMotor = pp.getMotor(pp.getProperty("leftMotor", "B"));
-	static RegulatedMotor rightMotor = pp.getMotor(pp.getProperty("rightMotor", "C"));
-	static Boolean reverse = Boolean.parseBoolean(pp.getProperty("reverse","false"));
-	
 /**
  * wheel diameter and track width in cm.
  * @param args
+ * @throws IOException 
  */
-   public static void main(String[] args)
+   public static void main(String[] args) throws IOException
     {
+    	PilotProps pp = PilotProps.loadDefaultProperties();
+    	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "4.96"));
+    	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "13.0"));
+    	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
+    	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
+    	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
+    	
       DifferentialPilot pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
       new RCNavigator(pilot).go();
     }
