@@ -1,7 +1,5 @@
 package lejos.robotics;
 
-
-
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
@@ -16,14 +14,14 @@ package lejos.robotics;
 public class Move {
 	/**
 	 * The type of  movement made in sufficient detail to allow errors
-	 * in the movement to be modelled.
+	 * in the movement to be modeled.
 	 */
 	public enum MoveType {TRAVEL, ROTATE, ARC, STOP};
-	protected float distanceTraveled, angleTurned;
-	protected MoveType moveType;
-	protected float arcRadius = Float.POSITIVE_INFINITY;
-	protected boolean isMoving;
-	protected long timeStamp;
+	private float distanceTraveled, angleTurned;
+	private MoveType moveType;
+	private float arcRadius = Float.POSITIVE_INFINITY;
+	private boolean isMoving;
+	private long timeStamp;
 	
 	/**
 	 * Create a movement object to record a movement made by a pilot.
@@ -134,6 +132,15 @@ public class Move {
 	 */
 	public float getDistanceTraveled() {
 		return distanceTraveled;
+	}
+	
+	/**
+	 * The time stamp is the system clock at the time the Move object is created. It is set automatically
+	 * in the Move constructor using {@link System#currentTimeMillis()} 
+	 * @return Time stamp in milliseconds.
+	 */
+	public long getTimeStamp() {
+		return timeStamp;
 	}
 	
 	/**

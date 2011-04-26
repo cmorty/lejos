@@ -1,16 +1,15 @@
 package lejos.robotics.navigation;
 
 // TODO: Get rid of platform dependencies.
-import lejos.nxt.LCD; // TODO: Use System.out instead. Alt constructor to suppress visual info.
-import lejos.nxt.Motor; // TODO: Andy might be able to make NXTMotor wake up motor controller chip.
 import lejos.nxt.Sound; // TODO: Visual count-down only, no sound.
 import lejos.nxt.addon.GyroSensor; // TODO: Use Gyroscope interface. Returns degrees/second velocity.
 import lejos.robotics.EncoderMotor;
+import lejos.nxt.LCD;
 
 /**
  * <p>This class balances a two-wheeled Segway-like robot. It works with almost any construction 
  * (tall or short) such as the <a href="http://www.laurensvalk.com/nxt-2_0-only/anyway">Anyway</a> or
- * the <a href="http://www.hitechnic.com/blog/gyro-sensor/htway/">HTWay</a>. Wheel diameter is the  most
+ * the <a href="http://www.hitechnic.com/blog/gyro-sensor/htway/">HTWay</a>. Wheel diameter is the most
  * important construction variable, which is specified in the constructor.</p> 
  * 
  * <p>To start the robot balancing:
@@ -201,10 +200,8 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 		LCD.drawString("offset.", 0, 6);
 
 		// Ensure that the motor controller is active since this affects the gyro values.
-		// TODO: Could try running the motors at very low power, which is what it normally runs at.
-		//left_motor.flt(); //These methods don't do it for some reason.
-		
-		Motor.A.flt(); // Must use this for it to work for some reason.
+		left_motor.flt(); //These methods don't do it for some reason.
+		right_motor.flt(); 
 		
 		do {
 			gSum = 0.0;
