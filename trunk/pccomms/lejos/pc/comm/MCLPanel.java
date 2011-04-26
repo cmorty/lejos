@@ -7,7 +7,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 
 import lejos.geom.Line;
-import lejos.robotics.Pose;
+import lejos.robotics.navigation.Pose;
 import lejos.robotics.localization.MCLParticle;
 import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.localization.MCLPoseProvider;

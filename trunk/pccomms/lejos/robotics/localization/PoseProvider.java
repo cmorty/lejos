@@ -1,6 +1,6 @@
 package lejos.robotics.localization;
 
-import lejos.robotics.Pose;
+import lejos.robotics.navigation.Pose;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
