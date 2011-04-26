@@ -6,7 +6,7 @@ import java.util.*;
 
 import lejos.geom.Line;
 import lejos.geom.Rectangle;
-import lejos.robotics.Pose;
+import lejos.robotics.navigation.Pose;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.*;
