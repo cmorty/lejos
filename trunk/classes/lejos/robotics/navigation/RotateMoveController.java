@@ -22,13 +22,7 @@ public interface RotateMoveController extends MoveController {
    * @param immediateReturn If immediateReturn is true then the method returns immediately
    */
   public void rotate(float angle, boolean immediateReturn);
-
-  /**
-   * gets the heading change since the start of the current movement;
-   * @return angle change in degrees
-   */
-  public float getAngleIncrement();
-
+  
   /**
    * sets the rotation speed of the robot (the angular velocity of the rotate()
    * methods)
