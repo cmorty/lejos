@@ -22,7 +22,8 @@ import lejos.util.Delay;
  *  <br> <b> Listeners.</b>  An object implementing the {@link lejos.robotics.RegulatedMotorListener
  * <code> RegulatedMotorListener </code> } interface  may register with this class.
  * It will be informed each time the motor starts or stops.
- * <br> <b>Stall detection</b> If a stall is detected, the motor will stop, and
+ * <br> <b>Stall detection</b> If a stall is detected or if for some other reason
+ * the speed regulation fails, the motor will stop, and
  * <code>isStalled()</code >  returns <b>true</b>.
  * <br>Motors will hold thier position when stopped. If this is not what you require use
  * the flt() method instead of stop().
