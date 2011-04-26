@@ -27,13 +27,16 @@ import lejos.robotics.navigation.DifferentialPilot;
  */ 
 public class PilotTester
 {
+	static RegulatedMotor leftMotor;
+	static RegulatedMotor rightMotor;
+		
 	public static void main(String[] args ) throws Exception
 	{
      	PilotProps pp = PilotProps.loadDefaultProperties();
     	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "4.96"));
     	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "13.0"));
-    	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
-    	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
+    	leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
+    	rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
     	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
     	
     	DifferentialPilot robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
@@ -86,8 +89,8 @@ public class PilotTester
    
 	public static void showCount(DifferentialPilot robot, int i)
 	{
-		LCD.drawInt(robot.getLeftCount(),0,i);
-		LCD.drawInt(robot.getRightCount(),7,i);
+		LCD.drawInt(leftMotor.getTachoCount(),0,i);
+		LCD.drawInt(rightMotor.getTachoCount(),7,i);
 	}
 }
 

@@ -157,30 +157,30 @@ public class DifferentialPilot implements
     setRotateSpeed(.8f * getMaxRotateSpeed());
   }
 
-  /**
+  /*
    * Returns the left motor.
    * @return left motor.
    */
-  public RegulatedMotor getLeft()
+  /*public RegulatedMotor getLeft()
   {
     return _left;
-  }
+  }*/
 
-  /**
+  /*
    * returns the right motor.
    * @return right motor.
    */
-  public RegulatedMotor getRight()
+  /*public RegulatedMotor getRight()
   {
     return _right;
-  }
+  }*/
 
   /**
-   * Returnsthe tachoCount of the left motor
+   * Returns the tachoCount of the left motor
    * @return tachoCount of left motor. Positive value means motor has moved
    *         the robot forward.
    */
-  public int getLeftCount()
+  private int getLeftCount()
   {
     return _parity * _left.getTachoCount();
   }
@@ -190,31 +190,30 @@ public class DifferentialPilot implements
    * @return tachoCount of the right motor. Positive value means motor has
    *         moved the robot forward.
    */
-  public int getRightCount()
+  private int getRightCount()
   {
     return _parity * _right.getTachoCount();
   }
 
-  /**
+  /*
    * Returns the actual speed of the left motor
    * @return actual speed of left motor in degrees per second. A negative
    *         value if motor is rotating backwards.
    **/
-  public int getLeftActualSpeed()
+  /*public int getLeftActualSpeed()
   {
     return _left.getRotationSpeed();
-  }
+  }*/
 
-  /**
+  /*
    * Returns the actual speed of right motor
    * @return actual speed of right motor in degrees per second. A negative
    *         value if motor is rotating backwards.
    **/
-  public int getRightActualSpeed()
+  /*public int getRightActualSpeed()
   {
     return _right.getRotationSpeed();
-  }
-
+  }*/
 
   private void setSpeed(final int leftSpeed, final int rightSpeed)
   {
@@ -407,13 +406,13 @@ public class DifferentialPilot implements
     if (!immediateReturn)  while (isMoving()) Thread.yield();
   }
 
-  /**
+  /*
    * This method can be overridden by subclasses to stop the robot if a hazard
    * is detected
    */
-  protected void  continueMoving()
-  {
-  }
+  //protected void  continueMoving()
+  //{
+  //}
 
   /**
    * Stops the NXT robot.
@@ -725,8 +724,9 @@ public class DifferentialPilot implements
    * helper method used by steer(float) and steer(float,float,boolean)
    * sets _outsideSpeed, _insideSpeed, _steerRatio
    * @param turnRate
+   * @deprecated Access to this method will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  protected void steerPrep(final float turnRate)
+  @Deprecated protected void steerPrep(final float turnRate)
   {
 
     float rate = turnRate;
@@ -777,8 +777,9 @@ public class DifferentialPilot implements
 
   /**
    * called at start of a movement to inform the listeners  that a movement has started
+   * @deprecated Access to this method will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  protected void movementStart(boolean alert)
+  @Deprecated protected void movementStart(boolean alert)
   {
     if (isMoving())  movementStop();
     reset();
@@ -791,7 +792,7 @@ public class DifferentialPilot implements
    * called by Arc() ,travel(),rotate(),stop() rotationStopped()
    * calls moveStopped on listener
    */
-  protected synchronized void movementStop()
+  private synchronized void movementStop()
   {
     for(MoveListener ml : _listeners)
       ml.moveStopped(new Move(_type,
@@ -809,7 +810,7 @@ public class DifferentialPilot implements
   /**
    * wait for the current operation on both motors to complete
    */
-  protected void waitComplete()
+  private void waitComplete()
   {
     while(isMoving())
     {
@@ -848,14 +849,25 @@ public class DifferentialPilot implements
     return _turnRadius;
   }
 
-  public float getMovementIncrement()
+  /**
+   * @deprecated Access to this method will be private in NXJ version 1.0 when the CompassPilot is removed
+   * and ArcNavigator sample will need to be updated to not use these methods.
+   * @return The move distance since it last started moving
+   */
+  @Deprecated public float getMovementIncrement()
   {
     float left = (getLeftCount() - _leftTC)/ _leftDegPerDistance;
     float right = (getRightCount() - _rightTC) / _rightDegPerDistance;
     return /*_parity * */ (left + right) / 2.0f;
   }
 
-  public float getAngleIncrement()
+  /**
+   * @deprecated Access to this method will be private in NXJ version 1.0 when the CompassPilot is removed
+   * and ArcNavigator sample will need to be updated to not use these methods.
+   * @return The angle rotated since rotation began.
+   * 
+   */
+  @Deprecated public float getAngleIncrement()
   {
     return /*_parity * */(((getRightCount() - _rightTC) / _rightTurnRatio) -
             ((getLeftCount()  - _leftTC) / _leftTurnRatio)) / 2.0f;
