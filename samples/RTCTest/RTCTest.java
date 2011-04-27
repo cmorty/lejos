@@ -2,9 +2,7 @@ import lejos.nxt.*;
 import lejos.util.Delay;
 import java.util.Random;
 import java.io.IOException;
-
-import lejos.nxt.addon.Clock;
-import lejos.nxt.addon.DummyClock;
+import lejos.robotics.Clock;
 import lejos.nxt.addon.RealTimeClock;
 
 public class RTCTest {
@@ -17,7 +15,7 @@ public class RTCTest {
 		byte[] ramTest = new byte[56];
 		Random r = new Random();
 		int i;
-		Clock clock = new RealTimeClock(SensorPort.S1);
+		lejos.robotics.Clock clock = new RealTimeClock(SensorPort.S1);
 		//Clock clock = new DummyClock();
 		int cur = 0;
 
