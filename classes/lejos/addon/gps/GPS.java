@@ -85,8 +85,10 @@ public class GPS extends SimpleGPS {
 		boolean tracked = false;
 		int [] prns = getPRN();
 		for(int i=0;i<prns.length;i++) {
-			if(prns[i] == s.getPRN()) tracked=true;
-			break;
+			if(prns[i] == s.getPRN()) {
+				tracked=true;
+				break;
+			}
 		}
 		s.setTracked(tracked);
 		return s;
