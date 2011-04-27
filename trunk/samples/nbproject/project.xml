@@ -37,16 +37,16 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>BTReceive</label>
+                    <label>BTGPS</label>
                     <type>java</type>
-                    <location>BTReceive</location>
+                    <location>BTGPS</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>BTGPS</label>
+                    <label>BTReceive</label>
                     <type>java</type>
-                    <location>BTGPS</location>
+                    <location>BTReceive</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -177,6 +177,13 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>IRTransmit</label>
+                    <type>java</type>
+                    <location>IRTransmit</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>JSR256Test</label>
                     <type>java</type>
                     <location>JSR256Test</location>
@@ -187,6 +194,13 @@
                     <label>KalmanTest</label>
                     <type>java</type>
                     <location>KalmanTest</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>KalmanTest2</label>
+                    <type>java</type>
+                    <location>KalmanTest2</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -219,9 +233,9 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>LLCMonitor</label>
+                    <label>LnrActuatorTest</label>
                     <type>java</type>
-                    <location>LLCMonitor</location>
+                    <location>LnrActuatorTest</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -275,6 +289,13 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>NXTMMXSample</label>
+                    <type>java</type>
+                    <location>NXTMMXSample</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>NXTReceive</label>
                     <type>java</type>
                     <location>NXTReceive</location>
@@ -317,6 +338,13 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>PilotParams</label>
+                    <type>java</type>
+                    <location>PilotParams</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>PilotTester</label>
                     <type>java</type>
                     <location>PilotTester</location>
@@ -341,6 +369,13 @@
                     <label>RCXEmulator</label>
                     <type>java</type>
                     <location>RCXEmulator</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>RCXLLCMonitor</label>
+                    <type>java</type>
+                    <location>RCXLLCMonitor</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -401,6 +436,13 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>SegwayPilotDemo</label>
+                    <type>java</type>
+                    <location>SegwayPilotDemo</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>SensorMuxTest</label>
                     <type>java</type>
                     <location>SensorMuxTest</location>
@@ -446,6 +488,13 @@
                     <label>SpeedTest</label>
                     <type>java</type>
                     <location>SpeedTest</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>SteerNavDemo</label>
+                    <type>java</type>
+                    <location>SteerNavDemo</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -536,13 +585,13 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>BTReceive</label>
-                        <location>BTReceive</location>
+                        <label>BTGPS</label>
+                        <location>BTGPS</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>BTGPS</label>
-                        <location>BTGPS</location>
+                        <label>BTReceive</label>
+                        <location>BTReceive</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -636,6 +685,11 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>IRTransmit</label>
+                        <location>IRTransmit</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>JSR256Test</label>
                         <location>JSR256Test</location>
                         <excludes>**.class,**.nxj</excludes>
@@ -643,6 +697,11 @@
                     <source-folder style="packages">
                         <label>KalmanTest</label>
                         <location>KalmanTest</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>KalmanTest2</label>
+                        <location>KalmanTest2</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -666,8 +725,8 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>LLCMonitor</label>
-                        <location>LLCMonitor</location>
+                        <label>LnrActuatorTest</label>
+                        <location>LnrActuatorTest</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -706,6 +765,11 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>NXTMMXSample</label>
+                        <location>NXTMMXSample</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>NXTReceive</label>
                         <location>NXTReceive</location>
                         <excludes>**.class,**.nxj</excludes>
@@ -736,6 +800,11 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>PilotParams</label>
+                        <location>PilotParams</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>PilotTester</label>
                         <location>PilotTester</location>
                         <excludes>**.class,**.nxj</excludes>
@@ -753,6 +822,11 @@
                     <source-folder style="packages">
                         <label>RCXEmulator</label>
                         <location>RCXEmulator</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>RCXLLCMonitor</label>
+                        <location>RCXLLCMonitor</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -796,6 +870,11 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>SegwayPilotDemo</label>
+                        <location>SegwayPilotDemo</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>SensorMuxTest</label>
                         <location>SensorMuxTest</location>
                         <excludes>**.class,**.nxj</excludes>
@@ -828,6 +907,11 @@
                     <source-folder style="packages">
                         <label>SpeedTest</label>
                         <location>SpeedTest</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>SteerNavDemo</label>
+                        <location>SteerNavDemo</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -884,10 +968,11 @@
         </general-data>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
-                <package-root>BTConnectTest</package-root>
+                <package-root>ArcNavigator</package-root>
                 <package-root>BlueStats</package-root>
-                <package-root>BTReceive</package-root>
+                <package-root>BTConnectTest</package-root>
                 <package-root>BTGPS</package-root>
+                <package-root>BTReceive</package-root>
                 <package-root>BumperCar</package-root>
                 <package-root>BumpNavigator</package-root>
                 <package-root>ColorDetector</package-root>
@@ -896,35 +981,45 @@
                 <package-root>CompassTest</package-root>
                 <package-root>DistanceTest</package-root>
                 <package-root>DLTest</package-root>
+                <package-root>DSwitchTest</package-root>
                 <package-root>EchoNavigator</package-root>
                 <package-root>ExceptionTest</package-root>
                 <package-root>FileTest</package-root>
                 <package-root>GPSInfo</package-root>
                 <package-root>GraphicsSample</package-root>
+                <package-root>GyroTest</package-root>
                 <package-root>HelloWorld</package-root>
                 <package-root>Homer</package-root>
                 <package-root>I2CDevices</package-root>
+                <package-root>IRTransmit</package-root>
+                <package-root>JSR256Test</package-root>
                 <package-root>KalmanTest</package-root>
+                <package-root>KalmanTest2</package-root>
                 <package-root>LatteboxTest</package-root>
                 <package-root>LCDUI</package-root>
                 <package-root>Line</package-root>
                 <package-root>Listen</package-root>
-                <package-root>LLCMonitor</package-root>
+                <package-root>LnrActuatorTest</package-root>
                 <package-root>MatrixTest</package-root>
                 <package-root>MemoryTest</package-root>
                 <package-root>MonitorTest</package-root>
                 <package-root>NXTCamTest</package-root>
                 <package-root>NXTConnectTest</package-root>
                 <package-root>NXTLCPRespond</package-root>
+                <package-root>NXTLineLeaderTest</package-root>
+                <package-root>NXTMMXSample</package-root>
                 <package-root>NXTReceive</package-root>
                 <package-root>NXTServoTest</package-root>
                 <package-root>PerformanceTest</package-root>
                 <package-root>PFLinkTest</package-root>
                 <package-root>PFMateTest</package-root>
                 <package-root>PFTest</package-root>
+                <package-root>PilotParams</package-root>
                 <package-root>PilotTester</package-root>
                 <package-root>RCNavigator</package-root>
+                <package-root>RCPilot</package-root>
                 <package-root>RCXEmulator</package-root>
+                <package-root>RCXLLCMonitor</package-root>
                 <package-root>RCXMMTest</package-root>
                 <package-root>RCXMuxTest</package-root>
                 <package-root>RCXPortTest</package-root>
@@ -933,11 +1028,16 @@
                 <package-root>RCXTempTest</package-root>
                 <package-root>RemoteNXTTest</package-root>
                 <package-root>RFIDTest</package-root>
+                <package-root>RTCTest</package-root>
+                <package-root>SegwayPilotDemo</package-root>
+                <package-root>SensorMuxTest</package-root>
                 <package-root>SignalTest</package-root>
+                <package-root>Sniffer</package-root>
                 <package-root>SocketTest</package-root>
                 <package-root>SonicTest</package-root>
                 <package-root>SoundSample</package-root>
                 <package-root>SpeedTest</package-root>
+                <package-root>SteerNavDemo</package-root>
                 <package-root>Subsumption1</package-root>
                 <package-root>Subsumption2</package-root>
                 <package-root>TiltTest</package-root>
@@ -946,14 +1046,6 @@
                 <package-root>USBReceive</package-root>
                 <package-root>View</package-root>
                 <package-root>WaypointNav</package-root>
-                <package-root>Sniffer</package-root>
-                <package-root>JSR256Test</package-root>
-                <package-root>ArcNavigator</package-root>
-                <package-root>DSwitchTest</package-root>
-                <package-root>GyroTest</package-root>
-                <package-root>NXTLineLeaderTest</package-root>
-                <package-root>RCPilot</package-root>
-                <package-root>SensorMuxTest</package-root>
                 <classpath mode="compile">../classes/lib/classes.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
