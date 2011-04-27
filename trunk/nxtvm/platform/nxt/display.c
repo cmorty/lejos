@@ -361,6 +361,8 @@ display_char(int c)
     do {
       *b++ = *f++;
     } while( f < fend);
+    // and now clear the inter char gap
+    *b = 0;
   }
 }
 
