@@ -49,7 +49,9 @@ public class Delay {
         // Note that we will still have jitter (due to the scheduler, but
         // this is probably better than nothing).
         while (System.nanoTime() < end)
-        	;
+        {
+        	// just spin
+        }
     }
 
     /**
@@ -66,7 +68,9 @@ public class Delay {
         // Note that we will still have jitter (due to the scheduler, but
         // this is probably better than nothing).
         while (System.nanoTime() < end)
-        	;
+        {
+        	// just spin
+        }
     }
 
 }
