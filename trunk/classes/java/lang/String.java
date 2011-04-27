@@ -306,7 +306,8 @@ public final class String implements CharSequence, Comparable<String>
 	@Deprecated
 	public void getBytes(int begin, int end, byte[] dst, int off)
 	{
-		for (int i = 0; i < characters.length; i++)
+		off -= begin;
+		for (int i = begin; i < end; i++)
 			dst[off+i] = (byte)characters[i];
 	}
 
