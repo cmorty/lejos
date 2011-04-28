@@ -41,7 +41,6 @@ public class Delay {
      * be interrupted.
      * @param period time to wait in us
      */
-    @SuppressWarnings("empty-statement")
     public static void usDelay(long period)
     {
         long end = System.nanoTime() + period*1000;
@@ -49,7 +48,10 @@ public class Delay {
         // To improve accuracy for small time periods we use a spin loop.
         // Note that we will still have jitter (due to the scheduler, but
         // this is probably better than nothing).
-        while (System.nanoTime() < end) ;
+        while (System.nanoTime() < end)
+        {
+        	// just spin
+        }
     }
 
     /**
@@ -58,7 +60,6 @@ public class Delay {
      * be interrupted.
      * @param period time to wait in ns
      */
-    @SuppressWarnings("empty-statement")
     public static void nsDelay(long period)
     {
         long end = System.nanoTime() + period;
@@ -67,7 +68,9 @@ public class Delay {
         // Note that we will still have jitter (due to the scheduler, but
         // this is probably better than nothing).
         while (System.nanoTime() < end)
-            ;
+        {
+        	// just spin
+        }
     }
 
 }

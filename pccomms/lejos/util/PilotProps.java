@@ -16,7 +16,7 @@ import lejos.robotics.RegulatedMotor;
  */
 public class PilotProps extends Properties
 {
-	public static final String DEFAULT_FILENAME = "pilot.props";
+	public static final String PERSISTENT_FILENAME = "pilot.props";
 
 	public static final String KEY_WHEELDIAMETER = "wheelDiameter";
 	public static final String KEY_TRACKWIDTH = "trackWidth";
@@ -24,44 +24,9 @@ public class PilotProps extends Properties
 	public static final String KEY_RIGHTMOTOR = "rightMotor";
 	public static final String KEY_REVERSE = "reverse";
 
-	/**
-	 * Create a property file (pilot.props) for a DifferentialPilot
-	 * 
-	 * @param wheelDiameter the wheel diameter
-	 * @param trackWidth the distance between the centers of the tyres
-	 * @param leftMotor the left motor (A,B or C)
-	 * @param rightMotor the right Motor (A,B or C)
-	 * @param reverse true iff rhe Motors are connected so the motor forward
-	 *            drives the robot backwards
-	 * @throws IOException if there is a problem writing the property file
-	 */
-	public static void storeDefaultProperties(final float wheelDiameter, final float trackWidth,
-			final String leftMotor, final String rightMotor, final boolean reverse) throws IOException
+	public void loadPersistentValues() throws IOException
 	{
-		PilotProps p = new PilotProps();
-		p.setProperty(KEY_WHEELDIAMETER, String.valueOf(wheelDiameter));
-		p.setProperty(KEY_TRACKWIDTH, String.valueOf(trackWidth));
-		p.setProperty(KEY_LEFTMOTOR, leftMotor);
-		p.setProperty(KEY_RIGHTMOTOR, rightMotor);
-		p.setProperty(KEY_REVERSE, String.valueOf(reverse));
-		
-		p.storeAsDefault();
-	}
-
-	/**
-	 * Read the property file as a set of properties
-	 * @throws IOException 
-	 */
-	public static PilotProps loadDefaultProperties() throws IOException
-	{
-		PilotProps p = new PilotProps();
-		p.loadDefault();
-		return p;
-	}
-
-	public void loadDefault() throws IOException
-	{
-		File f = new File(DEFAULT_FILENAME);
+		File f = new File(PERSISTENT_FILENAME);
 		if (!f.exists())
 			return;
 		
@@ -76,9 +41,9 @@ public class PilotProps extends Properties
 		}
 	}
 
-	public void storeAsDefault() throws IOException
+	public void storePersistentValues() throws IOException
 	{
-		File f = new File(DEFAULT_FILENAME);
+		File f = new File(PERSISTENT_FILENAME);
 		FileOutputStream fos = new FileOutputStream(f);
 		try
 		{

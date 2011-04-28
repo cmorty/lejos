@@ -18,14 +18,14 @@ public interface ArcMoveController extends MoveController {
 	 * 
 	 * @return the radius in degrees
 	 */
-	public float getMinRadius();
+	public double getMinRadius();
 	
 	/**
 	 * Set the radius of the minimum turning circle.
 	 * 
 	 * @param radius the radius in degrees
 	 */
-	public void setMinRadius(float radius);
+	public void setMinRadius(double radius);
 
 	/**
 	  * Starts the NXT robot moving forward along an arc with a specified radius.
@@ -41,7 +41,7 @@ public interface ArcMoveController extends MoveController {
 	  * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	  *          side of the robot is on the outside of the turn.
 	  */
-	 public void arcForward(float radius);
+	 public void arcForward(double radius);
 
 	 /**
 	  * Starts the NXT robot moving backward along an arc with a specified radius.
@@ -57,7 +57,7 @@ public interface ArcMoveController extends MoveController {
 	  * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	  *          side of the robot is on the outside of the turn.
 	  */
-	 public void arcBackward(float radius);
+	 public void arcBackward(double radius);
 	 
 	/**
 	 * Moves the NXT robot along an arc with a specified radius and  angle,
@@ -80,9 +80,9 @@ public interface ArcMoveController extends MoveController {
 	 * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	 *          side of the robot is on the outside of the turn.
 	 * @param angle The sign of the angle determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
-	 * @see #travelArc(float, float)
+	 * @see #travelArc(double, double)
 	 */
-	 public void arc(float radius, float angle);
+	 public void arc(double radius, double angle);
 
 	/**
 	 * Moves the NXT robot along an arc with a specified radius and  angle,
@@ -106,9 +106,9 @@ public interface ArcMoveController extends MoveController {
 	 *          side of the robot is on the outside of the turn.
 	 * @param angle The sign of the angle determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
 	 * @param immediateReturn If immediateReturn is true then the method returns immediately. 
-	 * @see #travelArc(float, float, boolean)
+	 * @see #travelArc(double, double, boolean)
 	 */
-	public void arc(float radius, float angle, boolean immediateReturn);
+	public void arc(double radius, double angle, boolean immediateReturn);
 
 	/**
 	 * Moves the NXT robot a specified distance along an arc of specified radius,
@@ -131,10 +131,10 @@ public interface ArcMoveController extends MoveController {
 	 * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	 *          side of the robot is on the outside of the turn.
 	 * @param distance to travel, in same units as <code>radius</code>. The sign of the distance determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
-	 * @see #arc(float, float)
+	 * @see #arc(double, double)
 	 * 
 	 */
-	 public void travelArc(float radius, float distance);
+	 public void travelArc(double radius, double distance);
 
 	/**
 	 * Moves the NXT robot a specified distance along an arc of specified radius,
@@ -159,8 +159,8 @@ public interface ArcMoveController extends MoveController {
 	 *          side of the robot is on the outside of the turn.
 	 * @param distance to travel, in same units as <code>radius</code>. The sign of the distance determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
 	 * @param immediateReturn If immediateReturn is true then the method returns immediately. 
-	 * @see #arc(float, float, boolean)
+	 * @see #arc(double, double, boolean)
 	 * 
 	 */
-	public void travelArc(float radius, float distance, boolean immediateReturn);
+	public void travelArc(double radius, double distance, boolean immediateReturn);
 }

@@ -34,8 +34,8 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 
 	private lejos.robotics.RegulatedMotor driveMotor;
 	private lejos.robotics.RegulatedMotor steeringMotor;
-	private float minTurnRadius;
-	private float driveWheelDiameter;
+	private double minTurnRadius;
+	private double driveWheelDiameter;
 	private boolean reverseDriveMotor;
 	
 	private boolean isMoving;
@@ -79,8 +79,8 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 	 * @param leftTurnTacho The tachometer the steering motor must turn to in order to turn left with the minimum turn radius.
 	 * @param rightTurnTacho The tachometer the steering motor must turn to in order to turn right with the minimum turn radius.
 	 */
-	public SteeringPilot(float driveWheelDiameter, lejos.robotics.RegulatedMotor driveMotor, boolean reverseDriveMotor,
-			lejos.robotics.RegulatedMotor steeringMotor, float minTurnRadius, int leftTurnTacho, int rightTurnTacho) {
+	public SteeringPilot(double driveWheelDiameter, lejos.robotics.RegulatedMotor driveMotor, boolean reverseDriveMotor,
+			lejos.robotics.RegulatedMotor steeringMotor, double minTurnRadius, int leftTurnTacho, int rightTurnTacho) {
 		this.driveMotor = driveMotor;
 		this.steeringMotor = steeringMotor;
 		this.driveMotor.addListener(this);
@@ -99,7 +99,7 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 	 * Currently returns minimum steering radius for the least tight turn direction.  
 	 * @return minimum turning radius, in centimeters
 	 */
-	public float getMinRadius() {
+	public double getMinRadius() {
 		return minTurnRadius;
 	}
 	
@@ -114,10 +114,10 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 	 * Positive radius = left turn
 	 * Negative radius = right turn
 	 */
-	private float steer(float radius) {
-		if(radius == Float.POSITIVE_INFINITY) {
+	private double steer(double radius) {
+		if(radius == Double.POSITIVE_INFINITY) {
 			this.steeringMotor.rotateTo(0);
-			return Float.POSITIVE_INFINITY;
+			return Double.POSITIVE_INFINITY;
 		} else if(radius > 0) {
 			this.steeringMotor.rotateTo(minLeft);
 			return getMinRadius();
@@ -127,33 +127,33 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 		}
 	}
 	
-	public void arcForward(float turnRadius) {
-		 arc(turnRadius, Float.POSITIVE_INFINITY, true);
+	public void arcForward(double turnRadius) {
+		 arc(turnRadius, Double.POSITIVE_INFINITY, true);
 	}
 	
-	public void arcBackward(float turnRadius) {
-		arc(turnRadius, Float.NEGATIVE_INFINITY, true);
+	public void arcBackward(double turnRadius) {
+		arc(turnRadius, Double.NEGATIVE_INFINITY, true);
 	}
 	
-	public void arc(float turnRadius, float arcAngle) throws IllegalArgumentException {
+	public void arc(double turnRadius, double arcAngle) throws IllegalArgumentException {
 		if(turnRadius == 0) throw new IllegalArgumentException("SteeringPilot can't do zero radius turns."); // Can't turn in one spot
 		 arc(turnRadius, arcAngle, false);
 	}
 
-	public void arc(float turnRadius, float arcAngle, boolean immediateReturn) {
-		double distance = Move.convertAngleToDistance(arcAngle, turnRadius);
+	public void arc(double turnRadius, double arcAngle, boolean immediateReturn) {
+		double distance = Move.convertAngleToDistance((float)arcAngle, (float)turnRadius);
 		 travelArc(turnRadius, (float)distance, immediateReturn);
 	}
 
-	public void setMinRadius(float minTurnRadius) {
+	public void setMinRadius(double minTurnRadius) {
 		this.minTurnRadius = minTurnRadius;
 	}
 
-	public void travelArc(float turnRadius, float distance) {
+	public void travelArc(double turnRadius, double distance) {
 		travelArc(turnRadius, distance, false);
 	}
 
-	public void travelArc(float turnRadius, float distance, boolean immediateReturn) throws IllegalArgumentException {
+	public void travelArc(double turnRadius, double distance, boolean immediateReturn) throws IllegalArgumentException {
 		
 		if(turnRadius < this.getMinRadius()) throw new IllegalArgumentException("Turn radius can't be less than " + this.getMinRadius());
 		
@@ -161,16 +161,16 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 		if(isMoving) stop();
 		
 		// 2. Change wheel steering:
-		float actualRadius = steer(turnRadius);
+		double actualRadius = steer(turnRadius);
 		
 		// 3 Create new Move object:
-		float angle = Move.convertDistanceToAngle(distance, actualRadius);
-		moveEvent = new Move(distance, angle, true);
+		double angle = Move.convertDistanceToAngle((float)distance, (float)actualRadius);
+		moveEvent = new Move((float)distance, (float)angle, true);
 		
 		
 		// TODO: This if() block is a temporary kludge due to Motor.rotate() bug with Integer.MIN_VALUE:
 		// Remove this if Roger changes Motor.rotate().
-		if((distance == Float.NEGATIVE_INFINITY & !this.reverseDriveMotor) | (distance == Float.POSITIVE_INFINITY & this.reverseDriveMotor)) {
+		if((distance == Double.NEGATIVE_INFINITY & !this.reverseDriveMotor) | (distance == Double.POSITIVE_INFINITY & this.reverseDriveMotor)) {
 			driveMotor.backward();
 			//return moveEvent;
 		}
@@ -185,21 +185,21 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 	}
 	
 	public void backward() {
-		travel(Float.NEGATIVE_INFINITY, true);
+		travel(Double.NEGATIVE_INFINITY, true);
 	}
 
 	public void forward() {
-		travel(Float.POSITIVE_INFINITY, true);
+		travel(Double.POSITIVE_INFINITY, true);
 	}
 
-	public float getMaxTravelSpeed() {
+	public double getMaxTravelSpeed() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	// TODO: This method should indicate it is not live speed. Such as getSpeedSetting(), setSpeedSetting()
 	// TODO: Many methods in MoveController have no documentation and unit specification, incl. this.
-	public float getTravelSpeed() {
+	public double getTravelSpeed() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -213,7 +213,7 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 		return isMoving;
 	}
 
-	public void setTravelSpeed(float speed) {
+	public void setTravelSpeed(double speed) {
 		// TODO This should set the motor speed for the drive motor, perhaps also calculates based on wheel diameter?
 		
 	}
@@ -235,12 +235,12 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 		//return moveEvent;
 	}
 
-	public void travel(float distance) {
+	public void travel(double distance) {
 		 travel(distance, false);
 	}
 
-	public void travel(float distance, boolean immediateReturn) {
-		travelArc(Float.POSITIVE_INFINITY, distance, immediateReturn);
+	public void travel(double distance, boolean immediateReturn) {
+		travelArc(Double.POSITIVE_INFINITY, distance, immediateReturn);
 	}
 
 	public void addMoveListener(MoveListener listener) {
