@@ -48,7 +48,7 @@ public interface PathController
    * @param x The x coordinate
    * @param y The y coordinate
    */
-  public void goTo(float x, float y);
+  public void goTo(double x, double y);
   
   /**
    * Moves the robot through the sequence of waypoints
