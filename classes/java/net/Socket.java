@@ -93,7 +93,9 @@ public class Socket{
 	public void close() {
 		try {
 			os.writeClose();
-		} catch (IOException e) {}
+		} catch (IOException e) {
+			// Ignore exception
+		}
 	}	
 }
 

@@ -63,6 +63,7 @@ public class GGASentence extends NMEASentence{
 	/**
 	 * Returns the NMEA header for this sentence.
 	 */
+	@Override
 	public String getHeader() {
 		return HEADER;
 	}
@@ -153,6 +154,7 @@ public class GGASentence extends NMEASentence{
 	/**
 	 * Method used to parse a GGA Sentence
 	 */
+	@Override
 	protected void parse(String sentence){
 		//StringTokenizer st = new StringTokenizer(nmeaSentence,",");
 		st = new StringTokenizer(sentence,",");

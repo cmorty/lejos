@@ -1,8 +1,6 @@
 package lejos.nxt.remote;
 
 import java.io.*;
-
-import lejos.nxt.Battery;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
 
@@ -156,7 +154,6 @@ public class RemoteMotor implements RegulatedMotor, NXTProtocol {
 	public void rotate(int count, boolean returnNow) {
 		this.runState = MOTOR_RUN_STATE_RUNNING;
 		// ** Really this can accept a ULONG value for count. Too lazy to properly convert right now:
-		byte status =  0;
 		// !! This used to say power > 0, apparently not working.
 		//if(power > 0)
 		try {
@@ -167,12 +164,9 @@ public class RemoteMotor implements RegulatedMotor, NXTProtocol {
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
 		}
-		if(returnNow) {
-			//return status;
-		} else {
+		if(!returnNow) {
 			// Check if mode is moving until done
 			waitComplete();
-			//return status;
 		}
 	}
 	
