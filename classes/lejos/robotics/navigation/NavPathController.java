@@ -5,7 +5,6 @@ import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.pathfinding.PathFinder;
 
 import java.util.*;
-import lejos.robotics.*;
 
 /**
  * This class can cause the robot to follow a route - a sequence of way points ;
@@ -126,7 +125,7 @@ public class NavPathController implements PathController
    * This method will navigate to a point. If a PathFinder was used in the constructor, it will rely
    * on it to calculate a series of waypoints to get to the destination.
    */
-  public void goTo(float x, float y) {
+  public void goTo(double x, double y) {
 	  goTo(new WayPoint(x, y));
   }
 
@@ -223,15 +222,15 @@ public class NavPathController implements PathController
           {
   			// 1. Get shortest path:
   			Move [] moves;
-  			float minRadius = (_pilot instanceof ArcMoveController ? ((ArcMoveController) _pilot).getMinRadius() : 0);
+  			double minRadius = (_pilot instanceof ArcMoveController ? ((ArcMoveController) _pilot).getMinRadius() : 0);
   			
   			if (_destination.headingRequired)
   			{
-  				moves = ArcAlgorithms.getBestPath(poseProvider.getPose(), minRadius, _destination.getPose(),minRadius);
+  				moves = ArcAlgorithms.getBestPath(poseProvider.getPose(), (float)minRadius, _destination.getPose(),(float)minRadius);
   			} 
   			else
   			{
-  				moves = ArcAlgorithms.getBestPath(poseProvider.getPose(), _destination, minRadius);  				
+  				moves = ArcAlgorithms.getBestPath(poseProvider.getPose(), _destination, (float)minRadius);  				
   			}
   			// 2. Drive the path
   			for(int i=0;i<moves.length;i++) {
@@ -300,5 +299,5 @@ public class NavPathController implements PathController
   protected PathFinder pathFinder = null;
   protected Pose _pose = new Pose();
   protected WayPoint _destination;
-  protected float _radius;
+  protected double _radius;
 }

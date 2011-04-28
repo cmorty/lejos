@@ -26,10 +26,10 @@ public class SegwayPilotDemo implements MoveListener {
 		GyroSensor g = new GyroSensor(SensorPort.S1);
 				
 		// The track width is for the AnyWay. Make sure to use the appropriate wheel size.
-		SegwayPilot pilot = new SegwayPilot(left, right, g, SegwayPilot.WHEEL_SIZE_NXT2, 10.45F); 
+		SegwayPilot pilot = new SegwayPilot(left, right, g, SegwayPilot.WHEEL_SIZE_NXT2, 10.45); 
 		
 		// If the robot is tippy, try slowing down the speed:
-		pilot.setTravelSpeed(50);
+		pilot.setTravelSpeed(80);
 		
 		MoveListener listy = new SegwayPilotDemo();
 		pilot.addMoveListener(listy);

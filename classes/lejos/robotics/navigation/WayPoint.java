@@ -24,15 +24,15 @@ public class WayPoint extends Point {
 	protected float maxPositionError = -1;
 	protected float maxHeadingError = -1;
 	
-	public WayPoint(float x, float y) {
-		super(x,y);
+	public WayPoint(double x, double y) {
+		super((float)x,(float)y);
 		headingRequired = false; 
 	}
 	
-	public WayPoint(float x, float y, float heading) {
-		super(x,y);
+	public WayPoint(double x, double y, double heading) {
+		super((float)x,(float)y);
 		headingRequired = true;
-		this.heading = heading;
+		this.heading = (float)heading;
 	}
 	
 	public WayPoint(Point p) {
@@ -46,24 +46,24 @@ public class WayPoint extends Point {
 		this.heading = p.getHeading();
 	}
 	
-	public float getHeading() {
+	public double getHeading() {
 		return heading;
 	}
 	
-	public float getMaxPositionError() {
+	public double getMaxPositionError() {
 		return maxPositionError;
 	}
 	
-	public void setMaxPositionError(float distance) {
-		maxPositionError = distance;
+	public void setMaxPositionError(double distance) {
+		maxPositionError = (float)distance;
 	}
 	
-	public float getMaxHeadingError() {
+	public double getMaxHeadingError() {
 		return maxHeadingError;
 	}
 	
-	public void setMaxHeadingError(float distance) {
-		maxHeadingError = distance;
+	public void setMaxHeadingError(double distance) {
+		maxHeadingError = (float)distance;
 	}
 	
 	/**

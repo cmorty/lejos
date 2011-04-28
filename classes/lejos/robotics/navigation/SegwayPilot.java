@@ -31,28 +31,14 @@ import lejos.robotics.EncoderMotor;
  * is moving. To counteract this, use larger wheels and/or slow down the speed using setTravelSpeed(). Make sure the 
  * battery is <b>fully charged</b>. The robot is more stable on carpet than hardwood at higher speeds.</p> 
  *  
- * <p>The default speed is 80, which can be changed with setTravelSpeed().</p>  
+ * <p>The default speed is 50, which can be changed with setTravelSpeed().</p>  
  * 
  * @see lejos.robotics.navigation.Segway
  * @author BB
  *
  */
 public class SegwayPilot extends Segway implements ArcRotateMoveController {
-	/**
-	 * NXT 1.0 kit wheel diameter, in centimeters
-	 */
-	public static final double WHEEL_SIZE_NXT1 = 5.60;
-
-	/**
-	 * NXT 2.0 kit wheel diameter, in centimeters
-	 */
-	public static final double WHEEL_SIZE_NXT2 = 4.32;
-
-	/**
-	 * White RCX "motorcycle" wheel diameter, in centimeters
-	 */
-	public static final double WHEEL_SIZE_RCX  = 8.16;
-
+	
 	private int move_delay = 5000; // amount to delay between moves
 	
 	private double wheelDiameter; // used for calculating travel distances
@@ -114,19 +100,19 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 		return (float)(direction * 100 * (1 - ratio));
 	}
 
-	private void steerPrep(float turnRate, float angle) {
+	private void steerPrep(double turnRate, double angle) {
 
 		// Record starting tachos before rotation begins:
 		left_start_tacho = left_tacho_target;
 		right_start_tacho = right_tacho_target;
 
 		float steerRatio;
-		float rate = turnRate; // TODO: Not sure why this occurs. Try it with leaving as turnRate.
+		double rate = turnRate; // TODO: Not sure why this occurs. Try it with leaving as turnRate.
 		if (rate < -200) rate = -200;
 		if (rate > 200) rate = 200;
 
 		int side = (int) Math.signum(turnRate);
-		steerRatio = 1 - rate / 100.0f; // calculates ratio for inside wheel
+		steerRatio = (float)(1 - rate / 100.0); // calculates ratio for inside wheel
 		int rotAngle = (int) (angle * trackWidth * 2 / (wheelDiameter * (1 - steerRatio)));
 
 		if (turnRate < 0) { // -ve radius, right wheel is inside of turn
@@ -171,8 +157,8 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 	 * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
 	 * @param immediateReturn If immediateReturn is true then the method returns immediately.
 	 */
-	public void steer(float turnRate, float angle, boolean immediateReturn) {
-		this.arc_target_angle = angle; // required for calcArcNotify() method
+	public void steer(double turnRate, double angle, boolean immediateReturn) {
+		this.arc_target_angle = (float)angle; // required for calcArcNotify() method
 
 		if (angle == 0) return;
 
@@ -181,7 +167,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 			return;
 		}
 
-		steerPrep(turnRate, angle); // This method runs wheelDriver() which starts it moving
+		steerPrep((float)turnRate, (float)angle); // This method runs wheelDriver() which starts it moving
 
 		// TODO: Assumes user won't go straight from travel to say rotate and assumes stop lasts at least MONITOR_INTERVAL.
 		if(!immediateReturn) while(move_mode != STOP);
@@ -191,11 +177,11 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 
 	private int angle_parity = 1;
 
-	public void arc(float radius, float angle, boolean immediateReturn) {
+	public void arc(double radius, double angle, boolean immediateReturn) {
 		for(MoveListener ml:listeners) 
-			ml.moveStarted(new Move(true, angle, radius), this); // TODO: Hasn't really been tested
+			ml.moveStarted(new Move(true, (float)angle, (float)radius), this); // TODO: Hasn't really been tested
 
-		if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY) {
+		if (radius == Double.POSITIVE_INFINITY || radius == Double.NEGATIVE_INFINITY) {
 			forward();
 			return;
 		}
@@ -204,15 +190,15 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 		if(radius < 0) angle_parity = -1;
 		else angle_parity = 1;
 
-		steer(turnRate(radius), angle, immediateReturn);// type and move started called by steer()
+		steer(turnRate((float)radius), angle, immediateReturn);// type and move started called by steer()
 	}
 
 	public void forward() {
-		travel(Float.POSITIVE_INFINITY, true);
+		travel(Double.POSITIVE_INFINITY, true);
 	}
 
 	public void backward() {
-		travel(Float.NEGATIVE_INFINITY, true);
+		travel(Double.NEGATIVE_INFINITY, true);
 	}
 
 	// TODO: Possible setDelay() method to delay between each movement to recover. Assume will use some default
@@ -227,7 +213,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 	}
 	
 	private long arc_target_tacho_avg; // Global for the target, used by calcXxxNotify()
-	private float arc_target_angle; // Global for the target, used by calcArcNotify()
+	private double arc_target_angle; // Global for the target, used by calcArcNotify()
 
 	public void stop() {
 		// Get the average tacho distance it was supposed to travel (for arc calculation) 
@@ -322,7 +308,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 			ml.moveStopped(new Move(0, (float)angle, false), this);
 	}
 
-	public void travel(float distance, boolean immediateReturn) {
+	public void travel(double distance, boolean immediateReturn) {
 		// Use left_tacho_target as starting point:
 		left_start_tacho = left_tacho_target;
 		right_start_tacho = right_tacho_target;
@@ -336,10 +322,10 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 		this.right_tacho_target -= degree_rotations;
 
 		// In case forward() or backward() calls filtered through to here, want indefinite movement:
-		if(distance == Float.POSITIVE_INFINITY) {
+		if(distance == Double.POSITIVE_INFINITY) {
 			this.left_tacho_target = Integer.MIN_VALUE; // Technically want NEGATIVE_INFINITY here.
 			this.right_tacho_target = Integer.MIN_VALUE;
-		} else if(distance == Float.NEGATIVE_INFINITY) {
+		} else if(distance == Double.NEGATIVE_INFINITY) {
 			this.left_tacho_target = Integer.MAX_VALUE; // Technically want POSITIVE_INFINITY here.
 			this.right_tacho_target = Integer.MAX_VALUE; // Shouldn't cause a problem in practical use = 809 km.
 		}
@@ -355,7 +341,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 
 		// Notify MoveListeners that a new move has begun.
 		for(MoveListener ml:listeners) 
-			ml.moveStarted(new Move(Move.MoveType.TRAVEL, distance, 0, true), this);
+			ml.moveStarted(new Move(Move.MoveType.TRAVEL, (float)distance, 0, true), this);
 
 		// The MoveControlRegulator will switch to stop mode when the targets are reached. Wait here if immediateReturn = false.
 		if(!immediateReturn) while(move_mode != STOP);
@@ -363,7 +349,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 		try {Thread.sleep(move_delay);} catch (InterruptedException e) {}
 	}
 
-	public void rotate(float degrees, boolean immediateReturn) {
+	public void rotate(double degrees, boolean immediateReturn) {
 		// Calculate how much to rotate the wheels (tachometer target)
 		double circleCirc = trackWidth * Math.PI; // Circumference of circle traced out by robot wheels 
 		double circleDist = (degrees/360) * circleCirc;
@@ -389,7 +375,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 
 		// Notify all MoveListeners
 		for(MoveListener ml:listeners) 
-			ml.moveStarted(new Move(Move.MoveType.ROTATE, 0, degrees, true), this);
+			ml.moveStarted(new Move(Move.MoveType.ROTATE, 0, (float)degrees, true), this);
 
 		// Wait here until move completes if immediateReturn = false:
 		if(!immediateReturn) while(move_mode != STOP);
@@ -397,16 +383,16 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 		try {Thread.sleep(move_delay);} catch (InterruptedException e) {}
 	}
 
-	public float getMaxTravelSpeed() {
+	public double getMaxTravelSpeed() {
 		return 200; // TODO: Find some other theoretical top speed
 	}
 
-	public float getMovementIncrement() {
+	public double getMovementIncrement() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	public float getTravelSpeed() {
+	public double getTravelSpeed() {
 		return SPEED;
 	}
 
@@ -418,7 +404,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 	 * Will need to make this method use units/second. 
 	 * @param speed The speed to travel.
 	 */
-	public void setTravelSpeed(float speed) {
+	public void setTravelSpeed(double speed) {
 		// TODO Use actual units per second
 		SPEED = (int)speed;
 	}
@@ -428,7 +414,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 		else return true;
 	}
 
-	public void travel(float distance) {
+	public void travel(double distance) {
 		travel(distance, false);
 	}
 
@@ -446,52 +432,52 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 		return 0;
 	}
 
-	public float getRotateMaxSpeed() {
+	public double getRotateMaxSpeed() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	public float getRotateSpeed() {
+	public double getRotateSpeed() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	public void rotate(float angle) {
+	public void rotate(double angle) {
 		rotate(angle, false);
 	}
 
-	public void setRotateSpeed(float arg0) {
+	public void setRotateSpeed(double arg0) {
 		// TODO Auto-generated method stub
 	}
 
-	public void arc(float radius, float angle) {
+	public void arc(double radius, double angle) {
 		arc(radius, angle, false);
 	}
 
-	public void arcBackward(float radius) {
-		arc(radius, Float.NEGATIVE_INFINITY, true);
+	public void arcBackward(double radius) {
+		arc(radius, Double.NEGATIVE_INFINITY, true);
 	}
 
-	public void arcForward(float radius) {
-		arc(radius, Float.POSITIVE_INFINITY, true);
+	public void arcForward(double radius) {
+		arc(radius, Double.POSITIVE_INFINITY, true);
 	}
 
-	private float minRadius = 0; 
+	private double minRadius = 0; 
 
-	public float getMinRadius() {
+	public double getMinRadius() {
 		return minRadius;
 	}
 
-	public void setMinRadius(float radius) {
+	public void setMinRadius(double radius) {
 		this.minRadius = radius;
 	}
 
-	public void travelArc(float radius, float distance) {
+	public void travelArc(double radius, double distance) {
 		travelArc(radius, distance, false);
 	}
 
-	public void travelArc(float radius, float distance, boolean immediateReturn) {
-		if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY) {
+	public void travelArc(double radius, double distance, boolean immediateReturn) {
+		if (radius == Double.POSITIVE_INFINITY || radius == Double.NEGATIVE_INFINITY) {
 			travel(distance, immediateReturn);
 			return;
 		}
@@ -499,7 +485,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 		if (radius == 0) {
 			throw new IllegalArgumentException("Zero arc radius");
 		}
-		float angle = (distance * 180) / ((float) Math.PI * radius);
+		float angle = (float)((distance * 180) / (Math.PI * radius));
 		arc(radius, angle, immediateReturn);
 	}
 

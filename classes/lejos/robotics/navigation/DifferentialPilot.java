@@ -70,7 +70,7 @@ public class DifferentialPilot implements
    * @param rightMotor
    *            The right Motor (e.g., Motor.A).
    */
-  public DifferentialPilot(final float wheelDiameter, final float trackWidth,
+  public DifferentialPilot(final double wheelDiameter, final double trackWidth,
           final RegulatedMotor leftMotor, final RegulatedMotor rightMotor)
   {
     this(wheelDiameter, trackWidth, leftMotor, rightMotor, false);
@@ -94,7 +94,7 @@ public class DifferentialPilot implements
    *            If true, the NXT robot moves forward when the motors are
    *            running backward.
    */
-  public DifferentialPilot(final float wheelDiameter, final float trackWidth,
+  public DifferentialPilot(final double wheelDiameter, final double trackWidth,
           final RegulatedMotor leftMotor, final RegulatedMotor rightMotor,
           final boolean reverse)
   {
@@ -134,24 +134,24 @@ public class DifferentialPilot implements
    *            If true, the NXT robot moves forward when the motors are
    *            running backward.
    */
-  public DifferentialPilot(final float leftWheelDiameter,
-          final float rightWheelDiameter, final float trackWidth,
+  public DifferentialPilot(final double leftWheelDiameter,
+          final double rightWheelDiameter, final double trackWidth,
           final RegulatedMotor leftMotor, final RegulatedMotor rightMotor,
           final boolean reverse)
   {
     _left = leftMotor;
    _left.addListener(this);
-    _leftWheelDiameter = leftWheelDiameter;
-    _leftTurnRatio = trackWidth / leftWheelDiameter;
-    _leftDegPerDistance = 360 / ((float) Math.PI * leftWheelDiameter);
+    _leftWheelDiameter = (float)leftWheelDiameter;
+    _leftTurnRatio = (float)(trackWidth / leftWheelDiameter);
+    _leftDegPerDistance = (float) (360 / (Math.PI * leftWheelDiameter));
     // right
     _right = rightMotor;
     _right.addListener(this);
-    _rightWheelDiameter = rightWheelDiameter;
-    _rightTurnRatio = trackWidth / rightWheelDiameter;
-    _rightDegPerDistance = 360 / ((float) Math.PI * rightWheelDiameter);
+    _rightWheelDiameter = (float)rightWheelDiameter;
+    _rightTurnRatio = (float)(trackWidth / rightWheelDiameter);
+    _rightDegPerDistance = (float)(360 / (Math.PI * rightWheelDiameter));
     // both
-    _trackWidth = trackWidth;
+    _trackWidth = (float)trackWidth;
     _parity = (byte) (reverse ? -1 : 1);
     setTravelSpeed(.8f * getMaxTravelSpeed());
     setRotateSpeed(.8f * getMaxRotateSpeed());
@@ -225,14 +225,14 @@ public class DifferentialPilot implements
   * set travel speed in wheel diameter units per second
   * @param travelSpeed : speed in distance (wheel diameter)units/sec
   */
-  public void setTravelSpeed(final float travelSpeed)
+  public void setTravelSpeed(final double travelSpeed)
   {
-    _robotTravelSpeed = travelSpeed;
-    _motorSpeed = Math.round(0.5f * travelSpeed * (_leftDegPerDistance + _rightDegPerDistance));
-    setSpeed(Math.round(travelSpeed * _leftDegPerDistance), Math.round(travelSpeed * _rightDegPerDistance));
+    _robotTravelSpeed = (float)travelSpeed;
+    _motorSpeed = (int)Math.round(0.5 * travelSpeed * (_leftDegPerDistance + _rightDegPerDistance));
+    setSpeed((int)Math.round(travelSpeed * _leftDegPerDistance), (int)Math.round(travelSpeed * _rightDegPerDistance));
   }
 
-  public float getTravelSpeed()
+  public double getTravelSpeed()
   {
     return _robotTravelSpeed;
   }
@@ -249,7 +249,7 @@ public class DifferentialPilot implements
 
   }
 
-  public float getMaxTravelSpeed()
+  public double getMaxTravelSpeed()
   {
     return Math.min(_left.getMaxSpeed(), _right.getMaxSpeed()) / Math.max(_leftDegPerDistance, _rightDegPerDistance);
     // max degree/second divided by degree/unit = unit/second
@@ -259,14 +259,14 @@ public class DifferentialPilot implements
    * sets the rotation speed of the vehicle, degrees per second
    * @param rotateSpeed
    */
-  public void setRotateSpeed(float rotateSpeed)
+  public void setRotateSpeed(double rotateSpeed)
   {
-    _robotRotateSpeed = rotateSpeed;
-    setSpeed(Math.round(rotateSpeed * _leftTurnRatio), Math.round(rotateSpeed * _rightTurnRatio));
+    _robotRotateSpeed = (float)rotateSpeed;
+    setSpeed((int)Math.round(rotateSpeed * _leftTurnRatio), (int)Math.round(rotateSpeed * _rightTurnRatio));
   }
 
 
-  public float getRotateSpeed()
+  public double getRotateSpeed()
   {
     return _robotRotateSpeed;
   }
@@ -279,7 +279,7 @@ public class DifferentialPilot implements
   }
 
 
-  public float getRotateMaxSpeed()
+  public double getRotateMaxSpeed()
   {
     return getMaxRotateSpeed();
   }
@@ -377,7 +377,7 @@ public class DifferentialPilot implements
    *            The wanted angle of rotation in degrees. Positive angle rotate
    *            left (clockwise), negative right.
    */
-  public void  rotate(final float angle)
+  public void  rotate(final double angle)
   {
      rotate(angle, false);
   }
@@ -393,7 +393,7 @@ public class DifferentialPilot implements
    * @param immediateReturn
    *            If true this method returns immediately.
    */
-  public void rotate(final float angle, final boolean immediateReturn)
+  public void rotate(final double angle, final boolean immediateReturn)
   {
     _type = Move.MoveType.ROTATE;
     movementStart(immediateReturn);
@@ -436,7 +436,7 @@ public class DifferentialPilot implements
    *            The distance to move. Unit of measure for distance must be
    *            same as wheelDiameter and trackWidth.
    **/
-  public void  travel(final float distance)
+  public void  travel(final double distance)
   {
       travel(distance, false);
   }
@@ -453,15 +453,15 @@ public class DifferentialPilot implements
    * @param immediateReturn
    *            If true this method returns immediately.
    */
-  public void travel(final float distance, final boolean immediateReturn)
+  public void travel(final double distance, final boolean immediateReturn)
   {
     _type = Move.MoveType.TRAVEL;
-    if (distance == Float.POSITIVE_INFINITY)
+    if (distance == Double.POSITIVE_INFINITY)
     {
       forward();
       return;
     }
-    if ((distance == Float.NEGATIVE_INFINITY))
+    if ((distance == Double.NEGATIVE_INFINITY))
     {
       backward();
       return;
@@ -474,11 +474,11 @@ public class DifferentialPilot implements
     if (!immediateReturn) waitComplete();
   }
 
-  public void arcForward(final float radius)
+  public void arcForward(final double radius)
   {
     _type = Move.MoveType.ARC;
     movementStart(true);
-    float turnRate = turnRate(radius);
+    double turnRate = turnRate(radius);
     steerPrep(turnRate); // sets motor speeds
     if(_parity >0)_outside.forward();
     else _outside.backward();
@@ -486,11 +486,11 @@ public class DifferentialPilot implements
     else _inside.backward();
   }
 
-  public void arcBackward(final float radius)
+  public void arcBackward(final double radius)
   {
      _type = Move.MoveType.ARC;
     movementStart(true);
-    float turnRate = turnRate(radius);
+    double turnRate = turnRate(radius);
     steerPrep(turnRate);// sets motor speeds
     if(_parity > 0)_outside.backward();
     else _outside.forward();
@@ -498,15 +498,15 @@ public class DifferentialPilot implements
      else _inside.forward();
   }
 
-  public void arc(final float radius, final float angle)
+  public void arc(final double radius, final double angle)
   {
      arc(radius, angle, false);
   }
 
-  public void  arc(final float radius, final float angle,
+  public void  arc(final double radius, final double angle,
           final boolean immediateReturn)
   {
-    if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY)
+    if (radius == Double.POSITIVE_INFINITY || radius == Double.NEGATIVE_INFINITY)
     {
       forward();
       return;
@@ -515,14 +515,14 @@ public class DifferentialPilot implements
     // if (!immediateReturn) waitComplete(); redundant I think - BB
   }
 
-  public  void  travelArc(float radius, float distance)
+  public  void  travelArc(double radius, double distance)
   {
      travelArc(radius, distance, false);
   }
 
-  public void travelArc(float radius, float distance, boolean immediateReturn)
+  public void travelArc(double radius, double distance, boolean immediateReturn)
   {
-    if (radius == Float.POSITIVE_INFINITY || radius == Float.NEGATIVE_INFINITY)
+    if (radius == Double.POSITIVE_INFINITY || radius == Double.NEGATIVE_INFINITY)
     {
       travel(distance, immediateReturn);
       return;
@@ -533,7 +533,7 @@ public class DifferentialPilot implements
     {
       throw new IllegalArgumentException("Zero arc radius");
     }
-    float angle = (distance * 180) / ((float) Math.PI * radius);
+    double angle = (distance * 180) / ((float) Math.PI * radius);
     arc(radius, angle, immediateReturn);
   }
 
@@ -544,10 +544,10 @@ public class DifferentialPilot implements
    * @param radius
    * @return turnRate to be used in steer()
    */
-  private float turnRate(final float radius)
+  private double turnRate(final double radius)
   {
     int direction;
-    float radiusToUse;
+    double radiusToUse;
     if (radius < 0)
     {
       direction = -1;
@@ -557,7 +557,7 @@ public class DifferentialPilot implements
       direction = 1;
       radiusToUse = radius;
     }
-    float ratio = (2 * radiusToUse - _trackWidth) / (2 * radiusToUse + _trackWidth);
+    double ratio = (2 * radiusToUse - _trackWidth) / (2 * radiusToUse + _trackWidth);
     return (direction * 100 * (1 - ratio));
   }
 
@@ -588,7 +588,7 @@ public class DifferentialPilot implements
    * @param turnRate If positive, the left side of the robot is on the inside of the turn. If negative,
    * the left side is on the outside.
    */
-  public void steer(float turnRate)
+  public void steer(double turnRate)
   {
     if (turnRate == 0)
     {
@@ -614,7 +614,7 @@ public class DifferentialPilot implements
    * {@link #steer(float turn rate )} except that the robot moves backward instead of forward.
    * @param turnRate
    */
-  public void steerBackward(final float turnRate)
+  public void steerBackward(final double turnRate)
   {
     if (turnRate == 0)
     {
@@ -664,7 +664,7 @@ public class DifferentialPilot implements
    * the left side is on the outside.
    * @param angle The angle through which the robot will rotate. If negative, the robot will move in the directin that decreases its heading.
    */
-  public void steer(final float turnRate, float angle)
+  public void steer(final double turnRate, double angle)
   {
     steer(turnRate, angle, false);
   }
@@ -693,7 +693,7 @@ public class DifferentialPilot implements
    * @param angle The angle through which the robot will rotate. If negative, robot traces the turning circle backwards.
    * @param immediateReturn If immediateReturn is true then the method returns immediately.
    */
-  public void steer(final float turnRate, final float angle,
+  public void steer(final double turnRate, final double angle,
           final boolean immediateReturn)
   {
     if (angle == 0)
@@ -726,10 +726,10 @@ public class DifferentialPilot implements
    * @param turnRate
    * @deprecated Access to this method will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  @Deprecated protected void steerPrep(final float turnRate)
+  @Deprecated protected void steerPrep(final double turnRate)
   {
 
-    float rate = turnRate;
+    double rate = turnRate;
     if (rate < -200) rate = -200;
     if (rate > 200) rate = 200;
 
@@ -744,7 +744,7 @@ public class DifferentialPilot implements
       _outside = _right;
     }
     _outside.setSpeed(_motorSpeed);
-    _steerRatio = 1 - rate / 100.0f;
+    _steerRatio = (float)(1 - rate / 100.0);
     _inside.setSpeed((int) (_motorSpeed * _steerRatio));
   }
 
@@ -839,12 +839,12 @@ public class DifferentialPilot implements
    * 
    * @param radius the radius in degrees
    */
-  public void setMinRadius(float radius)
+  public void setMinRadius(double radius)
   {
-    _turnRadius = radius;
+    _turnRadius = (float)radius;
   }
 
-  public float getMinRadius()
+  public double getMinRadius()
   {
     return _turnRadius;
   }
