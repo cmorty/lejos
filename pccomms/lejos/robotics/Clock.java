@@ -1,4 +1,4 @@
-package lejos.nxt.addon;
+package lejos.robotics;
 
 import java.io.IOException;
 
