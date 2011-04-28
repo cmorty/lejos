@@ -57,14 +57,12 @@ public class Socket{
 	 */
 	private void negotiateConnection() throws IOException {
 		if (host.length()==0) throw new IOException ();
-		else {
-			outToProxy = new DataOutputStream(nxtc.openOutputStream());
-			outToProxy.writeBoolean(isServer);
-			outToProxy.writeByte(host.length());
-			outToProxy.writeChars(host);
-			outToProxy.writeInt(port);
-			outToProxy.flush();
-		}
+		outToProxy = new DataOutputStream(nxtc.openOutputStream());
+		outToProxy.writeBoolean(isServer);
+		outToProxy.writeByte(host.length());
+		outToProxy.writeChars(host);
+		outToProxy.writeInt(port);
+		outToProxy.flush();
 		if (!inFromProxy.readBoolean()) {
 			throw new IOException();
 		}
