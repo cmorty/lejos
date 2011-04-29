@@ -11,6 +11,7 @@ import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -121,8 +122,9 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
     /**
      * Constructor builds GUI
      * @param debugFile File containing debug information.
+     * @throws IOException 
      */
-    public ConsoleViewer(String debugFile)
+    public ConsoleViewer(String debugFile) throws IOException
     {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("View RConsole output from NXT");
@@ -246,14 +248,21 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
      */
     public static void main(String[] args)
     {
-    	int r = start(args);
+		int r;
+		try {
+			r = start(args);
+		} catch (Exception e) {
+			e.printStackTrace(System.err);
+			r = 1;
+		}
+		
     	if (r >= 0)
     	{
     		System.exit(r);
     	}
     }
     
-    private static int start(String[] args)
+    private static int start(String[] args) throws IOException
     {
         ConsoleViewerCommandLineParser fParser = new ConsoleViewerCommandLineParser(ConsoleViewer.class, "[options]");
     	CommandLine commandLine;
