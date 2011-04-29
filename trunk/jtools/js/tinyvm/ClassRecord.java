@@ -90,6 +90,22 @@ public class ClassRecord implements WritableData
    {
       return iCF.getClassName();
    }
+   
+   public String getCanonicalName()
+   {
+	   return getName().replace('$', '.');
+   }
+
+   public String getSimpleName()
+   {
+	   String s = getName();
+	   
+	   int i = Math.max(s.lastIndexOf('.'), s.lastIndexOf('$'));
+	   if (i < 0)
+		   return s;
+	   
+	   return s.substring(i+1);
+   }
 
    public int getLength ()
    {
@@ -675,7 +691,7 @@ public class ClassRecord implements WritableData
       // We always place the static initializer (if any) first to make it easy to find.
       if (this.hasStaticInitializer())
       {
-         staticInitRec = iMethods.get(new Signature("<clinit>()V"));
+         staticInitRec = iMethods.get(new Signature(Constants.STATIC_INITIALIZER_NAME, "()V"));
          if (staticInitRec != null && (staticInitRec.isCalled || iBinary.useAll()))
          {
             iOptMethodTable.add(staticInitRec);
@@ -919,7 +935,7 @@ public class ClassRecord implements WritableData
       {
          MethodRecord pRec = iter.next();
          if (hasParent () && (pRec.getFlags() & (TinyVMConstants.M_STATIC | TinyVMConstants.M_STATIC)) == 0
-             && !(iBinary.iSignatures.elementAt(pRec.iSignatureId)).getImage().substring(0, 1).equals("<"))
+             && !(iBinary.iSignatures.elementAt(pRec.iSignatureId)).isInitializer())
          {
              MethodRecord pOverridden = getParent().getVirtualMethodRecord(iBinary.iSignatures.elementAt(pRec.getSignatureId()));
              if (pOverridden != null)

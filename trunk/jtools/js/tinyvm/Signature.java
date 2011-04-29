@@ -1,29 +1,46 @@
 package js.tinyvm;
 
-import org.apache.bcel.classfile.ConstantUtf8;
+import org.apache.bcel.Constants;
 
 public class Signature
 {
-   String iImage;
-
-   public Signature (String aName, ConstantUtf8 aDescriptor)
-   {
-      iImage = aName + aDescriptor;
-   }
+	String name;
+	String descriptor;
 
    public Signature (String aName, String aDescriptor)
    {
-      iImage = aName + aDescriptor;
+	   name = aName;
+	   descriptor = aDescriptor;
    }
 
    public Signature (String aSignature)
    {
-      iImage = aSignature;
+	   int i = aSignature.indexOf('(');
+	   if (i < 0)
+		   throw new RuntimeException("illegal signature");
+	   
+	   name = aSignature.substring(0, i);
+	   descriptor = aSignature.substring(i);
    }
-
+   
+   public boolean isInitializer()
+   {
+	   return this.isStaticInitializer() || this.isConstructor();
+   }
+   
+   public boolean isStaticInitializer()
+   {
+	   return this.name.equals(Constants.STATIC_INITIALIZER_NAME);
+   }
+   
+   public boolean isConstructor()
+   {
+	   return this.name.equals(Constants.CONSTRUCTOR_NAME);
+   }
+   
    public int hashCode ()
    {
-      return iImage.hashCode();
+      return name.hashCode() ^ descriptor.hashCode();
    }
 
    public boolean equals (Object aOther)
@@ -31,16 +48,26 @@ public class Signature
       if (!(aOther instanceof Signature))
          return false;
       Signature pSig = (Signature) aOther;
-      return pSig.iImage.equals(iImage);
+      return pSig.name.equals(name) && pSig.descriptor.equals(descriptor);
    }
 
    public String getImage ()
    {
-      return iImage;
+      return name + descriptor;
+   }
+   
+   public String getName()
+   {
+	   return this.name;
+   }
+   
+   public String getDescriptor()
+   {
+	   return this.descriptor;
    }
 
    public String toString ()
    {
-      return iImage;
+      return getImage();
    }
 }

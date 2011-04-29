@@ -12,6 +12,9 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 
+import org.apache.bcel.Constants;
+import org.apache.bcel.generic.Type;
+
 /**
  * Abstraction for dumped binary.
  */
@@ -487,8 +490,8 @@ public class Binary
          classRecord.markInstanceUsed();
       }
       // Add the run method that is called directly from the vm
-      Signature staticInit = new Signature("<clinit>()V");
-      Signature runMethod = new Signature("run()V");
+      Signature staticInit = new Signature(Constants.STATIC_INITIALIZER_NAME, "()V");
+      Signature runMethod = new Signature("run", "()V");
       Signature mainMethod = new Signature("main", "([Ljava/lang/String;)V");
       // Now add entry classes      
       for (int i = 0; i < entryClassNames.length; i++)
@@ -788,7 +791,7 @@ public class Binary
      for (int pIndex = 0; pIndex < iClassTable.size(); pIndex++)
      {
        ClassRecord pRec = iClassTable.get(pIndex);
-       monitor.log("Class " + pIndex + ": " + pRec.getName());
+       monitor.log("Class " + pIndex + ": " + pRec.getCanonicalName());
      }
      int pSize = iMethodTables.size();
      int methodNo = 0;
@@ -799,12 +802,17 @@ public class Binary
         for(int j = 0; j < cnt; j++)
         {
            MethodRecord mr = rt.get(j);
+           
+           // String s = "Method " + methodNo + ": Class: " + mr.iClassRecord.getName() + " Signature: " +
+           //    (iSignatures.elementAt(mr.iSignatureId)).getImage();
+      
+           Signature sig = iSignatures.elementAt(mr.iSignatureId); 
+           String s = "Method " + methodNo + ": " + toPrettyString(sig, mr.iClassRecord.getCanonicalName(), mr.iClassRecord.getSimpleName(), true);
+      
            if ((mr.iFlags & TinyVMConstants.M_NATIVE) == 0)
-              monitor.log("Method " + methodNo + ": Class: " + mr.iClassRecord.getName() + " Signature: " +
-                             (iSignatures.elementAt(mr.iSignatureId)).getImage() + " PC " + mr.getCodeStart() + " Signature id " + mr.iSignatureId);
+              monitor.log(s + " PC " + mr.getCodeStart() + " Signature id " + mr.iSignatureId);
            else
-              monitor.log("Method " + methodNo + ": Class: " + mr.iClassRecord.getName() + " Signature: " + 
-                             (iSignatures.elementAt(mr.iSignatureId)).getImage() + " Native id " + mr.iSignatureId);
+              monitor.log(s + " Native id " + mr.iSignatureId);
            methodNo++;
         }
      }
@@ -827,5 +835,62 @@ public class Binary
      //printInterfaces();
    }
    
+   private static String toPrettyString(Signature sig, String fullclass, String simpleclass, boolean omitReturn)
+   {
+	   String name = sig.getName();
+	   String descriptor = sig.getDescriptor();
+	   
+	   boolean omitEmptyArgs;
+	   String friendlyName;
+	   
+	   Type[] args = Type.getArgumentTypes(descriptor);
+	   Type rv = Type.getReturnType(descriptor);
+	   
+	   if (sig.isConstructor())
+	   {
+		   friendlyName = simpleclass;
+		   omitEmptyArgs = false;
+		   omitReturn = rv.equals(Type.VOID);
+	   }
+	   else if (sig.isStaticInitializer())
+	   {
+		   // or how about "static{}" as the friendly name?
+		   friendlyName = name;
+		   omitEmptyArgs = true;
+		   omitReturn = rv.equals(Type.VOID);
+	   }
+	   else
+	   {
+		   friendlyName = name;
+		   omitEmptyArgs = false;
+	   }
+		
+	   StringBuilder sb = new StringBuilder();
+	   if (!omitReturn)
+	   {
+		   sb.append(rv);
+		   sb.append(' ');
+	   }
+	   if (fullclass != null)
+	   {
+		   sb.append(fullclass);
+		   sb.append(".");
+	   }
+	   sb.append(friendlyName);
+	   if (!omitEmptyArgs || args.length > 0)
+	   {
+		   sb.append('(');
+		   for (int j=0; j<args.length; j++)
+		   {
+			   if (j > 0)
+				   sb.append(", ");
+			   sb.append(args[j]);
+		   }
+		   sb.append(')');
+	   }
+	   
+	   return sb.toString();
+   }
+
 }
 
