@@ -83,8 +83,9 @@
 			<arg value="LE" />
 			<arg value="-o" />
 			<arg file="${binary}" />
-			<arg value="-gr" />
+			<arg value="-od" />
 			<arg file="${debug}" />
+			<arg value="-gr" />
 			<arg value="-v" />
 			<arg value="${program}" />
 		</java>
