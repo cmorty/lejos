@@ -36,8 +36,8 @@ public class ConsoleDebugDisplay implements ConsoleDebug
         if (name == null)
         	return null;
         
-        FileInputStream fis = new FileInputStream(name);
         DebugData ret;
+        FileInputStream fis = new FileInputStream(name);
         try {
         	ObjectInputStream in = new ObjectInputStream(fis);
             ret = (DebugData) in.readObject();

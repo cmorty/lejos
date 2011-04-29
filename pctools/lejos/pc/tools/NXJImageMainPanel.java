@@ -183,10 +183,11 @@ public class NXJImageMainPanel extends JPanel {
 	}
 
 	protected void readNxtImage(File file) throws IOException {
-		DataInputStream in = new DataInputStream(new FileInputStream(file));
 		byte[] data;
 		int p, w, h;
+		FileInputStream fin = new FileInputStream(file);
 		try {
+			DataInputStream in = new DataInputStream(fin);
 			// byte size -> int size.
 //			w = in.read();
 //			if (w < 0) {
@@ -212,7 +213,7 @@ public class NXJImageMainPanel extends JPanel {
 			data = new byte[w * ((h + 7) / 8)];
 			in.readFully(data);
 		} finally {
-			in.close();
+			fin.close();
 		}
 		BufferedImage image = NXJImageConverter.nxtImageData2Image(data, w, h);
 		this.readImage(image);
