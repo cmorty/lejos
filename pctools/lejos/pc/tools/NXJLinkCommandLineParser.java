@@ -30,17 +30,12 @@ class NXJLinkCommandLineParser extends AbstractCommandLineParser
 		options.addOption("h", "help", false, "show this help");
 		options.addOption("a", "all", false, "do not filter classes");
 		options.addOption("g", "debug", false, "include debug monitor");
+		options.addOption("gr", "remotedebug", false, "include remote debug monitor");
 		options.addOption("v", "verbose", false, "print class and signature information");
 		options.addOption("ea", "enableassert", false, "enable assertions");
 		options.addOption("ec", "enablechecks", false, "enable run time checks");
 		options.addOption("dm", "disablememcompact", false, "disable memory compaction");
 
-		Option debugOption = new Option("gr", "remotedebug", true,
-			"enable remote debug and specify the debug file");
-		debugOption.setArgName("debugfile");
-		debugOption.setOptionalArg(true);
-		options.addOption(debugOption);
-		
 		Option bclasspathOption = new Option("bp", "bootclasspath", true,
 			"where to find leJOS classes");
 		bclasspathOption.setArgName("classpath");
@@ -53,6 +48,10 @@ class NXJLinkCommandLineParser extends AbstractCommandLineParser
 		Option outputOption = new Option("o", "output", true, "dump binary to file");
 		outputOption.setArgName("path to file");
 		options.addOption(outputOption);
+
+		Option debugFileOption = new Option("od", "outputdebug", true, "dump debug info to file");
+		debugFileOption.setArgName("path to file");
+		options.addOption(debugFileOption);
 
 		Option writeOrderOption = new Option("wo", "writeorder", true, "endianness (BE or LE)");
 		writeOrderOption.setArgName("write order");
@@ -155,6 +154,11 @@ class NXJLinkCommandLineParser extends AbstractCommandLineParser
 		return getLastOptVal(this.result, "o");
 	}
 
+	public String getDebugFile()
+	{
+		return getLastOptVal(this.result, "od");
+	}
+
 	public String getBP()
 	{
 		return this.bp;
@@ -163,11 +167,6 @@ class NXJLinkCommandLineParser extends AbstractCommandLineParser
 	public String getCP()
 	{
 		return this.cp;
-	}
-
-	public String getDebugFile()
-	{
-		return getLastOptVal(this.result, "gr");
 	}
 
 	public boolean isBigEndian()
