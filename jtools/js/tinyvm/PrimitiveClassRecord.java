@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import java.util.ArrayList;
 
+import org.apache.bcel.generic.Type;
+
 
 import js.tinyvm.util.HashVector;
 
@@ -21,6 +23,27 @@ public class PrimitiveClassRecord extends ClassRecord
    public String getName ()
    {
       return iName;
+   }
+   
+   @Override
+   public String getSimpleName()
+   {
+	   //TODO Integer[].class.getSimpleName() would return "Integer[]" instead of "java.lang.Integer[]"
+	   return getCanonicalName();
+   }
+   
+   @Override
+   public String getCanonicalName()
+   {
+	   String s = this.getName();
+	   
+	   if (s.equals("[V"))
+		   return "reserved";
+	   
+	   if (s.startsWith("["))
+		   s = Type.getType(s).toString();
+	   
+	   return s;
    }
 
 
