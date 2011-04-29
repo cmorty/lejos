@@ -28,7 +28,7 @@ class ConsoleCommandLineParser extends AbstractCommandLineParser
 		addressOption.setArgName("address");
 		options.addOption(addressOption);
 
-		Option debugOption = new Option("gr", "remotedebug", true, "use the specified debug file");
+		Option debugOption = new Option("di", "debuginfo", true, "use the specified debug file");
 		debugOption.setArgName("debugfile");
 		options.addOption(debugOption);
 	}
