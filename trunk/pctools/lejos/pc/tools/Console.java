@@ -53,7 +53,7 @@ public class Console implements ConsoleViewerUI {
 		boolean usb = commandLine.hasOption("u");
 		String name = commandLine.getOptionValue("n");
 		String address = commandLine.getOptionValue("d");
-        String debugFile = commandLine.getOptionValue("gr");
+        String debugFile = commandLine.getOptionValue("di");
         ConsoleDebugDisplay debug = new ConsoleDebugDisplay(this, debugFile);
 		ConsoleViewComms comm = new ConsoleViewComms(this, debug, false, false);
 		if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;

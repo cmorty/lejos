@@ -17,7 +17,7 @@ class ConsoleViewerCommandLineParser extends AbstractCommandLineParser
 		super(caller, params);
 		
 		options.addOption("h", "help", false, "help");
-		Option debugOption = new Option("gr", "remotedebug", true, "use the specified debug file");
+		Option debugOption = new Option("di", "debuginfo", true, "use the specified debug file");
 		debugOption.setArgName("debugfile");
 		options.addOption(debugOption);
 	}
