@@ -11,38 +11,49 @@ import java.io.*;
  */
 public class ConsoleDebugDisplay implements ConsoleDebug
 {
-    DebugData debugData = null;
+    DebugData debugData;
     ConsoleViewerUI viewer;
-
-    public ConsoleDebugDisplay(ConsoleViewerUI view, String debugFile)
+    
+    public ConsoleDebugDisplay(ConsoleViewerUI view)
     {
-        viewer = view;
-        viewer.append("Debug attached\n");
-        loadDebugData(debugFile);
+    	this(view, (DebugData)null);
+    }    
+
+    public ConsoleDebugDisplay(ConsoleViewerUI view, String debugFile) throws IOException
+    {
+    	this(view, loadDebugData(debugFile));
     }
 
-    void loadDebugData(String name)
+    public ConsoleDebugDisplay(ConsoleViewerUI view, DebugData debugData)
     {
-        if (name == null || name.length() == 0) return;
-        FileInputStream fis = null;
-        ObjectInputStream in = null;
-        DebugData ret = null;
+        this.viewer = view;
+        this.viewer.append("Debug attached\n");
+        this.debugData = debugData;
+    }
+    
+    static DebugData loadDebugData(String name) throws IOException
+    {
+        if (name == null)
+        	return null;
+        
+        FileInputStream fis = new FileInputStream(name);
+        DebugData ret;
         try {
-            fis = new FileInputStream(name);
-            in = new ObjectInputStream(fis);
+        	ObjectInputStream in = new ObjectInputStream(fis);
             ret = (DebugData) in.readObject();
             in.close();
-            fis.close();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
         }
         catch (ClassNotFoundException e)
         {
-            e.printStackTrace();
+        	IOException e2 = new IOException("failed to load debug data");
+        	e2.initCause(e);
+        	throw e2;
         }
-        debugData = ret;
+        finally
+        {
+            fis.close();        	
+        }
+        return ret;
     }
 
     public void exception(int classNo, String msg, int[] stackTrace)

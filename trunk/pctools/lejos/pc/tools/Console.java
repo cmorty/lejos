@@ -1,5 +1,7 @@
 package lejos.pc.tools;
 
+import java.io.IOException;
+
 import lejos.pc.comm.NXTCommFactory;
 
 import org.apache.commons.cli.CommandLine;
@@ -26,7 +28,7 @@ public class Console implements ConsoleViewerUI {
 	}
 
 
-	private int run(String[] args)
+	private int run(String[] args) throws IOException
 	{
 		ConsoleCommandLineParser fParser = new ConsoleCommandLineParser(Console.class, "[options]");
 		CommandLine commandLine;
