@@ -848,16 +848,17 @@ public class Binary
 	   
 	   if (sig.isConstructor())
 	   {
-		   friendlyName = simpleclass;
+		   // alternative: friendlyName = simpleclass;
+		   friendlyName = name;
 		   omitEmptyArgs = false;
-		   omitReturn = rv.equals(Type.VOID);
+		   omitReturn |= rv.equals(Type.VOID);
 	   }
 	   else if (sig.isStaticInitializer())
 	   {
-		   // or how about "static{}" as the friendly name?
+		   // alternative: friendlyName = "static{}"
 		   friendlyName = name;
 		   omitEmptyArgs = true;
-		   omitReturn = rv.equals(Type.VOID);
+		   omitReturn |= rv.equals(Type.VOID);
 	   }
 	   else
 	   {
