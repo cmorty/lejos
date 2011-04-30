@@ -13,7 +13,7 @@ public interface FeatureListener {
 	
 	/**
 	 * The angle and range (in a RangeReading) of a feature is reported when a feature is detected.
-	 * @param rr The RangeReading, which contains angle and range.
+	 * @param feature The RangeReading, which contains angle and range.
 	 */
 	public void featureDetected(DetectableFeature feature);
 	
