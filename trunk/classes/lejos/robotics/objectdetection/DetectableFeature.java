@@ -4,6 +4,7 @@ import lejos.robotics.RangeReading;
 
 /**
  * A DetectableFeature is a map feature that is detected and reported by a FeatureDetector.
+ * @author BB based on concepts by Lawrie Griffiths
  */
 public interface DetectableFeature {
 

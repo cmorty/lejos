@@ -5,9 +5,15 @@ import lejos.robotics.RangeFinder;
 import lejos.robotics.RangeReading;
 
 /**
- * The UnidentifiedObjectDetector used a RangeFinder to locate objects (known as features when mapping). This class is
- * unable to identify the feature and merely reports the range and angle to the object.
- * @author BB
+ * <p>The UnidentifiedObjectDetector used a RangeFinder to locate objects (known as features when mapping). This class is
+ * unable to identify the feature and merely reports the range and angle to the object.</p>
+ * 
+ * <p>To create a more complex FeatureDetector, extend this class and override the {@link FeatureDetector#scan()} method.
+ * It is possible to add more complex functionality in this method, such as only returning a "hit" if the scanner detects
+ * an object in the same location twice in a row. You can also have the scan identify the object (such as a camera using
+ * facial recognition to identify a person) and then report that in a DetectableFeature object that extends UnidentifiedFeature.</p>
+ *  
+ * @author BB based on concepts by Lawrie Griffiths
  *
  */
 public class UnidentifiedFeatureDetector implements FeatureDetector {
@@ -16,6 +22,7 @@ public class UnidentifiedFeatureDetector implements FeatureDetector {
 	private RangeFinder range_finder = null;
 	private float max_dist = 100;
 	private int delay = 0;
+	private boolean enabled = true;
 	// TODO: Accept optional RangeScanner?
 	
 	/**
@@ -56,11 +63,10 @@ public class UnidentifiedFeatureDetector implements FeatureDetector {
 		listeners.add(l);
 	}
 
-	// TODO: Notify with DetectableFeature instead?
-	private void notifyListeners(RangeReading rr) {
+	private void notifyListeners(DetectableFeature feature) {
 		if(listeners != null) { 
 			for(FeatureListener l : listeners) {
-				l.featureDetected(rr);
+				l.featureDetected(feature);
 			}
 		}
 	}
@@ -74,13 +80,9 @@ public class UnidentifiedFeatureDetector implements FeatureDetector {
 		public void run() {
 			while(true) {
 				/* TODO: Andy has a suggestion of moving the code in this thread out into the API so that users could override
-				this if they want to use multiple sensors or other types of sensors. Sounds good to me. - BB */
-				float range = range_finder.getRange();
-				if(range > 0 & range < max_dist) {
-					int angle = 0;
-					RangeReading rr = new RangeReading(angle, range);
-					notifyListeners(rr);
-				}
+				this if they want to use multiple sensors or other types of sensors. Use scan() method. */
+				DetectableFeature f = (enabled?scan():null);
+				if(f != null) notifyListeners(f);
 				
 				try {
 					Thread.sleep(delay);
@@ -89,5 +91,21 @@ public class UnidentifiedFeatureDetector implements FeatureDetector {
 				}
 			}
 		}
+	}
+
+	public void enableDetection(boolean enable) {
+		this.enabled = enable;
+	}
+
+	public DetectableFeature scan() {
+		UnidentifiedFeature feature = null;
+		
+		float range = range_finder.getRange();
+		if(range > 0 & range < max_dist) {
+			int angle = 0;
+			feature = new UnidentifiedFeature(new RangeReading(angle, range));
+			
+		}
+		return feature;
 	}
 }
