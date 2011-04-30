@@ -22,7 +22,7 @@ import javax.swing.event.ChangeListener;
  * @author Roger Glassey revised  06.15.2008
  *
  */
-public class DataViewer extends JFrame implements ActionListener, ChangeListener, DataViewerUI
+public class NXJDataViewer extends JFrame implements ActionListener, ChangeListener, DataViewerUI
 {
 	private static final long serialVersionUID = 4275975098699509511L;
 	private JButton startButton = new JButton("Download");
@@ -50,7 +50,7 @@ public class DataViewer extends JFrame implements ActionListener, ChangeListener
     /**
      * Constructor builds GUI
      */
-    public DataViewer()
+    public NXJDataViewer()
     {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("View output from NXJ Datalogger");
@@ -167,7 +167,7 @@ public class DataViewer extends JFrame implements ActionListener, ChangeListener
      */
     public static void main(String[] args)
     {
-        DataViewer frame = new DataViewer();
+        NXJDataViewer frame = new NXJDataViewer();
         frame.setVisible(true);
     }
 

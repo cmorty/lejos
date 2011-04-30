@@ -27,7 +27,7 @@ import org.apache.commons.cli.ParseException;
 *
 * @author Ranulf Green and Lawrie Griffiths
 */
-public class SocketProxy
+public class NXJSocketProxy
 {
 	/* TODO fix design problem
 	 * There are several problem with this proxy. First of all, a socket
@@ -48,7 +48,7 @@ public class SocketProxy
 	 * @throws InterruptedException 
 	 */
 	private int run(String[] args) throws IOException, InterruptedException {
-		SocketProxyCommandLineParser fParser = new SocketProxyCommandLineParser(SocketProxy.class, "[options]");
+		SocketProxyCommandLineParser fParser = new SocketProxyCommandLineParser(NXJSocketProxy.class, "[options]");
 		CommandLine commandLine;
 		
 		try
@@ -294,7 +294,7 @@ public class SocketProxy
 		int r;
 		try
 		{
-			r = new SocketProxy().run(args);
+			r = new NXJSocketProxy().run(args);
 		}
 		catch (Exception t)
 		{
