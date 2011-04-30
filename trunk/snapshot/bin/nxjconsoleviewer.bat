@@ -46,5 +46,5 @@ if "%OS%" == "Windows_NT" goto :winnt
 	)
 
 
-"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjconsoleviewer" -classpath "%NXJ_CP_PC%" lejos.pc.tools.ConsoleViewer  %*
+"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjconsoleviewer" -classpath "%NXJ_CP_PC%" lejos.pc.tools.NXJConsoleViewer  %*
 :eof

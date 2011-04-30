@@ -46,5 +46,5 @@ if "%OS%" == "Windows_NT" goto :winnt
 	)
 
 
-"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjdataviewer" -classpath "%NXJ_CP_PC%" lejos.pc.tools.DataViewer  %*
+"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjdataviewer" -classpath "%NXJ_CP_PC%" lejos.pc.tools.NXJDataViewer  %*
 :eof
