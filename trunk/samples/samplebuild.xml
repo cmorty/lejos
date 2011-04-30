@@ -66,6 +66,8 @@
 			<arg value="LE" />
 			<arg value="-o" />
 			<arg file="${binary}" />
+			<arg value="-od" />
+			<arg file="${debug}" />
 			<arg value="-v" />
 			<arg value="${program}" />
 		</java>
