@@ -8,11 +8,17 @@ import lejos.robotics.navigation.Move;
  */
 
 /**
- * Any class that wants to be updated automatically by a MoveProvider should
+ * <p>Any class that wants to be updated automatically by a MoveProvider should
  * implement this interface. Both movementStarted() and movementStopped() also return 
- * a MoveProvider object. In a scenario where one MoveListener GUI is watching movements from
- * multiple MovementProviders, it might want to draw one robot as blue, one as green, one as red, etc..
- * The MoveProvider allows it to differentiate the MovementProviders from one another.
+ * a MoveProvider object.</p>
+ * 
+ * <p>There are several practical scenarios to use a MoveListener. If you have a robot that has a range scanner
+ * pointed forward and mounted on a motor, a MoveListener could listen for arc movements and rotate the scanner
+ * left or right if the vehicle begins steering around a corner so the sensor is pointed where the robot is traveling.</p>
+ * 
+ * <p> In another scenario, a MoveListener GUI can listen for movements from multiple MovementProviders. It 
+ * might want to draw one robot as blue, one as green, one as red, etc..
+ * The MoveProvider allows it to differentiate the MovementProviders from one another.</p>
  * 
  * @author nxj team
  */
