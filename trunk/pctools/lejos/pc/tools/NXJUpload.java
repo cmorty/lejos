@@ -71,8 +71,8 @@ public class NXJUpload {
 		boolean run = commandLine.hasOption("r");
 		boolean blueTooth = commandLine.hasOption("b");
 		boolean usb = commandLine.hasOption("u");
-		String name = commandLine.getOptionValue("n");
-		String address = commandLine.getOptionValue("d");
+		String name = NXJLinkCommandLineParser.getLastOptVal(commandLine, "n");
+		String address = NXJLinkCommandLineParser.getLastOptVal(commandLine, "d");
 		
 		if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;
 		if (usb) protocols |= NXTCommFactory.USB;

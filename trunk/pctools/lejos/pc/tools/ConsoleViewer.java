@@ -282,7 +282,7 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
 			return 0;
 		}
 		
-        String debugFile = commandLine.getOptionValue("di");
+        String debugFile = NXJLinkCommandLineParser.getLastOptVal(commandLine, "di");
         ConsoleViewer frame = new ConsoleViewer(debugFile);
         frame.setVisible(true);        
         return -1;
