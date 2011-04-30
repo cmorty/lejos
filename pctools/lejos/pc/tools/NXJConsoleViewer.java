@@ -37,7 +37,7 @@ import org.apache.commons.cli.ParseException;
  * @author Roger Glassey 6.1.2008
  *
  */
-public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionListener, ChangeListener
+public class NXJConsoleViewer extends JFrame implements ConsoleViewerUI, ActionListener, ChangeListener
 {
 
     private static final int LCD_WIDTH = 100;
@@ -124,7 +124,7 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
      * @param debugFile File containing debug information.
      * @throws IOException 
      */
-    public ConsoleViewer(String debugFile) throws IOException
+    public NXJConsoleViewer(String debugFile) throws IOException
     {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("View RConsole output from NXT");
@@ -264,7 +264,7 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
     
     private static int start(String[] args) throws IOException
     {
-        ConsoleViewerCommandLineParser fParser = new ConsoleViewerCommandLineParser(ConsoleViewer.class, "[options]");
+        ConsoleViewerCommandLineParser fParser = new ConsoleViewerCommandLineParser(NXJConsoleViewer.class, "[options]");
     	CommandLine commandLine;
 		try
 		{
@@ -283,7 +283,7 @@ public class ConsoleViewer extends JFrame implements ConsoleViewerUI, ActionList
 		}
 		
         String debugFile = AbstractCommandLineParser.getLastOptVal(commandLine, "di");
-        ConsoleViewer frame = new ConsoleViewer(debugFile);
+        NXJConsoleViewer frame = new NXJConsoleViewer(debugFile);
         frame.setVisible(true);        
         return -1;
     }

@@ -81,13 +81,13 @@ ${template.linux.parser}
 		
 		<linux-tool file="nxjbrowse"        class="lejos.pc.tools.NXJBrowser"/>
 		<linux-tool file="nxjcontrol"       class="lejos.pc.tools.NXJControl"/>
-		<linux-tool file="nxjconsole"       class="lejos.pc.tools.Console"/>
-		<linux-tool file="nxjconsoleviewer" class="lejos.pc.tools.ConsoleViewer"/>
-		<linux-tool file="nxjdataviewer"    class="lejos.pc.tools.DataViewer"/>
+		<linux-tool file="nxjconsole"       class="lejos.pc.tools.NXJConsole"/>
+		<linux-tool file="nxjconsoleviewer" class="lejos.pc.tools.NXJConsoleViewer"/>
+		<linux-tool file="nxjdataviewer"    class="lejos.pc.tools.NXJDataViewer"/>
 		<linux-tool file="nxjflash"         class="lejos.pc.tools.NXJFlash"/>
 		<linux-tool file="nxjflashg"        class="lejos.pc.tools.NXJFlashG"/>
 		<linux-tool file="nxjmonitor"       class="lejos.pc.tools.NXJMonitor"/>
-		<linux-tool file="nxjsocketproxy"   class="lejos.pc.tools.SocketProxy"/>
+		<linux-tool file="nxjsocketproxy"   class="lejos.pc.tools.NXJSocketProxy"/>
 		<linux-tool file="nxjupload"        class="lejos.pc.tools.NXJUpload"/>
 		<linux-tool file="nxjimage"         class="lejos.pc.tools.NXJImage"/>
 		
@@ -120,13 +120,13 @@ ${template.linux.parser}
 		
 		<win-tool file="nxjbrowse"        class="lejos.pc.tools.NXJBrowser"/>
 		<win-tool file="nxjcontrol"       class="lejos.pc.tools.NXJControl"/>
-		<win-tool file="nxjconsole"       class="lejos.pc.tools.Console"/>
-		<win-tool file="nxjconsoleviewer" class="lejos.pc.tools.ConsoleViewer"/>
-		<win-tool file="nxjdataviewer"    class="lejos.pc.tools.DataViewer"/>
+		<win-tool file="nxjconsole"       class="lejos.pc.tools.NXJConsole"/>
+		<win-tool file="nxjconsoleviewer" class="lejos.pc.tools.NXJConsoleViewer"/>
+		<win-tool file="nxjdataviewer"    class="lejos.pc.tools.NXJDataViewer"/>
 		<win-tool file="nxjflash"         class="lejos.pc.tools.NXJFlash"/>
 		<win-tool file="nxjflashg"        class="lejos.pc.tools.NXJFlashG"/>
 		<win-tool file="nxjmonitor"       class="lejos.pc.tools.NXJMonitor"/>
-		<win-tool file="nxjsocketproxy"   class="lejos.pc.tools.SocketProxy"/>
+		<win-tool file="nxjsocketproxy"   class="lejos.pc.tools.NXJSocketProxy"/>
 		<win-tool file="nxjupload"        class="lejos.pc.tools.NXJUpload"/>
 		<win-tool file="nxjimage"         class="lejos.pc.tools.NXJImage"/>
 		

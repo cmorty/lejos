@@ -14,12 +14,12 @@ import org.apache.commons.cli.ParseException;
  * PC via the USB (or Bluetooth) connection.
  *
  */ 
-public class Console implements ConsoleViewerUI {
+public class NXJConsole implements ConsoleViewerUI {
 
 	public static void main(String[] args){
 		int r;
 		try {
-			r = new Console().run(args);
+			r = new NXJConsole().run(args);
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
 			r = 1;
@@ -30,7 +30,7 @@ public class Console implements ConsoleViewerUI {
 
 	private int run(String[] args) throws IOException
 	{
-		ConsoleCommandLineParser fParser = new ConsoleCommandLineParser(Console.class, "[options]");
+		ConsoleCommandLineParser fParser = new ConsoleCommandLineParser(NXJConsole.class, "[options]");
 		CommandLine commandLine;
 		try
 		{
