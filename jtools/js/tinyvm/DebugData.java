@@ -101,14 +101,24 @@ public class DebugData implements Serializable
       }
    }
 
+   public int getClassNameCount()
+   {
+       return classData.size();
+   }
+
    public String getClassName(int index)
    {
        return classData.get(index).name;
    }
 
-   public int getClassNameCount()
+   public String getClassFilename(int index)
    {
-       return classData.size();
+       return classData.get(index).file;
+   }
+
+   public int getMethodCount()
+   {
+       return methodData.size();
    }
 
    public String getMethodName(int index)
@@ -148,9 +158,4 @@ public class DebugData implements Serializable
    }
 
    
-   public int getMethodCount()
-   {
-       return methodData.size();
-   }
-
 }
