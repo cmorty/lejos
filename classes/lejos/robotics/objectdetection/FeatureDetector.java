@@ -18,8 +18,12 @@ public interface FeatureDetector {
 	 */
 	public void addListener(FeatureListener listener);
 	
+	// TODO: Is null the best thing to return if it doesn't detect anything? 
 	/**
-	 * Performs a single scan for an object and returns the results.
+	 * <p>Performs a single scan for an object and returns the results. If an object is not detected, this
+	 * method returns <b>null</b>.</p>
+	 * <p><i>Warning: Make sure to check for a null object before trying to read data from the returned 
+	 * DetectableFeature object, otherwise your code will throw a null pointer exception.</i></p>  
 	 * @return A feature it has detected. null if nothing found. 
 	 */
 	public DetectableFeature scan();
@@ -30,5 +34,11 @@ public interface FeatureDetector {
 	 * @param on true enables detection and notifications, false disables this class until it is enabled again.
 	 */
 	public void enableDetection(boolean on);
+	
+	/**
+	 * Indicates if automatic scanning mode and listener notification is currently enabled. (true by default)
+	 * @return true if enabled, false if not
+	 */
+	public boolean isEnabled();
 	
 }
