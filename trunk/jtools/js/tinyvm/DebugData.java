@@ -1,18 +1,19 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package js.tinyvm;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.apache.bcel.classfile.LineNumber;
+
 /**
  *
  * @author andys
  */
 public class DebugData implements Serializable
 {
+	private static final String SOURCE_MANDATORY = "mandatory";
+	
    static private class LineNo implements Serializable
    {
        int pc;
@@ -27,31 +28,59 @@ public class DebugData implements Serializable
 
    static private class MethodData implements Serializable
    {
+	   ClassData classData;
        String name;
-       String className;
-       String file;
        LineNo[] lineNumbers;
 
-       MethodData(String name, String className, String file, LineNo[] numbers)
+       MethodData(ClassData cd, String name, LineNo[] numbers)
        {
+    	   this.classData = cd;
            this.name = name;
-           this.className = className;
-           this.file = file;
            this.lineNumbers = numbers;
        }
    }
+   
+   static private class ClassData implements Serializable
+   {
+       String name;
+       String file;
+	   
+	   public ClassData(String name, String file)
+       {
+		   this.name = name;
+		   this.file = file;
+       }
+   }
 
-   ArrayList<String> classNames = new ArrayList<String>();
+   ArrayList<ClassData> classData = new ArrayList<ClassData>();
    ArrayList<MethodData> methodData = new ArrayList<MethodData>();
+   
+   private ClassData getClassData(HashMap<String, ClassData> cache, ClassRecord classRecord)
+   {
+	   String name = classRecord.iName;
+	   ClassData cd = cache.get(name);
+	   if (cd == null)
+	   {
+	       if (classRecord instanceof PrimitiveClassRecord)
+	      	 cd = new ClassData(name, null);
+	       else
+	      	 cd = new ClassData(classRecord.getName(), classRecord.iCF.getSourceFileName());
+	       
+	       cache.put(name, cd);
+	   }
+       return cd;
+   }
 
    void create(Binary binary)
    {
+	   HashMap<String, ClassData> cache = new HashMap<String, ClassData>();
+	   
       // First create the list of class files
       int pSize = binary.iClassTable.size();
       for (int pIndex = 0; pIndex < pSize; pIndex++)
       {
          ClassRecord classRecord = binary.iClassTable.get(pIndex);
-         classNames.add(classRecord.iName);
+         classData.add(getClassData(cache, classRecord));
       }
       for(int i = 0; i < binary.iMethodTables.size(); i++)
       {
@@ -67,19 +96,21 @@ public class DebugData implements Serializable
                for(int l = 0; l < nos.length; l++)
                   lnos[l] = new LineNo(nos[l].getStartPC(), nos[l].getLineNumber());
             }
-            methodData.add(new MethodData(method.iMethod.getName(), method.iClassRecord.getName(), method.iClassRecord.iCF.getFileName() + "/" + method.iClassRecord.iCF.getSourceFileName(), lnos));
+            
+            ClassData cd = getClassData(cache, method.iClassRecord);
+            methodData.add(new MethodData(cd, method.iMethod.getName(), lnos));
          }
       }
    }
 
    public String getClassName(int index)
    {
-       return classNames.get(index);
+       return classData.get(index).name;
    }
 
    public int getClassNameCount()
    {
-       return classNames.size();
+       return classData.size();
    }
 
    public String getMethodName(int index)
@@ -89,12 +120,12 @@ public class DebugData implements Serializable
 
    public String getMethodFile(int index)
    {
-       return methodData.get(index).file;
+       return methodData.get(index).classData.file;
    }
 
    public String getMethodClass(int index)
    {
-       return methodData.get(index).className;
+       return methodData.get(index).classData.name;
    }
 
    public int getLineNumber(int methodIndex, int pc)
