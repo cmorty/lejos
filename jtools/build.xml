@@ -20,7 +20,6 @@
 		<delete dir="build/classes" />
 		<mkdir dir="build/classes" />
 		<javac srcdir="." destdir="build/classes" source="1.5" target="1.5" debug="on">
-			<classpath location="3rdparty/lib/commons-cli.jar" />
 			<classpath location="3rdparty/lib/bcel.jar" />
 		</javac>
 		<mkdir dir="lib"/>
