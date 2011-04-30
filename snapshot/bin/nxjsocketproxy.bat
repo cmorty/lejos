@@ -46,5 +46,5 @@ if "%OS%" == "Windows_NT" goto :winnt
 	)
 
 
-"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjsocketproxy" -classpath "%NXJ_CP_PC%" lejos.pc.tools.SocketProxy  %*
+"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjsocketproxy" -classpath "%NXJ_CP_PC%" lejos.pc.tools.NXJSocketProxy  %*
 :eof
