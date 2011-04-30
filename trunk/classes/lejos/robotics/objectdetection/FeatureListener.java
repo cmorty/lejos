@@ -1,7 +1,5 @@
 package lejos.robotics.objectdetection;
 
-import lejos.robotics.RangeReading;
-
 /**
  * Any class implementing this interface and registering with a FeatureDetector will receive
  *  notifications when a feature is detected. 
