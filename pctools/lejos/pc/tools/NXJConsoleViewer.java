@@ -256,7 +256,7 @@ public class NXJConsoleViewer extends JFrame implements ConsoleViewerUI, ActionL
 			r = 1;
 		}
 		
-    	if (r >= 0)
+    	if (r != 0)
     	{
     		System.exit(r);
     	}
@@ -285,7 +285,7 @@ public class NXJConsoleViewer extends JFrame implements ConsoleViewerUI, ActionL
         String debugFile = AbstractCommandLineParser.getLastOptVal(commandLine, "di");
         NXJConsoleViewer frame = new NXJConsoleViewer(debugFile);
         frame.setVisible(true);        
-        return -1;
+        return 0;
     }
 
     /**

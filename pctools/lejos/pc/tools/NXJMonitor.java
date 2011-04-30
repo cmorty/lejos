@@ -145,7 +145,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
 
 	    pack();
 	    setVisible(true);
-	    return -1;
+	    return 0;
 	}
 	
 	private void showMonitor(String name) {
@@ -275,7 +275,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
 			r = 1;
 		}
 		
-		if (r >= 0)
+		if (r != 0)
 			System.exit(r);
 	}
 }
