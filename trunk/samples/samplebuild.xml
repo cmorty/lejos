@@ -124,11 +124,11 @@
 
 	<target name="console" depends="debuguploadandrun" description="run a console">
 		<sleep seconds="4" />
-		<java classname="lejos.pc.tools.Console" fork="true" failonerror="true">
+		<java classname="lejos.pc.tools.NXJConsole" fork="true" failonerror="true">
 			<jvmarg value="-Dnxj.home=${nxj.home}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
-			<arg value="-gr" />
+			<arg value="-di" />
 			<arg file="${debug}" />
 		</java>
 	</target>
