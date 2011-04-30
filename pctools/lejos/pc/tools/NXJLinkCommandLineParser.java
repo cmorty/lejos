@@ -5,7 +5,6 @@ import java.io.File;
 import js.tinyvm.RunTimeOptions;
 import js.tinyvm.DebugOptions;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
@@ -61,20 +60,6 @@ class NXJLinkCommandLineParser extends AbstractCommandLineParser
 		// true,"device used (USB, COM1, etc)");
 		// deviceOption.setArgName("device");
 		// options.addOption(deviceOption);
-	}
-
-	protected static String getLastOptVal(CommandLine cmdline, String key)
-	{
-		return getLastOptVal(cmdline, key, null);
-	}
-
-	protected static String getLastOptVal(CommandLine cmdline, String key, String def)
-	{
-		String[] vals = cmdline.getOptionValues(key);
-		if (vals == null || vals.length <= 0)
-			return def;
-
-		return vals[vals.length - 1];
 	}
 
 	private static String mangleClassPath(String cp) throws ParseException

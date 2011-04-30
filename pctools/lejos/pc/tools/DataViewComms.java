@@ -104,6 +104,6 @@ public class DataViewComms
     public void close() {
     	try {
     		if (con != null) con.close();
-    	} catch (IOException ioe) {};
+    	} catch (IOException ioe) {}
     }
 }	

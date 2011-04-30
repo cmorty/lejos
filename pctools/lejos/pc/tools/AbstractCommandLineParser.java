@@ -9,6 +9,20 @@ import org.apache.commons.cli.Options;
 
 public abstract class AbstractCommandLineParser
 {
+	protected static String getLastOptVal(CommandLine cmdline, String key)
+	{
+		return getLastOptVal(cmdline, key, null);
+	}
+
+	protected static String getLastOptVal(CommandLine cmdline, String key, String def)
+	{
+		String[] vals = cmdline.getOptionValues(key);
+		if (vals == null || vals.length <= 0)
+			return def;
+	
+		return vals[vals.length - 1];
+	}
+
 	protected final Options options = new Options();
 	protected final Class<?> caller;
 	protected final String params;

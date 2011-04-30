@@ -70,8 +70,8 @@ public class SocketProxy
 		int protocols = 0;
 		boolean blueTooth = commandLine.hasOption("b");
 		boolean usb = commandLine.hasOption("u");
-		String name = NXJLinkCommandLineParser.getLastOptVal(commandLine, "n");
-		String address = NXJLinkCommandLineParser.getLastOptVal(commandLine, "d");
+		String name = AbstractCommandLineParser.getLastOptVal(commandLine, "n");
+		String address = AbstractCommandLineParser.getLastOptVal(commandLine, "d");
 		NXTConnector conn = new NXTConnector();
 		conn.addLogListener(new ToolsLogger());
 		if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;
