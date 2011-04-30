@@ -563,7 +563,7 @@ public class DifferentialPilot implements
 
 /**
    * Starts the robot moving forward along a curved path. This method is similar to the
-   * {@link #arcForward(float radius )} method except it uses the <code> turnRate</code> parameter
+   * {@link #arcForward(double radius )} method except it uses the <code> turnRate</code> parameter
    * do determine the curvature of the path and therefore has the ability to drive straight. This makes
    * it useful for line following applications.
    * <p>
@@ -611,7 +611,7 @@ public class DifferentialPilot implements
   /**
    * Starts the robot moving backward  along a curved path. This method is essentially
    * the same as
-   * {@link #steer(float turn rate )} except that the robot moves backward instead of forward.
+   * {@link #steer(double turn rate )} except that the robot moves backward instead of forward.
    * @param turnRate
    */
   public void steerBackward(final double turnRate)
@@ -638,12 +638,12 @@ public class DifferentialPilot implements
 
   /**
    * Moves the robot along a curved path through a specified turn angle. This method is similar to the
-   * {@link #arc(float radius , float angle)} method except it uses a ratio of motor
+   * {@link #arc(double radius , double angle)} method except it uses a ratio of motor
    * speeds to determine the curvature of the  path and therefore has the ability to drive straight. This makes
    * it useful for line following applications. This method does not return until the robot has
    * completed moving <code>angle</code> degrees along the arc.<br>
    * The <code>turnRate</code> specifies the sharpness of the turn. Use values  between -200 and +200.<br>
-   * For details about how this parameter works.See {@link #steer(float turnRate) }
+   * For details about how this parameter works.See {@link #steer(double turnRate) }
    * <p>
    * The robot will stop when its heading has changed by the amount of the  <code>angle</code> parameter.<br>
    * If <code>angle</code> is positive, the robot will move in the direction that increases its heading (it turns left).<br>
@@ -671,20 +671,20 @@ public class DifferentialPilot implements
 
   /**
    * Moves the robot along a curved path for a specified angle of rotation. This method is similar to the
-   * {@link #arc(float radius, float angle, boolean immediateReturn)} method except it uses the <code> turnRate()</code>
+   * {@link #arc(double radius, double angle, boolean immediateReturn)} method except it uses the <code> turnRate()</code>
    * parameter to determine the curvature of the path and therefore has the ability to drive straight.
    * This makes it useful for line following applications. This method has the ability to return immediately
    * by using the <code>immediateReturn</code> parameter set to <b>true</b>.
    *
    * <p>
    * The <code>turnRate</code> specifies the sharpness of the turn. Use values between -200 and +200.<br>
-   * For details about how this parameter works, see {@link #steer(float turnRate) }
+   * For details about how this parameter works, see {@link #steer(double turnRate) }
    * <p>
     * The robot will stop when its heading has changed by the amount of the  <code>angle</code> parameter.<br>
    * If <code>angle</code> is positive, the robot will move in the direction that increases its heading (it turns left).<br>
    * If <code>angle</code> is negative, the robot will move in the direction that decreases its heading (turns right).<br>
    * If <code>angle</code> is zero, the robot will not move and the method returns immediately.<br>
-   * For more details about this parameter, see {@link #steer(float turnRate, float angle)}
+   * For more details about this parameter, see {@link #steer(double turnRate, double angle)}
    * <p>
    * Note: If you have specified a drift correction in the constructor it will not be applied in this method.
    *
