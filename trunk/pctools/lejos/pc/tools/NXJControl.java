@@ -981,8 +981,8 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		for (int i = 0; i < 4; i++) {
 			int max = 1024;
 			sensorPanels[i].setRawVal(sensorValues[i].rawADValue);
-			if (sensorValues[i].sensorMode == (byte) PCTFULLSCALEMODE) max = 100;
-			else if (sensorValues[i].sensorMode == (byte) BOOLEANMODE) max = 1;
+			if (sensorValues[i].sensorMode == PCTFULLSCALEMODE) max = 100;
+			else if (sensorValues[i].sensorMode == BOOLEANMODE) max = 1;
 
 			sensorPanels[i].setScaledMaxVal(max);
 			sensorPanels[i].setScaledVal(sensorValues[i].scaledValue);
@@ -1175,9 +1175,11 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	 * Convert a byte array to a string of hex characters
 	 */
 	private String toHex(byte[] b) {
-		StringBuffer output = new StringBuffer();
+		StringBuilder output = new StringBuilder();
 		for (int i = 0; i < b.length; i++) {
-			output.append(Integer.toHexString((int) b[i]));
+			byte j = b[i];
+			output.append(Character.forDigit((j >> 4) & 0xF, 16));
+			output.append(Character.forDigit(j & 0xF, 16));
 		}
 		return output.toString();
 	}
