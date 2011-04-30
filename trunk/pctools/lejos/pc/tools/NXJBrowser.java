@@ -90,10 +90,10 @@ public class NXJBrowser
 
     nxtCommand = NXTCommand.getSingleton();
     
-    String name = NXJLinkCommandLineParser.getLastOptVal(commandLine, "n");
+    String name = AbstractCommandLineParser.getLastOptVal(commandLine, "n");
 	boolean blueTooth = commandLine.hasOption("b");
 	boolean usb = commandLine.hasOption("u");
-	String address = NXJLinkCommandLineParser.getLastOptVal(commandLine, "d");
+	String address = AbstractCommandLineParser.getLastOptVal(commandLine, "d");
 	
     int protocols = 0;
     
