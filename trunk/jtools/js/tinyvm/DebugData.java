@@ -12,8 +12,6 @@ import org.apache.bcel.classfile.LineNumber;
  */
 public class DebugData implements Serializable
 {
-	private static final String SOURCE_MANDATORY = "mandatory";
-	
    static private class LineNo implements Serializable
    {
        int pc;
