@@ -156,7 +156,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 			r = 1;
 		}
 		
-		if (r >= 0)
+		if (r != 0)
 			System.exit(r);
 	}
 
@@ -261,7 +261,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		frame.add(tabbedPane);
 		frame.pack();
 		frame.setVisible(true);
-		return -1;
+		return 0;
 	}
 
 	/**

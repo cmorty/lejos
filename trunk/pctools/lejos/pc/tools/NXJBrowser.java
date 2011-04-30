@@ -63,7 +63,7 @@ public class NXJBrowser
 			r = 1;
 		}
 		
-		if (r >= 0)
+		if (r != 0)
 			System.exit(r);
 	}
   
@@ -165,7 +165,7 @@ public class NXJBrowser
 
     frame.pack();
     frame.setVisible(true);
-    return -1;
+    return 0;
   }
   
   private void showFiles(final JFrame frame, NXTInfo nxt) {
