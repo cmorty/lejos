@@ -14,7 +14,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.bcel.classfile.Code;
 import org.apache.bcel.classfile.LineNumber;
+import org.apache.bcel.classfile.LineNumberTable;
 
 /**
  *
@@ -39,13 +41,15 @@ public class DebugData implements Serializable
 	   ClassData classData;
        String name;
        String signature;
+       int codeLength;
        LineNo[] lineNumbers;
 
-       MethodData(ClassData cd, String name, String signature, LineNo[] numbers)
+       MethodData(ClassData cd, String name, String signature, int codeLength, LineNo[] numbers)
        {
     	   this.classData = cd;
            this.name = name;
            this.signature = signature;
+           this.codeLength = codeLength;
            this.lineNumbers = numbers;
        }
    }
@@ -95,16 +99,32 @@ public class DebugData implements Serializable
          {
             MethodRecord method = classMethods.get(j);
             LineNo[] lnos = null;
-            if (method.iMethod.getLineNumberTable() != null && method.iMethod.getLineNumberTable().getLineNumberTable() != null)
+            LineNumberTable lnt1 = method.iMethod.getLineNumberTable();
+            if (lnt1 != null)
             {
-               LineNumber[] nos = method.iMethod.getLineNumberTable().getLineNumberTable();
-               lnos = new LineNo[nos.length];
-               for(int l = 0; l < nos.length; l++)
-                  lnos[l] = new LineNo(nos[l].getStartPC(), nos[l].getLineNumber());
+               LineNumber[] lnt2 = lnt1.getLineNumberTable();
+               if (lnt2 != null)
+               {
+	               lnos = new LineNo[lnt2.length];
+	               for(int l = 0; l < lnt2.length; l++)
+	                  lnos[l] = new LineNo(lnt2[l].getStartPC(), lnt2[l].getLineNumber());
+               }
+            }
+            
+            int codeLen = 0;
+            Code code1 = method.iMethod.getCode();
+            if (code1 != null)
+            {
+            	byte[] code2 = code1.getCode();
+            	if (code2 != null)
+            	{
+            		codeLen = code2.length;
+            	}
             }
             
             ClassData cd = getClassData(cache, method.iClassRecord);
-            methodData.add(new MethodData(cd, method.iMethod.getName(), method.iMethod.getSignature(), lnos));
+            methodData.add(new MethodData(cd, method.iMethod.getName(), method.iMethod.getSignature(),
+            	codeLen, lnos));
          }
       }
    }
