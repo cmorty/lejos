@@ -106,6 +106,11 @@ public class ClassRecord implements WritableData
 	   
 	   return s.substring(i+1);
    }
+   
+   public String getSourceFilename()
+   {
+	   return this.iCF.getSourceFileName();
+   }
 
    public int getLength ()
    {
