@@ -40,6 +40,12 @@ public class NXJDebugTool {
 	        doHelp = commandLine.hasOption("h");
 	        restArgs = commandLine.getArgs();
 	        
+			if (doHelp)
+			{
+				fParser.printHelp(System.out);
+				return 0;
+			}
+			
 	        if (debugFile == null)
 	        	throw new ParseException("no debug file specified");	        
 		}
@@ -49,12 +55,6 @@ public class NXJDebugTool {
 			return 1;
 		}
 		
-		
-		if (doHelp)
-		{
-			fParser.printHelp(System.out);
-			return 0;
-		}
 		
 		if (!(doDump || doClass || doMethod))
 		{
