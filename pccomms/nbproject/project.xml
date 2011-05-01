@@ -19,7 +19,7 @@
                     <label>Source Packages</label>
                     <type>java</type>
                     <location>.</location>
-                    <excludes>3rdparty/**,build.xml,lib/**,nbproject/**,build/**</excludes>
+                    <includes>lejos/**</includes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -40,7 +40,7 @@
                     <source-folder style="packages">
                         <label>Source Packages</label>
                         <location>.</location>
-                        <excludes>3rdparty/**,build.xml,lib/**,nbproject/**,build/**</excludes>
+                        <includes>lejos/**</includes>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
