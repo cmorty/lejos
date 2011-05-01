@@ -45,7 +45,12 @@ public class PrimitiveClassRecord extends ClassRecord
 	   
 	   return s;
    }
-
+   
+   @Override
+   public String getSourceFilename()
+   {
+	   return null;
+   }
 
    @Override
    public boolean isInterface ()

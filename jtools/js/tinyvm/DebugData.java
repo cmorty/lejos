@@ -69,11 +69,7 @@ public class DebugData implements Serializable
 	   ClassData cd = cache.get(name);
 	   if (cd == null)
 	   {
-	       if (classRecord instanceof PrimitiveClassRecord)
-	      	 cd = new ClassData(name, null);
-	       else
-	      	 cd = new ClassData(classRecord.getName(), classRecord.iCF.getSourceFileName());
-	       
+		   cd = new ClassData(name, classRecord.getSourceFilename());
 	       cache.put(name, cd);
 	   }
        return cd;
