@@ -48,9 +48,11 @@ public abstract class AbstractCommandLineParser
 			out.println("Error: " + e.getMessage());
 		}
 		
-		String usage = System.getProperty("COMMAND_NAME");
-		if (usage == null)
-			usage = "java " + caller.getName();
+		String command = System.getProperty("COMMAND_NAME");
+		if (command == null)
+			command = "java " + caller.getName();
+		
+		String usage = command;
 		if (params != null)
 			usage += " " + params;
 	
@@ -60,7 +62,12 @@ public abstract class AbstractCommandLineParser
 		out.println();
 		new HelpFormatter().printHelp(out, 80, usage, header, options, 0, 2, footer);
 		out.println();
+		this.printFooter(command, out);
 		out.flush();
 	}
 
+	protected void printFooter(String command, PrintWriter out)
+	{
+		
+	}
 }

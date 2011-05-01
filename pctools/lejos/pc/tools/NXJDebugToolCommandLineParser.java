@@ -1,5 +1,7 @@
 package lejos.pc.tools;
 
+import java.io.PrintWriter;
+
 import js.tinyvm.TinyVMException;
 
 import org.apache.commons.cli.CommandLine;
@@ -26,6 +28,16 @@ class NXJDebugToolCommandLineParser extends AbstractCommandLineParser
 		options.addOption(dumpOption);
 		options.addOption(classOption);
 		options.addOption(methodOption);
+	}
+	
+	@Override
+	protected void printFooter(String command, PrintWriter out)
+	{
+		out.println("Examples:");
+		out.println("  "+command+" --dump ");
+		out.println("  "+command+" -c 16");
+		out.println("  "+command+" -m 45 30");
+		out.println("  "+command+" -c -m 16 45 30");
 	}
 	
 	/**
