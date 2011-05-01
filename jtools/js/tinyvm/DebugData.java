@@ -174,7 +174,7 @@ public class DebugData implements Serializable
 		MethodData mdata = methodData.get(methodIndex);
 		LineNo[] lnos = mdata.lineNumbers;
 		LineNo best = new LineNo(-1, -1);
-		if (lnos != null)
+		if (pc < mdata.codeLength && lnos != null)
 		{
 			for (LineNo lno : lnos)
 			{
