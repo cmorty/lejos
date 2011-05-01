@@ -28,7 +28,7 @@ public class NXJDebugTool {
 		String[] restArgs;
 		boolean doClass, doMethod, doDump, doHelp;
 		
-		NXJDebugToolCommandLineParser fParser = new NXJDebugToolCommandLineParser(NXJDebugTool.class, "[classNr] [methodNr [PC]]");
+		NXJDebugToolCommandLineParser fParser = new NXJDebugToolCommandLineParser(NXJDebugTool.class, "[options] [classNr] [methodNr [PC]]");
 		try
 		{
 			CommandLine commandLine = fParser.parse(args);
