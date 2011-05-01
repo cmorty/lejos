@@ -16,8 +16,8 @@
 	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
 
 	<meta name='VW96.objecttype' content='Document' />
-	<meta http-equiv='content-language' content='en'>
-	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta http-equiv='content-language' content='en' />
+	<meta name='DC.Language' scheme='RFC1766' content='English' />
 	<meta name='distribution' content='global' />
 	<meta name='resource-type' content='document' />
 
@@ -26,8 +26,8 @@
 
 	<!-- AUTHOR METADATA -->
 	
-	<META NAME="AUTHOR" CONTENT="Roger Glassey">
-	<META NAME="AUTHOR" CONTENT="Lawrie Griffiths">
+	<meta name="AUTHOR" content="Roger Glassey"/>
+	<meta name="AUTHOR" content="Lawrie Griffiths"/>
 
 	<!-- CSS -->
 	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
@@ -93,17 +93,17 @@
 			<h5>LCD Text methods</h5>
 			
 			<p>As a text display, the NXT LCD screen is 16 characters wide and eight characters deep. It is addressed using (x, y) co-ordinates as follows:</p>
-			<img src="image001.gif">
+			<img src="image001.gif"/>
 			<p>x ranges from 0 to 15, and y from 0 to 7.</p>
 			<p>The methods to write to the LCD in text mode are :-</p>
 			<ul class="BlueArrows">
-				<li><p>void drawString(String str, int x, int y)</p><p>This draws a string of text to the LCD screen starting at text co-ordinate (x, y).</p>
+				<li><p>void drawString(String str, int x, int y)</p><p>This draws a string of text to the LCD screen starting at text co-ordinate (x, y).</p></li>
 				<li><p>void drawInt(int i, int x, int y)</p>
-					<p>This draws an integer starting at text co-ordinate (x,y).The integer is left aligned and takes up as many characters as are necessary.</p>
+					<p>This draws an integer starting at text co-ordinate (x,y).The integer is left aligned and takes up as many characters as are necessary.</p></li>
 				<li><p>void drawInt(int i, int places, int x, int y)</p>
 					<p>This variant of drawInt right-aligns the integer and always uses the number of characters indicated by places.
-					   This means that it always writes to a fixed number of character places and, if used in a loop, the previous value will always be fully overwritten.</p>
-				<li><p>void clear()<p/><p>Clears the display.</p>
+					   This means that it always writes to a fixed number of character places and, if used in a loop, the previous value will always be fully overwritten.</p></li>
+				<li><p>void clear()</p><p>Clears the display.</p></li>
 			</ul>
 			
 			<p>Example:</p>
@@ -129,7 +129,7 @@ public class LCDTest {
 			   you can call LCD.setAutoRefresh(0) to turn off auto-refreshing and call LCD.refresh() when you want to refresh the display.</p>
 			
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-			<p>
+			<p/>
 			<a href="#top">Back to top</a>
 			
 			<a name="3"></a>
@@ -137,11 +137,11 @@ public class LCDTest {
 			
 			<p>As a graphics display, the NXT LCD screen is 100 pixels wide and 64 pixels deep. 
 			It is addressed using (x, y) pixel co-ordinates in the same way as for text co-ordinates:</p>
-			<img src="image001.gif">
+			<img src="image001.gif"/>
 			<p>x ranges from 0 to 99, and y from 0 to 63.</p>
 			
 			<p>To display graphics on the LCD screen, you can use the Graphics class from the package javax.microedition.lcdui.
-			See the <a HREF="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/javax/microedition/lcdui/Graphics.html">Graphics class API</a>.
+			See the <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/javax/microedition/lcdui/Graphics.html">Graphics class API</a>.
 			With this class, you can draw lines, rectangles, arcs, and position strings with pixel accuracy. </p>
 			
 			<p>Example:</p>
@@ -166,14 +166,14 @@ public class GraphicsSample {
 			   These are mainly there to support the Graphics class, but can be called directly: </p>
 			<ul class="BlueArrows">
 				<li><p>void drawString(String str,int x, int y, boolean invert)</p>
-					<p>This variant of drawString uses pixel co-ordinates and supports inverting the text drawing white characters on a black background. </p>
+					<p>This variant of drawString uses pixel co-ordinates and supports inverting the text drawing white characters on a black background. </p></li>
 				<li><p>void drawChar(char c,	int x, int y, boolean invert)</p>
-					<p>This draws a character at text co-ordinate (x, y) with optional inversion of the character. </p>
-				<li><p>void setPixel(int rgbColor, int x, int y)</p><p>Set or unset the pixel at (x,y). rgbColor=1 sets the pixel and zero unsets it.
+					<p>This draws a character at text co-ordinate (x, y) with optional inversion of the character. </p></li>
+				<li><p>void setPixel(int rgbColor, int x, int y)</p><p>Set or unset the pixel at (x,y). rgbColor=1 sets the pixel and zero unsets it.</p></li>
 			</ul>	
 		
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-			<p>
+			<p/>
 			<a href="#top">Back to top</a>
 			
 			<a name="4"></a>
@@ -188,7 +188,7 @@ public class GraphicsSample {
 			</ul>
 			<p>To test if a	button is pressed, you use:</p>
 			<ul class="BlueArrows">
-				<li><p>boolean isPressed()</p>
+				<li><p>boolean isPressed()</p></li>
 			</ul>
 			<p>Example:</p>
 			<div class="CodeBox">
@@ -211,7 +211,7 @@ public class ButtonPresses {
 			
 			<p>To wait for a specific button to be pressed and released, you use:</p>
 			<ul class="BlueArrows">
-				<li><p>void waitForPressAndRelease() throws InterruptedException</p>
+				<li><p>void waitForPressAndRelease() throws InterruptedException</p></li>
 			</ul>
 			
 			<p>Example:</p>
@@ -244,15 +244,15 @@ public class ButtonTest
 			4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8</b></p>
 			<p>To specify a listener to listen for button events for this button, you: use</p>
 			<ul class="BlueArrows">
-				<li><p>void	addButtonListener (ButtonListener aListener)</p><p>See &ldquo;Listeners and Events&rdquo; for how button listeners work.</p>
+				<li><p>void	addButtonListener (ButtonListener aListener)</p><p>See &ldquo;Listeners and Events&rdquo; for how button listeners work.</p></li>
 			</ul>
 			<p>To read the current state of all the buttons, you use:</p>
 			<ul class="BlueArrows">
-				<li><p>static int readButtons()</p><p>The return value is the sum of the codes of the buttons that are pressed. </p>
+				<li><p>static int readButtons()</p><p>The return value is the sum of the codes of the buttons that are pressed. </p></li>
 			</ul>
 			
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-			<p>
+			<p/>
 			<a href="#top">Back to top</a>
 
 
@@ -262,7 +262,7 @@ public class ButtonTest
 			<p>This class controls the single speaker so it has no instances and all the methods are static.</p>
 			<p>To play a single tone, use</p>
 			<ul class="BlueArrows">
-				<li><p>void playTone(int aFrequency, int aDuration)</p>
+				<li><p>void playTone(int aFrequency, int aDuration)</p></li>
 			</ul>
 			
 			<p>Example:</p>
@@ -288,7 +288,7 @@ public class PlayTones {
 			<p>There are two ways to play system sounds. One is:</p>
 			<ul class="BlueArrows">
 				<li><p>void	systemSound (boolean aQueued, int aCode)</p>
-				<p>The aQueued parameter is ignored on the NXT, it is here to be backwards compatible with the RXC.</p>
+				<p>The aQueued parameter is ignored on the NXT, it is here to be backwards compatible with the RXC.</p></li>
 			</ul>
 			<p>The values of code are:</p>
 			<p>code = 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Short beep<br/>
@@ -299,13 +299,13 @@ public class PlayTones {
 
 			<p>Individual methods to play a particular system sound, if you don&rsquo;t	remember the code, are</p>
 			<ul class="BlueArrows">
-				<li><p>void	beep()</p>
-				<li><p>void twoBeeps()</p>
-				<li><p>void beepSequence()</p>
-				<li><p>void beepSequenceUp()</p>
-				<li><p>void buzz();int playSample(File aWAVfile)</p>
+				<li><p>void	beep()</p></li>
+				<li><p>void twoBeeps()</p></li>
+				<li><p>void beepSequence()</p></li>
+				<li><p>void beepSequenceUp()</p></li>
+				<li><p>void buzz();int playSample(File aWAVfile)</p></li>
 				<li><p>int playSample(File aWAVfile, int volume) 
-				</p>
+				</p></li>
 			</ul>
 
 			<p>There is also a method to produce a rest when playing a tune; time in milliseconds</p>
@@ -316,8 +316,8 @@ public class PlayTones {
 
 			<p>leJOS NXJ has methods that can also play 8-bit WAV files:</p>
 			<ul class="BlueArrows">
-				<li><p>int playSample(File aWAVfile)</p>
-				<li><p>int playSample(File aWAVfile, int volume)</p>
+				<li><p>int playSample(File aWAVfile)</p></li>
+				<li><p>int playSample(File aWAVfile, int volume)</p></li>
 			</ul>
 			<p>The return value of milliseconds the sample will play for or &lt; 0 if there	is an error.</p>
 
@@ -327,11 +327,11 @@ public class PlayTones {
 				<p>The <i>inst</i> array contains the attack,
 				decay, sustain and release  parameters for the note. The
 				static constants for some predefined instruments are: FLUTE,
-				PIANO  and XYLOPHONE. You can also experiment with defining you own. </p>
+				PIANO  and XYLOPHONE. You can also experiment with defining you own. </p></li>
 			</ul>
 
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-			<p>
+			<p/>
 			<a href="#top">Back to top</a>
 			
 			<a name="6"></a>
@@ -339,8 +339,8 @@ public class PlayTones {
 			
 			<p>There are two static methods to get the battery voltage:</p>
 			<ul class="BlueArrows">
-				<li><p>int getVoltageMilliVolt()</p>
-				<li><p>float getVoltage()</p>
+				<li><p>int getVoltageMilliVolt()</p></li>
+				<li><p>float getVoltage()</p></li>
 			</ul>
 			
 			<p>Example:</p>
@@ -358,7 +358,7 @@ public class BatteryTest {
 			</div>			
 			
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-			<p>
+			<p/>
 			<a href="#top">Back to top</a>
 			
 			<a name="7"></a>
@@ -379,11 +379,11 @@ public class BatteryTest {
 			
 			<p>To use a touch sensor, you create an instance of it, using the constructor:</p>
 			<ul class="BlueArrows">
-				<li><p>TouchSensor(SensorPort port)</p>
+				<li><p>TouchSensor(SensorPort port)</p></li>
 			</ul>
 			<p>To test if the touch sensor is pressed, you use the isPressed() method:</p>
 			<ul class="BlueArrows">
-				<li><p>boolean isPressed()</p>
+				<li><p>boolean isPressed()</p></li>
 			</ul>
 			
 			<p>Example:</p>
@@ -404,7 +404,7 @@ public class TouchTest {
 			</div>			
 			
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-			<p>
+			<p/>
 			<a href="#top">Back to top</a>
 			
 			<a name="9"></a>
@@ -412,7 +412,7 @@ public class TouchTest {
 
 			<p>To use a light sensor, you create an instance of it using the constructor:</p>
 			<ul class="BlueArrows">
-				<li><p>public LightSensor(SensorPort port)</p>
+				<li><p>public LightSensor(SensorPort port)</p></li>
 			</ul>
 
 			<p>Example:</p>
@@ -436,7 +436,7 @@ public class LightTest {
 			</div>			
 			
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-			<p>
+			<p/>
 			<a href="#top">Back to top</a>
 			
 			<a name="10"></a>
@@ -449,12 +449,12 @@ public class LightTest {
 			
 			<p>There are two constructors:</p>
 			<ul class="BlueArrows">
-				<li><p>SoundSensor(SensorPort port)</p><p>creates a sound sensor using DB mode.</p>
-				<li><p>SoundSensor(SensorPort port, dba)</p><p>creates a sound sensor using DBA mode if the second parameter is <i><b>true</b></i>.</p>
+				<li><p>SoundSensor(SensorPort port)</p><p>creates a sound sensor using DB mode.</p></li>
+				<li><p>SoundSensor(SensorPort port, dba)</p><p>creates a sound sensor using DBA mode if the second parameter is <i><b>true</b></i>.</p></li>
 			</ul>
 			<p>You can switch modes with:</p>
 			<ul class="BlueArrows">
-				<li><p>void setDBA(boolean dba)</p>
+				<li><p>void setDBA(boolean dba)</p></li>
 			</ul>
 
 			<p>Example using DB mode only:</p>
@@ -470,7 +470,7 @@ public class SoundScope {
 
     while (!Button.ESCAPE.isPressed()) {
       LCD.clear();
-      for (int i = 0; i < 100; i++) {
+      for (int i = 0; i &#60; 100; i++) {
         LCD.setPixel(1, i, 60 - (sound.readValue() / 2));
         Thread.sleep(20);
       }
@@ -481,7 +481,7 @@ public class SoundScope {
 			</div>			
 			
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-			<p>
+			<p/>
 			<a href="#top">Back to top</a>
 			
 			<a name="11"></a>
@@ -489,7 +489,7 @@ public class SoundScope {
 
 			<p>To create an instance, use the constructor:</p>
 			<ul class="BlueArrows">
-				<li><p>	UltrasonicSensor( Port aSensorPort)</p>
+				<li><p>	UltrasonicSensor( Port aSensorPort)</p></li>
 			</ul>
 			<p>The sensor operates in two modes, continuous (default) and ping. When in
 			continuous mode the sensor sends out pings as often as it can and
@@ -497,7 +497,7 @@ public class SoundScope {
 			<ul class="BlueArrows">
 				<li><p>int getDistance()</p><p>The return value is in centimeters. If
 					no echo was detected, the returned value is 255. The
-					maximum range of the sensor is about 170 cm.</p>
+					maximum range of the sensor is about 170 cm.</p></li>
 			</ul>
 			
 								
@@ -525,7 +525,7 @@ public class SonicTest {
 			<ul class="BlueArrows">
 				<li><p>void ping()</p><p>This sets the sensor in ping mode and sends a
 							single ping and up to 8 echoes are captured. These may be
-							read by making a call to</p>
+							read by making a call to</p></li>
 				<li><p>int readDistances(int [] distances)</p><p>
 						    You provide an integer
 							array of length that contains the data after the method returns.
@@ -535,8 +535,8 @@ public class SonicTest {
 							or no data being returned. The normal getDistance call may also
 							be used with ping, returning information for the first echo.
 							<br/>Calling ping() will disable the default
-							continuous mode. Toto switch back to continuous mode, call</p>
-				<li><p>int continuous()</p>
+							continuous mode. Toto switch back to continuous mode, call</p></li>
+				<li><p>int continuous()</p></li>
 			</ul>	
 				
 			<h5>Program: multiple echoes</h5>
@@ -549,14 +549,14 @@ public class SonicTest {
 			<a href="USPingTest.htm" target="_blank">Solution</a>
 
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-			<p>
+			<p/>
 			<a href="#top">Back to top</a>
 			<p/>
 
         	<div class="NavBit">
                 <a target="_top" href="../Preliminaries/Intro.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../ListenersAndEvents/Listeners_Events.htm">Next&nbsp;»</a>
         	</div>
-		<td>
+		</td>
 		</tr>
 	</table>
 </body>
