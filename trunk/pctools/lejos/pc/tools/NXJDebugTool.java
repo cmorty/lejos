@@ -130,12 +130,17 @@ public class NXJDebugTool {
 		int clen = dd.getClassNameCount();
 		for (int i=0; i<clen; i++)
 		{
+			//TODO convert classnames to canonical notation
+			//TODO show [V as reserved
+			//TODO pretty print classnames like [B
+			//TODO pretty print signature, like in Binary.log()
 			System.out.println("Class "+i+": "+dd.getClassName(i)+" ("+dd.getClassFilename(i)+")");
 		}
 		
 		int mlen = dd.getMethodCount();
 		for (int i=0; i<mlen; i++)
 		{
+			//TODO convert classnames to canonical notation
 			//TODO pretty print signature, like in Binary.log()
 			System.out.println("Method "+i+": "+dd.getMethodClass(i)+"."+dd.getMethodName(i)+dd.getMethodSignature(i));
 		}
