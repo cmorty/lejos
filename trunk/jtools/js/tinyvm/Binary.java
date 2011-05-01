@@ -11,6 +11,7 @@ import js.tinyvm.util.HashVector;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.bcel.Constants;
 import org.apache.bcel.generic.Type;
@@ -87,24 +88,16 @@ public class Binary
    {
       iEntireBinary.dump(writer);
    }
+   
    /**
     * Dump debug data.
     *
     * @param fos FileOutputStream
     * @throws TinyVMException
     */
-   public void dumpDebug (FileOutputStream fos) throws TinyVMException
+   public void dumpDebug (OutputStream fos) throws IOException
    {
-      ObjectOutputStream out = null;
-      try {
-          out = new ObjectOutputStream(fos);
-          out.writeObject(debugData);
-          out.close();
-      }
-      catch (IOException ex)
-      {
-          ex.printStackTrace();
-      }
+	   DebugData.save(this.debugData, fos);
    }
 
    //

@@ -1,5 +1,15 @@
 package js.tinyvm;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -158,5 +168,53 @@ public class DebugData implements Serializable
 		}
 		return best.line;
 	}
-   
+
+	public static DebugData load(InputStream in) throws IOException
+	{
+        try
+        {
+        	ObjectInputStream oin = new ObjectInputStream(in);
+        	DebugData ret = (DebugData) oin.readObject();
+            return ret;
+        }
+        catch (ClassNotFoundException e)
+        {
+        	IOException e2 = new IOException("failed to load debug data");
+        	e2.initCause(e);
+        	throw e2;
+        }
+	}
+	
+	public static DebugData load(File file) throws IOException
+	{
+        FileInputStream fis = new FileInputStream(file);
+        try
+        {
+            return load(new BufferedInputStream(fis, 4096));
+        }
+        finally
+        {
+            fis.close();        	
+        }
+	}
+	
+	public static void save(DebugData data, OutputStream out) throws IOException
+	{
+		ObjectOutputStream oout = new ObjectOutputStream(out);
+		oout.writeObject(data);
+		oout.flush();
+	}
+	
+	public static void save(DebugData data, File file) throws IOException
+	{
+		FileOutputStream fos = new FileOutputStream(file);
+		try
+		{
+			save(data, new BufferedOutputStream(fos, 4096));
+		}
+		finally
+		{
+			fos.close();
+		}
+	}
 }
