@@ -34,10 +34,10 @@ class NXJDebugToolCommandLineParser extends AbstractCommandLineParser
 	protected void printFooter(String command, PrintWriter out)
 	{
 		out.println("Examples:");
-		out.println("  "+command+" --dump ");
-		out.println("  "+command+" -c 16");
-		out.println("  "+command+" -m 45 30");
-		out.println("  "+command+" -c -m 16 45 30");
+		out.println("  "+command+" -di <filename> --dump ");
+		out.println("  "+command+" -di <filename> -c 16");
+		out.println("  "+command+" -di <filename> -m 45 30");
+		out.println("  "+command+" -di <filename> -c -m 16 45 30");
 	}
 	
 	/**
