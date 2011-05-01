@@ -13,4 +13,6 @@ public class UnidentifiedFeature implements DetectableFeature {
 	public RangeReading getRangeReading() {
 		return rr;
 	}
+	
+	// TODO: Add timestamp to RangeReading or DetectableFeature? Will help identify velocity and vector of object. 
 }

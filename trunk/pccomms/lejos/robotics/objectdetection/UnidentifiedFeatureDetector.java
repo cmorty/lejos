@@ -3,15 +3,22 @@ package lejos.robotics.objectdetection;
 import java.util.ArrayList;
 import lejos.robotics.RangeFinder;
 import lejos.robotics.RangeReading;
-
+// TODO: Some of these API docs might be more appropriate in FeatureDetector
 /**
  * <p>The UnidentifiedObjectDetector used a RangeFinder to locate objects (known as features when mapping). This class is
  * unable to identify the feature and merely reports the range and angle to the object.</p>
  * 
+ *  <p>You can also have the scan identify the object (such as a camera using facial recognition to identify a person).
+ *  One possibility to implement this is to extend UnidentifiedFeatureDetector and add a camera to the constructor. When the
+ *  FeatureDetector range scanner detects an object, take a picture and look for a face in the image. This is then
+ *  reported as an extended class of UnidentifiedFeature called PersonFeature, which has a getPerson() method containing 
+ *  information on the object that was detected.</p>
+ *  
  * <p>To create a more complex FeatureDetector, extend this class and override the {@link FeatureDetector#scan()} method.
  * It is possible to add more complex functionality in this method, such as only returning a "hit" if the scanner detects
- * an object in the same location twice in a row. You can also have the scan identify the object (such as a camera using
- * facial recognition to identify a person) and then report that in a DetectableFeature object that extends UnidentifiedFeature.</p>
+ * an object in the same location twice in a row. This type of filtering could also take place in the FeatureListener
+ * method, although then single {@link FeatureDetector#scan()} calls will not contain the filtering.</p>
+ * 
  *  
  * @author BB based on concepts by Lawrie Griffiths
  *
@@ -107,5 +114,9 @@ public class UnidentifiedFeatureDetector implements FeatureDetector {
 			
 		}
 		return feature;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
 	}
 }
