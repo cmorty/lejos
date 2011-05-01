@@ -112,12 +112,17 @@ public class NXJDebugTool {
 		{
 			int pc = Integer.parseInt(args[i + 1]);
 			int line = dd.getLineNumber(method, pc);
-			
-			//TODO handle line == -1
-			//TODO report error if PC is too large to be plausible
+
 			System.out.println();
-			System.out.println("PC "+pc+" refers to:");
-			System.out.println("  line "+line+" in "+filename);
+			if (line < 0)
+			{
+				System.out.println("PC "+pc+" is invalid.");
+			}
+			else
+			{
+				System.out.println("PC "+pc+" refers to:");
+				System.out.println("  line "+line+" in "+filename);
+			}
 		}
 	}
 
