@@ -210,7 +210,9 @@ public class DebugData implements Serializable
 		FileOutputStream fos = new FileOutputStream(file);
 		try
 		{
-			save(data, new BufferedOutputStream(fos, 4096));
+			BufferedOutputStream bfos = new BufferedOutputStream(fos, 4096);
+			save(data, bfos);
+			bfos.flush();
 		}
 		finally
 		{
