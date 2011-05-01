@@ -16,8 +16,8 @@
 	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
 
 	<meta name='VW96.objecttype' content='Document' />
-	<meta http-equiv='content-language' content='en'>
-	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta http-equiv='content-language' content='en' />
+	<meta name='DC.Language' scheme='RFC1766' content='English' />
 	<meta name='distribution' content='global' />
 	<meta name='resource-type' content='document' />
 
@@ -175,7 +175,7 @@ public class TestRConsole {
   public static void main(String[] args) {
     RConsole.open();
     RConsole.println("Start for loop ");
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i &#60; 5; i++) {
       RConsole.print(" " + i);
       LCD.drawInt(i, 2, 2 * i, 4);
     }
@@ -188,9 +188,9 @@ public class TestRConsole {
 			</div>
 
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-			<p/>
+			<p>
 			<a href="#Top">Back to top</a>
-			<p/>
+			</p>
 
 			<div class="NavBit"> <a target="_top" href="../ListenersAndEvents/Listeners_Events.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Communications/Communications.htm">Next&nbsp;»</a>
 			</div>
