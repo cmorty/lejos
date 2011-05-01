@@ -38,7 +38,7 @@ public class NavPathController implements PathController
   {
     _pilot = pilot;
     if(poseProvider == null)
-      this.poseProvider = new DeadReckonerPoseProvider((ArcMoveController)_pilot);
+      this.poseProvider = new DeadReckonerPoseProvider(_pilot);
     else
     	this.poseProvider = poseProvider;
     
@@ -91,7 +91,7 @@ public class NavPathController implements PathController
     _route = (ArrayList<WayPoint>) aRoute;
     _keepGoing = true;
     if(immediateReturn)return;
-    else while(_keepGoing) Thread.yield();
+    while(_keepGoing) Thread.yield();
   }
  
   /**
@@ -180,7 +180,7 @@ public class NavPathController implements PathController
   public WayPoint getWayPoint()
   {
     if(_route.size() <= 0 ) return null;
-    else return _route.get(0);
+    return _route.get(0);
   }
 
   public void setPoseProvider(PoseProvider aProvider)
@@ -204,7 +204,8 @@ public class NavPathController implements PathController
   {
     boolean more = true;
 
-    public void run()
+    @Override
+	public void run()
     { 
       while (more)
       {
