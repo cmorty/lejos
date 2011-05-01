@@ -3,6 +3,7 @@ package js.tinyvm;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,7 +40,7 @@ public class TinyVMTool extends AbstractTool
     * @throws TinyVMException
     */
    public void link (String classpath, String[] classes, boolean all,
-      FileOutputStream stream, boolean bigEndian, int options, int debug, FileOutputStream debugStream) throws TinyVMException
+      OutputStream stream, boolean bigEndian, int options, int debug, OutputStream debugStream) throws TinyVMException
    {
       assert classpath != null: "Precondition: classpath != null";
       assert classes != null: "Precondition: classes != null";
@@ -118,7 +119,7 @@ public class TinyVMTool extends AbstractTool
     * @param debug stream to write debug data to.
     * @throws TinyVMException
     */
-   public void dump (Binary binary, FileOutputStream stream, boolean bigEndian, FileOutputStream debug)
+   public void dump (Binary binary, OutputStream stream, boolean bigEndian, OutputStream debug)
       throws TinyVMException
    {
       assert binary != null: "Precondition: binary != null";
@@ -131,10 +132,13 @@ public class TinyVMTool extends AbstractTool
             ? (IByteWriter) new BEByteWriter(bufferedStream)
             : (IByteWriter) new LEByteWriter(bufferedStream);
          binary.dump(byteWriter);
-         bufferedStream.close();
+         bufferedStream.flush();
+         
          if (debug != null)
          {
-            binary.dumpDebug(debug);
+        	 BufferedOutputStream bufdebug = new BufferedOutputStream(debug, 4096);
+        	 binary.dumpDebug(bufdebug);
+        	 bufdebug.flush();
          }
       }
       catch (IOException e)

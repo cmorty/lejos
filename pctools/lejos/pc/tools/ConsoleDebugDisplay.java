@@ -36,24 +36,7 @@ public class ConsoleDebugDisplay implements ConsoleDebug
         if (name == null)
         	return null;
         
-        DebugData ret;
-        FileInputStream fis = new FileInputStream(name);
-        try {
-        	ObjectInputStream in = new ObjectInputStream(fis);
-            ret = (DebugData) in.readObject();
-            in.close();
-        }
-        catch (ClassNotFoundException e)
-        {
-        	IOException e2 = new IOException("failed to load debug data");
-        	e2.initCause(e);
-        	throw e2;
-        }
-        finally
-        {
-            fis.close();        	
-        }
-        return ret;
+        return DebugData.load(new File(name));
     }
 
     public void exception(int classNo, String msg, int[] stackTrace)
