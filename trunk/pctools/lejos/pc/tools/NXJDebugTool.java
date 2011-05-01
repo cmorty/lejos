@@ -56,24 +56,35 @@ public class NXJDebugTool {
 		}
 		
 		
-		if (!(doDump || doClass || doMethod))
+        DebugData dd = DebugData.load(new File(debugFile));
+        boolean didSomething = false;
+        
+        if (doDump)
+        {
+        	doDump(dd);
+        	didSomething = true;
+        }
+        
+        int i = 0;
+        if (doClass)
+        {
+        	doClass(dd, restArgs, i++);
+        	didSomething = true;
+        }
+        
+        if (doMethod)
+        {
+        	doMethod(dd, restArgs, i);
+        	didSomething = true;
+        }
+        
+        
+		if (!didSomething)
 		{
 			System.out.println("Nothing to do!");
 			return 1;
 		}
 		
-        DebugData dd = DebugData.load(new File(debugFile));
-        
-        if (doDump)
-        	doDump(dd);
-        
-        int i = 0;
-        if (doClass)
-        	doClass(dd, restArgs, i++);
-        
-        if (doMethod)
-        	doMethod(dd, restArgs, i);
-        
 		return 0;
 	}
 
