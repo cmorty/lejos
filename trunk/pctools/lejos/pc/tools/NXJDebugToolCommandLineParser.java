@@ -21,7 +21,7 @@ class NXJDebugToolCommandLineParser extends AbstractCommandLineParser
 		options.addOption("h", "help", false, "help");
 		Option debugOption = new Option("di", "debuginfo", true, "use the specified debug file");
 		Option classOption = new Option("c", "class", false, "resolve class number");
-		Option methodOption = new Option("m", "class", false, "resolve method number");
+		Option methodOption = new Option("m", "method", false, "resolve method number");
 		Option dumpOption = new Option(null, "dump", false, "dump class and method table");
 		debugOption.setArgName("debugfile");
 		options.addOption(debugOption);
