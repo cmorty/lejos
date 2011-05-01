@@ -136,26 +136,27 @@ public class DebugData implements Serializable
        return methodData.get(index).classData.name;
    }
 
-   public int getLineNumber(int methodIndex, int pc)
-   {
-      MethodData mdata = methodData.get(methodIndex);
-      LineNo [] lnos = mdata.lineNumbers;
-      if (lnos == null) return -1;
-      LineNo best = new LineNo(-1, -1);
-      for(LineNo lno : lnos)
-      {
-         if (pc == lno.pc)
-            return lno.line;
-         else if (pc > lno.pc)
-         {
-            if ((pc - lno.pc) < (pc - best.pc))
-            {
-               best = lno;
-            }
-         }
-      }
-      return best.line;
-   }
-
+	public int getLineNumber(int methodIndex, int pc)
+	{
+		MethodData mdata = methodData.get(methodIndex);
+		LineNo[] lnos = mdata.lineNumbers;
+		LineNo best = new LineNo(-1, -1);
+		if (lnos != null)
+		{
+			for (LineNo lno : lnos)
+			{
+				if (pc >= lno.pc && lno.pc > best.pc)
+				{
+					best = lno;
+					if (pc == lno.pc)
+					{
+						// early out
+						break;
+					}
+				}
+			}
+		}
+		return best.line;
+	}
    
 }
