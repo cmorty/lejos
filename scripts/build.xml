@@ -84,6 +84,7 @@ ${template.linux.parser}
 		<linux-tool file="nxjconsole"       class="lejos.pc.tools.NXJConsole"/>
 		<linux-tool file="nxjconsoleviewer" class="lejos.pc.tools.NXJConsoleViewer"/>
 		<linux-tool file="nxjdataviewer"    class="lejos.pc.tools.NXJDataViewer"/>
+		<linux-tool file="nxjdebugtool"     class="lejos.pc.tools.NXJDebugTool"/>
 		<linux-tool file="nxjflash"         class="lejos.pc.tools.NXJFlash"/>
 		<linux-tool file="nxjflashg"        class="lejos.pc.tools.NXJFlashG"/>
 		<linux-tool file="nxjmonitor"       class="lejos.pc.tools.NXJMonitor"/>
@@ -123,6 +124,7 @@ ${template.linux.parser}
 		<win-tool file="nxjconsole"       class="lejos.pc.tools.NXJConsole"/>
 		<win-tool file="nxjconsoleviewer" class="lejos.pc.tools.NXJConsoleViewer"/>
 		<win-tool file="nxjdataviewer"    class="lejos.pc.tools.NXJDataViewer"/>
+		<win-tool file="nxjdebugtool"     class="lejos.pc.tools.NXJDebugTool"/>
 		<win-tool file="nxjflash"         class="lejos.pc.tools.NXJFlash"/>
 		<win-tool file="nxjflashg"        class="lejos.pc.tools.NXJFlashG"/>
 		<win-tool file="nxjmonitor"       class="lejos.pc.tools.NXJMonitor"/>

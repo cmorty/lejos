@@ -58,7 +58,7 @@ public class ConsoleDebugDisplay implements ConsoleDebug
             {
                 int methodNo = (frame >> 16) & 0xffff;
                 int pc = frame & 0xffff;
-                viewer.append(" at: " + debugData.getMethodClass(methodNo) + "." + debugData.getMethodName(methodNo) + "(" + debugData.getMethodFile(methodNo) + ":" + debugData.getLineNumber(methodNo, pc) + ")\n");
+                viewer.append(" at: " + debugData.getMethodClass(methodNo) + "." + debugData.getMethodName(methodNo) + "(" + debugData.getMethodFilename(methodNo) + ":" + debugData.getLineNumber(methodNo, pc) + ")\n");
             }
         }
     }

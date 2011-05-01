@@ -38,12 +38,14 @@ public class DebugData implements Serializable
    {
 	   ClassData classData;
        String name;
+       String signature;
        LineNo[] lineNumbers;
 
-       MethodData(ClassData cd, String name, LineNo[] numbers)
+       MethodData(ClassData cd, String name, String signature, LineNo[] numbers)
        {
     	   this.classData = cd;
            this.name = name;
+           this.signature = signature;
            this.lineNumbers = numbers;
        }
    }
@@ -65,7 +67,7 @@ public class DebugData implements Serializable
    
    private ClassData getClassData(HashMap<String, ClassData> cache, ClassRecord classRecord)
    {
-	   String name = classRecord.iName;
+	   String name = classRecord.getName();
 	   ClassData cd = cache.get(name);
 	   if (cd == null)
 	   {
@@ -102,7 +104,7 @@ public class DebugData implements Serializable
             }
             
             ClassData cd = getClassData(cache, method.iClassRecord);
-            methodData.add(new MethodData(cd, method.iMethod.getName(), lnos));
+            methodData.add(new MethodData(cd, method.iMethod.getName(), method.iMethod.getSignature(), lnos));
          }
       }
    }
@@ -132,7 +134,12 @@ public class DebugData implements Serializable
        return methodData.get(index).name;
    }
 
-   public String getMethodFile(int index)
+	public String getMethodSignature(int index)
+	{
+		return methodData.get(index).signature;
+	}
+	
+   public String getMethodFilename(int index)
    {
        return methodData.get(index).classData.file;
    }
