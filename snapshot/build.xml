@@ -121,6 +121,7 @@
 	<target name="subproject.startup.copy" depends="subproject.startup.build">
 		<copy todir="bin">
 			<fileset file="${project.startup}/${vars.startup.startup.bin}"/>
+			<fileset file="${project.startup}/${vars.startup.startup.debug}"/>
     	</copy>
 	</target>
 	
