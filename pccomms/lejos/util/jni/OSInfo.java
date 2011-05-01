@@ -109,9 +109,9 @@ public class OSInfo
 	 */
 	public OSInfo(String os, String arch, int datamodel) throws IOException
 	{
-		Map<?, ?> ALIAS = loadProperties();
-		this.os = probe(ALIAS, PREFIX_OS, os);
-		this.arch = probe(ALIAS, PREFIX_ARCH, arch);
+		Map<?, ?> alias = loadProperties();
+		this.os = probe(alias, PREFIX_OS, os);
+		this.arch = probe(alias, PREFIX_ARCH, arch);
 	}
 
 	/**
