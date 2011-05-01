@@ -19,7 +19,7 @@
                     <label>Source Packages</label>
                     <type>java</type>
                     <location>.</location>
-                    <excludes>build.xml,build/**,lib/**,nbproject/**,**/**.class</excludes>
+                    <includes>lejos/**</includes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -53,7 +53,7 @@
                     <source-folder style="packages">
                         <label>Source Packages</label>
                         <location>.</location>
-                        <excludes>build.xml,build/**,lib/**,nbproject/**,**/**.class</excludes>
+                        <includes>lejos/**</includes>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
@@ -70,7 +70,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
                 <package-root>.</package-root>
-                <classpath mode="compile">../pccomms/lib/pccomm.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar</classpath>
+                <classpath mode="compile">3rdparty/lib/commons-cli.jar;../pccomms/lib/pccomm.jar;../jtools/lib/jtools.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
