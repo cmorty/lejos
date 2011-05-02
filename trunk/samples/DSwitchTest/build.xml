@@ -1,6 +1,6 @@
-<project name="NXTCamTest" default="uploadandrun">
+<project name="DSwitchTest" default="uploadandrun">
     <description>
-    	NXTCamTest build file
+    	DSwitchTest build file
     </description>
 
 	<target name="clean" description="clean up all generated files" >

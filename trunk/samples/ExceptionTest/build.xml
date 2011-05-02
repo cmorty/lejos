@@ -26,4 +26,12 @@
 	<target name="console" description="console run" >
 		<ant antfile="../samplebuild.xml" target="console"/>
 	</target>
+
+	<target name="consoleviewer" description="run the GUI console viewer" >
+		<ant antfile="../samplebuild.xml" target="consoleviewer"/>
+	</target>
+	
+	<target name="debugtool" description="run debugtool" >
+		<ant antfile="../samplebuild.xml" target="debugtool"/>
+	</target>
 </project>
