@@ -132,4 +132,42 @@
 			<arg file="${debug}" />
 		</java>
 	</target>
+	
+	<target name="consoleviewer" depends="debuguploadandrun" description="run the GUI Console Viewer">
+		<sleep seconds="4" />
+		<java classname="lejos.pc.tools.NXJConsoleViewer" fork="true" failonerror="true">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-di" />
+			<arg file="${debug}" />
+		</java>
+	</target>
+	
+	<target name="debugtool" description="run the debug tool">
+		  <input
+		    message="Exception class:"
+		    addproperty="class"
+		  />
+		  <input
+		    message="Method number:"
+		    addproperty="method"
+		  />
+		  <input
+		    message="PC value:"
+		    addproperty="pc"
+		  />
+		<java classname="lejos.pc.tools.NXJDebugTool" fork="true" failonerror="true">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-di" />
+			<arg file="${debug}" />
+			<arg value="-c" />
+			<arg value="-m" />
+			<arg value="${class}" />
+			<arg value="${method}" />
+			<arg value="${pc}" />
+		</java>
+	</target>
 </project>
