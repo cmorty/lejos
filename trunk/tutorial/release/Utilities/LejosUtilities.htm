@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html dir="ltr" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<TITLE>leJOS Utilities</TITLE>
+	<title>leJOS Utilities</title>
 	
 	<!-- METADATA -->
 	<meta name="title" content="leJOS Utilities" />
@@ -16,8 +16,8 @@
 	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
 
 	<meta name='VW96.objecttype' content='Document' />
-	<meta http-equiv='content-language' content='en'>
-	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta http-equiv='content-language' content='en'/>
+	<meta name='DC.Language' scheme='RFC1766' content='English' />
 	<meta name='distribution' content='global' />
 	<meta name='resource-type' content='document' />
 
@@ -25,7 +25,7 @@
 	<meta name='robots' content='all' />
 
 	<!-- AUTHOR METADATA -->
-	<META NAME="AUTHOR" CONTENT="Roger Glassey">	
+	<meta name="AUTHOR" content="Roger Glassey"/>	
 		
 	<!-- CSS -->
 	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
@@ -81,17 +81,17 @@
 				count.</p>
 				<p>To start counting, call  one of these methods:</p>
 				<ul class="BlueArrows">
-					<li><p>void count(String  message)</p></a>
-					<li><p>void count(String message, int left, int right)</p></a>
+					<li><p>void count(String  message)</p></li>
+					<li><p>void count(String message, int left, int right)</p></li>
 				</ul>
 				<p>These methods exit when the user presses <b>ESC</b>.  Then the values can be retrieved by 
 				</p>
 				<ul class="BlueArrows">
-					<li><p>int getLeftCount()</p>
-					<li><p>int getRightCount()</p>
+					<li><p>int getLeftCount()</p></li>
+					<li><p>int getRightCount()</p></li>
 				</ul>
 				<p>The complete API for Button Counter
-				is <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/ButtonCounter.html">here</a>
+				is <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/ButtonCounter.html">here</a></p>
 				
 				<a name="2">
 				</a><h4>DataLogger</h4>
@@ -120,8 +120,8 @@
 				<p>This class represents an elapsed	time stopwatch. You can construct as many instances as you need.</p>
 				<p>There are only two methods</p>
 				<ul class="BlueArrows">
-					<li><p>void reset()</p><p>resets the watch to zero</p>
-					<li><p>int elapsed()</p><p>returns the elapsed time (since the last reset() in milliseconds.</p>
+					<li><p>void reset()</p><p>resets the watch to zero</p></li>
+					<li><p>int elapsed()</p><p>returns the elapsed time (since the last reset() in milliseconds.</p></li>
 				</ul>
 				<p>The API of Stopwatch is <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/Stopwatch.html">here</a>.</p>
 				
@@ -132,10 +132,10 @@
 				   It uses a private thread.</p>
 				<p>Methods:</p>
 				<ul class="BlueArrows">
-					<li><p>void start()</a>
-						</p><p>call this first.</p>
-					<li><p>void	setDelay(int delay)</p><p>set the interval between calls to the listener.</p>
-					<li><p>void stop()</a></p>
+					<li><p>void start()</p>
+						<p>call this first.</p></li>
+					<li><p>void	setDelay(int delay)</p><p>set the interval between calls to the listener.</p></li>
+					<li><p>void stop()</p></li>
 				</ul>
 
 				<p>The Timer API is <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/Timer.html">here</a>.</p>
@@ -145,7 +145,7 @@
 				
 				<p>To use the Timer, you need a class that implements this interface.  This interface  has only one	method.</p>
 				<ul  class="BlueArrows">
-					<li><p>void timedOut()</p><p>which is called every time the Timer fires.</p>
+					<li><p>void timedOut()</p><p>which is called every time the Timer fires.</p></li>
 				</ul>
 
 				<p><a href="#top">Back	to top</a></p>
@@ -155,29 +155,29 @@
 
 				<p>leJOS NXJ supports several of the Java data structures.  They are:</p>
 				<ul class="BlueArrows">
-					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/ArrayList.html">ArrayList</a>
-					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/BitSet.html">BitSet</a>
-					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Hashtable.html">Hashtable</a>
-					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Queue.html">Queue</a>
-					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Stack.html">Stack</a>
-					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Vector.html">Vector</a>
-					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Enumeration.html">Enumeration</a>
-					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/index.html?java/util/Enumeration.html">Iterator</a>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/ArrayList.html">ArrayList</a></li>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/BitSet.html">BitSet</a></li>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Hashtable.html">Hashtable</a></li>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Queue.html">Queue</a></li>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Stack.html">Stack</a></li>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Vector.html">Vector</a></li>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Enumeration.html">Enumeration</a></li>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/index.html?java/util/Enumeration.html">Iterator</a></li>
 				</ul>
 				
 				<p>It also supports two other Java utilities:</p>
 				<ul  class="BlueArrows">
-					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Random.html">Random</a>
-					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Properties.html">Properties</a>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Random.html">Random</a></li>
+					<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Properties.html">Properties</a></li>
 				</ul>
 
-				<p><A HREF="#top">Back to top</a></p>
+				<p><a href="#top">Back to top</a></p>
 				<p/>
 
         		<div class="NavBit">
                 	<a target="_top" href="../PC_GUI/PCGUITools.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../AdvancedTopics/Advanced_Hardware.htm">Next&nbsp;»</a>
         		</div>
-			<td>
+			</td>
 		</tr>
 	</table>
 </body>
