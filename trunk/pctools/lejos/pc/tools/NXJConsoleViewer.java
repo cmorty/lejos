@@ -3,6 +3,7 @@ package lejos.pc.tools;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
@@ -251,7 +252,7 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("View RConsole output from NXT");
 
-        setSize(720, 600);
+        setSize(700, 600);
 
         statusField.setPreferredSize(new Dimension(200,20));
 
@@ -269,20 +270,22 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
 
 	public void buildGui()
     {
-        JPanel connectPanel = new JPanel();  //holds  button and text field
+        JPanel connectPanel1 = new JPanel();  //holds text fields
+        JPanel connectPanel2 = new JPanel();  //holds buttons
         ButtonGroup choiceGroup = new ButtonGroup();
         choiceGroup.add(usbButton);
         usbButton.setSelected(true);
         usbButton.addChangeListener(this);
         btButton.addChangeListener(this);
         choiceGroup.add(btButton);
-        connectPanel.add(usbButton);
-        connectPanel.add(btButton);
-        connectPanel.add(new JLabel(" Name"));
-        connectPanel.add(nameField);
+        connectPanel2.add(usbButton);
+        connectPanel2.add(btButton);
+        connectPanel2.add(doLcd);
+        connectPanel1.add(new JLabel(" Name"));
+        connectPanel1.add(nameField);
         connectButton.addActionListener(this);
-        connectPanel.add(new JLabel("Addr"));
-        connectPanel.add(addrField);
+        connectPanel1.add(new JLabel("Addr"));
+        connectPanel1.add(addrField);
 
         JPanel statusPanel = new JPanel(new BorderLayout());//  holds label and text field
         statusPanel.add(new JLabel("Status: "), BorderLayout.LINE_START);
@@ -290,16 +293,18 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
 
         JPanel topLeftPanel = new JPanel();  // North area of the frame
         topLeftPanel.setLayout(new GridLayout(3, 1));
-        topLeftPanel.add(connectPanel);
+        topLeftPanel.add(connectPanel1);
         topLeftPanel.add(connectButton);
-        topLeftPanel.add(doLcd);
+        topLeftPanel.add(connectPanel2);
         lcd = new LCDDisplay();
         lcd.clear();
         //screen.add(new JLabel("Screen"));
         lcd.setMinimumSize(new Dimension(LCD_WIDTH*2, LCD_HEIGHT*2));
         lcd.setEnabled(true);
         lcd.setPreferredSize(lcd.getMinimumSize());
-        JPanel topPanel = new JPanel();
+        FlowLayout topPanelLayout = new FlowLayout();
+        topPanelLayout.setHgap(20);
+        JPanel topPanel = new JPanel(topPanelLayout);
         topPanel.add(topLeftPanel);
         topPanel.add(lcd);
         add(topPanel, BorderLayout.NORTH);
