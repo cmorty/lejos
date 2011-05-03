@@ -74,15 +74,18 @@
 			<a name="1"></a>
 			<h4> Introduction to the Motor class.</h4>
 
-      		<p>This class is an abstraction of a NXT motor. To be useful, a motor must be
+      		<p>This Motor class provides access to the NXT motors. To be useful, a motor must be
 			connected to one of the three NXT motor ports. This class provides an
-			instance for each port. They are: Motor.A, Motor.B and Motor.C. The
+			instance for each port. They are: Motor.A, Motor.B and Motor.C.</p>
+			
+			<p>Each of these three objects is an instance of the class NXTRegulatedMotor. This
 			class provides methods for controlling the motor, and for finding out
 			what the motor is doing. </p>
+			
       		<p>This	tutorial contains a set of five programs for you to write. With them,
 			you can perform experiments to understand how the NXT motor performs.
 			They are simple enough so you don&#8217;t need much Java experience to write
-			them. Finally, there is a discussion of <a href="#_Other_Motor_Methods"><font  color="#0000ff"><u>other motor methods</u></font></a> , not used in
+			them. Finally, there is a discussion of <a href="#7"><font  color="#0000ff"><u>other motor methods</u></font></a> , not used in
 			the programs, that you might find useful. </p>
 			
 			<a name="2"></a>
@@ -108,7 +111,7 @@
               			</tr>
               			<tr valign="top">
                 			<td width="64">
-                				<p><code>Motor</code></p>
+                				<p><code>NXTRegulatedMotor, e.g. Motor.A</code></p>
                 			</td>
                 			<td width="166">
                 				<p><code>forward()</code></p>
@@ -239,7 +242,7 @@
           		</tr>
           		<tr valign="top">
             		<td width="64">
-            			<p><code>Motor</code></p>
+            			<p><code>NXTRegulatedMotor, e.g. Motor.A</code></p>
             		</td>
             		<td width="202">
             			<p><code>flt()</code></p>
@@ -367,7 +370,7 @@
           </tr>
           <tr valign="top">
             <td width="90">
-            <p><code>Motor</code></p>
+            <p><code>NXTRegulatedMotor, e.g. Motor.A</code></p>
             </td>
             <td width="192">
             <p><code>rotate(angle)</code></p>
@@ -470,7 +473,7 @@
           </tr>
           <tr valign="top">
             <td width="57">
-           	 <p><code>Motor</code></p>
+           	 <p><code>NXTRegulatedMotor, e.g. Motor.A</code></p>
             </td>
             <td width="307">
             <p><code>rotate(angle,immediateReturn)</code></p>
@@ -486,8 +489,6 @@
             </td>
             <td width="307">
             <p><code>rotateTo(angle,immediateReturn)</code></p>
-            </td>
-            <td><br/>
             </td>
           </tr>
           <tr valign="top">
@@ -579,17 +580,6 @@
           </tr>
           <tr valign="top">
             <td width="86">
-            	<p><code>Motor</code></p>
-            </td>
-            <td width="294">
-            	<p><code>regulateSpeed(booleanyes)</code></p>
-            </td>
-            <td width="217">
-            	<p>Speed regulation is on by default. </p>
-            </td>
-          </tr>
-          <tr valign="top">
-            <td width="86">
             	<p><code>Stopwatch</code></p>
             </td>
             <td width="294">
@@ -651,7 +641,17 @@
 		response to a sensor reading as for example in a line follower or a
 		balancing robot. If the speed corrections happen frequently, there is
 		no advantage in the regulator thread using CPU cycles in adjusting the
-		motor power to maintain constant speed between adjustments. </p>
+		motor power to maintain constant speed between adjustments. To use an unregulated 
+	    Motor you must create an instance of the class NXTMotor. For example: </p>
+	    
+	   <div class="CodeBox">
+	   <pre><code>
+	   NXTMotor m1 = new NXTMotor(MotorPort.A);
+	   </code></pre>
+	   </div>
+	   
+	   <p>NXTMotor has many of the methods of NXTRegulatedMotor, but instead of the setSpeed method, it has a setPower method,
+	      and, as it has no regulation thread, it does not support any of the rotate methods.</p>
 		
       <h5>When should you use speed regulation?</h5>
       <p>If you specify a very slow speed, the power to maintain it may not be
@@ -681,18 +681,12 @@
           <p>int getLimitAngle()</p><p>Returns the angle to which the motor is currently rotating </p>
         </li>
         <li>
-          <p>boolean isRegulating()</p><p>Used to test if the speed regulation is turned on.</p>
-        </li>
-        <li>
           <p>int getSpeed()</p><p>Returns the current speed setting.</p>
         </li>
         <li>
           <p>int getActualSpeed()</p><p>Returns the actual speed of the motor. This is updated every 100 ms,
 			and is accurate to about +- 10 deg/sec. Use this method to detect if
 			the motor has stalled. </p>
-        </li>
-        <li>
-          <p>int getPower()</p><p>returns the current power setting in the range of 0 to 100.</p>
         </li>
         <li>
           <p>int getMode()</p><p>returns a code for the current motor status</p>
@@ -767,12 +761,6 @@
       <p/>
       <ul class="BlueArrows">
         <li>
-          <p>setPower(int aPower)</p><p>
-			Used to control motor power directly. Use a value between 0 and 100.
-			Don&#8217;t call this method if speed regulation is turned on because then
-			the regulator thread is continuously adjusting the power. </p>
-        </li>
-        <li>
           <p>resetTachoCount()</p><p>
 			This method not only sets the tacho count to 0 but also resets the
 			origin used by the regulator thread in deciding when to stop a rotation
@@ -787,10 +775,25 @@
 			the motor axle in position. </p>
         </li>
       </ul>
-      <p/>
-      <a href="#top">Back to top</a>
-      <p/>
 
+      <p><a href="#top">Back to top</a></p>
+      
+      <h5>NXTMotor methods</h5>
+      <p/>
+      <ul class="BlueArrows">
+        <li>
+          <p>setPower(int aPower)</p><p>
+			Used to control motor power directly. Use a value between 0 and 100.
+			Don&#8217;t call this method if speed regulation is turned on because then
+			the regulator thread is continuously adjusting the power. </p>
+        </li>
+        <li>
+          <p>int getPower()</p><p>returns the current power setting in the range of 0 to 100.</p>
+        </li>
+       </ul>
+       
+      <p><a href="#top">Back to top</a></p>
+      
       <div class="NavBit"> 
       	<a target="_top" href="../MenuSystem/MenuSystem.htm">&laquo;&nbsp;Previous</a>
       	&nbsp;&#8226;&nbsp;
