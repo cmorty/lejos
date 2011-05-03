@@ -28,14 +28,12 @@ public class ConsoleViewComms
     private ConsoleDebug debug;
     private Reader reader;
     private boolean daemon;
-    private boolean lcd;
 
-    public ConsoleViewComms(ConsoleViewerUI viewer, ConsoleDebug debug, boolean daemon, boolean lcd)
+    public ConsoleViewComms(ConsoleViewerUI viewer, ConsoleDebug debug, boolean daemon)
     {
     	this.daemon = daemon;
         this.viewer = viewer;
         this.debug = debug;
-        this.lcd = lcd;
         reader = new Reader();
         reader.setDaemon(daemon);
         reader.start();
@@ -49,9 +47,9 @@ public class ConsoleViewComms
      * @param useUSB use USB if true, else use Bluetooth
      * @return true iff the connection was successful
      */
-    public boolean connectTo(String name, String address, boolean useUSB)
+    public boolean connectTo(String name, String address, boolean useUSB, boolean lcd)
     {
-    	return connectTo(name, address, (useUSB ? NXTCommFactory.USB : NXTCommFactory.BLUETOOTH));
+    	return connectTo(name, address, (useUSB ? NXTCommFactory.USB : NXTCommFactory.BLUETOOTH), lcd);
     }
 
     /**
@@ -62,7 +60,7 @@ public class ConsoleViewComms
      * @param protocol USB or Bluetooth or both
      * @return true iff the connection was successful
      */
-    public boolean connectTo(String name, String address, int protocol)
+    public boolean connectTo(String name, String address, int protocol, boolean lcd)
     {
         con = new NXTConnector();
         con.addLogListener(new ToolsLogger());

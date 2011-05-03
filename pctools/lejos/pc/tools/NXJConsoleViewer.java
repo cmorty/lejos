@@ -13,6 +13,7 @@ import java.io.IOException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -165,13 +166,13 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
     private JButton connectButton = new JButton("Connect");
     private JRadioButton usbButton = new JRadioButton("USB");
     private JRadioButton btButton = new JRadioButton("BlueTooth");
+    private JCheckBox doLcd = new JCheckBox("show remote LCD screen", true);
 
     private JLabel statusField = new JLabel();
 
     private JTextField nameField = new JTextField(10);
     private JTextField addrField = new JTextField(12);
     private ConsoleViewComms comm;
-    private boolean usbSelected = true;
     private static final String USING_USB = "Using USB";
     private static final String USING_BT = "Using Bluetooth";
     /**
@@ -210,14 +211,18 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
             g2d.drawImage(lcd, (width-imgWidth)/2, (height-imgHeight)/2, imgWidth, imgHeight, null);
 
         }
+        
+        public void clear()
+        {
+            lcdGC.setColor(new Color(155, 205, 155, 255));
+            lcdGC.fillRect(0, 0, lcd.getWidth(), lcd.getHeight());
+        }
 
         public void update(byte [] buffer)
         {
             int offset = 0;
             int row = 0;
-            lcdGC.setColor(new Color(255, 255,255, 255));
-            lcdGC.fillRect(0, 0, lcd.getWidth(), lcd.getHeight());
-            lcdGC.setColor(new Color(0, 128, 0, 100));
+            lcdGC.setColor(new Color(155, 205, 155, 255));
             lcdGC.fillRect(0, 0, lcd.getWidth(), lcd.getHeight());
             lcdGC.setColor(new Color(0, 0, 0, 255));
             for(row = 0; row < 64; row += 8)
@@ -246,14 +251,14 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("View RConsole output from NXT");
 
-        setSize(680, 600);
+        setSize(720, 600);
 
         statusField.setPreferredSize(new Dimension(200,20));
 
         buildGui();
         final ConsoleUI ui = new ConsoleUI();
         ConsoleDebugDisplay debug = new ConsoleDebugDisplay(ui, debugFile);
-        comm = new ConsoleViewComms(ui, debug, true, true);
+        comm = new ConsoleViewComms(ui, debug, true);
     }
 
     public void append(String s)
@@ -284,16 +289,19 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
         statusPanel.add(statusField, BorderLayout.CENTER);
 
         JPanel topLeftPanel = new JPanel();  // North area of the frame
-        topLeftPanel.setLayout(new GridLayout(2, 1));
+        topLeftPanel.setLayout(new GridLayout(3, 1));
         topLeftPanel.add(connectPanel);
         topLeftPanel.add(connectButton);
+        topLeftPanel.add(doLcd);
         lcd = new LCDDisplay();
+        lcd.clear();
         //screen.add(new JLabel("Screen"));
         lcd.setMinimumSize(new Dimension(LCD_WIDTH*2, LCD_HEIGHT*2));
         lcd.setEnabled(true);
         lcd.setPreferredSize(lcd.getMinimumSize());
         JPanel topPanel = new JPanel();
-        //topPanel.setLayout(new GridLayout(1, 2));
+        //topPanel.setLayout(new GridBagLayout());
+        System.out.println(topPanel.getLayout());
         topPanel.add(topLeftPanel);
         topPanel.add(lcd);
         add(topPanel, BorderLayout.NORTH);
@@ -315,10 +323,18 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
         {
         	statusField.setText("Connecting");
             theLog.setText("");
+            lcd.clear();
             String name = nameField.getText();
             String address = addrField.getText();
             boolean _useUSB = usbButton.isSelected();
-            if (!comm.connectTo(name, address, _useUSB))
+            if (comm.connectTo(name, address, _useUSB, doLcd.isSelected()))
+            {
+//            	usbButton.setEnabled(false);
+//            	btButton.setEnabled(false);
+//            	connectButton.setEnabled(false);
+//            	doLcd.setEnabled(false);
+            }
+            else
             {
             	statusField.setText("Connection Failed");
                 if (_useUSB)
@@ -379,17 +395,15 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
     /**
      * Update the status field when USB or Bluetooth radio buttons selected
      */
-	public void stateChanged(ChangeEvent e) {
-		if (usbSelected && usbButton.isSelected()) return;
+	public void stateChanged(ChangeEvent e)
+	{
 		if (usbButton.isSelected())
 		{
 			statusField.setText(USING_USB);
-			usbSelected = true;
 		}
 		else 
 		{
 			statusField.setText(USING_BT);
-			usbSelected = false;
 		}
 	}
 

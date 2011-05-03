@@ -54,11 +54,11 @@ public class NXJConsole implements ConsoleViewerUI {
 		String address = AbstractCommandLineParser.getLastOptVal(commandLine, "d");
         String debugFile = AbstractCommandLineParser.getLastOptVal(commandLine, "di");
         ConsoleDebugDisplay debug = new ConsoleDebugDisplay(this, debugFile);
-		ConsoleViewComms comm = new ConsoleViewComms(this, debug, false, false);
+		ConsoleViewComms comm = new ConsoleViewComms(this, debug, false);
 		if (blueTooth) protocols |= NXTCommFactory.BLUETOOTH;
 		if (usb) protocols |= NXTCommFactory.USB;
 		if (protocols == 0) protocols = NXTCommFactory.ALL_PROTOCOLS;
-		boolean connected = comm.connectTo(name, address, protocols);
+		boolean connected = comm.connectTo(name, address, protocols, false);
 		if (!connected) {
 			logMessage("Failed to connect to NXT");
 			return 1;
