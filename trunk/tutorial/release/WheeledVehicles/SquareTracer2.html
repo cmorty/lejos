@@ -17,7 +17,7 @@ table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
 <body>
 <pre>
 <span class="ST0">import</span> lejos.nxt.*;
-<span class="ST0">import</span> lejos.navigation.Pilot;
+<span class="ST0">import</span> lejos.robotics.navigation.DifferentialPilot;
 
 <span class="comment">/**</span>
 <span class="comment"> * </span><span class="comment">Trace</span>  <span class="comment">two</span> <span class="comment">squares</span><span class="comment">, </span><span class="comment">twice</span><span class="comment">.</span>  
@@ -25,7 +25,7 @@ table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
  <span class="comment">*/</span>
 <span class="ST0">public</span> <span class="ST0">class</span> SquareTracer2 
 {
-      Pilot pilot ;
+    DifferentialPilot pilot ;
     <span class="ST0">public</span> <span class="ST0">void</span>  drawSquare(<span class="ST0">float</span> length)
     {
         <span class="ST0">byte</span> direction = 1;
@@ -45,7 +45,7 @@ table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
         System.out.println(<span class="character">&quot;</span><span class="character"> Square Tracer 2</span><span class="character">&quot;</span>);
         Button.waitForPress();
         SquareTracer2 sq = <span class="ST0">new</span> SquareTracer2();
-        sq.pilot = <span class="ST0">new</span> Pilot(2.25f, 5.5f, Motor.A, Motor.C);
+        sq.pilot = <span class="ST0">new</span> DifferentialPilot(2.25f, 5.5f, Motor.A, Motor.C);
         <span class="ST0">byte</span> direction = 1;
         <span class="ST0">int</span> length = 20;
         <span class="ST0">for</span>(<span class="ST0">int</span> i = 0; i&lt;4; i++)
