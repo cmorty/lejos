@@ -27,8 +27,10 @@ public class ConsoleDebugDisplay implements ConsoleDebug
     public ConsoleDebugDisplay(ConsoleViewerUI view, DebugData debugData)
     {
         this.viewer = view;
-        this.viewer.append("Debug attached\n");
         this.debugData = debugData;
+        
+        if (debugData != null)
+            this.viewer.append("Debug attached\n");
     }
     
     static DebugData loadDebugData(String name) throws IOException
