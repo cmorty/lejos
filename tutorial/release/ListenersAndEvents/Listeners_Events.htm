@@ -72,9 +72,10 @@
 			<p>Many of the leJOS classes start extra threads running for various purposes, for example:</p>
       		<ul class="BlueArrows">
         		<li>Button and SensorPort start a listener thread if listeners are used </li>
-        		<li>Each Motor has a regulator thread</li>
+        		<li>NXTRegulatedMotor (and hence Motor) start a single motor regulator thread</li>
         		<li>The Bluetooth class starts a thread to talk to the separate Bluetooth chip</li>
         		<li>Each Timer object starts a timer thread</li>
+        		<li>Some of the navigation classes, e.g. NavPathController, start extra threads</li>
         	</ul>
 
       		<p>User programs can create their own threads by subclassing Thread, and then
