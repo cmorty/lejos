@@ -17,7 +17,13 @@ public class NXJImage {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
+		ToolStarter.startSwingTool(NXJImage.class, args);
+	}
+	
+	public static int start(String[] args)
+	{
 		final JFrame frame = new JFrame("LeJOS NXT Image Convertor");
 		NXJImageMainPanel panel = new NXJImageMainPanel();
 		frame.getContentPane().add(panel);
@@ -31,6 +37,7 @@ public class NXJImage {
 				frame.setVisible(true);
 			}
 		});
+		return 0;
 	}
 
 }

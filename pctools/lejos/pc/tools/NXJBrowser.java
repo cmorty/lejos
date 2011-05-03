@@ -52,19 +52,12 @@ public class NXJBrowser
 
 	public static void main(String args[])
 	{
-		int r;
-		try
-		{
-			r = new NXJBrowser().run(args);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace(System.err);
-			r = 1;
-		}
-		
-		if (r != 0)
-			System.exit(r);
+		ToolStarter.startSwingTool(NXJBrowser.class, args);
+	}
+	
+	public static int start(String[] args)
+	{
+		return new NXJBrowser().run(args);
 	}
   
   private int run(String[] args)

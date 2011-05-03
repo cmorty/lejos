@@ -167,8 +167,14 @@ public class NXJDataViewer extends JFrame implements ActionListener, ChangeListe
      */
     public static void main(String[] args)
     {
+    	ToolStarter.startSwingTool(NXJDataViewer.class, args);
+    }
+    
+    public static int start(String[] args)
+    {
         NXJDataViewer frame = new NXJDataViewer();
         frame.setVisible(true);
+        return 0;
     }
 
     /**

@@ -183,14 +183,13 @@ public class NXJFlash implements NXJFlashUI {
 	 *            the command line arguments
 	 * @throws Exception
 	 */
-	public static void main(String[] args) throws Exception {
-		int r;
-		try {
-			r = new NXJFlash().run(args);
-		} catch (Exception e) {
-			e.printStackTrace(System.err);
-			r = 1;
-		}
-		System.exit(r);
+	public static void main(String[] args)
+	{
+		ToolStarter.startTool(NXJFlash.class, args);
+	}
+	
+	public static int start(String[] args) throws Exception 
+	{
+		return new NXJFlash().run(args);
 	}
 }

@@ -37,19 +37,14 @@ public class NXJLinkAndUpload extends NXTCommLoggable
 	 */
 	public static void main(String[] args)
 	{
-		int r;
-		try
-		{
-			NXJLinkAndUpload instance = new NXJLinkAndUpload();
-			instance.addToolsLogListener(new ToolsLogger());
-			r = instance.run(args);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace(System.err);
-			r = 1;
-		}
-		System.exit(r);
+		ToolStarter.startTool(NXJLinkAndUpload.class, args);
+	}
+
+	public static int start(String[] args) throws Exception
+	{
+		NXJLinkAndUpload instance = new NXJLinkAndUpload();
+		instance.addToolsLogListener(new ToolsLogger());
+		return instance.run(args);
 	}
 
 	/**

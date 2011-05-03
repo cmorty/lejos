@@ -290,17 +290,13 @@ public class NXJSocketProxy
 		}
 	}
 
-	public static void main(String[] args) {
-		int r;
-		try
-		{
-			r = new NXJSocketProxy().run(args);
-		}
-		catch (Exception t)
-		{
-			t.printStackTrace(System.err);
-			r = 1;
-		}
-		System.exit(r);
+	public static void main(String[] args)
+	{
+		ToolStarter.startTool(NXJSocketProxy.class, args);
+	}
+
+	public static int start(String[] args) throws Exception
+	{
+		return new NXJSocketProxy().run(args);
 	}
 }

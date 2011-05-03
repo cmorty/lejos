@@ -147,17 +147,14 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	/**
 	 * Command line entry point
 	 */
-	public static void main(String args[]) {
-		int r;
-		try {
-			r = new NXJControl().run();
-		} catch (Exception t) {
-			t.printStackTrace(System.err);
-			r = 1;
-		}
-		
-		if (r != 0)
-			System.exit(r);
+	public static void main(String args[])
+	{
+		ToolStarter.startSwingTool(NXJControl.class, args);
+	}
+	
+	public static int start(String[] args)
+	{
+		return new NXJControl().run();
 	}
 
 	/**

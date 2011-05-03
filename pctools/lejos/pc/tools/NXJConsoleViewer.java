@@ -347,21 +347,10 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
      */
     public static void main(String[] args)
     {
-		int r;
-		try {
-			r = start(args);
-		} catch (Exception e) {
-			e.printStackTrace(System.err);
-			r = 1;
-		}
-		
-    	if (r != 0)
-    	{
-    		System.exit(r);
-    	}
+    	ToolStarter.startSwingTool(NXJConsoleViewer.class, args);
     }
     
-    private static int start(String[] args) throws IOException
+    public static int start(String[] args) throws IOException
     {
         ConsoleViewerCommandLineParser fParser = new ConsoleViewerCommandLineParser(NXJConsoleViewer.class, "[options]");
     	CommandLine commandLine;
