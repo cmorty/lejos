@@ -162,19 +162,7 @@ public class GraphicsSample {
 			</code></pre>
 			</div>
 			
-			<p>There is a set of methods in the LCD class to write to the screen using pixel co-ordinates. 
-			   These are mainly there to support the Graphics class, but can be called directly: </p>
-			<ul class="BlueArrows">
-				<li><p>void drawString(String str,int x, int y, boolean invert)</p>
-					<p>This variant of drawString uses pixel co-ordinates and supports inverting the text drawing white characters on a black background. </p></li>
-				<li><p>void drawChar(char c,	int x, int y, boolean invert)</p>
-					<p>This draws a character at text co-ordinate (x, y) with optional inversion of the character. </p></li>
-				<li><p>void setPixel(int rgbColor, int x, int y)</p><p>Set or unset the pixel at (x,y). rgbColor=1 sets the pixel and zero unsets it.</p></li>
-			</ul>	
-		
-			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-			<p/>
-			<a href="#top">Back to top</a>
+			<p><a href="#top">Back to top</a></p>
 			
 			<a name="4"></a>
 			<h4>Buttons</h4>
@@ -425,8 +413,8 @@ public class LightTest {
     LightSensor light = new LightSensor(SensorPort.S1);
 
     while (true) {
-      LCD.drawInt(light.readValue(), 4, 0, 0);
-      LCD.drawInt(light.readNormalizedValue(), 4, 0, 1);
+      LCD.drawInt(light.getLightValue(), 4, 0, 0);
+      LCD.drawInt(light.getNormalizedLightValue(), 4, 0, 1);
       LCD.drawInt(SensorPort.S1.readRawValue(), 4, 0, 2);
       LCD.drawInt(SensorPort.S1.readValue(), 4, 0, 3);
     }
@@ -436,8 +424,7 @@ public class LightTest {
 			</div>			
 			
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-			<p/>
-			<a href="#top">Back to top</a>
+			<p><a href="#top">Back to top</a></p>
 			
 			<a name="10"></a>
 			<h5>Sound Sensor</h5>
