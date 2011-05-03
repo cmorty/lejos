@@ -16,8 +16,8 @@
 	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
 
 	<meta name='VW96.objecttype' content='Document' />
-	<meta http-equiv='content-language' content='en'>
-	<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+	<meta http-equiv='content-language' content='en'/>
+	<meta name='DC.Language' scheme='RFC1766' content='English' />
 	<meta name='distribution' content='global' />
 	<meta name='resource-type' content='document' />
 
@@ -25,8 +25,8 @@
 	<meta name='robots' content='all' />
 
 	<!-- AUTHOR METADATA -->
-	<meta name="Author" content="Lawrie Griffiths">
-	<meta name="Author" content="Roger Glassey">
+	<meta name="Author" content="Lawrie Griffiths"/>
+	<meta name="Author" content="Roger Glassey"/>
 	
 	<!-- CSS -->
 	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
@@ -105,22 +105,22 @@
 				<p>Static methods:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>void defrag()</p><p>removes unused pages in the file system.</p>
-					<li><p>void format()</p><p>erases all the files and	reformats the flash memory.</p>
-					<li><p>int freeMemory()</p><p>returns the total free memory in the file system.</p>
-					<li><p>File[] listfiles()</p><p>returns an array of	files in the system</p>
+					<li><p>void defrag()</p><p>removes unused pages in the file system.</p></li>
+					<li><p>void format()</p><p>erases all the files and	reformats the flash memory.</p></li>
+					<li><p>int freeMemory()</p><p>returns the total free memory in the file system.</p></li>
+					<li><p>File[] listfiles()</p><p>returns an array of	files in the system</p></li>
 				</ul>
 			
 				<p>To a create a new file, you first call the constructor</p>
 				
 				<ul class="BlueArrows">
-					<li><p>File(String name)</p>
+					<li><p>File(String name)</p></li>
 				</ul>
 			
 				<p>then</p>
 				
 				<ul class="BlueArrows">
-					<li><p>create newFile();</p><p>This method throws an IOException, so must be in a try/catch block.</p>
+					<li><p>create newFile();</p><p>This method throws an IOException, so must be in a try/catch block.</p></li>
 				</ul>
 			
 				<p>To read and write data, you need to
@@ -139,13 +139,13 @@
 			
 				<ul class="BlueArrows">
 					<li><p>FileOutputStream(File f) </p><p>createa new OutputStream to write to this file, starting at the
-						beginning of the file.methods:</p>
+						beginning of the file.methods:</p></li>
 					<li><p>FileOutputStream(File f, boolean append)
-						</p><p>create a new OutputStream to write to this file</p>
-					<li><p>void write(int b) </p><p>write 1 byte to	the file</p>
-					<li><p>void flush() </p><p>Flushes this output stream and forces any buffered output bytes to be written</p>
+						</p><p>create a new OutputStream to write to this file</p></li>
+					<li><p>void write(int b) </p><p>write 1 byte to	the file</p></li>
+					<li><p>void flush() </p><p>Flushes this output stream and forces any buffered output bytes to be written</p></li>
 					<li><p>void close()</p><p>Write the buffer to flash	memory and update the file parameters in flash. Be sure to call
-						this method before your program exits.</p>
+						this method before your program exits.</p></li>
 				</ul>
 			
 				<p>Example:</p>
@@ -195,14 +195,14 @@ public class FileWriteTest {
 				<p>The constructor is:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>FileInputStream( File afile)</p>
+					<li><p>FileInputStream( File afile)</p></li>
 				</ul>
 			
 				<p>Methods:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>int read()</p><p>returns a value	between 0 and 255, representing a single byte</p>
-					<li><p>int available()</p><p>returns the number of bytes available to be read.</p>
+					<li><p>int read()</p><p>returns a value	between 0 and 255, representing a single byte</p></li>
+					<li><p>int available()</p><p>returns the number of bytes available to be read.</p></li>
 				</ul>
 
 				<p>Here is an example that reads the file</p>
@@ -392,7 +392,7 @@ public class FileReadTest {
 				<p>The call of nxjupload looks like:</p>
 			
 				<ul class="BlueArrows">
-					<li><p>nxjupload [options] &lt;binary-file&gt;</p>
+					<li><p>nxjupload [options] &lt;binary-file&gt;</p></li>
 				</ul>
 
 				<p>By default nxjupload first looks for a NXT
@@ -407,13 +407,13 @@ public class FileReadTest {
 				options:</p>
 		
 				<ul class="BlueArrows">
-					<li><p>-b or &ndash;bluetooth: only Bluetooth is tried</p>
-					<li><p>-u or &ndash;usb: only USB is tried</p>
+					<li><p>-b or &ndash;bluetooth: only Bluetooth is tried</p></li>
+					<li><p>-u or &ndash;usb: only USB is tried</p></li>
 					<li><p>-n or --name: the upload is done to the
-						named NXT. A Bluetooth inquiry is done, but only the named NXT is looked for.</p>
+						named NXT. A Bluetooth inquiry is done, but only the named NXT is looked for.</p></li>
 					<li><p>-d or &ndash;address &lt;address&gt;: the upload is to the device with this Bluetooth address. USB is not
-						tried and no Bluetooth inquiry is done.</p>
-					<li><p>-r or &ndash;run: run the program after upload by sending a STARTPROGRAM LCP command.</p>
+						tried and no Bluetooth inquiry is done.</p></li>
+					<li><p>-r or &ndash;run: run the program after upload by sending a STARTPROGRAM LCP command.</p></li>
 				</ul>
 
 				<p>nxjupload uses the apache Commons CLI command
@@ -429,7 +429,7 @@ public class FileReadTest {
 				<p>The call looks like:</p>
 			
 				<ul class="BlueArrows">
-					<li><p>nxjlink [options] class &ndash;o	&lt;binary file&gt;</p>
+					<li><p>nxjlink [options] class &ndash;o	&lt;binary file&gt;</p></li>
 				</ul>
 
 				<p>The -cp or --classpath option is used to
@@ -503,7 +503,7 @@ public class FileReadTest {
         		<div class="NavBit">
                 	<a target="_top" href="../AdvancedTopics/Advanced_Hardware.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Behaviors/BehaviorProgramming.htm">Next&nbsp;»</a>
         		</div>
-			<td>
+			</td>
 		</tr>
 	</table>
 </body>
