@@ -1294,9 +1294,9 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		if (row >= 0) {
 			boolean open = false;
 			theConsoleLog.setText("");
-			cvcs[row] = new ConsoleViewComms(this, new ConsoleDebugDisplay(this), true, false);
+			cvcs[row] = new ConsoleViewComms(this, new ConsoleDebugDisplay(this), true);
 			cvc = cvcs[row];
-			open = cvc.connectTo(nxts[row].name, nxts[row].deviceAddress, nxts[row].protocol);
+			open = cvc.connectTo(nxts[row].name, nxts[row].deviceAddress, nxts[row].protocol, false);
 	        if (!open) {
 	            showMessage("Failed to connect to RConsole");
 	            return;
