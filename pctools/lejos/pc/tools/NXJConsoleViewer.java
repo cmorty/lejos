@@ -300,8 +300,6 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
         lcd.setEnabled(true);
         lcd.setPreferredSize(lcd.getMinimumSize());
         JPanel topPanel = new JPanel();
-        //topPanel.setLayout(new GridBagLayout());
-        System.out.println(topPanel.getLayout());
         topPanel.add(topLeftPanel);
         topPanel.add(lcd);
         add(topPanel, BorderLayout.NORTH);
