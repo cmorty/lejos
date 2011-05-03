@@ -55,20 +55,20 @@
 			<p>leJOS can be used in Android applications (.apks) via the <a
 				href="http://lejos.sourceforge.net/nxt/pc/api/index.html"
 				target="_blank">leJOS PC API</a> that communicates using Bluetooth
-			with either:
+			with either:</p>
+			<ul>
 			<li><i>leJOS NXJ programs running on your NXT.</i> [This
 			requires the leJOS firmware to be on your NXT]</li>
 			<li><i>the LEGO Communications Protocol (LCP).</i> [This DOES
 			NOT require the leJOS firmware to be on your NXT, and works with the
 			standard LEGO firmware]</li>
-			</p>
+			</ul>
 			<p>This tutorial is not a complete explanation of how to create
 			Android applications which can quickly become far more complicated
 			than the normal difficulty of using leJOS. Three leJOS sample
 			programs have been included in one Android .apk, and this tutorial
 			will explain the most relevant aspects of getting them to work under
 			Android.</p>
-			</p>
 			<p>Android specific questions should be directed to the<a
 				href="http://groups.google.com/group/android-developers"
 				target="_blank">Android Developer Mailing List</a>, while leJOS
@@ -92,17 +92,19 @@
 				href="http://kenai.com/projects/nbandroid/" target="_blank">Netbeans
 			Plugin</a> to simplify developing and building .apks. The <a href="#3">LeJOSDroid
 			sample project</a> was set up using the Eclipse Android Plugin and can be
-			imported into Eclipse by selecting File --> Import --> General -->
+			imported into Eclipse by selecting File --&gt; Import --&gt; General --&gt;
 			Existing Projects into Workspace and selecting the
 			android/leJOS-Droid folder</p>
-			</p>
 			<p>To use leJOS in your own Android project within Eclipse (same
-			principles apply for Netbeans), make sure:
-			<li>the lejos pccomms.jar (.9 or later) is in your project/libs
-			dir</li>
+			principles apply for Netbeans), make sure:</p>
+			<ul>
+			<li>the lejos pccomms.jar (.9 or later) is in your project/libs dir</li>
+			</ul>
 			<img src="libs.jpg" />
+			<ul>
 			<li>the lejos pccomms.jar is in your build path</li>
-			</p>
+			</ul>
+			<p>
 			<img src="build_path.jpg" />
 			</p>
 
@@ -132,11 +134,12 @@
 			<h4>LeJOSDroid Samples</h4>
 			<p>The LeJOSDroid.apk Android application includes three leJOS
 			samples modified from /pcsamples that typically run on your PC or
-			MAC:
+			MAC:</p>
+			<ul>
 			<li><i>TachoCount</i></li>
 			<li><i>BTSend</i></li>
 			<li><i>RCNavigationControl</i></li>
-			</p>
+			</ul>
 			<p>The samples have been tailored for Android, and it is
 			important to understand the modifications required by <a href="#2">Android
 			Application Fundamentals</a></p>
@@ -145,8 +148,8 @@
 				href="http://developer.android.com/guide/developing/tools/adb.html#move"
 				target="_blank">the adb tool in
 			your-android-sdk-location/platform-tools/.</a> Please uninstall the
-			distributed LeJOSDroid.apk from your Android device (via Settings -->
-			Applications --> Manage Applications) before reinstalling a new
+			distributed LeJOSDroid.apk from your Android device (via Settings --&gt;
+			Applications --&gt; Manage Applications) before reinstalling a new
 			LeJOSDroid.apk or there will be an error about conflicting
 			signatures. <a
 				href="http://developer.android.com/guide/publishing/app-signing.html"
@@ -204,11 +207,11 @@
 			<div class="CodeBox"><pre><code>
       
 
-    private final static String TAG = "LeJOSDroid";   			<--- used to label the logging
+    private final static String TAG = "LeJOSDroid";   			&lt;--- used to label the logging
       
  
      
-    public static NXTConnector connect(final CONN_TYPE connection_type) {	<--- method to return connection
+    public static NXTConnector connect(final CONN_TYPE connection_type) {	&lt;--- method to return connection
 	Log.d(TAG, " about to add LEJOS listener ");
 
 	NXTConnector conn = new NXTConnector();
@@ -224,7 +227,7 @@
 	    }
 	});
 
-	switch (connection_type) {   					<--- specifies the connection type i.e. LCP or packet
+	switch (connection_type) {   					&lt;--- specifies the connection type i.e. LCP or packet
 	case LEGO_LCP:
 	    conn.connectTo("btspp://NXT", NXTComm.LCP);
 	    break;
@@ -290,15 +293,12 @@
 			class is created while passing in the <code>RCNavigationControl</code>
 			instance in the constructor, and the instance is used to update the
 			UI.</p>
-			<p>
 			<div class="CodeBox"><pre><code>
       public class RCNavigationControl extends javax.swing.JFrame{  //example for PC or MAC
          ...
-           private RCNavComms communicator = new RCNavComms(this);   <------ This (using an instance to update the UI thread) is dangerous in Android with potential memory leaks and unpredictable behavior
+           private RCNavComms communicator = new RCNavComms(this);   &lt;------ This (using an instance to update the UI thread) is dangerous in Android with potential memory leaks and unpredictable behavior
  }
   </code></pre></div>
-			</p>
-			<p></p>
 			<div class="CodeBox"><pre><code>
  public class RCNavComms { //example for PC or MAC
      RCNavigationControl control;
@@ -312,17 +312,16 @@
        ...
          public void run(){
             ...
-            control.showtRobotPosition(x, y, h);   <------ This (using an instance to update the UI thread) is dangerous in Android with potential memory leaks and unpredictable behavior
+            control.showtRobotPosition(x, y, h);   &lt;------ This (using an instance to update the UI thread) is dangerous in Android with potential memory leaks and unpredictable behavior
             
          }
     }     
 }         
       </code></pre></div>
-			</p>
 
 			<p>In comparision, the RCNavComms class for the Android example
 			uses a Handler that was passed in through the constructor (instead of
-			the RCNavigationControl instance).
+			the RCNavigationControl instance).</p>
 			<div class="CodeBox"><pre><code>
  public class RCNavComms{ //example for Android
      Handler mUIMessageHandler;
@@ -344,14 +343,12 @@
        ...
          public void run(){
          ...
-            sendPosToUIThread(x, y, h);  <------ Sends a message via a Handler
+            sendPosToUIThread(x, y, h);  &lt;------ Sends a message via a Handler
             
          }
     }     
 }         
       </code></pre></div>
-			</p>
-			<p>
 			<div class="CodeBox"><pre><code>
       
        public class RCNavigationControl extends TabActivity{ //example for Android
@@ -377,7 +374,6 @@
 		}
 	}
       </code></pre></div>
-			</p>
 			<p>Please see the documentation to learn <a
 				href=">http://developer.android.com/reference/android/os/Handler.html"
 				target="_blank">more about Handlers</a>. While the
@@ -404,7 +400,7 @@
 			in <code>onResume()</code> instead of <code>onCreate()</code>. This
 			is to enable correct functioning when the application resumes from <code>onPause()</code>.
 
-
+			</p>
 			<div class="CodeBox"><pre><code> 
        	@Override
 	    protected void onResume() {
@@ -413,11 +409,7 @@
 		    communicator = new RCNavComms(mUIMessageHandler);
 	}
 	</code></pre></div>
-			</p>
-			</p>
 			<p><a href="#top">Back to top</a></p>
-
-
 			<div class="NavBit"><a target="_top"
 				href="../Preliminaries/Intro.htm">&#171;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
 			<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
