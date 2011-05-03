@@ -49,12 +49,12 @@
 				<div class="nolinkLESSON">The leJOS NXJ Menu System</div>
 				<div class="linkAHEAD"><a href="#1">Main menu</a></div>
 				<div class="linkAHEAD"><a href="#2">Files menu</a></div>
-				<div class="linkAHEAD"><a href="#3">System menu</a></div>
-				<div class="linkAHEAD"><a href="#4">Bluetooth menu</a></div>
-				<div class="linkAHEAD2"><a href="#5">Devices</a></div>
-				<div class="linkAHEAD2"><a href="#6">Search</a></div>
-				<div class="linkAHEAD2"><a href="#7">Sound</a></div>
-				<div class="linkAHEAD"><a href="#8">Version menu</a></div>
+				<div class="linkAHEAD"><a href="#3">Bluetooth menu</a></div>
+				<div class="linkAHEAD2"><a href="#3.1">Devices</a></div>
+				<div class="linkAHEAD2"><a href="#3.2">Search</a></div>
+				<div class="linkAHEAD"><a href="#4">Sound menu</a></div>
+				<div class="linkAHEAD"><a href="#5">System</a></div>
+				<div class="linkAHEAD"><a href="#6">Version menu</a></div>
       		</td>
       		<td>
 				<!-- BREADCRUMBS -->
@@ -75,18 +75,10 @@
 				<a name="1"></a>
 				<h4>Main menu</h4>
       			<p>When leJOS NXJ starts, it displays the leJOS NXJ logo for 3 seconds and then displays the main menu:</p>
-      			<div class="LCDBox">
-      				<p align="center">&nbsp;&nbsp;&nbsp;MYNXT&nbsp;&nbsp;BT</p>
-      				<p>&gt;Run Default</p>
-      				<p>&nbsp;Files</p>
-      				<p>&nbsp;Bluetooth</p>
-      				<p>&nbsp;Sound</p>
-      				<p>&nbsp;System</p>
-      				<p>&nbsp;Version</p>
-      			</div>
-      			<p>The top line shows the battery voltage icon,the name of the NXT, and the BlueTooth power icon. In this example, the
-				power is on. </p>
-      			<p>It then shows a menu implemented by the TextMenu class.
+      			<img src="default.jpg"/>
+      			<p>The top line shows the battery voltage icon,the name of the NXT, indicators for active USB and Bluetooth connections, and the Bluetooth power icon. In this example, the
+				power is on, but USB and Bluetooth are not connected. </p>
+      			<p>It then shows a graphic menu of icons. The selected icon is raised in the center and its name is displayed.
       			   You can use the keys to navigate the menu:</p>
       			<table border="1" cellpadding="7" cellspacing="0" width="533">
         			<col width="35"/> <col width="36"/> <col width="118"/> <col width="286"/> 
@@ -116,7 +108,7 @@
             					<p>Left,Right </p>
             				</td>
             				<td width="286">
-            					<p>Scroll up , down</p>
+            					<p>Move left or right</p>
             				</td>
           				</tr>
           				<tr valign="top">
@@ -159,52 +151,28 @@
       			
       			<a name="#2"></a>
       			<h4>Files menu</h4>
-      			<p>When you select the &#8220;Files&#8221; menu item, the list of files is displayed:</p>
+      			<p>Pressing the right button will display the Files icon:</p>
       			<p/>
-      			<div  class="LCDBox">
-      				<p align="center">MYNXT BT</p>
-      				<p>&gt;View.nxj</p>
-      				<p>&nbsp;SoundScope.nxj</p>
-      				<p>&nbsp;LCDTest.nxj</p>
-      			</div>
-      			<p>When you select a particular file, the file submenu is displayed:</p>
-      			<div class="LCDBox">
-      				<p align="center">MYNXT BT</p>
-      				<p>View</p>
-      				<p>&gt;Execute program</p>
-      				<p>&nbsp;Set as Default</p>
-      				<p>&nbsp;Delete file</p>
-      			</div>
+      			<img src="files.jpg"/>
+      			<p>Selecting "Files" will show a list of files using the TextMenu class.</p>
+      			
+      			<img src="filelist.jpg"/>
+      			
+      			<p> You can move through the menu using the left and right buttons.
+      			It will scroll up and down if there are more files than will fit on the screen and it will wrap round when you reach the top or bottom of the list.</p>
+      			
+      			<p>When you select a particular file with the Enter button, the file submenu is displayed:</p>
+      			<img src="file.jpg"/>
+      			
+      			<p>For any file a "Delete File" option is available. For program files (.nxj), you can execute the program or set it as the default program. For sound files, you can play the sound sample.</p>
       			<p/>
       			<a href="#top">Back to top</a>
       			<p/>
-      			
+      				
       			<a name="#3"></a>
-      			<h4>System menu</h4>
-      			<p>This menu shows some information about the status of the NXT, and allows you to change some of these variables.</p>
-      			<ul class="BlueArrows">
-        			<li>Free flash</li>
-        			<li>Battery voltage</li>
-        			<li>Free ram</li>
-        			<li>Format <br/>Wipes out the flash memory, deleting all files.</li>
-        			<li>Sleep Time<br/>is the number of seconds before the NXT shuts down in the absence of
-						any activity (button presses or program running) You can change the
-						setting by pressing the ENTER button. Zero means never.
-        			</li>
-        			<li>Auto run<br/>
-						If this is turned on, the default program immediately starts running
-						when the NXT is powered up, instead of displaying the main menu. You
-						can disable the auto run by holding down the left button during start
-						up.
-        			</li>
-      			</ul>
-      			<p/>
-      			<a href="#top">Back to top</a>
-      			<p/>
-      			
-      			<a name="#4"></a>
       			<h4>Bluetooth menu</h4>
-      			<p>This menu allows you to control the Bluetooth chip. When power is off, the menu looks like this:: </p>
+      			<p>Pressing the right arrow from the Files menu icon, displays the Bluetooth menu icon: </p>
+      			<img src="bluetooth.jpg"/>
       			<div class="LCDBox">
       				<p align="center">MYNXT BT</p>
       				<p>Bluetooth</p>
@@ -213,22 +181,13 @@
       			</div>
       			<p>This saves battery power, but Bluetooth communication to or from the NXT is not possible. Pressing Enter turns the power on. </p>
       			<p>When the power is on, the menu looks like this</p>
-      			<div class="LCDBox">
-      				<p align="center">MYNXT BT</p>
-      				<p> Bluetooth</p>
-      				<p>Status on vis</p>
-      				<p>&gt;Power off</p>
-      				<p>&nbsp;Search and Pair</p>
-      				<p>&nbsp;Devices</p>
-      				<p>&nbsp;Visibility </p>
-      				<p>&nbsp;Change PIN </p>
-      			</div>
+      			<img src="bluetoothon.jpg"/>
       			<p>The status line shows if power is on and where the device is visible to Bluetooth searches.</p>
       			<p>The Visibility menu item switches visibility of the devices to Bluetooth inquiries on and off. When it is on the status line displays &#8220;vis&#8221; and when it is off, &#8220;invis&#8221;.</p>
 				<a href="#top">Back to top</a>
 				<p/>
 				
-				<a name="#5"></a>
+				<a name="#3.1"></a>
       			<h4>Devices</h4>
       			<p>The Devices menu item lists the devices currently in the Known Devices list for you NXT.</p>
       			<div class="LCDBox">
@@ -251,7 +210,7 @@
 				<a href="#top">Back to top</a>
 				<p/>
 				
-      			<a name="#7"></a>
+      			<a name="#3.2"></a>
       			<h4>Search</h4>
       			<p>Selecting &#8220;Search&#8221; from the Bluetooth menu, starts a Bluetooth inquiry. The display is cleared and the first line displays &#8220;Searching&#8230;&#8221;. This takes about 10 seconds.</p>
       			<p>When the search is finished a menu of all the Bluetooth devices found, is displayed:</p>
@@ -275,29 +234,57 @@
       			<p>Selecting Add, adds the device to the list of know devices. This makes connecting to the devices from leJOS programs much easier.</p>    			
       			<a href="#top">Back to top</a>
       			<p/>
-      			
-      			<a name="#7"></a>
+      							
+				<a name="#4"></a>
       			<h4>Sound</h4>
       			<p/>
-      			<div class="LCDBox">
-      				<p align="center">MYNXT BT</p>
-      				<p>Sound</p>
-      				<p>&gt;Volume: 8</p>
-      				<p>&nbsp;KeyClick 6</p>
-      				<br/>
-      			</div>
-      			<p>With this menu, you can set the default system sound Volume and the Key Clock volume. Click the Enter key to scroll through the options.</p>
+      			<img src="sound.jpg"/>
       			
-      			<a name="#7"></a>
-      			<h4>Version</h4>
+    			<p>Press the right button from the Bluetooth menu item, displays the Sound menu icon:</p>
+      			
+      			<p>With this menu, you can set the default system sound Volume and the Key Clock volume. Click the Enter key to scroll through the options.</p>
+				
+				<img src="volume.jpg"/>
+				
+				<a name="#5"></a>
+      			<h4>System menu</h4>
+      			
+      			<p>Pressing the right button from the Sound menu icon, displays the System menu icon: </p>
+      			<img src="system.jpg"/>
+      			
+      			<p>Selecting this shows information about the current state of the NXT brick, and allows you to
+      			format (wipe clean) the file system.</p>
+      			<img src="systeminfo.jpg"/>
+      			
+      			<p>This menu shows some information about the status of the NXT, and allows you to change some of these variables.</p>
+      			<ul class="BlueArrows">
+        			<li>Free flash</li>
+        			<li>Battery voltage</li>
+        			<li>Free ram</li>
+        			<li>Format <br/>Wipes out the flash memory, deleting all files.</li>
+        			<li>Sleep Time<br/>is the number of seconds before the NXT shuts down in the absence of
+						any activity (button presses or program running) You can change the
+						setting by pressing the ENTER button. Zero means never.
+        			</li>
+        			<li>Auto run<br/>
+						If this is turned on, the default program immediately starts running
+						when the NXT is powered up, instead of displaying the main menu. You
+						can disable the auto run by holding down the left button during start
+						up.
+        			</li>
+      			</ul>
       			<p/>
-      			<div class="LCDBox">
-      				<p align="center">MYNXT BT</p>
-      				<p>Firmware Version</p>
-      				<p>1.0 (rev. 2260)</p>
-      				<p>Menu Version</p>
-      				<p>1.0 (rev 2260)</p>
-      			</div>
+      			<a href="#top">Back to top</a>
+      			<p/>
+      			
+      			<a name="#6"></a>
+      			<h4>Version</h4>
+      			<p>Pressing the right button from the System menu icon, displays the Version menu icon:</p>
+      			<img src="version.jpg"/>
+      			
+      			<p>Selecting this item, displays the version of the firmware and the menu.</p>
+      			<img src="versioninfo.jpg"/>
+      			
       			<p>This menu is for information only.</p>
 				
       			<a href="#top">Back to top</a>  
