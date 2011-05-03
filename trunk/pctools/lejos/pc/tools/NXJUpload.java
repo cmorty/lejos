@@ -3,7 +3,6 @@ package lejos.pc.tools;
 import java.io.File;
 
 import lejos.pc.comm.NXTCommFactory;
-import lejos.pc.comm.NXTCommLoggable;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
@@ -22,20 +21,16 @@ public class NXJUpload {
 	 * 
 	 * @param args command line arguments
 	 */
-	public static void main(String[] args) {
-		int r;
-		try
-		{
-			NXJUpload instance = new NXJUpload();
-			instance.addLogListener(new ToolsLogger());
-			r = instance.run(args);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace(System.err);
-			r = 1;
-		}
-		System.exit(r);
+	public static void main(String[] args)
+	{
+		ToolStarter.startTool(NXJUpload.class, args);
+	}
+
+	public static int start(String[] args) throws Exception
+	{
+		NXJUpload instance = new NXJUpload();
+		instance.addLogListener(new ToolsLogger());
+		return instance.run(args);
 	}
 	
 	/** 

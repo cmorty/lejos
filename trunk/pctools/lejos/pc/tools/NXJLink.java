@@ -26,19 +26,14 @@ public class NXJLink
 	 */
 	public static void main(String[] args)
 	{
-		int r;
-		try
-		{
-			r = new NXJLink().start(args);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace(System.err);
-			r = 1;
-		}
-		System.exit(r);
+		ToolStarter.startTool(NXJLink.class, args);
 	}
 
+	public static int start(String[] args) throws Exception
+	{
+		return new NXJLink().run(args);
+	}
+	
 	/**
 	 * Constructor.
 	 */
@@ -66,7 +61,7 @@ public class NXJLink
 	 * @param args command line
 	 * @throws TinyVMException
 	 */
-	public int start(String[] args) throws TinyVMException, IOException
+	public int run(String[] args) throws TinyVMException, IOException
 	{
 		assert args != null : "Precondition: args != null";
 

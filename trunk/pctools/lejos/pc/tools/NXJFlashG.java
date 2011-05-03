@@ -92,9 +92,15 @@ public class NXJFlashG extends javax.swing.JFrame {
 	 * @param args
 	 *            the command line arguments
 	 */
-	public static void main(String args[]) {
+	public static void main(String args[])
+	{
+		ToolStarter.startSwingTool(NXJFlashG.class, args);
+	}
+	
+	public static int start(String[] args)
+	{
 		new NXJFlashG().setVisible(true);
-
+		return 0;
 	}
 
 	/**

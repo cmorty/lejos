@@ -16,15 +16,14 @@ import org.apache.commons.cli.ParseException;
  */ 
 public class NXJConsole implements ConsoleViewerUI {
 
-	public static void main(String[] args){
-		int r;
-		try {
-			r = new NXJConsole().run(args);
-		} catch (Exception e) {
-			e.printStackTrace(System.err);
-			r = 1;
-		}
-		System.exit(r);
+	public static void main(String[] args)
+	{
+		ToolStarter.startTool(NXJConsole.class, args);
+	}
+	
+	public static int start(String[] args) throws IOException
+	{
+		return new NXJConsole().run(args);
 	}
 
 

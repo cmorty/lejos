@@ -266,17 +266,14 @@ public class NXJMonitor extends JFrame implements ActionListener {
 		}
 	}
 	
-	public static void main(String[] args) {
-		int r;
-		try {
-			r = new NXJMonitor().run();
-		} catch (Exception e) {
-			e.printStackTrace(System.err);
-			r = 1;
-		}
-		
-		if (r != 0)
-			System.exit(r);
+	public static void main(String[] args)
+	{
+		ToolStarter.startSwingTool(NXJMonitor.class, args);
+	}
+
+	public static int start(String[] args) throws Exception
+	{
+		return new NXJMonitor().run();
 	}
 }
 

@@ -11,18 +11,10 @@ import org.apache.commons.cli.ParseException;
 public class NXJDebugTool {
 
 	public static void main(String[] args){
-		int r;
-		try {
-			r = new NXJDebugTool().run(args);
-		} catch (Exception e) {
-			e.printStackTrace(System.err);
-			r = 1;
-		}
-		System.exit(r);
+		ToolStarter.startTool(NXJDebugTool.class, args);
 	}
 
-
-	private int run(String[] args) throws IOException
+	public static int start(String[] args) throws IOException
 	{
 		String debugFile;
 		String[] restArgs;
@@ -89,7 +81,7 @@ public class NXJDebugTool {
 	}
 
 
-	private void doMethod(DebugData dd, String[] args, int i)
+	private static void doMethod(DebugData dd, String[] args, int i)
 	{
 		if (args.length <= i)
 			throw new RuntimeException("no method number given");
@@ -126,7 +118,7 @@ public class NXJDebugTool {
 		}
 	}
 
-	private void doClass(DebugData dd, String[] args, int i)
+	private static void doClass(DebugData dd, String[] args, int i)
 	{
 		if (args.length <= i)
 			throw new RuntimeException("no class number given");
@@ -141,7 +133,7 @@ public class NXJDebugTool {
 		System.out.println("  "+dd.getClassName(i)+ " ("+dd.getClassFilename(i)+")");
 	}
 
-	private void doDump(DebugData dd)
+	private static void doDump(DebugData dd)
 	{
 		int clen = dd.getClassNameCount();
 		for (int i=0; i<clen; i++)
