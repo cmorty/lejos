@@ -1,8 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" dir="ltr"
-	lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" lang="en"
+	xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Android with leJOS</title>
 <!-- CSS -->
 <link rel="stylesheet" href="../r_css/lejos-tutorial.css"
 	type="text/css" />
@@ -12,50 +12,47 @@
 <body>
 <a id="top" name="top"></a>
 <!-- N1: HEADER -->
-<table class="n1t1" cellpadding="0" cellspacing="0">
-	<tbody>
-		<tr>
-			<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
-			<td align="right"><img
-				src="../r_media/images/tutorial_header2.jpg" /></td>
-		</tr>
-	</tbody>
+<table cellpadding="0" cellspacing="0" class="n1t1">
+	<tr>
+		<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
+		<td align="right"><img
+			src="../r_media/images/tutorial_header2.jpg" /></td>
+	</tr>
 </table>
 <!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
-<table class="n2t1" cellpadding="0" cellspacing="0">
-	<tbody>
-		<tr>
-			<td class="n2t1r1c1">
+<table cellpadding="0" cellspacing="0" class="n2t1">
+	<tr>
+		<td class="n2t1r1c1">
 			<div class="nolinkLESSON">Using leJOS with Android</div>
 			<div class="linkAHEAD"><a href="#1">Prerequisites</a></div>
 			<div class="linkAHEAD2"><a href="#1.1">Android SDK</a></div>
 			<div class="linkAHEAD2"><a href="#1.2">IDE Plugins</a></div>
 			<div class="linkAHEAD2"><a href="#1.3">Sdcard Cache File</a></div>
 			<div class="linkAHEAD2"><a href="#1.4">Device Setup</a></div>
-			<div class="linkAHEAD"><a href="#3">LeJOSDroid Samples</a></div>
-			<div class="linkAHEAD2"><a href="#3.1">TachoCount</a></div>
-			<div class="linkAHEAD2"><a href="#3.2">BTSend</a></div>
-			<div class="linkAHEAD2"><a href="#3.3">RCNagivationControl</a></div>
-			<div class="linkAHEAD"><a href="#2">Application
-			Fundamentals</a></div>
-			<div class="linkAHEAD2"><a href="#2.1">Connection</a></div>
-			<div class="linkAHEAD2"><a href="#2.2">Threading</a></div>
-			<div class="linkAHEAD2"><a href="#2.3">Messaging</a></div>
-			<div class="linkAHEAD2"><a href="#2.4">LifeCycle</a></div>
-			</td>
-			<td>
-
-			<div id="BreadCrumbs"><a href="../index.htm" target="_top">Home
-			Page</a>&gt; <a href="#">Android</a></div>
-			<div class="NavBit"><a target="_top"
-				href="../Preliminaries/Intro.htm">&#171;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
-			<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
-				href="../Preliminaries/FirstProgram.htm">Next&nbsp;&#187;</a></div>
+			<div class="linkAHEAD"><a href="#2">LeJOSDroid Samples</a></div>
+			<div class="linkAHEAD2"><a href="#2.1">TachoCount</a></div>
+			<div class="linkAHEAD2"><a href="#2.2">BTSend</a></div>
+			<div class="linkAHEAD2"><a href="#2.3">RCNagivationControl</a></div>
+			<div class="linkAHEAD"><a href="#3">Application Fundamentals</a></div>
+			<div class="linkAHEAD2"><a href="#3.1">Connection</a></div>
+			<div class="linkAHEAD2"><a href="#3.2">Threading</a></div>
+			<div class="linkAHEAD2"><a href="#3.3">Messaging</a></div>
+			<div class="linkAHEAD2"><a href="#3.4">LifeCycle</a></div>
+		</td>
+		<td>
+			<div id="BreadCrumbs">
+				<a href="../index.htm" target="_top">Home Page</a>&gt; 
+				<a href="#">Android</a>
+			</div>
+			<div class="NavBit">
+				<a target="_top" href="../Behaviors/BehaviorProgramming.htm">&#171;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
+				<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;
+				<a href="../index.htm">Next&nbsp;&#187;</a>
+			</div>
 			<div id="PageTitle">Using leJOS with Android</div>
 			<p>leJOS can be used in Android applications (.apks) via the <a
 				href="http://lejos.sourceforge.net/nxt/pc/api/index.html"
-				target="_blank">leJOS PC API</a> that communicates using Bluetooth
-			with either:</p>
+				target="_blank">leJOS PC API</a> that communicates using Bluetooth with either:</p>
 			<ul>
 			<li><i>leJOS NXJ programs running on your NXT.</i> [This
 			requires the leJOS firmware to be on your NXT]</li>
@@ -98,16 +95,10 @@
 			<p>To use leJOS in your own Android project within Eclipse (same
 			principles apply for Netbeans), make sure:</p>
 			<ul>
-			<li>the lejos pccomms.jar (.9 or later) is in your project/libs dir</li>
+			<li><p>the lejos pccomms.jar (.9 or later) is in your project/libs dir <br/><br/><img src="libs.jpg" /></p></li>
+			<li><p>the lejos pccomms.jar is in your build path <br/><br/><img src="./build_path.jpg" /></p></li>
 			</ul>
-			<img src="libs.jpg" />
-			<ul>
-			<li>the lejos pccomms.jar is in your build path</li>
-			</ul>
-			<p>
-			<img src="build_path.jpg" />
-			</p>
-
+			
 			<a id="1.3" name="1.3"></a>
 			<h5>Sdcard Cache File</h5>
 			<p>leJOS uses a nxj.cache file to record the MAC addresses of
@@ -130,7 +121,7 @@
 				target="_blank">using logcat via adb</a></p>
 			<p><a href="#top">Back to top</a></p>
 
-			<a id="3" name="3"></a>
+			<a id="2" name="2"></a>
 			<h4>LeJOSDroid Samples</h4>
 			<p>The LeJOSDroid.apk Android application includes three leJOS
 			samples modified from /pcsamples that typically run on your PC or
@@ -156,11 +147,11 @@
 				target="_blank">How to sign an Application</a>.</p>
 
 
-			<a id="3.1" name="3.1"></a>
+			<a id="2.1" name="2.1"></a>
 			<h5>TachoCount</h5>
 			<p>TachoCount works with either LEGO or leJOS firmware via LCP.
 			Nothing needs to be uploaded to or run on your brick.</p>
-			<a id="3.2" name="3.2"></a>
+			<a id="2.2" name="2.2"></a>
 			<h5>BTSend</h5>
 			<p>The BTSend example requires that samples/BTRecieve must be
 			uploaded and running on a NXT with leJOS firmware. See the section on
@@ -169,7 +160,7 @@
 			your OS, and <a href="../Preliminaries/CompileAndRun.htm">
 			compiling and running leJOS programs</a> on the NXT.</p>
 
-			<a id="3.3" name="3.3"></a>
+			<a id="2.3" name="2.3"></a>
 			<h5>RCNavigationControl</h5>
 			<p>The BTSend example requires that samples/RCNavigator must be
 			uploaded and running on a NXT with leJOS firmware. See the section on
@@ -180,7 +171,7 @@
 			<p><a href="#top">Back to top</a></p>
 
 
-			<a id="2" name="2"></a>
+			<a id="3" name="3"></a>
 			<h4>Application Fundamentals</h4>
 			<p>Below are some Android application fundamental considerations:</p>
 			<p>Further details on the topics touched on below, as well as
@@ -188,7 +179,7 @@
 			the <a href="http://developer.android.com/guide/index.html"
 				target="_blank">Android Developer Site </a></p>
 
-			<a id="2.1" name="2.1"></a>
+			<a id="3.1" name="3.1"></a>
 			<h5>Connection</h5>
 			<p>You will need to pair with the NXT from your Android device
 			before being able to connect.</p>
@@ -207,11 +198,13 @@
 			<div class="CodeBox"><pre><code>
       
 
-    private final static String TAG = "LeJOSDroid";   			&lt;--- used to label the logging
+    private final static String TAG = "LeJOSDroid";   			
+    &lt;--- used to label the logging
       
  
      
-    public static NXTConnector connect(final CONN_TYPE connection_type) {	&lt;--- method to return connection
+    public static NXTConnector connect(final CONN_TYPE connection_type) {	
+    &lt;--- method to return connection
 	Log.d(TAG, " about to add LEJOS listener ");
 
 	NXTConnector conn = new NXTConnector();
@@ -227,7 +220,7 @@
 	    }
 	});
 
-	switch (connection_type) {   					&lt;--- specifies the connection type i.e. LCP or packet
+	switch (connection_type) {   	&lt;--- specifies the connection type i.e. LCP or packet
 	case LEGO_LCP:
 	    conn.connectTo("btspp://NXT", NXTComm.LCP);
 	    break;
@@ -241,7 +234,7 @@
     }
       </code></pre></div>
 			<p><a href="#top">Back to top</a></p>
-			<a id="2.2" name="2.2"></a>
+			<a id="3.2" name="3.2"></a>
 			<h5>Threading</h5>
 
 			<p>Most work in Android must be done off the main UI thread,
@@ -250,8 +243,8 @@
 				target="_blank">ANR (Android Non-Response) message</a> when there is
 			no response to an input event (e.g. key press, screen touch) within 5
 			seconds.</p>
-			<p>For this reason, the <a href="#3.2">BTSend</a> and <a
-				href="#3.1">TachoCount</a> samples are run in their own thread. In
+			<p>For this reason, the <a href="#2.2">BTSend</a> and <a
+				href="#2.1">TachoCount</a> samples are run in their own thread. In
 			particular, <code>BTSend</code> has a while loop that could take more
 			than 5 seconds. Similarly, <code>TachoCount</code> could run into ANR
 			problems if it were run on the main UI thread and included a method
@@ -264,12 +257,13 @@
 			to write outgoing data via bluetooth), the <code>NXTCommAndroid
 			read()</code>method will block until data is available. Also, the <code>NXTCommAndroid
 			open()</code> methods used for connection creation will block until the
-			connection is made and IO streams are available. Since <code>lejos.pc.comm.NXTConnector.connectTo()</code>
+			connection is made and IO streams are available. 
+			Since <code>lejos.pc.comm.NXTConnector.connectTo()</code>
 			methods ultimately call the <code>NXTCommAndroid open()</code> method
 			that blocks, calls to open connections should be done off the main UI
 			thread as done in the examples.</p>
 
-			<p>The <a href="#3.3">RCNavigationControl</a> example has a more
+			<p>The <a href="#2.3">RCNavigationControl</a> example has a more
 			complex UI which isn't easily combined with LeJOSDroid and so is run
 			as a new activity. This new activity is, in fact now, the UI thread
 			that creates other threads to handle the connection and reading which
@@ -280,7 +274,7 @@
 			be creating an input event (via a key press or screen touch for
 			example) while waiting for a connection to be made.</p>
 			<p><a href="#top">Back to top</a></p>
-			<a id="2.3" name="2.3"></a>
+			<a id="3.3" name="3.3"></a>
 			<h5>Internal Messaging</h5>
 			<p>One implication of Android threading is that <a
 				href="http://developer.android.com/reference/android/os/Handler.html"
@@ -296,7 +290,9 @@
 			<div class="CodeBox"><pre><code>
       public class RCNavigationControl extends javax.swing.JFrame{  //example for PC or MAC
          ...
-           private RCNavComms communicator = new RCNavComms(this);   &lt;------ This (using an instance to update the UI thread) is dangerous in Android with potential memory leaks and unpredictable behavior
+           private RCNavComms communicator = new RCNavComms(this);   
+           &lt;------ This (using an instance to update the UI thread) is dangerous in 
+           Android with potential memory leaks and unpredictable behavior
  }
   </code></pre></div>
 			<div class="CodeBox"><pre><code>
@@ -312,7 +308,9 @@
        ...
          public void run(){
             ...
-            control.showtRobotPosition(x, y, h);   &lt;------ This (using an instance to update the UI thread) is dangerous in Android with potential memory leaks and unpredictable behavior
+            control.showtRobotPosition(x, y, h);   
+            &lt;------ This (using an instance to update the UI thread) is dangerous in 
+            Android with potential memory leaks and unpredictable behavior
             
          }
     }     
@@ -389,7 +387,7 @@
 				target="_blank">memory leaks</a>.</p>
 
 			<p><a href="#top">Back to top</a></p>
-			<a id="2.4" name="2.4"></a>
+			<a id="3.4" name="3.4"></a>
 			<h5>LifeCycle Basics</h5>
 			<p>Many of the LeJOSDroid methods such as <code>onCreate(Bundle
 			b), onPause(), onResume()</code> are part of the <a
@@ -410,16 +408,13 @@
 	}
 	</code></pre></div>
 			<p><a href="#top">Back to top</a></p>
-			<div class="NavBit"><a target="_top"
-				href="../Preliminaries/Intro.htm">&#171;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
-			<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
-				href="../Preliminaries/FirstProgram.htm">Next&nbsp;&#187;</a></div>
-			<br />
-			</td>
-			<td><br />
+			<div class="NavBit">
+				<a target="_top" href="../Behaviors/BehaviorProgramming.htm">&#171;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
+				<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;
+				<a href="../index.htm">Next&nbsp;&#187;</a>
+			</div>
 			</td>
 		</tr>
-	</tbody>
 </table>
 </body>
 </html>
