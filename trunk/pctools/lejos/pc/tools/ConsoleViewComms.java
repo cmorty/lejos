@@ -1,7 +1,11 @@
 package lejos.pc.tools;
 
-import java.io.*;
-import lejos.pc.comm.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTConnector;
 
 /**
  * Contains the logic for connecting to RConsole on the NXT and downloading data.
@@ -23,7 +27,6 @@ public class ConsoleViewComms
     private ConsoleViewerUI viewer;
     private ConsoleDebug debug;
     private Reader reader;
-    private boolean connected = false;
     private boolean daemon;
     private boolean lcd;
 
@@ -81,15 +84,15 @@ public class ConsoleViewComms
         } catch (IOException e)
         {
             viewer.logMessage("Handshake failed to write: " + e.getMessage());
-            connected = false;
+        	reader.setConnected(false);
             return false;
         }
         name = con.getNXTInfo().name;
         address = con.getNXTInfo().deviceAddress;
         viewer.connectedTo(name, address);
         viewer.logMessage("Connected to " + name + " " + address);
-        connected = true;
-        return connected;
+    	reader.setConnected(true);
+        return true;
     }
     
     /**
@@ -99,7 +102,7 @@ public class ConsoleViewComms
     	try {
     		if (con != null) con.close();
     	} catch (IOException e) {}
-    	connected = false;
+    	reader.setConnected(false);
     }
 
     /**
@@ -120,7 +123,8 @@ public class ConsoleViewComms
      */
     private class Reader extends Thread
     {
-        byte [] lcdBuffer = new byte[100*64/8];
+        private byte [] lcdBuffer = new byte[100*64/8];
+        private boolean connected = false;
 
 
         private int processLCDData() throws IOException
@@ -161,44 +165,63 @@ public class ConsoleViewComms
             debug.exception(classNo, new String(msg), stackTrace);
             return 0;
         }
+        
+        public synchronized void setConnected(boolean c)
+        {
+        	this.connected = c;
+        	this.notifyAll();
+        }
 
         public void run()
         {
             while (true)
             {              
-                if (connected)
+            	synchronized (this)
+            	{
+	            	while (!connected)
+	            	{
+	            		try
+						{
+							this.wait();
+						}
+						catch (InterruptedException e)
+						{
+							e.printStackTrace();
+							return;
+						}
+	            	}
+            	}
+                
+                try
                 {
-                    try
+                    int input;
+                    ioloop:while ((input = is.read()) >= 0)
                     {
-                        int input;
-                        ioloop:while ((input = is.read()) >= 0)
+                        if (input == MODE_SWITCH)
                         {
-                            if (input == MODE_SWITCH)
+                            // Extended data types, first byte tells us the type
+                            switch(is.read())
                             {
-                                // Extended data types, first byte tells us the type
-                                switch(is.read())
-                                {
-                                    case MODE_LCD:
-                                        if (processLCDData()< 0) break ioloop;
-                                        break;
-                                    case MODE_EVENT:
-                                        if (processExceptionData() < 0) break ioloop;
-                                        break;
-                                }
-                                //System.out.println("Got 255 marker");
+                                case MODE_LCD:
+                                    if (processLCDData()< 0) break ioloop;
+                                    break;
+                                case MODE_EVENT:
+                                    if (processExceptionData() < 0) break ioloop;
+                                    break;
                             }
-                            else
-                                viewer.append("" + (char) input);
+                            //System.out.println("Got 255 marker");
                         }
-                        close();
-                        if (!daemon) return;
-                    } catch (IOException e)
-                    {
-                        close();
-                        if (!daemon) return;
+                        else
+                            viewer.append("" + (char) input);
                     }
-                }               
-                Thread.yield();
+                    close();
+                    if (!daemon) return;
+                }
+                catch (IOException e)
+                {
+                    close();
+                    if (!daemon) return;
+                }
             }
         }
     }
