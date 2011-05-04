@@ -1,5 +1,4 @@
 package lejos.nxt;
-import lejos.util.Delay;
 
 /**
  * Abstraction for an NXT button.

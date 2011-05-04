@@ -1,7 +1,5 @@
 package lejos.nxt;
 
-import java.io.IOException;
-
 /**
  * Read and write access to flash memory in pages.
  * 
@@ -24,6 +22,7 @@ public class Flash {
 
 	private Flash()
 	{
+		//Static methods only
 	}
 	
 	static native int flashReadPage(byte[] buf, int pageNum);
