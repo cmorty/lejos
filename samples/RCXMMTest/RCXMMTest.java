@@ -22,10 +22,11 @@ public class RCXMMTest {
 			LCD.refresh();
 			
 			mm.A.setPower(100);
-			mm.A.forward();
-			Thread.sleep(1000);
 			mm.A.backward();
-			Thread.sleep(1000);
+			Thread.sleep(3000);
+			mm.A.stop();
+			mm.A.forward();
+			Thread.sleep(3000);
 		}
 	}
 }
