@@ -100,7 +100,7 @@ and select "Run Target" and "uploadandrun":</p>
 
 <p> You should see output like the following in the Console window:</p>
 
-<pre><font size=-2">
+<pre>
 Buildfile: C:\Users\Lawrie\leJOSProjects\samples\BlueStats\build.xml
 clean:
 compile:
@@ -118,14 +118,14 @@ link:
      [java] Class 9: java.lang.ClassCastException
 ...
      [java] Class 38: lejos.nxt.Flash
-     [java] Method 0: Class: java.lang.Object Signature: <init>()V PC 3222 Signature id 2
+     [java] Method 0: Class: java.lang.Object Signature: &gt;init&lt;()V PC 3222 Signature id 2
      [java] Method 1: Class: java.lang.Object Signature: notifyAll()V Native id 5
      [java] Method 2: Class: java.lang.Object Signature: wait()V Native id 6
      [java] Method 3: Class: java.lang.Object Signature: wait(J)V Native id 7
      [java] Method 4: Class: java.lang.Object Signature: toString()Ljava/lang/String; PC 3223 Signature id 95
 ...
      [java] Method 147: Class: lejos.nxt.Flash Signature: writePage([BI)V Native id 75
-     [java] Method 148: Class: lejos.nxt.Flash Signature: <clinit>()V PC 9337 Signature id 3
+     [java] Method 148: Class: lejos.nxt.Flash Signature: &gt;clinit&lt;()V PC 9337 Signature id 3
      [java] Master record    : 16 bytes.
      [java] Class records    : 39 (390 bytes).
      [java] Field records    : 80 (80 bytes).
@@ -139,10 +139,10 @@ link:
      [java] Total            : 9597 bytes.
 uploadandrun:
      [java] Found nxt name NOISY address 001653007848
-     [java] leJOS NXJ> Upload successful in 1974 milliseconds
+     [java] leJOS NXJ&gt; Upload successful in 1974 milliseconds
 BUILD SUCCESSFUL
 Total time: 4 seconds
-</font></pre>
+</pre>
 
 <p>This verbose output from the leJOS linker tells you all
 the classes and methods that have been included in your program. It is
@@ -174,7 +174,7 @@ Netbeans project for each leJOS NXJ program</p>
 <a name="3"></a>
 <h4>Using the PC samples project</h4>
 
-<p>You can open the leJOS NXJ samples project by selecting File > Open Project and browsing to the samples folder in the
+<p>You can open the leJOS NXJ samples project by selecting File &gt; Open Project and browsing to the samples folder in the
 location where you installed the leJOS java projects.</p> 
 
 <p>Open the BTSend folder. BTSend works with the BTReceive sample. BTSend.java runs on the PC and BTReceive.java runs on the NXT.</p>
@@ -217,9 +217,12 @@ BTSend.java by right-clicking on it and selecting, "Run as Java application", bu
 code for the NXT using the standard Java Project of NetBeans.
 Instead, you need a special type of project that
 will use the leJOS tools to link and upload your code. The easiest way
-to create a NXJ project is to use the NetBeans plugin.  
+to create a NXJ project is to use the NetBeans plugin. </p> 
 
-If instead, you wish to create your own project with a custom ant build file, open the org.lejos.example project, and look at what that does. It is a free form Java project. It is in fact, the template project that the Netbeans plugin uses.<p>To create a NXJ project using the plugin, select File&gt;New Project. then "Samples". In the
+<p>If instead, you wish to create your own project with a custom ant build file, open the org.lejos.example project, and look at what that does. 
+It is a free form Java project. It is in fact, the template project that the Netbeans plugin uses.</p>
+
+<p>To create a NXJ project using the plugin, select File&gt;New Project. then "Samples". In the
 Projects tab, select "NXJSample" and click next.  The New Project window will open.
 Type in the name you want to use, such as "myproject" and click "finish'"</p>
 
