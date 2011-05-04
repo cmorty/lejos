@@ -1420,7 +1420,7 @@ public class Bluetooth extends NXTCommDevice
 	 * @param cod the class of device to look for
 	 * @return a vector of all the devices found
 	 */
-	public static Vector<RemoteDevice> inquire(int maxDevices,  int timeout, byte[] cod) {
+	public static Vector<RemoteDevice> inquire(int maxDevices,  int timeout, int cod) {
 		Vector<RemoteDevice> retVec = new Vector<RemoteDevice>();
 		byte[] device = new byte[ADDRESS_LEN];
 		byte[] name = new byte[NAME_LEN];
@@ -1430,7 +1430,7 @@ public class Bluetooth extends NXTCommDevice
 			cmdStart();
 			cmdInit(MSG_BEGIN_INQUIRY, 8, maxDevices, 0);
 			cmdBuf[4] = (byte)timeout;
-			System.arraycopy(cod, 0, cmdBuf, 5, 4);	
+			intToBytesBE(cod, cmdBuf, 5);
 			while (cmdWait(RS_REPLY, state, MSG_ANY, TO_LONG) >= 0)
 			{
 				state = RS_WAIT;

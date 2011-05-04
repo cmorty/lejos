@@ -517,16 +517,13 @@ public class StartUpText
      */
     private void bluetoothSearch()
     {
-        byte[] cod =
-        {
-            0, 0, 0, 0
-        }; // All
         newScreen("Searching");
         Vector devList; 
         indiBT.incCount();
         try
         {
-	        devList = Bluetooth.inquire(5, 10, cod);
+        	// 0 means "search for all"
+	        devList = Bluetooth.inquire(5, 10, 0);
         }
 	    finally
 	    {
