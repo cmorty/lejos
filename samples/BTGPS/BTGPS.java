@@ -34,7 +34,7 @@ public class BTGPS{
 	private static String appVersion = "v6.8";
 
 	//Inquire code
-	private static byte[] cod = {0,0,0,0}; // 0,0,0,0 picks up every Bluetooth device regardless of Class of Device (cod).
+	private static int cod = 0; // 0 picks up every Bluetooth device regardless of Class of Device (cod).
 
 	//Bluetooth
 	private static RemoteDevice GPSDevice = null;
