@@ -45,6 +45,7 @@ public class ConsoleViewComms
      * @param name the name of the NXT or null
      * @param address the address of the NXT or null
      * @param useUSB use USB if true, else use Bluetooth
+     * @param lcd Request NXT LCD display contents
      * @return true iff the connection was successful
      */
     public boolean connectTo(String name, String address, boolean useUSB, boolean lcd)
@@ -58,6 +59,7 @@ public class ConsoleViewComms
      * @param name the name of the NXT or null
      * @param address the address of the NXT or null
      * @param protocol USB or Bluetooth or both
+     * @param lcd Request NXT LCD display contents
      * @return true iff the connection was successful
      */
     public boolean connectTo(String name, String address, int protocol, boolean lcd)
@@ -170,6 +172,7 @@ public class ConsoleViewComms
         	this.notifyAll();
         }
 
+        @Override
         public void run()
         {
             while (true)
