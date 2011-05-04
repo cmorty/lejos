@@ -50,8 +50,11 @@
 				<div class="linkAHEAD"><a href="#1">Main menu</a></div>
 				<div class="linkAHEAD"><a href="#2">Files menu</a></div>
 				<div class="linkAHEAD"><a href="#3">Bluetooth menu</a></div>
-				<div class="linkAHEAD2"><a href="#3.1">Devices</a></div>
-				<div class="linkAHEAD2"><a href="#3.2">Search</a></div>
+				<div class="linkAHEAD2"><a href="#3.1">Power On/Off</a></div>
+				<div class="linkAHEAD2"><a href="#3.2">Search/Pair</a></div>
+				<div class="linkAHEAD2"><a href="#3.3">Devices</a></div>
+				<div class="linkAHEAD2"><a href="#3.4">Visibility</a></div>
+				<div class="linkAHEAD2"><a href="#3.5">Change Pin</a></div>
 				<div class="linkAHEAD"><a href="#4">Sound menu</a></div>
 				<div class="linkAHEAD"><a href="#5">System</a></div>
 				<div class="linkAHEAD"><a href="#6">Version menu</a></div>
@@ -173,45 +176,24 @@
       			<h4>Bluetooth menu</h4>
       			<p>Pressing the right arrow from the Files menu icon, displays the Bluetooth menu icon: </p>
       			<img src="bluetooth.jpg"/>
-      			<div class="LCDBox">
-      				<p align="center">MYNXT BT</p>
-      				<p>Bluetooth</p>
-      				<p>Status off</p>
-      				<p>&gt;Power on</p>
-      			</div>
-      			<p>This saves battery power, but Bluetooth communication to or from the NXT is not possible. Pressing Enter turns the power on. </p>
-      			<p>When the power is on, the menu looks like this</p>
+      			
+      			<a name="#3.1"></a>
+      			<h5>Power On/Off</h5>
+
+      			<p>Pressing ENTER shows the Power On/Power Off Bluetooth submenu. This is the version when the power is on:</p>
       			<img src="bluetoothon.jpg"/>
-      			<p>The status line shows if power is on and where the device is visible to Bluetooth searches.</p>
-      			<p>The Visibility menu item switches visibility of the devices to Bluetooth inquiries on and off. When it is on the status line displays &#8220;vis&#8221; and when it is off, &#8220;invis&#8221;.</p>
-				<a href="#top">Back to top</a>
-				<p/>
-				
-				<a name="#3.1"></a>
-      			<h4>Devices</h4>
-      			<p>The Devices menu item lists the devices currently in the Known Devices list for you NXT.</p>
-      			<div class="LCDBox">
-      				<p align="center">Devices</p>
-      				<p>&gt;NXT1</p>
-      				<p>&nbsp;NXT2</p>
-      				<p>&nbsp;HOLUX_M-1200</p>
-      				<p/>
-      			</div>
-      			<p>Selecting a specific device will show details of it:</p>
-      			<div class="LCDBox">
-      				<p align="center">Devices</p>
-      				<p>NXT1</p>
-      				<p>001653007848</p>
-      				<p>0 0 0 4</p>
-      				<p>&gt;Remove</p>
-      			</div>
-     			<p>The first line give the name, the second the address, and the third the status of the four possible Bluetooth connections. </p>
-      			<p >The &#8220;Remove&#8221; menu item allows the device to be removed from the Known device list.</p>
-				<a href="#top">Back to top</a>
-				<p/>
-				
+      			
+      			<p>The status lines at the top show if power is on or off to the Bluetooth chip,  and whether the device is visible to Bluetooth searches.</p>
+      			
+      			<p>Switching the power off to the Bluetooth chip, increases battery life, but no Bluetooth capability is available until the power is switched back on.</p>
+      			<p>Press ENTER to switch the power off or back on.</p>
+						
       			<a name="#3.2"></a>
-      			<h4>Search</h4>
+      			<h5>Search/Pair</h5>
+      			
+      			<p>Pressing the right Button from the Power On/Off submenu, shows the Search/Pair submenu. </p>
+      			
+      			<img src="search.jpg"/>
       			<p>Selecting &#8220;Search&#8221; from the Bluetooth menu, starts a Bluetooth inquiry. The display is cleared and the first line displays &#8220;Searching&#8230;&#8221;. This takes about 10 seconds.</p>
       			<p>When the search is finished a menu of all the Bluetooth devices found, is displayed:</p>
       			<div class="LCDBox">
@@ -232,9 +214,45 @@
       				<br/>
       			</div>
       			<p>Selecting Add, adds the device to the list of know devices. This makes connecting to the devices from leJOS programs much easier.</p>    			
-      			<a href="#top">Back to top</a>
-      			<p/>
-      							
+				
+				<a name="#3.3"></a>
+      			<h5>Devices</h5>
+      			
+      			<p>Pressing the right button from the Search/Pair submenu icon, takes you to the Devices submenu icon:</p>
+      			
+      			<img src="devices.jpg"/>
+      			
+      			<p>Pressing enter shows the devices currently in the Known Devices list for your NXT:</p>
+      			
+      			<img src="devicelist.jpg"/>
+
+      			<p>Selecting a specific device will show details of it:</p>
+      			<div class="LCDBox">
+      				<p align="center">Devices</p>
+      				<p>NXT1</p>
+      				<p>001653007848</p>
+      				<p>0 0 0 4</p>
+      				<p>&gt;Remove</p>
+      			</div>
+      			
+     			<p>The first line give the name, the second the address, and the third the status of the four possible Bluetooth connections. </p>
+      			<p >The &#8220;Remove&#8221; menu item allows the device to be removed from the Known device list.</p>
+				
+				<a name="#3.4"></a>
+      			<h5>Visibility</h5>
+      			
+      			<p>Pressing the right button from the Devices submenu icon, shows the Visibility submenu:</p>
+      			
+      			<img src="visibility.jpg"/>
+      			
+				<p>Pressing Enter on the Visibility submenu switches visibility of the NXT device to Bluetooth inquiries on and off.
+				The status is shown on the Visibiliuty line at the top of the screen.</p>
+				
+      			<a name="#3.5"></a>
+      			<h5>Change Pin</h5>
+      			
+      			<p><a href="#top">Back to top</a></p>
+      						
 				<a name="#4"></a>
       			<h4>Sound</h4>
       			<p/>
