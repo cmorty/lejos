@@ -16,8 +16,8 @@
 		<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
 
 		<meta name='VW96.objecttype' content='Document' />
-		<meta http-equiv='content-language' content='en'>
-		<meta name='DC.Language' SCHEME='RFC1766' CONTENT='English' />
+		<meta http-equiv='content-language' content='en'/>
+		<meta name='DC.Language' scheme='RFC1766' content='English' />
 		<meta name='distribution' content='global' />
 		<meta name='resource-type' content='document' />
 
@@ -103,7 +103,7 @@
 					<h4>Importing the leJOS NXJ projects into Eclipse</h4>
 					
 					<p> You should first import the leJOS projects into your Eclipse workspace. 
-					The easiest way to do this is to select File > Import... and then choose General > Existing Projects into Workspace. 
+					The easiest way to do this is to select File &gt; Import... and then choose General &gt; Existing Projects into Workspace. 
 					Browse to the folder where you installed the leJOS projects (e.g. C:\Users\Me\leJOSNXJProjects or 
 					C:\Documents and Settings\Me\leJOSNXJSettings), and select them all to import.</p>
 					
@@ -132,7 +132,8 @@
 					Each folder contains a build.xml file which is a build file for the sample written using "ant". 
 					Ant is a build system specially designed for Java - it comes bundled with Eclipse.</p>
 					<p> There are other ways of building, uploading and running leJOS NXJ programs, 
-					such as using the leJOS Eclipse plugin, but the ant build files are easy to use, so we will start with them.
+					such as using the leJOS Eclipse plugin, but the ant build files are easy to use, so we will start with them.</p>
+					
 					<p> Ant build files have different "targets". The default target for the sample build.xml files is "uploadandrun". 
 					This means that if you run the build.xml file it will compile the Java source, 
 					link it with the standard leJOS classes (classes.jar) to produce a binary file and then upload ad run the binary file.</p>
@@ -143,7 +144,7 @@
 					
 					<p> You should see output like the following in the Console window:</p>
 					
-					<pre><font size=-2">
+					<pre>
 Buildfile: C:\Users\Lawrie\leJOSProjects\samples\BlueStats\build.xml
 clean:
 compile:
@@ -161,14 +162,14 @@ link:
      [java] Class 9: java.lang.ClassCastException
 ...
      [java] Class 38: lejos.nxt.Flash
-     [java] Method 0: Class: java.lang.Object Signature: <init>()V PC 3222 Signature id 2
+     [java] Method 0: Class: java.lang.Object Signature: &lt;init&gt;()V PC 3222 Signature id 2
      [java] Method 1: Class: java.lang.Object Signature: notifyAll()V Native id 5
      [java] Method 2: Class: java.lang.Object Signature: wait()V Native id 6
      [java] Method 3: Class: java.lang.Object Signature: wait(J)V Native id 7
      [java] Method 4: Class: java.lang.Object Signature: toString()Ljava/lang/String; PC 3223 Signature id 95
 ...
      [java] Method 147: Class: lejos.nxt.Flash Signature: writePage([BI)V Native id 75
-     [java] Method 148: Class: lejos.nxt.Flash Signature: <clinit>()V PC 9337 Signature id 3
+     [java] Method 148: Class: lejos.nxt.Flash Signature: &lt;clinit&gt;()V PC 9337 Signature id 3
      [java] Master record    : 16 bytes.
      [java] Class records    : 39 (390 bytes).
      [java] Field records    : 80 (80 bytes).
@@ -182,10 +183,10 @@ link:
      [java] Total            : 9597 bytes.
 uploadandrun:
      [java] Found nxt name NOISY address 001653007848
-     [java] leJOS NXJ> Upload successful in 1974 milliseconds
+     [java] leJOS NXJ&gt; Upload successful in 1974 milliseconds
 BUILD SUCCESSFUL
 Total time: 4 seconds
-</font></pre>
+</pre>
 					<p> This verbose output from the leJOS linker tells you all the classes and methods that have been included in your program. It is very useful for debugging your programs.</p>  
 					<p> You should see the Bluetooth statistics on your NXT LCD screen. You can stop the BlueStats program by pressing  the ESCAPE button on the NXT.</p>
 					<p> You can browse through the samples and try them out. Some of the samples need to communicate with a program on the PC - see <a href="#4">Using the PC samples project</a> below. 
@@ -249,7 +250,7 @@ Total time: 4 seconds
 					links the binary, uploads the binary and runs it </p>
 					
 					<p>Try right-clicking on build.xml and selecting "Ant Build". You should see the verbose output from the linker in the Eclipse
-					console windows and the binary will be uploaded to the NXT and run.<p/>
+					console windows and the binary will be uploaded to the NXT and run.</p>
 					
 					<p>If you want to run a different ant target, right-click on build.xml and select "Ant Build ...".</p>
 					
@@ -262,7 +263,7 @@ Total time: 4 seconds
 				    <p>This section describes how to create a project that uses an ant build file. If you prefer to use the Eclipse plugin,
 				    skip to <a href="#7">Installing the Eclipse plugin</a> below.</p>
 				   				
-					<p> To create a project, select File > New > Java Project. Give the project a name, e.g. "org.me.myproject" and press Finish to accept all the defaults.</p>
+					<p> To create a project, select File &gt; New &gt; Java Project. Give the project a name, e.g. "org.me.myproject" and press Finish to accept all the defaults.</p>
 					<p> You should now see "org.me.myproject" in the Package Explorer.</p>
 					
 					<p> You will need to add classes.jar to your project. To do this right-click on "org.me.myproject", select "Properties" and then "Java Build Path".
@@ -271,16 +272,16 @@ Total time: 4 seconds
 					
 					<p> You should use a package name for your project. We will also call our package "org.me.mypackage". </p>
 					
-					<p>Select the "src" folder in org.me.myproject, right-click on it and select New > Package
+					<p>Select the "src" folder in org.me.myproject, right-click on it and select New &gt; Package
 					   and type your package name.</p>
 					
 					<p> We now want to create main class.To do this, select the package you have just created, right-click on it and
-					select New > Class. Type in the class name - we will use "HelloWorld". Select the "public static void main(String[] args)" option.
+					select New &gt; Class. Type in the class name - we will use "HelloWorld". Select the "public static void main(String[] args)" option.
 					
 					You should now have a HelloWorld.java program containing:</p>
 					
 					<div class="CodeBox">
-					<code><pre>
+					<pre><code>
 package org.me.mypackage;
 
 public class HelloWorld {
@@ -292,13 +293,13 @@ public class HelloWorld {
         // TODO Auto-generated method stub
     }
 }
-				    </pre></code>
+				    </code></pre>
 				    </div>
 				    
 				    <p>Edit the source so it reads:</p>
 				    
 				    <div class="CodeBox">
-				    <code><pre>
+				    <pre><code>
 package org.me.mypackage;
 
 import lejos.nxt.*;
@@ -310,7 +311,7 @@ public class HelloWorld {
         Button.waitForPress();
     }
 }
-				    </pre></code>
+				    </code></pre>
 				    </div>
 				    
 				    <p> You will now need to build your project. One way to do this is to use an ant build file in the same way that the org.lejos.example project does.
