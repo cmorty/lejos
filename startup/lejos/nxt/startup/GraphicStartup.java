@@ -544,6 +544,7 @@ public class GraphicStartup {
     	int codRecord = (devCls[0] << 8) + devCls[1];
 		codRecord = (codRecord << 8) + devCls[2];
 		codRecord = (codRecord << 8) + devCls[3];
+		codRecord &= 0xffffff;
 		DeviceClass cls = new DeviceClass(codRecord);
 		switch(cls.getMajorDeviceClass()){
 			case(0x100):return ICMComp; // Computer Device
