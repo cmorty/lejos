@@ -1184,7 +1184,6 @@ public class Bluetooth extends NXTCommDevice
 		{
 			int state = RS_CMD;
 			byte[] device = new byte[ADDRESS_LEN];
-			byte[] devclass = new byte[4];
 			byte[] name = new byte[NAME_LEN];
 			Vector<RemoteDevice> retVec = new Vector<RemoteDevice>(1);
 			RemoteDevice curDevice;
@@ -1197,7 +1196,7 @@ public class Bluetooth extends NXTCommDevice
 				{
 					System.arraycopy(replyBuf, 2, device, 0, ADDRESS_LEN);
                     System.arraycopy(replyBuf, 9, name, 0, NAME_LEN);
-					System.arraycopy(replyBuf, 25, devclass, 0, 4);
+					int devclass = bytesToIntBE(replyBuf, 25);
 					curDevice = new RemoteDevice(nameToString(name), addressToString(device), devclass);
 					//1 RConsole.print("got name " + curDevice.getFriendlyName() + "\n");
 					retVec.addElement(curDevice);
@@ -1230,6 +1229,22 @@ public class Bluetooth extends NXTCommDevice
 		}
 		return null;
 	}
+	
+	private static void intToBytesBE(int v, byte[] b, int off)
+	{
+		b[off] = (byte)(v >>> 24);
+		b[off+1] = (byte)(v >>> 16);
+		b[off+2] = (byte)(v >>> 8);
+		b[off+3] = (byte)(v);
+	}
+
+	private static int bytesToIntBE(byte[] b, int off)
+	{
+		return (b[off] << 24)
+			| ((b[off+1] & 0xFF) << 16)
+			| ((b[off+2] & 0xFF) << 8)
+			| (b[off+3] & 0xFF);
+	}
 
 	/**
 	 * Add device to known devices
@@ -1239,7 +1254,7 @@ public class Bluetooth extends NXTCommDevice
 	public static boolean addDevice(RemoteDevice d) {
 		String addr = d.getDeviceAddr();
 		String name = d.getFriendlyName(false);
-		byte[] cod = d.getDeviceClass();
+		int cod = d.getDeviceClass();
 		//1 RConsole.print("addDevice " + name + "\n");
 		synchronized (Bluetooth.sync)
 		{
@@ -1247,7 +1262,7 @@ public class Bluetooth extends NXTCommDevice
 			cmdStart();
 			cmdInit(MSG_ADD_DEVICE, 28, 0, 0);
 			System.arraycopy(stringToAddress(addr), 0, cmdBuf, 2, ADDRESS_LEN);
-			System.arraycopy(cod, 0, cmdBuf, 25, 4);
+			intToBytesBE(cod, cmdBuf, 25);
             System.arraycopy(stringToName(name), 0, cmdBuf, 9, NAME_LEN);
 			if (cmdWait(RS_REPLY, RS_CMD, MSG_LIST_RESULT, TO_LONG) >= 0)	
 				ret = replyBuf[2] == 0x50;
@@ -1319,7 +1334,6 @@ public class Bluetooth extends NXTCommDevice
 		byte [] cod = {0,0,0,0}; // find all devices
 		byte[] device = new byte[ADDRESS_LEN];
 		byte[] name = new byte[NAME_LEN];
-        byte[] retCod = new byte[4];
         synchronized (Bluetooth.sync)
 		{
 			int state = RS_CMD;
@@ -1335,13 +1349,9 @@ public class Bluetooth extends NXTCommDevice
 				{
 					System.arraycopy(replyBuf, 2, device, 0, ADDRESS_LEN);
                     System.arraycopy(replyBuf, 9, name, 0, NAME_LEN);
-					System.arraycopy(replyBuf, 25, retCod, 0, 4);
+                    int retCod = bytesToIntBE(replyBuf, 25);
 					
-					int codRecord = (retCod[0] << 8) + retCod[1];
-					codRecord = (codRecord << 8) + retCod[2];
-					codRecord = (codRecord << 8) + retCod[3];
-					
-					final DeviceClass deviceClass = new DeviceClass(codRecord);
+					final DeviceClass deviceClass = new DeviceClass(retCod);
 					final RemoteDevice rd = new RemoteDevice(nameToString(name), addressToString(device), retCod);
 					
 					// Spawn a separate thread to notify in case doesn't return immediately:
@@ -1414,7 +1424,6 @@ public class Bluetooth extends NXTCommDevice
 		Vector<RemoteDevice> retVec = new Vector<RemoteDevice>();
 		byte[] device = new byte[ADDRESS_LEN];
 		byte[] name = new byte[NAME_LEN];
-        byte[] retCod = new byte[4];
 		synchronized (Bluetooth.sync)
 		{
 			int state = RS_CMD;
@@ -1429,7 +1438,7 @@ public class Bluetooth extends NXTCommDevice
 				{
 					System.arraycopy(replyBuf, 2, device, 0, ADDRESS_LEN);
                     System.arraycopy(replyBuf, 9, name, 0, NAME_LEN);
-					System.arraycopy(replyBuf, 25, retCod, 0, 4);
+					int retCod = bytesToIntBE(replyBuf, 25);
 					// add the Element to the Vector List
 					retVec.addElement(new RemoteDevice(nameToString(name), addressToString(device), retCod));
 				}

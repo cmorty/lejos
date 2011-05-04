@@ -48,8 +48,10 @@ public class DeviceClass {
 		minor = record & MINOR_MASK;
 		service = record & SERVICE_MASK;
 		
-		if ((record & 0xff000000) != 0)
-            throw new IllegalArgumentException();
+		// FIXME figure out why some devices have non-zero most significant byte
+		// until then, don't throw an exception
+		// if ((record & 0xff000000) != 0)
+        //    throw new IllegalArgumentException();
 	}
 	
 	/**

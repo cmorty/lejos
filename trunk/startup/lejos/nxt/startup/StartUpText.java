@@ -616,8 +616,7 @@ public class StartUpText
                     RemoteDevice btrd = ((RemoteDevice) devList.elementAt(selected));
                     LCD.drawString(btrd.getFriendlyName(false), 0, 2);
                     LCD.drawString(btrd.getBluetoothAddress(), 0, 3);
-                    for (int i = 0; i < 4; i++)
-                        LCD.drawInt(btrd.getDeviceClass()[i], 3, i * 4, 4);
+                    LCD.drawString("0x"+Integer.toHexString(btrd.getDeviceClass()), 0, 4);
                     int subSelection = getSelection(subMenu, 0);
                     if (subSelection == 0)
                     {
