@@ -540,13 +540,8 @@ public class GraphicStartup {
      * @param devCls Bluetooth Device Class
      * @return Icon
      */
-    private String getDeviceIcon(byte[] devCls){
-    	int codRecord = (devCls[0] << 24)
-         				| ((devCls[1] & 0xFF) << 16)
-         				| ((devCls[2] & 0xFF) << 8)
-         				| (devCls[3] & 0xFF);
-    	codRecord &= 0xffffff;
-		DeviceClass cls = new DeviceClass(codRecord);
+    private static String getDeviceIcon(int devCls){
+		DeviceClass cls = new DeviceClass(devCls);
 		switch(cls.getMajorDeviceClass()){
 			case(0x100):return ICMComp; // Computer Device
 			case(0x200):return ICMPhone; // Telephone Device
@@ -680,13 +675,14 @@ public class GraphicStartup {
             {
                 newScreen();
                 RemoteDevice btrd = devList.elementAt(selected);
+                int devclass = btrd.getDeviceClass();
                 LCD.bitBlt(
-                    	Utils.stringToBytes8(getDeviceIcon(btrd.getDeviceClass()))
+                    	Utils.stringToBytes8(getDeviceIcon(devclass))
                     	, 7, 7, 0, 0, 2, 16, 7, 7, LCD.ROP_COPY);
                 LCD.drawString(btrd.getFriendlyName(false), 2, 2);
                 LCD.drawString(btrd.getBluetoothAddress(), 0, 3);
-                for (int i = 0; i < 4; i++)
-                    LCD.drawInt(btrd.getDeviceClass()[i], 3, i * 4, 4);
+                // TODO device class is overwritten by menu
+                // LCD.drawString("0x"+Integer.toHexString(devclass), 0, 4);
                 int subSelection = getSelection(subMenu, 0);
                 if (subSelection == 0)
                 {

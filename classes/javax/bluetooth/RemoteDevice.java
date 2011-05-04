@@ -17,7 +17,7 @@ public class RemoteDevice {
 	
 	private String friendlyName;
 	
-	private byte[] deviceClass = new byte[4];
+	private int deviceClass;
 	
 	/**
 	 * Note: The standard JSR 82 method for obtaining a RemoteDevice
@@ -36,10 +36,10 @@ public class RemoteDevice {
 	}
 	
 	// !! DEV NOTES: Remove this whole method eventually.
-	public RemoteDevice(String name, String deviceAddr, byte [] devclass) {
+	public RemoteDevice(String name, String deviceAddr, int devclass) {
 		setFriendlyName(name);
 		setDeviceAddr(deviceAddr);
-		setDeviceClass(devclass);
+		this.deviceClass = devclass;
 	}
 
 	/*
@@ -103,14 +103,6 @@ public class RemoteDevice {
 	}
 	
 	
-	/*
-	 * TODO: REMOVE EVENTUALLY
-	 * DEV NOTES: This is not a standard JSR 82 method.
-	 */
-	public void setDeviceClass(byte[] devclass) {
-		for(int i=0;i<4;i++) deviceClass[i] = devclass[i];
-	}
-	
 	public String getBluetoothAddress() {
 		return addr;
 	}
@@ -127,7 +119,7 @@ public class RemoteDevice {
 	 * TODO: REMOVE EVENTUALLY
 	 * DEV NOTES: This is not a standard JSR 82 method.
 	 */
-	public byte[] getDeviceClass() {
+	public int getDeviceClass() {
 		return deviceClass;
 	}
 }
