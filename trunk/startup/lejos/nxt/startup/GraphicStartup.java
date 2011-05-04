@@ -541,10 +541,11 @@ public class GraphicStartup {
      * @return Icon
      */
     private String getDeviceIcon(byte[] devCls){
-    	int codRecord = (devCls[0] << 8) + devCls[1];
-		codRecord = (codRecord << 8) + devCls[2];
-		codRecord = (codRecord << 8) + devCls[3];
-		codRecord &= 0xffffff;
+    	int codRecord = (devCls[0] << 24)
+         				| ((devCls[1] & 0xFF) << 16)
+         				| ((devCls[2] & 0xFF) << 8)
+         				| (devCls[3] & 0xFF);
+    	codRecord &= 0xffffff;
 		DeviceClass cls = new DeviceClass(codRecord);
 		switch(cls.getMajorDeviceClass()){
 			case(0x100):return ICMComp; // Computer Device
