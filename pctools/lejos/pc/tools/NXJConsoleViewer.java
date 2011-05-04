@@ -308,7 +308,7 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
         topPanel.add(topLeftPanel);
         topPanel.add(lcd);
         add(topPanel, BorderLayout.NORTH);
-        theLog = new JTextArea(40, 40); // Center area of the frame
+        theLog = new JTextArea(); // Center area of the frame
         add(new JScrollPane(theLog), BorderLayout.CENTER);
 
         add(statusPanel, BorderLayout.SOUTH);
