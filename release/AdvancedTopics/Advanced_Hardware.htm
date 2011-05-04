@@ -49,21 +49,27 @@
 				<!-- LEFT NAVIGATION SYSTEM -->
 				<div class="nolinkLESSON">Advanced Motors, Sensors and Third Party Hardware</div>
 				<div class="linkAHEAD"><a href="#1">Motor interfaces</a></div>
-				<div class="linkAHEAD"><a href="#1">Unregulated Motor classes</a></div>
-				<div class="linkAHEAD2"><a href="#2">BasicMotor</a></div>
-				<div class="linkAHEAD2"><a href="#3">RCXMotor</a></div>
-				<div class="linkAHEAD2"><a href="#4">RCXMotor</a></div>
-				<div class="linkAHEAD2"><a href="#4">NXTRegulatedMotor</a></div>
-				<div class="linkAHEAD"><a href="#5">Motor Port classes</a></div>
-				<div class="linkAHEAD"><a href="#6">Sensor Ports</a></div>
-				<div class="linkAHEAD"><a href="#7">Sensors</a></div>
-				<div class="linkAHEAD"><a href="#8">RCX Sensors</a></div>
-				<div class="linkAHEAD2"><a href="#9">RCX Light Sensor</a></div>
-				<div class="linkAHEAD2"><a href="#10">RCX Touch Sensor</a></div>
-				<div class="linkAHEAD2"><a href="#11">RCX Rotation Sensor</a></div>
-				<div class="linkAHEAD2"><a href="#12">RCX Temperature Sensor</a></div>
-				<div class="linkAHEAD"><a href="#13">Third	Party sensors and other devices</a></div>
-				<div class="linkAHEAD"><a href="#14">I2CSensor</a></div>
+				<div class="linkAHEAD2"><a href="#1.1">BaseMotor</a></div>
+				<div class="linkAHEAD2"><a href="#1.2">DCMotor</a></div>
+				<div class="linkAHEAD2"><a href="#1,3">Encoder</a></div>
+				<div class="linkAHEAD2"><a href="#1,3">EncoderMotor</a></div>
+				<div class="linkAHEAD2"><a href="#1.4">Tachometer</a></div>
+				<div class="linkAHEAD2"><a href="#1.5">RegulatedMotor</a></div>
+				<div class="linkAHEAD"><a href="#2">Unregulated Motor classes</a></div>
+				<div class="linkAHEAD"><a href="#3">Regulated Motor classes</a></div>
+				<div class="linkAHEAD"><a href="#4">Motor Port classes</a></div>
+				<div class="linkAHEAD"><a href="#5">PF Motors</a></div>
+				<div class="linkAHEAD"><a href="#6">Servos and Linear Actuators</a></div>
+				<div class="linkAHEAD"><a href="#7">Motor multiplexers</a></div>
+				<div class="linkAHEAD"><a href="#8">Sensor Ports</a></div>
+				<div class="linkAHEAD"><a href="#9">Sensors</a></div>
+				<div class="linkAHEAD"><a href="#10">RCX Sensors</a></div>
+				<div class="linkAHEAD2"><a href="#10.1">RCX Light Sensor</a></div>
+				<div class="linkAHEAD2"><a href="#10.2">RCX Touch Sensor</a></div>
+				<div class="linkAHEAD2"><a href="#10.3">RCX Rotation Sensor</a></div>
+				<div class="linkAHEAD2"><a href="#10.4">RCX Temperature Sensor</a></div>
+				<div class="linkAHEAD"><a href="#11">Third	Party sensors and other devices</a></div>
+				<div class="linkAHEAD"><a href="#12">I2CSensor</a></div>
 			</td>
 			<td>
         		<div id="BreadCrumbs">
@@ -83,16 +89,17 @@
 				
 				<p>leJOS supports a variety of motors, including the NXT motors, RCX motors,
 				   PF motors, and a variety of servos. It supports them directly attached to a NXT
-				   motor port, or connected by a multiplexer, or via RCX converter cables, or connected to 
+				   motor port, or connected by a multiplexer, or via RCX or PF converter cables, or connected to 
 				   a remote NXT via Bluetooth or RS485, or connected to a remote RCX via an infrared
 				   link.</p>
 				   
 				<p>To help classify the types of motor, there are a set of motor interfaces in the lejos.robotics packages.
 				 These interfaces allow you to write programs that are essentially independent of the specific
-				 type of motor used, or the way it is connected. It is only the constructor for the a specific
+				 type of motor used and the way it is connected. It is only the constructor for the a specific
 				 motor and its connection that needs to change to use another type of motor or connection.</p>
 				 
-				 <h5>BaseMotor</h5>
+				<a name="1.1"></a>
+				<h5>BaseMotor</h5>
 				 
 				<p>The simplest interface that all motors implement is BaseMotor. It supports the methods:</p>
 				
@@ -104,6 +111,10 @@
 					<li>public void stop()</li>
 				</ul>
 				
+				<p>All leJOS NXJ motors implement this interface. However, servo motors are not currently supported as 
+				they do not normally support these methods.</p>
+				
+				<a name="1.2"></a>
 				<h5>DCMotor</h5>
 				
 				<p>The DCMotor interface extends BaseMotor and adds methods for setting the power
@@ -114,6 +125,9 @@
 					<li>public int getPower()</li>
 				</ul>
 				
+				<p>Unregulated motors without encoders, such as the RCX motor, support this interface.</p>
+				
+				<a name="1.3"></a>
 				<h5>Encoder</h5>
 				
 				<p>Some motors, such as the NXT motors, have built in encoders. The Encoder interfaces
@@ -124,11 +138,13 @@
 					<li>public void resetTachoCount();</li>
 				</ul>
 				
+				<a name="1.4"></a>
 				<h5>EncoderMotor</h5>
 				
-				<p>The EncodeMotor extends DCMotor and Encoder and adds no new methods. It is used for
-				unregulated motors with encoders. </p>
+				<p>The EncoderMotor interface extends DCMotor and Encoder and adds no new methods. It is used for
+				unregulated motors with encoders. The NXTMotor class implements this interface.</p>
 				
+				<a name="1.5"></a>
 				<h5>TachoMeter</h5>
 				
 				<p>Tachometers are more sophisticated encoders that not only give a tachometer
@@ -139,50 +155,86 @@
 					<li>public int getRotationSpeed();</li>
 				</ul>
 				
+				<a name="1.6"></a>
 				<h5>RegulatedMotor</h5>
 				
 				<p>The RegulatedMotor interface is used for motors that implement speed regulation and stopping
 				at a defined encoder count, such as the NXTRegulatedMotor class that implements the interface
 				for NXT motors.</p>
 				
-				<p>The RegulatedMotor interface extends BaseMotor and Tachometer and adds the following methods:</p>	
+				<p>The RegulatedMotor interface extends BaseMotor and Tachometer and adds the following methods:</p>
 				
 				<ul class="BlueArrows">
+					<li>public void addListener(RegulatedMotorListener listener);</li>
+					<li>public int getLimitAngle(;)</li>
+					<li>public float getMaxSpeed();</li>
+					<li>public int getSpeed();</li>
+					<li>public boolean isStalled();</li>
+					<li>public void rotate(int angle);</li>
+					<li>public void rotate(int angle, boolean immediateReturn);</li>
+					<li>public void rotateTo(int limitAngle);</li>
+					<li>public void rotateTo(int limitAngle, boolean immediateReturn);</li>
+					<li>public void setAcceleration(int acceleration);</li>
+					<li>public void setSpeed(int speed);</li>
+					<li>public void stop(boolean immediateReturn);</li>
+					<li>public void waitComplete();</li>
 				</ul>
 				
+				<p>NXTRegulatedMotor (which is the class of Motor.A, Motor.B, and Motor.C) support this interface. RemoteMotor
+				also supports it but with some restrictions.</p>
+				
+				<a name="1.7"></a>
 				<h5>RegulatedMotorListener</h5>
 				
-				<p>Regulated motors can fire events when they start and stop moving. The events
-				are defined by the RegulatedMotorListener interface:</p>
+				<p>Regulated motors must generate events when the motor starts and stops. Classes that listen for these
+				events implement the RegulatedMotorListener interface, which has the methods:</p>
 				
 				<ul class="BlueArrows">
-
+					<li>public void rotationStarted(RegulatedMotor motor, int tachoCount, boolean stalled, long timeStamp);</li>
+					<li>public void rotationStopped(RegulatedMotor motor, int tachoCount, boolean stalled, long timeStamp);</li>
 				</ul>
 				
+				<p>DifferentialPilot is an example of a class that supports this interface.</p>
+
+				<p><a href="#top">Back to top</a></p>
+								
 				<a name="2"></a>
 				<h4>Unregulated Motor classes</h4>
 				
-				<a name="2"></a>
+				<a name="2.1"></a>
 				<h5>BasicMotor</h5>				
 
-				<p>All unregulated leJOS NXJ Motor classes extend the abstract BasicMotor class. 
-				BasicMotor defines the methods that any type of leJOS NXJ motor must support and 
-				provides implementations for some of them. The methods are:</p>
+				<p>As well as the interface defined above, leJOS has an abstract motor class that simplify the implementation of 
+				the unregulated motor classes.</p>
+				
+				<p>BasicMotor is an abstract class which implements the DCMotor interface, and provide methods common to all implementations of unregulated motors.</p>
+				
+				<a name="2.2"></a>
+				<h5>NXTMotor</h5>
+				
+				<p>NXTMotor is a very simple implementation of an unregulated motor for NXT motors. It extends BasicMotor and implements
+				the Encoder interface method, and therefore implements the EncoderMotor interface.</p>
+				
+				<p>It is used for applications such as Segway robots that need to directly control the power supplied to the NXT motors,
+				and do not need speed regulation or rotation to a limit point.</p>
+				
+				<p>To use an NXTMotor you create an
+				instance of the NXTMotor class using one of the constructors:</p>
 				
 				<ul class="BlueArrows">
-					<li>public void setPower(int power)</li>
-					<li>public int getPower()</li>
-					<li>public void forward()</li>
-					<li>public void backward()</li>
-					<li>public boolean isMoving()</li>
-					<li>public void flt()</li>
-					<li>public void stop()</li>
+					<li>public NXTMotor(TachoMotorPort port);</li>
+					<li>public NXTMotor(TachoMotorPort port, int PWMMode);</li>
 				</ul>
 				
-				<a name="3"></a>
-				<h5>NXTMotor</h5>	
+				<p>Example:</p>
 				
-				<a name="3"></a>
+				<div class="CodeBox">
+				<pre><code>
+NXTMotor m1 = new NXTMotor(MotorPort.A);				
+				</code></pre>
+				</div>
+						
+				<a name="2.3"></a>
 				<h5>RCXMotor</h5>	
 			
 				<p>The RCX motors do not have an in-built
@@ -198,7 +250,7 @@
 				instance of the RCXMotor class using the constructor:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>public RCXMotor(BasicMotorPort port)</p></li>
+					<li>public RCXMotor(BasicMotorPort port)</li>
 				</ul>
 				
 				<p>Example:</p>
@@ -212,14 +264,36 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
 				<p>You can use RCX Motors with leJOS NXJ by connecting them with the conversion cables that can be purchased from 
 				LEGO (and are bundled with the LEGO MINDSTORMS NXT educational kits). You can also use the RCXMotor class to control
 				RCX motors connected to a remote RCX - see the "Communications" tutorial.</p>
-
-				<a name="4"></a>
-				<h5>Motor</h5>	
-			
-				<p>This class controls the NXT motors which have a built in tachometer, and is
-				described in <a href="../MotorTutorial/ControllingMotors.htm">Controlling the Motors</a></p>
 				
-				<a name="5"></a>
+				<p>RCXMotor extends BasicMotor and therefore implements the DCMotor interface.</p>
+				
+				<p>RCX motors can be connected to a sensor port via the RCXMotorMultiplxer device.
+				This allows up to 4 RCX motors to be connected and thus entends the number of motors
+				that a NXT can support.</p>
+				
+				<p>RCX Motors can be attached to RCX bricks and controlled remotely via the
+				Mindsensors NRLink device using the RCXRemoteMotorPort class.</p>
+
+				<p><a href="#top">Back to top</a></p>
+				
+				<a name="3"></a>
+				<h4>Regulated motor classes</h4>	
+			
+				<p>The NXTRegulatedMotor class controls the NXT motors, and is
+				described in <a href="../MotorTutorial/ControllingMotors.htm">Controlling the Motors</a>. It implements
+				speed regulation and rotation by a specified number of degrees. Motor.A, Motor.B and Motor.C are instances of NXTRegulatedMotor.</p>
+					
+				<p>RemoteMotor also implements the RegulatedMotor class but with restrictions. It sends LCP commands to a remote NXT,
+				which uses an instance of NXTRegulatedMotor to implement them. RemoteMotor is available on the NXT and on the PC (via the pccomms API).
+				On the PC, Motor.A, Motor.B and Motor.C are instances of RemoteMotor.</p>
+				
+				<p>On the NXT, RemoteMotor can be used to control motors on another NXT either over Bluetooth, or using RS485, 
+				by connecting port 4 of the two NXTs via a NXT cable. RS485 has lower latency than Bluetooth, so the motors will be
+				more responsive over RS485.</p>
+
+				<p><a href="#top">Back to top</a></p>
+								
+				<a name="4"></a>
 				<h4>MotorPort classes</h4>
 				
 				<p>To use the NXT motors it is not
@@ -230,19 +304,19 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
 				<p>However it is useful to understand how motor ports work as they are used by:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>The Motor class</p></li>
-					<li><p>The RCXMotor class</p></li>
-					<li><p>The RemoteNXT class</p></li>
-					<li><p>The RCXMotorMultiplexer class</p></li>
-					<li><p>Remote RCX motors accessed via the RCXLink class</p></li>
+					<li>The NXTRegulatedMotor class</li>
+					<li>The RCXMotor class</li>
+					<li>The RemoteNXT class</li>
+					<li>The RCXMotorMultiplexer class</li>
+					<li>Remote RCX motors accessed via the RCXLink class</li>
 				</ul>
 				
 				<p>There is a hierarchy of interfaces defined for motor ports:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>BasicMotorPort</p></li>
-					<li><p>Tachometer</p></li>
-					<li><p>TachoMotorPort</p></li>
+					<li>BasicMotorPort</li>
+					<li>Tachometer</li>
+					<li>TachoMotorPort</li>
 				</ul>
 				
 				<p>All motor ports support the
@@ -252,20 +326,21 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
 				<p>Ports that supports this include:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>NXT ports connected to NXT motors</p></li>
-					<li><p>NXT ports connected via the RCX conversion cable to RCX motors</p></li>
-					<li><p>Ports on the RCXMotorMultiplexer adapter</p></li>
-					<li><p>Ports on remote NXTs accessed via the RemoteNXT class</p></li>
-					<li><p>Ports on remote RCXs accessed via the RCXLink class</p></li>
+					<li>NXT ports connected to NXT motors</li>
+					<li>NXT ports connected via the RCX conversion cable to RCX motors</li>
+					<li>Ports on the RCXMotorMultiplexer adapter</li>
+					<li>Ports on remote NXTs accessed via the RemoteNXT class</li>
+					<li>Ports on remote RCXs accessed via the RCXLink class</li>
 				</ul>
 				
 				<p>The implementations of BasicMotorPort include:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>MotorPort</p></li>
-					<li><p>RemoteMotorPort</p></li>
-					<li><p>RCXPlexedMotorPort</p></li>
-					<li><p>RCXRemoteMotorPort</p></li>
+					<li>MotorPort</li>
+					<li>PFMotorPort</li>
+					<li>RemoteMotorPort</li>
+					<li>RCXPlexedMotorPort</li>
+					<li>RCXRemoteMotorPort</li>
 				</ul>
 
 				<p>The tachometers that are built in to the NXT motors support the Tachometer interface.</p>
@@ -275,28 +350,80 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
 				<p>Implementations of TachoMotorPort include:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>MotorPort</p></li>
-					<li><p>RemoteMotorPort</p></li>
+					<li>MotorPort</li>
+					<li>RemoteMotorPort</li>
 				</ul>
 
 				<p>All this sounds rather complicated, but is simple to use:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>For NXT motors, you use Motor.A, Motor.B	and Motor.C</p></li>
-					<li><p>For RCX motors connected by the conversion cable you use RCXMotor(MotorPort.A), RCXMotor(MotorPort.B) or
-						RCXMotor(MotorPort.C)</p></li>
-					<li><p>For NXT motors on a remote NXT, you use remoteNXT.Motor.A, remoteNXT.Motor.B or remoteNXT.Motor.C where
-						remoteNXT is an instance of RemoteNXT.</p></li>
-					<li><p>For RCX motors connected by the RCX Motor Multiplexer, you use rcxMotorMultiplexer.A,
+					<li>For NXT motors, you use Motor.A, Motor.B and Motor.C</li>
+					<li>For RCX motors connected by the conversion cable you use RCXMotor(MotorPort.A), RCXMotor(MotorPort.B) or
+						RCXMotor(MotorPort.C)</li>
+					<li>For NXT motors on a remote NXT, you use remoteNXT.Motor.A, remoteNXT.Motor.B or remoteNXT.Motor.C where
+						remoteNXT is an instance of RemoteNXT.</li>
+					<li>For RCX motors connected by the RCX Motor Multiplexer, you use rcxMotorMultiplexer.A,
 						rcxMotorMultiplexer.B, rcxMotorMultiPlexer.C or	rcxMotorMultiplexer.D, 
-						where rcxMotorMultiplexer is an instance of RCXMotorMultiPlexer.</p></li>
-					<li><p>For RCX motors connected t remote RCXs via the RCXLink class you use rcxLink.A, rcxLink.B or rcxLink.C where
-						rcxLink is an instance of the RCXLink class.</p></li>
+						where rcxMotorMultiplexer is an instance of RCXMotorMultiPlexer.</li>
+					<li>For RCX motors connected t remote RCXs via the RCXLink class you use rcxLink.A, rcxLink.B or rcxLink.C where
+						rcxLink is an instance of the RCXLink class.</li>
 				</ul>
+				<p><a href="#top">Back to top</a></p>
+				
+				<a name="5"></a>
+				<h4>LEGO Power Function motors</h4>
+				
+				<p>LEGO PF motors can be controlled by leJOS NXJ in a variety of ways. They can be directly connected to the NXT via 
+				converter cables, or they can be controlled remotely using their IR receivers use several different third party devices.</p>
+				
+				<p>If you use converter cables, then PF motors are best driven using the RCXMotor class.</p>
+				
+				<p>To drive PF Motors remotely, via the IR Receiver, three different devices can be used. </p>
+				
+				<p>The Mindsensors PFMate device is designed to drive PF motors directly. This device is supported by the PFMate and PFMateMotor
+				classes. PFMate implements the DCMotor interface, and therefore provides similar methods to RCXMotor.</p>
+				
+				<p>Using the HiTechnic IRLink device, one way to drive PF motors is to use the PFMotorPort class. This provides a BasicMotorPort interface
+				and so can be used as the BasicMotorPort parameter for the RCXMotor constructor. This allows RCXMotor to drive 
+				remotely connected PF motors. Another option is to use the methods of the PFLink class directly. This gives greater
+				control but the methods are specific to this device.</p>
+				
+				<p>A third device that can be used to drive PF motors is the Mindsensors NRLink. The PFLink 
+				class can be used to drive this device and send commands to the PF motors. The methods are specific
+				to this device and none of the motor or motor port interfaces are supported.</p>
 
 				<p><a href="#top">Back to top</a></p>
 
 				<a name="6"></a>
+				<h4>Servos and Linear Actuators</h4>
+				
+				<p>leJOS NXJ has several classes in lejos.nxt.addon to support Servo motors.</p>
+				
+				<p>The Mindsensors MSC8 device is supported by the MSC and MServo classes. MSC represents the controller,
+				which allows up to 8 servo motors to be connected. MServo represents each servo. the main methods are setSpeed
+				and setAngle. None of the motor interfaces are supported.</p>
+				
+				<p>The Lattebox range of products is supported by the NXTe, LSC and LServo classes.</p>
+				
+				<p>Firgelli L12-NXT-50 and L12-NXT-100 Linear Actuators are supported by the LnrActuator class.</p>
+
+				<p><a href="#top">Back to top</a></p>
+				
+				<a name="7"></a>
+				<h4>Motor multiplexers</h4>
+				
+				<p>The motor multiplexors supported by leJOS NXJ are:</p>
+
+				<ul class="BlueArrows">
+					<li>Mindsensors RCX multiplexer</li>
+					<li>Mindsensors NXT multiplexer</li>
+				</ul>
+				
+				<p>The RCX multiplexor is supported by the RCXMotorMultiplexor and RCXPlexdMotorPort classes.</p>				
+
+				<p><a href="#top">Back to top</a></p>
+												
+				<a name="8"></a>
 				<h4>Sensor Ports</h4>
 				
 				<p>If you are using a sensor connected
@@ -309,18 +436,18 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
 				different types of sensor:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>NXT Analog/Digital Sensors</p></li>
-					<li><p>I2C Sensors</p></li>
-					<li><p>Legacy RCX sensors</p></li>
+					<li>NXT Analog/Digital Sensors</li>
+					<li>I2C Sensors</li>
+					<li>Legacy RCX sensors</li>
 				</ul>
 				
 				<p>Corresponding to each of the
 				different types of sensor, there is a corresponding interface:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>ADSensorPort which extends BasicSensorPort</p></li>
-					<li><p>I2CPort extends BasicSensorPort</p></li>
-					<li><p>LegacySensorPort extends ADSensorPort</p></li>
+					<li>ADSensorPort which extends BasicSensorPort</li>
+					<li>I2CPort extends BasicSensorPort</li>
+					<li>LegacySensorPort extends ADSensorPort</li>
 				</ul>
 				
 				<p>At the top of the interface
@@ -588,25 +715,25 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
 				defines the methods:</p>
 				
 				<ul class="BlueArrows">
-					<li><p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>public</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
+					<li><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>public</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
 					</font></font></font><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-					getmode();</font></font></font></p></li>
-					<li><p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>public</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
+					getmode();</font></font></font></li>
+					<li><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>public</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
 					</font></font></font><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-					gettype();</font></font></font></p></li>
-					<li><p><font color="#7f0055"><font face="courier new, monospace"><font size=2><span lang="fr-fr"><b>public</b></span></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2><span lang="fr-fr">
+					gettype();</font></font></font></li>
+					<li><font color="#7f0055"><font face="courier new, monospace"><font size=2><span lang="fr-fr"><b>public</b></span></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2><span lang="fr-fr">
 					</span></font></font></font><font color="#7f0055"><font face="courier new, monospace"><font size=2><span lang="fr-fr"><b>void</b></span></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2><span lang="fr-fr">
 					setmode(</span></font></font></font><font color="#7f0055"><font face="courier new, monospace"><font size=2><span lang="fr-fr"><b>int</b></span></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2><span lang="fr-fr">
-					mode);</span></font></font></font></p></li>
-					<li><p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>public</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
+					mode);</span></font></font></font></li>
+					<li><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>public</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
 					</font></font></font><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>void</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
 					settype(</font></font></font><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-					type);</font></font></font></p></li>
-					<li><p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>public</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
+					type);</font></font></font></li>
+					<li><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>public</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
 					</font></font></font><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>void</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
 					settypeandmode(</font></font></font><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
 					type, </font></font></font><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-					mode);</font></font></font></p></li>
+					mode);</font></font></font></li>
 				</ul>
 				
 				<p>Most of the time, with leJOS NXJ,
@@ -623,11 +750,11 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
 				implemented:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>I2C Sensors just require I2CPort</p></li>
-					<li><p>NXT Analog/Digital sensors just require
-					ADSensorPort</p></li>
-					<li><p>RCX sensors such as the RCX Light sensor
-					require LegacySensorPort</p></li>
+					<li>I2C Sensors just require I2CPort</li>
+					<li>NXT Analog/Digital sensors just require
+					ADSensorPort</li>
+					<li>RCX sensors such as the RCX Light sensor
+					require LegacySensorPort</li>
 				</ul>
 				
 				<p>Port splitters like the Mindsensors
@@ -645,7 +772,7 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
 
 				<p><a href="#top">Back to top</a></p>
 
-				<a name="7"></a>
+				<a name="9"></a>
 				<h4>Sensors</h4>
 				
 				<p>Each sensor supported by leJOS NXJ
@@ -1097,7 +1224,9 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
              		</tbody>
               	</table>
 			
-				<a name="8"></a>
+				<p><a href="#top">Back to top</a></p>
+				
+				<a name="10"></a>
 				<h4>RCX Sensors</h4>
 			
 				<p>RCX sensors, other than the touch
@@ -1105,7 +1234,7 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
 				the short period every three milliseconds when the measurement is
 				taken.</p>
 				
-				<a name="9"></a>
+				<a name="10.1"></a>
 				<h5>RCX Light Sensor</h5>
 				
 				<p>The RCX light sensor is supported by the RCXLightSensor class.</p>
@@ -1113,7 +1242,7 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
 				<p>The constructor is:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>public RCXLightSensor(LegacySensorPort port)</p></li>
+					<li>public RCXLightSensor(LegacySensorPort port)</li>
 				</ul>
 				
 				<p>For example:</p>
@@ -1129,37 +1258,39 @@ RCXLightSensor light = new RCXLightSensor(SensorPort.S1);
 				<p>The methods are:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>public int readValue()</p></li>
-					<li><p>public void activate()</p></li>
-					<li><p>public void passivate()</p></li>
+					<li>public int readValue()</li>
+					<li>public void activate()</li>
+					<li>public void passivate()</li>
 				</ul>
 			
-				<a name="10"></a>
+				<a name="10.2"></a>
 				<h5>RCX Touch Sensor</h5>
 			
 				<p>As the RCX touch sensor is a
 				passive sensor similar to the NXT version, it is supported by the
 				standard TouchSensor class.</p>
 				
-				<a name="11"></a>
+				<a name="10.3"></a>
 				<h5>RCX Rotation Sensor</h5>
 				
 				<p>The RCX rotation sensor is not currently supported by leJOS NXJ.</p>
 				
-				<a name="12"></a>
+				<a name=10.4"></a>
 				<h5>RCX Temperature Sensor</h5>
 				
 				<p>The constructor is:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>public RCXTemperatureSensor(LegacySensorPort port)</p></li>
-					<li><p>The methods are:</p></li>
-					<li><p>int readValue()</p><p>returns raw value</p></li>
-					<li><p>float getCelcius()</p><p>return the temperature in degrees Celcius</p></li>
-					<li><p>float getFarenheit()</p><p>return the temperature in degrees Farenheit</p></li>
+					<li>public RCXTemperatureSensor(LegacySensorPort port)</li>
+					<li>The methods are:</li>
+					<li>int readValue() - returns raw value</li>
+					<li>float getCelcius() - return the temperature in degrees Celcius</li>
+					<li>float getFarenheit() - return the temperature in degrees Farenheit</li>
 				</ul>
-				
-				<a name="13"></a>
+
+				<p><a href="#top">Back to top</a></p>
+								
+				<a name="11"></a>
 				<h4>Third party sensors and other devices</h4>
 			
 				<p>leJOS NXJ supports many third party sensors. The two main vendors of third party sensors are
@@ -1177,8 +1308,10 @@ RCXLightSensor light = new RCXLightSensor(SensorPort.S1);
 				<p>The Mindstorms NRLink-Nx  infra-red communications adapter is an example of an adapter.  It allows
 				two-way communication between the NXT and RCXs. It also allows control of Power Function motors. 
 				</p>
-			
-				<a name="14"></a>
+
+				<p><a href="#top">Back to top</a></p>
+							
+				<a name="11"></a>
 				<h4>I2CSensor</h4>
 			
 				<p>The I2CSensor class implements the basic methods for accessing I2C sensors including getData and	SendData.</p>
@@ -1189,23 +1322,13 @@ RCXLightSensor light = new RCXLightSensor(SensorPort.S1);
 				<p>The method signatures are:</p>
 			
 				<ul class="BlueArrows">
-					<li><p>public int getData(int register, byte []	buf, int len)</p></li>
-					<li><p>public int sendData(int register, byte [] buf, int len)</p></li>
-					<li><p>public int sendData(int register, byte value)</p></li>
-					<li><p>public String getVersion()</p></li>
-					<li><p>public String getProductID()</p></li>
-					<li><p>public String getSensorType()</p></li>
+					<li>public int getData(int register, byte []	buf, int len)</li>
+					<li>public int sendData(int register, byte [] buf, int len)</li>
+					<li>public int sendData(int register, byte value)</li>
+					<li>public String getVersion()</li>
+					<li>public String getProductID()</li>
+					<li>public String getSensorType()</li>
 				</ul>
-			
-				<p>leJOS NXJ uses 7-bit I2C addresses,
-				whereas I2C device specification often give them as 8-bit
-				addresses with the least significant bit set to zero. Most I2C
-				sensors use a default address of 0x01, which such specifications
-				give as 0x02. Most I2C devices allow the address to be changed.</p>
-			
-				<p>The setAddress method can be used
-				to set the address used to talk to the I2C device &ndash; it
-				defaults to 0x01.</p>
 			
 				<p>Individual I2C devices have
 				registers that can be read and written and registers that can be
