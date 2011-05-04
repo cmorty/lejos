@@ -50,20 +50,16 @@
 				<!-- LEFT NAVIGATION SYSTEM -->
 				<div class="nolinkLESSON">Advanced	Topics: Files, LCP, Memory, NXJ Tools</div>
 				<div class="linkAHEAD"><a href="#1">Understanding	the leJOS File System</a></div>
-				<div class="linkAHEAD2"><a href="#2">Flash</a></div>
-				<div class="linkAHEAD2"><a href="#3">File</a></div>
-				<div class="linkAHEAD2"><a href="#4">FileOutputstream</a></div>
-				<div class="linkAHEAD2"><a href="#5">FileInputstream</a></div>
-				<div class="linkAHEAD"><a href="#6">Understanding LCP</a></div>
-				<div class="linkAHEAD"><a href="#7">Understanding leJOS NXJ use of memory</a></div>
-				<div class="linkAHEAD"><a href="#8">Understanding the leJOS NXJ tools</a></div>
-				<div class="linkAHEAD2"><a href="#9">nxjflash</a></div>
-				<div class="linkAHEAD2"><a href="#10">nxjupload</a></div>
-				<div class="linkAHEAD2"><a href="#11">nxjlink</a></div>
-				<div class="linkAHEAD2"><a href="#12">nxj</a></div>
-				<div class="linkAHEAD2"><a href="#13">nxjc</a></div>
-				<div class="linkAHEAD2"><a href="#14">nxjpc</a></div>
-				<div class="linkAHEAD2"><a href="#15">nxjpcc</a></div>																
+				<div class="linkAHEAD2"><a href="#1.1">Flash</a></div>
+				<div class="linkAHEAD2"><a href="#1.2">File</a></div>
+				<div class="linkAHEAD2"><a href="#1.3">FileOutputstream</a></div>
+				<div class="linkAHEAD2"><a href="#1.4">FileInputstream</a></div>
+				<div class="linkAHEAD"><a href="#2">Understanding LCP</a></div>
+				<div class="linkAHEAD"><a href="#3">Understanding leJOS NXJ use of memory</a></div>
+				<div class="linkAHEAD"><a href="#4">Understanding the key leJOS NXJ tools</a></div>
+				<div class="linkAHEAD2"><a href="#4.1">nxjflash</a></div>
+				<div class="linkAHEAD2"><a href="#4.2">nxjupload</a></div>
+				<div class="linkAHEAD2"><a href="4.3">nxjlink</a></div>																
 			</td>
 			<td>
         		<div id="BreadCrumbs">
@@ -80,23 +76,35 @@
         		
         		<a name="1"></a>
 				<h4>Understanding the leJOS File System</h4>
+				
+				<p>The NXT has 256kb of flash memory. A fixed section at the start of the flash memory is allocated to the system. It is used to 
+				hold the firmware, followed by the startup menu. The rest of this system area is unused. The size of
+				the system area varies between releases.</p>
+				
+				<p>The firmware is written in C, with some ARM assembly language. The startup menu is written in Java (in the startup project in SVN).</p>
+				
+				<p>Flash memory is read and written in 256-byte pages. The first page after the system area is
+				used for persistent system settings administered by the startup menu. </p>
 
-				<p>leJOS NXJ implements a file system
-				using flash memory. The flash memory is read and written in
-				256-byte pages. The first two pages hold the file table
-				(directory) and the rest of the pages hold user files. Files are
+				<p>The rest of the flash memory is used for the user file system. The first two pages hold the file table
+				(directory),  and the rest of the pages hold user files. Files are
 				held as a contiguous set of bytes &ndash; i.e they use a single
 				range of page numbers with no gaps. This allows a file to be
 				addressed as a region of memory.</p>
 				
-       			<a name="2"></a>
-				<h5>Flash</h5>
+       			<a name="1.1"></a>
+				<h5>The Flash class</h5>
 				
 				<p>The Flash class has methods to read and write 256-byte pages of flash memory. 
 				   It should not be	used by user programs.</p>
+
+       			<a name="1.2"></a>
+				<h5>The System Settings class</h5>
 				
-       			<a name="3"></a>
-				<h5>File</h5>
+				<p>The SystemSettings class is used to administer the system settings page. It should not be used by user programs.</p>	
+							
+       			<a name="1.3"></a>
+				<h5>The File class</h5>
 			
 				<p>The File class has static methods
 				that manipulate the file system as a whole and instance methods
@@ -105,26 +113,14 @@
 				<p>Static methods:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>void defrag()</p><p>removes unused pages in the file system.</p></li>
-					<li><p>void format()</p><p>erases all the files and	reformats the flash memory.</p></li>
-					<li><p>int freeMemory()</p><p>returns the total free memory in the file system.</p></li>
-					<li><p>File[] listfiles()</p><p>returns an array of	files in the system</p></li>
+					<li>void defrag() - removes unused pages in the file system.</li>
+					<li>void format() - erases all the files and	reformats the flash memory.</li>
+					<li>int freeMemory() - returns the total free memory in the file system.</li>
+					<li>File[] listfiles() - returns an array of	files in the system</li>
 				</ul>
 			
-				<p>To a create a new file, you first call the constructor</p>
-				
-				<ul class="BlueArrows">
-					<li><p>File(String name)</p></li>
-				</ul>
-			
-				<p>then</p>
-				
-				<ul class="BlueArrows">
-					<li><p>create newFile();</p><p>This method throws an IOException, so must be in a try/catch block.</p></li>
-				</ul>
-			
-				<p>To read and write data, you need to
-				use streams. The stream constructors also throw an IOException so
+				<p>To read and write files, you need to
+				use streams. The stream constructors throw an IOException so
 				they also must be in a try/catch block.</p>
 			
 				<p>The file streams read and write
@@ -132,20 +128,20 @@
 				filter. 
 				</p>
 			
-       			<a name="4"></a>
+       			<a name="1.4"></a>
 				<h5>FileOutputStream</h5>
 			
 				<p>The constructors are:</p>
 			
 				<ul class="BlueArrows">
-					<li><p>FileOutputStream(File f) </p><p>createa new OutputStream to write to this file, starting at the
-						beginning of the file.methods:</p></li>
-					<li><p>FileOutputStream(File f, boolean append)
-						</p><p>create a new OutputStream to write to this file</p></li>
-					<li><p>void write(int b) </p><p>write 1 byte to	the file</p></li>
-					<li><p>void flush() </p><p>Flushes this output stream and forces any buffered output bytes to be written</p></li>
-					<li><p>void close()</p><p>Write the buffer to flash	memory and update the file parameters in flash. Be sure to call
-						this method before your program exits.</p></li>
+					<li>FileOutputStream(File f) - creates new OutputStream to write to this file, starting at the
+						beginning of the file. The file is deleted if it already exists. A new file is then created. Methods:</li>
+					<li>FileOutputStream(File f, boolean append)
+						 - create a new OutputStream to write to this file</li>
+					<li>void write(int b)  - write 1 byte to	the file</li>
+					<li>void flush()  - Flushes this output stream and forces any buffered output bytes to be written</li>
+					<li>void close() - Write the buffer to flash	memory and update the file parameters in flash. Be sure to call
+						this method before your program exits.</li>
 				</ul>
 			
 				<p>Example:</p>
@@ -161,9 +157,12 @@ public class FileWriteTest {
     File data = new File("log.dat");
 
     try {
-      data.createNewFile();
       out = new FileOutputStream(data);
-    } catch(IOException e) {}
+    } catch(IOException e) {
+    	System.err.println("Failed to create output stream");
+    	Button.waitForPress();
+    	System.exit(1);
+    }
 
     DataOutputStream dataOut = new DataOutputStream(out);
 
@@ -173,12 +172,11 @@ public class FileWriteTest {
     try { // write
       for(int i = 0 ; i&lt;length; i++ ) {
         dataOut.writeFloat(x);
-        LCD.drawString(" "+x,0,i);
         x = x*-2.2f; 
       }
       out.close(); // flush the buffer and write the file
     } catch (IOException e) {
-      LCD.drawString("write error", 0, 3);
+      System.err.println("Failed to write to output stream");
     }
     Sound.beep();
     Button.waitForPress();
@@ -189,20 +187,22 @@ public class FileWriteTest {
 				
 				<p>After you run this example, look	for the newly created file in the Files menu.</p>
 				
-				<a name=""></a>
+				<p>You can also use the PrintStream class or the OutputStreamWriter class to write to files.</p>
+				
+				<a name="1.5"></a>
 				<h5>FileInputStream</h5>
 				
 				<p>The constructor is:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>FileInputStream( File afile)</p></li>
+					<li>FileInputStream( File afile)</li>
 				</ul>
 			
 				<p>Methods:</p>
 				
 				<ul class="BlueArrows">
-					<li><p>int read()</p><p>returns a value	between 0 and 255, representing a single byte</p></li>
-					<li><p>int available()</p><p>returns the number of bytes available to be read.</p></li>
+					<li>int read() - returns a value	between 0 and 255, representing a single byte</li>
+					<li>int available() - returns the number of bytes available to be read.</li>
 				</ul>
 
 				<p>Here is an example that reads the file</p>
@@ -222,14 +222,13 @@ public class FileReadTest {
       DataInputStream din = new DataInputStream(is);
 
       while (is.available() &gt; 3) { // at least 4 bytes left to read
-        LCD.drawInt(is.available(), 4, 10, 0);
         float x = din.readFloat();
 
-        LCD.drawString("" + x, 0, i++);
+        System.out.println("" + x);
       }
       din.close();
     } catch (IOException ioe) {
-      LCD.drawString("read exception", 0, 0);
+      System.err.println("Read Exception");
     }
     Button.waitForPress();
   }
@@ -239,7 +238,7 @@ public class FileReadTest {
 				
 				<p><a href="#top">Back to top</a></p>
 
-       			<a name="6"></a>
+       			<a name="2"></a>
 				<h5>Understanding LCP</h5>
 
 				<p>LEGO defines a protocol called the LEGO
@@ -269,14 +268,14 @@ public class FileReadTest {
 				differently than the standard firmware, the semantics of LCP on
 				leJOS are not always identical to the standard LEGO firmware.</p>
 
-				<p>The start-up menu &ndash; StartUpTextjava &ndash;
+				<p>The start-up menu 
 				uses LCP to support the leJOS NXJ tools and third-party tools.
 				This means that LCP commands can be executed over Bluetooth or USB
 				when the menu is running.</p>
 
 				<p><a href="#top">Back to top</a></p>
 
-       			<a name="7"></a>
+       			<a name="3"></a>
 				<h4>Understanding leJOS NXJ use of memory</h4>				
 
 				<p>The NXT has 256kb of flash memory and 64kb of RAM.</p>
@@ -290,9 +289,8 @@ public class FileReadTest {
 				combination of C and ARM assembler code. It consists of the
 				initialization code, the Java VM and device drivers for all the
 				hardware subsystems. The leJOS firmware is a complete firmware
-				replacement and has no reliance on the standard LEGO firmware. The
-				first 32kb of flash memory is allocated to the leJOS NXJ firmware.
-				Most code is executed from flash memory, but a`small amount (e.g.
+				replacement and has no reliance on the standard LEGO firmware. 
+				Most code is executed from flash memory, but a small amount (e.g.
 				the code that writes pages of flash memory) is copied to RAM.
 				Read-only data is held in flash memory but read/write data is
 				copied to RAM. The firmware uses a fixed size stack and interrupt
@@ -306,11 +304,6 @@ public class FileReadTest {
 				programs. 
 				</p>
 
-				<p>The start-up menu occupies up to 48kb of memory
-				that starts at address 32k (i.e. after the end of the firmware).
-				The last word of the 48kb allocated to the start-up menu holds the
-				size of the start-up menu).</p>
-
 				<p>Java programs execute from flash memory. Static
 				read-only data is held in flash memory. Static read-write data is
 				copied to RAM. Objects are created in a heap that starts at the
@@ -320,14 +313,14 @@ public class FileReadTest {
 
 				<p><a href="#top">Back to top</a></p>
 
-       			<a name="8"></a>
-				<h4>Understanding the leJOS NXJ tools</h4>
+       			<a name="4"></a>
+				<h4>Understanding the key leJOS NXJ tools</h4>
 
-       			<a name="9"></a>
+       			<a name="4.1"></a>
 				<h5>nxjflash</h5>
 
-				<p>In order to flash firmware to the NXT, it was
-				necessary that the NXT must be in firmware update mode. If you
+				<p>In order to flash firmware to the NXT, it is
+				necessary that the NXT is in firmware update mode. If you
 				have the standard LEGO firmware installed (or if you have a
 				very recent version of leJOS), then the nxjflash program will do
 				this automatically for you. If not or if there is some problem
@@ -352,92 +345,53 @@ public class FileReadTest {
 				Devices&rdquo; an entry for the USB driver, labelled &ldquo;LEGO
 				MINDSTORMS NXT Firmware Update Mode&rdquo;.</p>
 
-				<p>nxjflash uses the libusb library to drive the
-				USB interface. On Linux libusb provides the USB driver. On
-				Microsoft Windows, you need to run the libusb-win32 filter driver.
-				This allows nxjflash to drive the LEGO MINDSTORMS NXT Firmware
-				Update Mode USB driver.</p>
-
-				<p>nxjflash drives libusb via a library written by David Anderson, called libnxt. This
-				supports SAM-BA commands. To flash new firmware, it uploads the
+				<p>To flash new firmware, nxjflash uploads the
 				firmware image a 256-byte page at a time and then executes a small
 				RAM-resident routine to write the page to flash memory. In this
 				way the leJOS NXJ firmware, lejos_nxt_rom.bin is written to flash
-				memory. This occupies the first 32kb of flash memory.</p>
+				memory. </p>
 
 				<p>nxjflash also uploads the leJOS NXJ start-up
 				menu StartUpText.bin. This menu is written in Java and built like
 				any other leJOS NXJ Java programs. It implements the leJOS NXJ
 				menu system and supports threads for executing Lego Communication
-				Protocol (LCP) commands over USB and Bluetooth. StartUpText.bin
-				resides in flash memory starting at address 32k. 48kb of flash
-				memory is reserved for it. The highest address word in the 49k.
-				When both the firmware and the menu have been uploaded, nxjflash
+				Protocol (LCP) commands over USB and Bluetooth. When both the 
+				firmware and the menu have been uploaded, nxjflash
 				sends a SAM-BA command to the NXT causing it to jump to address
 				zero and the leJOS NXJ firmware executes.</p>
 
 				<p><a href="#top">Back	to top</a></p>
 
-       			<a name="10"></a>
+       			<a name="4.2"></a>
 				<h5>nxjupload</h5>
 
 				<p>nxjupload uploads programs or other files over
 				USB or Bluetooth. It is a command line interface that is suitable
 				for use from command windows, ant scripts, and as an external
-				command from IDEs such as Eclipse.</p>
+				command from IDEs such as Eclipse or Netbeans.</p>
 
 				<p>nxjupload sends LCP system commands to the NXT
 				to upload the file. The commands are OPEN_WRITE, WRITE and CLOSE.</p>
 
-				<p>The call of nxjupload looks like:</p>
-			
-				<ul class="BlueArrows">
-					<li><p>nxjupload [options] &lt;binary-file&gt;</p></li>
-				</ul>
-
 				<p>By default nxjupload first looks for a NXT
 				connected by USB. If it does not find one, it tries Bluetooth. It
-				does a Bluetooth inquiry looking for NXTs. It it finds any it
+				does a Bluetooth inquiry looking for NXTs, and saves the results is in a cache file which it uses in
+				preference to doing a Bluetooth inquiry when it can . It it finds any it
 				tries to connect to each one, and uploads the file to the first
 				one it successfully connects to. This means that if you have
 				multiple NXTs, it will upload to the one that is currently
 				switched on.</p>
-
-				<p>This behaviour can be modified by the following
-				options:</p>
-		
-				<ul class="BlueArrows">
-					<li><p>-b or &ndash;bluetooth: only Bluetooth is tried</p></li>
-					<li><p>-u or &ndash;usb: only USB is tried</p></li>
-					<li><p>-n or --name: the upload is done to the
-						named NXT. A Bluetooth inquiry is done, but only the named NXT is looked for.</p></li>
-					<li><p>-d or &ndash;address &lt;address&gt;: the upload is to the device with this Bluetooth address. USB is not
-						tried and no Bluetooth inquiry is done.</p></li>
-					<li><p>-r or &ndash;run: run the program after upload by sending a STARTPROGRAM LCP command.</p></li>
-				</ul>
 
 				<p>nxjupload uses the apache Commons CLI command
 				line processor.</p>
 
 				<p><a href="#top">Back to top</a></p>
 
-       			<a name="11"></a>
+       			<a name="4.3"></a>
 				<h5>nxjlink</h5>
 
-				<p>nxjlink call the linker (class js.tinyvm.TinyVM).</p>
-
-				<p>The call looks like:</p>
-			
-				<ul class="BlueArrows">
-					<li><p>nxjlink [options] class &ndash;o	&lt;binary file&gt;</p></li>
-				</ul>
-
-				<p>The -cp or --classpath option is used to
-				specify where the linker looks for classes. Note that the linker
-				classpath is separate to the classpath uses to execute
-				js.tinyVM.TinyVM. 
-				</p>
-			
+				<p>nxjlink calls the linker (class js.tinyvm.TinyVM).</p>
+		
 				<p>The linker first looks for the specified class
 				in the linker classpath, and then looks for all classes that this
 				references to form a &ldquo;closure&rdquo; of the classes. The
@@ -462,42 +416,13 @@ public class FileReadTest {
 				by &ldquo;&ndash;writeorder LE&rdquo; for Little-Endian.</p>
 
 			
-				<p>If the &ndash;v or &ndash;verbose flag is set,
+				<p>If the verbose option is set,
 				a list of the classes and methods in the binary is output to
 				standard out. This is very useful for debugging.</p>
 
 				<p>nxjlink uses the apache Commons CLI library for
 				command line processing.</p>
-			
-       			<a name="12"></a>
-				<h5>nxj</h5>
-			
-				<p>The nxj command links and uploads the program
-				file. It takes the same parameters as nxjlink.</p>
-			
-       			<a name="13"></a>
-				<h5>nxjc</h5>
-				
-				<p>This command invokes the compiler. It takes the same parameters as standard java.</p>
 
-				<p><a href="#top">Back to top</a></p>
-				
-				<a name="14"></a>
-				<h5>nxjpcc</h5>
-				
-				<p>This command invokes the compiler for a PC API Program. It takes the same parameters as standard java.</p>
-
-				<p><a href="#top">Back to top</a></p>
-				
-				 <p> See <a href="../Preliminaries/CompileAndRun.htm#7">nxjpcc &#8211; compile  a program for your pc</a></p>
-				
-				<a name="15"></a>
-				<h5>nxjpc</h5>
-				
-				<p>This command runs a PC API program. It takes the same parameters as standard java.</p>
-
-	            <p> See <a href="../Preliminaries/CompileAndRun.htm#8">nxjpc &#8211; run a PC API program on your pc</a></p>
-	
 				<p><a href="#top">Back to top</a></p>
 
         		<div class="NavBit">
