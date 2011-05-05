@@ -168,5 +168,17 @@ public class ExtendedFileModel extends AbstractTableModel {
   public int numFiles() {
 	  return numFiles;
   }
+  
+  /**
+   * Return the row for a given file
+   * @param fileName the filename
+   * @return the row of -1 if not found
+   */
+  public int getRow(String fileName) {
+	  for(int i=0;i<numFiles;i++) {
+		  if (fileName.equals(fileData[i][0])) return i;
+	  }
+	  return -1;
+  }
 }
 

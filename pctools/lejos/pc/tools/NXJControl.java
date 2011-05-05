@@ -692,6 +692,13 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
         {   public void filesDropped( java.io.File[] files )
             {   for( int i = 0; i < files.length; i++ )
                 {   
+            		String fileName = files[i].getName();
+            		int row = fm.getRow(fileName);
+            		try {
+            			if (row >= 0) fm.delete(fileName, row);
+            		} catch (IOException e) {
+            			showMessage("IOException deleting file");
+            		}
                 	uploadFile(files[i]);
                 }
             }
