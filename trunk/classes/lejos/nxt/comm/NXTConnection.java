@@ -8,32 +8,51 @@ import lejos.util.Delay;
 
 /**
  * Generic lejos nxt connection class. Provide access to standard read/write
- * methods. This code supports both asynchronous (used for Bluetooth and Rs$85 
+ * methods. This code supports both asynchronous (used for Bluetooth and RS-485 
  * connections) and synchronous (used for USB) I/O operations for the actual
  * reading and writing of the low level buffers.
- * NOTE: The code in this class makes a number of assumptions:
- * 1. The input and output buffers have been sized to match the underlying 
- *    device, and the packet header size. In particular the synchronous
+ * <p>
+ * <b>NOTE:</b> The code in this class makes a number of assumptions:
+ * <ol>
+ * <li>The input and output buffers have been sized to match the underlying 
+ *    device and the packet header size. In particular, the synchronous
  *    code assumes that the entire output buffer can be written using a single
  *    atomic write operation.
- * 2. Although the code can handle any size packet header the default is
+ * <li>Although the code can handle any size packet header, the default is
  *    assumed to be 2 bytes. If this is not the case (for example USB), then
- *    the setIOMode function must be over-ridden.
- * 3. This class allows the use of a "soft" EOF implementation which uses a 
- *    zero length packet as an EOF marker. This only operates when in packet
+ *    the {@link #setIOMode <code>setIOMode</code>} function must be over-ridden.
+ * <li>This class allows the use of a "soft" EOF implementation which uses a 
+ *    zero length packet as an EOF marker. This only operates when in <code>PACKET</code>
  *    mode and can be overridden. Currently this is used for USB
- *    devices. It is not used for Bluetooth/RS485 connections.
- * 4. Some devices (like USB), have an inherent packet structure. The current
- *    PC assumes that when in packet mode an entire packet will fit within
+ *    devices. It is not used for Bluetooth/RS-485 connections.
+ * <li>Some devices (like USB), have an inherent packet structure. The current
+ *    PC assumes that when in <code>PACKET</code> mode, an entire packet will fit within
  *    a single USB packet. This limits the maximum packet size which can be
  *    used over USB connections to 63 bytes. This code does not currently
  *    enforce this limit.
- * @author andy
+ *  </ol>
+ * @author Andy Shaw
  */
 public abstract class NXTConnection implements StreamConnection {
     /* Connection modes */
+
+    /**
+     * Lego Communications Protocol (<code>LCP</code>) I/O mode. The LCP is defined by The Lego Company to allow limited remote 
+     * command control of a NXT brick. 
+     * 
+     * @see The <a href="http://mindstorms.lego.com">Lego Mindstorms</a> Site. Look for the Bluetooth Developer Kit in Support |
+     * Files | Advanced
+     */
     public static final int LCP = 1;
+    /**
+     * <code>PACKET</code> I/O mode. This is default and  is probably the best mode to use if you are talking to a
+     * NXT using the leJOS classes. Headers are inclcuded for each packet of data sent and received.
+     */
     public static final int PACKET = 0;
+    /**
+     * <code>RAW</code> I/O mode. This mode is just that and omits any headers. It is used normally for connections to non-NXT 
+     * devices such as cell phones, etc.
+     */
     public static final int RAW = 2;
 
 	static final int CS_IDLE = 0;
@@ -64,38 +83,44 @@ public abstract class NXTConnection implements StreamConnection {
 	OutputStream os;
     String address;
 
-	public String getAddress() {
+    /** Get the device address set by implementation. 
+     * @return The device address
+     */
+    public String getAddress() {
 		return address;
 	}
 
     
     /**
      * Write all of the current output buffer to the device.
-     * NOTE: To ensure correct operation of packet mode, this function should
+     * <p><b>NOTE:</b> To ensure correct operation of {@link #PACKET <code>PACKET</code>} mode, this function should
      * only return 1 if all of the data will eventually be written. It should
      * avoid writing part of the data.
-     * @param wait if true wait until the output has been written
+     * @param wait if <code>true</code> wait until the output has been written
      * @return -ve if error, 0 if not written, +ve if written/no data
      */
     abstract int flushBuffer(boolean wait);
 
 	/**
 	 * Attempt to write bytes to the connection. Optionally wait if it
-	 * is not possible to write at the moment. Supports both packet and raw
-	 * write operations. If in packet mode a set of header bytes indicating
+	 * is not possible to write at the moment. Supports both {@link #PACKET <code>PACKET</code>} and 
+     * {@link #RAW <code>RAW</code>}
+	 * write operations. If in <code>PACKET</code> mode, a set of header bytes indicating
 	 * the size of the packet will be sent ahead of the data.
-	 * NOTE: If in packet mode the maximum write will be limited to the
-     * underlying maximum packet length. When using packet mode with writes
-     * larger then the I/O buffer, wait mode must be used to ensure correct
+	 * <p>
+     * <b>NOTE:</b> If in <code>PACKET</code> mode, the maximum write will be limited to the
+     * underlying maximum packet length. When using <code>PACKET</code> mode with writes
+     * larger then the I/O buffer, the <code>wait mode</code>=<code>true</code> must be used to ensure correct
      * operation.
 	 * @param	data	The data to be written.
 	 * @param	len		The number of bytes to write.
-	 * @param	wait	True if the call should block until all of the data has
+	 * @param	wait	<code>true</code> if the call should block until all of the data has
 	 *					been sent.
-	 * @return			> 0 number of bytes written.
-	 *					0 Request would have blocked (and wait was false).
-	 *					-1 An error occurred
-	 *					-2 Data has been lost (See notes above).
+	 * @return			<ul><li>&gt; 0: number of bytes written.
+	 *					<li>0: Request would have blocked (and <code>wait</code> was false).
+	 *					<li>-1: An error occurred
+	 *					<li>-2: Data has been lost (See <b>NOTE</b> above).
+     *                  </ul>
 	 */
 	public synchronized int write(byte [] data, int len, boolean wait)
 	{
@@ -156,28 +181,31 @@ ioloop: while (offset < len)
 
     /**
      * Get any available data into the input buffer.
-     * @param wait if true wait for data to be available.
-     * @return -ve if error, 0 if not read, +ve if read
+     * @param wait if <code>true</code>, wait for data to be available.
+     * @return -ve if error, 0 if not read, +ve if read.
      */
     abstract int fillBuffer(boolean wait);
 
     /**
 	 * Attempt to read data from the connection. Optionally wait for data to
-	 * become available. Supports both packet and raw mode operations. When
-	 * in packet mode the packet length bytes are automatically processed. The
+	 * become available. Supports both {@link #PACKET <code>PACKET</code>} and {@link #RAW <code>RAW</code>} mode operations. When
+	 * in <code>PACKET</code> mode, the packet length bytes are automatically processed. The
 	 * read will return just a single packet. If the packet is larger then the
-	 * requested length then the rest of the packet will be returned in the
-	 * following reads. If wait is true then in packet mode the call will wait
-	 * until either the entire packet can be read or outLen bytes are available.
+	 * requested length, then the rest of the packet will be returned in the
+	 * following reads. 
+     * <p>
+     * If <code>wait</code> is <code>true</code> then in <code>PACKET</code> mode, the call will wait
+	 * until either the entire packet can be read or <code>outLen</code> bytes are available.
 	 * In stream mode the call will return if at least 1 byte has been read.
 	 * @param	data	Location to return the data. If null the data is discarded.
 	 * @param	outLen	Max number of bytes to read.
 	 * @param	wait	Should the call block waiting for data.
-	 * @return			> 0 number of bytes read.
-	 *      			0 no bytes available (and wait was false).
-	 *					-1 EOF/Connection closed.
-	 *					-2 data lost (see notes).
-     *                  -3 Some other error
+	 * @return			<ul><li> &gt; 0: number of bytes read.
+	 *      			<li>0: no bytes available (and wait was false).
+	 *					<li>-1: EOF/Connection closed.
+	 *					<li>-2: data lost (see notes).
+     *                  <li>-3: Some other error
+     *                  </ul>
 	 */
 	public synchronized int read(byte [] data, int outLen, boolean wait)
 	{
@@ -273,7 +301,7 @@ ioloop: while (offset < len)
 	}
 
 	/**
-	 * Indicate the number of bytes available to be read. Supports both packet
+	 * Indicate the number of bytes available to be read. Supports both <code>PACKET</code>
 	 * mode and stream connections.
 	 * @param	what	0 (all modes) return the number of bytes that can be
 	 *					read without blocking.
@@ -307,7 +335,11 @@ ioloop: while (offset < len)
 			return inCnt;
 	}
 
-	public int available()
+    /** Convenience method that calls <code>available(0)</code>
+     * @return number of bytes available
+     * @see #available(int)
+     */
+    public int available()
 	{
 		return available(0);
 	}
@@ -322,8 +354,11 @@ ioloop: while (offset < len)
 
 	/**
 	 * Set operating mode. Controls the packet/stream mode of this channel.
-	 * For packet mode it defines the header size to be used.
-	 * @param mode	I/O mode to be used for this connection. NXTConnection.RAW, .LCP, or .PACKET
+	 * For <code>PACKET</code> mode, it defines the header size to be used.
+	 * @param mode	I/O mode to be used for this connection. <code>RAW</code>, <code>LCP</code>, or <code>PACKET</code>
+     * @see #RAW
+     * @see #LCP
+     * @see #PACKET
 	 */
 	public void setIOMode(int mode)
 	{
@@ -359,6 +394,7 @@ ioloop: while (offset < len)
 	 * Return the InputStream for this connection.
 	 *
 	 * @return the input stream
+     * @see NXTInputStream
 	 */
 	public InputStream openInputStream() {
 		return (is != null ? is : (is = new NXTInputStream(this, bufSz - header)));
@@ -368,6 +404,7 @@ ioloop: while (offset < len)
 	 * Return the OutputStream for this connection
 	 *
 	 * @return the output stream
+     * @see NXTOutputStream
 	 */
 	public OutputStream openOutputStream() {
 		return (os != null ? os : (os = new NXTOutputStream(this, bufSz - header)));
@@ -448,8 +485,8 @@ ioloop: while (offset < len)
 
     }
 	/**
-	 * Close the connection. Flush any pending output. Inform the remote side
-	 * that the connection is now closed. Free resources.
+	 * Close the connection. Flush any pending output. Informs the remote side
+	 * that the connection is now closed and frees resources.
 	 */
 	public void close()
 	{
@@ -525,7 +562,7 @@ ioloop: while (offset < len)
 	}
 
     /**
-     * Discard any input
+     * Discard any input. 
      * Reads and throws away any input until no more is present. Then resets the
      * read state.
      */
@@ -543,11 +580,12 @@ ioloop: while (offset < len)
 
 	/**
 	 * Read a packet from the stream. Do not block and for small packets
-	 * (< bufSz), do not return a partial packet.
+	 * (&lt; [package access scope variable] <code>bufSz</code>), do not return a partial packet.
 	 * @param	buf		Buffer to read data into.
 	 * @param	len		Number of bytes to read.
 	 * @return			> 0 number of bytes read.
-	 *					other values see read.
+	 *					Other values see <code>read</code>.
+     * @see #read(byte[],int,boolean)
 	 */
 	public int readPacket(byte buf[], int len)
 	{
