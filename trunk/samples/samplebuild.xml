@@ -159,7 +159,6 @@
 		  />
 		<java classname="lejos.pc.tools.NXJDebugTool" fork="true" failonerror="true">
 			<jvmarg value="-Dnxj.home=${nxj.home}" />
-			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-di" />
 			<arg file="${debug}" />
