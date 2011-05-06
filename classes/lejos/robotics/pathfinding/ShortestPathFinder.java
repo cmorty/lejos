@@ -1,14 +1,17 @@
 package lejos.robotics.pathfinding;
 
+
+
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.DestinationUnreachableException;
-import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.WayPoint;
 import lejos.robotics.navigation.WayPointListener;
 
 import java.util.*;
 import lejos.geom.*;
+import lejos.robotics.navigation.Pose;
 
+import lejos.nxt.*;
 /**
  * This class calculates the shortest path from a starting point to a finish point.
  * while avoiding obstacles that are represented as a set of straight lines.
@@ -21,7 +24,7 @@ import lejos.geom.*;
  *
  * @author Roger Glassey
  */
-public class ShortestPathFinder implements PathFinder
+public class ShortestPathFinder// implements PathFinder
 {
 
 
@@ -29,6 +32,7 @@ public class ShortestPathFinder implements PathFinder
 public ShortestPathFinder(LineMap map)
 {
   setMap(map);
+
 }
 /**
  * Finds the shortest path from start to finish using the map (or collection of lines)
@@ -79,24 +83,28 @@ public ShortestPathFinder(LineMap map)
     Node dest;  // current destination node
     int index = _candidate.size()-1;  //index of current destination in candidate set
     boolean failed = false;
-
-    while (_candidate.size() > 0 && !failed)
+  // Te real work is here:
+    while (! _reached.contains(destination) && !failed)
     {
       _count++;
-      // get destination from inCandidateSet set
-      dest = _candidate.get(index);
-      from = getBest(dest);
+      // get temporary destination from inCandidateSet set
+      dest = _candidate.get(index);  // temporary destination
+      from = getBest(dest);  //best predecessor in reached
+      
       float distance = from.getDistance(dest);
       if (distance >= BIG)  // dest is known to be blocked  from best node in  _reached
       {
         index--;  // try another temporary start node
         failed = index < 0; // tried the whole stack.
       } else
-      { // dest is not known to be blocked  from  best  reached node
+      {
+        int candSize = _candidate.size();// dest is not known to be blocked  from  best  reached node
         if (segmentBlocked(from, dest))
         { // this method call possibly created and added new nodes to the _candidate set
           from.block(dest);//  Record dest as not directly reachable
-          index = _candidate.size() - 1;  // search from top  from top of stack
+          if(_candidate.size()>candSize) // new candidates added
+                 index = _candidate.size() - 1;  // search from top  from top of stack
+            else if(candSize >= 1 && index > 0) index--; // keep earching down
         } else  // not blocked  so dest node has is  reached
         {
           if (distance < .05f) // essentially same node as best node in _reached,
@@ -111,9 +119,8 @@ public ShortestPathFinder(LineMap map)
           // move dest from _candidate to _reached
           _reached.add(dest);
           _candidate.remove(dest);  // pop the stack
-          index = _candidate.size() - 1;
+          if(_candidate.size()>0)index = _candidate.size() - 1; //start from top
         } // end else  dest not blocked
-
       } // end else dest not previously blocked
     }// end while
     if (failed)
@@ -121,6 +128,7 @@ public ShortestPathFinder(LineMap map)
       throw new DestinationUnreachableException();
 //      return null;
     }
+
     return getRoute(destination);
   }
 
