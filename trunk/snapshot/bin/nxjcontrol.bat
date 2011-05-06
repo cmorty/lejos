@@ -11,6 +11,13 @@ if "%OS%" == "Windows_NT" goto :winnt
 	goto :eof
 
 :build_classpath
+	if not exists "%~2" (
+	  echo Your NXJ_HOME variable seems to be incorrect.
+	  echo The following folder does not exist:
+	  echo   "%~2"
+	  exit /B 1
+	)
+
 	set "TMP_CP="
 	for /R "%~2" %%i in (*.jar) do (
 		call :append_jar "%%i"
