@@ -1,9 +1,21 @@
 package lejos.robotics.objectdetection;
 
 /**
- * A FeatureDetector is capable of detecting objects and notifying listeners when it detects something. A Feature is
- * a term for any property that can be added to map data. The FeatureListeneer is notified when an object is detected,
- * even if it has previously detected the same object.
+ * <p>A FeatureDetector is capable of detecting objects and notifying listeners when it detects something. A Feature is
+ * a term for any property that can be added to map data. The FeatureListener is notified when an object is detected,
+ * even if it has previously detected the same object.</p>
+ * 
+ * <p>There can be many different qualities recorded by different FeatureDetector implementations. For example, you could
+ * implement a VectorFeatureDetector that could take multiple readings of an object, determine any change in position, 
+ * and return the velocity/vector of the object (provided the sensor is capable of identifying an object and change in 
+ * position). For example, a camera could note the change in position of objects and estimate the vector/velocity of 
+ * the object.</p>
+ * 
+ * <p><i>Note: Because {@link FeatureListener#featureDetected(DetectableFeature)} and {@link FeatureDetector#scan()} are
+ * only capable of returning a DetectableFeature object, any classes that want to read extended feature qualities (e.g.
+ * vector, color, or person data) would need to use an instanceof test to see if it is the appropriate data container,
+ * then cast the object into that type in order to retrieve the unique data.</i></p> 
+ * 
  * @see lejos.robotics.objectdetection.FeatureListener
  * @author BB based on concepts by Lawrie Griffiths
  *

@@ -1,4 +1,4 @@
-package com.benedettelli.robotics;
+package lejos.nxt.addon;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
