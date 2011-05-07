@@ -7,7 +7,6 @@ package lejos.robotics;
 
 /**
  * Interface for a regular DC motor.
- * TODO: Reconcile this with lejos.nxt.BasicMotor. Maybe BasicMotor implements this? 
  * @author BB
  *
  */

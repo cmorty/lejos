@@ -12,7 +12,6 @@ import java.awt.Rectangle;
 import lejos.robotics.localization.PoseProvider;
 import java.io.*;
 
-import lejos.util.Stopwatch;
 
 public class MCLPoseProvider implements PoseProvider, MoveListener
 {
@@ -30,10 +29,10 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   private int border;
   private boolean debug = false;
   boolean busy = false;
-  Stopwatch sw = new Stopwatch();
   private float BIG_FLOAT = 1000000f;
   private RangeReadings readings;
-
+  boolean lost = false;
+  boolean incomplete = true;
 
   public MCLPoseProvider(MoveProvider mp, RangeScanner scanner,
           RangeMap map, int numParticles, int border)
@@ -98,9 +97,16 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   }
 
   /**
+   * Replaces the particles with a random set
+   */
+  public void generateParticles()
+    {
+      particles = new MCLParticleSet(map, numParticles, border);
+  }
+  /**
   Required by MoveListener interface; does nothing
    */
-  public void moveStarted(Move event, MoveProvider mp) {}
+  public void moveStarted(Move event, MoveProvider mp) { updated = false;}
 
 
   /**
@@ -114,11 +120,94 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
       updated = false;
       updater.moveStopped(event);
   }
+
+
+/**
+ * returns true if the update from range readings is successful
+ * Calls range scanner to get range readings and calls resample(rangeReadings)
+ *
+ * @return true if update was successful
+ */
 public boolean  update()
 {
-  return updater.update();
+// if(updated) return true;
+    busy = true;
+    if(debug)System.out.println("MCLPP update called ");
+    updated = false;
+    if (scanner == null)
+    {
+      busy = false;
+      return false;
 }
+    readings = scanner.getRangeValues();
+    incomplete = readings.incomplete();
+//    if(debug) System.out.println("mcl Update: range readings " + readings.getNumReadings());
+    if (incomplete  )
+    {
+       busy = false;
+              return false;
+    }
+    else return update(readings);
 
+
+  }
+  /**
+ * Calculates particle weights from readings, then resamples the particle set;
+ *
+ * @param readings
+ * @return true if update was successful.
+ */
+public boolean update(RangeReadings readings)
+    {
+    if(debug)System.out.println("MCLPP update readings called ");
+        updated = false;
+        busy = true;
+        int count = 0;
+        incomplete = readings.incomplete();
+        if (incomplete) {
+           busy = false;
+            return false;
+        }
+        if(debug)System.out.println("update readings incomplete "+incomplete);
+        boolean goodPose = false;
+
+        goodPose = particles.calculateWeights(readings, map);
+        if (debug) System.out.println(" max Weight " + particles.getMaxWeight()+
+                " Good pose "+goodPose);
+
+        if (!goodPose) {
+            if (debug)  System.out.println("Sensor data improbable from this pose ");
+            busy = false;
+            return false;
+        }
+        goodPose = particles.resample();
+        updated = goodPose;
+        busy = false;
+        if (debug) {
+            if (goodPose) System.out.println("Resample done");
+            else System.out.println("Resample failed");
+        }
+        return goodPose;
+}
+/**
+ * Returns update success flag
+ * @return true if update is successful
+ */
+public boolean isUpdated() {return updated;}
+
+/**
+ * returns lost status
+ * @return true if robot is lost
+ */
+public boolean isLost() { return lost; }
+
+
+/**
+ * returns range scanner failure status
+ * @return true if range readings are incomplete
+ */
+
+public boolean incompleteRanges() { return incomplete;}
 
   /**
    * Returns the difference between max and min x
@@ -145,12 +234,13 @@ public boolean  update()
    */
   public Pose getPose()
   {
-    if(debug) System.out.println("MCLPP getPose updated "+updated);
+   if(debug) System.out.println("Mcl call update; updated? "+updated
+              +" busy "+busy);
     if (!updated)
     {
     while(busy)Thread.yield();
       if(debug) System.out.println("Mcl call update; updated? "+updated);
-      if(!updated)updater.update();
+      if(!updated)update();
     }
     estimatePose();
     return new Pose(_x, _y, _heading);
@@ -159,6 +249,7 @@ public boolean  update()
 
   /**
    * Estimate pose from weighted average of the particles
+   * Calculate statistics
    */
   private void estimatePose()
   {
@@ -175,6 +266,8 @@ public boolean  update()
     varH = 0;
     minX = BIG_FLOAT;
     minY = BIG_FLOAT;
+    maxX = -BIG_FLOAT;
+    maxY = -BIG_FLOAT;
 
     for (int i = 0; i < numParticles; i++)
     {
@@ -191,23 +284,12 @@ public boolean  update()
       varH += (head * head * weight);
       totalWeights += weight;
 
-      if (x < minX)
-      {
-        minX = x;
+      if (x < minX)  minX = x;
+
+      if (x > maxX)maxX = x;
+      if (y < minY)minY = y;
+      if (y > maxY)   maxY = y;
       }
-      if (x > maxX)
-      {
-        maxX = x;
-      }
-      if (y < minY)
-      {
-        minY = y;
-      }
-      if (y > maxY)
-      {
-        maxY = y;
-      }
-    }
 
     estimatedX /= totalWeights;
     varX /= totalWeights;
@@ -377,49 +459,9 @@ public RangeScanner getScanner()
     {
       updater.event = theEvent;
       moveStopped = true;
-      if(debug) System.out.println("Updater move stop "+theEvent.getMoveType());
     }
- /**
-   * Updates the estimated pose using Monte Carlo method applied to particles.
-   * Gets range readings from the scanner, calculates weights and resamples the
-   * the particles.  Tries at most 4 times  range values are incomplete and/or
-   * the probabilities of the sensor readings are too small;.
-   * @return  true if the update was successful.  Otherwise, the dead reckoning pose
-   * is the only one available.
-   */
-  private synchronized  boolean update()
-  {
-    if (scanner == null)
-    {
-      return false;
-    }
-    while(busy)Thread.yield();
-    busy = true;
-    readings = scanner.getRangeValues();
-    if(debug) System.out.println("mcl Update: range readings " + readings.getNumReadings());
-    if (readings.incomplete())
-    {
-      if (debug)
-      {
-        System.out.println("Readings incomplete");
-      }
-      busy = false;
-      return false;
-    }
-    if (!particles.calculateWeights(readings, map))
-    {
-      if (debug)
-      {
-        System.out.println("Sensor data is too improbable from the current pose");
-      }
-      busy = false;
-      return false;
-    }
-    particles.resample();
-    updated = true;
-    busy = false;
-    return true;
-  }
+
+
 
     public void run()
     {
@@ -427,21 +469,15 @@ public RangeScanner getScanner()
       {
         if (moveStopped)
         {
+            if(debug) System.out.println("Updater move stop "+event.getMoveType());
          busy = true;
-          moveStopped = false;
-          if(debug)System.out.println("Update run move stopped "+event.getMoveType());
-          sw.reset();
+
           particles.applyMove(event);      
-          if (autoUpdate && event.getMoveType() == Move.MoveType.TRAVEL)
-          {
+//          System.out.println("apply move ");
             busy = false;
-            update();
-            updated = true;
-            if (debug) System.out.println("MCL run update complete time "+sw.elapsed());
+          moveStopped = false;
           }
-          busy = false;
         }
-      }
     }  // end run()
   }// end class Updater
 }

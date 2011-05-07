@@ -24,13 +24,15 @@ public class RCXPlexedMotorPort implements BasicMotorPort {
 	
 	public void controlMotor(int power, int mode) {
 		int mmMode = mode;
-		if (mmMode == 4) mmMode = 0; // float
-		int mmPower = (int) ((float)power * 2.55f);
-		if (mmMode == 3) mmPower = 255; // Maximum breaking
-		plex.setDirection(mmMode, id);
-		plex.setSpeed(mmPower, id);
+		if (mmMode == BasicMotorPort.FLOAT) mmMode = 0; // float
+		int mmPower = (int) (power * 2.55f);
+		if (mmMode == BasicMotorPort.STOP) {
+			mmPower = 255; // Maximum breaking
+		}
+		plex.sendCommand(id, mmMode, mmPower);
 	}
 	
 	public void setPWMMode(int mode) {
+		// Not implemented
 	}
 }

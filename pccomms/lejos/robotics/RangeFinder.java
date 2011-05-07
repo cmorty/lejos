@@ -17,4 +17,12 @@ public interface RangeFinder {
 	 * @return the distance to the nearest object
 	 */
 	public float getRange();
+	
+	/**
+	 * If the sensor is capable, this method returns multiple range values from a single scan. Sensors that can only
+	 * return a single value should return an array containing a single value.
+	 * 
+	 * @return an array of ranges, ordered from closest to farthest.
+	 */
+	public float [] getRanges();
 }

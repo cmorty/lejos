@@ -108,7 +108,7 @@ public class OpticalDistanceSensor extends I2CSensor implements RangeFinder{
 	 * @return the range as a float
 	 */
 	public float getRange(){
-		return getDistLSB() / 10;
+		return getDistLSB() / 10.0F;
 	}
 	
 	/**
@@ -415,5 +415,11 @@ public class OpticalDistanceSensor extends I2CSensor implements RangeFinder{
 		buf[1] = (byte)buf1;
 		
 		sendData(register, buf, 2);	
+	}
+
+	public float[] getRanges() {
+		float [] ranges = new float[1]; // Optical sensor can only return one value
+		ranges[0] = getRange();
+		return ranges;
 	}
 }

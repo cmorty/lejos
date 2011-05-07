@@ -3,15 +3,20 @@ package lejos.robotics.objectdetection;
 import java.util.ArrayList;
 import lejos.robotics.RangeFinder;
 import lejos.robotics.RangeReading;
+import lejos.robotics.RangeReadings;
 // TODO: Some of these API docs might be more appropriate in FeatureDetector
+
+// TODO: So much code is repeated in SensorFusorDetector, TouchDetector, and RangeFeatureDetector. Would make sense
+// to make an abstract class.
+
 /**
  * <p>The UnidentifiedObjectDetector used a RangeFinder to locate objects (known as features when mapping). This class is
  * unable to identify the feature and merely reports the range and angle to the object.</p>
  * 
  *  <p>You can also have the scan identify the object (such as a camera using facial recognition to identify a person).
- *  One possibility to implement this is to extend UnidentifiedFeatureDetector and add a camera to the constructor. When the
+ *  One possibility to implement this is to extend RangeFeatureDetector and add a camera to the constructor. When the
  *  FeatureDetector range scanner detects an object, take a picture and look for a face in the image. This is then
- *  reported as an extended class of UnidentifiedFeature called PersonFeature, which has a getPerson() method containing 
+ *  reported as an extended class of RangeFeature called PersonFeature, which has a getPerson() method containing 
  *  information on the object that was detected.</p>
  *  
  * <p>To create a more complex FeatureDetector, extend this class and override the {@link FeatureDetector#scan()} method.
@@ -23,13 +28,10 @@ import lejos.robotics.RangeReading;
  * @author BB based on concepts by Lawrie Griffiths
  *
  */
-public class UnidentifiedFeatureDetector implements FeatureDetector {
+public class RangeFeatureDetector extends FeatureDetectorAdapter {
 	
-	private ArrayList<FeatureListener> listeners = null;
 	private RangeFinder range_finder = null;
 	private float max_dist = 100;
-	private int delay = 0;
-	private boolean enabled = true;
 	// TODO: Accept optional RangeScanner?
 	
 	/**
@@ -40,13 +42,10 @@ public class UnidentifiedFeatureDetector implements FeatureDetector {
 	 * @param delay The interval range finder checks for objects. e.g. 250 ms.
 	 * @see lejos.nxt.UltrasonicSensor
 	 */
-	public UnidentifiedFeatureDetector(RangeFinder rf, float maxDistance, int delay) {
+	public RangeFeatureDetector(RangeFinder rf, float maxDistance, int delay) {
+		super(delay);
 		this.range_finder = rf;
 		setMaxDistance(maxDistance);
-		this.delay = delay;
-		Thread x = new MonitorThread();
-		x.setDaemon(true);
-		x.start();
 	}
 
 	/**
@@ -65,58 +64,21 @@ public class UnidentifiedFeatureDetector implements FeatureDetector {
 		return this.max_dist;
 	}
 	
-	public void addListener(FeatureListener l){
-		if(listeners == null )listeners = new ArrayList<FeatureListener>();
-		listeners.add(l);
-	}
-
-	private void notifyListeners(DetectableFeature feature) {
-		if(listeners != null) { 
-			for(FeatureListener l : listeners) {
-				l.featureDetected(feature);
-			}
-		}
-	}
-	
-	/**
-	 * TODO: Thread to monitor the range finder. If we go Listener API with RangeSensor, this thread will no longer be necessary.
-	 *
-	 */
-	private class MonitorThread extends Thread{
-
-		public void run() {
-			while(true) {
-				/* TODO: Andy has a suggestion of moving the code in this thread out into the API so that users could override
-				this if they want to use multiple sensors or other types of sensors. Use scan() method. */
-				DetectableFeature f = (enabled?scan():null);
-				if(f != null) notifyListeners(f);
-				
-				try {
-					Thread.sleep(delay);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-	public void enableDetection(boolean enable) {
-		this.enabled = enable;
-	}
-
 	public DetectableFeature scan() {
-		UnidentifiedFeature feature = null;
-		
-		float range = range_finder.getRange();
-		if(range > 0 & range < max_dist) {
-			int angle = 0;
-			feature = new UnidentifiedFeature(new RangeReading(angle, range));
-			
+		RangeFeature feature = null;
+		// TODO: Note: If it is slower to retrieve multiple rather than single scan. Have option for single only in constructor?
+		float [] ranges = range_finder.getRanges();
+		RangeReadings rrs = new RangeReadings(0); // TODO: Should it omit anything outside max_dist?
+		if(ranges.length <= 0) return null; // Check to make sure it retrieved some readings. Seems to return nothing sometimes. 
+		if(ranges[0] > 0 & ranges[0] < max_dist) { 
+			for(int i=0;i<ranges.length;i++) {
+				int angle = 0; // TODO: Activate global "angle" setting for angle sensor is mounted at on vehicle. Constructor param.
+				rrs.add(new RangeReading(angle, ranges[i]));
+			}
+			feature = new RangeFeature(rrs);
 		}
 		return feature;
 	}
 
-	public boolean isEnabled() {
-		return enabled;
-	}
+	
 }
