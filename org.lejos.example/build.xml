@@ -8,6 +8,9 @@
 	<property file="build.properties" />
 	<property name="src" location="src" />
 	<property name="build" location="build" />
+	<property name="full.main.class" value="${package}.${main.class}" />
+	<property name="binary" value="${build}/${main.class}.nxj" />
+	<property name="debug" value="${build}/${main.class}.nxd" />
 
 	<path id="lejos.pc">
 		<fileset dir="${nxj.home}/lib/pc">
@@ -19,6 +22,12 @@
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
+	
+	<condition property="d32Flag" value="-d32" else="-Dblank.dummy.arg=">
+		<and>
+			<os family="mac" />
+		</and>
+	</condition>
 
 	<!-- deletes generated files -->
 	<target name="clean" description="clean up all generated files">
@@ -50,26 +59,108 @@
 			<arg value="--writeorder" />
 			<arg value="LE" />
 			<arg value="-o" />
-			<arg file="${build}/${binary}" />
+			<arg file="${binary}" />
+			<arg value="-od" />
+			<arg file="${debug}" />
 			<arg value="-v" />
-			<arg value="${main.class}" />
+			<arg value="${full.main.class}" />
 		</java>
 	</target>
-
+	
+	<target name="debuglink" depends="compile" description="link the binary">
+		<!-- Link the binary and create a signature file -->
+		<java classname="lejos.pc.tools.NXJLink" failonerror="true">
+			<classpath refid="lejos.pc" />
+			<arg value="--bootclasspath" />
+			<arg pathref="lejos.nxt" />
+			<arg value="--classpath" />
+			<arg path="${build}" />
+			<arg value="--writeorder" />
+			<arg value="LE" />
+			<arg value="-o" />
+			<arg file="${binary}" />
+			<arg value="-od" />
+			<arg file="${debug}" />
+			<arg value="-gr" />
+			<arg value="-v" />
+			<arg value="${full.main.class}" />
+		</java>
+	</target>
+	
 	<target name="upload" depends="link" description="upload the binary">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
 			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
-			<arg file="${build}/${binary}" />
+			<arg value="${binary}" />
 		</java>
 	</target>
-
+	
 	<target name="uploadandrun" depends="link" description="upload and run the binary">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
 			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-r" />
-			<arg file="${build}/${binary}" />
+			<arg file="${binary}" />
+		</java>
+	</target>
+	
+	<target name="debuguploadandrun" depends="debuglink" description="upload and run the binary">
+		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-r" />
+			<arg file="${binary}" />
+		</java>
+	</target>
+	
+	<target name="console" depends="debuguploadandrun" description="run a console">
+		<sleep seconds="4" />
+		<java classname="lejos.pc.tools.NXJConsole" fork="true" failonerror="true">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-di" />
+			<arg file="${debug}" />
+		</java>
+	</target>
+	
+	<target name="consoleviewer" depends="debuguploadandrun" description="run the GUI Console Viewer">
+		<sleep seconds="4" />
+		<java classname="lejos.pc.tools.NXJConsoleViewer" fork="true" failonerror="true">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-di" />
+			<arg file="${debug}" />
+		</java>
+	</target>
+	
+	<target name="debugtool" description="run the debug tool">
+		  <input
+		    message="Exception class:"
+		    addproperty="class"
+		  />
+		  <input
+		    message="Method number:"
+		    addproperty="method"
+		  />
+		  <input
+		    message="PC value:"
+		    addproperty="pc"
+		  />
+		<java classname="lejos.pc.tools.NXJDebugTool" fork="true" failonerror="true">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-di" />
+			<arg file="${debug}" />
+			<arg value="-c" />
+			<arg value="-m" />
+			<arg value="${class}" />
+			<arg value="${method}" />
+			<arg value="${pc}" />
 		</java>
 	</target>
 
