@@ -88,8 +88,8 @@ public class NXJDebugTool {
 		
 		int method = Integer.parseInt(args[i]);
 		
-		if (method < 0 || method > dd.getMethodCount())
-			throw new IllegalArgumentException("no such method");
+		if (method < 0 || method >= dd.getMethodCount())
+			throw new IllegalArgumentException("method number is out of range");
 		
 		String mname = dd.getMethodName(method);
 		String clname = dd.getMethodClass(method);
@@ -125,8 +125,8 @@ public class NXJDebugTool {
 		
 		int classNr = Integer.parseInt(args[i]);
 		
-		if (classNr < 0 || classNr > dd.getClassNameCount())
-			throw new IllegalArgumentException("no such class");
+		if (classNr < 0 || classNr >= dd.getClassNameCount())
+			throw new IllegalArgumentException("class number is out of range");
 		
 		System.out.println();
 		System.out.println("The class number "+classNr+" refers to:");
