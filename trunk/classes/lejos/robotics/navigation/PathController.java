@@ -75,6 +75,11 @@ public interface PathController
    */
   public void resume();  //following the route after an interruption;
 
+  /**
+   * Adds a WayPoint to the route.  If the route was empty, the robot immediately
+   * starts moving toward the Waypoint
+   * @param aWayPoint
+   */
   public void addWayPoint(WayPoint aWayPoint); // adds a WayPoint to the route.
 
   /**
