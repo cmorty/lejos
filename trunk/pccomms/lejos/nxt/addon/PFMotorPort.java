@@ -24,6 +24,7 @@ public class PFMotorPort implements BasicMotorPort {
 		link.sendPFComboDirect(channel, (slot == 0 ? modeTranslation[mode-1] : 0), (slot == 1 ? modeTranslation[mode-1] : 0));
 	}
 
-	public void setPWMMode(int mode) { 	
+	public void setPWMMode(int mode) {
+		// Not implemented
 	}
 }

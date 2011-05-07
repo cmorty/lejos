@@ -15,7 +15,7 @@ import lejos.nxt.I2CSensor;
  * 
  */
 public class RCXMotorMultiplexer extends I2CSensor {
-	private byte[] buf = new byte[1];
+	private byte[] buf = new byte[2];
 
     public static final int DEFAULT_RCXMMUX_ADDRESS = 0xb4;
 
@@ -27,10 +27,11 @@ public class RCXMotorMultiplexer extends I2CSensor {
 	
 	public RCXMotorMultiplexer(I2CPort port) {
 		this(port, DEFAULT_RCXMMUX_ADDRESS);
+
 	}
 
 	public RCXMotorMultiplexer(I2CPort port, int address) {
-		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
+		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED_9V);
 	}
 
 	public void setSpeed(int speed, int id) {
@@ -41,6 +42,12 @@ public class RCXMotorMultiplexer extends I2CSensor {
 	public int getSpeed(int id) {
 		getData(0x43 + (id*2), buf, 1);
 	    return buf[0] & 0xFF;
+	}
+	
+	public void sendCommand(int id, int direction, int speed) {
+		buf[0] = (byte) direction;
+		buf[1] = (byte) speed;
+		sendData(0x42 + (id*2), buf, 2);
 	}
 	
 	public void setDirection(int direction, int id) {

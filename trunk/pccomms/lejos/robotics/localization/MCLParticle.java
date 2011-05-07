@@ -83,6 +83,11 @@ public class MCLParticle {
     Pose tempPose = new Pose();
     tempPose.setLocation(pose.getLocation());
     for (int i = 0; i < rr.getNumReadings(); i++) {
+        if(!map.inside(tempPose.getLocation()))
+        {
+            weight = 0;
+            return;
+        }
       float angle = rr.getAngle(i);
       tempPose.setHeading(pose.getHeading() + angle);      
       float robotReading = rr.getRange(i);

@@ -470,4 +470,17 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 		int ret = getData(REG_MODE, byteBuff, 1);
 		return ret < 0 ? ret : (byteBuff[0] & 0xFF);
 	}
+
+	public float[] getRanges() {
+		//int oldMode = getMode();
+		ping();
+		int [] dists = new int[8]; // 8 is max number of return pings from ultrasonic sensor
+		int numScans = getDistances(dists);
+		float [] distsF = new float[numScans];
+		for(int i=0;i<numScans;i++){
+			distsF[i] = dists[i];
+		}
+		//setMode(oldMode);
+		return distsF;
+	}
 }
