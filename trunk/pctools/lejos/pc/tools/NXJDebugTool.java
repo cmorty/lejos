@@ -130,7 +130,7 @@ public class NXJDebugTool {
 		
 		System.out.println();
 		System.out.println("The class number "+classNr+" refers to:");
-		System.out.println("  "+dd.getClassName(i)+ " ("+dd.getClassFilename(i)+")");
+		System.out.println("  "+dd.getClassName(classNr)+ " ("+dd.getClassFilename(classNr)+")");
 	}
 
 	private static void doDump(DebugData dd)
