@@ -63,7 +63,7 @@
 			</div>
 			<!-- NAVIGATION TOOL -->
 			<div class="NavBit">
-			   	<a target="_top" href="../MenuSystem/MenuSystem.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../WheeledVehicles/WheeledVehicles.htm">Next&nbsp;»</a>
+                <a target="_top" href="../MenuSystem/MenuSystem.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../WheeledVehicles/WheeledVehicles.htm">Next&nbsp;&raquo;</a>
 			</div>
 					
 			<!-- CONTENT AREA -->
@@ -437,6 +437,13 @@
 		to turn after the brake has been applied. It applies the brake before
 		reaching the specified angle. It then makes minor adjustments to the
 		motor position till it is close enough. </p>
+      <p>Observe: Once the motor has stopped if you try to turn it by hand it will resist you and will even
+      return nack to the stopped position. This is because when you use the stop method the regulator will continue 
+      to control the position of the motor. If you don't want this to happen you can call the flt() method. This will
+      release the motor from regulation and you will be able to turn it easily by hand. If you call one of the rotate
+      methods and allow them to complete, then the default state at the end of the rotation will be as if you had called 
+      stop, so the motor position will be maintained.
+    </p>
       	<p><a href="Rotation.htm" target="_blank"><u>Solution</u></a></p>
 
       	<p/>
@@ -541,7 +548,7 @@
           <p>Repeat steps 2,3,5.</p>
         </li>
       </ol>
-      <p>Observe: if youpress the button before the rotation is complete, the motor will stop
+      <p>Observe: if you press the button before the rotation is complete, the motor will stop
 		without completing its rotation. Otherwise, the stop() method has no
 		effect. </p>
       	<p><a href="RotInterrupt.htm" target="_blank"><u>Solution</u></a></p>
@@ -621,15 +628,11 @@
         <li>
           <p>Write down maximum difference you see between the motor tacho counts. </p>
         </li>
-        <li>
-          <p>Turn off speed regulation.</p>
-        </li>
-        <li>
-          <p>Repeat steps 1 &#8211; 5.</p>
-        </li>
       </ol>
-      <p>With speed regulation on, the motors should remain within a few degrees of each
-		other. When it is off, the difference in angle of rotation get larger
+      <p>The motors should remain within a few degrees of each
+		other. You may want to modify the program and try the same test without regulation, to
+        do this you will need to use the NXTMotor class and setPower method (see below). 
+        When regulation is not used, the difference in angle of rotation get larger
 		with time unless you have an unusually well matched set of motors. </p>
       <p><a href="RegulationTest.htm" target="_blank"><u>Solution</u></a></p>
 
@@ -660,6 +663,11 @@
 		regulation on, the regulator will keep increasing the power until the
 		motor comes up to speed. </p>
       <p/>
+      <h5>Can you mix the two methods of control?</h5>
+      <p>Yes you can. Simply create an instance of both NXTRegulatedMotor and NXTMotor classes for the same motor
+      port. When you want to use setPower simply turn off motor regulation by calling suspendRegulation on the
+      NXTRegulatedMotor instance.</p>
+      <p/>
       <p><a href="#top">Back to top</a></p>
 
       	<a name="7"></a>
@@ -675,86 +683,19 @@
 			backward() have been called or a rotate() task is in progress) </p>
         </li>
         <li>
-          <p>boolean isRotating()</p><p>Specifically tests if a rotate task is currently in progress</p>
-        </li>
-        <li>
           <p>int getLimitAngle()</p><p>Returns the angle to which the motor is currently rotating </p>
         </li>
         <li>
           <p>int getSpeed()</p><p>Returns the current speed setting.</p>
         </li>
         <li>
-          <p>int getActualSpeed()</p><p>Returns the actual speed of the motor. This is updated every 100 ms,
-			and is accurate to about +- 10 deg/sec. Use this method to detect if
-			the motor has stalled. </p>
+          <p>int getActualSpeed()</p><p>Returns the actual speed of the motor. </p>
         </li>
         <li>
-          <p>int getMode()</p><p>returns a code for the current motor status</p>
+          <p>boolean isStalled()</p><p>Tells you if the motor is stalled or if the regulation of
+          the motor speed has failed (have you asked it to go faster then is possible?).</p>
         </li>
-      </ul>
-      <dl>
-          <dd>
-            <table border="1" cellpadding="7" cellspacing="0" width="236">
-              <col width="88"/> <col width="118"/> 
-              <tbody>
-                <tr valign="top">
-                  <td width="88">
-                  	<p><b>Code</b></p>
-                  </td>
-                  <td width="118">
-                  	<p><b>motor status</b></p>
-                  </td>
-                </tr>
-                <tr valign="top">
-                  <td width="88">
-                  	<p>1</p>
-                  </td>
-                  <td width="118">
-                  	<p>forward</p>
-                  </td>
-                </tr>
-                <tr valign="top">
-                  <td width="88">
-                  	<p>2</p>
-                  </td>
-                  <td width="118">
-                  	<p>backward</p>
-                  </td>
-                </tr>
-                <tr valign="top">
-                  <td width="88">
-                  	<p>3</p>
-                  </td>
-                  <td width="118">
-                  	<p>stop</p>
-                  </td>
-                </tr>
-                <tr valign="top">
-                  <td width="88">
-                  	<p>4</p>
-                  </td>
-                  <td width="118">
-                  	<p>float</p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </dd>
-        </dl>
-      <p>The following methods are another way to get motor status:</p>
-      <ul class="BlueArrows">
-        <li>
-          <p>boolean isForward()</p>
-        </li>
-        <li>
-          <p>boolean isBackward()</p>
-        </li>
-        <li>
-          <p>boolean isStopped()</p>
-        </li>
-        <li>
-          <p>boolean isFloating()</p>
-        </li>
+
       </ul>
 
       <h5>Various other motor methods</h5>
@@ -767,12 +708,18 @@
 			task. </p>
         </li>
         <li>
-          <p>lock()</p><p>
-			Ordinarily, when the motor is stopped, it has some resistance to being
-			rotated. But in some applications, such a weight lifting robot, the
-			force of gravity may be enough to overcome this resistance. This method
-			causes the regulator thread to apply additional power in order to hold
-			the motor axle in position. </p>
+          <p>void setAcceleration(int acceleration)</p><p>Lets you control how fast the motor speed will
+          change from one speed to another. The acceleration is set in degrees per second per second. Use
+          small values (try 200 or 500) to have your robot smoothly accelerate up to speed.</p>
+        </li>
+        <li>
+          <p>void getAcceleration()</p><p>Returns the current acceleration value for the motor</p>
+        </li>
+        <li>
+          <p>suspendRegulation()</p><p>
+            Turns of the regulation of the motor. Use this method if you want to mix regulated and 
+            unregulated control of the same motor.
+          </p>
         </li>
       </ul>
 
