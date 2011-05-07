@@ -1,7 +1,12 @@
 package lejos.pc.tools;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 import lejos.nxt.remote.*;
+
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -11,39 +16,22 @@ import javax.swing.table.AbstractTableModel;
  */
 public class ExtendedFileModel extends AbstractTableModel {
   private static final long serialVersionUID = -6173853132812064498L;
-  private static final String[] columnNames = {"File","Size", "Start Page", "End Page", "Delete"};
-  private static final int NUM_COLUMNS = 5;
+  private static final String[] columnNames = {"File", "Size", "Delete"};
+  private static final int NUM_COLUMNS = 3;
   public static final int MAX_FILES = 30;
+  public static final int COL_NAME = 0;
+  public static final int COL_SIZE = 1;
+  public static final int COL_DELETE = 2;
 
-  private Object[][] fileData;
-  private int numFiles;
-  private FileInfo[] files = new FileInfo[MAX_FILES];
-  private NXTCommand nxtCommand;
+  private ArrayList<Boolean> delete = new ArrayList<Boolean>();
+  private ArrayList<FileInfo> files = new ArrayList<FileInfo>();
 
   /**
    * Fetch files from the NXT and create the model
    * 
    * @param nxtCommand used to send LCP commands to the NXT
    */
-  public ExtendedFileModel(NXTCommand nxtCommand) {
-	this.nxtCommand = nxtCommand;
-	fetchFiles();
-    setData(files, numFiles);
-  }
-
-  private void setData(FileInfo[] files, int numFiles) {
-    this.numFiles = numFiles;
-
-    fileData = new Object[30][NUM_COLUMNS];
-
-    for(int i=0;i<numFiles;i++) {
-      fileData[i][0]  = files[i].fileName;
-      fileData[i][1] = new Integer(files[i].fileSize);
-      fileData[i][2] = new Integer(files[i].startPage);
-      fileData[i][3] = new Integer(files[i].startPage + ((files[i].fileSize -1)/256));
-      fileData[i][4] = new Boolean(false);
-
-     }
+  public ExtendedFileModel() {
   }
 
   /**
@@ -55,11 +43,9 @@ public class ExtendedFileModel extends AbstractTableModel {
    * @throws IOException
    */
   public void delete(String fileName, int row) throws IOException {
-	nxtCommand.delete(fileName); 
-    for(int i=row;i<numFiles-1;i++) {
-      fileData[i] = fileData[i+1];
-    }
-    numFiles--;
+	files.remove(row);
+	delete.remove(row);
+	this.fireTableRowsDeleted(row, row);
   }
 
   /**
@@ -68,7 +54,7 @@ public class ExtendedFileModel extends AbstractTableModel {
    * @return the number of files in the model
    */
   public int getRowCount() {
-    return numFiles;
+    return files.size();
   }
 
   /**
@@ -86,14 +72,28 @@ public class ExtendedFileModel extends AbstractTableModel {
    * @return the object at the specified location
    */
   public Object getValueAt(int row, int column) {
-    return fileData[row][column];
+		FileInfo f = files.get(row);
+		switch (column)
+		{
+		case COL_NAME:
+			return f.fileName;
+		case COL_SIZE:
+			return Integer.valueOf(f.fileSize);
+		case COL_DELETE:
+			return delete.get(row);
+		default:
+			throw new RuntimeException("unknown column");
+		}
   }
 
   /**
    * Set the value of a cell
    */
   public void setValueAt(Object value, int row, int column) {
-    fileData[row][column] = value;
+	  if (column != COL_DELETE)
+		  throw new RuntimeException("invalid column");
+	  
+	  delete.set(row, (Boolean)value);
   }
 
   /**
@@ -111,7 +111,17 @@ public class ExtendedFileModel extends AbstractTableModel {
    * @return the class of the column
    */
   public Class<?> getColumnClass(int column) {
-    return fileData[0][column].getClass();
+	  switch (column)
+	  {
+	  case COL_NAME:
+		  return String.class;
+	  case COL_SIZE:
+		  return Integer.class;
+	  case COL_DELETE:
+		  return Boolean.class;
+	  default:
+		  throw new RuntimeException("unknown column");
+	  }
   }
 
   /**
@@ -119,7 +129,7 @@ public class ExtendedFileModel extends AbstractTableModel {
    * @return true iff the cell is editable
    */
   public boolean isCellEditable(int row, int column) {
-    return (column == 4);
+    return (column == COL_DELETE);
   }
   
   /**
@@ -127,23 +137,26 @@ public class ExtendedFileModel extends AbstractTableModel {
    * 
    * @return null for success or the error message
    */
-  public String fetchFiles() {
-	numFiles = 0;
+  public String fetchFiles(NXTCommand nxtCommand) {
+	  files.clear();
+	  delete.clear();
     try {
-      files[0] = nxtCommand.findFirstNXJ("*.*");
-	
-	  if (files[0] != null) {
-	    numFiles = 1;
-	
-	    for(int i=1;i<MAX_FILES;i++) {
-	      files[i] = nxtCommand.findNextNXJ(files[i-1].fileHandle);
-	      if (files[i] == null) break;
-	      else {
-	        numFiles++;
-	      }
-	    }
+      FileInfo f = nxtCommand.findFirst("*.*");	
+	  while (f != null)
+	  {
+		  files.add(f);
+		  delete.add(Boolean.FALSE);
+		  
+		  f = nxtCommand.findNext(f.fileHandle);
 	  }
-	  setData(files,numFiles);
+	  
+	  Collections.sort(files, new Comparator<FileInfo>() {
+		public int compare(FileInfo o1, FileInfo o2) {
+			return o1.fileName.compareTo(o2.fileName);
+		}
+	  });
+	  
+	  this.fireTableDataChanged();
 	  return null;
     } catch (IOException ioe) {
     	return "IOException fetching files";
@@ -157,7 +170,7 @@ public class ExtendedFileModel extends AbstractTableModel {
    * @return the FileInfo object
    */
   public FileInfo getFile(int i) {
-	  return files[i];
+	  return files.get(i);
   }
   
   /**
@@ -166,7 +179,7 @@ public class ExtendedFileModel extends AbstractTableModel {
    * @return the number of files
    */
   public int numFiles() {
-	  return numFiles;
+	  return files.size();
   }
   
   /**
@@ -175,10 +188,12 @@ public class ExtendedFileModel extends AbstractTableModel {
    * @return the row of -1 if not found
    */
   public int getRow(String fileName) {
-	  for(int i=0;i<numFiles;i++) {
-		  if (fileName.equals(fileData[i][0])) return i;
-	  }
-	  return -1;
+	int len = files.size();
+	for (int i = 0; i < len; i++)
+		if (fileName.equals(files.get(i).fileName))
+			return i;
+			
+	return -1;
   }
 }
 

@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import lejos.nxt.remote.NXTCommand;
 import lejos.pc.comm.NXTComm;
@@ -171,13 +171,14 @@ public class NXJBrowser
 	
     frame.getContentPane().removeAll();
 
-    final ExtendedFileModel fm = new ExtendedFileModel(nxtCommand);
+    final ExtendedFileModel fm = new ExtendedFileModel();
+    fm.fetchFiles(nxtCommand);
       
     final JTable table = new JTable(fm);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     
-    TableColumn col = table.getColumnModel().getColumn(0);
-    col.setPreferredWidth(300);
+    TableColumnModel tcm = table.getColumnModel();
+    tcm.getColumn(0).setPreferredWidth(450);
 
     final JScrollPane tablePane = new JScrollPane(table);
     tablePane.setPreferredSize(new Dimension(605, 500));
@@ -204,119 +205,39 @@ public class NXJBrowser
 
     deleteButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {
-    	frame.setCursor(hourglassCursor);
-        
-    	try {
-	        for(int i=0;i<fm.getRowCount();i++) {
-	          Boolean b = (Boolean) fm.getValueAt(i,4);
-	          boolean deleteIt = b.booleanValue();
-	          String fileName = (String) fm.getValueAt(i,0);
-	          if (deleteIt) {
-	            //System.out.println("Deleting " + fileName);
-	            nxtCommand.delete(fileName); 
-		        fm.delete(fileName, i);
-		        i--;
-		        table.invalidate();
-		        tablePane.revalidate();   
-	          }
-	        }
-        } catch (IOException ioe) {
-        	showMessage("IOException deleting files");
-        }
-        frame.setCursor(normalCursor);
+    	deleteFile(frame, fm);
       }
     });
 
     uploadButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {       
-        JFileChooser fc = new JFileChooser();
-
-        int returnVal = fc.showOpenDialog(frame);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-          frame.setCursor(hourglassCursor);
-          try {
-        	  File file = fc.getSelectedFile();
-        	  if (file.getName().length() > 20) {
-        		  showMessage("File name is more than 20 characters");
-        	  } else {   	
-		          nxtCommand.uploadFile(file, file.getName());
-		          String s = fm.fetchFiles();
-		          if (s != null) throw new IOException();
-		          table.invalidate();
-		          tablePane.revalidate();
-        	  }
-          } catch (IOException ioe) {
-        	  showMessage("IOException uploading file");
-          }
-          frame.setCursor(normalCursor);
-        }
+        uploadFile(frame, fm);
       }
     });
     
     downloadButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {
         int i = table.getSelectedRow();
-        if (i<0) return;
-        String fileName = fm.getFile(i).fileName;
-        int size = fm.getFile(i).fileSize;
-        JFileChooser fc = new JFileChooser();
-        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fc.setSelectedFile(new File(fileName)); 
-	    int returnVal = fc.showSaveDialog(frame);
-        if (returnVal == 0) {
-          File file = fc.getSelectedFile();
-          frame.setCursor(hourglassCursor);
-          getFile(file, fileName, size);
-          frame.setCursor(normalCursor);
-        }
+        downloadFile(frame, fm, i);
       }
     });
 
     defragButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ae) {
-          frame.setCursor(hourglassCursor);
-          try {
-        	  nxtCommand.defrag();
-	          String s = fm.fetchFiles();
-	          if (s != null) throw new IOException();
-	          table.invalidate();
-	          tablePane.revalidate();
-	          tablePane.repaint();
-          } catch (IOException ioe) {
-        	  showMessage("IOException during defrag");
-          }
-          frame.setCursor(normalCursor);
+          defragFS(frame, fm);
         }
       });
     
     runButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ae) {
       	  int i = table.getSelectedRow();
-      	  if (i<0) return;
-      	  String fileName = fm.getFile(i).fileName;
-          try {
-        	  runProgram(fileName);
-        	  System.exit(0);
-          } catch (IOException ioe) {
-        	  showMessage("IOException running program");
-          }
+      	  runFile(fm, i);
         }
       });
     
     nameButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ae) {
-          String name = JOptionPane.showInputDialog(frame,"New Name");
-          
-          if (name != null && name.length() <= 16) {
-        	  frame.setCursor(hourglassCursor);        
-              try {
-            	  nxtCommand.setFriendlyName(name);
-            	  frame.setTitle(title + " : " + name);
-              } catch (IOException ioe) {
-            	  showMessage("IOException setting friendly name");
-              }
-        	  frame.setCursor(normalCursor);
-          }
+          changeName(frame);
         }
       });
 
@@ -361,6 +282,102 @@ public class NXJBrowser
   public void showMessage(String msg) {
 	  JOptionPane.showMessageDialog(frame, msg);
   }
+
+private void deleteFile(final JFrame frame, final ExtendedFileModel fm) {
+	frame.setCursor(hourglassCursor);
+	
+	try {
+	    for(int i=0;i<fm.getRowCount();i++) {
+	      Boolean b = (Boolean) fm.getValueAt(i,ExtendedFileModel.COL_DELETE);
+	      String fileName = (String) fm.getValueAt(i,ExtendedFileModel.COL_NAME);
+	      boolean deleteIt = b.booleanValue();
+	      if (deleteIt) {
+	        //System.out.println("Deleting " + fileName);
+	        nxtCommand.delete(fileName); 
+	      }
+	    }
+	    fm.fetchFiles(nxtCommand);
+	} catch (IOException ioe) {
+		showMessage("IOException deleting files");
+	}
+	frame.setCursor(normalCursor);
+}
+
+private void uploadFile(final JFrame frame, final ExtendedFileModel fm) {
+	JFileChooser fc = new JFileChooser();
+
+	int returnVal = fc.showOpenDialog(frame);
+	if (returnVal == JFileChooser.APPROVE_OPTION) {
+	  frame.setCursor(hourglassCursor);
+	  try {
+		  File file = fc.getSelectedFile();
+		  if (file.getName().length() > 20) {
+			  showMessage("File name is more than 20 characters");
+		  } else {   	
+	          nxtCommand.uploadFile(file, file.getName());
+	          String s = fm.fetchFiles(nxtCommand);
+	          if (s != null) throw new IOException();
+		  }
+	  } catch (IOException ioe) {
+		  showMessage("IOException uploading file");
+	  }
+	  frame.setCursor(normalCursor);
+	}
+}
+
+private void downloadFile(final JFrame frame, final ExtendedFileModel fm, int i) {
+	if (i<0) return;
+	String fileName = fm.getFile(i).fileName;
+	int size = fm.getFile(i).fileSize;
+	JFileChooser fc = new JFileChooser();
+	fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+	fc.setSelectedFile(new File(fileName)); 
+	int returnVal = fc.showSaveDialog(frame);
+	if (returnVal == 0) {
+	  File file = fc.getSelectedFile();
+	  frame.setCursor(hourglassCursor);
+	  getFile(file, fileName, size);
+	  frame.setCursor(normalCursor);
+	}
+}
+
+private void defragFS(final JFrame frame, final ExtendedFileModel fm) {
+	frame.setCursor(hourglassCursor);
+	  try {
+		  nxtCommand.defrag();
+	      String s = fm.fetchFiles(nxtCommand);
+	      if (s != null) throw new IOException();
+	  } catch (IOException ioe) {
+		  showMessage("IOException during defrag");
+	  }
+	  frame.setCursor(normalCursor);
+}
+
+private void runFile(final ExtendedFileModel fm, int i) {
+	if (i<0) return;
+	  String fileName = fm.getFile(i).fileName;
+	  try {
+		  runProgram(fileName);
+		  System.exit(0);
+	  } catch (IOException ioe) {
+		  showMessage("IOException running program");
+	  }
+}
+
+private void changeName(final JFrame frame) {
+	String name = JOptionPane.showInputDialog(frame,"New Name");
+	  
+	  if (name != null && name.length() <= 16) {
+		  frame.setCursor(hourglassCursor);        
+	      try {
+	    	  nxtCommand.setFriendlyName(name);
+	    	  frame.setTitle(title + " : " + name);
+	      } catch (IOException ioe) {
+	    	  showMessage("IOException setting friendly name");
+	      }
+		  frame.setCursor(normalCursor);
+	  }
+}
 }
 
 

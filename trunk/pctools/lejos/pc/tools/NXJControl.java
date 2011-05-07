@@ -39,7 +39,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	private static final Dimension innerInfoPanelSize = new Dimension(280, 70);
 	private static final Dimension tonePanelSize = new Dimension(300, 110);
 	private static final Dimension i2cPanelSize = new Dimension(480, 170);
-	private static final int fileNameColumnWidth = 200;
+	private static final int fileNameColumnWidth = 400;
 	
 	private static final String title = "NXJ Control Center";
 
@@ -681,7 +681,8 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	 *  Set up the files table
 	 */
 	private void createFilesTable() {
-		fm = new ExtendedFileModel(nxtCommand);
+		fm = new ExtendedFileModel();
+		fm.fetchFiles(nxtCommand);
 		table = new JTable(fm);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.getColumnModel().getColumn(0).setPreferredWidth(fileNameColumnWidth);
@@ -1351,17 +1352,14 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		frame.setCursor(hourglassCursor);
 		try {
 			for (int i = 0; i < fm.getRowCount(); i++) {
-				Boolean b = (Boolean) fm.getValueAt(i, 4);
+				Boolean b = (Boolean) fm.getValueAt(i,ExtendedFileModel.COL_DELETE);
+				String fileName = (String) fm.getValueAt(i,ExtendedFileModel.COL_NAME);
 				boolean deleteIt = b.booleanValue();
-				String fileName = (String) fm.getValueAt(i, 0);
-				
 				if (deleteIt) {
-					fm.delete(fileName, i);
-					i--;
-					table.invalidate();
-					tablePane.revalidate();
+					nxtCommand.delete(fileName);
 				}
 			}
+			fm.fetchFiles(nxtCommand);
 		} catch (IOException ioe) {
 			showMessage("IOException deleting files");
 		}
@@ -1388,10 +1386,8 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 			frame.setCursor(hourglassCursor);
 			try {
 				nxtCommand.uploadFile(file, file.getName());
-				String msg = fm.fetchFiles();
+				String msg = fm.fetchFiles(nxtCommand);
 				if (msg != null) showMessage(msg);
-				table.invalidate();
-				tablePane.revalidate();
 			} catch (IOException ioe) {
 				showMessage("IOException uploading file");
 			}
@@ -1600,9 +1596,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		if (nxtCommand == null) return;
 		try {
 			nxtCommand.deleteUserFlash();
-			fm.fetchFiles();
-			table.invalidate();
-			tablePane.revalidate();
+			fm.fetchFiles(nxtCommand);
 		} catch (IOException ioe) {
 			showMessage("IO Exception formatting file system");
 		}
