@@ -70,6 +70,7 @@
 				<div class="linkAHEAD2"><a href="#10.4">RCX Temperature Sensor</a></div>
 				<div class="linkAHEAD"><a href="#11">Third	Party sensors and other devices</a></div>
 				<div class="linkAHEAD"><a href="#12">I2CSensor</a></div>
+				<div class="linkAHEAD"><a href="#13">I2CPort</a></div>
 			</td>
 			<td>
         		<div id="BreadCrumbs">
@@ -78,7 +79,7 @@
             		<a href="#">Advanced Motors, Sensors and Third Party Hardware</a>
         		</div>
         		<div class="NavBit">
-                	<a target="_top" href="../Utilities/LejosUtilities.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../AdvancedTopics/UnderstandingFilesLCPMemTools.htm">Next&nbsp;»</a>
+                    <a target="_top" href="../Utilities/LejosUtilities.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../AdvancedTopics/UnderstandingFilesLCPMemTools.htm">Next&nbsp;&raquo;</a>
         		</div>
         		
 				<!-- CONTENT TITLE -->
@@ -459,257 +460,43 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
 				</p>
 				
 				<p>The types of sensors are:</p>
+				<div class="CodeBox">
+				<pre><code>       
+TYPE_NO_SENSOR = 0
+TYPE_SWITCH = 1
+TYPE_TEMPERATURE = 2
+TYPE_REFLECTION = 3
+TYPE_ANGLE = 4
+TYPE_LIGHT_ACTIVE = 5
+TYPE_LIGHT_INACTIVE = 6
+TYPE_SOUND_DB = 7 
+TYPE_SOUND_DBA = 8
+TYPE_CUSTOM = 9
+TYPE_LOWSPEED = 10
+TYPE_LOWSPEED_9V = 11
+TYPE_HISPEED = 12
+TYPE_COLORFULL = 13
+TYPE_COLORRED = 14
+TYPE_COLORGREEN = 15
+TYPE_COLORBLUE = 16
+TYPE_COLORNONE = 17
+				</code></pre>
+				</div>
 
-				<table dir="ltr" width=394 border=1 cellpadding=7 cellspacing=0>
-					<col width=213/>
-					<col width=152/>
-					<tr valign=top>
-						<td width=213>
-							<p>sensor type</p>
-						</td>
-						<td width=152>
-							<p>code 
-							</p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=213>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>type_no_sensor</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=152>
-							<p> <font face="courier new, monospace"><font size=2>0x00;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=213>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>type_switch</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=152>
-							<p> <font face="courier new, monospace"><font size=2>0x01;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=213>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>type_temperature</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=152>
-							<p> <font face="courier new, monospace"><font size=2>0x02;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=213>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>type_reflection</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=152>
-							<p> <font face="courier new, monospace"><font size=2>0x03;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=213>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>type_angle</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=152>
-							<p> <font face="courier new, monospace"><font size=2>0x04;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=213>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>type_light_active</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=152>
-							<p> <font face="courier new, monospace"><font size=2>0x05;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=213>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>type_light_inactive</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=152>
-							<p> <font face="courier new, monospace"><font size=2>0x06;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=213>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>type_sound_db</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=152>
-							<p> <font face="courier new, monospace"><font size=2>0x07;
-							</font></font>
-							</p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=213>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>type_sound_dba</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=152>
-							<p> <font face="courier new, monospace"><font size=2>0x08;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=213>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>type_custom</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=152>
-							<p> <font face="courier new, monospace"><font size=2>0x09;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=213>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>type_lowspeed</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=152>
-							<p> <font face="courier new, monospace"><font size=2>0x0a;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=213>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>type_lowspeed_9v</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=152>
-							<p> <font face="courier new, monospace"><font size=2>0x0b;</font></font></p>
-						</td>
-					</tr>
-				</table>
-				
 				<p>and the modes are:</p>
+				<div class="CodeBox">
+				<pre><code>       
+MODE_RAW = 0x00
+MODE_BOOLEAN = 0x20
+MODE_TRANSITIONCNT = 0x40
+MODE_PERIODCOUNTER = 0x60
+MODE_PCTFULLSCALE = 0x80
+MODE_CELSIUS = 0xA0
+MODE_FARENHEIT = 0xC0
+MODE_ANGLESTEP = 0xE0
+				</code></pre>
+				</div>
 				
-				<table dir="ltr" width=394 border=1 cellpadding=7 cellspacing=0>
-					<col width=196/>
-					<col width=168/>
-					<tr valign=top>
-						<td width=196>
-							<p>mode</p>
-						</td>
-						<td width=168>
-							<p>code</p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=196>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>mode_raw</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=168>
-							<p> <font face="courier new, monospace"><font size=2>0x00;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=196>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>mode_boolean</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=168>
-							<p> <font face="courier new, monospace"><font size=2>0x20;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=196>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>mode_transitioncnt</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=168>
-							<p> <font face="courier new, monospace"><font size=2>0x40;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=196>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>mode_periodcounter</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=168>
-							<p> <font face="courier new, monospace"><font size=2>0x60;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=196>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>mode_pctfullscale</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=168>
-							<p> <font face="courier new, monospace"><font size=2>0x80;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=196>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>mode_celsius</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=168>
-							<p> <font face="courier new, monospace"><font size=2>0xa0;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=196>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>mode_farenheit</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=168>
-							<p> <font face="courier new, monospace"><font size=2>0xc0;</font></font></p>
-						</td>
-					</tr>
-					<tr valign=top>
-						<td width=196>
-							<p><font color="#7f0055"><font face="courier new, monospace"><font size=2><b>int</b></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font><font color="#0000c0"><font face="courier new, monospace"><font size=2><i>mode_anglestep</i></font></font></font><font color="#000000"><font face="courier new, monospace"><font size=2>
-							</font></font></font>
-							</p>
-						</td>
-						<td width=168>
-							<p> <font face="courier new, monospace"><font size=2>0xe0;</font></font></p>
-						</td>
-					</tr>
-				</table>
 
 				<p>The BasicSensorPort interface
 				defines the methods:</p>
@@ -793,8 +580,9 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
 				splitter they must each have different I2C addresses. Most I2C
 				sensors can have their address changed &ndash; see the
 				manufacturers instructions. To specify the address that a sensor
-				uses, if it is not the default, the setAddress method of I2CSensor
-				should be used.</p>
+				uses, if it is not the default, then you may need to use an alternate constructor
+                for the sensor class to allow you to specify the address. If such a constructor does not
+                exist please report this to us and use the setAddress method of I2CSensor.</p>
 				
 				<p>The sensor ports supported by leJOS
 				NXJ together with the class that supports them and the type of
@@ -849,13 +637,13 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
               			</tr>
                 			<tr>
                 			<td>
-                				<p>LEGO NXT Sound Sensor</p>
+                				<p>LEGO NXT Color Sensor</p>
                 			</td>
                 			<td>
-                				<p>SoundSensor</p>
+                				<p>ColorSensor</p>
                 			</td>
                 			<td>
-                				<p>ADSensorPort</p>
+                				<p>SensorPort</p>
                 			</td>
               			</tr>
                			<tr>
@@ -940,7 +728,7 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
                 				<p>HiTechnic Gyro Sensor</p>
                 			</td>
                 			<td>
-                				<p>GyroSensorSensor</p>
+                				<p>GyroSensor</p>
                 			</td>
                 			<td>
                 				<p>ADSensorPort</p>
@@ -1221,6 +1009,17 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
                 				<p>I2CPort</p>
                 			</td>
               			</tr>              			
+                		<tr>
+                			<td>
+                				<p>Cruizcore Gyro</p>
+                			</td>
+                			<td>
+                				<p>CruizcoreGyro</p>
+                			</td>
+                			<td>
+                				<p>I2CPort</p>
+                			</td>
+              			</tr>              			
              		</tbody>
               	</table>
 			
@@ -1311,7 +1110,7 @@ RCXLightSensor light = new RCXLightSensor(SensorPort.S1);
 
 				<p><a href="#top">Back to top</a></p>
 							
-				<a name="11"></a>
+				<a name="12"></a>
 				<h4>I2CSensor</h4>
 			
 				<p>The I2CSensor class implements the basic methods for accessing I2C sensors including getData and	SendData.</p>
@@ -1338,7 +1137,7 @@ RCXLightSensor light = new RCXLightSensor(SensorPort.S1);
 			
 				<p>The I2CSensor class can be used to
 				implement an I2C device explorer that reports what devices are
-				connected to which sensor sing which address &ndash; see the
+				connected to which sensor using which address &ndash; see the
 				I2CDevices sample. This is possible as all the NXT I2C sensors and
 				other devices support the getVersion, getProductID and
 				getSensorType methods.</p>
@@ -1346,9 +1145,53 @@ RCXLightSensor light = new RCXLightSensor(SensorPort.S1);
 				<p>See the table above for the complete list of  sensors and other third party devices. </p>
 
 				<p><a href="#top">Back to top</a></p>
+				<a name="13"></a>
+				<h4>I2CPort</h4>
+			
+				<p>The I2CPort provides low level access to a port being used for I2C communications. In many cases
+                    these operations are not required and the higher level I2CSensor class is used. However
+                    some advanced applications (like those scanning ports to identify sensors) may require access
+                    at this level.</p>
+			
+				<p>The method signatures are:</p>
+			
+				<ul class="BlueArrows">
+					<li>public void i2cEnable(int mode)</li>
+					<li>public void i2cDisable()</li>
+					<li>public int i2cStatus()</li>
+					<li>public int i2cTransaction(int deviceAddress, byte[]writeBuf,
+            int writeOffset, int writeLen, byte[] readBuf, int readOffset,
+            int readLen)</li>
+				</ul>
+
+                <p>To use a port with I2C it must be enabled. When I2C operation is no longer required it should
+                    be disabled. The enable method also sets the operating
+                   mode of the port. The available operating modes are:</p>
+				<div class="CodeBox">
+				<pre><code>
+STANDARD_MODE = 0
+LEGO_MODE = 1
+ALWAYS_ACTIVE = 2
+NO_RELEASE = 4
+HIGH_SPEED = 8
+				</code></pre>
+				</div>
+                <p>The mode normally used is <b>LEGO_MODE</b>. This offers compatibility with the standard
+                   Lego firmware. The bus will operate at 9.6Kbps and will add delays to be
+                   compatible with the Lego Ultrasonic sensor. This mode will normally work with all NXT compatible devices.
+                   <b>STANDARD_MODE</b> operates the port in a more I2C standard compliant way. You may wish to try using
+                   this if you are having problems with a device. <b>HIGH_SPEED</b> mode operates the bus at a much
+                   higher speed (125Kbps), to function at this speed the device will typically need to be using a 
+                   hardware implementation of I2C (many of the HiTechnics and Mindsensors devices can be used at this
+                   speed). It should be noted that these modes operate at the port level not for an individual sensor
+                   so if more than one sensor is attached to the same port they will all share the same operating mode.
+                   To set the operating mode of a port a call to enable(mode) should be made prior to creating any
+                   instances of sensors to be associated with the port.</p>
+
+				<p><a href="#top">Back to top</a></p>
 
         		<div class="NavBit">
-                	<a target="_top" href="../Utilities/LejosUtilities.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../AdvancedTopics/UnderstandingFilesLCPMemTools.htm">Next&nbsp;»</a>
+                    <a target="_top" href="../Utilities/LejosUtilities.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../AdvancedTopics/UnderstandingFilesLCPMemTools.htm">Next&nbsp;&raquo;</a>
         		</div>
 			</td>
 		</tr>
