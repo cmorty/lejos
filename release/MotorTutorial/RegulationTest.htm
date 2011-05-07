@@ -40,24 +40,15 @@ table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
         <span class="ST0">new</span> RegulateTest().go();   
     }
     <span class="comment">/**</span>
-<span class="comment">     * </span><span class="comment">performs</span> <span class="comment">the</span> <span class="comment">test</span> <span class="comment">twice</span><span class="comment">,  </span><span class="comment">with</span> <span class="comment">and</span> <span class="comment">without</span> <span class="comment">speed</span> <span class="comment">regulation</span><span class="comment">.</span>
-     <span class="comment">*/</span>
-    <span class="ST0">public</span> <span class="ST0">void</span> go()
-    {
-        <span class="ST0">for</span>( <span class="ST0">int</span> i = 0; i&lt;3; i++)m[i].setSpeed(720);
-        step();
-       <span class="ST0">for</span>( <span class="ST0">int</span> i = 0; i&lt;3; i++)m[i].regulateSpeed(<span class="ST0">false</span>);
-         step();      
-    }
-    <span class="comment">/**</span>
 <span class="comment">     * </span><span class="comment">helper</span> <span class="comment">method</span><span class="comment"> - </span><span class="comment">does</span> <span class="comment">the</span> <span class="comment">detailed</span> <span class="comment">work</span><span class="comment">; </span><span class="comment">resets</span> <span class="comment">tacho</span> <span class="comment">count</span><span class="comment">, </span><span class="comment">runs</span> <span class="comment">motors</span><span class="comment">,</span>
 <span class="comment">     * </span><span class="comment">displays</span> <span class="comment">data</span>
      <span class="comment">*/</span>
-    <span class="ST0">public</span> <span class="ST0">void</span> step()
+    <span class="ST0">public</span> <span class="ST0">void</span> go()
     {
         LCD.clear();
         sw.reset();  
         <span class="ST0">for</span>( <span class="ST0">int</span> i = 0; i&lt;3; i++)m[i].resetTachoCount();
+        <span class="ST0">for</span>( <span class="ST0">int</span> i = 0; i&lt;3; i++)m[i].setSpeed(720);
         <span class="ST0">for</span>( <span class="ST0">int</span> i = 0; i&lt;3; i++)m[i].forward();
         <span class="ST0">for</span>(<span class="ST0">int</span> r = 0 ; r&lt;8; r++)
         {
