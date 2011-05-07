@@ -1,14 +1,14 @@
 package lejos.robotics.localization;
 
+
 import lejos.geom.*;
 import java.io.*;
 import lejos.robotics.*;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
-
 import java.util.Random;
-
+import lejos.robotics.localization.MCLParticle;
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
@@ -16,19 +16,19 @@ import java.util.Random;
 
 /**
  * Represents a particle set for the particle filtering algorithm.
- * 
+ *
  * @author Lawrie Griffiths
- * 
+ *
  */
 public class MCLParticleSet {
-  // Constants 
+  // Constants
   private static final float BIG_FLOAT = 10000f;
   // Static variables
   public static int maxIterations = 1000;
-  private float twoSigmaSquared = 200f; // was 250 200
+  private float twoSigmaSquared = 400f; // was 250 200
   // Instance variables
-  private float distanceNoiseFactor = 0.1f;
-  private float angleNoiseFactor = 2f;
+  private float distanceNoiseFactor = 0.2f;
+  private float angleNoiseFactor = 4f;
   private int numParticles;
   private MCLParticle[] particles;
   private RangeMap map;
@@ -36,11 +36,12 @@ public class MCLParticleSet {
   private int border = 10;	// The minimum distance from the edge of the map
   private Random random = new Random(); // to generate a particle.
   private Rectangle boundingRect;
-  private boolean debug = false;
-  
+  private static boolean debug = false;
+  private int _iterations;
+
   /**
    * Create a set of particles randomly distributed with the given map.
-   * 
+   *
    * @param map the map of the enclosed environment
    */
   public MCLParticleSet(RangeMap map, int numParticles, int border)
@@ -53,10 +54,9 @@ public class MCLParticleSet {
     for (int i = 0; i < numParticles; i++) {
       particles[i] = generateParticle();
     }
-    normalize();
   }
 /**
- * Generates a circular cloud of particles centered on initialPose with random 
+ * Generates a circular cloud of particles centered on initialPose with random
  * radius  and angle
  * @param map the map
  * @param numParticles the number of particles
@@ -68,7 +68,8 @@ public class MCLParticleSet {
   public MCLParticleSet(RangeMap map, int numParticles, int border,
           RangeReadings readings, float divisor, float minWeight)
   {
-     int k = 1;
+    if(debug)System.out.println("New  Particles from readings");
+    int k = 1;
     this.map = map;
     this.numParticles = numParticles;
     this.border = border;
@@ -85,10 +86,10 @@ public class MCLParticleSet {
       {
         particles[i]=particle;
         i++;
+        if(debug )System.out.println("generated "+i);
       }
     }
-    normalize();
-    System.out.println("particles generated " + k);
+    System.out.println("Total particles tried " + k);
   }
 public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
           float radiusNoise, float headingNoise)
@@ -106,13 +107,15 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
       float y = initialPose.getY() + rad * (float) Math.sin(theta);
       float heading = initialPose.getHeading() + headingNoise * (float) random.nextGaussian();
       particles[i] = new MCLParticle((new Pose(x,y,heading)));
+      if(debug){
+          System.out.println(" new particle set ");
+      }
     }
-    normalize();
   }
 
   /**
    * Generate a random particle within the mapped area.
-   * 
+   *
    * @return the particle
    */
   private MCLParticle generateParticle() {
@@ -136,25 +139,26 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
 
   /**
    * Return the number of particles in the set
-   * 
+   *
    * @return the number of particles
    */
   public int numParticles() {
     return numParticles;
   }
-  
+
   /**
    * Set system out debugging on or off
-   * 
+   *
    * @param debug true to set debug, false to set it off
    */
-  public void setDebug(boolean debug) {
+  public    void setDebug(boolean debug) {
 	  this.debug = debug;
+          if(debug)System.out.println("ParticleSet Debug ON ");
   }
 
   /**
    * Get a specific particle
-   * 
+   *
    * @param i the index of the particle
    * @return the particle
    */
@@ -164,6 +168,14 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
 
 
   /**
+   * Resample the set picking those with higher weights.
+   *
+   * Note that the new set has multiple instances of the particles with higher
+   * weights.
+   *
+   * @return true iff lost
+   */
+   /**
    * Resample the set picking those with higher weights.
    *
    * Note that the new set has multiple instances of the particles with higher
@@ -184,33 +196,24 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
 
     while (count < numParticles) {
       iterations++;
-      if (iterations >= maxIterations)
-      {
-        if (debug){
-          System.out.println("Lost: count = " + count);
-        }
-
+      if (iterations >= maxIterations) {
+        if (debug) System.out.println("Lost: count = " + count);
         if (count > 0) { // Duplicate the ones we have so far
           for (int i = count; i < numParticles; i++) {
             particles[i] = new MCLParticle(particles[i % count].getPose());
             particles[i].setWeight(particles[i % count].getWeight());
           }
-          normalize();
           return false;
         } else { // Completely lost - generate a new set of particles
           for (int i = 0; i < numParticles; i++) {
             particles[i] = generateParticle();
           }
-//          resetEstimate();
-          normalize();
           return true;
         }
       }
-      float rand = maxWeight *(float) Math.random();
-      for (int i = 0; i < numParticles && count < numParticles; i++)
-      {
-        if (oldParticles[i].getWeight() >= rand)
-        {
+      float rand = (float) Math.random();
+      for (int i = 0; i < numParticles && count < numParticles; i++) {
+        if (oldParticles[i].getWeight() >= rand) {
           Pose p = oldParticles[i].getPose();
           float x = p.getX();
           float y = p.getY();
@@ -222,86 +225,43 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
         }
       }
     }
-    return false;
+    return true;
   }
 
-  /**
-    Thrun Low variance resampling algorithm pg 110 table 4.4
-   */
-  public void resampleLowVar()
-  {
-    // does not work well ??
-
-    MCLParticle[] oldParticles = particles; // line 2
-    particles = new MCLParticle[numParticles];
-    float np_1 = 1.0f/ numParticles;
-    float r = random.nextFloat() * np_1;// line 3
-    float c = oldParticles[0].getWeight()/totalWeight;//. line 4
-    int k = 0; 
-    int iold = 0;
-
-    int i=  0; // line 5
-
-    for (int m = 0; m < numParticles; m++)// line 6
-    {
-      float u = r + m * np_1; // line 7
-      while (u > c)// line 8
-      {
-        i++;  // line 9
-        if (i == numParticles)
-        {
-          i = 0;// avoid array out of bounds
-        }
-        float w = oldParticles[i].getWeight() / totalWeight;
-        c += oldParticles[i].getWeight() / totalWeight; // line 10
-      }// end while  // line 11
-      particles[m] = oldParticles[i];// line 12
-      if (i != iold)
-      {
-        iold = i;
-        k++;
-      }
-    } //  end  for  line 13
-  }
 
 
   /**
    * Calculate the weight for each particle
-   *  Normalize to sum = 1.0
    * @param rr the robot range readings
    */
-  public boolean  calculateWeights(RangeReadings rr, RangeMap map) {
-   if(debug) System.out.print(" calc weights using ranges:  "+rr.getRange(0)+" "+rr.getRange(1)+" "
+  public boolean  calculateWeights(RangeReadings rr, RangeMap map)
+  {
+   if(debug) System.out.println(" Calc weights using ranges:  "+rr.getRange(0)+" "+rr.getRange(1)+" "
            +rr.getRange(2)+" A "
            +rr.getAngle(0)+" "+rr.getAngle(1)+" "+rr.getAngle(2));
-   if(rr.incomplete())  
+   if(rr.incomplete())
    {
      if(debug) System.out.println("range set incomplete");
      return false;
    }
+   int zeros= 0;
     maxWeight = 0f;
-    for (int i = 0; i < numParticles; i++) {
+    for (int i = 0; i < numParticles; i++)
+    {
       particles[i].calculateWeight(rr, map, twoSigmaSquared);
-    }
-    normalize();
-    for (int i = 0; i < numParticles; i++) {
-      float weight = particles[i].getWeight();
+         float weight = particles[i].getWeight();
       if (weight > maxWeight) maxWeight = weight;
-      }
+         if(weight == 0 )zeros++;
+    }
 
-   if(debug) System.out.println("Calc Weights Max wt " +maxWeight);
-     if(maxWeight < .1)return false;
-// normalize so maximum weight = 1  for mor efficient resampling.
-// TO DO   normalize to sum of weights = 1;    multiply new by old'
-    for (int i = 0; i < numParticles; i++){
-      particles[i].setWeight(particles[i].getWeight()/ maxWeight);
-    } 
+   if(debug) System.out.println("Calc Weights Max wt " +maxWeight+" Zeros "+zeros);
+    if(maxWeight < .01)return false;
     return true;
   }
-  
+
   /**
    * Apply a move to each particle
-   * 
+   *
    * @param move the move to apply
    */
   public void applyMove(Move move) {
@@ -310,35 +270,38 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
     for (int i = 0; i < numParticles; i++) {
       particles[i].applyMove(move, distanceNoiseFactor, angleNoiseFactor);
     }
+       if(debug)System.out.println("particles applyMove Exit");
   }
-  
+
   /**
    * The highest weight of any particle
-   * 
+   *
    * @return the highest weight
    */
   public float getMaxWeight() {
-    return maxWeight;
+    float wt = 0;
+    for (int i = 0; i < particles.length; i ++ ) wt = Math.max(wt,particles[i].getWeight());
+    return wt;
   }
-  
+
   /**
    * Get the border where particles should not be generated
-   * 
+   *
    * @return the border
    */
   public float getBorder() {
 	  return border;
   }
-  
+
   /**
    * Set border where no particles should be generated
-   * 
-   * @param border the border 
+   *
+   * @param border the border
    */
   public void setBorder(int border) {
     this.border = border;
   }
-  
+
   /**
    * Set the standard deviation for the sensor probability model
    * @param sigma the standard deviation
@@ -346,7 +309,7 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
   public void setSigma(float sigma) {
     twoSigmaSquared = 2 * sigma * sigma;
   }
-  
+
   /**
    * Set the distance noise factor
    * @param factor the distance noise factor
@@ -354,7 +317,7 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
   public void setDistanceNoiseFactor(float factor) {
     distanceNoiseFactor = factor;
   }
-  
+
   /**
    * Set the distance angle factor
    * @param factor the distance angle factor
@@ -362,7 +325,7 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
   public void setAngleNoiseFactor(float factor) {
     angleNoiseFactor = factor;
   }
- 
+
   /**
    * Set the maximum iterations for the resample algorithm
    * @param max the maximum iterations
@@ -370,11 +333,11 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
   public void setMaxIterations(int max) {
     maxIterations = max;
   }
-  
+
   /**
    * Find the index of the particle closest to a given co-ordinates.
    * This is used for diagnostic purposes.
-   * 
+   *
    * @param x the x-coordinate
    * @param y the y-coordinate
    * @return the index
@@ -385,7 +348,7 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
     for (int i = 0; i < numParticles; i++) {
       Pose pose = particles[i].getPose();
       float distance = (float) Math.sqrt((double) (
-          (pose.getX() - x) * (pose.getX() - x)) + 
+          (pose.getX() - x) * (pose.getX() - x)) +
           ((pose.getY() - y) * (pose.getY() - y)));
       if (distance < minDistance) {
         minDistance = distance;
@@ -394,23 +357,10 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
     }
     return index;
   }
-  private void normalize()
-  {
-    totalWeight  = 0;
-    for (int i = 0; i< numParticles; i++ )
-    {
-       totalWeight += particles[i].getWeight();
-    }
-     for (int i = 0; i< numParticles; i++ )
-    {
-       float w = particles[i].getWeight()/totalWeight;
-       particles[i].setWeight(w);
-    }
-    totalWeight = 1;
-  }
+
   /**
    * Serialize the particle set to a data output stream
-   * 
+   *
    * @param dos the data output stream
    * @throws IOException
    */
@@ -428,6 +378,9 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
       }
   }
 
+  public int getIterations() {
+      return _iterations;
+  }
   /**
    * Load serialized particles from a data input stream
    * @param dis the data input stream
@@ -443,13 +396,13 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
       Pose pose = new Pose(x, y, angle);
       particles[i] = new MCLParticle(pose);
       particles[i].setWeight(dis.readFloat());
-    }  
+    }
   }
-  
+
   /**
    * Find the closest particle to specified coordinates and dump its
    * details to a data output stream.
-   * 
+   *
    * @param dos the data output stream
    * @param x the x-coordinate
    * @param y the y-coordinate
