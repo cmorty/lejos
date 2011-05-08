@@ -63,9 +63,9 @@
 			
 			<!-- NAVIGATION TOOL -->
 			<div class="NavBit">
-				<a target="_top" href="../ListenersAndEvents/Listeners_Events.htm">«&nbsp;Previous</a>
+                <a target="_top" href="../ListenersAndEvents/Listeners_Events.htm">&laquo;&nbsp;Previous</a>
 				&nbsp;&#8226;&nbsp;
-				<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Communications/Communications.htm">Next&nbsp;»</a>
+                <a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Communications/Communications.htm">Next&nbsp;&raquo;</a>
 			</div>
 
 			<!-- CONTENT AREA -->
@@ -84,22 +84,181 @@
 			<h4>Exceptions</h4>
 			<p>Most of the standard Java language exception classes are supported by leJOS, and user can create their own exception classes.</p>
 			<p>Example:</p>
-			<p>The following simplified version of the ExceptionTest example demonstrates what happens for an exception that is not caught &#8211; in this case an
+			<p>The following ExceptionTest example demonstrates what happens for an exception that is not caught &#8211; in this case an
 			ArrayIndexOutOfBounds exception.</p>
 			
 			<div class="CodeBox">
 			<pre><code>
-import lejos.nxt.*;
-
 public class ExceptionTest {
-  public static void main(String[] args) {
-    SensorPort p = SensorPort.PORTS[5];
-  }
+    static void m1()
+    {
+		int test[] = new int[2];
+        // Force an exception
+		test[0] = test[1] + test[2]; // This is line 6
+    }
+
+    static void m2()
+    {
+        m1();
+    }
+
+	public static void main (String[] aArg) throws Exception
+	{
+        System.out.println("Running");
+        m2();
+	}
 }
 			</code></pre>
 			</div>
+            <p>
+                When this code is run the NXT will display the uncaught exception screen. Which looks something like this:
+            </p>
+			<div class="CodeBox">
+			<pre><code>
+Exception: 28
+  at:  20(11)
+  at:  21(1)
+  at:  22(9)
+			</code></pre>
+			</div>
+            <p>
+                But what are these numbers telling us? The first line tells us the number of the exception class that
+                has been thrown, in this case class 28. The following lines show us a mini stack trace, one for each method
+                in the call stack, showing the method number and the program counter location within the method. The top most
+                item is the location that the exception was thrown, which in this case was at location 11 in method number 20.
+            </p>
+            <p>
+                So we now understand what the numbers are, but how do we relate them to our program? Well one way is to use
+                the verbose output from the linker, an abbreviated version of which looks like this:
+            </p>
+			<div class="CodeBox">
+			<pre><code>
+Class 0: java.lang.Object
+Class 1: java.lang.Throwable
+Class 2: java.lang.Error
+Class 3: java.lang.OutOfMemoryError
+Class 4: boolean
+Class 5: char
+Class 6: float
+Class 7: double
+Class 8: byte
+Class 9: short
+Class 10: int
+Class 11: long
+Class 12: void
+Class 13: java.lang.Object[]
+Class 14: java.lang.NoSuchMethodError
+Class 15: java.lang.StackOverflowError
+Class 16: java.lang.NullPointerException
+Class 17: boolean[]
+Class 18: char[]
+Class 19: float[]
+Class 20: double[]
+Class 21: byte[]
+Class 22: short[]
+Class 23: int[]
+Class 24: long[]
+Class 25: reserved
+Class 26: java.lang.ClassCastException
+Class 27: java.lang.ArithmeticException
+Class 28: java.lang.ArrayIndexOutOfBoundsException
+Class 29: java.lang.IllegalArgumentException
+Class 30: java.lang.InterruptedException
+Class 31: java.lang.IllegalStateException
+Class 32: java.lang.IllegalMonitorStateException
+Class 33: java.lang.ThreadDeath
+.... other classes omitted
+Method 0: java.lang.Object.&lt;init&gt;() PC 1976 Signature id 2
+Method 1: java.lang.Object.getClass() PC 1977 Signature id 121
+Method 2: java.lang.Object.toString() PC 1985 Signature id 123
+Method 3: java.lang.Throwable.i&lt;init&gt;() PC 2013 Signature id 2
+Method 4: java.lang.Throwable.&lt;init&gt;(java.lang.String) PC 2023 Signature id 124
+Method 5: java.lang.Throwable.getLocalizedMessage() PC 2038 Signature id 125
+Method 6: java.lang.Throwable.getMessage() PC 2043 Signature id 29
+Method 7: java.lang.Throwable.toString() PC 2048 Signature id 123
+Method 8: java.lang.Throwable.fillInStackTrace() PC 2096 Signature id 126
+Method 9: java.lang.NullPointerException.&lt;init&gt;() PC 2109 Signature id 2
+Method 10: java.lang.Class.isInterface() PC 2114 Signature id 133
+Method 11: java.lang.Class.toString() PC 2131 Signature id 123
+Method 12: java.lang.String.&lt;init&gt;(int) PC 2177 Signature id 128
+Method 13: java.lang.String.&lt;init&gt;(char[], int, int) PC 2189 Signature id 141
+Method 14: java.lang.String.charAt(int) PC 2206 Signature id 145
+Method 15: java.lang.String.length() PC 2231 Signature id 155
+Method 16: java.lang.String.toString() PC 2237 Signature id 123
+Method 17: java.lang.String.valueOf(java.lang.Object) PC 2239 Signature id 167
+Method 18: java.lang.Thread.run() PC 2253 Signature id 1
+Method 19: java.lang.Thread.currentThread() Native id 12
+Method 20: ExceptionTest.m1() PC 2273 Signature id 175
+Method 21: ExceptionTest.m2() PC 2288 Signature id 176
+Method 22: ExceptionTest.main(java.lang.String[]) PC 2292 Signature id 0
+Method 23: lejos.nxt.VM.&lt;clinit&gt; PC 2304 Signature id 3
+Method 24: lejos.nxt.VM.&lt;init&gt;() PC 2323 Signature id 2
+Method 25: lejos.nxt.VM.getVM() PC 2358 Signature id 177
+Method 26: lejos.nxt.VM.memPeek(int, int, int) Native id 103
+.... other methods omitted
+			</code></pre>
+			</div>
+            <p>
+                We can use the class table to look up the exception class, in this
+                case class 28 is java.lang.ArrayIndexOutOfBoundsException so we know we have an array out of bounds
+                exception. Now we can look up the method names. Method 20 is ExceptionTest.m1, method
+                21 is ExceptionTest.m2 and method 22 is ExceptionTest.main. Which tells us that the exception has
+                been thrown in method m1, that was called from method m2, that was in turn called from method main.
+                So far so good, but how do we use the value of the location counter to narrow down where exactly
+                the exception occurred. Well we could decompile the byte code classes and use that but there has to
+                be an easier way right? Well yes there is. leJOS comes with two tools that make this process much
+                easier, one helps you decode the above numbers, the other will do all of the work for you. Both tools
+                require an additional linker option -od which tells the linker to output extra debug information to the 
+                specified file. Once we have this file we can use the NXJDebugTool to decode the exception data as shown below:
+            </p>
+			<div class="CodeBox">
+			<pre><code>
+C:\samples\ExceptionTest>nxjc ExceptionTest.java
+C:\samples\ExceptionTest>nxjlink -o ExceptionTest.nxj -od ExceptionTest.nxd ExceptionTest
+C:\samples\ExceptionTest>nxjdebugtool -di ExceptionTest.nxd -c -m 28 20 11
+
+The class number 28 refers to:
+  java.lang.ArrayIndexOutOfBoundsException (ArrayIndexOutOfBoundsException.java)
 
 
+The method number 20 refers to:
+  ExceptionTest.m1()V (ExceptionTest.java)
+
+PC 11 refers to:
+  line 6 in ExceptionTest.java
+			</code></pre>
+			</div>
+            <p>Which as you can see tells you exactly which line in the source code the exception was thrown on.</p>
+            <p>The final option is to make use of the leJOS remote console application (see below for more details).
+            again we need some extra linker options, this time -od to create the debug information and -gr to add
+            the remote console debug code to the program. If we link with these options and run the program again, then
+            three extra things happen, first the program will wait for the remote console application to connect to it,
+            secondly any output that uses the System.out stream will be re-directed to the console display 
+            (in this case "Running") and finally
+            the exception information will be displayed by the remote console in an easy to understand form. See below
+            for an example of this:</p>
+			<div class="CodeBox">
+			<pre><code>
+C:\samples\ExceptionTest>nxjc ExceptionTest.java
+C:\samples\ExceptionTest>nxjlink -gr -o ExceptionTest.nxj -od ExceptionTest.nxd ExceptionTest
+C:\samples\ExceptionTest>nxjupload -r ExceptionTest.nxj
+Found NXT: nxt2 001653015066
+leJOS NXJ> Connected to nxt2
+leJOS NXJ> Upload successful in 2904 milliseconds
+C:\samples\ExceptionTest>nxjconsole -di ExceptionTest.nxd
+Debug attached
+Found NXT: nxt2 001653015066
+leJOS NXJ> Connected to nxt2
+Connected to nxt2 001653015066
+Console open
+Running
+Exception: java.lang.ArrayIndexOutOfBoundsException
+ at: ExceptionTest.m1(ExceptionTest.java:6)
+ at: ExceptionTest.m2(ExceptionTest.java:12)
+ at: ExceptionTest.main(ExceptionTest.java:18)
+Console closed
+			</code></pre>
+			</div>
 			<a name="2"></a>
 			<h4>Data Aborts</h4>
 			<p>If the leJOS firmware crashes you will normally a Data Abort. The screen shows the PC value
@@ -192,7 +351,7 @@ public class TestRConsole {
 			<a href="#Top">Back to top</a>
 			</p>
 
-			<div class="NavBit"> <a target="_top" href="../ListenersAndEvents/Listeners_Events.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Communications/Communications.htm">Next&nbsp;»</a>
+            <div class="NavBit"> <a target="_top" href="../ListenersAndEvents/Listeners_Events.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Communications/Communications.htm">Next&nbsp;&raquo;</a>
 			</div>
 		</td>
 	</tr>
