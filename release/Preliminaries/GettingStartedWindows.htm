@@ -61,14 +61,16 @@
       Note that a Java Runtime Environment (JRE) is not sufficient 
       as it does not allow you to compile Java programs. You can download
       the latest JDK from <a href="http://www.oracle.com/technetwork/java/index.html" target="_blank">http://www.oracle.com/technetwork/java/index.html</a>.
-      Follow the instructions for installing it. leJOS NXJ works has been
-      tested with JDK versions 1.5 and 1.6, but will not work with earlier
+      Follow the instructions for installing it. leJOS NXJ has been
+      tested with JDK versions 1.5 and 1.6, and will not work with earlier
       versions. JDK 1.6 is recommended, and some PC sample programs will not work with JDK 1.5.</p>
+      <p>leJOS NXJ only works with 32-bit version of the JDK and JRE, so even if you have a 64-bit system,
+      you should select a 32-bit version of the JDK.</p>
       <p>You will need to add the JDK bin directory to your system or user PATH,
        so that commands such as <code>javac</code> and <code>java</code> can be called from a command prompt. If you do not know how to do this, 
        see the "Setting up environment variables" section below.</p>
-       <p> It is also a good idea to set the environment variable JAVA_HOME to the folder where you installed the JDK. This is necessary
-           if you use the <code>ant</code> build system.</p>
+       <p> You should set the environment variable JAVA_HOME to the folder where you installed the JDK. If you have multiple JDKs on
+       your PC, and do not want to change JAVA_HOME, you can set LEJOS_NXT_JAVA_HOME instead.</p>
       <a id="4" name="4"></a>
       <h5>Bluetooth Stack</h5> 
       <p> If you want to communicate with the NXT over Bluetooth, you will need a Bluetooth dongle or built-in support on your PC, 
@@ -101,7 +103,7 @@
       <img src="installprojects.jpg"/>
       
       <p> Again you can change the destination for the leJOS projects. It defaults to leJOSNXJProjects in the users
-      home directory. On Windows Vista this is C:\Users\<i>user</i> and on XP it is C:\Documents and Settings\<i>user</i>.</p>
+      home directory. On Windows 7 or Vista this is C:\Users\<i>user</i> and on XP it is C:\Documents and Settings\<i>user</i>.</p>
       
       <p>All the Java source in leJOS NXJ is issued as projects that can be opened in Eclipse and Netbeans.</p>
       
@@ -173,8 +175,8 @@
       <p> Skip this section  and go to &quot;Testing the Installation&quot; if you are using the GUI installer.</p>
       <a id="8" name="8"></a>
       <h5>Unzipping the release</h5>
-      <p> Unzip the release to a folder such as c:\lejosbeta85. The zip file includes a directory called lejos_nxt, so your
-          NXJ_HOME folder will be c:\lejosbeta85\lejos_nxt.</p>
+      <p> Unzip the release to a folder such as c:\lejosbeta9. The zip file includes a directory called lejos_nxt, so your
+          NXJ_HOME folder will be c:\lejosbeta9\lejos_nxt.</p>
       <a id="9" name="9"></a>
       <h5>Setting up environment variables</h5>
       <p>You need to set:</p>
@@ -198,11 +200,11 @@
           <tr>
             <td>PATH</td>
             <td>Add the bin folders for the JDK and leJOS</td>
-            <td>C:\Program Files\Java\jdk1.6.0_24\bin;C:\lejosbeta85\lejos_nxt\bin;</td>
+            <td>C:\Program Files\Java\jdk1.6.0_24\bin;C:\lejosbeta9\lejos_nxt\bin;</td>
           </tr>
         </tbody>
       </table>
-      <p>Setting JAVA_HOME is not always  necessary, but is good practice. The bin directory for the JDK may already be on your PATH.</p>
+      <p>Note that you can set LEJOS_NXT_JAVA_HOME instead, if you do not want to change JAVA_HOME. The bin directory for the JDK may already be on your PATH.</p>
       <p>You can set these environment variables by going to Control Panel &gt; System &gt; Advanced &gt; Environment
       Variables and creating them or editing existing values. You can set them either as user or system variables 
       depending on whether you want leJOS NXJ to be available to all users or just the current user.
@@ -211,7 +213,7 @@
       <h5>Using a Command Window</h5>
       <p> You will need to run command-line commands to test your installation and optionally to flash the firmware. If you plan to use IDE such as Eclipse or Netbeans, 
       once you have installed your IDE, you should not need to use the command window any more.</p>
-      <p> You can start a command window on Windows XP by Start &gt; Run and typing cmd. On Vista, type "Command Prompt".</p>
+      <p> You can start a command window on Windows XP by Start &gt; Run and typing cmd. On Vista or Windows 7, type "Command Prompt".</p>
       <p>Type <code>set</code> to list environment variables and check they are all set up correctly.</p>
       <a id="11" name="11"></a>
       <h5>Flashing the Firmware</h5>
