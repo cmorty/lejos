@@ -4,8 +4,10 @@ import lejos.robotics.navigation.ArcRotateMoveController;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.RegulatedMotor;
+import lejos.robotics.navigation.WayPoint;
+import lejos.robotics.navigation.NavPathController;
 import lejos.geom.Point;
-
+ import lejos.nxt.comm.RConsole;
 import java.io.IOException;
 import java.util.Random;
 import lejos.util.Delay;
@@ -33,6 +35,7 @@ public class EchoNavigator
     sonar.continuous();
     pilot = aPilot;
     drpp = new DeadReckonerPoseProvider(pilot);
+    nav = new NavPathController(pilot);
   }
 
 /**
@@ -43,23 +46,29 @@ public class EchoNavigator
  */
 public void goTo(float x, float y)
 {
-  pilot.setTravelSpeed(20);
-  pilot.setRotateSpeed(180);
-  Point destination = new Point(x, y);
-  pose = drpp.getPose();
 
-  while (pose.distanceTo(destination) > 5)
-  {
-    float angle = pose.angleTo(destination);
-    pilot.rotate(angle - pose.getHeading());  // rotate to face destinaton
-    pilot.travel(pose.distanceTo(destination), true);// init move to destination
-    boolean clear = detect();// returns if obstacle found or travel is complete
-    while (!clear) //  obstacle found
-    {
-      clear = avoid();
-    }
-    pose = drpp.getPose();
-  }
+  Point destination = new Point(x, y);
+  if(debug) System.out.println(" get pose ");
+  pose = drpp.getPose();
+  if(debug) System.out.println(" nav go to ");
+  if(debug) System.out.println(" nav "+nav);  WayPoint dest = new WayPoint(x, y);
+ nav.goTo(dest, true);
+ if(debug) System.out.println("nav is Going " +nav.isGoing());
+
+        while (nav.isGoing())
+        {
+            if(detect() )
+            {
+                if (debug) System.out.println(" detect ");
+                nav.interrupt();  // interrupt going to destination
+                if (debug) System.out.println(" interrupt " + drpp.getPose());
+                while (avoid());
+                if(debug) System.out.println(" avoiding end " + drpp.getPose());
+                 nav.resume(); // goint to destination
+            }
+        }
+      if (debug) System.out.println(" at  " + drpp.getPose());
+ RConsole.close();
 }
 
   /**
@@ -107,16 +116,17 @@ public void goTo(float x, float y)
   public boolean detect()
   {
     int distance = 255;
-    boolean clear = true;
+    boolean obstacle = false;
     while( pilot.isMoving()& distance > _limit )
     {
       distance = sonar.getDistance();
       LCD.drawInt(distance, 4,0,1);
-      clear = distance > _limit ;
+      obstacle = distance < _limit ;
       Thread.yield();
     }
-    pilot.stop();
-    return clear;
+   if(debug)  System.out.println(" Distance " +distance + pilot.isMoving() );
+
+    return obstacle;
   }
   
   /**
@@ -133,19 +143,31 @@ public void goTo(float x, float y)
 	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "A"));
 	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
 	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
-	
-    System.out.println("Any Button");
     ArcRotateMoveController pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
     EchoNavigator  robot  = new EchoNavigator(pilot,SensorPort.S3);
-    Button.waitForPress();
-    robot.goTo(200,0);
+    System.out.println(" Echo Navigator ");
+    debug = true;
+    if(debug) {
+        System.out.println("RConsole wants BlueTooth");
+        RConsole.openBluetooth(0);
+        System.setOut(RConsole.getPrintStream());
+    }
+      else
+    {
+       System.out.println(" Any Button ");
+       Button.waitForPress();
+      }
+    
+    robot.goTo(300,0);
   }
 
-  private ArcRotateMoveController pilot;
+   private NavPathController nav ;
+   private ArcRotateMoveController pilot;
   private DeadReckonerPoseProvider drpp;
   private Pose pose = new Pose();
   Random rand = new Random();
   UltrasonicSensor sonar;
-  int _limit =20; //cm
+  int _limit =15; //cm
+  static  boolean debug = false;
 
 }
