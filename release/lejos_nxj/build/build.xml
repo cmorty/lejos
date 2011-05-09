@@ -1,7 +1,7 @@
 <!-- build file for building the os dependent parts of the lejos distribution -->
 <!-- do not change this file -->
 
-<project name="leJOS JNI wrappers" default="help" basedir=".">
+<project name="leJOS JNI wrappers" default="all" basedir=".">
 	
 	<!-- Setting up the global properties for the build -->
 	<property name="lejos.dist.root" value="${basedir}/.."/>
@@ -62,23 +62,9 @@
 	    <pathelement location="${basedir}/cpptasks.jar"/>
 	  </classpath>
 	</typedef>
-	
-	<target name="help">
-		<echo>
-*** READ THIS ***
 
-This build file is for building the leJOS JNI wrappers for USB
-and Bluetooth access. The Bluetooth wrapper is obsolete. Normal
-users will only want to build the USB wrapper.
-
-Type "ant jlibnxt" to build the USB wrapper.
-Type "ant jbluez" to build the Bluetooth wrapper.
-Type "ant all" to build both wrappers.
-		</echo>
-	</target>
-	
 	<!-- build the os dependent parts of the lejos distribution --> 
-	<target name="all" depends ="jlibnxt,jbluez" 
+	<target name="all" depends ="jlibnxt" 
 		description="build the os dependent parts of the lejos distribution">
 		<echo message="Done."/>
 	</target>
@@ -116,28 +102,4 @@ Type "ant all" to build both wrappers.
 *** SUCCESS: jlibnxt was installed correctly ***
   		</echo>
   	</target>
-  	
-    <condition property="isMacOs">
-	    <os family="mac"/>
-	</condition>
-
-	<!-- builds jbluez -->
-  	<target name="jbluez" description="builds jbluez">
-  		<fail if="isMacOS">jbluez is not support on Mac OS X</fail>
-  		<ant antfile="${lejos.dist.src.jbluez}/build.xml" dir="${lejos.dist.src.jbluez}" inheritall="true" />
-		<copy todir="${lejos.dist.native}">
-      		<fileset dir="${lejos.dist.src.jbluez}">
-      			<include name="libjbluez.so"/>
-      		</fileset>
-		</copy>
-  		<chmod perm="755">
-  			<fileset dir="${lejos.dist.native}">
-      			<include name="libjbluez.so"/>
-  	      	</fileset>
-  		</chmod>
-  		<echo>
-*** SUCCESS: jbluez was installed correctly ***
-  		</echo>
-  	</target>
-	
 </project>
