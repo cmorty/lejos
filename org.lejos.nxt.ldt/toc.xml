@@ -9,7 +9,7 @@
 		<topic label="Creating a leJOS NXJ project" href="html/usermanual/lejosproject.html"/> 
 		<topic label="Uploading a leJOS NXJ program to the NXT brick" href="html/usermanual/programupload.html"/> 
 	</topic>
-	<topic label="leJOS NXJ API" href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/index.html"/>
+	<topic label="leJOS NXJ API" href="http://lejos.sourceforge.net/nxt/nxj/api/index.html"/>
 	<topic label="FAQs" href="html/faqs/faqs.html"/>
 	<topic label="About" href="html/about/about.html"/>
 </toc>
