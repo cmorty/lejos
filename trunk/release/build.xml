@@ -267,6 +267,7 @@
 		<copy todir="${release.bin}">
       		<fileset dir="${lejos.root}/startup/build">
       			<include name="StartUpText.bin"/>
+      			<include name="StartUpText.nxd"/>
       		</fileset>
     	</copy>
 			
@@ -411,6 +412,7 @@
 			 	<exclude name="lejos_nxj/bin/nxjpcc"/>
 			 	<exclude name="lejos_nxj/bin/nxjcontrol"/>
 			 	<exclude name="lejos_nxj/bin/nxjimage"/>
+			 	<exclude name="lejos_nxj/bin/nxjdebugtool"/>
 			 	<!--
 			 	<exclude name="lejos_nxj/lib/**/*.so"/>
 			 	<exclude name="lejos_nxj/lib/**/*.jnilib"/>
