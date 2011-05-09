@@ -10,7 +10,7 @@
 	<property name="lejos.root" value="${basedir}/.." />
 	<property name="release" value="${lejos.root}/release" />
 	<property name="release.nxj" value="${release}/lejos_nxj" /> 
-	<property name="3rdparty.libs" value="${release.nxj}/3rdparty/lib" />
+	<property name="3rdparty.libs" value="${release.nxj}/lib/pc/3rdparty" />
 
 	<!-- builds the jar files -->
 	<target name="buildLibs" description="copies the lejos NXJ jar files to the plugin's lib folder">
