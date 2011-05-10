@@ -55,7 +55,7 @@ public class GraphicStartup {
     static final String ICMNXT = "\u007f\u007f\u0063\u000b\u0063\u007f\u007f";
     static final String ICMComp = "\u0060\u007f\u0051\u0071\u0053\u005f\u0060";
     static final String ICMPhone = "\0\u003e\u0069\u0059\u0069\u003f\0";
-    static final String ICMBlueU = "\0\"\u0014\u007f\u002a\u0014\0";
+    static final String ICMBlueU = "\"\u0014\u00ef\u0002\u0054\u0020\u0050";
     static final String ICMLAN = "\u0068\u0058\u006b\r\u006b\u0058\u0068";
     static final String ICMImaging = "\u0038\u0044\u007c\u006c\u007e\u004a\u003e";
     static final String ICMHID = "\u003c\u004a\u004f\u004b\u003d\u0001\u000e";
@@ -552,7 +552,7 @@ public class GraphicStartup {
 			case(0x800):if (cls.getMinorDeviceClass() == 0x04) 
 				        return ICMNXT; // LEGO NXT
 		}
-		return ICMBlueU;
+		return ICMBlueU; // Unknown Bluetooth Device
     }
 
     /**
@@ -591,7 +591,6 @@ public class GraphicStartup {
         }
         GraphicListMenu searchMenu = new GraphicListMenu(names, icons);
         searchMenu.setParentIcon(ICSearch);
-        // TODO Make Pair Icon
         GraphicMenu subMenu = new GraphicMenu(new String[]{"Pair"}, new String[]{ICYes},4);
         subMenu.setParentIcon(ICSearch);
         int selected = 0;

@@ -4,7 +4,8 @@ import lejos.nxt.LCD;
 
 /**
  * Abrams version of a more detailed GraphicMenu for the file menu.
- * @author Legoabram
+ * 
+ * @author Abram Early
  *
  */
 public class GraphicListMenu extends GraphicMenu {
@@ -43,8 +44,8 @@ public class GraphicListMenu extends GraphicMenu {
 	}
 	
 	@Override
-	protected int getIconSize(){return 7;}
+	protected int getIconSize(){return 7;}// Returns the icon size (In Bytes)
 	
 	@Override
-	protected boolean get2IconMode(){return true;}// Do Not Wrap With 2 Icons
+	protected boolean get2IconMode(){return true;}// Wrap With 2 Icons
 }

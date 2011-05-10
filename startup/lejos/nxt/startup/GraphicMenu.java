@@ -269,7 +269,7 @@ public class GraphicMenu extends TextMenu{
 			_parent = Utils.stringToBytes8(str);
 	}
 	
-	protected int getIconSize(){return 32;}
+	protected int getIconSize(){return 32;}// Returns the icon size (In Bytes)
 	
 	protected boolean get2IconMode(){return false;}// Do Not Wrap With 2 Icons
 }
