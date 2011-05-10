@@ -148,7 +148,8 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 	 * Return an array of distances. If in continuous mode, at most one distance
 	 * is returned. If in ping mode, up to 8 distances are returned, but not
 	 * more than <code>len</code>. If the distance data is not yet available the
-	 * method will wait until it is.
+	 * method will wait until it is. The LEGO ultrasonic sensor can return multiple 
+	 * readings in approx. 75 ms.
 	 * 
 	 * @param dist the destination array
 	 * @param off the index of the first distance

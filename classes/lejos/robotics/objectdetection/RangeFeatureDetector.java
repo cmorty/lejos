@@ -1,12 +1,11 @@
 package lejos.robotics.objectdetection;
 
-import java.util.ArrayList;
 import lejos.robotics.RangeFinder;
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
 // TODO: Some of these API docs might be more appropriate in FeatureDetector
 
-// TODO: So much code is repeated in SensorFusorDetector, TouchDetector, and RangeFeatureDetector. Would make sense
+// TODO: So much code is repeated in FusorDetector, TouchDetector, and RangeFeatureDetector. Would make sense
 // to make an abstract class.
 
 /**
@@ -64,6 +63,7 @@ public class RangeFeatureDetector extends FeatureDetectorAdapter {
 		return this.max_dist;
 	}
 	
+	@Override
 	public DetectableFeature scan() {
 		RangeFeature feature = null;
 		// TODO: Note: If it is slower to retrieve multiple rather than single scan. Have option for single only in constructor?
