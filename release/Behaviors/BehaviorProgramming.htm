@@ -56,9 +56,8 @@
 				<div class="linkAHEAD2"><a href="#3">Behavior class</a></div>
 				<div class="linkAHEAD2"><a href="#4">Arbitrator class</a></div>
 				<div class="linkAHEAD"><a href="#5">Coding behaviors</a></div>
-				<div class="linkAHEAD"><a href="#6">Advanced Behavior Coding</a></div>
-				<div class="linkAHEAD2"><a href="#7">Coding solid behaviors</a></div>
-				<div class="linkAHEAD"><a href="#8">Summary</a></div>
+				<div class="linkAHEAD"><a href="#6">Recommended design</a></div>
+				<div class="linkAHEAD2"><a href="#7">Summary</a></div>
 			</td>
 			<td>
         		<div id="BreadCrumbs">
@@ -97,7 +96,8 @@
 				understand by other programmers familiar with the behavior control
 				model, but more importantly it becomes very easy to add or remove
 				specific behaviors from the overall structure, without negative
-				repercussions to the rest of the code. </p>
+				repercussions to the rest of the code. It also makes it possible to
+                                test and debug each behavior by itself.</p>
 			
 				
 				The concepts of Behavior Programming as implemented in leJOS NXJ  are very simple.:
@@ -114,7 +114,8 @@
 				<h4>The Behavior API </h4>
 				The Behavior API is is composed of only one interface and one class. 
 				The Behavior interface defines the individual behavior classes.  
-				The Behavior interface is very general and defines three public methods.  
+				The Behavior interface is very general and defines three public methods.  Each task that
+                                the robot must perform can be defined in its own class.
 				It works quite well because, even though the individual implementations of a behavior vary widely, 
 				they are all treated alike.  Once all the behaviors are created, they are given to an 
 				Arbitrator to regulate which behavior should be activated at any time.  
@@ -124,29 +125,36 @@
 				<a name="3"></a>
 				
 				<h5>lejos.subsumption.Behavior</h5>
-		   <ul  class="BlueArrows"> 
-			  <li> boolean takeControl()<br></br>
+                                <br></br>
+		   <ul  class="BlueArrows">
+
+			  <li> boolean takeControl()<p>
 			  Returns a boolean value to indicate
-				if this behavior should become active. For example, if a touch
+				if this behavior should become active.  For example, if a touch
 				sensor indicates the robot has bumped into an object, this method
-				should return true.
+				should return true. This method should return quickly, not perform
+                                a long calculation.</p>
 				</li>
 					
 			<li>
-			void action()<br></br> 
-					The code in this method initiates
-				an action when the behavior becomes active. For example, if
+			void action()<p>
+					The code in this method begins performing its task 
+			        when the behavior becomes active. For example, if
 				takeControl() detects the robot has collided with an object, the
 				action() code could make the robot back up and turn away from the
 				object.<br></br>
-				 A behavior is active as long as its action() method is running. 		 
+				 A behavior is active as long as its action() method is running,
+                                 so the action() method should exit when it's task is complete.
+                                 Also, the action() method should exit promptly when suppress() is called.
+                                 When it exits, it should leave the robot in a safe state for the next behavior;
+
+                                 </p>
 			</li>
 			<li>
 				 void suppress()<br></br>
 					The code in the suppress() method
 				should immediately terminate the code running in the action()
-				method. The suppress() method can also be used to update any data
-				before this behavior completes.
+				method. It also should exit quickly.
 			</li>
 			</ul>
 			
@@ -187,12 +195,12 @@
 				to understand than Behavior. When an Arbitrator object is
 				instantiated, it is given an array of Behavior objects. Once it
 				has these, the start() method is called and it begins arbitrating;
-				deciding which behaviors should become active. The Arbitrator
+				deciding which behavior will become active. The Arbitrator
 				calls the takeControl() method on each Behavior object, starting
 				with the object with the highest index number in the array. It
 				works its way down through the array, (in decreasing priority order) 
 				 till it finds a behavior that wants to take control.  
-				If the  priority index of this behavior iis greater than that of the current active behavior, 
+				If the  priority index of this behavior is greater than that of the current active behavior, 
 				 the active behavior is suppressed. 
 				The action  method is then called on the behavior of this index.  
 				As a result, if several  behaviors  want to take control,
@@ -205,12 +213,23 @@
 				<a name="5"></a>
 
 				<h4>Coding Behaviors</h4>
-
+	 <p> For reliable performance of the behavior control system, it is essential that action() method  terminates
+		 promptly when suppress() is called.  One way to guarantee this is to define a boolean flag <i> suppressed </i>
+		 in each behavior.
+		 This variable is set to <i>true</i> by the suppress() method and tested in every loop of the action()
+		  method. Of course, the first thing an action() method must do is set this flag to <i>false</i>.
+		 The action() method might be quite complex, such as a separate thread for line tracking or wall following,
+		 but it must be  coded to ensure prompt exit from action() when necessary.  This is the
+		   <b>recommended design pattern</b> .
+		 . </p>
 				<p>Now that we are familiar with the
 				Behavior API under leJOS, let's look at a simple example using
 				three behaviors. For this example, we will program some behavior
 				for a simple robot with differential steering. This robot will
-				drive forward as it's primary low-level behavior. . This activity continues unless  the robotic hits an object,then a high priority behavior will become active to back the robot up and turn it 90 degrees. There will also be a third
+				drive forward as it's primary low-level behavior. . This activity
+                                continues unless  the robotic hits an object,then a high priority
+                                behavior will become active to back the robot up and turn it 90 degrees.
+                                There will also be a third
 				behavior which we will insert into the program after the first two
 				have been completed. Let's start with the first behavior.</p>
 				
@@ -218,31 +237,34 @@
 				interface, we must implement the methods action(), suppress(), and
 				takeControl(). The behavior for driving forward will take place in
 				the action() method. It simply needs to make motors A and C rotate
-				forward and it  exits when  the motors are no longer moving. 
+				forward and it  exits when  the motors are no longer moving, or suppress is called;
 				This behavior  remains active as long as the motors are turning. 
 				The method code is::</p>
 				
 				<div class="CodeBox">
 				<pre><code>
 public void action() {
-  Motor.A.forward();
-  Motor.C.forward();
-  while(Motor.A.isMoving()|| Motor.C.isMoving()) 
-      Thread.yield(); // wait for motors to stop}
+    suppress = false;  // standard first line of action
+    Motor.A.forward();
+    Motor.C.forward();
+    while( !suppressed)
+        Thread.yield(); // wait for  suppressed to be called}
+    Motor.A.stop(); // clean up 
+    Motor.C.stop();
+   }
 				</code></pre>
 				</div>
    
 				<p>That was easy enough! Now the
-				suppress() method will need to stop this action when it is called,
-				as follows:</p>
+				standard suppress() method will stop this action when it is called:
+				</p>
 				
 				<div class="CodeBox">
 				<pre><code>
 public void suppress() {
-  Motor.A.stop();
-  Motor.C.stop);
-}
-				</code></pre>
+    suppressed = true;
+    }
+</code></pre>
 				</div>
 
 				<p>So far, so good. Now we need to
@@ -259,8 +281,8 @@ public void suppress() {
 
 				<pre><code>
 public boolean takeControl() {
-  return true;
-}
+    return true;
+    }
 				</code></pre>
 				</div>
 
@@ -273,22 +295,29 @@ public boolean takeControl() {
 import lejos.subsumption.*;
 import lejos.nxt.*;
 
-public class DriveForward implements Behavior {
-   public boolean takeControl() {
+public class DriveForward  implements Behavior {
+
+   private boolean suppressed = false;
+
+
+
+ public boolean takeControl() {
       return true;
    }
 
    public void suppress() {
-      Motor.A.stop();
-      Motor.C.stop();
+      suppressed = true;
    }
 
    public void action() {
-      Motor.A.forward();
-      Motor.C.forward();
-      while(Motor.A.isMoving()|| Motor.C.isMoving()) 
-      Thread.yield(); // wait for motors to stop}
-   }
+
+     suppressed = false;
+     Motor.A.forward();
+     Motor.C.forward();
+     while( !suppressed ) Thread.yield();
+     Motor.A.stop(); // clean up
+     Motor.C.stop();
+
 }
 				</code></pre>
 				</div>
@@ -315,34 +344,35 @@ public boolean takeControl() {
 				and a new  UltraSonicSensor object has been assigned to the variable <i>sonar</i>.</p>
 
 				<p>For the action, we want the robot to back up
-				and rotate when it strikes an object, so we will define the
+				and rotate when it detects  an object, so we will define the
 				action() method as follows:</p>
 				
 				<div class="CodeBox">
 				<pre><code>
-public void action();
-Motor.A.rotate(-180,true);
-Motor.C.rotate(-360,true); 
+public void action()
+{
+    suppressed = false;
+    Motor.A.rotate(-180,true);
+    Motor.C.rotate(-360,true);
 
-while(Motor.C.isRotatinng()) 
-   Thread.yield();  // wait till turn is complete}			
+    while(Motor.C.isRotatinng() && !suppressed)
+        Thread.yield();  // wait till turn is complete or suppressed is called}
+    if(suppressed ){
+        Motor.A.stop();
+        Motor.C.stop();
+    }
+}
+
 				</code></pre>
 				</div>
 				
-				<p>Defining the suppress() method for
-				this behavior is quite easy in this example. The action() method
-				above is the sort of method that runs very quickly (1.3 seconds)
-				and is usually high priority. We can either stop it dead by
-				stopping motor movement, or we could wait for it to complete the
-				backing up maneuver. To keep things simple, lets just stop the
-				motors from rotating:</p>
+				<p> We use the standard suppress() method here too.</p>
 				
 				<div class="CodeBox">
 
 				<pre><code>
 public void suppress {
-  Motor.A.stop();
-  Motor.C.stop();
+  suppressed = true;
 }
 				</code></pre>
 				</div>
@@ -352,28 +382,43 @@ public void suppress {
 				<div class="CodeBox">
 				<pre><code>
 import lejos.subsumption.*;
+
 import lejos.nxt.*;
 
 public class HitWall implements Behavior {
-   private TouchSensor touch = new TouchSensor(SensorPort. S1);
-   private UltrasonicSensor sonar;
-   
+
+  private boolean suppressed = false;
+  private TouchSensor touch;
+  private UltrasonicSensor sonar;
+  private boolean suppressed = false;
+
    public boolean takeControl() {
-      return touch.isPressed();
+      sonar.ping();
+      Sound.pause(20);  // wait for good data
+      return touch.isPressed() || sonar.getDistance() &#60; 25;
    }
 
    public void suppress() {
-      Motor.A.stop();
-      Motor.C.stop();
+      suppressed = true;
    }
 
-   public void action() {
-       Motor.A.rotate(-180,true);
-       Motor.C.rotate(-360,true); 
-       while(Motor.C.isRotatinng()) 
-          Thread.yield();  // wait till turn is complete}
-   }
-}
+
+public void action() {
+
+  // Back up  and turn
+
+   suppress = false;
+
+   Motor.A.rotate(-180,true);
+   Motor.C.rotate(-360,true);
+
+   while( Motor.C.isRotating() &amp; !suppressed )
+         Thread.yield();
+
+   Motor.A.stop();
+   Motor.C.stop();
+
+  }  
 				</code></pre>
 				</div>
 
@@ -457,7 +502,7 @@ public class BatteryLow implements Behavior {
       }
 
    public static void play() {
-      for(int i=0;i &lt;note.length; i+=2) {
+      for(int i=0;i &lt;note.length; ; i+=2) {
          final short w = note[i+1];
          Sound.playTone(note[i], w);
          Sound.pause(w*10);
@@ -474,12 +519,12 @@ public class BatteryLow implements Behavior {
 				level is less the voltage specified in the constructor. The
 				takeControl() method looks a little inflated, and that's because
 				it also displays the battery charge to the LCD display. The
-				action() and suppress() methods are comparatively easy. Action
+				action() method is  comparatively easy. Action
 				makes a bunch of noise, then exits the program.
-			     Since this behavior stops the program, there is little need to
-				create a suppress() method. But  just in case,  we declare a boolean flag 
-				<i>suppressed</i>  which is set by the suppress() method and tested by the play() method 
-				so it can interrupt the tune if a wall has been detected or hit.  
+			     Since this behavior stops the program, we might get away without a
+                             a suppress() method.  But just in case we detect a wall,
+                             while playing the tune, we use one.
+
 				</p>
 				
 				<p>To insert this behavior into our
@@ -525,8 +570,63 @@ public class BumperCar {
 				bug will exist somewhere in the behaviors, making it difficult to
 				locate. By programming and testing them one at a time it makes it
 				easier to identify where the problem was introduced.</p>
+			
 				
-				<p>Behavior coding is predominantly
+				<p><a href="#top">Back to Top</a></p>
+			
+				<a name="6"></a>
+				<h4>Notes on the recommended design pattern</h4>
+                           <p>
+			   In order to understand why we recommend this design pattern,
+				it is useful to dig a little deeper into the inner workings of the arbitrator.
+				 The Arbitrator contains a monitor thread that cycles through each of the behaviors,
+				 checking the takeControl() method to see if  the behavior should become active.
+				   It starts with behavior of largest index
+				   (because they are are stored in increasing priority order)
+				   and works down the array. As soon as it comes across a behavior
+				   that should take control, this is the highest priority behavior
+                                   that wants control at the moment.
+				    If this behavior has higher priority than the active behavior,
+				     the  monitor thread  executes suppress() on the active behavior,
+				     and then starts checking each behavior from the top again.
+				     The main thread of the Arbitrator is very simple.
+				     It just calls  the action() method on the highest priority behavior,
+				     (as determined by the Monitor thread) and that behavior becomes the active.
+				      When action() exits, either because its task is complete or
+                                      because the Monitor thread has called suppress in it,
+                                      that  behavior is no longer active, and the loop continues,
+                                      calling action() on the behavior that is now has
+				      the highest priority as determined by the Monitor thread.
+                                      It is possible that the same behavior repeatedly becomes active.
+
+				</p>
+				<p>It would be nice if all behaviors
+				were as simple as the examples given above, but in more complex
+				coding there are some unexpected results that can sometimes be
+				introduced. If it is necessary to have a behavior that uses its own Thread,
+                                for example, can sometimes be difficult to
+				halt it  from the suppress() method, which can lead to two different
+				threads fighting over the same resources - often the same motor!   But in this pattern,
+                                the suppress() method does not try to halt anything.  It is the responsibility
+                                of the action() method to keep testing the <code> suppressed </code> variable, exit as soon
+                                as it become true, and leave the robot is a safe state for the next behavior.
+				
+                                </p>
+     
+				<p>
+                     Another  advantage of  this design pattern is that each behavior is coded in the same way
+		   without making any assumptions about its priority.  You can then change the priority order of
+		   your behaviors or reuse them in other applications without reprogramming any of them.
+
+                 </p>
+		   <p>
+		   Note: If you would like to remove any mystery about what goes on in the Arbitrator class, 
+		   take a look at the source code located in src/classes/lejos/subsumption/Arbitrator.java.
+		   </p>
+					
+			<a name="7"></a>
+					<h4>Summary</h4>
+			<p>Behavior coding is predominantly
 				used for autonomous robots - robots that work independently, on
 				their own free will. A robot arm controlled by a human would
 				likely not use behavior programming, although it would be
@@ -537,176 +637,7 @@ public class BumperCar {
 				left on the joystick would take precedence over pushing up? In
 				other words, behavior control in anything other than autonomous
 				robots is largely overkill.</p>
-
-				
-				<p><a href="#top">Back to Top</a></p>
-			
-				<a name="6"></a>
-				<h4>Advanced Behavior Coding</h4>
-
-				<p>It would be nice if all behaviors
-				were as simple as the examples given above, but in more complex
-				coding there are some unexpected results that can sometimes be
-				introduced. Threads, for example, can sometimes be difficult to
-				halt from the suppress() method, which can lead to two different
-				threads fighting over the same resources - often the same motor!  
-				Furthermore, when an action() method exits, it may leave side effects that 
-				could cause trouble for the next behavior that becomes active. 
-				This section, we introduces a design pattern that avoids some of these problems.
-			
-				</p>
-				
-				<a name="7"></a>
-
-				<h5>Coding solid  behaviors</h5>
-				 In order to code reliable  action() and suppress() pairs, 
-				it is necessary to understand how arbitration works.  
-				 The Arbitrator contains a monitor thread that cycles through each of the behaviors, 
-				 checking the takeControl() method to see if  the behavior should become active. 
-				   It starts with behavior of largest index 
-				   (because they are are stored in increasing priority order) 
-				   and works down the array. As soon as it comes across a behavior 
-				   that should take control, this is the highest priority behavior at the moment. 
-				    If this behavior has higher priority than the active behavior, 
-				     the  monitor thread  executes suppress() on the active behavior, 
-				     and then starts checking each behavior from the top again. 
-				     The main thread of the Arbitrator is very simple.  
-				     It just calls  the action() method on the highest priority behavior, 
-				     (as determined by the Monitor thread) and that behavior becomes the active. 
-				      When action() exits,  that  behavior is no longer active, and the loop continues, calling action() on the behavior that is now has 
-				      the highest priority.  It is possible that the same behavior repeatedly becomes active.
-				      
-		 <p> For reliable performance of the behavior control system, it is essential that action() method  terminates
-		 promptly when suppress() is called.  One way to guarantee this is to define a boolean flag <i> suppressed </i> 
-		 in each behavior.
-		 This variable is set to <i>true</i> by the suppress() method and tested in every loop of the action()
-		  method. Of course, the first thing an action() method must do is set this flag to <i>false</i>. 
-		 The action() method might be quite complex, such as a separate thread for line tracking or wall following, 
-		 but it must be  coded to ensure prompt exit from action() when necessary. 
-		  This <b>recommended design pattern</b> is illustrated in the BatteryLow code . 
-		  Below are examples of the other BumperCar behaviors revised according to this design pattern. </p>
-
-	    <b>Revised Drive Forward behavior</b>	<br></br>	
-													
-				<div class="CodeBox">
-				<pre><code>
-
-
-import lejos.subsumption.*;
-import lejos.nxt.*;
-
-public class DriveForward  implements Behavior {
-
-   private boolean suppressed = false;
-
-  
-
- public boolean takeControl() {
-      return true;
-   }
-
-   public void suppress() {
-      suppressed = true;
-   }
-
-   public void action() {
-
-     suppressed = false;
-
-     Motor.A.forward();
-     Motor.C.forward();
-     while( !suppressed ) Thread.yield(); 
-
-     Motor.A.stop(); // clean up
-     Motor.C.stop();
-
-}
-				<br /></code></pre>
-
-				</div>
-			
-			<b>Revised HitWall: </b><br />
-				
-				<div class="CodeBox">
-				<pre><code>
-
-
-
-import lejos.subsumption.*;
-
-import lejos.nxt.*;
-
-public class HitWall implements Behavior {
-
-  private boolean suppressed = false;
-  private TouchSensor touch;
-  private UltrasonicSensor sonar;
-  private boolean suppressed = false;
-
-   public boolean takeControl() {
-      sonar.ping();
-      Sound.pause(20);  // wait for good data
-      return touch.isPressed() || sonar.getDistance() &#60; 25;  
-   }
-
-   public void suppress() {
-      suppressed = true;
-   }
-
-
-public void action() {
-
-  // Back up  and turn
-
-   suppress = false;
-
-   Motor.A.rotate(-180,true);
-   Motor.C.rotate(-360,true);
-
-   while( Motor.C.isRotating() &amp; !suppressed ) 
-         Thread.yield();  
-
-   Motor.A.stop();
-   Motor.C.stop();
-
-  }  
-
-}
-
-				</code></pre>
-				</div>
-				
-		<p>
-		As you can see from these examples, the motor shutdown code  that was in suppress() 
-		has been moved to the end of action(). In this pattern, it is the responsibility of the 
-		action() method to do any clean up work so that no side effects are left that might interfere 
-		with the next behavior to become active. The danger of a side effect may not be obvious. 
-		 </p>		
-		 <p>
-		 Suppose, for example, in the DriveForward behavior, the action() method does not test the  
-		 suppressed  flag but instead  starts the motors driving forward and then exits, 
-		 leaving the side effect of motors running.  If a higher priority behavior should take control,
-		  there is no problem. Otherwise,  DriveForward.action() will  immediately be called again. 
-		  So where is the problem?  Answer:  Repeated calls of any Motor method will reduce the 
-		  accuracy of motor speed regulation. Speed regulation works by comparing the total motor rotation 
-		  with the desired speed times elapsed time, and adjusting power to reduce the error.  
-		  Each call to a Motor method resets the origin of both elapsed time and rotation count, 
-		  so calling a motor method every few milliseconds soon makes speed regulation ineffective.  
-		  If the motors do not run at the same speed, the robot will not move in a straight line.  
-		  So if you want your robot to run straight, be careful about how you code your action() methods. 
-		   </p>
-		   One advantage of using this design pattern is that each behavior is coded in the same way 
-		   without making any assumptions about its priority.  You can then change the priority order of 
-		   your behaviors or reuse them in other applications without reprogramming any of them.
-
-		   <p>
-		   Note: If you would like to remove any mystery about what goes on in the Arbitrator class, 
-		   take a look at the source code located in src/classes/lejos/subsumption/Arbitrator.java.
-		   </p>
-					
-			<a name="8"></a>			
-					<h4>Summary</h4>
-			
+                                        
 					<p>So why use the Behavior API? The
 					best reason is because in programming we strive to create the
 					simplest, most powerful solution possible, even if it takes
@@ -716,7 +647,7 @@ public void action() {
 					and come back to it several months later, the things that looked
 					so obvious suddenly don't anymore. With behavior control, you can
 					add and remove behaviors without even looking at the rest of the
-					code, even if there are 10 or more bahaviors in the program.
+					code, even if there are 10 or more bhaviors in the program.
 					Another big plus of behavior control is programmers can exchange
 					behaviors with each other easily, which fosters code reusability.
 					Hundreds of interesting, generic behaviors could be uploaded to
@@ -724,6 +655,8 @@ public void action() {
 					to your robot (assuming your robot is the correct type of robot).
 					This reusability of code can be taken forward even more by using
 					standard leJOS NXJ classes such as the Navigation API.</p>
+                                        
+
 			
 					<p><a href="#top">Back to Top</a></p>
 
