@@ -58,27 +58,22 @@ public class NXJFlash implements NXJFlashUI {
 		// First look to see if there are any devices already in SAM-BA mode
 		NXTSamba samba = updater.openSambaDevice(0);
 
-		// Look for devices in SAM-BA mode
+		// Look for devices in non-SAM-BA mode and reset them
 		if (samba == null) {
 			NXTInfo[] nxts;
-			System.out
-					.println("No devices in firmware update mode were found.\nSearching for other NXT devices.");
+			System.out.println("No devices in firmware update mode were found.\nSearching for other NXT devices.");
 			NXTConnector conn = new NXTConnector();
 			nxts = conn.search(null, null, NXTCommFactory.USB);
-			if (nxts.length <= 0) {
-				System.out
-						.println("No NXT found. Please check that the device is turned on and connected.");
+			if (nxts.length <= 0)
 				return null;
-			}
+			
 			int devNo = 0;
 			do {
-				System.out
-						.println("The following NXT devices have been found:");
+				System.out.println("The following NXT devices have been found:");
 				for (int i = 0; i < nxts.length; i++)
 					System.out.println("  " + (i + 1) + ":  " + nxts[i].name
 							+ "  " + nxts[i].deviceAddress);
-				System.out
-						.println("Select the device to update, or enter 0 to exit.");
+				System.out.println("Select the device to update, or enter 0 to exit.");
 				System.out.print("Device number to update: ");
 				devNo = getChoice();
 			} while (devNo < 0 || devNo > nxts.length);
@@ -87,9 +82,6 @@ public class NXJFlash implements NXJFlashUI {
 			updater.resetDevice(nxts[devNo - 1]);
 			samba = updater.openSambaDevice(30000);
 		}
-		if (samba == null)
-			System.out
-					.println("No NXT found. Please check that the device is turned on and connected.");
 		return samba;
 	}
 
@@ -145,9 +137,12 @@ public class NXJFlash implements NXJFlashUI {
 		}
 		
 		NXTSamba nxt = openDevice();
-		if (nxt != null) {
-			updater.updateDevice(nxt, memoryImage, fs, true, true, true);
+		if (nxt == null) {
+			System.err.println("No NXT found. Please check that the device is turned on and connected.");
+			return 1;
 		}
+		
+		updater.updateDevice(nxt, memoryImage, fs, true, true, true);
 		return 0;
 	}
 
