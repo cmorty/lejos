@@ -1,15 +1,61 @@
 package lejos.pc.tools;
 
-import lejos.pc.comm.*;
-import lejos.nxt.remote.*;
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.TableColumn;
-import javax.swing.border.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.NumberFormat;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
+
+import lejos.nxt.remote.DeviceInfo;
+import lejos.nxt.remote.FileInfo;
+import lejos.nxt.remote.FirmwareInfo;
+import lejos.nxt.remote.InputValues;
+import lejos.nxt.remote.NXTCommand;
+import lejos.nxt.remote.NXTProtocol;
+import lejos.pc.comm.NXTComm;
+import lejos.pc.comm.NXTCommException;
+import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTConnectionState;
+import lejos.pc.comm.NXTConnector;
+import lejos.pc.comm.NXTInfo;
 
 /**
  * 
@@ -1302,7 +1348,8 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		if (row >= 0) {
 			boolean open = false;
 			theConsoleLog.setText("");
-			cvcs[row] = new ConsoleViewComms(this, new ConsoleDebugDisplay(this), true);
+			ConsoleViewerUI ui = new ConsoleViewerSwingUI(this);
+			cvcs[row] = new ConsoleViewComms(ui, new ConsoleDebugDisplay(ui), true);
 			cvc = cvcs[row];
 			open = cvc.connectTo(nxts[row].name, nxts[row].deviceAddress, nxts[row].protocol, false);
 	        if (!open) {
@@ -1613,6 +1660,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 
 	public void append(String value) {
 		theConsoleLog.append(value);
+		theConsoleLog.setCaretPosition(theConsoleLog.getDocument().getLength());
 	}
 
     public void updateLCD(byte[] buffer)
