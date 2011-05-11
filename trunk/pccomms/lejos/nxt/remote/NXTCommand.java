@@ -14,6 +14,8 @@ import java.io.*;
  *
  */
 public class NXTCommand implements NXTProtocol {
+	
+	public static final int MAX_FILENAMELENGTH = 20;
 
 	private NXTCommRequest nxtComm = null;
 	private static NXTCommand singleton = null;
