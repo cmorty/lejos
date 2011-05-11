@@ -59,12 +59,12 @@
       Follow the instructions for installing it. leJOS NXJ works has been
       tested with JDK versions 1.5 and 1.6, but will not work with earlier
       versions. JDK 1.6 is recommended as some PC samples do not work with JDK 1.5. Note that leJOS has only
-      been tested with the official Oracle JDK. </p>
+      been tested with the official Oracle JDK. It is likely to work with the Open JDK, but not with gcj.</p>
       <p>You will need to add the JDK bin directory to your system or user PATH,
        so that commands such as <code>javac</code> and <code>java</code> can be called from a command prompt. If you do not know how to do this, 
        see <a href="#11">Setting up environment variables</a> below.</p>
-       <p> It is also a good idea to set the environment variable JAVA_HOME to the folder where you installed the JDK, as it is necessary
-           if you use the <b>ant</b> build system.</p>
+       <p> You should set the environment variable JAVA_HOME to the folder where you installed the JDK. If you have multiple JDKs installed and do
+       not want to have JAVA_HOME, you can set LEJOS_NXT_JAVA_HOME instead.</p>
  
       <a name="3"></a>
       <h5>libusb</h5>  
@@ -141,7 +141,7 @@
           <tr>
             <td>NXJ_HOME</td>
             <td>The folder you installed leJOS NXJ into</td>
-            <td>/opt/lejos</td>
+            <td>/opt/lejos_nxj</td>
           </tr>
           <tr>
             <td>JAVA_HOME</td>
@@ -155,11 +155,11 @@
           </tr>
         </tbody>
       </table>
-      <p>Setting JAVA_HOME is not always  necessary, but is good practice. The bin directory for the JDK may already be on your PATH.</p>
+      <p>Note that you can set LEJOS_NXT_JAVA_HOME if you prefer. The bin directory for the JDK may already be on your PATH.</p>
       <p>With most Linux distributions, you can set these environment variables for the current user in .bash_profile or for all users in /etc/profile.
-      If you use Eclipse and the Eclipse plugin, you will also need to add $NXJ_HOME/bin to LD_LIBRARY_PATH so that the Eclipse  plugin can access the leJOS NXJ JNI libraries. This should normally be done
-      in /etc/profile, but this may  
-      differ for different Linux distributions.</p>
+      </p>
+      
+      <p>You should check that the contents of the $NXJ_HOME/bin directory to check that all the files have execute permission, and set it if if it is not set.</p>
  
        <a name="13"></a>     
       <h5>Building the release</h5>
