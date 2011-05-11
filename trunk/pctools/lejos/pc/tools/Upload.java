@@ -1,6 +1,7 @@
 package lejos.pc.tools;
 
 import java.io.File;
+import java.io.IOException;
 
 import lejos.nxt.remote.NXTCommand;
 import lejos.pc.comm.NXTCommFactory;
@@ -26,13 +27,13 @@ public class Upload extends NXTCommLoggable {
 	}
 
 	public void upload(String name, String address, int protocols,
-			File f, String nxtFileName, boolean run) throws NXJUploadException {
+			File f, String nxtFileName, boolean run) throws NXTNotFoundException, IOException {
 		
 		// Under some circumstances the filename might be a full package name
 		// Remove all but the last two components
 		
-		if (nxtFileName.length() > 20) {
-			throw new NXJUploadException(nxtFileName
+		if (nxtFileName.length() > NXTCommand.MAX_FILENAMELENGTH) {
+			throw new IllegalArgumentException(nxtFileName
 					+ ": Filename is more than 20 characters");
 		}
 
@@ -42,23 +43,19 @@ public class Upload extends NXTCommLoggable {
 		boolean connected = fConnector.connectTo(name, address, protocols);
 		
 		if (!connected)
-			throw new NXJUploadException(
+			throw new NXTNotFoundException(
 					"No NXT found - is it switched on and plugged in (for USB)?");
 		
 		fNXTCommand.setNXTComm(fConnector.getNXTComm());
 
-		try {
-			log(fNXTCommand.uploadFile(f, nxtFileName));
-			
-			if (run) {
-				fNXTCommand.setVerify(false);
-				fNXTCommand.startProgram(nxtFileName);
-			}
-			
-			fNXTCommand.close();
-		} catch (Throwable t) {
-			throw new NXJUploadException("Exception during upload", t);
+		log(fNXTCommand.uploadFile(f, nxtFileName));
+		
+		if (run) {
+			fNXTCommand.setVerify(false);
+			fNXTCommand.startProgram(nxtFileName);
 		}
+		
+		fNXTCommand.close();
 	}
 	
 	/**

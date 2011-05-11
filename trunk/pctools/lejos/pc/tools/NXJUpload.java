@@ -1,7 +1,9 @@
 package lejos.pc.tools;
 
 import java.io.File;
+import java.io.IOException;
 
+import lejos.nxt.remote.NXTCommand;
 import lejos.pc.comm.NXTCommFactory;
 
 import org.apache.commons.cli.CommandLine;
@@ -40,9 +42,9 @@ public class NXJUpload {
 	 * @param args the command line arguments
 	 * 
 	 * @throws js.tinyvm.TinyVMException
-	 * @throws NXJUploadException
+	 * @throws NXTNotFoundException
 	 */
-	private int run(String[] args) throws NXJUploadException {
+	private int run(String[] args) throws IOException {
 		NXJUploadCommandLineParser fParser = new NXJUploadCommandLineParser(NXJUpload.class, "[options] filename [more filenames]");
 		CommandLine commandLine;
 		
@@ -78,8 +80,22 @@ public class NXJUpload {
 			File inputFile = new File(files[i]);
 			String nxtFileName = inputFile.getName();
 			
+			if (nxtFileName.length() > NXTCommand.MAX_FILENAMELENGTH)
+			{
+				System.err.println("Filename must not be larger than "+NXTCommand.MAX_FILENAMELENGTH+" characters.");
+				return 1;
+			}
+			
 			//TODO improve dirty hack: open connection only once and reuse it
-			fUpload.upload(name, address, protocols, inputFile, nxtFileName, run && (i == files.length - 1));
+			try
+			{
+				fUpload.upload(name, address, protocols, inputFile, nxtFileName, run && (i == files.length - 1));
+			}
+			catch (NXTNotFoundException e)
+			{
+				System.err.println(e.getMessage());
+				return 1;
+			}
 		}
 		return 0;
 	}	
