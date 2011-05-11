@@ -8,9 +8,8 @@ package lejos.robotics.subsumption;
 * e.g. When the touch sensor determines the robot has collided with an object.<BR>
 * 2) The action to perform when this behavior takes control. 
 * e.g. Back up and turn.<BR>
-* 3) The tasks to perform when another behavior has seized control from this
-* behavior, including interrupting it.  S
-* e.g. Stop the current movement and update coordinates.<BR>
+* 3) A way to quickly exit from the action when the Arbitrator selects  a higher
+ * priority behavior to take control.
 * These are represented by defining the methods takeControl(), action(),
 * and suppress() respectively. <BR>
 * A behavior control system has one or more Behavior objects. When you have defined
@@ -19,7 +18,7 @@ package lejos.robotics.subsumption;
 *
 * @see Arbitrator
   
-* @version 0.7  28 Dec-2008
+* @version 0.9  May 2011
 */
 public interface Behavior {
    
@@ -38,20 +37,18 @@ public interface Behavior {
    * behavior becomes active. It can be as complex as navigating around a
    * room, or as simple as playing a tune.<BR>
    * <B>The contract for implementing this method is:</B><BR>
-   * Any action can be started in this method. If the action is complete, the
-    * method should return.  It <B> must </B> return when the suppress() method 
-    * is called, even if it runs  a  separate thread. <br>   
+   *  If its task is  is complete, the method returns.
+    * It also  <B> must </B> return promptly when the suppress() method
+    * is called, for example by testing the boolean suppress flag.  <br>
+    * When this method exits, the robot is in a safe state for another behavior
+    * to run its action() method
    */
    public void action();
    
    /**
-   * The code in suppress() should stop the current behavior. This can include
-   * stopping motors, or even calling methods to update internal data (such
-   * as navigational coordinates). <BR>
+   * The code in suppress() should cause the current behavior to exit. <BR>
    * <B>The contract for implementing this method is:</B><BR>
-   * This method will stop the action running in this Behavior class and cause action()
-    * to exit promptly. If action() is not running, this method should leave the robot
-    * in a safe state for any other Behavior to run.
+   *  Exit  quickly, for example, just set boolean flag.
    */
    public void suppress();
    
