@@ -1,5 +1,14 @@
 package lejos.robotics.objectdetection;
 
+/*
+ * TODO: Testing:
+ * 1. See how code looks to make a range sensor proportionally rotate left or right when doing an arc.
+ * More of a move listener thing maybe, but needs to see the angle.
+ * 2. Implement a bumper navigator and echo navigator sample.
+ * 3. See how easy it is to react differently based on criteria (such as person ID - chase or run away depending on person). 
+ * 4. Implement this API in PathPlanner/PathController. Will need setFeatureDetector() and alt constructor. 
+ */
+
 /**
  * <p>A FeatureDetector is capable of detecting objects and notifying listeners when it detects something. A Feature is
  * a term for any property that can be added to map data. The FeatureListener is notified when an object is detected,
@@ -53,4 +62,20 @@ public interface FeatureDetector {
 	 */
 	public boolean isEnabled();
 	
+	/**
+	 * The minimum delay between notification of readings from the feature detector. If no objects are detected,
+	 * no notification will occur. Some sensors, such as touch sensors, check the sensor more frequently than other
+	 * sensors, such as range sensors.  
+	 * 
+	 * @return The delay between sensor readings. 
+	 */
+	public int getDelay();
+	
+	/**
+	 * Sets the minimum delay between readings from the feature detector. The notification thread will notify 
+	 * FeatureListener objects every <i>delay</i> milliseconds, unless it takes longer to retrieve readings
+	 * from the sensor.  
+	 * @param delay The FeatureDetector will return one new set of readings every <i>delay</i> milliseconds. 
+	 */
+	public void setDelay(int delay);
 }

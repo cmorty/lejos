@@ -28,6 +28,8 @@ public abstract class FeatureDetectorAdapter implements FeatureDetector {
 	}
 
 	public void enableDetection(boolean enable) {
+		// TODO: Optionally do a real disable where it ends thread (true test in thread loop) and 
+		// enabling it will start thread (if thread is null/not running).
 		this.enabled = enable;
 	}
 
@@ -49,6 +51,8 @@ public abstract class FeatureDetectorAdapter implements FeatureDetector {
 	 */
 	private class MonitorThread extends Thread{
 
+		long prev_time;
+		
 		@Override
 		public void run() {
 			while(true) {
@@ -57,7 +61,14 @@ public abstract class FeatureDetectorAdapter implements FeatureDetector {
 				if(f != null) notifyListeners(f);
 				
 				try {
-					Thread.sleep(delay);
+					long elapsed_time = System.currentTimeMillis() - prev_time;
+					
+					
+					long actual_delay = delay - elapsed_time;
+					if(actual_delay < 0) actual_delay = 0;
+					
+					Thread.sleep(actual_delay);
+					prev_time = System.currentTimeMillis();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -68,7 +79,7 @@ public abstract class FeatureDetectorAdapter implements FeatureDetector {
 	protected void notifyListeners(DetectableFeature feature) {
 		if(listeners != null) { 
 			for(FeatureListener l : listeners) {
-				l.featureDetected(feature);
+				l.featureDetected(feature, this);
 			}
 		}
 	}

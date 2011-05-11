@@ -1,6 +1,8 @@
 package lejos.robotics.objectdetection;
 
 /*
+ * TODO: Lawrie wants Pose added to detected feature as an optional field. Dilutes the mission purity but might be useful.
+ * 
  * DEVELOPER NOTES: This is a little weird because if you extend it to include say facial recognition information
  * about the person it detected, with multiple facial detections the information need to be indexed separately 
  * from the RangeReading objects.
