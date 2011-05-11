@@ -35,6 +35,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="MatrixTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MemoryTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MonitorTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="MotorTester"/>
 	<classpathentry excluding="build.xml" kind="src" path="NXTCamTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="NXTConnectTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="NXTLCPRespond"/>
