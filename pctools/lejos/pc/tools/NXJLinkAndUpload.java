@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import js.tinyvm.TinyVMException;
 
+import lejos.nxt.remote.NXTCommand;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTCommLoggable;
 
@@ -53,9 +54,9 @@ public class NXJLinkAndUpload extends NXTCommLoggable
 	 * 
 	 * @param args the command-line arguments
 	 * @throws js.tinyvm.TinyVMException
-	 * @throws NXJUploadException
+	 * @throws NXTNotFoundException
 	 */
-	private int run(String[] args) throws TinyVMException, NXJUploadException, IOException
+	private int run(String[] args) throws TinyVMException, IOException
 	{
 		// process arguments
 		try
@@ -141,8 +142,22 @@ public class NXJLinkAndUpload extends NXTCommLoggable
 
 				nxtFileName = mainClass.substring(i) + ".nxj";
 			}
+			
+			if (nxtFileName.length() > NXTCommand.MAX_FILENAMELENGTH)
+			{
+				System.err.println("Filename must not be larger than "+NXTCommand.MAX_FILENAMELENGTH+" characters.");
+				return 1;
+			}
 
-			fUpload.upload(name, address, protocols, outputFile, nxtFileName, run);
+			try
+			{
+				fUpload.upload(name, address, protocols, outputFile, nxtFileName, run);
+			}
+			catch (NXTNotFoundException e)
+			{
+				System.err.println(e.getMessage());
+				return 1;
+			}
 			return 0;
 		}
 		finally

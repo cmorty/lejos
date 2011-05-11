@@ -1,22 +1,22 @@
 package lejos.pc.tools;
 
-public class NXJUploadException extends Exception {
+public class NXTNotFoundException extends Exception {
 
 	private static final long serialVersionUID = -7605663541720174844L;
 
-	public NXJUploadException() {
+	public NXTNotFoundException() {
 		super();
 	}
 
-	public NXJUploadException(String arg0) {
+	public NXTNotFoundException(String arg0) {
 		super(arg0);
 	}
 
-	public NXJUploadException(Throwable arg0) {
+	public NXTNotFoundException(Throwable arg0) {
 		super(arg0);
 	}
 
-	public NXJUploadException(String arg0, Throwable arg1) {
+	public NXTNotFoundException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 	}
 
