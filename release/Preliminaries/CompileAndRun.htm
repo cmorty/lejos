@@ -137,14 +137,15 @@
 				<p>-bootclasspath is set because leJOS does not use the standard java.lang classes
 						but has its own versions in classes.jar.</p>
 						
-				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-				<a href="#top">Back to top</a>
-				<p/>
+				<p><a href="#top">Back to top</a></p>
 		
 				<a name="3"></a>
 				<h5>nxjlink &#8211; link a program</h5>
 				<p>Calls the leJOS NXJ linker.</p>
-				<p>Usage:  nxjlink [-v|--verbose] [-g|--debug] [-a|--all] main-class &#8211;o &lt;binary&gt;</p>
+				<p>Usage:  nxjlink [-v|--verbose] [-g|--debug] [-gr|--remotedebug] [-a|--all]
+				                   [-dm|--disablememcompaction] [-ea|--enableassertions]
+				                   [-ec|--enablechecks]
+				                   [-od|--outputdebug &lt;debug-file&gt; ] -o &lt;binary&gt; main-class</p>
 				<p>Example:</p>
 				<code>nxjlink -v Tune -o Tune.nxj</code>
 				<p>Links the specified main class with any
@@ -157,14 +158,19 @@
 				<p>The -g or --debug flag causes a debug monitor to be included with the program. This allows the program
 				   to be interrupted while is running (by pressing ENTER+ESCAPE) and gives stack dumps when untrapped
 				   exceptions occur.</p>
+				<p>The -gr or --remotedebug flag is used to switch on remote debugging, which works with the nxjconsole
+				or nxjconsoleviewer tools.</p>
+				<p>The -od or --outputdebug flag is used to specify an output debug file, which is used by remote
+				   debugging and by nxjdebugtool.</p>
+				<p> The -ec or --enablechecks flag is used to enable checks.</p>
+				<p> The -ea or --enableassertions flag is used to enable assertions.</p>
+				<p> The -dm or --disablememcompactions flag is used to disable memory compaction.</p>
 				<p>The linker removes methods that are
-						not used. Specify &#8211;a or &#8211;all to include all  methods
+						not used. Specify -a or --all to include all  methods
 						whether they are used or not. This should never be necessary.</p>
 				<p>Use the -h or --help flag to print out the options.</p>
-				
-				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-				<a href="#top">Back to top</a>
-				<p/>
+
+				<p><a href="#top">Back to top</a></p>
 				
 				<a name="4"></a>
 				<h5>nxjupload &#8211; upload a program</h5>
@@ -184,9 +190,7 @@
 				<p>If the --run parameter is
 					specified, the program is run after it has been uploaded.</p>
 		
-						<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-				<a href="#top">Back to top</a>
-				<p/>
+				<p><a href="#top">Back to top</a></p>
 				
 				<a name="5"></a>
 				<h5>nxj &#8211; link, upload and run a program</h5>
@@ -198,9 +202,7 @@
 				<p>Any of the options for <code>nxjlink</code> and <code>nxjupload</code> can be specified.</p>
 				<p>The default binary name is &lt;main-class&gt;.nxj, e.g. Tune.nxj.</p>
 				
-				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-				<a href="#top">Back to top</a>
-				<p/>
+				<p><a href="#top">Back to top</a></p>
                  
                 <a name="6"></a>
 				<h4>Using PC API command line tools</h4>
@@ -221,9 +223,7 @@
 				<p>Example: </p>
 				<p><code>nxjpcc SensorTest.java</code></p>		 
 						
-				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-				<a href="#top">Back to top</a>
-				<p/>
+				<p><a href="#top">Back to top</a></p>
 		
 				<a name="8"></a>
 				<h5>nxjpc &#8211; run a PC API program on your pc</h5>
@@ -232,10 +232,7 @@
 				<p>Example:</p>
 				<p><code>nxjpc SensorTest</code></p>
 				
-				
-				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
-				<a href="#top">Back to top</a>
-				<p/> 
+				<p><a href="#top">Back to top</a></p>
                  
 				<!-- END CONTENT AREA -->
 
