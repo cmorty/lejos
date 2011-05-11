@@ -277,12 +277,6 @@
       			<include name="native/**/*.jnilib"/>
       		</fileset>
     	</copy>
-		
-		<!-- adjust permissions -->
-  		<chmod perm="755">
-  			<fileset dir="${release.bin}">
-  	      	</fileset>
-  		</chmod>
 	</target>
 	
 	<!-- copies the jar files -->
@@ -357,7 +351,11 @@
 	<target name="distribution.linux" description="packages the linux distribution">
 		<!-- tar & gzip leJOS Unix distribution -->
 		<tar destfile="${release.dist}/${lejos.linux.version}.tar.gz" compression="gzip">
-			 <tarfileset dir="${release}" >
+			<tarfileset dir="${release}" filemode="755">
+			    <include name="lejos_nxj/bin/nxj*"/>
+			 	<exclude name="lejos_nxj/bin/*.bat"/>
+			</tarfileset>
+			<tarfileset dir="${release}" >
 			    <include name="lejos_nxj/RELEASENOTES"/>
 			    <include name="lejos_nxj/README.html"/>
 			    <include name="lejos_nxj/LICENSE"/>
@@ -367,6 +365,7 @@
 			    <include name="lejos_nxj/src/**"/>
 			    <include name="lejos_nxj/bin/*"/>
 			 	<include name="lejos_nxj/projects/**"/>
+			 	<exclude name="lejos_nxj/bin/nxj*"/>
 			 	<exclude name="lejos_nxj/bin/*.xml"/>
 			 	<exclude name="lejos_nxj/bin/*.exe"/>
 			 	<exclude name="lejos_nxj/bin/*.bat"/>
@@ -375,7 +374,7 @@
 			 	-->
 			 	<include name="lejos_nxj/build/*"/>
 			 	<include name="lejos_nxj/docs/**"/>
-			  </tarfileset>
+			</tarfileset>
 		</tar>
 	</target>
 	
