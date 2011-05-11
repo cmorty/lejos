@@ -1,6 +1,8 @@
 package lejos.nxt.remote;
 
 import java.io.*;
+
+import lejos.robotics.DCMotor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
 
@@ -16,7 +18,7 @@ import lejos.robotics.RegulatedMotorListener;
  * @author <a href="mailto:bbagnall@mts.net">Brian Bagnall</a>
  *
  */
-public class RemoteMotor implements RegulatedMotor, NXTProtocol {
+public class RemoteMotor implements RegulatedMotor, DCMotor, NXTProtocol {
 	
 	private int id;
 	private byte power;
