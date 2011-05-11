@@ -65,6 +65,9 @@ public class AngleSensor extends I2CSensor {
       int bits08to01 = buf[3];
       
       // prevent bytes with values above 127 to become negative numbers when they are converted to integers
+      if(bits32to24 < 0) {
+          bits32to24+=256;
+      }
       if(bits23to18 < 0) {
          bits23to18+=256;
       }
