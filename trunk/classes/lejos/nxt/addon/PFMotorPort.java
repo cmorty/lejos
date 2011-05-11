@@ -20,7 +20,7 @@ public class PFMotorPort implements BasicMotorPort {
 	}
 	
 	public void controlMotor(int power, int mode) {
-		System.out.println("slot = " + slot + " mode = " + modeTranslation[mode-1]);
+		if (mode < 1 || mode > 4) return;
 		link.sendPFComboDirect(channel, (slot == 0 ? modeTranslation[mode-1] : 0), (slot == 1 ? modeTranslation[mode-1] : 0));
 	}
 
