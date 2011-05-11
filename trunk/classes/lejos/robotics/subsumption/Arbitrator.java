@@ -2,21 +2,20 @@ package lejos.robotics.subsumption;
 
 
 /**
- * Arbitrator controls which behavior should become active in
+ * Arbitrator controls which Behavior object will become active in
  * a behavior control system. Make sure to call start() after the 
  * Arbitrator is instantiated.<br>
  *  This class has three major responsibilities: <br> 
  * 1. Determine the highest priority  behavior that returns <b> true </b> to takeControl()<br>   
  * 2. Suppress the active behavior if its priority is less than highest
  * priority. <br>   
- * 3. When the action() method exits, it calls action() on the Behavior of highest priority.
- * This Behavior becomes active.
- * Chances since release 0.7:
- * <br> 1. It assumes that a Behavior is no longer active when action() exits.
- * <br> 2. Therefore it will only call suppress() on the Behavior whose action() method is running.
- * <br> 3. It can make consecutives calls of action() on the same Behavior.
- * <br> 4. Requirements for a Behavior:
+ * 3. When the action() method exits, call action() on the Behavior of highest priority.
+ * <br>  The Arbitrator assumes that a Behavior is no longer active when action() exits,
+ * <br>  therefore it will only call suppress() on the Behavior whose action() method is running.
+ * <br>  It can make consecutive calls of action() on the same Behavior.
+ * <br>  Requirements for a Behavior:
  * <br>    When suppress() is called, terminate  action() immediately.
+ * <br>    When action() exits, the robot is in a safe state (e.g. motors stopped)
  * @see Behavior
  * @author Roger Glassey
  */
