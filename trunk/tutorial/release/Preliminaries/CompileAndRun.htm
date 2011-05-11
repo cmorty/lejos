@@ -162,9 +162,16 @@
 				or nxjconsoleviewer tools.</p>
 				<p>The -od or --outputdebug flag is used to specify an output debug file, which is used by remote
 				   debugging and by nxjdebugtool.</p>
-				<p> The -ec or --enablechecks flag is used to enable checks.</p>
-				<p> The -ea or --enableassertions flag is used to enable assertions.</p>
-				<p> The -dm or --disablememcompactions flag is used to disable memory compaction.</p>
+				<p> The -ec or --enablechecks flag is used to enable additional run time
+                    checks. These checks are relatively expensive (and rarely generate
+                    errors) and so are off by default. Currently the only check that this
+                    setting enables is the testing for ArraystoreExceptions.</p>
+				<p>The -ea or --enableassertions flag is used to enable the checking of
+                   assert statements with the program.</p>
+				<p>The -dm or --disablememcompactions flag is used to disable memory
+                   compaction. Normally the leJOS garbage collector will attempt to move
+                   large objects in memory to maximise the amount of contiguous free
+                   space, this option disables this feature.</p>
 				<p>The linker removes methods that are
 						not used. Specify -a or --all to include all  methods
 						whether they are used or not. This should never be necessary.</p>
