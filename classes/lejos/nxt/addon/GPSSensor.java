@@ -33,8 +33,7 @@ public class GPSSensor extends I2CSensor {
     }
     
     private int sendCommand(byte c, byte reply[], int replyLen) {
-    	byte args[] = {c};
-    	return port.i2cTransaction(address, args, 0, 1, reply, 0, replyLen);
+    	return this.getData(c, reply, 0, replyLen);
     }
 
 
@@ -187,17 +186,14 @@ public class GPSSensor extends I2CSensor {
 	* @return 0 if no error else error code
 	*/
      public int setLatitude(int latitude) {
-    	 byte args[] = new byte[5];
-
     	 // We set the latitude in the dGPS
+    	 byte args[] = new byte[4];
+    	 args[0] = (byte)((latitude >> 24) & 0xFF);
+    	 args[1] = (byte)((latitude >> 16) & 0xFF);
+    	 args[2] = (byte)((latitude >>  8) & 0xFF);
+    	 args[3] = (byte)((latitude >>  0) & 0xFF);
 
-    	 args[0] = DGPS_CMD_SLAT;
-    	 args[1] = (byte)((latitude >> 24) & 0xFF);
-    	 args[2] = (byte)((latitude >> 16) & 0xFF);
-    	 args[3] = (byte)((latitude >>  8) & 0xFF);
-    	 args[4] = (byte)((latitude >>  0) & 0xFF);
-
-    	 return port.i2cTransaction(address, args, 0, 5, null, 0, 0);
+    	 return this.sendData(DGPS_CMD_SLAT, args, 0, 4);
      }
 
 
@@ -207,15 +203,13 @@ public class GPSSensor extends I2CSensor {
 	* @return 0 if no error else error code
 	*/
      public int setLongitude(int longitude) {
-    	 byte args[] = new byte[5];
-
     	 // We set the longitude in the dGPS
-    	 args[0] = DGPS_CMD_SLONG;
-    	 args[1] = (byte)((longitude >> 24) & 0xFF);
-    	 args[2] = (byte)((longitude >> 16) & 0xFF);
-    	 args[3] = (byte)((longitude >>  8) & 0xFF);
-    	 args[4] = (byte)((longitude >>  0) & 0xFF);
+    	 byte args[] = new byte[4];
+    	 args[0] = (byte)((longitude >> 24) & 0xFF);
+    	 args[1] = (byte)((longitude >> 16) & 0xFF);
+    	 args[2] = (byte)((longitude >>  8) & 0xFF);
+    	 args[3] = (byte)((longitude >>  0) & 0xFF);
 
-    	 return port.i2cTransaction(address, args, 0, 5, null, 0, 0);
+    	 return this.sendData(DGPS_CMD_SLONG, args, 0, 4);
      }
 }
