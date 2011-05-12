@@ -22,6 +22,7 @@ Sven Koehler:
 - Implemented a loader for JNI libraries (no need to set java.library.path anymore)
 - New directory structure: JARs have been moved to $NXJ_HOME/lib/nxt and $NXJ_HOME/lib/pc
 - Native libraries moved to subfolders of $NXJ_HOME/lib/pc/native
+- Added new nxjdebugtool to decode exceptions
 
 Andy Shaw:
 - New memory allocator, large objects can now be moved to avoid fragmentation
@@ -63,19 +64,19 @@ Brian Bagnall:
 - Added new Timer and TimerTask classes, improved Thread class
 - Improved Arc steering code, added SteeringPilot code and ArcPoseController
 - Added new path finding implementation
-
+- Reimplemented Acceleration sensor classes to separate them and implement Accelerometer interface
+- Added NodeSearch PC sample
+- Addded ShapefileLoader to load a map from a shape file 
 
 Lawrie Griffiths:
 - NXJControl added drag and drop
-- Added support for javax.microedition.sensor
+- Added support for javax.microedition.sensor and Sniffer and JSR256Test samples
 - Added support for HiTechnics Gyro sensor and created test program
-- Added sensor integration
-- Added support for IRSeeker based on code from forum user Eric
-- Added support for Mindsensors RTC based on Robert Kramers class
+- Added support for IRSeekerV2 based on code from forum user Eric
 - Support sending data to RCX with IRLink
-- Added RTC and IRLink samples
-- Improvements to NXTMMX based on code from Mike Smith
-- Clean up up examples etc to work with new robotics code
+- Clean up up samples to work with new robotics code
+- MotorTest sample
+- Updated the tutorial with help from Andy, Brian, Roger and others
 
 Shawn Brown:
 - Cleaned up build process for comms etc.
@@ -84,9 +85,8 @@ Shawn Brown:
 - Improved eclipse linker error handling
 - Improved Mac documentation and build system
 
-Brent Gardener:
-- Added GyroDirectionFinder and InertialMoveProvider
-- Added DirectionFinder interface and GyroPoseProvidor prototypes
+Brent Gardner:
+- Added GyroDirectionFinder and DirectionFinder interface
 
 Abram Early:
 - Improved menu status bar
@@ -96,6 +96,7 @@ Abram Early:
 Kirk Thompson:
 - PID control classes
 - Linear actuator driver
+- Added GyroSensor interface and improvment to Gyro classes
 
 esmetaman
 - Added class to support NXTLineLeader based on code from Eric Pascual
@@ -106,9 +107,24 @@ Dan Rollo:
 - Set up continuous build system that aids development
 
 John Tangney:
-Updated the Eclipse plugin and update site to support Eclipse Galileo and later
+Updated the Eclipse plugin and update site to support Eclipse Galileo and later,
+and provided a HOWTO document on how to build the plugin.
 
+Michael Mirwald:
+Contributed the AngleSensor class that supports the HiTechnic angle sensor.
 
+Mark Crosbie:
+Contributed the GPSSensor class that supports the Dexter Industries dGPS sensor.
+
+Mike Smith:
+Contributed the NXTMMMX and NXTMMXMotor classes that support the Mindsensors NXTMMX sensor.
+Also the NXTMMXSAmple sample.
+
+Robert J Kramer contributed the RealTimeClock class that supports the Mindsensors RTC sensor,
+and also the RTCTest sample. 
+
+Daniele Benedettelli:
+Added the CruizCoreGyro class.
 
 leJOS NXJ 0.85 beta
 -------------------
