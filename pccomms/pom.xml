@@ -6,6 +6,7 @@
         <groupId>lejos</groupId>
         <artifactId>lejos-parent</artifactId>
         <version>0.9-SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>pccomms</artifactId>

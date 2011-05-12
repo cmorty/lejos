@@ -1,4 +1,4 @@
-NOTE: This README.txt file only applies to the pom.xml file here in the top project, and in sub projects containing a pom.xml file.
+NOTE: This README.txt file only applies to the pom.xml file here in the parent project, and in 'child' projects containing a pom.xml file.
 
 *** THESE pom.xml FILES ARE NOT THE PRIMARY BUILD SYSTEM. The primary build is done via 'ant'.
 
@@ -34,7 +34,7 @@ Some other useful maven commands:
 mvn compile                 - compile production classes
 mvn compiler:testCompile    - compile unit test classes
 mvn test                    - compile all classes, run unit tests
-mvn package                 - compile all classes, run unit tests, build jar, and "patch" jar (that can be extacted into the CIS base install dir)
+mvn package                 - compile all classes, run unit tests, build jar
 mvn install                 - install this projects jar into your local maven repository (${user.dir}/.m2/repository/...).
 mvn scm:update              - fetch the latest source from the bank
 mvn site                    - site docs will be created here: ./target/site/index.html
