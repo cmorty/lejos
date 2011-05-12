@@ -22,7 +22,7 @@ import java.util.Random;
  * sets the parameters of the Pilot to the dimensions
  * and motor connections for your robot.
  * 
- * @author Roger Glasssey
+ * @author Roger Glassey
  */
 public class BumpNavigator {
 

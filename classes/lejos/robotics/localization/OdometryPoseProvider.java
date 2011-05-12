@@ -11,14 +11,11 @@ import lejos.robotics.navigation.Pose;
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 /**
- * A PoseProvider that keeps track of coordinates using dead reckoning, by monitoring Pilot movements.
- * 
- * Question: What about a robot that is helped along with a Compass? Should the compass go in a DeadReckoner
- *  constructor, or a Pilot constructor? The PoseProvider seems more logical but Lawrie wants it to only
- *  accept a Pilot. 
- * 
- * Provisional name: DeadReckonerPoseProvider
- * Alternate names:  DeadReckonerPoseProvider, DeadReckoner, OrienteeringPoseProvider, OdometryPoseProvider 
+ * <p>A PoseProvider that keeps track of coordinates using odometry (dead reckoning), by monitoring Pilot movements.
+ * The method a pilot uses to keep track of movements is irrelevant to this class. For example, it can keep track of 
+ * movements using optical rotation sensors in the motors, or it could use something more exotic such as 
+ * <a href="http://en.wikipedia.org/wiki/Visual_odometry">visual odometry</a> used by the 
+ * <a href="http://en.wikipedia.org/wiki/Mars_Exploration_Rover">MER</a>.  
  * 
  */
 // TODO: Probably makes more sense to use inner class implementation of MoveListener?
