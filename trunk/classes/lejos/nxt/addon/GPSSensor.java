@@ -1,7 +1,7 @@
 package lejos.nxt.addon;
 
-import lejos.nxt.*;
-import lejos.util.*;
+import lejos.nxt.I2CPort;
+import lejos.nxt.I2CSensor;
 
 /**
  * Class for controlling dGPS sensor from Dexter Industries
@@ -24,33 +24,17 @@ public class GPSSensor extends I2CSensor {
 	public static final byte DGPS_CMD_SLAT=0x0A;      /*!< Set latitude of destination */
 	public static final byte DGPS_CMD_SLONG=0x0B;      /*!< Set longitude of destination */
 	
-	private SensorPort I2Cport;
-	private byte address;
-
 	/**
 	* Constructor
 	* @param link the DGPS port number
 	*/
-    public GPSSensor(SensorPort sensorPort) {
-        super(sensorPort);
-        I2Cport = sensorPort;
-        address = DGPS_I2C_ADDR;       
-        I2Cport.setType(TYPE_LOWSPEED);
-        I2Cport.i2cEnable(I2CPort.STANDARD_MODE);
+    public GPSSensor(I2CPort sensorPort) {
+        super(sensorPort, DGPS_I2C_ADDR, I2CPort.STANDARD_MODE, TYPE_LOWSPEED);
     }
     
     private int sendCommand(byte c, byte reply[], int replyLen) {
-    	byte args[] = {c, 0, 0, 0, 0, 0, 0};
-    	int r = I2Cport.i2cStart(address, args, 0, 1, replyLen);
-
-    	if(r != 0) return r;
-    	
-    	//I2Cport.i2cWaitIOComplete();
-    	Delay.msDelay(50);
-
-    	r = I2Cport.i2cComplete(reply, 0, replyLen);
-
-    	return r;
+    	byte args[] = {c};
+    	return port.i2cTransaction(address, args, 0, 1, reply, 0, replyLen);
     }
 
 
@@ -60,7 +44,7 @@ public class GPSSensor extends I2CSensor {
 	* @return true if GPS link is up, else false
 	*/
     public boolean linkStatus() {
-    	byte reply[] = {0};
+   		byte reply[] = new byte[1];
 
     	sendCommand(DGPS_CMD_STATUS, reply, 1);
     	return (reply[0] == 1);
@@ -71,7 +55,7 @@ public class GPSSensor extends I2CSensor {
 	* @return current UTC time stored on the device
 	*/ 
     public int getUTC() {
-    	byte reply[] = {0, 0, 0, 0};
+   	 	byte reply[] = new byte[4];
     	int r = sendCommand(DGPS_CMD_UTC, reply, 4);
 
     	if(r < 0) return r;
@@ -90,7 +74,7 @@ public class GPSSensor extends I2CSensor {
      * @return current latitude in decimal degrees
      */
     public int getLat(){
-    	byte reply[] = {0, 0, 0, 0};
+    	byte reply[] = new byte[4];
 
     	sendCommand(DGPS_CMD_LAT, reply, 4);
     	
@@ -107,7 +91,7 @@ public class GPSSensor extends I2CSensor {
 	* @return current longitude in decimal degrees
 	*/ 
     public int getLong() {
-    	byte reply[] = {0, 0, 0, 0};
+   	 	byte reply[] = new byte[4];
 
     	sendCommand(DGPS_CMD_LONG, reply, 4);
 
@@ -125,7 +109,7 @@ public class GPSSensor extends I2CSensor {
 	 * @return current velocity in cm/s
 	 */
     public int getVelocity() {
-    	byte reply[] = {0, 0, 0};
+   	 byte reply[] = new byte[3];
 
     	sendCommand(DGPS_CMD_VELO, reply, 3);
 
@@ -141,7 +125,7 @@ public class GPSSensor extends I2CSensor {
      * @return current heading in degrees
      */
     public int getHeading() {
-    	byte reply[] = {0, 0};
+   	 byte reply[] = new byte[2];
 
     	sendCommand(DGPS_CMD_HEAD, reply, 2);
 
@@ -156,7 +140,7 @@ public class GPSSensor extends I2CSensor {
      * @return relative head
      */
      public int getRelativeHeading() {
-    	 byte reply[] = {0, 0};
+    	 byte reply[] = new byte[2];
 
     	 sendCommand(DGPS_CMD_ANGR, reply, 2);
 
@@ -171,7 +155,7 @@ public class GPSSensor extends I2CSensor {
 	* @return distance to destination in meters
 	*/
      public int getDistanceToDest() {
-    	 byte reply[] = {0, 0, 0, 0};
+    	 byte reply[] = new byte[4];
 
     	 sendCommand(DGPS_CMD_DIST, reply, 4);
 
@@ -188,7 +172,7 @@ public class GPSSensor extends I2CSensor {
 	* @return angle to destination in degrees
 	*/
      public int getAngleToDest() {
-    	 byte reply[] = {0, 0};
+    	 byte reply[] = new byte[2];
     	 
     	 sendCommand(DGPS_CMD_ANGD, reply, 2);
 
@@ -203,8 +187,7 @@ public class GPSSensor extends I2CSensor {
 	* @return 0 if no error else error code
 	*/
      public int setLatitude(int latitude) {
-    	 byte reply[] = {0, 0};
-    	 byte args[] = {0, 0, 0, 0, 0, 0, 0};
+    	 byte args[] = new byte[5];
 
     	 // We set the latitude in the dGPS
 
@@ -214,15 +197,7 @@ public class GPSSensor extends I2CSensor {
     	 args[3] = (byte)((latitude >>  8) & 0xFF);
     	 args[4] = (byte)((latitude >>  0) & 0xFF);
 
-    	 int r = I2Cport.i2cStart(address, args, 0, 5, 0);
-
-    	 if(r != 0) return r;
-
-		 //I2Cport.i2cWaitIOComplete();
-		 Delay.msDelay(50);
-		 r = I2Cport.i2cComplete(reply, 0, 0);
-
-		 return r;
+    	 return port.i2cTransaction(address, args, 0, 5, null, 0, 0);
      }
 
 
@@ -232,8 +207,7 @@ public class GPSSensor extends I2CSensor {
 	* @return 0 if no error else error code
 	*/
      public int setLongitude(int longitude) {
-    	 byte reply[] = {0, 0};
-    	 byte args[] = {0, 0, 0, 0, 0, 0, 0};
+    	 byte args[] = new byte[5];
 
     	 // We set the longitude in the dGPS
     	 args[0] = DGPS_CMD_SLONG;
@@ -242,13 +216,6 @@ public class GPSSensor extends I2CSensor {
     	 args[3] = (byte)((longitude >>  8) & 0xFF);
     	 args[4] = (byte)((longitude >>  0) & 0xFF);
 
-    	 int r = I2Cport.i2cStart(address, args, 0, 5, 0);
-
-    	 if(r != 0) return r;
-   
-    	 //I2Cport.i2cWaitIOComplete();
-    	 Delay.msDelay(50);
-    	 r = I2Cport.i2cComplete(reply, 0, 0);
-    	 return r;
+    	 return port.i2cTransaction(address, args, 0, 5, null, 0, 0);
      }
 }
