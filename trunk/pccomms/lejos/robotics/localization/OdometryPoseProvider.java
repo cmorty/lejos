@@ -22,7 +22,7 @@ import lejos.robotics.navigation.Pose;
  * 
  */
 // TODO: Probably makes more sense to use inner class implementation of MoveListener?
-public class DeadReckonerPoseProvider implements PoseProvider, MoveListener
+public class OdometryPoseProvider implements PoseProvider, MoveListener
 {
 
   private float x = 0, y = 0, heading = 0;
@@ -36,7 +36,7 @@ public class DeadReckonerPoseProvider implements PoseProvider, MoveListener
    *
    * @param mp the movement provider
    */
-  public DeadReckonerPoseProvider(MoveProvider mp)
+  public OdometryPoseProvider(MoveProvider mp)
   {
     mp.addMoveListener(this);
   }

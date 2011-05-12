@@ -10,7 +10,7 @@ import lejos.robotics.localization.PoseProvider;
 
 /**
  * 
- * The PathController guides a Pilot to a destination. It can not plan a route, 
+ * The PathController guides a MoveController  to a destination. It can not plan a route,
  * but will navigate to a set of coordinates and possibly avoid obstacles along the way.
  * It uses a collection of waypoints as a queue.
  * The PathController constructor very likely accepts a MoveController and PoseProvider.
@@ -25,8 +25,8 @@ public interface PathController
    * This method causes the robot to travel to a new location.
    * If the robot is moving, it stops,  the route is emptied and the destination
    * is added to it. The robot then starts  moving to the coordinates of the
-   * destination WayPoint.
-   * @param destination the destination waypoint
+   * destination {@link lejos.robotics.navigation.WayPoint}
+   * @param destination the destination {@link lejos.robotics.navigation.MoveController}
    * @param immediateReturn true for non-blocking, false for blocking
    */
   public void goTo(WayPoint destination, boolean immediateReturn);
@@ -83,7 +83,8 @@ public interface PathController
   public void addWayPoint(WayPoint aWayPoint); // adds a WayPoint to the route.
 
   /**
-   * Adds a waypoint listener that will be notified with the actual waypoint it reached.
+   * Adds a {@link lejos.robotics.navigation.WayPointListener}
+   * that will be notified with the actual waypoint it reached.
    * @param aListener
    */
   public void addListener(WayPointListener aListener);
