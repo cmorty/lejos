@@ -40,7 +40,7 @@ public class MCLParticleSet {
   private int _iterations;
 
   /**
-   * Create a set of particles randomly distributed with the given map.
+   * Create a set of particles randomly distributed within the given map.
    *
    * @param map the map of the enclosed environment
    */
@@ -55,16 +55,18 @@ public class MCLParticleSet {
       particles[i] = generateParticle();
     }
   }
-/**
- * Generates a circular cloud of particles centered on initialPose with random
- * radius  and angle
- * @param map the map
- * @param numParticles the number of particles
- * @param border the border
- * @param readings the set of readings
- * @param divisor the divisor
- * @param minWeight the minimum weight
- */
+
+  /**
+   * Generates a set of particles within the map that have a minimum weight as
+   * as calculated from the particle pose, the range readings and the map.
+   *
+   * @param map
+   * @param numParticles  - number of particles
+   * @param border - within which no particles should be generated
+   * @param readings - to use in calculating weight
+   * @param divisor
+   * @param minWeight - the minimum wight of a particle in the map
+   */
   public MCLParticleSet(RangeMap map, int numParticles, int border,
           RangeReadings readings, float divisor, float minWeight)
   {
@@ -91,6 +93,16 @@ public class MCLParticleSet {
     }
     System.out.println("Total particles tried " + k);
   }
+
+  /**
+ * Generates a circular cloud of particles centered on initialPose with random
+ * normal radius  and angle, and random normal heading.
+ * @param map the map
+ * @param numParticles the number of particles
+   * @param initialPose  the center of the cloud
+   * @param radiusNoise standard deviation of the normal of the distance from center
+   * @param headingNoise standard deviation of heading
+ */
 public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
           float radiusNoise, float headingNoise)
   {
