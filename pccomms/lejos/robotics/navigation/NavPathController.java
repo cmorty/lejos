@@ -1,17 +1,21 @@
 package lejos.robotics.navigation;
 
-import lejos.robotics.localization.DeadReckonerPoseProvider;
+import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.pathfinding.PathFinder;
 
 import java.util.*;
 
 /**
- * This class can cause the robot to follow a route - a sequence of way points ;
+ * This class can cause the robot to follow a route - a sequence of  {@link  lejos.robotics.navigation.WayPoint }
+ * ;
  * The way points are stored in a queue (actually, a Collection).
- * This  class uses  an inner class running its own thread to issue movement commands to its pilot.
- * It can use either a differential pilot or steering pilot.
- * It also uses a PoseProvider to keep its pose updated, and calls its WayPoint Listeners
+ * This  class uses  an inner class running its own thread to issue movement commands to its
+ * {@link lejos.robotics.navigation.MoveController},
+ * which can be either a  {@link lejos.robotics.navigation.DifferentialPilot}
+ * or {@link lejos.robotics.navigation.SteeringPilot}.
+ * It also uses a {@link lejos.robotics.localization.PoseProvider}
+ * to keep its pose updated, and calls its {@link lejos.robotics.navigation.WayPointListener}
  * when a way point is reached.
  * 
  * @author Roger Glassey
@@ -38,7 +42,7 @@ public class NavPathController implements PathController
   {
     _pilot = pilot;
     if(poseProvider == null)
-      this.poseProvider = new DeadReckonerPoseProvider(_pilot);
+      this.poseProvider = new OdometryPoseProvider(_pilot);
     else
     	this.poseProvider = poseProvider;
     

@@ -12,6 +12,20 @@ import java.awt.Rectangle;
 import lejos.robotics.localization.PoseProvider;
 import java.io.*;
 
+/**
+ * Maintains an estimate of the robot pose using sensor data.  It uses Monte Carlo
+ * Localization  (See section 8.3 of "Probabilistic Robotics" by Thrun et al. <br>
+ * Uses a {@link MCLParticleSet} to represent the probability distribution  of the
+ * estimated pose.
+ * It uses a {@link lejos.robotics.navigation.MoveProvider} to supply odometry
+ * data whenever  a movement is completed,
+ * from which the {@link lejos.robotics.navigation.Pose} of each particle is updated.
+ * It then uses a {@link  lejos.robotics.RangeScanner} to provide
+ * {@link lejos.robotics.RangeReadings}  which are used, together with the
+ * {@link lejos.robotics.mapping.RangeMap} to calculate the
+ * probability weight of  each {@link MCLParticle} .
+ * @author Lawrie Griffiths and Roger Glassey
+ */
 
 public class MCLPoseProvider implements PoseProvider, MoveListener
 {
@@ -34,6 +48,14 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   boolean lost = false;
   boolean incomplete = true;
 
+  /**
+   * Allocates a new MCLPoseProvider.
+   * @param mp - the MoveProivder
+   * @param scanner - the RangeScanner
+   * @param map - the RangeMap
+   * @param numParticles number of particles
+   * @param border of the map
+   */
   public MCLPoseProvider(MoveProvider mp, RangeScanner scanner,
           RangeMap map, int numParticles, int border)
   {
@@ -48,10 +70,11 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   }
 
   /**
-   * Sets the initial particle set to a circular cloud centered on  aPose
-   * @param aPose
-   * @param radiusNoise
-   * @param headingNoise
+   * Generates an  initial particle set in a circular normal distribution, centered
+   * on aPose.
+   * @param aPose - center of the cloud
+   * @param radiusNoise - standard deviation of the radius of the cloud
+   * @param headingNoise - standard deviation of the heading;
    */
   public void setInitialPose(Pose aPose, float radiusNoise, float headingNoise)
   {
@@ -62,9 +85,10 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   }
 
   /**
-   * Sets the initial pose using the range readings
+   *  Generates an  initial particle set  using the range readings.  The particles
+   *  have a significant probability weight given the readings.
    * @param readings
-   * @param sigma  range reading noise
+   * @param sigma  range reading noise standard deviation.
    */
   public void setInitialPose(RangeReadings readings,float sigma)
   {
@@ -81,6 +105,10 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   public void setDebug(boolean on) {
 	  debug = on;
   }
+
+ /*8
+  * set the initial pose cloud with radius noise 1 and heading noise 1
+  */
   public void setPose(Pose aPose)
   {
     setInitialPose(aPose, 1, 1);
@@ -97,7 +125,8 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
   }
 
   /**
-   * Replaces the particles with a random set
+   * Generate a new particle set, uniformly distributed within the map, and
+   * uniformly distributed heading.
    */
   public void generateParticles()
     {
@@ -110,10 +139,10 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
 
 
   /**
-   * Required by MoveListener interface.
-   * Applies the move to all particles; updates the estimated pose after Travel
-   * @param event the event just completed
-   * @param mp
+   * Required by MoveListener interface. The pose of each particle is updated
+   * using the odometry data of the Move object.
+   * @param event the move  just completed
+   * @param mp the MoveProvider
    */
   public void moveStopped(Move event, MoveProvider mp)
   {
@@ -123,8 +152,9 @@ public class MCLPoseProvider implements PoseProvider, MoveListener
 
 
 /**
- * returns true if the update from range readings is successful
- * Calls range scanner to get range readings and calls resample(rangeReadings)
+ * 
+ * Calls range scanner to get range readings, calculates the probabilities
+ * of each particle from the range  readings and the map and calls resample(()
  *
  * @return true if update was successful
  */
@@ -153,7 +183,6 @@ public boolean  update()
   }
   /**
  * Calculates particle weights from readings, then resamples the particle set;
- *
  * @param readings
  * @return true if update was successful.
  */
@@ -196,7 +225,7 @@ public boolean update(RangeReadings readings)
 public boolean isUpdated() {return updated;}
 
 /**
- * returns lost status
+ * returns lost status - all particles have very low probability weights
  * @return true if robot is lost
  */
 public boolean isLost() { return lost; }
@@ -210,8 +239,8 @@ public boolean isLost() { return lost; }
 public boolean incompleteRanges() { return incomplete;}
 
   /**
-   * Returns the difference between max and min x
-   * @return the difference between min and max x
+   * Returns the difference between max X and min X
+   * @return the difference between min and max X
    */
   public float getXRange()
   {
@@ -219,8 +248,8 @@ public boolean incompleteRanges() { return incomplete;}
   }
 
   /**
-   * Return difference between max and min y
-   * @return difference between max and min y
+   * Return difference between max Y and min Y
+   * @return difference between max and min Y
    */
   public float getYRange()
   {
@@ -385,7 +414,7 @@ public boolean incompleteRanges() { return incomplete;}
   }
 
   /**
-   * Returns the standard deviation of the Y values in the particle set;
+   * Returns the standard deviation of the heading values in the particle set;
    * @return sigma heading
    */
   public float getSigmaHeading()
@@ -441,13 +470,27 @@ public RangeScanner getScanner()
     System.out.println("Estimate = " + minX + " , " + maxX + " , " + minY + " , " + maxY);
   }
 
+  /**
+   * If yes: after a Travel move,  the range scanner is requested to get
+   * range readings,  which are then used to update the particle weights.
+   * @param yes
+   */
   public void autoUpdate(boolean yes)
   {
     autoUpdate = yes;
   }
 
+  /**
+   * returns true if particle weights are being updated. The  robot should not move
+   * while this is happening otherwise the prediction from odometry data may
+   * introduce errors into the updating.
+   * @return  true if weight update is in progress.
+   */
   public boolean isBusy() { return busy;}
 
+  /**
+   * predicts particle pose from odometry data.
+   */
   class Updater extends Thread
   {
 

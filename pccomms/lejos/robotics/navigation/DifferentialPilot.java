@@ -14,14 +14,16 @@ import lejos.robotics.*;
  * backward in a straight line or a circular path or rotate to a new direction.<br>
  * This  class will only work with two independently controlled motors to
  * steer differentially, so it can rotate within its own footprint (i.e. turn on
- * one spot). It registers as a RegulatedMotorListener with each of its motors.
+ * one spot). It registers as a {@link lejos.robotics.RegulatedMotorListener}
+ * with each of its motors.
  * An object of this class assumes that it has exclusive control of
  * its motors.  If any other object makes calls to its motors, the results are
  * unpredictable. <br>
  * This class  can be used with robots that have reversed motor design: the robot moves
  * in the direction opposite to the the direction of motor rotation. .<br>
- * It automatically updates a DeadReckonerMoveProvider which has called the
- * addMoveListener() method on object class.<br>
+ * It automatically updates a {@link lejos.robotics.localization.OdometryPoseProvider}
+ * which has called the
+ * <code>addMoveListener</code>  method on this object.<br>
  * Some methods optionally return immediately so the thread that called the
  * method can monitor sensors, get current pose, and call stop() if necessary.<br>
  * Handling stalls: If a stall is detected,   <code>isStalled()</code> returns <code>
