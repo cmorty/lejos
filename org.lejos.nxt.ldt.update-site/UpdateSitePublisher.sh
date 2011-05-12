@@ -15,6 +15,8 @@ CURRENT_DIR=`dirname "$0"`
 PROJECT=${WORKSPACE}/org.lejos.nxt.ldt.update-site
 DIST=${PROJECT}/dist
 
+rm -rf ${DIST}
+
 java \
 	-jar ${ECLIPSE_HOME}/plugins/org.eclipse.equinox.launcher_*.jar \
 	-application org.eclipse.equinox.p2.publisher.UpdateSitePublisher \
