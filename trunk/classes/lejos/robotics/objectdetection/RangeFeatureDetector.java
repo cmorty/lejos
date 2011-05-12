@@ -3,10 +3,12 @@ package lejos.robotics.objectdetection;
 import lejos.robotics.RangeFinder;
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
-// TODO: Some of these API docs might be more appropriate in FeatureDetector
-
-// TODO: So much code is repeated in FusorDetector, TouchDetector, and RangeFeatureDetector. Would make sense
-// to make an abstract class.
+/*
+ * DEVELOPER NOTES:
+ * TODO: Some of these API docs might be more appropriate in FeatureDetector
+ * TODO: One weakness of this class is it forces RangeFinder to use multiple readings. Might be some benefits to only
+ * retrieving one reading from ultrasonic sensor.
+ */
 
 /**
  * <p>The UnidentifiedObjectDetector used a RangeFinder to locate objects (known as features when mapping). This class is
@@ -78,7 +80,5 @@ public class RangeFeatureDetector extends FeatureDetectorAdapter {
 			feature = new RangeFeature(rrs);
 		}
 		return feature;
-	}
-
-	
+	}	
 }

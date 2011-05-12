@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="build.xml" kind="src" path="ArcNavigator"/>
 	<classpathentry excluding="build.xml" kind="src" path="BlueStats"/>
 	<classpathentry excluding="build.xml" kind="src" path="BTConnectTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="BTGPS"/>
@@ -79,6 +78,8 @@
 	<classpathentry excluding="build.xml" kind="src" path="USBReceive"/>
 	<classpathentry excluding="build.xml" kind="src" path="View"/>
 	<classpathentry excluding="build.xml" kind="src" path="WaypointNav"/>
+	<classpathentry excluding="build.xml" kind="src" path="ObjectDetect"/>
+	<classpathentry excluding="build.xml" kind="src" path="FusorBumper"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/classes"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

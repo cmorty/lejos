@@ -1,6 +1,6 @@
-<project name="ArcNavigator" default="uploadandrun">
+<project name="FusorBumper" default="uploadandrun">
     <description>
-    	ArcNavigator build file
+    	FusorBumper build file
     </description>
 
 	<target name="clean" description="clean up all generated files" >
