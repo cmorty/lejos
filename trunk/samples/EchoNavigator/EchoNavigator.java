@@ -1,5 +1,5 @@
 import lejos.nxt.*;
-import lejos.robotics.localization.DeadReckonerPoseProvider;
+import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.navigation.ArcRotateMoveController;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.Pose;
@@ -34,7 +34,7 @@ public class EchoNavigator
     sonar= new UltrasonicSensor(echo);
     sonar.continuous();
     pilot = aPilot;
-    drpp = new DeadReckonerPoseProvider(pilot);
+    poseProivder = new OdometryPoseProvider(pilot);
     nav = new NavPathController(pilot);
   }
 
@@ -49,7 +49,7 @@ public void goTo(float x, float y)
 
   Point destination = new Point(x, y);
   if(debug) System.out.println(" get pose ");
-  pose = drpp.getPose();
+  pose = poseProivder.getPose();
   if(debug) System.out.println(" nav go to ");
   if(debug) System.out.println(" nav "+nav);  WayPoint dest = new WayPoint(x, y);
  nav.goTo(dest, true);
@@ -61,13 +61,13 @@ public void goTo(float x, float y)
             {
                 if (debug) System.out.println(" detect ");
                 nav.interrupt();  // interrupt going to destination
-                if (debug) System.out.println(" interrupt " + drpp.getPose());
+                if (debug) System.out.println(" interrupt " + poseProivder.getPose());
                 while (avoid());
-                if(debug) System.out.println(" avoiding end " + drpp.getPose());
+                if(debug) System.out.println(" avoiding end " + poseProivder.getPose());
                  nav.resume(); // goint to destination
             }
         }
-      if (debug) System.out.println(" at  " + drpp.getPose());
+      if (debug) System.out.println(" at  " + poseProivder.getPose());
  RConsole.close();
 }
 
@@ -163,7 +163,7 @@ public void goTo(float x, float y)
 
    private NavPathController nav ;
    private ArcRotateMoveController pilot;
-  private DeadReckonerPoseProvider drpp;
+  private OdometryPoseProvider poseProivder;
   private Pose pose = new Pose();
   Random rand = new Random();
   UltrasonicSensor sonar;
