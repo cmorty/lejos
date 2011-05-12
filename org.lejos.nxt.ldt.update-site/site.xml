@@ -3,7 +3,7 @@
    <description name="leJOS NXJ">
       leJOS NXJ features for Eclipse
    </description>
-   <feature url="features/org.lejos.nxt.ldt.feature_0.9.0.201105112006.jar" id="org.lejos.nxt.ldt.feature" version="0.9.0.201105112006">
+   <feature url="features/org.lejos.nxt.ldt.feature_0.9.0.201105121147.jar" id="org.lejos.nxt.ldt.feature" version="0.9.0.201105121147">
       <category name="org.lejos.nxt"/>
    </feature>
    <category-def name="org.lejos.nxt" label="leJOS NXJ Support">
