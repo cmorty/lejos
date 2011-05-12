@@ -2,7 +2,7 @@
 <feature
       id="org.lejos.nxt.ldt.feature"
       label="leJOS NXJ plugin"
-      version="0.9"
+      version="0.9.0.qualifier"
       provider-name="www.lejos.org">
 
    <description url="http://www.lejos.org">
