@@ -2,7 +2,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import lejos.nxt.*;
-import lejos.robotics.localization.DeadReckonerPoseProvider;
+import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.navigation.ArcRotateMoveController;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.Pose;
@@ -28,7 +28,7 @@ public class RCNavigator
    public RCNavigator(final ArcRotateMoveController aPilot)
     {
       pilot = aPilot;
-      drpp = new DeadReckonerPoseProvider(pilot);
+      poseProvider = new OdometryPoseProvider(pilot);
       pilot.setTravelSpeed(20);
       pilot.setRotateSpeed(180);
     }
@@ -66,7 +66,7 @@ public class RCNavigator
          Sound.playTone(800 + 100 * code, 200);
          if (command == Command.GOTO)// convert enum to int for comparison
          {
-           pose = drpp.getPose();
+           pose = poseProvider.getPose();
             float x = dataIn.readFloat();
             float y = dataIn.readFloat();
             Point destination = new Point(x,y);
@@ -98,7 +98,7 @@ public class RCNavigator
     {
       try
       {
-        pose = drpp.getPose();
+        pose = poseProvider.getPose();
          dataOut.writeFloat(pose.getX());
          dataOut.writeFloat(pose.getY());
          dataOut.writeFloat(pose.getHeading());
@@ -134,7 +134,7 @@ public class RCNavigator
     }
    
   private ArcRotateMoveController pilot;
-  private DeadReckonerPoseProvider drpp;
+  private OdometryPoseProvider poseProvider;
   private Pose pose = new Pose();
    BTConnection connection;
    DataInputStream dataIn;
