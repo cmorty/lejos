@@ -6,7 +6,7 @@ import lejos.robotics.Touch;
 import lejos.geom.Point;
 
 /**
- * This class allows a touch sensor to be used as a defacto range sensor by reporting the position of the toch sensor
+ * This class allows a touch sensor to be used as a defacto range sensor by reporting the position of the touch sensor
  * to the object detection API. The touch sensor will only notify one time when it is pressed and will not be ready to
  * notify again until the touch sensor is released.
  * 
