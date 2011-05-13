@@ -284,7 +284,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
      */
     public int getLimitAngle()
     {
-        return limitAngle;
+        return limitAngle; // set in reg
     }
 
     /**
@@ -491,6 +491,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
             baseVelocity = curVelocity;
             curHold = hold;
             curLimit = limit;
+            limitAngle = curLimit; // limitAngle is in outer. KPT 5/13/2011 06:42
             moving = curTargetVelocity != 0 || baseVelocity != 0;
         }
 
