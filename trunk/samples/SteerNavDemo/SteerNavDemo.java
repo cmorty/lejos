@@ -9,7 +9,7 @@ import lejos.nxt.*;
  * <p>This sample starts at 0,0 with a heading of 0 degrees (facing east). It drives to 50,50 with no specified heading.
  * Then it drives to -50, 50 with a heading of 270 (facing south). Then it drives back to the original position and ends.</p>
  * 
- *  <p>NOTE: If you don't have plans for a steering vehicle, you can simulate this kind of movement using a regular
+ *  <p>NOTE: If you don't have LEGO plans for a steering vehicle, you can simulate this kind of movement using a regular
  *  DifferentialPilot robot. Use the commented-out code below to test this type of vehicle.</p>
  *  
  * @author BB
