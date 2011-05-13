@@ -27,7 +27,7 @@ public class FusorDetector implements FeatureDetector, FeatureListener {
 	 */
 	private int delay;
 	
-	private boolean enabled;
+	private boolean enabled = true;
 	
 	private ArrayList<FeatureListener> listeners = null;
 	

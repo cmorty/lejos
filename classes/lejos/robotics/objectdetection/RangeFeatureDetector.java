@@ -11,7 +11,7 @@ import lejos.robotics.RangeReadings;
  */
 
 /**
- * <p>The UnidentifiedObjectDetector used a RangeFinder to locate objects (known as features when mapping). This class is
+ * <p>The RangeFeatureDetector used a RangeFinder to locate objects (known as features when mapping). This class is
  * unable to identify the feature and merely reports the range and angle to the object.</p>
  * 
  *  <p>You can also have the scan identify the object (such as a camera using facial recognition to identify a person).
