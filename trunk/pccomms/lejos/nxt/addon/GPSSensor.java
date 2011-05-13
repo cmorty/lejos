@@ -26,7 +26,7 @@ public class GPSSensor extends I2CSensor {
 	
 	/**
 	* Constructor
-	* @param link the DGPS port number
+	* @param sensorPort the sensor port the sensor is connected to
 	*/
     public GPSSensor(I2CPort sensorPort) {
         super(sensorPort, DGPS_I2C_ADDR, I2CPort.STANDARD_MODE, TYPE_LOWSPEED);

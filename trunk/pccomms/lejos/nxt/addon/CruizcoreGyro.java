@@ -55,7 +55,7 @@ public class CruizcoreGyro extends I2CSensor {
 	
 	/**
 	 * Read all data from the sensor and save values in the private properties of the class. 
-	 * Use {@link GetLastAccel} and similar methods to retrieve values.
+	 * Use {@link #getLastAccel} and similar methods to retrieve values.
 	 *
 	 * @return true, if successful
 	 */
@@ -73,7 +73,7 @@ public class CruizcoreGyro extends I2CSensor {
 	
 	/**
 	 * Gets the last acceleration read from the 3 axes.
-	 * See {@link readAllData}
+	 * See {@link #readAllData}
 	 *
 	 * @return the last acceleration
 	 */
@@ -83,7 +83,7 @@ public class CruizcoreGyro extends I2CSensor {
 	
 	/**
 	 * Gets the last accel.
-	 * See {@link readAllData}
+	 * See {@link #readAllData}
 	 *
 	 * @param axis the axis (0 for X, 1 for Y, 2 for Z)
 	 * @return the last acceleration
@@ -91,13 +91,12 @@ public class CruizcoreGyro extends I2CSensor {
 	public int getLastAccel(int axis) {
 		if ( axis>=0 && axis<=2) 
 			return accel[axis];
-		else
-			 return 0;
+		return 0;
 	}
 	
 	/**
 	 * Gets the last pitch.
-	 * See {@link readAllData}
+	 * See {@link #readAllData}
 	 *
 	 * @return the last pitch
 	 */
@@ -108,7 +107,7 @@ public class CruizcoreGyro extends I2CSensor {
 	
 	/**
 	 * Gets the last roll.
-	 * See {@link readAllData}
+	 * See {@link #readAllData}
 	 *
 	 * @return the last roll
 	 */
@@ -119,7 +118,7 @@ public class CruizcoreGyro extends I2CSensor {
 	
 	/**
 	 * Gets the last rate.
-	 * See {@link readAllData}
+	 * See {@link #readAllData}
 	 *
 	 * @return the last rotation rate
 	 */
@@ -129,7 +128,7 @@ public class CruizcoreGyro extends I2CSensor {
 	
 	/**
 	 * Gets the last angle.
-	 * See {@link readAllData}
+	 * See {@link #readAllData}
 	 *
 	 * @return the last angle
 	 */
@@ -139,7 +138,7 @@ public class CruizcoreGyro extends I2CSensor {
 	
 	/**
 	 * Gets the accel.
-	 * See {@link readAllData}
+	 * See {@link #readAllData}
 	 *
 	 * @return the acceleration
 	 */
@@ -182,7 +181,8 @@ public class CruizcoreGyro extends I2CSensor {
 		if (ret==0) {
 			angle =  inBuf[1]*256 + inBuf[0];
 			return angle;
-		} else return 0;
+		}
+		return 0;
 	}
 	
 	/**
@@ -194,7 +194,8 @@ public class CruizcoreGyro extends I2CSensor {
 		int ret = getData(RATE,inBuf,2);
 		if (ret==0) {
 			return inBuf[1]*256 + inBuf[0];
-		} else return 0;
+		}
+		return 0;
 	}
 	
 	/**
