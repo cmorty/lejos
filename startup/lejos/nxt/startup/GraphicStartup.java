@@ -72,7 +72,7 @@ public class GraphicStartup {
 	static final int SEARCH = 8;
 	static final int PIN = 9;
     
-    static final String REVISION = "$Revision: 3967 $";
+    static final String REVISION = "$Revision$";
     static final int VERSION = 0x000900;
 
     private int timeout;
