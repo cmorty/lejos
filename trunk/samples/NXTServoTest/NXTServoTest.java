@@ -23,7 +23,6 @@ public class NXTServoTest{
 		msc.servo1.setAngle(90);
 		
 		int angle = 0;
-		int pulse = 0;
 		int NXTServoBattery = 0;
 
 		while(!Button.ESCAPE.isPressed()){
@@ -65,9 +64,9 @@ public class NXTServoTest{
 	 * Internal method used to clear some rows in User Interface
 	 */
 	private static void clearRows(){
-		LCD.drawString("               ", 0, 3);
-		LCD.drawString("               ", 0, 4);
-		LCD.drawString("               ", 0, 5);
+		LCD.clear(3);
+		LCD.clear(4);
+		LCD.clear(5);
 	}
 
 	/**
