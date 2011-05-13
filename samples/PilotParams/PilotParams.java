@@ -7,7 +7,7 @@ import java.io.IOException;
 import lejos.util.PilotProps;
 
 /**
- * Use this sample to set the parameters for Differential. These values
+ * Use this sample to set the parameters for DifferentialPilot. These values
  * will then work with any sample that uses DifferentialPilot.
  * 
  * @author Lawrie Griffiths
