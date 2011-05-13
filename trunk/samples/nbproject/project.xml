@@ -16,13 +16,6 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>ArcNavigator</label>
-                    <type>java</type>
-                    <location>ArcNavigator</location>
-                    <excludes>**.class,**.nxj</excludes>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
                     <label>BlueStats</label>
                     <type>java</type>
                     <location>BlueStats</location>
@@ -135,6 +128,13 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>FusorBumper</label>
+                    <type>java</type>
+                    <location>FusorBumper</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>GPSInfo</label>
                     <type>java</type>
                     <location>GPSInfo</location>
@@ -219,9 +219,9 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>Line</label>
+                    <label>LineFollower</label>
                     <type>java</type>
-                    <location>Line</location>
+                    <location>LineFollower</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -257,6 +257,13 @@
                     <label>MonitorTest</label>
                     <type>java</type>
                     <location>MonitorTest</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>MotorTester</label>
+                    <type>java</type>
+                    <location>MotorTester</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -306,6 +313,20 @@
                     <label>NXTServoTest</label>
                     <type>java</type>
                     <location>NXTServoTest</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>ObjectDetect</label>
+                    <type>java</type>
+                    <location>ObjectDetect</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>PathFinding</label>
+                    <type>java</type>
+                    <location>PathFinding</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -570,11 +591,6 @@
             <view>
                 <items>
                     <source-folder style="packages">
-                        <label>ArcNavigator</label>
-                        <location>ArcNavigator</location>
-                        <excludes>**.class,**.nxj</excludes>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>BlueStats</label>
                         <location>BlueStats</location>
                         <excludes>**.class,**.nxj</excludes>
@@ -655,6 +671,11 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>FusorBumper</label>
+                        <location>FusorBumper</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>GPSInfo</label>
                         <location>GPSInfo</location>
                         <excludes>**.class,**.nxj</excludes>
@@ -715,8 +736,8 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>Line</label>
-                        <location>Line</location>
+                        <label>LineFollower</label>
+                        <location>LineFollower</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -742,6 +763,11 @@
                     <source-folder style="packages">
                         <label>MonitorTest</label>
                         <location>MonitorTest</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>MotorTester</label>
+                        <location>MotorTester</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -777,6 +803,16 @@
                     <source-folder style="packages">
                         <label>NXTServoTest</label>
                         <location>NXTServoTest</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>ObjectDetect</label>
+                        <location>ObjectDetect</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>PathFinding</label>
+                        <location>PathFinding</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -968,7 +1004,6 @@
         </general-data>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
-                <package-root>ArcNavigator</package-root>
                 <package-root>BlueStats</package-root>
                 <package-root>BTConnectTest</package-root>
                 <package-root>BTGPS</package-root>
@@ -997,7 +1032,6 @@
                 <package-root>KalmanTest2</package-root>
                 <package-root>LatteboxTest</package-root>
                 <package-root>LCDUI</package-root>
-                <package-root>Line</package-root>
                 <package-root>Listen</package-root>
                 <package-root>LnrActuatorTest</package-root>
                 <package-root>MatrixTest</package-root>
@@ -1046,6 +1080,11 @@
                 <package-root>USBReceive</package-root>
                 <package-root>View</package-root>
                 <package-root>WaypointNav</package-root>
+                <package-root>FusorBumper</package-root>
+                <package-root>LineFollower</package-root>
+                <package-root>MotorTester</package-root>
+                <package-root>ObjectDetect</package-root>
+                <package-root>PathFinding</package-root>
                 <classpath mode="compile">../classes/lib/classes.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
