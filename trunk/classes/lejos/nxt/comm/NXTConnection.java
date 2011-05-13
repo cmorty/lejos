@@ -40,13 +40,13 @@ public abstract class NXTConnection implements StreamConnection {
      * Lego Communications Protocol (<code>LCP</code>) I/O mode. The LCP is defined by The Lego Company to allow limited remote 
      * command control of a NXT brick. 
      * 
-     * @see The <a href="http://mindstorms.lego.com">Lego Mindstorms</a> Site. Look for the Bluetooth Developer Kit in Support |
+     * See the <a href="http://mindstorms.lego.com">Lego Mindstorms</a> Site. Look for the Bluetooth Developer Kit in Support |
      * Files | Advanced
      */
     public static final int LCP = 1;
     /**
      * <code>PACKET</code> I/O mode. This is default and  is probably the best mode to use if you are talking to a
-     * NXT using the leJOS classes. Headers are inclcuded for each packet of data sent and received.
+     * NXT using the leJOS classes. Headers are included for each packet of data sent and received.
      */
     public static final int PACKET = 0;
     /**
