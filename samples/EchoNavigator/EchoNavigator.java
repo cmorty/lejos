@@ -1,173 +1,137 @@
+import lejos.robotics.navigation.*;
+import lejos.robotics.objectdetection.*;
 import lejos.nxt.*;
-import lejos.robotics.localization.OdometryPoseProvider;
-import lejos.robotics.navigation.ArcRotateMoveController;
-import lejos.robotics.navigation.DifferentialPilot;
-import lejos.robotics.navigation.Pose;
+import lejos.robotics.RangeFinder;
 import lejos.robotics.RegulatedMotor;
-import lejos.robotics.navigation.WayPoint;
-import lejos.robotics.navigation.NavPathController;
-import lejos.geom.Point;
- import lejos.nxt.comm.RConsole;
+import lejos.util.PilotProps;
 import java.io.IOException;
 import java.util.Random;
-import lejos.util.Delay;
-import lejos.util.PilotProps;
 
 /**
- * EchoNavigator is a obstacle avoiding  robot that attempts reach its destination.
- * uses DiffertntialPilot
- * Hardware requirements:  an ultrasonic sensor facing forward
- * Since it relies on dead reckoning to keep track of its
- * location, the accuracy of navigation degrades with each obstacle.  Does not
- * map the obstacles, but uses a randomized avoiding strategy.
+ * <p>EchoNavigator is a simple obstacle avoiding robot that randomly travels to 
+ * locations within a 2m x 2m space (you can enlarge or shrink this with the 
+ * AREA_WIDTH and AREA_LENGTH constants). Press the button after each waypoint
+ * is reached to make it travel to a new waypoint.</p>  
  * 
- * You can run the PilotParams sample to create a property file which 
+ * <p>The robot requires an ultrasonic sensor in  port 4. It does not
+ * map the obstacles, but instead uses a randomized avoiding strategy.</p>
+ * 
+ * <p>Classes used:   DifferentialPilot, NavPathController, FeatureDetector</p>
+ * 
+ * <p>You can run the PilotParams sample to create a property file which 
  * sets the parameters of the Pilot to the dimensions
- * and motor connections for your robot.
+ * and motor connections for your robot.</p>
  * 
  * @author Roger Glassey
  */
-public class EchoNavigator
-{
-  public EchoNavigator(final ArcRotateMoveController aPilot, SensorPort echo)
-  {
-    sonar= new UltrasonicSensor(echo);
-    sonar.continuous();
-    pilot = aPilot;
-    poseProivder = new OdometryPoseProvider(pilot);
-    nav = new NavPathController(pilot);
-  }
+public class EchoNavigator implements FeatureListener {
 
-/**
- * attempt to reach a destination at coordinates x,y despite obstacles.
- * uses detect() and avoid()
- * @param x coordinate of destination
- * @param y coordinate of destination.
- */
-public void goTo(float x, float y)
-{
-
-  Point destination = new Point(x, y);
-  if(debug) System.out.println(" get pose ");
-  pose = poseProivder.getPose();
-  if(debug) System.out.println(" nav go to ");
-  if(debug) System.out.println(" nav "+nav);  WayPoint dest = new WayPoint(x, y);
- nav.goTo(dest, true);
- if(debug) System.out.println("nav is Going " +nav.isGoing());
-
-        while (nav.isGoing())
-        {
-            if(detect() )
-            {
-                if (debug) System.out.println(" detect ");
-                nav.interrupt();  // interrupt going to destination
-                if (debug) System.out.println(" interrupt " + poseProivder.getPose());
-                while (avoid());
-                if(debug) System.out.println(" avoiding end " + poseProivder.getPose());
-                 nav.resume(); // goint to destination
-            }
-        }
-      if (debug) System.out.println(" at  " + poseProivder.getPose());
- RConsole.close();
-}
-
-  /**
-   * backs up, rotates away from the obstacle, and travels forward;
-   * returns true if no obstacle was discovered while traveling<br>
-   * uses readSensor()
-   * @return
-   */
-  private  boolean  avoid()
-  {
-    int leftDist = 0;
-    int rightDist = 0;
-    byte turnDirection = 1;
-    boolean more = true;
-    while (more)
-    {
-      pilot.rotate(75);
-      Delay.msDelay(50);
-      leftDist = sonar.getDistance();
-      pilot.rotate(-150);
-      Delay.msDelay(50);
-      rightDist = sonar.getDistance();
-      pilot.rotate(75);
-      if (leftDist > rightDist)turnDirection = 1;
-      else  turnDirection = -1;
-      more = leftDist < _limit && _limit < _limit;
-      if (more)
-      {
-        pilot.travel(-4);
-      }
-      LCD.drawInt(leftDist, 4, 0, 5);
-      LCD.drawInt(rightDist, 4, 8, 5);
+	public static int AREA_WIDTH = 200;
+	public static int AREA_LENGTH = 200;
+	
+	public static int LEFT_SIDE = 1;
+	public static int RIGHT_SIDE = -1;
+	
+	private WayPoint target;
+	private FeatureDetector fd = null;
+	
+    /**
+     * allocates a EchoNavigator
+     * @param pilot  construct this pilot first
+     * @param sonicPort -  an ultrasonic sensor
+     */
+    // 
+    public EchoNavigator(final NavPathController aNavigator, final SensorPort sonicPort) {
+        RangeFinder us = new UltrasonicSensor(sonicPort);
+        
+        // Create object detector and add EchoNavigator as a listener:
+        fd = new RangeFeatureDetector(us, 40, 250);
+        fd.enableDetection(false); // Disable until moving in case someone walks in front of it.
+        fd.addListener(this);
+        
+        nav = aNavigator;
     }
-    pilot.travel(-10 - rand.nextInt(10));
-    int angle = 60+rand.nextInt(60);
-    pilot.rotate(turnDirection * angle);
-    pilot.travel(10 + rand.nextInt(60), true);
-    return  detect ();  // watch for hit while moving forward
-  }
-  /**
-   * Monitors the ultrasonic sensor while the robot is moving.
-   * Returns if an obstacle is detected or if the travel is complete
-   * @return false if obstacle was detected
-   */
-  public boolean detect()
-  {
-    int distance = 255;
-    boolean obstacle = false;
-    while( pilot.isMoving()& distance > _limit )
-    {
-      distance = sonar.getDistance();
-      LCD.drawInt(distance, 4,0,1);
-      obstacle = distance < _limit ;
-      Thread.yield();
-    }
-   if(debug)  System.out.println(" Distance " +distance + pilot.isMoving() );
-
-    return obstacle;
-  }
-  
-  /**
-   * assumes UltrasonicSensor is on port S3;
-   * @param args
- * @throws IOException 
-   */
-  public static void main(String[] args) throws IOException
-  {
-  	PilotProps pp = new PilotProps();
-	pp.loadPersistentValues();
-	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "5.6"));
-	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "14.2"));
-	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "A"));
-	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
-	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
-    ArcRotateMoveController pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
-    EchoNavigator  robot  = new EchoNavigator(pilot,SensorPort.S3);
-    System.out.println(" Echo Navigator ");
-    debug = true;
-    if(debug) {
-        System.out.println("RConsole wants BlueTooth");
-        RConsole.openBluetooth(0);
-        System.setOut(RConsole.getPrintStream());
-    }
-      else
-    {
-       System.out.println(" Any Button ");
-       Button.waitForPress();
-      }
     
-    robot.goTo(300,0);
-  }
-
-   private NavPathController nav ;
-   private ArcRotateMoveController pilot;
-  private OdometryPoseProvider poseProivder;
-  private Pose pose = new Pose();
-  Random rand = new Random();
-  UltrasonicSensor sonar;
-  int _limit =15; //cm
-  static  boolean debug = false;
-
+    public void goTo(double x, double y) {
+    	target = new WayPoint(x, y);
+    	nav.goTo(target);
+    }
+    
+    /**
+     * Test of EchoNavitator. Destinations are randomly generated.
+     * @param args
+     * @throws IOException 
+     * @throws InterruptedException 
+     */
+    public static void main(String[] args) throws IOException, InterruptedException {
+    	PilotProps pp = new PilotProps();
+    	pp.loadPersistentValues();
+    	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "4.32"));
+    	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "16.35"));
+    	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
+    	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
+    	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
+    	
+        DifferentialPilot p = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
+        NavPathController nav = new NavPathController(p);
+        
+        EchoNavigator robot = new EchoNavigator(nav, SensorPort.S4);
+        robot.pilot = p;
+        
+        // TODO: For version 1.0. 
+        // This is overly complex to make NavPathController and a FeatureListener do something simple like
+        // a bumper car. Might want to look at ways to change API so we can simplify this type of sample. Coding
+        // this type of example is not very intuitive with the current API.
+        
+        // Repeatedly drive to random points:
+        while(!Button.ESCAPE.isPressed()) {
+        	System.out.println("Target: ");
+        	double x_targ = Math.random() * AREA_WIDTH;
+        	double y_targ = Math.random() * AREA_LENGTH;
+        	System.out.println("X: " + (int)x_targ);
+        	System.out.println("Y: " + (int)y_targ);
+        	System.out.println("Press ENTER key");
+        	Button.ENTER.waitForPressAndRelease();
+        	
+        	robot.fd.enableDetection(true); //  Enable detector
+        	
+        	// When an obstacle is encountered and stop() is called, the method goTo() returns 
+        	// even though it didn't reach the target waypoint... 
+	        robot.goTo(x_targ, y_targ);
+	        
+	        // ...therefore this delay is needed.
+	        while(p.isMoving())
+	        	Thread.sleep(500);
+	        
+	        robot.fd.enableDetection(false); //  Disable detector while stopped
+	        Sound.beepSequenceUp();
+	        
+	        // Output arrival:
+	        Pose curPose = nav.getPoseProvider().getPose();
+	        System.out.println("Arrived: " + (int)curPose.getX() + ", " + (int)curPose.getY());
+        }
+    }
+    private NavPathController nav;
+    private DifferentialPilot pilot;
+    Random rand = new Random();
+        
+    /**
+     * causes the robot to back up, turn away from the obstacle
+     * returns when obstacle is cleared or if an obstacle is detected while traveling
+     */
+	public void featureDetected(DetectableFeature feature, FeatureDetector detector) {
+		detector.enableDetection(false);
+		Sound.beepSequence();
+		
+		// Randomly rotate left or right:
+		int side = (Math.random() > 0.5 ? -1 : 1);
+		
+		// Perform a movement to avoid the obstacle.
+	    pilot.travel(-5 - rand.nextInt(5));
+	    int angle = 60 + rand.nextInt(60);
+	    pilot.rotate(-side * angle);
+	    detector.enableDetection(true);
+	    pilot.travel(10 + rand.nextInt(60));
+	    nav.goTo(target);
+	}
 }

@@ -7,7 +7,8 @@ import lejos.robotics.pathfinding.*;
 import lejos.util.PilotProps;
 
 /**
- * This sample shows how to create a trivial LineMap, feed it to a GridMesh, and then use a pathfinder
+ * This sample uses the A* search algorithm to find a path from one location to another. The code demonstrates 
+ * how to create a trivial LineMap, feed it to a GridMesh, and then use a pathfinder
  * to control the robot and allow it to navigate around map obstacles. You will need to construct a simple
  * pilot robot to use this class. No sensors are required.
  * 
