@@ -66,7 +66,8 @@ Brian Bagnall:
 - Added new path finding implementation
 - Reimplemented Acceleration sensor classes to separate them and implement Accelerometer interface
 - Added NodeSearch PC sample
-- Addded ShapefileLoader to load a map from a shape file 
+- Added ShapefileLoader to load a map from a shape file 
+- Added FusorBumper, ObjectDetect and PathFinder samples
 
 Lawrie Griffiths:
 - NXJControl added drag and drop
@@ -98,7 +99,7 @@ Kirk Thompson:
 - Linear actuator driver
 - Added GyroSensor interface and improvment to Gyro classes
 
-esmetaman
+Juan Antonio Brenha Moral:
 - Added class to support NXTLineLeader based on code from Eric Pascual
 - Support for Dswitch
 - Added support for hitechnics sensor mux
