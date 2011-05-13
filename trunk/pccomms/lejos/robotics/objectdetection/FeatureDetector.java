@@ -14,6 +14,10 @@ package lejos.robotics.objectdetection;
  * a term for any property that can be added to map data. The FeatureListener is notified when an object is detected,
  * even if it has previously detected the same object.</p>
  * 
+ * <p>The most basic feature is the Range Feature, which indicates the position of the detected object relative
+ * to the "center" of the robot (normally the point mid-way between the drive wheels). A robot with many bumpers
+ * arrayed around the robot will also report the bumper location relative to the robot center.</p>
+ * 
  * <p>There can be many different qualities recorded by different FeatureDetector implementations. For example, you could
  * implement a VectorFeatureDetector that could take multiple readings of an object, determine any change in position, 
  * and return the velocity/vector of the object (provided the sensor is capable of identifying an object and change in 
