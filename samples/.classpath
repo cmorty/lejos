@@ -80,6 +80,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="WaypointNav"/>
 	<classpathentry excluding="build.xml" kind="src" path="ObjectDetect"/>
 	<classpathentry excluding="build.xml" kind="src" path="FusorBumper"/>
+	<classpathentry excluding="build.xml" kind="src" path="PathFinding"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/classes"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
