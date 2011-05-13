@@ -16,8 +16,10 @@ import lejos.util.PilotProps;
  */
 public class FusorBumper implements FeatureListener {
 
-	public static final int MAX_DETECT = 50;
-	public static final int RANGE_READING_DELAY = 500;
+	private static final int MAX_DETECT = 50;
+	private static final int RANGE_READING_DELAY = 500;
+	private static final int TOUCH_X_OFFSET = -4;
+	private static final int TOUCH_Y_OFFSET = 16;
 
 	private DifferentialPilot robot;
 
@@ -39,7 +41,7 @@ public class FusorBumper implements FeatureListener {
 		FeatureDetector usdetector = new RangeFeatureDetector(us, MAX_DETECT,RANGE_READING_DELAY);
 
 		Touch ts = new TouchSensor(SensorPort.S2);
-		FeatureDetector tsdetector = new TouchFeatureDetector(ts, -4, 16); 
+		FeatureDetector tsdetector = new TouchFeatureDetector(ts, TOUCH_X_OFFSET, TOUCH_Y_OFFSET); 
 
 		FusorDetector fusion = new FusorDetector();
 		fusion.addDetector(tsdetector);
