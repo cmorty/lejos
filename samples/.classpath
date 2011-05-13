@@ -16,6 +16,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="EchoNavigator"/>
 	<classpathentry excluding="build.xml" kind="src" path="ExceptionTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="FileTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="FusorBumper"/>
 	<classpathentry excluding="build.xml" kind="src" path="GPSInfo"/>
 	<classpathentry excluding="build.xml" kind="src" path="GraphicsSample"/>
 	<classpathentry excluding="build.xml" kind="src" path="GyroTest"/>
@@ -28,7 +29,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="KalmanTest2"/>
 	<classpathentry excluding="build.xml" kind="src" path="LatteboxTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="LCDUI"/>
-	<classpathentry excluding="build.xml" kind="src" path="Line"/>
+	<classpathentry excluding="build.xml" kind="src" path="LineFollower"/>
 	<classpathentry excluding="build.xml" kind="src" path="Listen"/>
 	<classpathentry excluding="build.xml" kind="src" path="LnrActuatorTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MatrixTest"/>
@@ -41,7 +42,9 @@
 	<classpathentry excluding="build.xml" kind="src" path="NXTLineLeaderTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="NXTMMXSample"/>
 	<classpathentry excluding="build.xml" kind="src" path="NXTReceive"/>
+	<classpathentry excluding="build.xml" kind="src" path="ObjectDetect"/>
 	<classpathentry excluding="build.xml" kind="src" path="NXTServoTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="PathFinding"/>
 	<classpathentry excluding="build.xml" kind="src" path="PerformanceTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="PFLinkTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="PFMateTest"/>
@@ -78,9 +81,6 @@
 	<classpathentry excluding="build.xml" kind="src" path="USBReceive"/>
 	<classpathentry excluding="build.xml" kind="src" path="View"/>
 	<classpathentry excluding="build.xml" kind="src" path="WaypointNav"/>
-	<classpathentry excluding="build.xml" kind="src" path="ObjectDetect"/>
-	<classpathentry excluding="build.xml" kind="src" path="FusorBumper"/>
-	<classpathentry excluding="build.xml" kind="src" path="PathFinding"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/classes"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

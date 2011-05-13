@@ -30,7 +30,7 @@ public class PathFinding {
 		
 		// Create a rudimentary map:
 		Line [] lines = new Line[3];
-		lines [0] = new Line(75, 100, 100, 100);
+		lines [0] = new Line(75f, 100f, 100f, 100f);
 		lines [1] = new Line(100, 100, 87, 75);
 		lines [2] = new Line(87, 75, 75, 100);
 		lejos.geom.Rectangle bounds = new Rectangle(-50, -50, 250, 250);
