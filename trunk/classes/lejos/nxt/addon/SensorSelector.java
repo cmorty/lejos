@@ -26,4 +26,14 @@ public class SensorSelector {
 		
 		throw new SensorSelectorException("No Such Sensor");	
 	}
+	
+	public static IRTransmitter createIRTransmitter(I2CPort port) throws SensorSelectorException {
+		I2CSensor tester = new I2CSensor(port);
+		String type = tester.getProductID();
+		
+		if (type.equals(MINDSENSORS_ID)) return new RCXLink(port);
+		if (type.equals(HITECHNIC_ID)) return new IRLink(port);
+		
+		throw new SensorSelectorException("No Such Sensor");	
+	}		
 }
