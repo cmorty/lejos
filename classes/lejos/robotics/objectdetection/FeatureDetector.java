@@ -24,7 +24,7 @@ package lejos.robotics.objectdetection;
  * position). For example, a camera could note the change in position of objects and estimate the vector/velocity of 
  * the object.</p>
  * 
- * <p><i>Note: Because {@link FeatureListener#featureDetected(DetectableFeature)} and {@link FeatureDetector#scan()} are
+ * <p><i>Note: Because {@link FeatureListener#featureDetected(DetectableFeature, FeatureDetector detector)} and {@link FeatureDetector#scan()} are
  * only capable of returning a DetectableFeature object, any classes that want to read extended feature qualities (e.g.
  * vector, color, or person data) would need to use an instanceof test to see if it is the appropriate data container,
  * then cast the object into that type in order to retrieve the unique data.</i></p> 
