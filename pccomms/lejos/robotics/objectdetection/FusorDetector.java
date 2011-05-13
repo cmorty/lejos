@@ -112,30 +112,35 @@ public class FusorDetector implements FeatureDetector, FeatureListener {
 		@Override
 		public void run() {
 			while(true) {
-				// 0. Make new RangeReadings object
-				RangeReadings rrs = new RangeReadings(0); 
 				
-				// 1. Check if there are features gathered by listener code
-				for(RangeReadings r : readings){
+				if(enabled) {
+					// 0. Make new RangeReadings object
+					RangeReadings rrs = new RangeReadings(0); 
 					
-					// 2. Amalgamate them into one DetectableFeature object
-					// Now get them all and add them to rrs
-					for(RangeReading rtemp : r) {
-						rrs.add(rtemp);
+					// 1. Check if there are features gathered by listener code
+					for(RangeReadings r : readings){
+						
+						// 2. Amalgamate them into one DetectableFeature object
+						// Now get them all and add them to rrs
+						for(RangeReading rtemp : r) {
+							rrs.add(rtemp);
+						}
 					}
+					
+					// 3. Check if anything exists. If so, notify all listeners.
+					if(rrs.size() > 0)
+						notifyListeners(new RangeFeature(rrs));
+					
+					// 4. Now clear out the detectors so they aren't resent next loop.
+					readings.clear();
+					
+					// 5. And add dummies to it to make it proper size.
+					for(int i=0;i<detectors.size();i++) 
+						readings.add(new RangeReadings(0));
+						
 				}
 				
-				// 3. Check if anything exists. If so, notify all listeners.
-				if(rrs.size() > 0)
-					notifyListeners(new RangeFeature(rrs));
-				
-				// 4. Now clear out the detectors so they aren't resent next loop.
-				readings.clear();
-				// 5. And add dummies to it to make it proper size.
-				for(int i=0;i<detectors.size();i++) 
-					readings.add(new RangeReadings(0));
-					
-				try {
+				try { // TODO: Technically this should be at start of loop?
 					Thread.sleep(delay);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -157,8 +162,15 @@ public class FusorDetector implements FeatureDetector, FeatureListener {
 		this.listeners.add(listener);
 	}
 
+	/**
+	 * This method enables/disables automatic scanning and listener reporting for this object and
+	 * all FeatureDetectors used in this FusorDetector object. 
+	 */
 	public void enableDetection(boolean on) {
 		enabled = on;
+		for(FeatureDetector fd : detectors) {
+			fd.enableDetection(on);
+		}
 	}
 
 	public int getDelay() {

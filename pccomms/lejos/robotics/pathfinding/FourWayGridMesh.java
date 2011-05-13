@@ -70,8 +70,8 @@ public class FourWayGridMesh implements NavigationMesh {
 	}
 	
 	public void regenerate() {
-		long startNanoT = System.nanoTime();
-		long startFreeMem = Runtime.getRuntime().freeMemory();
+		//long startNanoT = System.nanoTime();
+		//long startFreeMem = Runtime.getRuntime().freeMemory();
 		
 		mesh = new ArrayList <Node> ();
 		
@@ -115,13 +115,13 @@ public class FourWayGridMesh implements NavigationMesh {
 		// TODO: At this point I could optionally remove nodes that are too close to geometry. Pretty quick. Currently
 		// it leaves them in the mesh set unconnected to anything. Probably better that way.
 		
-		long totalNanoT = System.nanoTime() - startNanoT;
-		long endFreeMem = Runtime.getRuntime().freeMemory();
+		//long totalNanoT = System.nanoTime() - startNanoT;
+		//long endFreeMem = Runtime.getRuntime().freeMemory();
 		
-		System.out.println("Mesh time " + (totalNanoT/1000000D) + " ms");
-		System.out.print("Free Memory start: " + startFreeMem);
-		System.out.print(" end: " + endFreeMem);
-		System.out.println(" used: " + (startFreeMem - endFreeMem));
+		//System.out.println("Mesh time " + (totalNanoT/1000000D) + " ms");
+		//System.out.print("Free Memory start: " + startFreeMem);
+		//System.out.print(" end: " + endFreeMem);
+		//System.out.println(" used: " + (startFreeMem - endFreeMem));
 	}
 	
 	public boolean connect(Node node1, Node node2) {
