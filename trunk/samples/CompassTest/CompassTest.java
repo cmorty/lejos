@@ -16,8 +16,8 @@ import lejos.nxt.addon.*;
 					
 		while(!Button.ESCAPE.isPressed()) {
 			LCD.clear();
-			LCD.drawInt((int) compass.getDegrees(), 0, 0);
-			LCD.refresh();
+			LCD.drawString("Bearing:", 0, 0);
+			LCD.drawInt((int) compass.getDegrees(), 0, 1);
 			Thread.sleep(500);
 		}
 	}	
