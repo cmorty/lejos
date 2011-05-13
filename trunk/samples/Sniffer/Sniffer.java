@@ -1,10 +1,19 @@
-import java.io.PrintStream;
 import javax.microedition.io.Connector;
 import javax.microedition.sensor.*;
 
 import lejos.nxt.Button;
 import lejos.nxt.comm.RConsole;
 
+/**
+ * JSR256 Sniffer example. This example should be run using nxjconsole
+ * or nxjconsoleviewer on the PC. You can use the corresponding targets in the build.xml file.
+ * 
+ * Tests features of the JSR 256 javax.microedition.sensor API.
+ * Use it with a variety of I2C sensors.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class Sniffer implements SensorListener, ConditionListener, DataListener {
 	private static final LimitCondition COND1 =
 		new LimitCondition(0, Condition.OP_GREATER_THAN_OR_EQUALS);
@@ -14,8 +23,6 @@ public class Sniffer implements SensorListener, ConditionListener, DataListener 
 	public SensorConnection sensor;
 	
 	public void run() {		
-		RConsole.openBluetooth(0);	
-		System.setOut(RConsole.getPrintStream());
 		
 		// Listen for a proximity sensor like the ultrasonic
 		SensorManager.addSensorListener(this, "proximity");
