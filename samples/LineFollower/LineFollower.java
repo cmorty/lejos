@@ -22,7 +22,7 @@ import lejos.util.PilotProps;
  * @author Lawrie Griffiths
  *
  */
-public class Line {
+public class LineFollower {
 	
 	public static void main (String[] aArg)
 	throws Exception
