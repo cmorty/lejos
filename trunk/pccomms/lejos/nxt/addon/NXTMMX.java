@@ -5,6 +5,11 @@ import lejos.nxt.I2CSensor;
 import lejos.nxt.SensorPort;
 //import lejos.nxt.addon.NXTMMXMotor;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Supports the Mindsensors NXTMMX motor multiplexor. This device allows you to connect two 
  * additional motors to your robot using a sensor port. Multiple NXTMMXs can be chained together when addressed correctly.

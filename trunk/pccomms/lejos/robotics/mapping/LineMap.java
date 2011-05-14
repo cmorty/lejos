@@ -2,7 +2,6 @@ package lejos.robotics.mapping;
 
 import lejos.geom.*;
 import java.io.*;
-import lejos.robotics.*;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.navigation.Pose;
 
