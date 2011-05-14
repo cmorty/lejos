@@ -1,12 +1,19 @@
 package lejos.nxt.addon;
-import lejos.nxt.*;
+
+import lejos.nxt.I2CPort;
+import lejos.nxt.I2CSensor;
+import lejos.nxt.SensorPort;
+//import lejos.nxt.addon.NXTMMXMotor;
+
 /**
-* Supports Mindsensors NXTMMX. this device allows you to connect two 
-* additional motors to your robot. Multiple NXTMMXs can be chained together.
-* 
-* @author Michael D. Smith mdsmitty@gmail.com
-*
-*/
+ * Supports the Mindsensors NXTMMX motor multiplexor. This device allows you to connect two 
+ * additional motors to your robot using a sensor port. Multiple NXTMMXs can be chained together when addressed correctly.
+ * <p>
+ * Create an instance of this class to pass to the constructor of a <code>MMXRegulatedMotor</code> instance.
+ * @see net.mosen.poc.MMX.MMXRegulatedMotor
+ * @author Michael D. Smith mdsmitty@gmail.com
+ * 
+ */
 public class NXTMMX extends I2CSensor{
 	//registers
 	private final int REG_MuxCommand = 0x41; //register to read input voltage
@@ -29,17 +36,29 @@ public class NXTMMX extends I2CSensor{
 	private boolean autoStart = true;
 
     public static final int DEFAULT_MMX_ADDRESS = 0x6;
-	
+
+    /**NXTMMX Motor 1. This ID is used to bind a <code>MMXRegulatedMotor</code> to M1 of the NXTMMX.
+     * @see net.mosen.poc.MMX.MMXRegulatedMotor#MMXRegulatedMotor
+     */
+    public static final int MMX_MOTOR_1 = 0;
+    /**NXTMMX Motor 2. This ID is used to bind a <code>MMXRegulatedMotor</code> to M2 of the NXTMMX.
+     * @see net.mosen.poc.MMX.MMXRegulatedMotor#MMXRegulatedMotor
+     */
+    public static final int MMX_MOTOR_2 = 1;
 	//motors
 	public NXTMMXMotor A;
 	public NXTMMXMotor B;
 	
 	/**
 	 * Constructor for the NXTMMX
-     * @param port - the port its plugged in to
+     * @param port - the sensor port its plugged in to
      * @param address The I2C address for the device
+     * @see SensorPort#S1
+     * @see SensorPort#S2
+     * @see SensorPort#S3
+     * @see SensorPort#S4
 	 */
-	public  NXTMMX(I2CPort port, int address){
+	public  NXTMMX(SensorPort port, int address){
 		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
 		reset();
 		A = new NXTMMXMotor(this, 0);
@@ -50,38 +69,39 @@ public class NXTMMX extends I2CSensor{
 	 * Constructor for the NXTMMX
 	 * @param port - the port its plugged in to
 	 */
-	public  NXTMMX(I2CPort port){
+	public  NXTMMX(SensorPort port){
         this(port, DEFAULT_MMX_ADDRESS);
 	}
 
 	/**
-	 * resets mux values to default and stops all tasks. this includes zeroing the tachos.
+	 * resets mux values to default and stops all tasks. This includes zeroing the tachos.
 	 */
 	public void reset(){
 		sendData(REG_MuxCommand, (byte) COMMAND_Reset);
 	}
 	
 	/**
-	 * Determines if motors will automatically start of not. by default they are on.
-	 * @return true if on
+	 * Determines if motors will automatically start or not. By default they are on.
+	 * @return <code>true</code> if on
 	 */
 	public boolean isAutoStart(){
 		return autoStart;
 	}
 	
 	/**
-	 * turns autostart on or off. if you are going to start the motors
-	 *  at same time turn autostart off and use the motor methods 
-	 *  in the mux not the motors 
-	 * @param autoStart
+	 * Turns autostart on or off. if you are going to start the motors
+	 *  at same time, turn autostart off and use the motor methods 
+	 *  in this class, not the individual motors. 
+     *  <p>Default at instantiation is <code>true</code>.
+	 * @param autoStart <code>true</code> to enable autoStart
 	 */
 	public void setAutoStart(boolean autoStart){
 		this.autoStart = autoStart;
 	}
 	
 	/**
-	 * Starts both motors at the same time. speed has to be set and 
-	 * direction or tacho or time should be set on the motors.
+	 * Starts both motors at the same time. Speed has to be set and 
+	 * direction or tacho should be set on the motors.
 	 */
 	public void startMotors(){
 		this.sendData(REG_MuxCommand, (byte) COMMAND_StartMotors);
@@ -102,12 +122,13 @@ public class NXTMMX extends I2CSensor{
 	}
 	
 	/**
-	 * returns the voltage in milliamps
-	 * @return the voltage in milliamps
+	 * Returns the voltage in millivolts
+	 * @return the voltage in millivolts
 	 */
 	public int getVoltage(){
 		 getData(REG_MuxCommand, buffer, 1);
-		 return (37*(0x00ff & buffer[0]));
+		 // 37 is the constant given by Mindsensors support 5/2011 to return millivolts
+         return (37*(0x00ff & buffer[0]));
 	}
 	
 	//Proportional gain tacho
