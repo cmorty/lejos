@@ -47,20 +47,24 @@
 			<td class="n2t1r1c1">
 				<!-- LEFT NAVIGATION SYSTEM -->
 				<div class="nolinkLESSON">Controlling Wheeled Vehicles</div>
-				<div class="linkAHEAD"><a href="#1">DifferentialPilot</a></div>
+				<div class="linkAHEAD"><a href="#01">Overview</a></div>
+                                <div class="linkAHEAD"><a href="#1">DifferentialPilot</a></div>
 				<div class="linkAHEAD2"><a href="#2">Constructors:</a></div>
 				<div class="linkAHEAD2"><a href="#3">Straight line movement</a></div>
 				<div class="linkAHEAD2"><a href="#4">Program SquareTracer</a></div>
 				<div class="linkAHEAD2"><a href="#5">Program SquareTracer2</a></div>
 				<div class="linkAHEAD2"><a href="#6">Movement along a curved path</a></div>
 				<div class="linkAHEAD2"><a href="#7">Program SteerTester</a></div>
+                                <div class="linkAHEAD2"><a href="#7.1">Communicating with OdometryPoseProvider</a></div>
 				<div class="linkAHEAD2"><a href="#8">Other methods for DifferentialPilot</a></div>
 				<div class="linkAHEAD"><a href="#9">Compass Pilot</a></div>
 				<div class="linkAHEAD2"><a href="#10">Constructors:</a></div>
 				<div class="linkAHEAD2"><a href="#11">Additional methods in CompassPilot: </a></div>
 				<div class="linkAHEAD2"><a href="#12">Program: Compass Pilot Test</a></div>
-				<div class="linkAHEAD"><a href="#13">NavPathController</a></div>
-				<div class="linkAHEAD2"><a href="#14">Constructors:</a></div>
+                                <div class="linkAHEAD"><a href="#13">OdometryPoseController</a></div>
+				<div class="linkAHEAD"><a href="#14">NavPathController</a></div>
+				<div class="linkAHEAD2"><a href="#14.1">Constructors:</a></div>
+                                <div class="linkAHEAD2"><a href="#14.1">Navigation Methods:</a></div>
 			</td>
 			<td>
         	<div id="BreadCrumbs">
@@ -74,16 +78,82 @@
 			<!-- CONTENT TITLE -->
         	<div id="PageTitle">Controlling Wheeled Vehicles</div>
 
-			<p>A common type of robot is the two wheeled
-			vehicle with independently controlled motors. This design uses
-			differential steering and can turn in place. leJOS NXJ contains
-			several classes that control it. 
+			<p>
 			</p>
+                <a name="01" </a>
+                <h4> Overview</h4>
+                <p>
+                    A common type of robot is the two wheeled
+			vehicle with independently controlled motors. This design uses
+			differential steering and can turn in place.
+                    The classes that control vehicles of this design  deal with several levels of abstraction.
+                    At bottom, there are the motors that turn the wheels, controlled by
+                    the <a href="../MotorTutorial/ControllingMotors.htm"> NXTRegulatedMotor</a> class. The vehicle uses
+                    two of them.
+                    The DifferentialPilot  class uses the motors to control
+                    elementary moves:  rotate in place, travel in a straight line,
+                    or travel in an arc. At the next level, the NavPathController uses
+                    a DifferentialPilot to
+                    move the robot through a complicated path in a plane.  To do this,
+                    the path controller  needs to keep track of the robot location
+                    and the direction it is heading.
+                    It uses a OdometeryPoseProvider to keep this information up to date.
+                    The relationships among
+                these classes is shown in the in this table: </p>
+               
 
+                <table border="4" width="24" cellspacing="2" cellpadding="1">
+                    <thead>
+                        <tr>
+                            <th>Class</th>
+                            <th>Uses</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>NavPathController</td>
+                            <td>  DifferentialPilot  <br> OdometryPoseProvider</br></td>
+                        </tr>
+                       
+                        <tr>
+                            <td>OdometryPoseProvider</td>
+                            <td>DifferentialPilot 
+                                    </td>
+                        </tr>
+                         <tr>
+                            <td>DifferentialPilot</td>
+                            <td>RegulatedMotor</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>
+                   The flow of control is from the top down:  the path controller
+                   controls the pilot which controls the motors.  But the flow of
+                   information is from bottom up. The pilot uses information from
+                   the motors to control them.  The pose provider uses odometry
+                   information from the pilot to update its current estimate of the robot
+                   pose.  The pose consists of  the robot’s coordinates (x and y)
+                   and its heading angle (the direction it is facing ).
+                   The robot heading uses  Cartesian coordinates, with angles in degrees; 0 degrees
+                   is the direction of the positive x axis, 90 degrees is the positive y axis.
+                   The path controller uses this data to calculate the distance and direction
+                   to its destination. </p>
+                <p>
+                    This flow of information uses the listener and event model.
+                    The pilot registers as a listener to with motors, which inform it
+                    when a motor rotation is  started or completed.  The pose provider
+                    registers as a listener with the pilot, which  informs it of the
+                    start and completion of every movement.  This information
+                    flow is pretty much automatic. 
+                    The  path controller requests a pose estimate whenever it needs it.
+
+                </p>
+              
 			<a name="1"></a>
 			<h4>DifferentialPilot</h4>
 
-			<p>The DifferentialPilot class steers the vehicle by
+			<p> The DifferentialPilot class
+                        steers the vehicle by
 			controlling the speed and direction of rotation of its motors. The
 			pilot needs to know the wiring diagram of the robot, i.e. which
 			ports the motors are connected to and whether driving the motors
@@ -105,10 +175,13 @@
 			
 			<p/>
 			<ul class="BlueArrows">
-				<li><p>DifferentialPilot(float wheelDiameter, float trackWidth,Motor leftMotor, Motor rightMotor)</p></li>
-				<li><p>DifferentialPilot(float wheelDiameter, float trackWidth, Motor leftMotor, Motor rightMotor, boolean
-				reverse)</p><p>Use this constructor if you need to set the <i>reverse </i>boolean to <i><b>true</b></i>.
-				</p></li>
+				<li><p>DifferentialPilot(float wheelDiameter, float trackWidth,
+                                        Motor leftMotor, Motor rightMotor)</p></li>
+				<li><p>DifferentialPilot(float wheelDiameter, float trackWidth,
+                                        Motor leftMotor, Motor rightMotor, boolean
+				reverse)<br>Use this constructor if you need to set the
+                                    <i>reverse </i>boolean to <i><b>true</b></i>.
+                                </br></p></li>
 			</ul>
 
 			<a name="3"></a>
@@ -116,8 +189,9 @@
 
 			<p>To control the robot	moving in a straight line, use:</p>
 			<ul class="BlueArrows">
-				<li><p>void setTravelSpeed(double travelSpeed)</p><p>sets the speed of the motors in distance (wheel diameter)units per second</p></li>
-				<li><p>void forward()</p><p>starts the robot moving forward</p></li>
+				<li><p>void setTravelSpeed(double travelSpeed)
+                                    <br>sets the speed of the motors in distance (wheel diameter)units per second</br></p></li>
+				<li><p>void forward()<br>starts the robot moving forward</br></p></li>
 				<li><p>void backward()</p></li>
 				<li><p>void stop()</p></li>
 			</ul>
@@ -125,9 +199,9 @@
 			<p>To control the distance the robot moves, use:</p>
 			<ul class="BlueArrows">
 				<li><p>void travel(double distance)</p></li>
-				<li><p>void travel(double distance, boolean immediateReturn)</p><p><i>distance</i> is in the same units
+				<li><p>void travel(double distance, boolean immediateReturn)<br><i>distance</i> is in the same units
 				as wheel diameter; a negative distance means travel backwards.
-				You can find out how far the robot has moved by calling</p></li>
+				You can find out how far the robot has moved by calling</br></p></li>
 			</ul>
 			
 			<p>Example:</p>
@@ -242,25 +316,35 @@ public class TravelTest {
 			</p>
 			
 			<p><a href="SteerTest.html" target="_blank">Solution</a></p>
+                        <a name="7.1"</a>
+                        <h5> Communicating with OdometryPoseProvider </h5>
+                        <p> The Odometry PoseProvider keeps track of the robot position and heading. To do this, it
+                        needs to know about every move made by the DifferetnialPilot. So the pilot needs to
+                        register as a listener with the pose provider by calling the <code>
+                            addListener</code> method.  After the pilot  does this,it  will automatically
+                            call the <code>moveStarted</code> method on the pose provider
+                            every time a movement starts, and <code>moveStopped</code>
+                            when the move is complete.  If the pose provider needs to know the
+                            status of a movement that is in progress, it calls the getMovement()
+                           method  on the pilot.
+                       
+                        </p>
+
 
 			<a name="8"></a>
 			<h5>Other methods for DifferentialPilot</h5>
 			<p/>
 			<ul class="BlueArrows">
-				<li><p>void resetTachocount()</p><p>Resets the count for both motors.</p></li>
-				<li><p>void regulateSpeed(Boolean yes)</p><p>You should
-				consider turning off speed regulation if you are using sensor
-				feedback and the steer() method to control the robot movement. 
-				</p></li>
-				<li><p>boolean isMoving()</p><p>Returns true if
+				<li>void resetTachocount()<br>Resets the count for both motors.</br></li>
+				<li><p>boolean isMoving()<br>Returns true if
 				either motor is moving. Useful if you have used the
 				immediateReturn parameter and need to know if the task is still
-				in progress. 
+				in progress. </br>
 				</p></li>
-				<li><p>boolean stalled()</p><p>returns true if
+				<li><p>boolean stalled()<br>returns true if
 				either motor actual speed is zero. Remember, the actual speed is
 				calculated every 100ms. So stalled() will return <i><b>true</b></i>
-				for the first 100ms after the robot begins its move. 
+				for the first 100ms after the robot begins its move. </br>
 				</p></li>
 			</ul>
 			
@@ -290,8 +374,10 @@ public class TravelTest {
 			
 			<p/>
 			<ul class="BlueArrows">
-				<li><p>CompassPilot(SensorPort compassPort, float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor)</p></li>
-				<li><p>CompassPilot(SensorPort compassPort, float wheelDiameter,float trackWidth,Motor leftMotor, Motor rightMotor, boolean reverse)</p></li>
+				<li><p>CompassPilot(SensorPort compassPort, float wheelDiameter,
+                                        float trackWidth,Motor leftMotor, Motor rightMotor)</p></li>
+				<li><p>CompassPilot(SensorPort compassPort, float wheelDiameter,
+                                        float trackWidth,Motor leftMotor, Motor rightMotor, boolean reverse)</p></li>
 			</ul>
 
 			<a name="11"></a>
@@ -299,12 +385,13 @@ public class TravelTest {
 
 			<p/>
 			<ul class="BlueArrows">
-				<li><p>void calibrate()</p><p>calibrate the compass sensor; rotates the robot slowly through 360 degreees.</p></li>
-				<li><p>setHeading(int angle)</p><p>set the desired robot heading, in degrees in Cartesian coordinates (a left turn
-				increases the heading)</p></li>
-				<li><p>int getHeading()</p><p>return the desired robot heading</p></li>
-				<li><p>int getAngle()</p><p>return the compass Cartesian angle. Also the actual robot heading assuming the
-				compass sensor points forward.</p></li>
+				<li><p>void calibrate()<br>calibrate the compass sensor;
+                                        rotates the robot slowly through 360 degreees.</br></p></li>
+				<li><p>setHeading(int angle)<br>set the desired robot heading, in degrees in Cartesian coordinates (a left turn
+				increases the heading)</br></p></li>
+				<li><p>int getHeading()<br>>return the desired robot heading</br></p></li>
+                                <li><p>int getAngle()<br>return the compass Cartesian angle. Also the actual robot heading assuming the
+				compass sensor points forward.</br></p></li>
 			</ul>
 			
 			<a name="12"></a>
@@ -328,25 +415,125 @@ public class TravelTest {
 			<p/><a href="#top">Back	to top</a>
 			
 			<a name="13"></a>
+                        <h4>OdometryPoseProvider </h4>
+                        <p>
+                        The responsibility of this class is to maintain a current
+                        estimate of the robot location and the direction in which it is
+                        heading. This information is stored in a Pose object.
+                        The constructor is: </p>
+                        <ul class="BlueArrows">
+				<li>OdometryPoseProvider(MoveProvider mp) )<br>It
+                                        registers the new  object as a listener with
+                                        the MoveProvider.</br>
+                                </li>
+			</ul>
+                        <p> The methods that the move provider uses at the obvious times
+                            are:</p>
+                            <ul class="BlueArrows">
+                                <li>
+                                    moveStarted(Move move, MoveProvider mp)
+                                </li>
+                                <li>
+                                    public void moveStopped(Move move, MoveProvider mp)
+                                </li>
+                            </ul>
+                        <p> The odometry data is contained in the Move object, which the pose provider
+                            uses to calculate the new robot pose.
+                        </p>
+                        <p> The only methods you may need to use in your programming are:</p>
+                            <ul class="BlueArrows">
+                                <li><p> setPose(Pose aPose) </p></li>
+                                <li> getPose()<br>
+                                        If this method is called while the robot is moving,
+                                        the pose provider will call  getMovement()
+                                        on the move provider. This guarantees
+                                        that the pose is current.
+                                    </br> </li>
+                            </ul>
+                        <p></p>
+
+
+                         <a href="#top">Back	to top</a>
+                        <a name="14"></a>
 			<h4>NavPathController</h4>	
 			
-			<p>NavPathController (the navigator) implements the PathController interface which defines
-			methods for the basic navigational tasks. The navigator keeps
-			track of the robot&rsquo;s coordinates (x, and y) and its heading
-			angle (the direction it is facing ). It uses Cartesian
-			coordinates, with angles in degrees; 0 degrees is the direction of
-			the positive x axis, 90 degrees is the positive y axis. 
-			</p>
-			
-			<a name="14"></a>
+			<p>NavPathController (the navigator) uses a pilot and a PoseProivder to
+                            follow a route,  a series of locations.  Each location
+                            is stored in a WayPoint object.  The navigator stores the
+                            route as a queue.  When it reaches a way point, it removes
+                            that way point  from the route  and goes to the next one.
+                            New way points can be added to the route  at any time. <br>
+                            It has three constructors:</br>
+                        </p>
+                   
+			<a name="14.1"></a>
 			<h5>Constructors:</h5>
-
-			<p/>
+			
 			<ul class="BlueArrows">
-				<li><p>NavPathController(MoveController	aPilot)</p><p>To use this constructor, you must construct a pilot
-				and use it as the parameter.</p></li>
+                            <li><p>NavPathController(MoveControlle aPilot)<br>
+                                        To use this constructor, you must construct a pilot
+				and use it as the parameter.  The consttructor
+                                will create its own OdometryPoseProider </br></p></li>
+                            <li><p>NavPathController(MoveController pilot, PoseProvider poseProvider
+                                    <br> Use this if you want to use another PoseProvider class </br>
+                                </p></li>
+                                <li>NavPathController(MoveController pilot, PoseProvider poseProvider, PathFinder pathFinder)
+                                    <br> This constructor also attaches a PathFinder. </br>
+                                </li>
 			</ul>
-					
+			<a name="14.2"></a>
+			<h5>Navigation methods </h5>
+                        <p>
+                            The primary methods for navigating the route in the absence of
+                            obstacles are listed below.  The methods that do not have a
+                            <code>immediateReturn</code> are non-blocking (they will return immediately).
+                            
+                        </p>
+                        <ul class="BlueArrows">
+                            <li>followRoute(Collection<WayPoint> aRoute,
+                                    boolean immediateReturn)<br> This method does exactly
+                                    what its name suggests. If <code> immediateReturn </code>is false,
+                                    the method will return when the last way point is reached.
+                                    Otherwise, the method is non-blocking</br> </li>
+                            <li><p> addWayPoint(WayPoint aWayPoint)<br>
+                            The WayPoint is added to the route. If the route was  empty,
+                            the robot immediately starts moving.  </br>
+                                </p> </li>
+                            <li><p> goTo(WayPoint destination, boolean immediateReturn)<br>
+                                  If the queue is not empty, it is flushed.
+                                  The destination is added to the route  and the robot starts
+                                  moving. 
+                                    </br>
+                                </p></li>
+                            <li><p>goTo(WayPoint destination)<br>
+                                        The non-blocking version of the previous method.
+                                    </br>
+                                </p></li>
+                            <li><p>goTo(double x,double y)<br>
+                                        Just another way to specify the destination.
+                                        Acts like the previous method.
+                                    </br>
+                                </p></li>
+                            <li><p> interrupt()<br> Stops the robot but preserves 
+                                    the route.</br>
+                             </p></li>
+                            <li> <p>resume()<br> Start following the route again.
+                                    use after calling  interrupt().  </br>
+
+                                </p> </li>
+
+                            <li>  <p> isGoing()<br> Returns the navigator status.  <i>
+                                   <b> true </b></i> if the robot is traveling
+                                    the route, that is  the last way point has not been reached,
+                                    nor has is  the route interrupted.
+                                    </br>
+                                    
+                                </p></li>
+
+                        </ul>
+
+
+
 			<p><a href="#top">Back to top</a></p>
         	<div class="NavBit">
                 <a target="_top" href="../MotorTutorial/ControllingMotors.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../LCD_Sensors/LCD_Sensors.htm">Next&nbsp;»</a>
