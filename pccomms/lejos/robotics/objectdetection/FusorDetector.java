@@ -67,10 +67,10 @@ public class FusorDetector implements FeatureDetector, FeatureListener {
 	 * This method scans all the sensors added to this object and returns the amalgamated results.
 	 * NOTE: This method is not called by the thread code.		
 	 */
-	public DetectableFeature scan() {
+	public Feature scan() {
 		RangeReadings rr = new RangeReadings(0);
 		for(FeatureDetector d : detectors) {
-			DetectableFeature df = d.scan();
+			Feature df = d.scan();
 			if(df != null) {
 				RangeReadings temp = df.getRangeReadings();
 				for(int i=0;i<temp.size();i++)
@@ -88,7 +88,7 @@ public class FusorDetector implements FeatureDetector, FeatureListener {
 	 * SOLUTION: Use listeners. Get max scan time (e.g. 250 ms) and wait that long for each listener to
 	 * report in before reporting all at once.		
 	 */
-	public void featureDetected(DetectableFeature feature, FeatureDetector detector) {
+	public void featureDetected(Feature feature, FeatureDetector detector) {
 		// 1. Need to know who is reporting this otherwise can accumulate 5 touch sensor readings (50 ms each)
 		// while range sensor produces one (250 ms). Need to ID who is reporting via comparison against set of detectors.
 		int index = detectors.indexOf(detector);
@@ -125,7 +125,7 @@ public class FusorDetector implements FeatureDetector, FeatureListener {
 					// 1. Check if there are features gathered by listener code
 					for(RangeReadings r : readings){
 						
-						// 2. Amalgamate them into one DetectableFeature object
+						// 2. Amalgamate them into one Feature object
 						// Now get them all and add them to rrs
 						for(RangeReading rtemp : r) {
 							rrs.add(rtemp);
@@ -154,7 +154,7 @@ public class FusorDetector implements FeatureDetector, FeatureListener {
 		}
 	}
 
-	private void notifyListeners(DetectableFeature feature) {
+	private void notifyListeners(Feature feature) {
 		if(listeners != null) { 
 			for(FeatureListener l : listeners) {
 				l.featureDetected(feature, this);
