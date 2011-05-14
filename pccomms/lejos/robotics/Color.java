@@ -1,5 +1,13 @@
 package lejos.robotics;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
+/**
+ * Representation of a color, used by color sensors and color detectors.
+ */
 public class Color {	
 	public static final int RED = 0;
 	public static final int GREEN = 1;

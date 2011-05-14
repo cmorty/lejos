@@ -6,6 +6,11 @@ import lejos.geom.Line;
 import lejos.geom.Rectangle;
 import lejos.robotics.mapping.LineMap;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Generates a grid of nodes. Spacing between the grid nodes and clearance around map geometry can be specified. 
  * This set can be generated once at the beginning of a user program, and the same node set can be used for all 

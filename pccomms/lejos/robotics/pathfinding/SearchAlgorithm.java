@@ -3,6 +3,11 @@ package lejos.robotics.pathfinding;
 import java.util.Collection;
 import lejos.robotics.navigation.WayPoint;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * An interface for defining generic node search algorithms.
  * NOTE: Implementations of this interface should override Object.toString() with the name of the algorithm. 

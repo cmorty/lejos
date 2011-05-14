@@ -4,6 +4,11 @@ import java.awt.geom.*;
 
 import lejos.geom.*;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * The static methods in this class can be used to to calculate theoretical routes and for displaying graphical representations of
  * the path of a robot. The methods getAvailablePaths() and getBestPath() are useful for this.

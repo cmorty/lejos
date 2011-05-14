@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import lejos.geom.Line;
 import lejos.geom.Rectangle;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * <p>This class loads map data from a Shapefile and produces a LineMap object, which can
  * be used by the leJOS navigation package.</p>

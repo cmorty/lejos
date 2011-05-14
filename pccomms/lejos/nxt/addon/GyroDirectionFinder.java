@@ -2,6 +2,11 @@ package lejos.nxt.addon;
 
 import lejos.robotics.DirectionFinder;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Implementation of the <code>DirectionFinder</code> interface that integrates repeated rate-of-turn readings from a 
  * <code>{@link GyroSensor}</code>

@@ -2,6 +2,11 @@ package lejos.robotics.objectdetection;
 
 import java.util.ArrayList;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * An adapter to make it easier to implement FeatureDetector classes. The scan() method is the only method 
  * which must be implemented by the actual class.

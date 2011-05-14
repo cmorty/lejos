@@ -3,6 +3,11 @@ package lejos.robotics.objectdetection;
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * A DetectableFeature is an interface for information retrieved about an object detected by
  * sensors. DetectableFeature is a map feature that is detected and reported by a FeatureDetector.

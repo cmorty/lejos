@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * <p>If you have a robot with multiple sensors (touch and range) and would like them to report to one
  * listener, or if you want to control them at the same time (such as disabling them all at once) you can
