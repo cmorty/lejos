@@ -122,7 +122,7 @@ public class NavPathController implements PathController
   public void goTo(WayPoint destination) {
    
 	  goTo(destination, false);
-
+	// TODO: It would be helpful to return boolean if it got to destination successfully.
   }
 
   /**

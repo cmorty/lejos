@@ -33,7 +33,10 @@ public class RangeFeatureDetector extends FeatureDetectorAdapter {
 	
 	private RangeFinder range_finder = null;
 	private float max_dist = 100;
+	
 	// TODO: Accept optional RangeScanner?
+	
+	// TODO: Alternate constructor for range sensors angled and mounted non-center.
 	
 	/**
 	 * If a range finder is used, assumes object is detected straight ahead so heading is 

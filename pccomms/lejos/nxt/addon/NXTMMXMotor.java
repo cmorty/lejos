@@ -105,7 +105,7 @@ public class NXTMMXMotor {
 	}
 
 	/**
-	 * Causes motor to rotate forward.
+	 * Causes motor to rotate forward. TODO 
 	 */
 	public void forward() {
 		int speed;
