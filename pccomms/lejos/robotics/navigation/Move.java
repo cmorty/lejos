@@ -22,6 +22,7 @@ public class Move {
 	private float arcRadius = Float.POSITIVE_INFINITY;
 	private boolean isMoving;
 	private long timeStamp;
+	private float travelSpeed, rotateSpeed;
 	
 	/**
 	 * Create a movement object to record a movement made by a pilot.
@@ -54,20 +55,38 @@ public class Move {
    * @param type the movement type
    * @param distance the distance traveled in pilot units
    * @param angle the angle turned in degrees
+   * @param travelSpeed the travel speed
+   * @param rotateSpeed the rotate speed
    * @param isMoving true iff the movement was created while the robot was moving
    */
-  public Move(MoveType type, float distance, float angle,boolean isMoving)
+  public Move(MoveType type, float distance, float angle, float travelSpeed, float rotateSpeed, boolean isMoving)
   {
     this.moveType = type;
     this.distanceTraveled = distance;
     this.angleTurned = angle;
-    if (Math.abs(angle) > 0.5) {
-			double turnRad = Math.toRadians(angle);
-			arcRadius = (float) ((double) distance / turnRad);
-		}
+    if (Math.abs(angle) > 0.5) 
+    {
+		double turnRad = Math.toRadians(angle);
+		arcRadius = (float) (distance / turnRad);
+	}
+    this.travelSpeed = travelSpeed;
+    this.rotateSpeed = rotateSpeed;
     this.isMoving = isMoving;
     this.timeStamp = System.currentTimeMillis();
   }
+
+  /**
+   * Create a movement object to record a movement made by a pilot.
+   * @param type the movement type
+   * @param distance the distance traveled in pilot units
+   * @param angle the angle turned in degrees
+   * @param isMoving true iff the movement was created while the robot was moving
+   */
+  public Move(MoveType type, float distance, float angle, boolean isMoving)
+  {
+	  this(type,distance,angle,0f,0f,isMoving);
+  }
+  
 
   /**
    * use this method to recycle an existing Move instead of creating a new one
@@ -82,7 +101,8 @@ public class Move {
 		this.angleTurned = angle;
 		this.isMoving = isMoving;
 		// TODO: This works fine, but could use convertDistanceToAngle() instead here?
-		if (Math.abs(angle) > 0.5) {
+		if (Math.abs(angle) > 0.5) 
+		{
 			double turnRad = Math.toRadians(angle);
 			arcRadius = (float) ((double) distance / turnRad);
 		}
@@ -169,6 +189,23 @@ public class Move {
 	public float getArcRadius() {
 		return arcRadius;
 	}
+	
+	/**
+	 * Get the travel speed
+	 * @return the travel speed
+	 */
+	public float getTravelSpeed() {
+		return travelSpeed;
+	}
+	
+	/**
+	 * Get the rotate speed
+	 * @return the rotate speed
+	 */
+	public float getRotateSpeed() {
+		return rotateSpeed;
+	}
+		
 	/**
 	 * Test if move was in progress
 	 * 
