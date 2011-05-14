@@ -75,7 +75,7 @@ public class RangeFeatureDetector extends FeatureDetectorAdapter {
 	}
 	
 	@Override
-	public DetectableFeature scan() {
+	public Feature scan() {
 		RangeFeature feature = null;
 		// TODO: Note: If it is slower to retrieve multiple rather than single scan. Have option for single only in constructor?
 		float [] ranges = range_finder.getRanges();
