@@ -40,7 +40,7 @@ import lejos.util.Delay;
  *   Motor.C.stop();
  *   Motor.A.rotateTo( 360);
  *   Motor.A.rotate(-720,true);
- *   while(Motor.A.isRotating() :Thread.yield();
+ *   while(Motor.A.isMoving() :Thread.yield();
  *   int angle = Motor.A.getTachoCount(); // should be -360
  *   LCD.drawInt(angle,0,0);
  * </pre></code>
