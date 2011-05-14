@@ -118,7 +118,7 @@ public class BumpNavigator implements FeatureListener {
      * causes the robot to back up, turn away from the obstacle.
      * returns when obstacle is cleared or if an obstacle is detected while traveling.
      */
-	public void featureDetected(DetectableFeature feature, FeatureDetector detector) {
+	public void featureDetected(Feature feature, FeatureDetector detector) {
 		detector.enableDetection(false);
 		Sound.beepSequence();
 		int side = 0;

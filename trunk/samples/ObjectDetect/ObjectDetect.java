@@ -38,7 +38,7 @@ public class ObjectDetect implements FeatureListener {
 			
 			// Perform a single scan:
 			if(Button.ENTER.isPressed()) {
-				DetectableFeature res = fd.scan();
+				Feature res = fd.scan();
 				if(res == null) System.out.println("Nothing detected");
 				else {
 					// This is unorthodox--easier to piggy-back on listener's display code:
@@ -67,7 +67,7 @@ public class ObjectDetect implements FeatureListener {
 	 * Output data about the detected object to LCD.
 	 * Plays a tone corresponding to range.
 	 */
-	public void featureDetected(DetectableFeature feature, FeatureDetector detector) {
+	public void featureDetected(Feature feature, FeatureDetector detector) {
 		int range = (int)feature.getRangeReading().getRange();
 		Sound.playTone(1200 - (range * 10), 100);
 		System.out.println("Range:" + range);

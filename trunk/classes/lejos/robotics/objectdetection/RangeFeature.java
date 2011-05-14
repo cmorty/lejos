@@ -29,7 +29,7 @@ import lejos.robotics.RangeReadings;
  * @author BB
  *
  */
-public class RangeFeature implements DetectableFeature {
+public class RangeFeature implements Feature {
 
 	private RangeReading rr;
 	private RangeReadings rrs;

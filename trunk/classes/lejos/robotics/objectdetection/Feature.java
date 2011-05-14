@@ -9,11 +9,11 @@ import lejos.robotics.RangeReadings;
  */
 
 /**
- * A DetectableFeature is an interface for information retrieved about an object detected by
- * sensors. DetectableFeature is a map feature that is detected and reported by a FeatureDetector.
+ * A Feature is an interface for information retrieved about an object detected by
+ * sensors. Feature is a map feature that is detected and reported by a FeatureDetector.
  * @author BB based on concepts by Lawrie Griffiths
  */
-public interface DetectableFeature {
+public interface Feature {
 
 	// TODO: It's possible that a detector would detect the coordinate position of something, not 
 	// really have the relative position to vehicle available.
@@ -36,7 +36,7 @@ public interface DetectableFeature {
 	
 	/**
 	 * The time-stamp is the recorded system time when the range reading was taken. This is generally
-	 * recorded in the constructor of the DetectableFeature implementation. The time-stamp can help 
+	 * recorded in the constructor of the Feature implementation. The time-stamp can help 
 	 * identify the vector of the detected object.
 	 * @return The system time (in milliseconds) when the reading was taken. 
 	 */

@@ -29,8 +29,8 @@ package lejos.robotics.objectdetection;
  * position). For example, a camera could note the change in position of objects and estimate the vector/velocity of 
  * the object.</p>
  * 
- * <p><i>Note: Because {@link FeatureListener#featureDetected(DetectableFeature, FeatureDetector detector)} and {@link FeatureDetector#scan()} are
- * only capable of returning a DetectableFeature object, any classes that want to read extended feature qualities (e.g.
+ * <p><i>Note: Because {@link FeatureListener#featureDetected(Feature, FeatureDetector detector)} and {@link FeatureDetector#scan()} are
+ * only capable of returning a Feature object, any classes that want to read extended feature qualities (e.g.
  * vector, color, or person data) would need to use an instanceof test to see if it is the appropriate data container,
  * then cast the object into that type in order to retrieve the unique data.</i></p> 
  * 
@@ -53,10 +53,10 @@ public interface FeatureDetector {
 	 * <p>Performs a single scan for an object and returns the results. If an object is not detected, this
 	 * method returns <b>null</b>.</p>
 	 * <p><i>Warning: Make sure to check for a null object before trying to read data from the returned 
-	 * DetectableFeature object, otherwise your code will throw a null pointer exception.</i></p>  
+	 * Feature object, otherwise your code will throw a null pointer exception.</i></p>  
 	 * @return A feature it has detected. null if nothing found. 
 	 */
-	public DetectableFeature scan();
+	public Feature scan();
 	
 	/**
 	 * Enable or disable detection of objects.

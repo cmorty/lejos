@@ -52,7 +52,7 @@ public class FusorBumper implements FeatureListener {
 		Button.waitForPress();
 	}
 
-	public void featureDetected(DetectableFeature feature, FeatureDetector detector) {
+	public void featureDetected(Feature feature, FeatureDetector detector) {
 		detector.enableDetection(false);
 		robot.travel(-MAX_DETECT + feature.getRangeReading().getRange()); // go back relative to distance from the feature
 		robot.rotate(90 * Math.random());
