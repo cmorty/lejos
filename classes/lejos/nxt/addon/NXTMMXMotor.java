@@ -1,5 +1,10 @@
 package lejos.nxt.addon;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Supports Mindsensors NXTMMX. this device allows you to connect two 
  * additional motors to your robot. Multiple NXTMMXs can be chained together.

@@ -1,6 +1,5 @@
 package lejos.nxt.addon;
 
-
 import lejos.nxt.addon.NXTMMX;
 
 import lejos.robotics.DCMotor;
@@ -9,6 +8,10 @@ import lejos.robotics.RegulatedMotorListener;
 
 import lejos.util.Delay;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
 
 /**
  * Supports Mindsensors NXTMMX motor multiplexer. This device allows you to connect two 

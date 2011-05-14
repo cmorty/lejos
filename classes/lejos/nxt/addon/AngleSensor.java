@@ -3,6 +3,11 @@ package lejos.nxt.addon;
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /** Supports the angle sensor of HiTechnic.
 * This Java implementation was based on the NXC implementation on http://www.hitechnic.com/cgi-bin/commerce.cgi?preadd=action&key=NAA1030.
 * Works clockwise, i.e. rotating clockwise increases angle value and rotating counter-clockwise decreases angle value.
