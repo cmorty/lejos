@@ -1,4 +1,3 @@
-
 package lejos.nxt.addon;
 import lejos.robotics.Touch;
 import lejos.nxt.ADSensorPort;
