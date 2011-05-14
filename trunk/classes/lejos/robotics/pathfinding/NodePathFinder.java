@@ -6,6 +6,11 @@ import java.util.Iterator;
 
 import lejos.robotics.navigation.*;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * This path finder class uses one of the common search algorithms (e.g. A*) and a navigation mesh (e.g. grid) and
  * uses them to find a path around map geometry.

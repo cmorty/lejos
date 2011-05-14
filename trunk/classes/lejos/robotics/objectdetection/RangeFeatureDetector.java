@@ -3,6 +3,12 @@ package lejos.robotics.objectdetection;
 import lejos.robotics.RangeFinder;
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
+
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /*
  * DEVELOPER NOTES:
  * TODO: Some of these API docs might be more appropriate in FeatureDetector

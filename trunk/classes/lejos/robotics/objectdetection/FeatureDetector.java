@@ -1,6 +1,11 @@
 package lejos.robotics.objectdetection;
 
 /*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
+/*
  * TODO: Testing:
  * 1. See how code looks to make a range sensor proportionally rotate left or right when doing an arc.
  * More of a move listener thing maybe, but needs to see the angle.

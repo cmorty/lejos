@@ -3,6 +3,11 @@ package lejos.robotics.pathfinding;
 import java.util.*;
 import lejos.robotics.navigation.WayPoint;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 // TODO: This works, but this code keeps the Node properties right in the Node object. The same Node set
 // (aka Navigation Mesh) might conceivably (probably) be used repeatedly for many different searches. So things
 // like setPredecessor() and setG_Score() should be temporary, not part of Node object?

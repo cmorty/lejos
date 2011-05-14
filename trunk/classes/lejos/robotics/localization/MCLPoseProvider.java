@@ -1,6 +1,5 @@
 package lejos.robotics.localization;
 
-
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveListener;
@@ -11,6 +10,11 @@ import lejos.robotics.RangeScanner;
 import java.awt.Rectangle;
 import lejos.robotics.localization.PoseProvider;
 import java.io.*;
+
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
 
 /**
  * Maintains an estimate of the robot pose using sensor data.  It uses Monte Carlo

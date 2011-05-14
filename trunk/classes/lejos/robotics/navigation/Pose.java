@@ -1,7 +1,5 @@
 package lejos.robotics.navigation;
 
-
-
 import lejos.geom.Point;
 
 /*

@@ -2,6 +2,11 @@ package lejos.robotics.navigation;
 
 import lejos.robotics.navigation.Move;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Should be implemented by a Pilot that provides a partial movement to a pose
  * when requested.

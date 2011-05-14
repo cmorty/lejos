@@ -6,6 +6,11 @@ import lejos.robotics.pathfinding.PathFinder;
 
 import java.util.*;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * This class can cause the robot to follow a route - a sequence of  {@link  lejos.robotics.navigation.WayPoint }
  * ;
