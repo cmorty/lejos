@@ -15,7 +15,7 @@ import lejos.nxt.SensorPort;
  * additional motors to your robot using a sensor port. Multiple NXTMMXs can be chained together when addressed correctly.
  * <p>
  * Create an instance of this class to pass to the constructor of a <code>MMXRegulatedMotor</code> instance.
- * @see net.mosen.poc.MMX.MMXRegulatedMotor
+ * @see lejos.nxt.addon.MMXRegulatedMotor
  * @author Michael D. Smith mdsmitty@gmail.com
  * 
  */
@@ -43,11 +43,11 @@ public class NXTMMX extends I2CSensor{
     public static final int DEFAULT_MMX_ADDRESS = 0x6;
 
     /**NXTMMX Motor 1. This ID is used to bind a <code>MMXRegulatedMotor</code> to M1 of the NXTMMX.
-     * @see net.mosen.poc.MMX.MMXRegulatedMotor#MMXRegulatedMotor
+     * @see lejos.nxt.addon.MMXRegulatedMotor#MMXRegulatedMotor
      */
     public static final int MMX_MOTOR_1 = 0;
     /**NXTMMX Motor 2. This ID is used to bind a <code>MMXRegulatedMotor</code> to M2 of the NXTMMX.
-     * @see net.mosen.poc.MMX.MMXRegulatedMotor#MMXRegulatedMotor
+     * @see lejos.nxt.addon.MMXRegulatedMotor#MMXRegulatedMotor
      */
     public static final int MMX_MOTOR_2 = 1;
 	//motors
