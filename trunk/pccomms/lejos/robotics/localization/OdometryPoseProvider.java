@@ -11,14 +11,13 @@ import lejos.robotics.navigation.Pose;
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 /**
- * <p>A PoseProvider that keeps track of coordinates using odometry (dead reckoning), by monitoring Pilot movements.
- * The method a pilot uses to keep track of movements is irrelevant to this class. For example, it can keep track of 
- * movements using optical rotation sensors in the motors, or it could use something more exotic such as 
- * <a href="http://en.wikipedia.org/wiki/Visual_odometry">visual odometry</a> used by the 
- * <a href="http://en.wikipedia.org/wiki/Mars_Exploration_Rover">MER</a>.  
- * 
+ * <p>A PoseProvider keeps track of the robot {@link lejos.robotics.navigation.Pose}.
+ * It does this using odometry (dead reckoning)
+ * data contained in a {@link lejos.robotics.navigation.Move}, which is  supplied by a {@link
+ *lejos.robotics.navigation.MoveProvider}. When the PoseProivder  is constructed, it registers
+ * as listener with its MoveProvider,
  */
-// TODO: Probably makes more sense to use inner class implementation of MoveListener?
+
 public class OdometryPoseProvider implements PoseProvider, MoveListener
 {
 
@@ -28,10 +27,7 @@ public class OdometryPoseProvider implements PoseProvider, MoveListener
   boolean current = true;
 
   /**
-   * Internally, the constructor  listens to movements from the Pilot. This allows it to keep
-   * track of all vector movements made.
-   *
-   * @param mp the movement provider
+   *Allocates a new OdometryPoseProivder and registers it  with the  MovePovider as a listener.
    */
   public OdometryPoseProvider(MoveProvider mp)
   {
@@ -39,7 +35,9 @@ public class OdometryPoseProvider implements PoseProvider, MoveListener
   }
 
   /**
-   * returns  a new pose that represents the current location and heading of the robot
+   * returns  a new pose that represents the current location and heading of the robot.
+   * If called while the robot is moving, the PoseProvider will get updated odometry
+   * data from its MoveProvider
    * @return pose
    */
   public Pose getPose()
@@ -53,10 +51,10 @@ public class OdometryPoseProvider implements PoseProvider, MoveListener
 
   /**
    * called by a MoveProvider when movement starts
-   * @param event - the event that just started
+   * @param move - the event that just started
    * @param mp the MoveProvider that called this method
    */
-  public void moveStarted(Move event, MoveProvider mp)
+  public void moveStarted(Move move, MoveProvider mp)
   {
     angle0 = 0;
     distance0 = 0;
@@ -72,12 +70,12 @@ public class OdometryPoseProvider implements PoseProvider, MoveListener
   
   /**
    * called by a MoveProvider when movement ends
-   * @param event - the event that just started
+   * @param move - the event that just started
    * @param mp
    */
-  public void moveStopped(Move event, MoveProvider mp)
+  public void moveStopped(Move move, MoveProvider mp)
   {
-    updatePose(event);
+    updatePose(move);
   }
 
   /*
