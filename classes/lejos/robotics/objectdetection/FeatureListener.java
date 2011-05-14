@@ -1,5 +1,10 @@
 package lejos.robotics.objectdetection;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * Any class implementing this interface and registering with a FeatureDetector will receive
  *  notifications when a feature is detected. 

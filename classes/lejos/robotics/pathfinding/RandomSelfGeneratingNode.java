@@ -3,6 +3,11 @@ package lejos.robotics.pathfinding;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * This Node is able to randomly generate its own neighbors via the getNeighbors() method. The number of neighbors 
  * and possible distances to the neighbors are determined in the constructor. The first instance of this node is generally

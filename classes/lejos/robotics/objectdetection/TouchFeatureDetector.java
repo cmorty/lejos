@@ -5,6 +5,11 @@ import lejos.robotics.RangeReading;
 import lejos.robotics.Touch;
 import lejos.geom.Point;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * This class allows a touch sensor to be used as a defacto range sensor by reporting the position of the touch sensor
  * to the object detection API. The touch sensor will only notify one time when it is pressed and will not be ready to

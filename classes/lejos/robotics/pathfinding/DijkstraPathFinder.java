@@ -9,6 +9,11 @@ import lejos.robotics.navigation.WayPointListener;
 import java.util.*;
 import lejos.geom.*;
 
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+
 /**
  * This class calculates the shortest path from a starting point to a finish point.
  * while avoiding obstacles that are represented as a set of straight lines.
