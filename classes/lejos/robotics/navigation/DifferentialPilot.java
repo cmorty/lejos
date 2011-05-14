@@ -787,7 +787,8 @@ public class DifferentialPilot implements
     reset();
     for(MoveListener ml : _listeners)
       ml.moveStarted(new Move(_type,
-            getMovementIncrement(), getAngleIncrement(), isMoving()), this);
+            getMovementIncrement(), getAngleIncrement(), 
+            _robotTravelSpeed, _robotRotateSpeed, isMoving()), this);
   }
 
   /**

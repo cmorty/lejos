@@ -693,7 +693,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
          */
         private void calcPower(float error, float P, float I, float D)
         {
-            // use smoothing to reduce the noise in frequrent tacho count readings
+            // use smoothing to reduce the noise in frequent tacho count readings
             // New values
             err1 = 0.375f * err1 + 0.625f * error;  // fast smoothing
             err2 = 0.75f * err2 + 0.25f * error; // slow smoothing
