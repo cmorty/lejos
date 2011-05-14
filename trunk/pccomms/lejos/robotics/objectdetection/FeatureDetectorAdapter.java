@@ -62,7 +62,7 @@ public abstract class FeatureDetectorAdapter implements FeatureDetector {
 		public void run() {
 			while(true) {
 				// Only performs scan if detection is enabled.
-				DetectableFeature f = (enabled?scan():null);
+				Feature f = (enabled?scan():null);
 				if(f != null) notifyListeners(f);
 				
 				try {
@@ -81,7 +81,7 @@ public abstract class FeatureDetectorAdapter implements FeatureDetector {
 		}
 	}
 
-	protected void notifyListeners(DetectableFeature feature) {
+	protected void notifyListeners(Feature feature) {
 		if(listeners != null) { 
 			for(FeatureListener l : listeners) {
 				l.featureDetected(feature, this);
@@ -89,6 +89,6 @@ public abstract class FeatureDetectorAdapter implements FeatureDetector {
 		}
 	}
 	
-	public abstract DetectableFeature scan();
+	public abstract Feature scan();
 
 }

@@ -61,7 +61,7 @@ public class TouchFeatureDetector extends FeatureDetectorAdapter {
 		angle = robot_center.angleTo(bumper_p) - 90;
 	}
 
-	public DetectableFeature scan() {
+	public Feature scan() {
 		RangeFeature rf = null;
 		if(touch_sensor.isPressed()) {
 			RangeReading rr = new RangeReading(angle, range);
@@ -71,7 +71,7 @@ public class TouchFeatureDetector extends FeatureDetectorAdapter {
 	}
 
 	@Override
-	protected void notifyListeners(DetectableFeature feature) {
+	protected void notifyListeners(Feature feature) {
 		super.notifyListeners(feature);
 		// Wait until bumper is released before continuing to prevent multiple notifications from same press:
 		while(touch_sensor.isPressed());
