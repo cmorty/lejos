@@ -13,7 +13,6 @@ import lejos.robotics.*;
  */
 public class MotorTester implements CommandListener {
   private static final int CMDID_EXIT_APP         = 2;
-
   private static final Command EXIT_COMMAND = new Command(CMDID_EXIT_APP, Command.STOP, 2);
   
   private List typeMenu, connMenu, portMenu, sensorMenu, testMenu, menu;
@@ -24,10 +23,8 @@ public class MotorTester implements CommandListener {
   private Ticker connTicker = new Ticker("Select conn type");
   private Ticker testTicker = new Ticker("Testing");
   
-  private String motorText, portText, connText;
-  
+  private String motorText, portText, connText; 
   private int motorType, connType, motorPort;
-  
   private DCMotor motor = null;
   
   public static void main(String[] options) {
@@ -105,7 +102,7 @@ public class MotorTester implements CommandListener {
         testTicker.setString("Testing " + motorText + " " + portText + " " + connText);
        
         if (connType == 0) { // Direct
-          MotorPort port = (motorPort == 0 ? MotorPort.A : (motorPort == 1 ? MotorPort.B : MotorPort.C));
+          MotorPort port = MotorPort.getInstance(motorPort);
           switch (motorType) {
             case 0: motor = new NXTMotor(port); break; // NXT
             case 1: motor = new RCXMotor(port); break; // RCX
@@ -121,25 +118,28 @@ public class MotorTester implements CommandListener {
             RemoteNXT nxt = new RemoteNXT("NXT",RS485.getConnector());
             motor = nxt.A;
           } catch (IOException e) {}
-        } else if (connType == 3) { // NXTMMX not yet supported
+        } else if (connType == 3) { // NXTMMX
+        	SensorPort port = SensorPort.getInstance(motorPort);
+        	NXTMMX mmx = new NXTMMX(port);
+        	motor = new MMXRegulatedMotor(mmx, NXTMMX.MMX_MOTOR_1);
         } else if (connType == 4) { // RCMMMX
-          SensorPort port = (motorPort == 0 ? SensorPort.S1 : (motorPort == 1 ? SensorPort.S2 : SensorPort.S3));
+          SensorPort port = SensorPort.getInstance(motorPort);
           RCXMotorMultiplexer mmx = new RCXMotorMultiplexer(port);
           motor = mmx.A;
         } else if (connType == 5) { //PFMate
           if (motorType != 2) return; // Only PF motors are supported via PFMate
-          SensorPort port = (motorPort == 0 ? SensorPort.S1 : (motorPort == 1 ? SensorPort.S2 : SensorPort.S3));
+          SensorPort port = SensorPort.getInstance(motorPort);
           PFMate pfm = new PFMate(port, 1); // use channel 1
           motor = pfm.A; // Use motor A
         } else if (connType == 6) { // IRLink
           if (motorType != 2) return; // Only PF motors are supported via IRLink
-          SensorPort port = (motorPort == 0 ? SensorPort.S1 : (motorPort == 1 ? SensorPort.S2 : SensorPort.S3));
+          SensorPort port = SensorPort.getInstance(motorPort);
           IRLink irl = new IRLink(port);
           PFMotorPort mp = new PFMotorPort(irl,0,0); // channel 1, slot 0
           motor = new RCXMotor(mp);
         } else if (connType == 7) { //NRLink
           if (motorType != 1) return; // Only RCX Motors are supported by NRLink
-          SensorPort port = (motorPort == 0 ? SensorPort.S1 : (motorPort == 1 ? SensorPort.S2 : SensorPort.S3));
+          SensorPort port = SensorPort.getInstance(motorPort);
           RCXLink link = new RCXLink(port);
           RCXRemoteMotorPort mp = new RCXRemoteMotorPort(link, 0);
           motor = new RCXMotor(mp);
