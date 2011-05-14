@@ -73,7 +73,7 @@
             	<a href="#">Controlling Wheeled Vehicles</a>
         	</div>
         	<div class="NavBit">
-                <a target="_top" href="../MotorTutorial/ControllingMotors.htm">�&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../LCD_Sensors/LCD_Sensors.htm">Next&nbsp;�</a>
+                <a target="_top" href="../MotorTutorial/ControllingMotors.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../LCD_Sensors/LCD_Sensors.htm">Next&nbsp;&raquo;</a>
         	</div>
 			<!-- CONTENT TITLE -->
         	<div id="PageTitle">Controlling Wheeled Vehicles</div>
@@ -112,7 +112,7 @@
                     <tbody>
                         <tr>
                             <td>NavPathController</td>
-                            <td>  DifferentialPilot</td><td>OdometryPoseProvider</td>
+                            <td>  DifferentialPilot<br/>OdometryPoseProvider</td>
                         </tr>
                        
                         <tr>
@@ -132,7 +132,7 @@
                    information is from bottom up. The pilot uses information from
                    the motors to control them.  The pose provider uses odometry
                    information from the pilot to update its current estimate of the robot
-                   pose.  The pose consists of  the robot�s coordinates (x and y)
+                   pose.  The pose consists of  the robot's coordinates (x and y)
                    and its heading angle (the direction it is facing ).
                    The robot heading uses  Cartesian coordinates, with angles in degrees; 0 degrees
                    is the direction of the positive x axis, 90 degrees is the positive y axis.
@@ -490,11 +490,11 @@ public class TravelTest {
                             
                         </p>
                         <ul class="BlueArrows">
-                            <li>followRoute(Collection&lt;WayPoint&gt; aRoute,
+                            <li><p>followRoute(Collection&lt;WayPoint&gt; aRoute,
                                     boolean immediateReturn)<br/> This method does exactly
                                     what its name suggests. If <code> immediateReturn </code>is false,
                                     the method will return when the last way point is reached.
-                                    Otherwise, the method is non-blocking </li>
+                                    Otherwise, the method is non-blocking</p> </li>
                             <li><p> addWayPoint(WayPoint aWayPoint)<br/>
                             The WayPoint is added to the route. If the route was  empty,
                             the robot immediately starts moving.
@@ -530,7 +530,7 @@ public class TravelTest {
 
 			<p><a href="#top">Back to top</a></p>
         	<div class="NavBit">
-                <a target="_top" href="../MotorTutorial/ControllingMotors.htm">�&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../LCD_Sensors/LCD_Sensors.htm">Next&nbsp;�</a>
+                <a target="_top" href="../MotorTutorial/ControllingMotors.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../LCD_Sensors/LCD_Sensors.htm">Next&nbsp;&raquo;</a>
         	</div>
 			</td>
 		</tr>
