@@ -163,6 +163,30 @@
 			<arg value="${pc}" />
 		</java>
 	</target>
+	
+	<!-- generate javadocs -->
+	<target name="docs" description="generate javadocs">
+		<delete dir="${docs}" />
+		
+    	<mkdir dir="${docs}" />
+		<javadoc
+			destdir="${docs}"
+			charset="utf-8"
+			locale="en_US"
+			author="true"
+			access="protected"
+			windowtitle="Project documentation"
+			verbose="false"
+		>
+			<classpath refid="lejos.nxt" />
+    		<arg value="-extdirs"/>
+			<arg value="-quiet"/>
+			
+			<packageset
+				dir="${src}"
+			/>
+		</javadoc>
+	</target>
 
 	<!--  used only for modifying the Netbeans NXJPlugin -->
 	<target name="Zip for Netbeans" description="Zip the application to the sample project">
