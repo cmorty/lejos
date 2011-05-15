@@ -1,14 +1,14 @@
 package org.lejos.nxt.ldt;
 
-import lejos.pc.comm.NXTCommLogListener;
-import lejos.pc.comm.NXTConnectionManager;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -18,7 +18,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @author Matthias Paul Scholz
  */
-public class LeJOSNXJPlugin extends AbstractUIPlugin implements NXTCommLogListener {
+public class LeJOSNXJPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.lejos.nxt.ldt";
@@ -27,11 +27,9 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin implements NXTCommLogListen
 	private static LeJOSNXJPlugin plugin;
 
 	// the leJOS NXJ console
-	private MessageConsole _leJOSNXJConsole;
+	private IOConsole console;
+	private PrintWriter consoleWriter;
 	
-	// the connection manager
-	private NXTConnectionManager connectionManager;
-
 	/**
 	 * The constructor
 	 */
@@ -58,9 +56,6 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin implements NXTCommLogListen
 	 * )
 	 */
 	public void stop(BundleContext context) throws Exception {
-		if(connectionManager!=null) {
-			connectionManager.removeLogListener(this);
-		}
 		plugin = null;
 		super.stop(context);
 	}
@@ -86,45 +81,23 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin implements NXTCommLogListen
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
 
-	/**
-	 * logs messages to Eclipse status facilities
-	 * 
-	 * @param message
-	 */
-	public void logEvent(String message) {
-		Status status = new Status(IStatus.INFO, PLUGIN_ID, IStatus.OK,
-				message, null);
-		getDefault().getLog().log(status);
-	}
-
-	/**
-	 * logs messages to Eclipse status facilities
-	 * 
-	 * @param message
-	 */
-	public void logEvent(Throwable throwable) {
-		Status status = new Status(IStatus.ERROR, PLUGIN_ID, throwable
-				.getMessage(), throwable);
-		getDefault().getLog().log(status);
-	}
-
-	public NXTConnectionManager getConnectionManager() {
-		if(connectionManager==null) {
-			connectionManager = new NXTConnectionManager();
-			connectionManager.addLogListener(this);
-		}
-		return connectionManager;
-	}
-
-	public MessageConsole getLeJOSNXJConsole() {
-		if (_leJOSNXJConsole == null) {
+	public IOConsole getConsole() {
+		if (console == null) {
 			// create console
-			_leJOSNXJConsole = new MessageConsole("leJOS NXJ",
-					getImageDescriptor("icons/nxt.jpg"));
+			console = new IOConsole("leJOS NXJ", null, getImageDescriptor("icons/nxt.jpg"), "utf8", false);
 			// add to console manager
 			ConsolePlugin plugin = ConsolePlugin.getDefault();
 			IConsoleManager conMan = plugin.getConsoleManager();
-			conMan.addConsoles(new IConsole[] { _leJOSNXJConsole });
+			conMan.addConsoles(new IConsole[] { console });
+			
+			try
+			{
+				consoleWriter = new PrintWriter(new OutputStreamWriter(console.newOutputStream(), "utf8"), true);
+			}
+			catch (UnsupportedEncodingException e)
+			{
+				throw new RuntimeException(e);
+			}
 		}
 
 //		// make it visible
@@ -144,6 +117,12 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin implements NXTCommLogListen
 //				}
 //			}
 //		}
-		return _leJOSNXJConsole;
+		return console;
+	}
+	
+	public PrintWriter getConsoleWriter()
+	{
+		getConsole();
+		return this.consoleWriter;
 	}
 }
