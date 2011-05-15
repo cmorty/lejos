@@ -80,7 +80,7 @@ public class NXJFlash implements NXJFlashUI {
 					SystemContext.out.println("  " + (i + 1) + ":  " + nxts[i].name
 							+ "  " + nxts[i].deviceAddress);
 				SystemContext.out.println("Select the device to update, or enter 0 to exit.");
-				devNo = getChoice("Device number to update (0 to exit): ", 0, nxts.length-1);
+				devNo = getChoice("Device number to update (0 to exit): ", 0, nxts.length);
 			} while (devNo < 0 || devNo > nxts.length);
 			if (devNo == 0)
 				return null;
