@@ -1,4 +1,7 @@
-package js.common;
+package lejos.pc.tools;
+
+import js.common.ToolProgressMonitor;
+import lejos.pc.comm.SystemContext;
 
 /**
  * Simple implementation of ToolProgressMonitor with output to System.out.
@@ -14,7 +17,7 @@ public class CLIToolProgressMonitor implements ToolProgressMonitor {
 	 */
 	public void operation(String message) {
 		assert message != null : "Precondition: message != null";
-		System.out.println(message);
+		SystemContext.out.println(message);
 	}
 
 	/*
@@ -26,7 +29,7 @@ public class CLIToolProgressMonitor implements ToolProgressMonitor {
 		if (!_verbose)
 			return;
 		assert message != null : "Precondition: message != null";
-		System.out.println(message);
+		SystemContext.out.println(message);
 	}
 
 	/*
@@ -37,9 +40,9 @@ public class CLIToolProgressMonitor implements ToolProgressMonitor {
 	public void progress(int progress) {
 		assert progress >= 0 && progress <= 1000 : "Precondition: progress >= 0 && progress <= 1000";
 		String message = "\r  " + (progress / 10) + "%\r";
-		System.out.print(message);
+		SystemContext.out.print(message);
 		if (progress >= 1000) {
-			System.out.println();
+			SystemContext.out.println();
 		}
 	}
 

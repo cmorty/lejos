@@ -65,6 +65,7 @@
 			<classpath>
 				<pathelement location="${lejos.jtools}/lib/jtools.jar"/>
 				<pathelement location="${lejos.jtools}/3rdparty/lib/bcel.jar"/>
+				<pathelement location="${lejos.pccomms}/lib/pccomm.jar"/>
 				<pathelement location="${lejos.pctools}/lib/pctools.jar"/>
 				<pathelement location="${lejos.pctools}/3rdparty/lib/commons-cli.jar"/>
 			</classpath>
