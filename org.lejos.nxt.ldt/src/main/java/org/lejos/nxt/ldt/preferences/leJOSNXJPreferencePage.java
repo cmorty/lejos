@@ -38,9 +38,9 @@ public class leJOSNXJPreferencePage extends FieldEditorPreferencePage implements
 		addField(new RadioGroupFieldEditor(
 				PreferenceConstants.KEY_CONNECTION_TYPE, "&Connection type", 1,
 				new String[][] {
+						{ "B&oth", PreferenceConstants.VAL_PROTOCOL_BOTH },
 						{ "&USB", PreferenceConstants.VAL_PROTOCOL_USB },
-						{ "&Bluetooth",
-								PreferenceConstants.VAL_PROTOCOL_BLUETOOTH } },
+						{ "&Bluetooth",	PreferenceConstants.VAL_PROTOCOL_BLUETOOTH } },
 				getFieldEditorParent()));
 		// run after download?
 		addField(new BooleanFieldEditor(
