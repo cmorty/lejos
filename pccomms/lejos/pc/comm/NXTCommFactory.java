@@ -100,7 +100,7 @@ public class NXTCommFactory {
 	 * property, if set, else the environment variable,
 	 */
 	private static String getPropsFile() {
-		String home = System.getProperty("nxj.home");
+		String home = SystemContext.getNxjHome();
 		if (home == null)
 			return null;
 		

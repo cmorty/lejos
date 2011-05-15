@@ -39,9 +39,19 @@ public abstract class AbstractCommandLineParser
 		this.printHelp(u, null);
 	}
 	
+	public void printHelp(PrintWriter u)
+	{
+		this.printHelp(u, null);
+	}
+	
 	public void printHelp(OutputStream u, Throwable e)
 	{
 		PrintWriter out = new PrintWriter(u, false);
+		this.printHelp(out, e);
+	}
+		
+	public void printHelp(PrintWriter out, Throwable e)
+	{
 		if (e != null)
 		{
 			out.println();

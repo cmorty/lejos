@@ -13,6 +13,7 @@ import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTConnector;
 import lejos.pc.comm.NXTInfo;
 import lejos.pc.comm.NXTSamba;
+import lejos.pc.comm.SystemContext;
 
 import org.apache.commons.cli.ParseException;
 
@@ -24,25 +25,30 @@ public class NXJFlash implements NXJFlashUI {
 	NXJFlashUpdate updater = new NXJFlashUpdate(this);
 
 	public void message(String str) {
-		System.out.println(str);
+		SystemContext.out.println(str);
 	}
 
 	public void progress(String str, int percent) {
-		System.out.printf("%s %3d%%\r", str, percent);
-		System.out.flush();
+		SystemContext.out.printf("%s %3d%%\r", str, percent);
+		SystemContext.out.flush();
 	}
 
-	int getChoice() throws IOException {
-		// flush any old input
-		while (System.in.available() > 0)
-			System.in.read();
-		char choice = (char) System.in.read();
-		// flush any old input
-		while (System.in.available() > 0)
-			System.in.read();
-		if (choice >= '0' && choice <= '9')
-			return choice - '0';
-		return -1;
+	int getChoice(String msg, int min, int max) throws IOException {
+		while (true)
+		{		
+			SystemContext.out.print(msg);
+			String tmp = SystemContext.in.readLine();
+			try{
+				int i = Integer.parseInt(tmp.trim());
+				if (i >= min && i <= max)
+					return i;
+			}
+			catch (NumberFormatException e)
+			{
+				// ignore
+			}
+			SystemContext.err.println("Invalid input");
+		}
 	}
 
 	/**
@@ -61,7 +67,7 @@ public class NXJFlash implements NXJFlashUI {
 		// Look for devices in non-SAM-BA mode and reset them
 		if (samba == null) {
 			NXTInfo[] nxts;
-			System.out.println("No devices in firmware update mode were found.\nSearching for other NXT devices.");
+			SystemContext.out.println("No devices in firmware update mode were found.\nSearching for other NXT devices.");
 			NXTConnector conn = new NXTConnector();
 			nxts = conn.search(null, null, NXTCommFactory.USB);
 			if (nxts.length <= 0)
@@ -69,13 +75,12 @@ public class NXJFlash implements NXJFlashUI {
 			
 			int devNo = 0;
 			do {
-				System.out.println("The following NXT devices have been found:");
+				SystemContext.out.println("The following NXT devices have been found:");
 				for (int i = 0; i < nxts.length; i++)
-					System.out.println("  " + (i + 1) + ":  " + nxts[i].name
+					SystemContext.out.println("  " + (i + 1) + ":  " + nxts[i].name
 							+ "  " + nxts[i].deviceAddress);
-				System.out.println("Select the device to update, or enter 0 to exit.");
-				System.out.print("Device number to update: ");
-				devNo = getChoice();
+				SystemContext.out.println("Select the device to update, or enter 0 to exit.");
+				devNo = getChoice("Device number to update (0 to exit): ", 0, nxts.length-1);
 			} while (devNo < 0 || devNo > nxts.length);
 			if (devNo == 0)
 				return null;
@@ -100,13 +105,13 @@ public class NXJFlash implements NXJFlashUI {
 		}
 		catch (ParseException e)
 		{
-			parser.printHelp(System.err, e);
+			parser.printHelp(SystemContext.err, e);
 			return 1;
 		}
 		
 		if (parser.isHelp())
 		{
-			parser.printHelp(System.out);
+			parser.printHelp(SystemContext.out);
 			return 0;
 		}
 		
@@ -125,9 +130,7 @@ public class NXJFlash implements NXJFlashUI {
 			File vmFile = parser.getFirmwareFile();
 			File menuFile = parser.getMenuFile();
 			
-			String home = System.getProperty("nxj.home");
-			if (home == null)
-				home = System.getenv("NXJ_HOME");
+			String home = SystemContext.getNxjHome();
 			
 			memoryImage = updater.createFirmwareImage(vmFile, menuFile, home);
 			if (parser.doFormat())
@@ -138,7 +141,7 @@ public class NXJFlash implements NXJFlashUI {
 		
 		NXTSamba nxt = openDevice();
 		if (nxt == null) {
-			System.err.println("No NXT found. Please check that the device is turned on and connected.");
+			SystemContext.err.println("No NXT found. Please check that the device is turned on and connected.");
 			return 1;
 		}
 		

@@ -14,6 +14,7 @@ import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTConnector;
 import lejos.pc.comm.NXTInfo;
 import lejos.pc.comm.NXTSamba;
+import lejos.pc.comm.SystemContext;
 
 /***
  * GUI application to write the leJOS Virtual Machine and Menu system to the NXT
@@ -128,9 +129,7 @@ public class NXJFlashG extends javax.swing.JFrame {
 				JOptionPane.showMessageDialog(msgPanel,
 						"Click OK when your NXT is turned on and connected ");
 				try {
-					String home = System.getProperty("nxj.home");
-					if (home == null)
-						home = System.getenv("NXJ_HOME");
+					String home = SystemContext.getNxjHome();
 					byte[] memoryImage = updater.createFirmwareImage(null,
 							null, home);
 					boolean format = 0 == JOptionPane.showConfirmDialog(
