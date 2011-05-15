@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import lejos.nxt.remote.NXTCommand;
 import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.SystemContext;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
@@ -54,13 +55,13 @@ public class NXJUpload {
 		}
 		catch (ParseException e)
 		{
-			fParser.printHelp(System.err, e);
+			fParser.printHelp(SystemContext.err, e);
 			return 1;
 		}
 		
 		if (commandLine.hasOption("h"))
 		{
-			fParser.printHelp(System.out);
+			fParser.printHelp(SystemContext.out);
 			return 0;
 		}
 		
@@ -82,7 +83,7 @@ public class NXJUpload {
 			
 			if (nxtFileName.length() > NXTCommand.MAX_FILENAMELENGTH)
 			{
-				System.err.println("Filename must not be larger than "+NXTCommand.MAX_FILENAMELENGTH+" characters.");
+				SystemContext.err.println("Filename must not be larger than "+NXTCommand.MAX_FILENAMELENGTH+" characters.");
 				return 1;
 			}
 			
@@ -93,7 +94,7 @@ public class NXJUpload {
 			}
 			catch (NXTNotFoundException e)
 			{
-				System.err.println(e.getMessage());
+				SystemContext.err.println(e.getMessage());
 				return 1;
 			}
 		}

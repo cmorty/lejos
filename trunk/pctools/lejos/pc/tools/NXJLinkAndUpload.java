@@ -9,6 +9,7 @@ import js.tinyvm.TinyVMException;
 import lejos.nxt.remote.NXTCommand;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTCommLoggable;
+import lejos.pc.comm.SystemContext;
 
 import org.apache.commons.cli.ParseException;
 
@@ -65,13 +66,13 @@ public class NXJLinkAndUpload extends NXTCommLoggable
 		}
 		catch (ParseException e)
 		{
-			fParser.printHelp(System.err, e);
+			fParser.printHelp(SystemContext.err, e);
 			return 1;
 		}
 
 		if (fParser.isHelp())
 		{
-			fParser.printHelp(System.out);
+			fParser.printHelp(SystemContext.out);
 			return 0;
 		}
 
@@ -145,7 +146,7 @@ public class NXJLinkAndUpload extends NXTCommLoggable
 			
 			if (nxtFileName.length() > NXTCommand.MAX_FILENAMELENGTH)
 			{
-				System.err.println("Filename must not be larger than "+NXTCommand.MAX_FILENAMELENGTH+" characters.");
+				SystemContext.err.println("Filename must not be larger than "+NXTCommand.MAX_FILENAMELENGTH+" characters.");
 				return 1;
 			}
 
@@ -155,7 +156,7 @@ public class NXJLinkAndUpload extends NXTCommLoggable
 			}
 			catch (NXTNotFoundException e)
 			{
-				System.err.println(e.getMessage());
+				SystemContext.err.println(e.getMessage());
 				return 1;
 			}
 			return 0;

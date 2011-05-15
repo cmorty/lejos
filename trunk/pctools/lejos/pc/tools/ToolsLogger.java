@@ -1,14 +1,16 @@
 package lejos.pc.tools;
 
+import lejos.pc.comm.SystemContext;
+
 
 public class ToolsLogger implements ToolsLogListener {
 
 	public void logEvent(String message) {
-		System.out.println("leJOS NXJ> " + message);
+		SystemContext.out.println("leJOS NXJ> " + message);
 	}
 
 	public void logEvent(Throwable throwable) {
-		System.err.println("leJOS NXJ> " + throwable.getMessage());
+		SystemContext.err.println("leJOS NXJ> " + throwable.getMessage());
 	}
 
 }

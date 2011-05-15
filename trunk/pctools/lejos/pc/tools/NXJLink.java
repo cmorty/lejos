@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import js.common.CLIToolProgressMonitor;
 import js.common.ToolProgressMonitor;
 import js.tinyvm.TinyVMException;
 import js.tinyvm.TinyVMTool;
