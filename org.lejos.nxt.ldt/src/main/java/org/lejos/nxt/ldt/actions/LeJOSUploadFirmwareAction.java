@@ -5,6 +5,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
@@ -37,27 +40,24 @@ public class LeJOSUploadFirmwareAction implements
 	 */
 	public void run(IAction action) {
 		// open progress monitor
-		IProgressService ps = PlatformUI.getWorkbench().getProgressService();
-		try {
-			ps.busyCursorWhile(new IRunnableWithProgress() {
-				public void run(IProgressMonitor pm) {
-					flashFirmware(pm);
-				}
-			});
-		} catch (Throwable t) {
-			// log
-			LeJOSNXJUtil.log(t);
-		}
+		Job flash = new Job("flashing leJOS firmware") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				flashFirmware(monitor);
+				return Status.OK_STATUS;
+			}
+		};
+		flash.schedule();
 	}
 
 	private void flashFirmware(IProgressMonitor progressMonitor) {
 		LeJOSNXJPlugin.getDefault().getConsole().activate();
 		
 		try {
-			// upload firmware
 			progressMonitor.beginTask("Uploading firmware...", IProgressMonitor.UNKNOWN);
 			try
 			{
+				// upload firmware
 				File nxjHome = LeJOSNXJUtil.getNXJHome();
 				ClassLoader cl = LeJOSNXJUtil.getCachedPCClassLoader(nxjHome);
 				Class<?> c = cl.loadClass("lejos.pc.tools.NXJFlash");
