@@ -73,7 +73,7 @@ public class LeJOSNXJUtil {
 				Object element = it.next();
 				if (element instanceof IFile) {
 					IFile f = (IFile)element;
-					dst.add(f.getFullPath().toFile());
+					dst.add(f.getLocation().toFile());
 				} else {
 					foundInvalid = true;
 				}
@@ -284,6 +284,10 @@ public class LeJOSNXJUtil {
 			dst.add("-b");
 		else if (PreferenceConstants.VAL_PROTOCOL_USB.equals(connectionType))
 			dst.add("-u");
+		else if (PreferenceConstants.VAL_PROTOCOL_BOTH.equals(connectionType))
+		{
+			// don't add anything, since usb+bluetooth is default
+		}
 		else
 			throw new LeJOSNXJException("illegal connection type");
 		

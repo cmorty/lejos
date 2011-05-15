@@ -8,6 +8,7 @@ package org.lejos.nxt.ldt.preferences;
  */
 public class PreferenceConstants {
 
+	public static final String VAL_PROTOCOL_BOTH = "ub";
 	public static final String VAL_PROTOCOL_USB = "u";
 	public static final String VAL_PROTOCOL_BLUETOOTH = "b";
 	public static final String KEY_NXJ_HOME = "nxjHome";
