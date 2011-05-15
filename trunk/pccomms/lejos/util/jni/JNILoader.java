@@ -39,7 +39,16 @@ public class JNILoader
 			
 		File tmp;
 		URI uri = url.toURI();
-		if ("jar".equalsIgnoreCase(uri.getScheme()))
+		String scheme = uri.getScheme();
+		if ("file".equals(scheme))
+		{
+			tmp = new File(uri);
+			for (int i = clname.indexOf('.'); i >= 0; i = clname.indexOf('.', i + 1))
+			{
+				tmp = tmp.getParentFile();
+			}
+		}
+		else if ("jar".equalsIgnoreCase(scheme))
 		{
 			String jarpath = uri.getRawSchemeSpecificPart();
 			int i = jarpath.indexOf('!');
@@ -51,11 +60,7 @@ public class JNILoader
 		}
 		else
 		{
-			tmp = new File(uri);
-			for (int i = clname.indexOf('.'); i >= 0; i = clname.indexOf('.', i + 1))
-			{
-				tmp = tmp.getParentFile();
-			}
+			throw new JNIException("unknown scheme in URL "+uri);
 		}
 		tmp = tmp.getParentFile();
 		if (subdir != null)

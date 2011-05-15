@@ -123,20 +123,13 @@ public class NXJFlashUpdate {
 	 * @return Memory image ready to be flashed to the device.
 	 */
 	public byte[] createFirmwareImage(File vmName, File menuName,
-			String leJOSHomeDir) throws IOException {
+			String home) throws IOException {
 		ui.message("Building firmware image.");
 		byte[] memoryImage = new byte[MAX_FIRMWARE_PAGES * NXTSamba.PAGE_SIZE];
-		String home = leJOSHomeDir;
-		// String home = System.getProperty("nxj.home");
-		// if (home == null)
-		// home = System.getenv("NXJ_HOME");
-		if (home == null)
-			home = "";
-		String SEP = File.separator;
 		if (vmName == null)
-			vmName = new File(home + SEP + "bin" + SEP + VM);
+			vmName = new File(home, "bin" + File.separator + VM);
 		if (menuName == null)
-			menuName = new File(home + SEP + "bin" + SEP + MENU);
+			menuName = new File(home, "bin" + File.separator + MENU);
 		ui.message("VM file: " + vmName);
 		ui.message("Menu file: " + menuName);
 		int vmLen = readWholeFile(vmName, memoryImage, 0, memoryImage.length);
