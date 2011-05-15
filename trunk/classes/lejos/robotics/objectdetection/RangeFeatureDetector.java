@@ -39,21 +39,38 @@ public class RangeFeatureDetector extends FeatureDetectorAdapter {
 	
 	private RangeFinder range_finder = null;
 	private float max_dist = 100;
+	private float angle = 0;
 	
 	// TODO: Accept optional RangeScanner?
 	
-	// TODO: Alternate constructor for range sensors angled and mounted non-center.
+	// TODO: Alternate constructor for range sensors mounted non-center.
 	
 	/**
-	 * If a range finder is used, assumes object is detected straight ahead so heading is 
-	 * always 0 for the returned RangeReading. 
+	 * This constructor allows you to specify the sensor, the maximum distance to report a 
+	 * detection, and the delay between scanning the sensor. It assumes the range sensor is 
+	 * pointed straight ahead, so heading is always 0 for the returned RangeReading. 
 	 * @param rf The range finder sensor. e.g. UltrasonicSensor
 	 * @param maxDistance The upper limit of distance it will report. e.g. 40 cm.
 	 * @param delay The interval range finder checks for objects. e.g. 250 ms.
 	 * @see lejos.nxt.UltrasonicSensor
 	 */
 	public RangeFeatureDetector(RangeFinder rf, float maxDistance, int delay) {
+		this(rf, maxDistance, delay, 0);
+	}
+	
+	
+	/**
+	 * This constructor allows you to specify the sensor, the maximum distance to report a 
+	 * detection, the delay between scanning the sensor, and the angle the sensor is pointed. 
+	 * @param rf The range finder sensor. e.g. UltrasonicSensor
+	 * @param maxDistance The upper limit of distance it will report. e.g. 40 cm.
+	 * @param delay The interval range finder checks for objects. e.g. 250 ms.
+	 * @param angle The angle, in degrees, the range sensor is pointed. (0 = forward, +ve = left, -ve = right)
+	 * @see lejos.nxt.UltrasonicSensor
+	 */
+	public RangeFeatureDetector(RangeFinder rf, float maxDistance, int delay, double angle) {
 		super(delay);
+		this.angle = (float)angle;
 		this.range_finder = rf;
 		setMaxDistance(maxDistance);
 	}
@@ -83,8 +100,7 @@ public class RangeFeatureDetector extends FeatureDetectorAdapter {
 		if(ranges.length <= 0) return null; // Check to make sure it retrieved some readings. Seems to return nothing sometimes. 
 		if(ranges[0] > 0 & ranges[0] < max_dist) { 
 			for(int i=0;i<ranges.length;i++) {
-				int angle = 0; // TODO: Activate global "angle" setting for angle sensor is mounted at on vehicle. Constructor param.
-				rrs.add(new RangeReading(angle, ranges[i]));
+				rrs.add(new RangeReading(this.angle, ranges[i]));
 			}
 			feature = new RangeFeature(rrs);
 		}
