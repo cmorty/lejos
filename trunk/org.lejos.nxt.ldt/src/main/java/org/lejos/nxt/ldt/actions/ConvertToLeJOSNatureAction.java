@@ -1,10 +1,10 @@
 package org.lejos.nxt.ldt.actions;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -14,10 +14,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
-import org.lejos.nxt.ldt.LeJOSNXJPlugin;
 import org.lejos.nxt.ldt.builder.leJOSNature;
-import org.lejos.nxt.ldt.preferences.PreferenceConstants;
-import org.lejos.nxt.ldt.util.LeJOSNXJException;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 /**
@@ -37,15 +34,7 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		IJavaProject project = LeJOSNXJUtil
-				.getJavaProjectFromSelection(selection);
-		if (project != null) {
-			setLeJOSNature(project);
-		} else {
-			// log
-			LeJOSNXJUtil.message(new LeJOSNXJException(
-					"no project selected or no Java project"));
-		}
+		setLeJOSNature();
 	}
 
 	/*
@@ -56,6 +45,9 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		this.selection = selection;
+		ArrayList<IJavaProject> list = new ArrayList<IJavaProject>();
+		LeJOSNXJUtil.getJavaProjectFromSelection(selection, list);
+		action.setEnabled(!list.isEmpty());
 	}
 
 	/*
@@ -72,47 +64,41 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 	 * 
 	 * @param project
 	 */
-	private void setLeJOSNature(IJavaProject project) {
-		try {
-			IProjectDescription description = project.getProject()
-					.getDescription();
-			String[] natures = description.getNatureIds();
-
-			// nature already set?
-			if (LeJOSNXJUtil.isLeJOSProject(project)) {
-				LeJOSNXJUtil.message("project "
-						+ project.getProject().getName()
-						+ " already is a leJOS NXJ project");
-				return;
+	private void setLeJOSNature() {
+		ArrayList<IJavaProject> list = new ArrayList<IJavaProject>();
+		LeJOSNXJUtil.getJavaProjectFromSelection(selection, list);
+		for (IJavaProject project : list)
+		{
+			try {
+				IProjectDescription description = project.getProject().getDescription();
+				String[] natures = description.getNatureIds();
+	
+				LinkedHashSet<String> newNatures = new LinkedHashSet<String>();
+				for (String e : natures)
+					newNatures.add(e);
+				
+				newNatures.add(leJOSNature.NATURE_ID);
+				String[] tmp = new String[newNatures.size()];
+				newNatures.toArray(tmp);
+				description.setNatureIds(tmp);
+				project.getProject().setDescription(description, null);
+	
+				// update classpath
+				updateClasspath(project);
+				// set "compliance 1.5" option
+	//			project.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM,
+	//					JavaCore.VERSION_1_5);
+	//			project.setOption(JavaCore.COMPILER_COMPLIANCE,
+	//					JavaCore.VERSION_1_5);
+	//			project.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
+				
+				// log
+				LeJOSNXJUtil.message("project " + project.getProject().getName()
+						+ " now is a leJOS NXJ project");
+			} catch (Throwable t) {
+				// log
+				LeJOSNXJUtil.message("project " + project.getProject().getName()+" was not converted.", t);
 			}
-
-			// check setting of NXJ_HOME
-			String nxjHome = LeJOSNXJPlugin.getDefault().getPluginPreferences()
-					.getString(PreferenceConstants.P_NXJ_HOME);
-			if ((nxjHome == null) || (nxjHome.length()==0))
-				throw new LeJOSNXJException(
-						"preference for NXJ_HOME is not set");
-			// add the nature
-			String[] newNatures = new String[natures.length + 1];
-			System.arraycopy(natures, 0, newNatures, 0, natures.length);
-			newNatures[natures.length] = leJOSNature.NATURE_ID;
-			description.setNatureIds(newNatures);
-			project.getProject().setDescription(description, null);
-			// update classpath
-			updateClasspath(project);
-			// set "compliance 1.5" option
-//			project.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM,
-//					JavaCore.VERSION_1_5);
-//			project.setOption(JavaCore.COMPILER_COMPLIANCE,
-//					JavaCore.VERSION_1_5);
-//			project.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
-			// TODO set Javadoc location to classes.jar
-			// log
-			LeJOSNXJUtil.message("project " + project.getProject().getName()
-					+ " now is a leJOS NXJ project");
-		} catch (Throwable t) {
-			// log
-			LeJOSNXJUtil.message(t);
 		}
 	}
 
@@ -122,49 +108,44 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 	 * @param aProject
 	 *            a java project
 	 */
-	private void updateClasspath(IJavaProject project)
-			throws JavaModelException {
-		// get existing classpath
-		IClasspathEntry[] existingClasspath = project.getRawClasspath();
-		// get NXJ classpath entries
-		IClasspathEntry[] nxjEntries = getNXJClasspath();
-		// create new classpath with additional leJOS libraries last
-		List<IClasspathEntry> newClasspath = new ArrayList<IClasspathEntry>(
-				existingClasspath.length + nxjEntries.length);
-		for (int i = 0; i < existingClasspath.length; i++) {
-			// filter out JRE_CONTAINER
-			IClasspathEntry cpEntry = existingClasspath[i];
-			if ((cpEntry.getEntryKind() == IClasspathEntry.CPE_CONTAINER)
-					&& ((cpEntry.getPath().lastSegment())
-							.indexOf("JRE_CONTAINER") >= 0)) {
-				// skip JRE_CONTAINER, if container ends with JRE_CONTAINER
-			} else {
-				// e.g. source container
-				newClasspath.add(existingClasspath[i]);
+	private void updateClasspath(IJavaProject project) throws JavaModelException {
+		// TODO set source attachement of classes.jar
+		
+		try {
+			File nxjHome = LeJOSNXJUtil.getNXJHome();
+			ArrayList<File> tmp = new ArrayList<File>();
+			LeJOSNXJUtil.buildNXTClasspath(nxjHome, tmp);
+			LinkedHashSet<Path> nxjFiles = new LinkedHashSet<Path>();
+			for (File e : tmp)
+				nxjFiles.add(new Path(e.getAbsolutePath()));
+			
+			// get existing classpath
+			IClasspathEntry[] existingClasspath = project.getRawClasspath();
+			// create new classpath with additional leJOS libraries last
+			ArrayList<IClasspathEntry> newClasspath = new ArrayList<IClasspathEntry>();
+			for (IClasspathEntry cpEntry : existingClasspath) {
+				if (cpEntry.getEntryKind() == IClasspathEntry.CPE_CONTAINER
+						&& cpEntry.getPath().segment(0).equals("org.eclipse.jdt.launching.JRE_CONTAINER")) {
+					// skip JRE/JDK
+				} else if (nxjFiles.contains(cpEntry.getPath().makeAbsolute())) {
+					// skip
+				} else {
+					// e.g. source container
+					newClasspath.add(cpEntry);
+				}
 			}
+			
+			// add the other cp entries
+			for (Path e : nxjFiles)
+				newClasspath.add(JavaCore.newLibraryEntry(e, null, null));
+			
+			// set new classpath to project
+			IClasspathEntry[] cpEntries = new IClasspathEntry[newClasspath.size()];
+			newClasspath.toArray(cpEntries);
+			project.setRawClasspath(cpEntries, null);
+		} catch (Throwable t) {
+			// log
+			LeJOSNXJUtil.log(t);
 		}
-		// add the other cp entries
-		for (int i = 0; i < nxjEntries.length; i++) {
-			newClasspath.add(nxjEntries[i]);
-		}
-		IClasspathEntry[] cpEntries = (IClasspathEntry[]) newClasspath
-				.toArray(new IClasspathEntry[0]);
-		// set new classpath to project
-		project.setRawClasspath(cpEntries, null);
-	}
-
-	private IClasspathEntry[] getNXJClasspath() {
-		// TODO read classpath from preferences
-		// get NXJ_HOME
-		String nxjHome = LeJOSNXJPlugin.getDefault().getPluginPreferences()
-				.getString(PreferenceConstants.P_NXJ_HOME);
-		// create classpath entries
-		IClasspathEntry[] entries = new IClasspathEntry[1];
-		// classes jar
-		IPath jar = new Path(nxjHome + "/lib/nxt/classes.jar");
-		IClasspathEntry entry = JavaCore.newLibraryEntry(jar, null, new Path(
-				"/"));
-		entries[0] = entry;
-		return entries;
 	}
 }

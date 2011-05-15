@@ -31,9 +31,9 @@
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             adaptable="true"
-            objectClass="org.eclipse.jdt.core.IJavaElement"
+            id="org.lejos.nxt.ldt.leJOSContribution"
             nameFilter="*"
-            id="org.lejos.nxt.ldt.leJOSContribution">
+            objectClass="org.eclipse.core.runtime.IAdaptable">
          <menu
                id="org.lejos.nxt.ldt.leJOSNXJPopupMenu"
                label="leJOS NXJ"
@@ -41,11 +41,21 @@
          </menu>
          <action
                class="org.lejos.nxt.ldt.actions.LeJOSLinkAndUploadAction"
+               enablesFor="1"
                icon="icons/nxj.jpg"
                id="org.lejos.nxt.ldt.actions.LeJOSLinkAndUploadAction"
-               label="&amp;Upload Program To The NXT Brick"
+               label="&amp;Link and Upload Program to the NXT Brick"
                menubarPath="org.lejos.nxt.ldt.leJOSNXJPopupMenu/leJOSNXJGroup"
-               tooltip="Uploads the program to the NXT brick">
+               tooltip="Links and uploads the selected program to the NXT brick">
+         </action>
+         <action
+               class="org.lejos.nxt.ldt.actions.LeJOSUploadAction"
+               enablesFor="+"
+               icon="icons/nxj.jpg"
+               id="org.lejos.nxt.ldt.actions.LeJOSUploadAction"
+               label="&amp;Upload File to the NXT Brick"
+               menubarPath="org.lejos.nxt.ldt.leJOSNXJPopupMenu/leJOSNXJGroup"
+               tooltip="Uploads the selected file to the NXT brick">
          </action>
          <action
                class="org.lejos.nxt.ldt.actions.ConvertToLeJOSNatureAction"

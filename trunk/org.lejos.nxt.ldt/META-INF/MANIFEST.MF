@@ -12,14 +12,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.core,
  org.eclipse.ui.console,
  org.junit
-Bundle-ClassPath: lejosnxj.jar,
- .,
- lib/bcel.jar,
- lib/bluecove-gpl.jar,
- lib/bluecove.jar,
- lib/commons-cli.jar,
- lib/jtools.jar,
- lib/pccomm.jar,
- lib/pctools.jar
+Bundle-ClassPath: lejosnxj.jar
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy

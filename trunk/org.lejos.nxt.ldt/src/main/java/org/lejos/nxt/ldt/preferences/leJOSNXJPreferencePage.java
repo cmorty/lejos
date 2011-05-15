@@ -32,36 +32,36 @@ public class leJOSNXJPreferencePage extends FieldEditorPreferencePage implements
 	 */
 	public void createFieldEditors() {
 		// NXJ_HOME
-		addField(new DirectoryFieldEditor(PreferenceConstants.P_NXJ_HOME,
+		addField(new DirectoryFieldEditor(PreferenceConstants.KEY_NXJ_HOME,
 				"&NXJ_HOME:", getFieldEditorParent()));
 		// connection type
 		addField(new RadioGroupFieldEditor(
-				PreferenceConstants.P_CONNECTION_TYPE, "&Connection type", 1,
+				PreferenceConstants.KEY_CONNECTION_TYPE, "&Connection type", 1,
 				new String[][] {
-						{ "&USB", PreferenceConstants.P_PROTOCOL_USB },
+						{ "&USB", PreferenceConstants.VAL_PROTOCOL_USB },
 						{ "&Bluetooth",
-								PreferenceConstants.P_PROTOCOL_BLUETOOTH } },
+								PreferenceConstants.VAL_PROTOCOL_BLUETOOTH } },
 				getFieldEditorParent()));
 		// run after download?
 		addField(new BooleanFieldEditor(
-				PreferenceConstants.P_RUN_AFTER_UPLOAD,
+				PreferenceConstants.KEY_RUN_AFTER_UPLOAD,
 				"&Run program after upload", getFieldEditorParent()));
 		// verbose?
-		addField(new BooleanFieldEditor(PreferenceConstants.P_IS_VERBOSE,
+		addField(new BooleanFieldEditor(PreferenceConstants.KEY_IS_VERBOSE,
 				"&Verbose", getFieldEditorParent()));
 		// connect to NXT address?
 		addField(new BooleanFieldEditor(
-				PreferenceConstants.P_CONNECT_TO_BRICK_ADDRESS,
+				PreferenceConstants.KEY_CONNECT_TO_BRICK_ADDRESS,
 				"&Connect to address", getFieldEditorParent()));
 		addField(new StringFieldEditor(
-				PreferenceConstants.P_CONNECTION_BRICK_ADDRESS, "&Address",
+				PreferenceConstants.KEY_CONNECTION_BRICK_ADDRESS, "&Address",
 				getFieldEditorParent()));
 		// connect to named NXT?
 		addField(new BooleanFieldEditor(
-				PreferenceConstants.P_CONNECT_TO_NAMED_BRICK,
+				PreferenceConstants.KEY_CONNECT_TO_NAMED_BRICK,
 				"Connect to &named brick", getFieldEditorParent()));
 		addField(new StringFieldEditor(
-				PreferenceConstants.P_CONNECTION_BRICK_NAME, "&Name",
+				PreferenceConstants.KEY_CONNECTION_BRICK_NAME, "&Name",
 				getFieldEditorParent()));
 	}
 
