@@ -28,10 +28,8 @@ Click Build All
 You should see the new jars appear in the features and plugins directories.
 
 C. Generate a local update repository
-Open a bash shell
-cd to the org.lejos.nxt.ldt.update-site folder in your workspace
-Run the UpdateSitePublisher.sh script 
-You should see the dist directory getting created and filled with goodness
+Run the updatesite.xml script. 
+Note that you must have "Run in same JVM as the workspace" set, under the JRE tab on "Ant Build ...".
 
 D. Test the build via the local update repository
 In Eclipse, open Help > Install New Software...
