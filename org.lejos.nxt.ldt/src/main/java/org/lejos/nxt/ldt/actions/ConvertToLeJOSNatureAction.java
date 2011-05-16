@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.lejos.nxt.ldt.builder.leJOSNature;
+import org.lejos.nxt.ldt.util.LeJOSNXJException;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 /**
@@ -108,44 +109,39 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 	 * @param aProject
 	 *            a java project
 	 */
-	private void updateClasspath(IJavaProject project) throws JavaModelException {
+	private void updateClasspath(IJavaProject project) throws JavaModelException, LeJOSNXJException {
 		// TODO set source attachement of classes.jar
 		
-		try {
-			File nxjHome = LeJOSNXJUtil.getNXJHome();
-			ArrayList<File> tmp = new ArrayList<File>();
-			LeJOSNXJUtil.buildNXTClasspath(nxjHome, tmp);
-			LinkedHashSet<Path> nxjFiles = new LinkedHashSet<Path>();
-			for (File e : tmp)
-				nxjFiles.add(new Path(e.getAbsolutePath()));
-			
-			// get existing classpath
-			IClasspathEntry[] existingClasspath = project.getRawClasspath();
-			// create new classpath with additional leJOS libraries last
-			ArrayList<IClasspathEntry> newClasspath = new ArrayList<IClasspathEntry>();
-			for (IClasspathEntry cpEntry : existingClasspath) {
-				if (cpEntry.getEntryKind() == IClasspathEntry.CPE_CONTAINER
-						&& cpEntry.getPath().segment(0).equals("org.eclipse.jdt.launching.JRE_CONTAINER")) {
-					// skip JRE/JDK
-				} else if (nxjFiles.contains(cpEntry.getPath().makeAbsolute())) {
-					// skip
-				} else {
-					// e.g. source container
-					newClasspath.add(cpEntry);
-				}
+		File nxjHome = LeJOSNXJUtil.getNXJHome();
+		ArrayList<File> tmp = new ArrayList<File>();
+		LeJOSNXJUtil.buildNXTClasspath(nxjHome, tmp);
+		LinkedHashSet<Path> nxjFiles = new LinkedHashSet<Path>();
+		for (File e : tmp)
+			nxjFiles.add(new Path(e.getAbsolutePath()));
+		
+		// get existing classpath
+		IClasspathEntry[] existingClasspath = project.getRawClasspath();
+		// create new classpath with additional leJOS libraries last
+		ArrayList<IClasspathEntry> newClasspath = new ArrayList<IClasspathEntry>();
+		for (IClasspathEntry cpEntry : existingClasspath) {
+			if (cpEntry.getEntryKind() == IClasspathEntry.CPE_CONTAINER
+					&& cpEntry.getPath().segment(0).equals("org.eclipse.jdt.launching.JRE_CONTAINER")) {
+				// skip JRE/JDK
+			} else if (nxjFiles.contains(cpEntry.getPath().makeAbsolute())) {
+				// skip
+			} else {
+				// e.g. source container
+				newClasspath.add(cpEntry);
 			}
-			
-			// add the other cp entries
-			for (Path e : nxjFiles)
-				newClasspath.add(JavaCore.newLibraryEntry(e, null, null));
-			
-			// set new classpath to project
-			IClasspathEntry[] cpEntries = new IClasspathEntry[newClasspath.size()];
-			newClasspath.toArray(cpEntries);
-			project.setRawClasspath(cpEntries, null);
-		} catch (Throwable t) {
-			// log
-			LeJOSNXJUtil.log(t);
 		}
+		
+		// add the other cp entries
+		for (Path e : nxjFiles)
+			newClasspath.add(JavaCore.newLibraryEntry(e, null, null));
+		
+		// set new classpath to project
+		IClasspathEntry[] cpEntries = new IClasspathEntry[newClasspath.size()];
+		newClasspath.toArray(cpEntries);
+		project.setRawClasspath(cpEntries, null);
 	}
 }
