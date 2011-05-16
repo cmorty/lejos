@@ -8,6 +8,14 @@
 	<!-- Need to set "Run in same JRE as workspace" in Ant Buld JRE tab for eclipse.home to be set  -->
 	<property name="dist" value="${basedir}/dist" />
 	
+	<property name="eclipse.equinox.main" value="org.eclipse.equinox.launcher.Main" />
+	<path id="eclipse.equinox.cp">
+		<fileset dir="${eclipse.home}/plugins/">
+			<include name="org.eclipse.equinox.launcher_*.jar" />
+		</fileset>
+	</path>
+
+	
 	<target name="publish" description="Publishes update site in dist directory">
 	
 	    <echo message="dist = ${dist}"/>
@@ -16,9 +24,8 @@
 		<delete dir="${dist}"/>
 		<mkdir dir="${dist}"/>
 		
-	    <java
-           jar="${eclipse.home}/plugins/org.eclipse.equinox.launcher_*.jar"
-           fork="true"
+	    <java classname="${eclipse.equinox.main}"
+	       classpathref="eclipse.equinox.cp"
            failonerror="true">
 	         <arg value="-application"/>
 	         <arg value="org.eclipse.equinox.p2.publisher.UpdateSitePublisher"/>
@@ -38,9 +45,8 @@
 	         <arg value="-publishArtifacts"/>
        </java>
        
-       <java
-           jar="${eclipse.home}/plugins/org.eclipse.equinox.launcher_*.jar"
-           fork="true"
+       <java classname="${eclipse.equinox.main}"
+	       classpathref="eclipse.equinox.cp"
            failonerror="true">
            <arg value="-application"/>
            <arg value="org.eclipse.equinox.p2.publisher.CategoryPublisher"/>
