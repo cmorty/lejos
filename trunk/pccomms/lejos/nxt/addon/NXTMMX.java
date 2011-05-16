@@ -22,20 +22,20 @@ import lejos.nxt.SensorPort;
 public class NXTMMX extends I2CSensor{
 	//registers
 	private final int REG_MuxCommand = 0x41; //register to read input voltage
-	private final int REG_KP_TACHO = 0x7A;
-	private final int REG_KI_TACHO = 0x7C;
-	private final int REG_KD_TACHO = 0x7E;
-	private final int REG_KP_SPEED = 0x80;
-	private final int REG_KI_SPEED = 0x82;
-	private final int REG_KD_SPEED = 0x84;
-	private final int REG_PID_PASS_COUNT = 0x86;
-	private final int REG_TOLERANCE = 0x87;
+//	private final int REG_KP_TACHO = 0x7A;
+//	private final int REG_KI_TACHO = 0x7C;
+//	private final int REG_KD_TACHO = 0x7E;
+//	private final int REG_KP_SPEED = 0x80;
+//	private final int REG_KI_SPEED = 0x82;
+//	private final int REG_KD_SPEED = 0x84;
+//	private final int REG_PID_PASS_COUNT = 0x86;
+//	private final int REG_TOLERANCE = 0x87;
 	
 	//commands
 	private final int COMMAND_Reset = 'R';
 	private final int COMMAND_StartMotors = 'S';
 	private final int COMMAND_FloatMotors = 'c';
-	private final int COMMAND_BreakMotors = 'C';
+	private final int COMMAND_BrakeMotors = 'C';
 	
 	private byte [] buffer = new byte[2];
 	private boolean autoStart = true;
@@ -50,9 +50,10 @@ public class NXTMMX extends I2CSensor{
      * @see lejos.nxt.addon.MMXRegulatedMotor#MMXRegulatedMotor
      */
     public static final int MMX_MOTOR_2 = 1;
-	//motors
-	public NXTMMXMotor A;
-	public NXTMMXMotor B;
+	
+    //motors
+//	public NXTMMXMotor A;
+//	public NXTMMXMotor B;
 	
 	/**
 	 * Constructor for the NXTMMX
@@ -66,8 +67,8 @@ public class NXTMMX extends I2CSensor{
 	public  NXTMMX(SensorPort port, int address){
 		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
 		reset();
-		A = new NXTMMXMotor(this, 0);
-		B = new NXTMMXMotor(this, 1);
+//		A = new NXTMMXMotor(this, 0);
+//		B = new NXTMMXMotor(this, 1);
 	}
 
 	/**
@@ -113,17 +114,17 @@ public class NXTMMX extends I2CSensor{
 	}
 	
 	/**
-	 * floats both motors
+	 * Floats both motors
 	 */
 	public void fltMotors(){
 		this.sendData(REG_MuxCommand, (byte) COMMAND_FloatMotors);
 	}
 	
 	/**
-	 * breaks both motors
+	 * Stops both motors
 	 */
-	public void breakMotors(){
-		this.sendData(REG_MuxCommand, (byte) COMMAND_BreakMotors);
+	public void stopMotors(){
+		this.sendData(REG_MuxCommand, (byte) COMMAND_BrakeMotors);
 	}
 	
 	/**
@@ -132,10 +133,10 @@ public class NXTMMX extends I2CSensor{
 	 */
 	public int getVoltage(){
 		 getData(REG_MuxCommand, buffer, 1);
-		 // 37 is the constant given by Mindsensors support 5/2011 to return millivolts
+		 // 37 is the constant given by Mindsensors support 5/2011 to return millivolts. KPT
          return (37*(0x00ff & buffer[0]));
 	}
-	
+/*	
 	//Proportional gain tacho
 	public int getKpTacho(){
 		getData(REG_KP_TACHO, buffer, 2);
@@ -230,4 +231,5 @@ public class NXTMMX extends I2CSensor{
 		return ((buffer[1] & 0xFF) << 8)
         	+ (buffer[0] & 0xFF); 
 	}
+ */
 }

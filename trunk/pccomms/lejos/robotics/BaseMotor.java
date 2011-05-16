@@ -12,12 +12,12 @@ package lejos.robotics;
 public interface BaseMotor {
 
 	/**
-	   * Causes motor to rotate forward until stop is called.
+	   * Causes motor to rotate forward until <code>stop()</code> or <code>flt()</code> is called.
 	   */
 	  void forward();
 
 	  /**
-	   * Causes motor to rotate backwards until stop is called.
+	   * Causes motor to rotate backwards until <code>stop()</code> or <code>flt()</code> is called.
 	   */
 	  void backward();
 
@@ -33,9 +33,9 @@ public interface BaseMotor {
 	  public void flt();
 
 	  /**
-	   * Return if the motor is moving.
+	   * Return <code>true</code> if the motor is moving.
 	   *
-	   * @return true if the motor is currently in motion
+	   * @return <code>true</code> if the motor is currently in motion, <code>false</code> if stopped.
 	   */
 	  // TODO: Possibly part of Encoder interface? Depends if encoder used to determine this.
 	  boolean isMoving();
