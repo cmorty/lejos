@@ -17,16 +17,18 @@ import lejos.util.Delay;
  * Supports Mindsensors NXTMMX motor multiplexer. This device allows you to connect two 
  * additional motors to your robot using a sensor port. Multiple NXTMMXs can be chained together.
  * <p>
- * Create an instance of this class passing the <code>NXTMMX</code> instance and Motor ID in the constructor.
+ * Create an instance of this class passing a <code>NXTMMX</code> instance and Motor ID 
+ * (<code>{@link NXTMMX#MMX_MOTOR_1 MMX_MOTOR_1}</code> or <code>{@link NXTMMX#MMX_MOTOR_2 MMX_MOTOR_2}</code>)
+ * in the constructor.
  * 
  * @see NXTMMX
- * @author Michael D. Smith mdsmitty@gmail.com
- * @author Kirk P. Thompson  lejos@mosen.net
+ * @author Michael D. Smith &lt;mdsmitty@gmail.com&gt;
+ * @author Kirk P. Thompson  
  *
  */
 public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
     private NXTMMX mux;
-    private boolean rampUp = true;
+    private boolean rampUp = true; 
     private final boolean controlSpeed = true;  // no public accessor so I made final to ensure
     private boolean tachoLock = false;
     private boolean tachoBrake = true;
@@ -73,7 +75,7 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
     /** Use to specify motor float when a rotate method completes.
      * @see #setRotateStopMode
      */
-    public static final int ROTSTOP_FLOAT=0;
+    public static final int ROTSTOP_FLOAT=1;
     
     /** Use to specify motor brake when a rotate method completes.
      * @see #setRotateStopMode
@@ -102,8 +104,7 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
     private boolean _resetTacho = false;
     private boolean latchRotStart=false;
     private boolean latchRotEnd=false;
-    
-//    private Object waitObject = new Object();
+    private int _tachoCount=0;
     
     /**
      * Create an instance of a <code>MMXRegulatedMotor</code>.
@@ -142,7 +143,8 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
 
     /**
      * Add a motor listener. Move operations will be reported to this object.
-     * @param listener
+     * @param listener An instance of type <code>RegulatedMotorListener</code>
+     * @see RegulatedMotorListener
      */
     public void addListener(RegulatedMotorListener listener) {
         _listener = listener;
@@ -156,7 +158,6 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
         return MOTOR_MAX_DPS;
     }
     
-    
     /**
      * Returns the actual speed.
      * 
@@ -166,24 +167,6 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
         return (int)_degpersec * _direction; 
     }
     
-    // TODO implement `start both motors command/method. see autoStart in MMX class
-
-//    /** Put the motor in the Synchronized mode where all action settings do not take effect until <code>startSynchronized()</code> is
-//     * called
-//     * @param startSynchronized <code>true</code> to put in Synchronized mode
-//     * @see #startSynchronized
-//     */
-//    public void setSynchronizedStart(boolean startSynchronized){
-//        
-//    }
-//
-//    /** Start both motors at the same time with given power, speed, rotate commands set for each motor.
-//     * @see #setSynchronizedStart
-//     */
-//    public void startSynchronized(){
-//        
-//    }
-    
     private void waitForMotorCompletion(){
         // wait until tachomonitor registers a move (without a stall). This is done when the motor is started.
         while (!_isStalled&&!_isMoving) Thread.yield();
@@ -191,28 +174,20 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
         while (!_isStalled&&_isMoving) Thread.yield();
     }
     
-    private void motorGO(int command){
-        if(controlSpeed) command |= CONTROL_SPEED; //0
-        if(rampUp) command |= CONTROL_RAMP; //1  
-        if(mux.isAutoStart()) command |= CONTROL_GO; // 7
-        // send the command
-        mux.sendData(REG_MotorCommandRegA, (byte)command);
-    }
-    
     private void motorRotate(boolean relative){
         int command = 0;
-        
+        _isRunCmd = false;
         _isRotateCmd=true;
         if (relative) command |= CONTROL_RELATIVE; //2
         command |= CONTROL_TACHO; //3
         if(tachoBrake) command |= CONTROL_TACHO_BRAKE; //4
         if(tachoLock) command |= CONTROL_TACHO_LOCK; //5
-        setRotateAngle();
+        setRotateAngle(_limitAngle);
         motorGO(command);
     }
     
-    private void setRotateAngle(){
-        buffer = intToByteArray(_limitAngle);
+    private void setRotateAngle(int angle){
+        buffer = intToByteArray(angle);
         mux.sendData(REG_RotateTo, buffer, 4);
     }
     
@@ -282,6 +257,7 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
      * Return the current target speed.
      * @return Motor speed in degrees per second.
      * @see #setSpeed
+     * @see #getPower
      */
     public int getSpeed(){
         return Math.round(8.1551f*_currentPower+32.253f);
@@ -292,7 +268,8 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
      * <p>
      * The NXTMMX does not provide speed control per se (just power) so we approximate the power value used
      * based on the requested degress/sec (dps) passed in <code>speed</code>. This means if you request 400 dps, the actual dps value
-     * may not reflect that.
+     * may not reflect that. Setting speed during a rotate method will have no effect on the running rotate but will on the next rotate
+     * method call.
      * <p> 
      * experimental data gives: dps=8.1551*power+32.253 (unloaded @ 8.83V)
      * <p>
@@ -310,17 +287,29 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
     }
 
     /**
-     * Returns the current motor power setting.
+     * Returns the current motor power setting (%). 
      * @return current power 0-100
      * @see #setPower
+     * @see #getSpeed
      */
     public int getPower() {
         int power = (_currentPower==POWER_INIT)?0:Math.abs(_currentPower);
         return power;
     }
     
+    private void motorGO(int command){
+        if(controlSpeed) command |= CONTROL_SPEED; //0
+        if(rampUp) command |= CONTROL_RAMP; //1  
+        // if authstart or we already have started [a non-rotate] and need to effect power change
+        if(mux.isAutoStart() || _isRunCmd) command |= CONTROL_GO; // 7
+        // send the command
+        mux.sendData(REG_MotorCommandRegA, (byte)command);
+    }
+    
     /**
-     * Set the power level 0-100% to be applied to the motor
+     * Set the power level 0-100% to be applied to the motor. Setting power during a rotate method will have no effect on the 
+     * running rotate but will on the next rotate
+     * method call.
      * @param power new motor power 0-100%
      * @see #setSpeed
      * @see #getPower
@@ -333,7 +322,7 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
         // this is why we use _currentPower==POWER_INIT on intialization: If power is not sent, the MMX runs @ 100% by default
         // on powerup. This forces an i2c send to set the power.
         if (_currentPower!=power) {
-            // send the new power value
+            // send the new power value. This needs to be done for reverses as well
             mux.sendData(REG_MotorSpeed, (byte)power);
             // if motor is running on non-rotate/timing command, effect power change immediately
             if (_isRunCmd) motorGO(0);
@@ -341,6 +330,38 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
         }
     }
     
+    /**
+     * Causes motor to rotate forward or backward .
+     */
+    private void doMotorDirection(int direction) {
+        boolean switchDirection=(_direction!=direction);
+        
+        // effect power change
+        _direction=direction; // 1=forward, -1=backward
+        _isRunCmd = true;
+        _isRotateCmd=false;
+        _limitAngle=0;
+        if (switchDirection) {
+            // use ABS so setPower() doesn't set to zero on negative _currentPower values. setPower() uses _direction to determine -power
+            setPower(Math.abs(_currentPower)); 
+        } else motorGO(0);
+    }
+    
+    /**
+     * Causes motor to rotate forward.
+     * @see #backward
+     */
+    public void forward(){
+        doMotorDirection(1);
+    }
+    
+    /**
+     * Causes motor to rotate backwards.
+     * @see #forward
+     */
+    public void backward() {
+        doMotorDirection(-1);
+    }
     
     /**
      * Causes motor to float. This will stop the motor without braking
@@ -362,6 +383,8 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
      * before returning.
      * 
      * @see #flt(boolean)
+     * @see #lock()
+     * @see #stop()
      */
     public void flt() {
         flt(true);
@@ -374,6 +397,7 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
      * Cancels any <code>rotate()</code> orders in progress.
      * 
      * @param immediateReturn if <code>true</code> do not wait for the motor to actually stop
+     * @see #stop()
      */
     public void stop(boolean immediateReturn) {
         // REG_MUX_Command =        0x41;
@@ -391,6 +415,9 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
      * complete.
      * <p>
      * Cancels any <code>rotate()</code> orders in progress. 
+     * @see #stop(boolean)
+     * @see #flt()
+     * @see #lock()
      */
     public void stop() {
         stop(false);
@@ -428,46 +455,46 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
     }
     
     /**
+     * Locks the motor in current position. Uses active feed back to hold it. 
+     * @see #stop()
+     * @see #flt()
+     */
+    public void lock(){
+        int command = 0;
+        stop(true);
+        Delay.msDelay(50);
+        int position = getTacho();
+        setRotateAngle(position);
+        command |= CONTROL_TACHO; //3
+        command |= CONTROL_TACHO_BRAKE; //4
+        command |= CONTROL_TACHO_LOCK; //5
+        _isRunCmd = true; // trick motorGO() to send GO command
+        motorGO(command);
+        _isRunCmd=false;
+    }
+    
+    /**
      * Wait until the current movement operation is complete. This can include
      * the motor stalling.
      */
     public void waitComplete() {
         while(_isMoving) Thread.yield();
     }
-
-
-    /**
-     * Causes motor to rotate forward or backward .
-     */
-    private void doMotorDirection(int direction) {
-        boolean switchDirection=(_direction!=direction);
+    
+    private int getTacho(){
+        int retVal=0;
         
-        // effect power change
-        _direction=direction; // 1=forward, -1=backward
-        _isRunCmd = true;
-        _limitAngle=0;
-        if (switchDirection) {
-            setPower(Math.abs(_currentPower)); 
-        } else motorGO(0);
+        // try up to three times for tacho count if zero. This is because sometimes zero is returned even if motor is running. I don't
+        // know if this is a problem with the NXTMMX or the LeJOS quadrature encoder reader code
+        for (int i=0;i<3;i++) {
+            //REG_TacPos =             0x62;//   0x66
+            mux.getData(REG_TacPos, buffer, 4);
+            retVal=byteArrayToInt(buffer);
+            if (retVal!=0) break;
+            Delay.msDelay(3);
+        }
+        return retVal;
     }
-    
-    /**
-     * Causes motor to rotate forward.
-     * @see #backward
-     */
-    public void forward(){
-        doMotorDirection(1);
-    }
-    
-    /**
-     * Causes motor to rotate backwards.
-     * @see #forward
-     */
-    public void backward() {
-        doMotorDirection(-1);
-    }
-    
-  
     
     /**
      * Returns the tachometer count.
@@ -475,11 +502,8 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
      * @see #resetTachoCount
      */
     public synchronized int getTachoCount() {
-        int retVal =0;
-        //REG_TacPos =             0x62;//   0x66
-        mux.getData(REG_TacPos, buffer, 4);
-        retVal = byteArrayToInt(buffer);        
-        return retVal;
+
+        return _tachoCount;
     }
     
     /**
@@ -576,17 +600,17 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
             int statusCheck=0;
             
             stime = System.currentTimeMillis();
-            tcBegin=getTachoCount();
+            _tachoCount=tcBegin=getTacho();
             while(true) {
                 if (_resetTacho) {
                     _resetTacho=false;
                     stime = System.currentTimeMillis();
-                    tcBegin=getTachoCount();
+                    _tachoCount=tcBegin=getTacho();
                     synchronized (_tachoMonitor) {_tachoMonitor.notifyAll();} // wake up the resetTachoCount() method
                 }
                 Delay.msDelay(100); 
-                tc=getTachoCount();
-                tcDelta=Math.abs(tc-tcBegin);
+                _tachoCount=tc=getTacho();
+                tcDelta=Math.abs(tc-tcBegin); 
                 tcBegin=tc;
                 etime=System.currentTimeMillis();
                 tdelta = etime - stime;
@@ -606,6 +630,7 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
                 // set stall if detected. Defer to stall bit on rotates so we can not get screwed up when the angle has been reached 
                 // and the motor stops (for immediate returns on rotate(), rotateTo()).
                 _isStalled=(((STATUS_STALL&_status)==STATUS_STALL) || (!_isMoving && _isRunCmd)); 
+                
                 
                 // if moving and first start, notifyListener()
                 if (_isMoving && !latchRotStart) {
