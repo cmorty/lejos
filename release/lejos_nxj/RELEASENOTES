@@ -60,10 +60,12 @@ Roger Glassey:
 - Implemented various proposed robotics class prototypes
 
 Brian Bagnall:
+- Added Segway and SegwayPilot classes
+- Added lejos.robotics.objectdetection package
+- Added lejos.robotics.pathfinding package
 - Restructured light and color sensor classes added new interfaces
 - Added new Timer and TimerTask classes, improved Thread class
 - Improved Arc steering code, added SteeringPilot code and ArcPoseController
-- Added new path finding implementation
 - Reimplemented Acceleration sensor classes to separate them and implement Accelerometer interface
 - Added NodeSearch PC sample
 - Added ShapefileLoader to load a map from a shape file 
