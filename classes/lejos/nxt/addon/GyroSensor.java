@@ -47,7 +47,7 @@ public class GyroSensor implements SensorConstants, Gyroscope {
 	private int offset = 0;
     private float gsRawTotal =0f;
     private float gsvarianceTotal =0f;
-    private int samples=0;
+    private int samples=1;
     private boolean calibrating=false;
     private long timestamp;
     private int consecutiveStdv=0;
@@ -146,6 +146,7 @@ public class GyroSensor implements SensorConstants, Gyroscope {
         }
         
         // subtract the mean bias from the raw value and return it
+        if (samples==0) return 0f; // avoid NaN
         return gsVal-gsRawTotal/samples;
     }
 
