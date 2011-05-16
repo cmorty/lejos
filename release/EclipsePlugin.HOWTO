@@ -5,7 +5,6 @@ A. Set version numbers if necessary
 This step is only necessary if the version number needs to change (e.g. from 0.9.0 to 0.9.1). Minor releases are managed by Eclipse without us having to change the version.
 
 In the org.lejos.nxt.ldt project:
-Run copy.xml with "Ant Build" to refresh the lejos and 3rd party jar files with the latest versions.
 Open plugin.xml with the Plugin Manifest Editor. 
 Change the version number there, for example 0.9.0.qualifier --> 0.9.1.qualifier. 
 Save
