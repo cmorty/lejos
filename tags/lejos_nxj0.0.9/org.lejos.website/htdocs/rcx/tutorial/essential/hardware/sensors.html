@@ -1,0 +1,222 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>Controlling the Hardware: Sensors</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="motors.html" target="_top"><img src="../../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../toc.html#hardware" target="_top"><img src="../../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="ir.html" target="_top"><img src="../../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="../index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1">
+            <b>Trail</b>: Essential leJOS classes<br>
+            <b>Lesson</b>: Controlling the Hardware
+        </font>
+
+        <!-- headline -->
+        <h1>Controlling the Hardware: Sensors</h1>
+        <p>
+
+        <!-- intro -->
+        <img src="../../images/sensors.jpg">
+        <br clear="all">
+        Sensors are the senses of your robot, which enables it to generate an inner model of its
+        environment and to react to events accordingly.
+        <p>
+        There's a bunch of hardware sensors available which may be connected to one of the three
+        gray ports mounted above the RCX's display:
+        <br>
+        <img src="../../images/rcx_sensors.gif">
+        <br clear="all">
+        <p>
+
+        <!-- access -->
+        Similarly to the motor ports, the three ports are implemented as static fields 
+        of the <code>Sensor</code> class:
+        <ul>
+            <li>Sensor.S1</li>
+            <li>Sensor.S2</li>
+            <li>Sensor.S3</li>
+        </ul>
+        Hence a typical call would be 
+        <pre><code>
+            Sensor.S1.readValue();
+        </code></pre>
+
+        <span class="remark">Another possibility to access the sensor ports is via the 
+        static <code>Sensor[]</code> array, which contains the three sensors.
+        </span>
+
+        <!-- configuring -->
+        <h2>Configuring a sensor</h2>
+        Before data can be read from a sensor, it has to be configured, which means that you have to tell
+        the actual instance of the <code>Sensor</code> 
+        <ul>
+            <li>which kind of sensor is connected and</li>
+            <li>in which kind of mode the sensor data should be read.</li>
+        </ul>
+        This is done by the <code>public static void setTypeAndMode(int aType, int aMode)</code> method, where
+        <code>type</code> is one of the five types
+        <ul>
+            <li>SensorConstants.SENSOR_TYPE_LIGHT: light sensor</li>
+            <li>SensorConstants.SENSOR_TYPE_ROT: rotation sensor</li>
+            <li>SensorConstants.SENSOR_TYPE_TEMP: temperature sensor</li>
+            <li>SensorConstants.SENSOR_TYPE_TOUCH: touch sensor</li>
+            <li>SensorConstants.SENSOR_TYPE_RAW: unspecific sensor for raw data reading</li>
+        </ul>
+        <code>mode</code> can be set to 
+        <ul>
+            <li>SensorConstants.SENSOR_MODE_ANGLE: angle measurement (for rotation sensors)</li>
+            <li>SensorConstants.SENSOR_MODE_BOOL: pressed/not pressed measurement (for touch sensors)</li>
+            <li>SensorConstants.SENSOR_MODE_DEGC: Celsius measurement (for temperature sensors)</li>
+            <li>SensorConstants.SENSOR_MODE_DEGF: Fahrenheit measurement (for temperature sensors)</li>
+            <li>SensorConstants.SENSOR_MODE_EDGE: edge counting, which counts the number of times the 
+            state of a touch sensor changes</li>
+            <li>SensorConstants.SENSOR_MODE_PCT: percent measurement (for light sensors)</li>
+            <li>SensorConstants.SENSOR_MODE_PULSE: click count (for touch sensors)</li>
+            <li>SensorConstants.SENSOR_MODE_RAW: raw value measurement (0 - 1023).</li>
+        </ul>
+        The edge mode has some peculiarity: when the RCX is turned off, the counter remains its values.
+        So be sure to call <code>Sensor.setPreviousValue(0)</code> before starting new measurements.
+        <p>
+
+        <span class="remark">When configuring the sensor make sure that you use a meaningful
+        combination of mode and type else the measured value won't make much sense.
+        </span>
+        <p>
+
+        <!-- activating -->
+        <h2>Activating a sensor</h2>
+        Some of the sensors, such as light sensors, require electricity to work. By calling
+        <code>Sensor.activate()</code> the sensor port in question is "switched on" in a sense
+        that it constantly toggles between supplying power to the connected sensor and reading
+        data (the light sensor's electronics smoothens out this toggling so you won't notice it).
+        <br>The opposite <code>Sensor.passivate()</code> method turns off this power supply.
+
+        <h2>Reading a sensor's value</h2>
+        The easiest way to read a sensor's value is the use of one of
+        the <code>read...()</code> methods:
+        <ul>
+            <li>public static boolean readBooleanValue()</li>
+            <li>public static int readValue()</li>
+            <li>public static int readRawValue()</li>
+        </ul>
+        which delivers the actual state or the measured data of the sensor at the moment the
+        method is called (keep in mind to use the correct method depending on the type and mode
+        the sensor was configured before!).
+        <p>
+        <span class="remark">There's is an additional low-level API method
+            <code>public static int readSensorValue(int aSensorId,int aRequestType)</code>
+            where <code>aSensorId</code> is the sensor's id (0,1,2) and 
+            <code>aRequestType</code> is the type of data to read (0 = raw value,
+            1 = configured value,2 = boolean value).  
+        </span>
+        <p>
+
+        In most cases, though, you might want to be notified when some sensor is "triggered"
+        or measures a certain value.
+        For such cases you will use Java's <b>event listener</b> technology:
+        <br>
+        Your class to listen for such a sensor event will implement the 
+        <code>public void stateChanged(Sensor aSource, int aOldValue, int aNewValue)</code> method 
+        of the <code>josx.platform.rcx.SensorListener</code> interface,  where the two
+        value parameters reflect the value before and after the change in value measurement:
+        <pre><code>
+            public class MySensorListener implements SensorListener {
+                public void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {
+                    // respond to sensor value change here
+                } // stateChanged()
+            } // class MySensorListener
+        </code></pre>
+
+        Now you are able to add this class as a listener to the sensor port in question:
+        <pre><code>
+            Sensor.S1.addSensorListener(mySensorListener);
+        </code></pre>
+
+        Every time the sensor notifies a change in the value it measures, the  
+        <code>stateChanged()</code> method of the 
+        <code>MySensorListener</code> will be called.
+        <br>This technology is extremely useful for touch sensors, for example.
+        <p>
+
+        <span class="remark">If you are unfamiliar with event listeners, feel free to consult the
+        <a href="http://java.sun.com/docs/books/tutorial/uiswing/events/actionlistener.html" target="_top">
+        section</a> of The Java Tutorial&trade; in question.
+        </span>
+        <p>
+
+        <h2>A convenience sensor: ProximitySensor</h2>
+        When the first versions of the leJOS platform were released it was quickly detected 
+        that a special class for the detection of proximity would be quite useful: 
+        your robot wouldn't have to bump into objects any longer to detect their existence by the
+        means of a touch sensor  but were able to avoid it by using the light sensor for perception.
+        <br>Yet the implementation wasn't as easy as the idea sounded: the values measured by the 
+        light sensors vary immensely among two measurements even if there is no object nearby.
+        <br>So the <code>ProximitySensor</code> which tackled that issue
+        was added to the <code>josx.platform.rcx</code> package. 
+        <br>It's not a subclass of the <code>Sensor</code> class, but is constructed with one.
+        In the constructor you also might set the threshold, a integer value which defines
+        the distance to an object by which the sensor is triggered: the bigger the value, the
+        closer the robot gets.
+        <br>
+        The sensor is used by calling the <code>waitTillNear(long aMilliseconds)</code>
+        method which blocks the current thread until an object is detected; the parameter defines
+        how long may be waited, where 0 means forever (until an object is in fact detected).
+
+        <h2>An example which uses the Sensor class</h2>
+        is <b>Rotator.java</b> which may be found in the <code>examples/rotator</code> 
+        section of the leJOS tree.
+
+        <h2>The Sensor API</h2>
+        may be found <a href="http://lejos.sourceforge.net/apidocs/josx/platform/rcx/Sensor.html"
+        target="_top">here</a>.
+
+        <hr>
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="motors.html" target="_top"><img src="../../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../toc.html#hardware" target="_top"><img src="../../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="ir.html" target="_top"><img src="../../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="../index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>

@@ -1,0 +1,143 @@
+<!--
+  =============================================================
+  Buildfile for copying common classes from the classes project
+  =============================================================
+-->
+<project name="copy" default="copy" basedir=".">
+  	<target name="copy"  description="Copy source of common classes">
+  		<mkdir dir="lejos/geom"/>
+  		<delete dir="lejos/geom" includes="*.java, package.html"/>
+  		<copy overwrite="true" todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/geom/*.java"/>
+  				<include name="lejos/geom/package.html"/>
+  			</fileset>
+  		</copy>
+        <!-- NOTE do not add delete for lejos/nxt, it has files in it from the pccomms tree -->
+  		<mkdir dir="lejos/nxt"/>
+  		<copy overwrite="true" todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/nxt/ADSensorPort.java"/>
+  				<include name="lejos/nxt/BasicMotor.java"/>
+  				<include name="lejos/nxt/BasicMotorPort.java"/>
+  				<include name="lejos/nxt/BasicSensorPort.java"/>
+  				<include name="lejos/nxt/LegacySensorPort.java"/>
+  				<include name="lejos/nxt/LightSensor.java"/>
+  				<include name="lejos/nxt/Colors.java"/>
+  				<include name="lejos/nxt/ColorSensor.java"/>
+  				<include name="lejos/nxt/Colors.java"/>
+  				<include name="lejos/nxt/SensorConstants.java"/>
+  				<include name="lejos/nxt/SoundSensor.java"/>
+  				<include name="lejos/nxt/TouchSensor.java"/>
+  				<include name="lejos/nxt/TachoMotorPort.java"/>
+  				<include name="lejos/nxt/Tachometer.java"/>
+  				<include name="lejos/nxt/UltrasonicSensor.java"/>
+  				<include name="lejos/nxt/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/nxt/remote"/>
+  		<delete dir="lejos/nxt/remote" includes="*.java, package.html"/>
+  		<copy overwrite="true" todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/nxt/remote/AsciizCodec.java"/>
+  				<include name="lejos/nxt/remote/DeviceInfo.java"/>
+  				<include name="lejos/nxt/remote/ErrorMessages.java"/>
+  				<include name="lejos/nxt/remote/FileInfo.java"/>
+  				<include name="lejos/nxt/remote/FirmwareInfo.java"/>
+  				<include name="lejos/nxt/remote/InputValues.java"/>
+  				<include name="lejos/nxt/remote/NXTCommand.java"/>
+  				<include name="lejos/nxt/remote/NXTCommRequest.java"/>
+  				<include name="lejos/nxt/remote/NXTProtocol.java"/>
+  				<include name="lejos/nxt/remote/OutputState.java"/>
+  				<include name="lejos/nxt/remote/RemoteBattery.java"/>
+  				<include name="lejos/nxt/remote/RemoteMotor.java"/>
+  				<include name="lejos/nxt/remote/RemoteMotorPort.java"/>
+  				<include name="lejos/nxt/remote/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/nxt/addon"/>
+		<delete dir="lejos/nxt/addon" includes="*.java, package.html"/>
+  		<copy overwrite="true" todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/nxt/addon/*.java"/>
+  				<exclude name="lejos/nxt/addon/RealTimeClock.java"/>
+  				<exclude name="lejos/nxt/addon/DSwitch.java"/>
+  				<include name="lejos/nxt/addon/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/nxt/rcxcomm"/>
+		<delete dir="lejos/nxt/rcxcomm" includes="*.java, package.html"/>
+  		<copy overwrite="true" todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/nxt/rcxcomm/*.java"/>
+  				<include name="lejos/nxt/rcxcomm/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/robotics/"/>
+  		<delete dir="lejos/robotics/" includes="*.java, package.html"/>
+  		<copy overwrite="true" todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/robotics/*.java"/>
+  				<include name="lejos/robotics/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/robotics/localization"/>
+  		<delete dir="lejos/robotics/localization" includes="*.java, package.html"/>
+  		<copy overwrite="true" todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/robotics/localization/*.java"/>
+  				<exclude name="lejos/robotics/localization/TachoLocalizer.java"/>
+  				<exclude name="lejos/robotics/localization/MCLWayPointNavigator.java"/>
+  				<include name="lejos/robotics/localization/package.html"/>
+  			</fileset>
+  		</copy>  		
+  		<mkdir dir="lejos/robotics/navigation"/>
+        <delete dir="lejos/robotics/navigation" includes="*.java, package.html"/>
+  		<copy overwrite="true"  todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/robotics/navigation/*.java"/>
+  				<include name="lejos/robotics/navigation/package.html"/>
+  				<exclude name="lejos/robotics/navigation/Segway.java"/>
+  				<exclude name="lejos/robotics/navigation/SegwayPilot.java"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/robotics/mapping"/>
+  		<delete dir="lejos/robotics/mapping" includes="*.java, package.html"/>
+  		<copy overwrite="true" todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/robotics/mapping/*.java"/>
+  				<include name="lejos/robotics/mapping/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/robotics/pathfinding"/>
+  		<delete dir="lejos/robotics/pathfinding" includes="*.java, package.html"/>
+  		<copy overwrite="true" todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/robotics/pathfinding/*.java"/>
+  				<include name="lejos/robotics/pathfinding/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/robotics/objectdetection"/>
+  		<delete dir="lejos/robotics/objectdetection" includes="*.java, package.html"/>
+  		<copy overwrite="true"  todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/robotics/objectdetection/*.java"/>
+  				<include name="lejos/robotics/objectdetection/package.html"/>
+  			</fileset>
+  		</copy>
+  		<mkdir dir="lejos/util/"/>
+  		<delete dir="lejos/util/" includes="*.java, package.html"/>
+  		<copy overwrite="true" todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/util/Delay.java"/>
+  				<include name="lejos/util/Matrix.java"/>
+  				<include name="lejos/util/LUDecomposition.java"/>
+  				<include name="lejos/util/KalmanFilter.java"/>
+  				<include name="lejos/util/PilotProps.java"/>
+  				<include name="lejos/util/Stopwatch.java"/>
+  				<include name="lejos/util/package.html"/>
+  			</fileset>
+  		</copy>
+
+  	</target>
+</project>

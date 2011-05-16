@@ -1,0 +1,203 @@
+<project name="org.lejos.example" default="uploadandrun">
+	<description>
+    	org.lejos.example.HelloWorld build file
+    </description>
+
+	<!-- set properties for this build -->
+	<property environment="env" />
+	<property file="build.properties" />
+	<property name="src" location="src" />
+	<property name="build" location="build" />
+	<property name="full.main.class" value="${package}.${main.class}" />
+	<property name="binary" value="${build}/${main.class}.nxj" />
+	<property name="debug" value="${build}/${main.class}.nxd" />
+
+	<path id="lejos.pc">
+		<fileset dir="${nxj.home}/lib/pc">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<path id="lejos.nxt">
+		<fileset dir="${nxj.home}/lib/nxt">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+	<condition property="d32Flag" value="-d32" else="-Dblank.dummy.arg=">
+		<and>
+			<os family="mac" />
+		</and>
+	</condition>
+
+	<!-- deletes generated files -->
+	<target name="clean" description="clean up all generated files">
+		<delete dir="${build}" />
+	</target>
+
+	<target name="compile" depends="clean" description="compile the source ">
+		<!-- Compile the java code from ${src} to ${build}  -->
+		<mkdir dir="${build}" />
+		<javac srcdir="${src}" destdir="${build}" includeantruntime="false" verbose="false">
+			<bootclasspath refid="lejos.nxt" />
+			<!--
+				Without this, there are some JDK jars in the classpath.
+				Set verbose=true to check that the classpath is really clean.
+			-->
+    		<compilerarg value="-extdirs" />
+    		<compilerarg value="" />
+		</javac>
+	</target>
+
+	<target name="link" depends="compile" description="link the binary ">
+		<!-- Link the binary and create a signature file -->
+		<java classname="lejos.pc.tools.NXJLink" failonerror="true">
+			<classpath refid="lejos.pc" />
+			<arg value="--bootclasspath" />
+			<arg pathref="lejos.nxt" />
+			<arg value="--classpath" />
+			<arg path="${build}" />
+			<arg value="--writeorder" />
+			<arg value="LE" />
+			<arg value="-o" />
+			<arg file="${binary}" />
+			<arg value="-od" />
+			<arg file="${debug}" />
+			<arg value="-v" />
+			<arg value="${full.main.class}" />
+		</java>
+	</target>
+	
+	<target name="debuglink" depends="compile" description="link the binary">
+		<!-- Link the binary and create a signature file -->
+		<java classname="lejos.pc.tools.NXJLink" failonerror="true">
+			<classpath refid="lejos.pc" />
+			<arg value="--bootclasspath" />
+			<arg pathref="lejos.nxt" />
+			<arg value="--classpath" />
+			<arg path="${build}" />
+			<arg value="--writeorder" />
+			<arg value="LE" />
+			<arg value="-o" />
+			<arg file="${binary}" />
+			<arg value="-od" />
+			<arg file="${debug}" />
+			<arg value="-gr" />
+			<arg value="-v" />
+			<arg value="${full.main.class}" />
+		</java>
+	</target>
+	
+	<target name="upload" depends="link" description="upload the binary">
+		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="${binary}" />
+		</java>
+	</target>
+	
+	<target name="uploadandrun" depends="link" description="upload and run the binary">
+		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-r" />
+			<arg file="${binary}" />
+		</java>
+	</target>
+	
+	<target name="debuguploadandrun" depends="debuglink" description="upload and run the binary">
+		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-r" />
+			<arg file="${binary}" />
+		</java>
+	</target>
+	
+	<target name="console" depends="debuguploadandrun" description="run a console">
+		<sleep seconds="4" />
+		<java classname="lejos.pc.tools.NXJConsole" fork="true" failonerror="true">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-di" />
+			<arg file="${debug}" />
+		</java>
+	</target>
+	
+	<target name="consoleviewer" depends="debuguploadandrun" description="run the GUI Console Viewer">
+		<sleep seconds="4" />
+		<java classname="lejos.pc.tools.NXJConsoleViewer" fork="true" failonerror="true">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-di" />
+			<arg file="${debug}" />
+		</java>
+	</target>
+	
+	<target name="debugtool" description="run the debug tool">
+		  <input
+		    message="Exception class:"
+		    addproperty="class"
+		  />
+		  <input
+		    message="Method number:"
+		    addproperty="method"
+		  />
+		  <input
+		    message="PC value:"
+		    addproperty="pc"
+		  />
+		<java classname="lejos.pc.tools.NXJDebugTool" fork="true" failonerror="true">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-di" />
+			<arg file="${debug}" />
+			<arg value="-c" />
+			<arg value="-m" />
+			<arg value="${class}" />
+			<arg value="${method}" />
+			<arg value="${pc}" />
+		</java>
+	</target>
+	
+	<!-- generate javadocs -->
+	<target name="docs" description="generate javadocs">
+		<delete dir="${docs}" />
+		
+    	<mkdir dir="${docs}" />
+		<javadoc
+			destdir="${docs}"
+			charset="utf-8"
+			locale="en_US"
+			author="true"
+			access="protected"
+			windowtitle="Project documentation"
+			verbose="false"
+		>
+			<classpath refid="lejos.nxt" />
+    		<arg value="-extdirs"/>
+			<arg value="-quiet"/>
+			
+			<packageset
+				dir="${src}"
+			/>
+		</javadoc>
+	</target>
+
+	<!--  used only for modifying the Netbeans NXJPlugin -->
+	<target name="Zip for Netbeans" description="Zip the application to the sample project">
+		<property name="plugin" location="../NXJPlugin/src/nxjplugin/" />
+		<zip basedir="." destfile="${plugin}/NXJSampleProject.zip">
+			<exclude name="build/**" />
+			<exclude name="bin/**" />
+			<exclude name="dist/**" />
+			<exclude name="nbproject/private/**" />
+			<exclude name=".project" />
+			<exclude name=".classpath" />
+		</zip>
+	</target>
+</project>

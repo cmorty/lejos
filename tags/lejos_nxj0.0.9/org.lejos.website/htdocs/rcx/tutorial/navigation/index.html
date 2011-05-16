@@ -1,0 +1,279 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>Navigation</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="../overview/index.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../overview/toc.html#navigation" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="../communication/index.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1"><b>Trail</b>: Behavior</font>
+
+        <!-- headline -->
+        <h1>Trail: Navigation</h1>
+        <p>
+        <em><b>by <a href="mailto:bbagnall@users.sourceforge.net">Brian Bagnall</a></b></em>
+        <p>
+
+<!-- Brian's stuff -->
+<h1>The Navigator API</h1>
+
+<p>The leJOS Navigator API provides a convenient set of methods to control a robot. There are methods for moving to any location and controlling the direction of movement. A Navigator object will automatically keep track of the current angle and x, y coordinates after every movement. The great part about this class is that it can be used by any robot with differential steering, regardless of the construction of the robot.</p>
+<p>Differential steering has one requirement: the robot must be able to turn within its own footprint. That is, it must be able to change direction without changing its x and y coordinates. The robot can have wheels with a diameter of eight centimeters or three centimeters, or no wheels at all (treads, legs), or it can be fast or slow - it doesn’t matter! </p>
+<p>These types of physical parameters are addressed by the constructor of the Navigator class. Once these parameters are set, the Navigator class works the same for all differential robots. Let’s examine the actual interface.</p>
+
+<h2>josx.robotics.Navigator</h2>
+
+<H3>forward</H3>
+
+public void <B>forward</B>()
+<DL>
+<DD>Moves the RCX robot forward until stop() is called.</DD>
+<P>
+</DL>
+<HR>
+
+<H3>backward</H3>
+
+public void <B>backward</B>()
+<DL>
+<DD>Moves the RCX robot backward until stop() is called.</DD>
+<P>
+</DL>
+<HR>
+
+<H3>travel</H3>
+
+public void <B>travel</B>(int&nbsp;distance)
+<DL>
+<DD>Moves the RCX robot a specific distance. A positive value moves it forward and
+ a negative value moves it backward. Method returns when movement is done.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>distance</CODE> - The positive or negative distance to move the robot.</DL>
+</DD>
+</DL>
+<HR>
+
+<H3>stop</H3>
+
+public void <B>stop</B>()
+<DL>
+<DD>Halts the RCX robot and calculates new x, y coordinates.</DD>
+<P>
+</DL>
+<HR>
+
+<H3>rotate</H3>
+
+public void <B>rotate</B>(float&nbsp;angle)
+<DL>
+<DD>Rotates the RCX robot a specific number of degrees in a direction (+ or -).This
+ method will return once the rotation is complete.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>angle</CODE> - Angle to rotate in degrees. A positive value rotates left, a negative value right.</DL>
+</DD>
+</DL>
+<HR>
+
+<H3>gotoAngle</H3>
+
+public void <B>gotoAngle</B>(float&nbsp;angle)
+<DL>
+<DD>Rotates the RCX robot to point in a certain direction. It will take the shortest
+ path necessary to point to the desired angle. Method returns once rotation is complete.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>angle</CODE> - The angle to rotate to, in degrees.</DL>
+</DD>
+</DL>
+<HR>
+
+<H3>gotoPoint</H3>
+
+public void <B>gotoPoint</B>(float&nbsp;x, float&nbsp;y)
+<DL>
+<DD>Rotates the RCX robot towards the target point and moves the required distance.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - The x coordinate to move to.<DD><CODE>y</CODE> - The y coordinate to move to.</DL>
+</DD>
+</DL>
+<HR>
+
+<H3>getX</H3>
+
+public float <B>getX</B>()
+<DL>
+<DD>Returns the current x coordinate of the RCX.
+ Note: At present it will only give an updated reading when the RCX is stopped.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>float Present x coordinate.</DL>
+</DD>
+</DL>
+<HR>
+
+<H3>getY</H3>
+
+public float <B>getY</B>()
+<DL>
+<DD>Returns the current y coordinate of the RCX.
+ Note: At present it will only give an updated reading when the RCX is stopped.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>float Present y coordinate.</DL>
+</DD>
+</DL>
+<HR>
+
+<H3>getAngle</H3>
+
+public float <B>getAngle</B>()
+<DL>
+<DD>Returns the current angle the RCX robot is facing.
+ Note: At present it will only give an updated reading when the RCX is stopped.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>float Angle in degrees.</DL>
+</DD>
+</DL>
+<HR>
+
+<h1>TimingNavigator</h1>
+
+<p>The Navigator interface is used for two classes in the josx.robotics package: TimingNavigator and RotationNavigator. This tutorial will use TimingNavigator exclusively because it is the easiest to use and requires no additional Lego parts.</p>
+<p>TimingNavigator relies on keeping track of coordinates by measuring movement in terms of the number of seconds it has travelled or rotated. Robots have different wheel radii, different gearing, different motor strengths and different axle lengths so the timing constants for a particular robot will differ. In order to accomodate this, the TimingNavigator class requires values for the time it takes for the robot to move any given distance, and the time it takes to rotate any given angle.</p>
+
+<p>Both of these values could be given in the form of speeds, but to make things easier the constructor just asks for the time it takes to travel one-hundred units (inches or centimeters - whatever you prefer to use), and the time it takes to complete one full rotation. The constructor also requires two Motor objects - one for the left wheel and one for the right. This is to let it know which output ports are being used to drive the movement.</p>
+
+<H3>TimingNavigator Constructor</H3>
+
+public <B>TimingNavigator</B>(<A HREF="../../josx/platform/rcx/Motor.html">Motor</A>&nbsp;right,
+                       <A HREF="../../josx/platform/rcx/Motor.html">Motor</A>&nbsp;left,
+                       float&nbsp;timeOneMeter,
+                       float&nbsp;timeRotate)
+<DL>
+<DD>Allocates a Navigator object and initializes if with the left and right wheels.
+ The x and y values will each equal 0 (cm's) on initialization, and the starting
+ angle is 0 degrees, so if the first move is forward() the robot will run along
+ the x axis.
+ <BR> Note: If you find your robot is going backwards when you tell it to go forwards, try
+ rotating the wires to the motor ports by 90 degrees.
+<P>
+<DT><B>Parameters:</B><DD><CODE>right</CODE> - The motor used to drive the right wheel e.g. Motor.C.<DD><CODE>left</CODE> - The motor used to drive the left wheel e.g. Motor.A.<DD><CODE>timeOneMeter</CODE> - The number of seconds it takes your robot to drive one meter (e.g. 2.0 seconds is normal for a fast robot, 5 seconds for a slower robot).<DD><CODE>timeRotate</CODE> - The number of seconds it takes your robot to rotate 360 degrees. (e.g. 0.646 is normal for a small axle length, 2.2 for a larger axle length)</DL>
+
+<h1>Programming a Robot</h1>
+<p>For this part of the tutorial you will need to build a robot that can rotate in its own footprint. Once it is completed you can give it some intelligent navigation abilities.</p>
+<p>The TimingNavigator requires us to figure out how long it takes to travel one meter, and how long it takes to rotate 360 degrees. The first part is easy; all we need to do is make a simple program to get it moving forward and then time it:</p>
+
+<p>
+import josx.platform.rcx.*;<br>
+class TravelTest {<br>
+&nbsp;&nbsp;&nbsp;public static void main(String [] args) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motor.A.setPower(7); // Change to equalize motors<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motor.C.setPower(7); // Change to equalize motors<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motor.A.forward();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motor.C.forward();<br>
+&nbsp;&nbsp;&nbsp;}<br>
+}
+</p>
+<p>The above code has two lines for setting the power to each motor. Generally the motors do not produce the same torque, which can cause your robot to veer off in one direction. When I first tested Trilobot, it veered off significantly to the left indicating motor C is turning faster than motor A. By playing around with the aPower argument in the setPower() method, I came up with the following revised code:</p>
+<p>
+import josx.platform.rcx.*;<br>
+class TravelTest {<br>
+&nbsp;&nbsp;&nbsp;public static void main(String [] args) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motor.A.setPower(7);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motor.C.setPower(4); // Decreases power<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motor.A.forward();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motor.C.forward();<br>
+&nbsp;&nbsp;&nbsp;}<br>
+}
+</p>
+<p>It is very important to balance the two motors! If they are not balanced the robot will be thrown off course. Now we need to create a small track for Trilobot by measuring out a meter (100 centimeters) on the floor. If you want, you can measure out 100 inches if you are more comfortable using the imperial system of measurements, but just make sure you consistently use inches with all measurements. If you use inches in the constructor, the TimingNavigator class will use inches for the x and y coordinates.</p>
+<p>For better accuracy, instead of measuring 100 units, you can measure out 400 units, and then divide the final result by four to get the average. My test is on carpet, which will produce different times than if it was on a hard surface. The total four meter trip took 21.9 seconds, so we will use the value of 5.475 seconds per meter. Next, we need to measure the time it takes to rotate 360 degrees. For this, I’m going to make it rotate four times and average them out. The code is the same as above, only one of the motors will move backwards:</p>
+<p>
+import josx.platform.rcx.*;<br>
+class RotateTest {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public static void main(String [] args) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motor.A.setPower(7);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motor.C.setPower(4); // Decreases power<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motor.A.forward();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motor.C.backward();<br>
+&nbsp;&nbsp;&nbsp;}<br>
+}</p>
+<p>Four complete rotations took 16.00 seconds, so one rotation is about 4.0 seconds. I also tried rotating counter-clockwise to see if it produced a different result, but it was quite similar at 16.27 seconds, or 4.0675 seconds. I’ll use a final average of 4.03 seconds. Now that we have our two required values we can create a TimingNavigator object and try out some simple functions.</p>
+<p>Our first test will make your robot spin 360 degrees (so we can see how accurate we were with the calibrations), then trace out the shape of a square. The path will look similar to Figure 7-8. In order to trace the square, we will make it go to the following coordinates: (100,0) (100,100) (0,100) (0,0).</p>
+
+<p>
+import josx.platform.rcx.*;<br>
+import josx.robotics.*;<br>
+<br>
+class Testbot {<br>
+<br>
+&nbsp;&nbsp;&nbsp;public static void main(String [] args) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motor.A.setPower(7);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motor.C.setPower(5);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TimingNavigator n = new TimingNavigator(Motor.C, Motor.A, 5.475f, 4.03f);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n.rotate(360);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n.gotoPoint(100,0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n.gotoPoint(100,100);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n.gotoPoint(0,100);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n.gotoPoint(0,0);<br>
+&nbsp;&nbsp;&nbsp;}<br>
+}
+</p>
+<p>Note: The third and fourth parameters in the above constructor will likely be different for you than the values above (5.475 and 4.03). These values are dependent on the motor strengths and battery charge of your robot. If your robot uses lithium batteries the wheels will probably turn faster, so the parameters in the constructor will likely be smaller than a robot that uses rechargable batteries.</p>
+
+<p>In the above code we have retained the method calls to setPower() in order to equalize the motors. If all goes well the robot should complete a full square and then stop. If you notice your robot rotates more than 360 degrees, you might want to consider lowering the rotate argument in the TimingNavigator constructor, and likewise if it doesn’t rotate enough it should be increased. Once this is straightened out as close as possible (it will never be perfect) you can move on to some more serious uses of the Navigator class.</p>
+<!-- end of Brian's stuff -->
+        <hr>
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="../overview/index.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../overview/toc.html#navigation" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="../communication/index.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>

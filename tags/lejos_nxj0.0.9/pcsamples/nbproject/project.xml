@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.ant.freeform</type>
+    <configuration>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
+            <name>pcsamples</name>
+        </general-data>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
+            <!-- Do not use Project Properties customizer when editing this file manually. -->
+            <name>pcsamples</name>
+            <properties/>
+            <folders>
+                <source-folder>
+                    <label>pcsamples</label>
+                    <location>.</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>AccelDemo</label>
+                    <type>java</type>
+                    <location>AccelDemo</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>BTSend</label>
+                    <type>java</type>
+                    <location>BTSend</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>NodeSearch</label>
+                    <type>java</type>
+                    <location>NodeSearch</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>RCNavigationControl</label>
+                    <type>java</type>
+                    <location>RCNavigationControl</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>RemotePilotControl</label>
+                    <type>java</type>
+                    <location>RCNavigationControl</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>SensorTest</label>
+                    <type>java</type>
+                    <location>SensorTest</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>SocketServer</label>
+                    <type>java</type>
+                    <location>SocketServer</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>TachoCount</label>
+                    <type>java</type>
+                    <location>TachoCount</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>USBSend</label>
+                    <type>java</type>
+                    <location>USBSend</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+            </folders>
+            <ide-actions>
+                <action name="build">
+                    <target>build</target>
+                </action>
+                <action name="clean">
+                    <target>clean</target>
+                </action>
+                <action name="rebuild">
+                    <target>clean</target>
+                    <target>build</target>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-AccelDemo</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>AccelDemo</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-BTSend</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>BTSend</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-NodeSearch</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>NodeSearch</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-RCNavigationControl</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>RCNavigationControl</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-RemotePilotControl</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>RemotePilotControl</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-SensorTest</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>SensorTest</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-SocketServer</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>SocketServer</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-TachoCount</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>TachoCount</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-USBSend</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>USBSend</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+            </ide-actions>
+            <view>
+                <items>
+                    <source-folder style="packages">
+                        <label>AccelDemo</label>
+                        <location>AccelDemo</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>BTSend</label>
+                        <location>BTSend</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>NodeSearch</label>
+                        <location>NodeSearch</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>RCNavigationControl</label>
+                        <location>RCNavigationControl</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>RemotePilotControl</label>
+                        <location>RCNavigationControl</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>SensorTest</label>
+                        <location>SensorTest</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>SocketServer</label>
+                        <location>SocketServer</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>TachoCount</label>
+                        <location>TachoCount</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>USBSend</label>
+                        <location>USBSend</location>
+                    </source-folder>
+                    <source-file>
+                        <location>build.xml</location>
+                    </source-file>
+                </items>
+                <context-menu>
+                    <ide-action name="build"/>
+                    <ide-action name="rebuild"/>
+                    <ide-action name="clean"/>
+                </context-menu>
+            </view>
+            <subprojects/>
+        </general-data>
+        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
+            <compilation-unit>
+                <package-root>AccelDemo</package-root>
+                <package-root>BTSend</package-root>
+                <package-root>NodeSearch</package-root>
+                <package-root>RCNavigationControl</package-root>
+                <package-root>RemotePilotControl</package-root>
+                <package-root>SensorTest</package-root>
+                <package-root>SocketServer</package-root>
+                <package-root>TachoCount</package-root>
+                <package-root>USBSend</package-root>
+                <classpath mode="compile">../pccomms/lib/pccomm.jar;../pctools/lib/pctools.jar</classpath>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+        </java-data>
+    </configuration>
+</project>

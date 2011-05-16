@@ -1,0 +1,248 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>lejos</groupId>
+        <artifactId>lejos-parent</artifactId>
+        <version>0.9-SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>classes-test</artifactId>
+
+    <name>${project.artifactId} : Unit Tests of Core java classes</name>
+    <description>Unit Tests Core java classes for lejos jvm which execute natively on the NXT hardware.</description>
+
+    <scm>
+        <connection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/${project.artifactId}</connection>
+        <developerConnection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/${project.artifactId}</developerConnection>
+    </scm>
+    <url>http://lejos.sourceforge.net/</url>
+    
+    <packaging>jar</packaging>
+
+    <build>
+
+        <plugins>
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <!-- For maven lifecycle order, see: http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
+                    
+                    <!-- create empty nirvana dir before compile -->
+                    <execution>
+                        <id>pre-compile</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${nirvana.dir}" />
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <!-- delete empty nirvana dir before package -->
+                    <execution>
+                        <id>post-compile</id>
+                        <phase>prepare-package</phase> <!-- keep dir around for unit testing with junit-lejos. -->
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete dir="${nirvana.dir}" />
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <!-- run unit tests with junit-lejos jar -->
+                    <execution>
+                        <id>test</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <property name="test_classpath" refid="maven.test.classpath"/>
+                                
+                                <java   classname="AllTests"
+                                        fork="true"
+                                        failonerror="true"
+                                        >
+
+                                    <!-- uncleared bootclasspath means we are not using lejos core runtime classes.
+                                    Even so, running at all provides a small sanity check.
+                                    <bootclasspath>
+                                        <pathelement location="${nirvana.dir}" />
+                                    </bootclasspath>
+                                    -->
+
+                                    <sysproperty key="java.ext.dirs" path="${nirvana.dir}"/>
+
+                                    <classpath>
+                                        <pathelement path="${test_classpath}"/>
+                                    </classpath>
+
+                                    
+                                </java>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${source.version}</source>
+                    <target>${target.version}</target>
+
+                    <!--
+                        All that is need to kick any class from Sun's JDK out of the classpath.
+                        Check the search paths using verbose="true" that they really don't contain
+                        anything from the JDK, Ant, etc.
+                        There doesn't seem to be a clean way of having an empty (boot)classpath.
+                        javac keeps adding "." or even worse "" to the path. So i'm adding the
+                        nirvana path to the classpath.
+                    -->
+                    <compilerArguments>
+                        <bootclasspath>${nirvana.dir}</bootclasspath>
+                        <extdirs>${nirvana.dir}</extdirs>
+                    </compilerArguments>
+
+                    <verbose>true</verbose>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- run nothing with the regular junit/surefire, would fail due missing reflection methods-->
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+        
+    </build>
+
+    <profiles>
+        <profile>
+            <!-- link, load, and run unit tests on the nxj hardware. -->
+            <id>nxj</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>debuglink</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <!-- we only need to make this dir because the project has only 'test' classes,
+                                        otherwise TinyVM complains about the 'target/classes' missing. -->
+                                        <mkdir dir="${project.build.outputDirectory}"/>
+                                        
+                                        <property name="test_classpath" refid="maven.test.classpath"/>
+                                            
+                                        <!--<basename property="program" file="."/>-->
+                                        <basename property="program" file="AllTests"/>
+                                        <property name="binary" value="${project.build.directory}/${program}.nxj" />
+                                        <property name="debug" value ="${project.build.directory}/${program}.nxd" />
+                                        
+                                        <!-- Link the binary and create a signature file -->
+                                        <java classname="js.tinyvm.TinyVM"
+                                              fork="true"
+                                              failonerror="true"
+                                                >
+                                            <arg value="--bootclasspath"/>
+                                            <arg path="${lejos:classes:jar}"/>
+                                            <arg value="--classpath"/>
+                                            <arg path="${test_classpath}/"/>
+                                            <arg value="--writeorder"/>
+                                            <arg value="LE"/>
+                                            <arg value="${program}"/>
+                                            <arg value="-o"/>
+                                            <arg value="${binary}"/>
+                                            <arg value="-v"/>
+                                            <arg value="-gr"/>
+                                            <arg value="${debug}"/>
+                                            <classpath>
+                                                <pathelement path="${test_classpath}"/>
+                                            </classpath>
+                                        </java>
+
+                                        <!-- upload and run the binary -->
+                                        <java classname="lejos.pc.tools.NXJUpload"
+                                              fork="true"
+                                              failonerror="true"
+                                                >
+                                            <jvmarg value="-Djava.library.path=${basedir}/../release/dist/lejos_nxj/bin"/>
+                                            <jvmarg value="-Dnxj.home=${basedir}/../release/dist/lejos_nxj"/>
+                                            <arg value="${binary}"/>
+                                            <arg value="-r"/>
+                                            <classpath>
+                                                <pathelement path="${test_classpath}"/>
+                                            </classpath>
+                                        </java>
+
+                                        <sleep seconds="4"/>
+                                        
+                                        <!-- attach a remote console to NXJ -->
+                                        <java classname="lejos.pc.tools.Console"
+                                              fork="true"
+                                              failonerror="true"
+                                                >
+                                            <jvmarg value="-Djava.library.path=${basedir}/../release/dist/lejos_nxj/bin"/>
+                                            <jvmarg value="-Dnxj.home=${basedir}/../release/dist/lejos_nxj"/>
+                                            <arg value="-gr"/>
+                                            <arg value="${debug}"/>
+                                            <classpath>
+                                                <pathelement path="${test_classpath}"/>
+                                            </classpath>
+                                        </java>
+
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            
+        </profile>
+    </profiles>
+    <dependencies>
+        <dependency>
+            <groupId>lejos</groupId>
+            <artifactId>junit-lejos</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>lejos</groupId>
+            <artifactId>pctools</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>lejos</groupId>
+            <artifactId>classes</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

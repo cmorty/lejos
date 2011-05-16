@@ -1,0 +1,38 @@
+<!--
+  ==================================================
+  Buildfile for building PC samples
+  ==================================================
+-->
+<project name="PC Samples" default="build" basedir=".">
+
+	<!-- set properties for this build -->
+	<property environment="env" />
+	<property file="build.properties" />
+
+	<path id="lejos.pc">
+		<fileset dir="${nxj.home}/lib/pc">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<path id="lejos.nxt">
+		<fileset dir="${nxj.home}/lib/nxt">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="build" description="compile PC samples">
+		<mkdir dir="build/classes" />
+		<javac srcdir="." destdir="build/classes" debug="on" source="1.5" target="1.5" includeantruntime="false">
+			<classpath refid="lejos.pc" />
+		</javac>
+	</target>
+
+	<!-- deletes class files -->
+	<target name="clean" description="clean up all generated files">
+		<delete>
+			<fileset dir=".">
+				<include name="**/*.class" />
+			</fileset>
+		</delete>
+	</target>
+</project>

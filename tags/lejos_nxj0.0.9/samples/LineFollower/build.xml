@@ -1,0 +1,37 @@
+<project name="Line" default="uploadandrun">
+    <description>
+    	Line build file
+    </description>
+
+	<target name="clean" description="clean up all generated files" >
+		<ant antfile="../samplebuild.xml" target="clean"/>
+	</target>
+
+	<target name="compile" description="compile the source" >
+		<ant antfile="../samplebuild.xml" target="compile"/>
+	</target>
+		
+	<target name="link" description="link the binary" >
+		<ant antfile="../samplebuild.xml" target="link"/>
+	</target>
+		
+	<target name="upload" description="upload the binary" >
+		<ant antfile="../samplebuild.xml" target="upload"/>
+	</target>
+		
+	<target name="uploadandrun" description="upload and run the binary" >
+		<ant antfile="../samplebuild.xml" target="uploadandrun"/>
+	</target>
+	
+	<target name="console" description="console run" >
+		<ant antfile="../samplebuild.xml" target="console"/>
+	</target>
+
+	<target name="consoleviewer" description="run the GUI console viewer" >
+		<ant antfile="../samplebuild.xml" target="consoleviewer"/>
+	</target>
+	
+	<target name="debugtool" description="run debugtool" >
+		<ant antfile="../samplebuild.xml" target="debugtool"/>
+	</target>
+</project>

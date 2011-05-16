@@ -1,0 +1,144 @@
+<!--
+  ==================================================
+  Buildfile for building classes.jar for NXT
+  ==================================================
+-->
+<project name="leJOS NXT Java classes" default="all" basedir=".">
+	
+	<property file="build.properties" />
+	
+	<!-- Special folder that shouldn't exist. It's used obtain empty (boot)classpath. -->
+	<property name="nirvana.dir" value="${build.dir}/nirvana" />
+	
+ 	<!-- compiles the classes -->
+  	<target name="classes" description="compile classes">
+  		<!--
+  			Ant is NOT suitable for incremental compilation.
+  			It doesn't keep track of inlined constants and possibly
+  			other things. So we simply delete the output folder.
+  		--> 
+		<delete dir="${classes.dir}" />
+		
+    	<mkdir dir="${classes.dir}" />
+  		<mkdir dir="${nirvana.dir}" />
+    	<javac
+    		srcdir="${source.dir}"
+    		includes="${source.include}"
+    		excludes="${source.exclude}"
+    		encoding="${source.encoding}"
+    		source="${source.version}"
+    		target="${target.version}"
+  			destdir="${classes.dir}"
+    		debug="true"
+    		includeAntRuntime="false"
+  			includeJavaRuntime="false"
+    		verbose="false"
+    	>
+      		<!--
+      			All that is need to kick any class from Sun's JDK out of the classpath.
+      			Check the search paths using verbose="true" that they really don't contain
+      			anything from the JDK, Ant, etc.
+      			There doesn't seem to be a clean way of having an empty (boot)classpath.
+      			javac keeps adding "." or even worse "" to the path. So i'm adding the
+      			nirvana path to the classpath. 
+      		--> 
+    		<bootclasspath>
+    			<pathelement location="${nirvana.dir}" />
+    		</bootclasspath>
+    		<compilerarg value="-extdirs"/>
+    		<compilerarg path="${nirvana.dir}" />
+    		
+    		<!-- enable warnings -->
+    		<compilerarg value="-Xlint:${source.warn}" />
+  		</javac>
+  		
+  		<delete dir="${nirvana.dir}" />
+  	</target>
+	
+ 	<!-- creates the classes jar -->
+	<target name="classes.jar" description="generate jar of classes" depends="classes">
+		<dirname property="tmp" file="${classes.jar}" />
+    	<mkdir dir="${tmp}" />
+    	<jar
+    		basedir="${classes.dir}"
+			destfile="${classes.jar}"
+    	/>
+	</target>
+	
+	<!-- generate javadocs -->
+	<target name="docs" description="generate javadocs">
+		<delete dir="${docs.dir}" />
+		
+    	<mkdir dir="${docs.dir}" />
+  		<mkdir dir="${nirvana.dir}" />
+		<javadoc
+    		encoding="${source.encoding}"
+			source="${source.version}"
+			destdir="${docs.dir}"
+			charset="utf-8"
+			locale="en_US"
+			author="true"
+			access="protected"
+			windowtitle="leJOS NXJ API documentation"
+			verbose="false"
+		>
+			<!-- see above for why this is needed -->
+    		<bootclasspath>
+    			<pathelement location="${nirvana.dir}" />
+    		</bootclasspath>
+    		<classpath>
+    			<pathelement location="${nirvana.dir}" />
+    		</classpath>
+    		<arg value="-extdirs"/>
+    		<arg path="${nirvana.dir}" />
+			
+	    	<arg value="-quiet"/>
+			
+			<packageset
+				dir="${source.dir}"
+	    		includes="${source.include}"
+	    		excludes="${source.exclude}"
+			/>
+		</javadoc>
+		
+  		<delete dir="${nirvana.dir}" />
+	</target>
+	
+	<!-- zip the javadocs -->
+	<target name="docs.zip" description="generate zip of javadocs" depends="docs">
+		<dirname property="tmp" file="${docs.zip}" />
+    	<mkdir dir="${tmp}" />
+    	<zip
+    		basedir="${docs.dir}"
+			destfile="${docs.zip}"
+    	/>
+	</target>
+	
+	<!-- zip the project -->
+	<target name="source.zip" description="generate zip of sources">
+		<dirname property="tmp" file="${source.zip}" />
+    	<mkdir dir="${tmp}" />
+    	<zip destfile="${source.zip}"
+    		basedir="${basedir}"
+    		includes="${dist.include}"
+    		excludes="${dist.exclude}"
+    	/>
+	</target>
+	
+	<target name="all" description="classes.jar, docs.zip and source.zip" depends="classes.jar, docs.zip, source.zip" />
+		
+	<!-- delete everything generated -->
+	<target name="clean" description="clean up all generated files">
+		<delete dir="${build.dir}" />
+		
+		<delete dir="${docs.dir}" />
+		<delete file="${docs.zip}" />
+		
+		<delete dir="${classes.dir}" />
+		<delete file="${classes.jar}" />
+		
+		<delete file="${source.zip}" />
+		
+  		<delete dir="${nirvana.dir}" />
+	</target>
+</project>

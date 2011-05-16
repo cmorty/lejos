@@ -1,0 +1,137 @@
+<project name="StartUpText" default="all" basedir=".">
+	<description>
+		StartUpText build file
+	</description>
+
+	<property file="build.properties" />
+	<property file="${lejos.classes}/build.properties" prefix="vars.classes"/>
+	
+
+	<target name="all" depends="link, docs.zip, source.zip" />
+
+	<!-- deletes class files -->
+	<target name="clean" description="clean up all generated files">
+		<delete dir="${build.dir}"/> 
+	</target>
+	
+	<target name="compile" description="compile the source " >
+		<!-- Compile the java code from ${src}	-->
+		<delete dir="${classes.dir}"/>
+		<mkdir dir="${classes.dir}"/>
+		<javac
+    		srcdir="${source.dir}"
+    		includes="${source.include}"
+    		excludes="${source.exclude}"
+    		encoding="${source.encoding}"
+    		source="${source.version}"
+    		target="${target.version}"
+  			destdir="${classes.dir}"
+    		debug="true"
+    		includeAntRuntime="false"
+  			includeJavaRuntime="false"
+    		verbose="false"			
+		>
+			<bootclasspath>
+				<pathelement location="${lejos.classes}/${vars.classes.classes.jar}"/>
+			</bootclasspath>
+			<!--
+				Without this, there are some JDK jars in the classpath.
+				Set verbose=true to check that the classpath is really clean.
+			-->
+    		<compilerarg value="-extdirs" />
+    		<compilerarg value="" />
+    		
+    		<!-- enable warnings -->
+    		<compilerarg value="-Xlint:${source.warn},-path" />
+		</javac>
+	</target>
+	
+	<target name="link" depends="compile" description="link the binary " >
+		<!-- Link the binary and create a signature file -->
+		<java classname="lejos.pc.tools.NXJLink" failonerror="true"
+			output="${startup.out}" logerror="true">
+			<arg value="--bootclasspath"/>
+			<arg path="${lejos.classes}/${vars.classes.classes.jar}" /> 
+			<arg value="--classpath"/>
+			<arg path="${classes.dir}" /> 
+			<arg value="--writeorder" />
+			<arg value="LE" />
+			<arg value="-o"/>
+			<arg file="${startup.bin}"/>
+			<arg value="-od"/>
+			<arg file="${startup.debug}"/>
+			<arg value="-v"/>
+			<arg value="${startup.class}"/>
+			<classpath>
+				<pathelement location="${lejos.jtools}/lib/jtools.jar"/>
+				<pathelement location="${lejos.jtools}/3rdparty/lib/bcel.jar"/>
+				<pathelement location="${lejos.pccomms}/lib/pccomm.jar"/>
+				<pathelement location="${lejos.pctools}/lib/pctools.jar"/>
+				<pathelement location="${lejos.pctools}/3rdparty/lib/commons-cli.jar"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<!-- generate javadocs -->
+	<target name="docs" description="generate javadocs">
+		<delete dir="${docs.dir}" />
+    	<mkdir dir="${docs.dir}" />
+		<javadoc
+    		encoding="${source.encoding}"
+			source="${source.version}"
+			destdir="${docs.dir}"
+			charset="utf-8"
+			locale="en_US"
+			author="true"
+			access="protected"
+			verbose="false"
+		>
+			<bootclasspath>
+				<pathelement location="${lejos.classes}/${vars.classes.classes.jar}"/>
+			</bootclasspath>
+			<classpath>
+				<pathelement location="${lejos.classes}/${vars.classes.classes.jar}"/>
+			</classpath>
+			
+			<!--
+				Without this, there are some JDK jars in the classpath.
+				Set verbose=true to check that the classpath is really clean.
+			-->
+    		<arg value="-extdirs" />
+    		<arg value="" />
+			
+	    	<arg value="-quiet"/>
+			
+			<fileset
+				dir="${source.dir}"
+	    		includes="${source.include}"
+	    		excludes="${source.exclude}"
+			>
+				<!-- javadoc only wants *.java files -->
+				<filename name="**/*.java"/>
+			</fileset>
+		</javadoc>
+	</target>
+	
+	<!-- zip the javadocs -->
+	<target name="docs.zip" description="generate zip of javadocs" depends="docs">
+		<dirname property="tmp" file="${docs.zip}" />
+    	<mkdir dir="${tmp}" />
+    	<zip
+    		basedir="${docs.dir}"
+			destfile="${docs.zip}"
+    	/>
+	</target>
+	
+	<!-- zip the project -->
+	<target name="source.zip" description="generate zip of sources">
+		<dirname property="tmp" file="${source.zip}" />
+    	<mkdir dir="${tmp}" />
+    	<zip destfile="${source.zip}"
+    		basedir="${basedir}"
+    		includes="${dist.include}"
+    		excludes="${dist.exclude}"
+    	/>
+	</target>
+	
+</project>

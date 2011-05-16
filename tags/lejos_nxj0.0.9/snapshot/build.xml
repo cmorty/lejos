@@ -1,0 +1,128 @@
+<!--
+  ==================================================
+  Buildfile for release of leJOS NXJ
+  ==================================================
+-->
+<project name="leJOS snapshot" default="all" basedir=".">
+	
+	<!-- Setting up the global properties for the build -->
+  	<property file="build.properties"/>
+  	<property prefix="vars.classes" file="${project.classes}/build.properties"/>
+  	<property prefix="vars.scripts" file="${project.scripts}/build.properties"/>
+  	<property prefix="vars.startup" file="${project.startup}/build.properties"/>
+	
+	<!-- vars, that will one day be contributed by the subprojects themseves-->
+	<property name="vars.jtools.jtools.jar" value="lib/jtools.jar"/>
+	<property name="vars.pctools.pctools.jar" value="lib/pctools.jar"/>
+	<property name="vars.pccomms.pccomms.jar" value="lib/pccomm.jar"/>
+	
+	<target name="debug-vars">
+		<echoproperties/>
+	</target>
+	
+	<!-- release leJOS NXJ --> 
+	<target
+		name="all"
+		depends ="subproject.classes.copy, subproject.jtools.copy, subproject.pccomms.copy, subproject.pctools.copy, subproject.startup.copy, subproject.scripts.copy"
+		description="build/copy lejos files"
+	>
+		<echo message="Done."/>
+	</target>
+
+  	<!-- cleans the distribution -->
+	<target name="clean" description="clean up all generated files">
+	  	<!-- nothing here -->
+  	</target>
+  	
+	<target name="subproject.scripts.build">
+		<echo message="*** entering scripts project"/>
+		<ant inheritAll="false"	dir="${project.scripts}" antfile="build.xml">
+			<target name="clean"/>
+			<target name="all"/>
+		</ant>
+		<echo message="*** leaving scripts project"/>
+	</target>	
+	<target name="subproject.scripts.copy" depends="subproject.scripts.build">
+		<copy todir="bin">
+      		<fileset dir="${project.scripts}/${vars.scripts.windows.dir}" />
+    	</copy>
+	</target>
+	
+	<!-- creates the platform API doc -->
+	<target name="subproject.classes.build">
+		<echo message="*** entering classes project"/>
+		<ant inheritAll="false"	dir="${project.classes}" antfile="build.xml">
+			<target name="clean"/>
+			<target name="classes.jar"/>
+		</ant>
+		<echo message="*** leaving classes project"/>
+	</target>
+	<target name="subproject.classes.copy" depends="subproject.classes.build">
+		<copy todir="lib/nxt">
+			<fileset file="${project.classes}/${vars.classes.classes.jar}"/>
+    	</copy>
+	</target>
+	
+	<target name="subproject.jtools.build">
+		<echo message="*** entering jtools project"/>
+		<ant inheritAll="false"	dir="${project.jtools}" antfile="build.xml">
+			<target name="clean"/>
+			<target name="build"/>
+		</ant>
+		<echo message="*** leaving jtools project"/>
+	</target>
+	<target name="subproject.jtools.copy" depends="subproject.jtools.build">
+		<copy todir="lib/pc">
+			<fileset file="${project.jtools}/${vars.jtools.jtools.jar}"/>
+    	</copy>
+	</target>
+	
+	<target name="subproject.pccomms.build">
+		<echo message="*** entering pccomms project"/>
+		<ant inheritAll="false"	dir="${project.pccomms}" antfile="build.xml">
+			<target name="clean"/>
+			<target name="build"/>
+		</ant>
+		<echo message="*** leaving pccomms project"/>
+	</target>
+	<target name="subproject.pccomms.copy" depends="subproject.pccomms.build">
+		<copy todir="lib/pc">
+			<fileset file="${project.pccomms}/${vars.pccomms.pccomms.jar}"/>
+    	</copy>
+		<copy todir="lib/pc/3rdparty">
+			<fileset dir="${project.pccomms}/3rdparty/lib" >
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="subproject.pctools.build" depends="subproject.pccomms.build, subproject.jtools.build">
+		<echo message="*** entering pctools project"/>
+		<ant inheritAll="false"	dir="${project.pctools}" antfile="build.xml">
+			<target name="clean"/>
+			<target name="build"/>
+		</ant>
+		<echo message="*** leaving pctools project"/>
+	</target>
+	<target name="subproject.pctools.copy" depends="subproject.pctools.build">
+		<copy todir="lib/pc">
+			<fileset file="${project.pctools}/${vars.pctools.pctools.jar}"/>
+    	</copy>
+	</target>
+	
+	<target name="subproject.startup.build" depends="subproject.classes.build, subproject.pctools.build">
+		<echo message="*** entering startup project"/>
+		<ant inheritAll="false"	dir="${project.startup}" antfile="build.xml">
+			<target name="clean"/>
+			<target name="link"/>
+		</ant>
+		<echo message="*** leaving startup project"/>
+	</target>
+	<target name="subproject.startup.copy" depends="subproject.startup.build">
+		<copy todir="bin">
+			<fileset file="${project.startup}/${vars.startup.startup.bin}"/>
+			<fileset file="${project.startup}/${vars.startup.startup.debug}"/>
+    	</copy>
+	</target>
+	
+</project>

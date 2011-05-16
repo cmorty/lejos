@@ -1,0 +1,32 @@
+<!--
+  ==================================================
+  Buildfile for building pccomms
+  ==================================================
+-->
+<project name="pccomms" default="build" basedir=".">
+	
+  	<!-- creates the pccomm jar -->
+  	<target name="build"  description="generate pccomm jar">
+  		<delete dir="build"/>
+    	<mkdir dir="build"/>
+  		<!-- Copy common classes -->
+  		<ant antfile="copy.xml" target="copy"/>
+    	<!-- generate jar file -->
+		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" source="1.5" target="1.5">
+			<classpath location="build"/>
+			<classpath location="3rdparty/lib/bluecove.jar"/>
+		</javac>
+		<mkdir dir="lib"/>
+    	<jar destfile="lib/pccomm.jar" update="false">
+			<fileset dir="build"/>
+			<fileset dir=".">
+				<include name="lejos/util/jni/*.properties"/>
+				<include name="lejos/pc/comm/*.bin"/>
+			</fileset>
+    	</jar>
+  	</target>
+	
+    <target name="clean" description="cleans the build folder">
+		<delete dir="build"/>
+	</target>
+</project>

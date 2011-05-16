@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." name="pcsamples-IDE">
+    <target name="run-selected-file-in-pcsamples">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
+            </classpath>
+        </java>
+    </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
+    <target name="run-selected-file-in-AccelDemo">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
+            </classpath>
+        </java>
+    </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
+    <target name="run-selected-file-in-BTSend">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
+            </classpath>
+        </java>
+    </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
+    <target name="run-selected-file-in-NodeSearch">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
+            </classpath>
+        </java>
+    </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
+    <target name="run-selected-file-in-RCNavigationControl">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
+            </classpath>
+        </java>
+    </target>
+    <target name="run-selected-file-in-RemotePilotControl">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
+            </classpath>
+        </java>
+    </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
+    <target name="run-selected-file-in-SensorTest">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
+            </classpath>
+        </java>
+    </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
+    <target name="run-selected-file-in-SocketServer">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
+            </classpath>
+        </java>
+    </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
+    <target name="run-selected-file-in-TachoCount">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
+            </classpath>
+        </java>
+    </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
+    <target name="run-selected-file-in-USBSend">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="build/classes;../pccomms/lib/pccomm.jar;../pccomms/3rdparty/lib/bluecove-gpl.jar;../pccomms/3rdparty/lib/bluecove.jar;../jtools/3rdparty/lib/commons-cli.jar;../jtools/lib/jtools.jar"/>
+            </classpath>
+        </java>
+    </target>
+</project>

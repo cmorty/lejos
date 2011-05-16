@@ -1,0 +1,38 @@
+<!--
+  ==================================================
+  Buildfile for building jtools
+  ==================================================
+-->
+<project name="jtools" default="build" basedir=".">
+	
+	<!-- copy DB files from nxtvm project -->
+	<target name="copy" description="generate java files">
+		<copy todir="js/tinyvm">
+			<fileset dir="../nxtvm/javavm">
+				<include name="*.db"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- creates the jtools jar -->
+	<target name="build" depends="copy" description="generate jtools jar">
+		<!-- generate tools -->
+		<delete dir="build/classes" />
+		<mkdir dir="build/classes" />
+		<javac srcdir="." destdir="build/classes" source="1.5" target="1.5" debug="on">
+			<classpath location="3rdparty/lib/bcel.jar" />
+		</javac>
+		<mkdir dir="lib"/>
+		<jar destfile="lib/jtools.jar" update="false">
+			<fileset dir="build/classes"/>
+			<fileset dir=".">
+				<include name="js/tinyvm/*.db"/>
+			</fileset>
+		</jar>
+	</target>
+	
+	<target name="clean" description="cleans the build folder">
+		<delete dir="build"/>
+		<delete dir="lib"/>
+	</target>
+</project>

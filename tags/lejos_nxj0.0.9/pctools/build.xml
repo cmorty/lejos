@@ -1,0 +1,27 @@
+<!--
+  ==================================================
+  Buildfile for building pctools
+  ==================================================
+-->
+<project name="pctools" default="build" basedir=".">
+
+	<!-- creates the pctools jar -->
+	<target name="build" description="generate pctools jar">
+		<delete dir="build"/>
+		<mkdir dir="build"/>
+		<!-- generate tools -->
+		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" source="1.5" target="1.5">
+			<classpath location="3rdparty/lib/commons-cli.jar"/>
+			<classpath location="../pccomms/lib/pccomm.jar"/>
+			<classpath location="../jtools/lib/jtools.jar"/>
+			<classpath location="../jtools/3rdparty/lib/bcel.jar"/>
+		</javac>
+		<mkdir dir="lib"/>
+		<jar destfile="lib/pctools.jar" basedir="build" update="false">
+		</jar>
+	</target>
+	
+	<target name="clean" description="cleans the build folder">
+		<delete dir="build"/>
+	</target>
+</project>
