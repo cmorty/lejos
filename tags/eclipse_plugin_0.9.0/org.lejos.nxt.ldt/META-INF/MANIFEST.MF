@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: leJOS NXJ plugin
+Bundle-SymbolicName: org.lejos.nxt.ldt; singleton:=true
+Bundle-Version: 0.9.0.qualifier
+Bundle-Activator: org.lejos.nxt.ldt.LeJOSNXJPlugin
+Bundle-Vendor: www.lejos.org
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.swt,
+ org.eclipse.ui,
+ org.eclipse.jdt.core,
+ org.eclipse.ui.console,
+ org.junit
+Bundle-ClassPath: lejosnxj.jar
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
