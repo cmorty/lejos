@@ -227,21 +227,21 @@
         <dependency>
             <groupId>lejos</groupId>
             <artifactId>junit-lejos</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>lejos</groupId>
             <artifactId>pctools</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>lejos</groupId>
             <artifactId>classes</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 
