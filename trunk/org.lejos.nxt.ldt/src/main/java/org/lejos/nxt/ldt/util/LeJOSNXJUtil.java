@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -313,19 +314,12 @@ public class LeJOSNXJUtil {
 
 
 	public static File resolvePath(IPath path) throws JavaModelException {
-		if (path.getDevice() != null)
-			return path.toFile();
-		
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		if (path.segmentCount() < 2)
-		{
-			String pname = path.segment(0);
-			return root.getProject(pname).getLocation().toFile();
-		}
+		IResource res = root.findMember(path);
+		if (res != null)
+			path = res.getLocation();
 		
-		IFolder f = root.getFolder(path);
-		IPath p = f.getLocation();
-		return p.toFile();
+		return path.toFile();
 	}
 
 	/**
@@ -362,9 +356,8 @@ public class LeJOSNXJUtil {
 						dst.add(resolvePath(classpathEntry.getPath()));
 						break;
 					case IClasspathEntry.CPE_VARIABLE:
-						//TODO add variable support
 					case IClasspathEntry.CPE_CONTAINER:
-						//TODO add container support
+						// variable and container should never occur, since we use resolved classpath
 					default:
 						throw new LeJOSNXJException("unsupported classpath entry "+classpathEntry);
 				}
