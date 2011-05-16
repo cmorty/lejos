@@ -26,6 +26,7 @@
 		
 	    <java classname="${eclipse.equinox.main}"
 	       classpathref="eclipse.equinox.cp"
+	       fork="true"
            failonerror="true">
 	         <arg value="-application"/>
 	         <arg value="org.eclipse.equinox.p2.publisher.UpdateSitePublisher"/>
@@ -47,6 +48,7 @@
        
        <java classname="${eclipse.equinox.main}"
 	       classpathref="eclipse.equinox.cp"
+       	   fork="true"
            failonerror="true">
            <arg value="-application"/>
            <arg value="org.eclipse.equinox.p2.publisher.CategoryPublisher"/>
