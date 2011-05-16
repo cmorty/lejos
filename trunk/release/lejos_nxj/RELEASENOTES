@@ -98,6 +98,7 @@ Kirk Thompson:
 - PID control classes
 - Linear actuator driver
 - Added GyroSensor interface and improvment to Gyro classes
+- Added MMXRegulatedMotor [based on Michael D. Smith's NXTMMXMotor] to work with restructured motor classes/interfaces. 
 
 Juan Antonio Brenha Moral:
 - Added class to support NXTLineLeader based on code from Eric Pascual
@@ -108,24 +109,26 @@ Dan Rollo:
 - Set up continuous build system that aids development
 
 John Tangney:
-Updated the Eclipse plugin and update site to support Eclipse Galileo and later,
-and provided a HOWTO document on how to build the plugin.
+- Updated the Eclipse plugin and update site to support Eclipse Galileo and later,
+  and provided a HOWTO document on how to build the plugin.
 
 Michael Mirwald:
-Contributed the AngleSensor class that supports the HiTechnic angle sensor.
+- Contributed the AngleSensor class that supports the HiTechnic angle sensor.
 
 Mark Crosbie:
-Contributed the GPSSensor class that supports the Dexter Industries dGPS sensor.
+- Contributed the GPSSensor class that supports the Dexter Industries dGPS sensor.
 
 Mike Smith:
-Contributed the NXTMMMX and NXTMMXMotor classes that support the Mindsensors NXTMMX sensor.
-Also the NXTMMXSAmple sample.
+- Contributed the NXTMMMX and NXTMMXMotor classes that support the Mindsensors NXTMMX sensor.
+- Also the NXTMMXSAmple sample.
 
-Robert J Kramer contributed the RealTimeClock class that supports the Mindsensors RTC sensor,
-and also the RTCTest sample. 
+Robert J Kramer:
+- Contributed the RealTimeClock class that supports the Mindsensors RTC sensor,
+  and also the RTCTest sample. 
 
 Daniele Benedettelli:
-Added the CruizCoreGyro class.
+- Added the CruizCoreGyro class.
+
 
 leJOS NXJ 0.85 beta
 -------------------
