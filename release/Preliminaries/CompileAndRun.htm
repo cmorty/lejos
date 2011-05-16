@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en">
+<head><!-- CSS -->		
+	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" /><!-- ICON -->
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />		
+	<title>Compiling and Running Programs</title>
+	<meta name="AUTHOR" content="Roger Glassey" />
+	<meta name="AUTHOR" content="Lawrie Griffiths" />
+</head>
+<body>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table class="n1t1" cellpadding="0" cellspacing="0">
+		<tr>
+			<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
+			<td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
+		</tr>
+	</table>
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table class="n2t1" cellpadding="0" cellspacing="0">
+		<tr>
+			<td class="n2t1r1c1">
+				<div class="nolinkLESSON">Compiling and Running Programs </div>
+				<div class="linkAHEAD"><a href="#1">Using the leJOS NXJ command line tools</a></div>
+				<div class="linkAHEAD2"><a href="#2">nxjc &#8211; compile  a program</a></div>
+				<div class="linkAHEAD2"><a href="#3">nxjlink &#8211; link a program</a></div>
+				<div class="linkAHEAD2"><a href="#4">nxjupload &#8211; upload a program</a></div>
+				<div class="linkAHEAD2"><a href="#5">nxj &#8211; link, upload and run a program</a></div>
+				<div class="linkAHEAD"><a href="#6">Using PC API command line tools</a></div>
+				<div class="linkAHEAD2"><a href="#7">nxjpcc &#8211; compile a PC API program </a></div>
+				<div class="linkAHEAD2"><a href="#8">nxjpc &#8211; run a PC API program  </a></div>
+			</td>
+			<td>
+				<!-- DO NOT MANINPULATE -->
+        		<div id="BreadCrumbs">
+            		<a href="../index.htm" target="_top">Home Page</a> &gt; <a href="#">Compiling and Running NXJ programs</a>
+
+        		</div>
+        		<div class="NavBit">
+                	<a target="_top" href="../Preliminaries/FirstProgram.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../MenuSystem/MenuSystem.htm">Next&nbsp;»</a>
+        		</div>
+				<div id="PageTitle">Compiling and Running Programs</div>
+				<p>This section describes how to compile and run leJOS NXJ programs.</p>
+				
+				<p>Most people will want to write Java programs that run on the NXT brick, but that is not the only option. leJOS NXJ
+				also supports programs that run on the PC and control a NXT robot remotely. Such PC programs can control a NXT robot
+				running the leJOS NXJ menu. They can also remotely control a robot running the standard LEGO firmware. An even more
+				interesting option that leJOS NXJ supports is to write a program that runs partly on the NXT and partly on a PC  with the two parts communicating
+				with each other over Bluetooth or USB. The part of your program that runs on the PC has more memory and processing power available
+				to it and can do more complex processing. It can also display interesting user interfaces such as maps of where your robot
+				is exploring. The part of the program that runs on the NXT can respond quickly to sensors and can accurately control motors. If you are interested in writing PC programs see the <a href="#6">PC API command line tools</a> section below.</p>
+				
+				<p>While we are on the subject, it is also worth mentioning that leJOS NXJ programs can also run on mobile 
+				phones or other devices that support the Java MicroEdition Environment (JME). Such programs can communicate with the NXT over
+				Bluetooth. We plan to add a section to the tutorial soon that will describe how to develop programs that use the leJOS NXJ JME API.</p>
+				
+				<p>You can also communicate with leJOS NXJ programs from Android phones - see the <a href="../Android/Android.htm">Android</a> tutorial page.</p>
+				<p>Finally, leJOS NXJ programs can be distributed across multiple NXT bricks which can communicate with each other over Bluetooth or via RS485 
+				communication using NXT cables linking port 4 of two or more NXT bricks. Oh, and NXT programs can also communicate with external devices
+				such as Bluetooth GPS Receivers. This is all described in <a href="../Communications/Communications.htm">Communications</a> tutorial page.</p>
+				
+				<p>We shall start, however, with writing programs that run on the NXT brick. You can either compile and run your programs using the leJOS NXJ command line tools or you can use an Integrated Development Environment (IDE).</p>
+
+				<p>While command line tools are very useful, programming for leJOS NXJ is best done using an IDE. IDEs have
+				syntax-directed editors that immediately show you any syntax errors in your program, rather than waiting until you compile the
+				program and then showing a list of errors. This, together with color coding of the source, automatic formatting of the code,
+				prompting for method names and signatures, expanding and collapsing parts of your program, and many other editing features,
+				makes creating your program a much faster and more enjoyable experience. But the advantages of the IDE do not end there: they
+				also help you with creating and building projects, debugging, generating documentation, and creating user interfaces. Java IDEs
+				put all the Sun Java tools and a variety of third-party tools at your fingertips. They make supporting new tools simple, either by
+				use of plug-ins or by integration of external tools.</p>
+				<p>IDEs are easy to set up and use and you should use them for all your leJOS programming &#8211; even
+				the simplest of projects. Any type of leJOS NXJ program can be created using an IDE.</p>
+				
+				<p>You can produce leJOS NXJ programs with any Java IDE. This tutorial currently has sections on how to use two of the most popular Jave IDEs: Eclipse and Netbeans.
+				leJOS NXJ supports plugins for these two IDEs which makes writing and testing your programs even simpler.</p>
+				
+				<p>To learn how to create, compile and run your programs from an Integrated Development Environment, go to one of the following sections:</p>
+				<ul class="BlueArrows">
+					<li><a href="UsingEclipse.htm">Eclipse</a></li>
+					<li><a href="UsingNetbeans.htm">Netbeans</a></li>
+				</ul>	
+				
+				<p>This section of the tutorial will teach you how to use the command line tools. If you decide to use the command
+				line tools you can write your program using the editor of your choice. Many programmer's editors will let you invoke
+				the tools directly from the editor.</p>
+				
+				<p>Another option you can use to compile and run your leJOS NXJ programs is to use <em>ant</em> build scripts. ant
+				build scripts are usually used from an IDE. Netbeans does all compiling and building of programs using ant, and it is
+				an option in Eclipse. However, you can also use ant from the command line. ant build scripts are provided for all the leJOS NXJ samples.
+				To run ant build scripts you just change directory to the directory containing the build.xml file and type <em>ant</em>.
+				</p>
+				
+				<p>The scripts described in the following sections are Windows .cmd or .bat files or Unix shell scripts, depending on
+				which operating system you are using. They set up the class path, library path and boot class path needed by leJOS NXJ
+				and then call a Java class that does all the work. The exception to this is <em>nxjc</em> which just calls <em>javac</em>.
+				Note that ant build scripts use the same underlying Java classes, but do not use the scripts.</p>
+				
+				<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+				<a href="#top">Back to top</a>
+				<p/>
+				
+				<a name="1"></a>
+				<h4>Using the leJOS NXJ command line tools</h4>
+								
+				<p>leJOS uses the standard Sun Java compiler for compiling programs. However, it needs to replace the standard Java library
+				   with leJOS's own version of this - classes.jar. For this reason we provide a command called <em>nxjc</em> that sets the boot class path to classes.jar. Its parameter
+				   are the same as those as <em>javac</em></p>
+				   
+				<p>leJOS NXJ programs are different from normal Java programs in that they do not support dynamic class loading. Instead all
+				the classes used in the program are collected together and packaged
+				in a binary file with a .nxj extension. This process is referred
+				to as linking. The linked binary is then uploaded to the NXT.</p>
+
+				<p>The tools for compiling, linking and uploading leJOS NXJ programs are:</p>
+				<ul class="BlueArrows">
+					<li>nxjc</li>
+					<li>nxjlink</li>
+					<li>nxjupload</li>
+					<li>nxj</li>
+				</ul>
+				<p>Note that you normally only need to use the <code>nxjc</code> and <code>nxj</code> commands,
+				   as <code>nxj</code> does the equivalent of <code>nxjlink</code> followed by <code>nxjupload</code>.</p>
+				<p>You need to open a command window to run these commands.</p>
+				
+				<a name="2"></a>
+				<h5>nxjc &#8211; compile a program</h5>
+				<p>Compiles one or more java files.</p>
+				<p>Usage: nxjc &lt;java-files&gt;</p>
+				<p>Example: </p>
+				<code>nxjc View.java</code>
+				<p>nxjc calls javac with parameters:</p>
+				<ul class="BlueArrows">
+					<li>-bootclasspath &lt;path to classes.jar&gt;</li>
+					<li>&lt;java-files&gt;</li>
+				</ul>
+				<p>-bootclasspath is set because leJOS does not use the standard java.lang classes
+						but has its own versions in classes.jar.</p>
+						
+				<p><a href="#top">Back to top</a></p>
+		
+				<a name="3"></a>
+				<h5>nxjlink &#8211; link a program</h5>
+				<p>Calls the leJOS NXJ linker.</p>
+				<p>Usage:  nxjlink [-v|--verbose] [-g|--debug] [-gr|--remotedebug] [-a|--all]
+				                   [-dm|--disablememcompaction] [-ea|--enableassertions]
+				                   [-ec|--enablechecks]
+				                   [-od|--outputdebug &lt;debug-file&gt; ] -o &lt;binary&gt; main-class</p>
+				<p>Example:</p>
+				<code>nxjlink -v Tune -o Tune.nxj</code>
+				<p>Links the specified main class with any
+						classes that it references in the current directory and with the
+						standard leJOS classes from classes.jar to produce a binary NXJ
+						program that can be uploaded and run.</p>
+				<p>The -v or --verbose flag
+						causes a list of class names and method signatures  included in the
+						binary   to be sent to the standard output. This output is extremely useful for debugging.</p>
+				<p>The -g or --debug flag causes a debug monitor to be included with the program. This allows the program
+				   to be interrupted while is running (by pressing ENTER+ESCAPE) and gives stack dumps when untrapped
+				   exceptions occur.</p>
+				<p>The -gr or --remotedebug flag is used to switch on remote debugging, which works with the nxjconsole
+				or nxjconsoleviewer tools.</p>
+				<p>The -od or --outputdebug flag is used to specify an output debug file, which is used by remote
+				   debugging and by nxjdebugtool.</p>
+				<p> The -ec or --enablechecks flag is used to enable additional run time
+                    checks. These checks are relatively expensive (and rarely generate
+                    errors) and so are off by default. Currently the only check that this
+                    setting enables is the testing for ArraystoreExceptions.</p>
+				<p>The -ea or --enableassertions flag is used to enable the checking of
+                   assert statements with the program.</p>
+				<p>The -dm or --disablememcompactions flag is used to disable memory
+                   compaction. Normally the leJOS garbage collector will attempt to move
+                   large objects in memory to maximise the amount of contiguous free
+                   space, this option disables this feature.</p>
+				<p>The linker removes methods that are
+						not used. Specify -a or --all to include all  methods
+						whether they are used or not. This should never be necessary.</p>
+				<p>Use the -h or --help flag to print out the options.</p>
+
+				<p><a href="#top">Back to top</a></p>
+				
+				<a name="4"></a>
+				<h5>nxjupload &#8211; upload a program</h5>
+				<p>Usage: nxjupload [-b|--bluetooth] [-u|--usb] [-d|--address address] [-n|--name name]  [-r|--run]	&lt;binary&gt;</p>
+				<p>Example:</p>
+				<p>nxjupload  Tune.nxj</p>
+				<p>Uploads the binary (.nxj) file. By default USB is tried first and then Bluetooth. If the --bluetooth
+					flag is specified, only Bluetooth is tried. If --usb is specified, only USB
+					is tried.</p>
+				<p>When Bluetooth is used, a search
+					for Bluetooth devices is done, unless the -address flag is
+					set, when a device with the given address is connected to.</p>
+				<p>The --name parameter limits
+					the search for a NXT with the given name. If this is not
+					specified, nxjupload tries to connect to each NXT that it finds
+					and will upload to the first NXT that is successfully connects to.</p>
+				<p>If the --run parameter is
+					specified, the program is run after it has been uploaded.</p>
+		
+				<p><a href="#top">Back to top</a></p>
+				
+				<a name="5"></a>
+				<h5>nxj &#8211; link, upload and run a program</h5>
+				<p>Usage: nxj [options] main-class</p>
+				<p >Example:	</p>
+				<code>nxj -r Tune</code>
+				<p> The nxj command links and uploads a leJOS NXJ program. It is the equivalent of nxjlink followed by nxjupload.</p>
+			
+				<p>Any of the options for <code>nxjlink</code> and <code>nxjupload</code> can be specified.</p>
+				<p>The default binary name is &lt;main-class&gt;.nxj, e.g. Tune.nxj.</p>
+				
+				<p><a href="#top">Back to top</a></p>
+                 
+                <a name="6"></a>
+				<h4>Using PC API command line tools</h4>
+				<p>The tools for compiling and running leJOS PC API programs are:</p>
+				<ul class="BlueArrows">
+					<li>nxjpcc</li>
+					<li>nxjpc</li>
+				</ul>
+			 
+				<p>Reminder: If you are compiling or running a PC API program without using these tools, you need <code>pccomm.jar</code> and <code>bluecove.jar</code> (Linux users also need <code>bluecove-gpl</code>) in your CLASSPATH and <code>classes.jar</code> must be removed. Also, the <code>java library path</code> needs to be set.
+				</p>
+				
+				<a name="7"></a>
+				<h5>nxjpcc &#8211; compile a PC API program for your pc</h5>
+				
+				<p>Compiles one or more PC API java files.</p>
+				<p>Usage: nxjpcc [javac-options] &lt;java-files&gt;</p>
+				<p>Example: </p>
+				<p><code>nxjpcc SensorTest.java</code></p>		 
+						
+				<p><a href="#top">Back to top</a></p>
+		
+				<a name="8"></a>
+				<h5>nxjpc &#8211; run a PC API program on your pc</h5>
+				<p>Usage: nxjpc [java-options] &lt;main-class&gt;</p>
+				<p>Calls java to run your PC API program.</p>
+				<p>Example:</p>
+				<p><code>nxjpc SensorTest</code></p>
+				
+				<p><a href="#top">Back to top</a></p>
+                 
+				<!-- END CONTENT AREA -->
+
+				<!-- NAVIGATION TOOL -->				
+        		<div class="NavBit">
+               		<a target="_top" href="../Preliminaries/FirstProgram.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../MenuSystem/MenuSystem.htm">Next&nbsp;»</a>
+        		</div>
+				<br />
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

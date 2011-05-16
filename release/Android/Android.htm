@@ -1,0 +1,420 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html dir="ltr" xml:lang="en" lang="en"
+	xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- CSS -->
+<link rel="stylesheet" href="../r_css/lejos-tutorial.css"
+	type="text/css" />
+<!-- ICONO -->
+<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+</head>
+<body>
+<a id="top" name="top"></a>
+<!-- N1: HEADER -->
+<table cellpadding="0" cellspacing="0" class="n1t1">
+	<tr>
+		<td><img src="../r_media/images/tutorial_header1.jpg" /></td>
+		<td align="right"><img
+			src="../r_media/images/tutorial_header2.jpg" /></td>
+	</tr>
+</table>
+<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+<table cellpadding="0" cellspacing="0" class="n2t1">
+	<tr>
+		<td class="n2t1r1c1">
+			<div class="nolinkLESSON">Using leJOS with Android</div>
+			<div class="linkAHEAD"><a href="#1">Prerequisites</a></div>
+			<div class="linkAHEAD2"><a href="#1.1">Android SDK</a></div>
+			<div class="linkAHEAD2"><a href="#1.2">IDE Plugins</a></div>
+			<div class="linkAHEAD2"><a href="#1.3">Sdcard Cache File</a></div>
+			<div class="linkAHEAD2"><a href="#1.4">Device Setup</a></div>
+			<div class="linkAHEAD"><a href="#2">LeJOSDroid Samples</a></div>
+			<div class="linkAHEAD2"><a href="#2.1">TachoCount</a></div>
+			<div class="linkAHEAD2"><a href="#2.2">BTSend</a></div>
+			<div class="linkAHEAD2"><a href="#2.3">RCNagivationControl</a></div>
+			<div class="linkAHEAD"><a href="#3">Application Fundamentals</a></div>
+			<div class="linkAHEAD2"><a href="#3.1">Connection</a></div>
+			<div class="linkAHEAD2"><a href="#3.2">Threading</a></div>
+			<div class="linkAHEAD2"><a href="#3.3">Messaging</a></div>
+			<div class="linkAHEAD2"><a href="#3.4">LifeCycle</a></div>
+		</td>
+		<td>
+			<div id="BreadCrumbs">
+				<a href="../index.htm" target="_top">Home Page</a>&gt; 
+				<a href="#">Android</a>
+			</div>
+			<div class="NavBit">
+				<a target="_top" href="../Behaviors/BehaviorProgramming.htm">&#171;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
+				<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;
+				<a href="../index.htm">Next&nbsp;&#187;</a>
+			</div>
+			<div id="PageTitle">Using leJOS with Android</div>
+			<p>leJOS can be used in Android applications (.apks) via the <a
+				href="http://lejos.sourceforge.net/nxt/pc/api/index.html"
+				target="_blank">leJOS PC API</a> that communicates using Bluetooth with either:</p>
+			<ul>
+			<li><i>leJOS NXJ programs running on your NXT.</i> [This
+			requires the leJOS firmware to be on your NXT]</li>
+			<li><i>the LEGO Communications Protocol (LCP).</i> [This DOES
+			NOT require the leJOS firmware to be on your NXT, and works with the
+			standard LEGO firmware]</li>
+			</ul>
+			<p>This tutorial is not a complete explanation of how to create
+			Android applications which can quickly become far more complicated
+			than the normal difficulty of using leJOS. Three leJOS sample
+			programs have been included in one Android .apk, and this tutorial
+			will explain the most relevant aspects of getting them to work under
+			Android.  <b>Please note:</b> The robotics package is not supported.</p>
+			<p>Android specific questions should be directed to the<a
+				href="http://groups.google.com/group/android-developers"
+				target="_blank">Android Developer Mailing List</a>, while leJOS
+			specific ones can go to <a href="http://lejos.sourceforge.net/forum/"
+				target="_blank"> our forum</a></p>
+			<a id="1" name="1"></a>
+			<h4>Prerequisites</h4>
+			<a id="1.1" name="1.1"></a>
+			<h5>Android SDK</h5>
+			<p>To build .apks that run on Android or to upload the sample
+			.apk to your Android device, you need to <a
+				href="http://developer.android.com/sdk/index.html" target="_blank">download
+			the SDK for your OS</a> and <a
+				href="http://developer.android.com/sdk/installing.html"
+				target="_blank">install it</a>.</p>
+			<a id="1.2" name="1.2"></a>
+			<h5>IDE Plugins</h5>
+			<p>There is an <a
+				href="http://developer.android.com/sdk/eclipse-adt.html"
+				target="_blank">Eclipse Plugin</a> or a <a
+				href="http://kenai.com/projects/nbandroid/" target="_blank">Netbeans
+			Plugin</a> to simplify developing and building .apks. The <a href="#3">LeJOSDroid
+			sample project</a> was set up using the Eclipse Android Plugin and can be
+			imported into Eclipse by selecting File --&gt; Import --&gt; General --&gt;
+			Existing Projects into Workspace and selecting the
+			android/leJOS-Droid folder</p>
+			<p>To use leJOS in your own Android project within Eclipse (same
+			principles apply for Netbeans), make sure:</p>
+			<ul>
+			<li><p>the lejos pccomms.jar (.9 or later) is in your project/libs dir <br/><br/><img src="libs.jpg" /></p></li>
+			<li><p>the lejos pccomms.jar is in your build path <br/><br/><img src="./build_path.jpg" /></p></li>
+			</ul>
+			
+			<a id="1.3" name="1.3"></a>
+			<h5>Sdcard Cache File</h5>
+			<p>leJOS uses a nxj.cache file to record the MAC addresses of
+			paired NXT devices. Running the sample LeJOSDroid.apk will set this
+			up for you. To enable this otherwise, create a <code>leJOS</code>
+			directory in the root dir of your Android's sdcard. Without this
+			cache file, leJOS will iterate through the list of paired devices on
+			your Android handset and connect to the first NXT it finds.</p>
+			<a id="1.4" name="1.4"></a>
+			<h5>Device Setup</h5>
+			<p>To develop with an Android device, which is necessary for
+			anything involving a BlueTooth connection to the NXT, you will need
+			to <a
+				href="http://developer.android.com/guide/developing/device.html#setting-up"
+				target="_blank">set up your Android device for debugging</a>. The
+			Android emulator can be used to develop the GUI of your application,
+			but the emulator can not do bluetooth connections.</p>
+			<p>Logging can be seen in the Eclipse window or via a shell by <a
+				href="http://developer.android.com/guide/developing/tools/adb.html#logcat"
+				target="_blank">using logcat via adb</a></p>
+			<p><a href="#top">Back to top</a></p>
+
+			<a id="2" name="2"></a>
+			<h4>LeJOSDroid Samples</h4>
+			<p>The LeJOSDroid.apk Android application includes three leJOS
+			samples modified from /pcsamples that typically run on your PC or
+			MAC:</p>
+			<ul>
+			<li><i>TachoCount</i></li>
+			<li><i>BTSend</i></li>
+			<li><i>RCNavigationControl</i></li>
+			</ul>
+			<p>The samples have been tailored for Android, and it is
+			important to understand the modifications required by <a href="#2">Android
+			Application Fundamentals</a></p>
+
+			<p>The LeJOSDroid.apk can be installed with <a
+				href="http://developer.android.com/guide/developing/tools/adb.html#move"
+				target="_blank">the adb tool in
+			your-android-sdk-location/platform-tools/.</a> Please uninstall the
+			distributed LeJOSDroid.apk from your Android device (via Settings --&gt;
+			Applications --&gt; Manage Applications) before reinstalling a new
+			LeJOSDroid.apk or there will be an error about conflicting
+			signatures. <a
+				href="http://developer.android.com/guide/publishing/app-signing.html"
+				target="_blank">How to sign an Application</a>.</p>
+
+
+			<a id="2.1" name="2.1"></a>
+			<h5>TachoCount</h5>
+			<p>TachoCount works with either LEGO or leJOS firmware via LCP.
+			Nothing needs to be uploaded to or run on your brick.</p>
+			<a id="2.2" name="2.2"></a>
+			<h5>BTSend</h5>
+			<p>The BTSend example requires that samples/BTRecieve must be
+			uploaded and running on a NXT with leJOS firmware. See the section on
+			flashing the leJOS firmware in <a
+				href="../Preliminaries/GettingStarted.htm"> getting started</a> for
+			your OS, and <a href="../Preliminaries/CompileAndRun.htm">
+			compiling and running leJOS programs</a> on the NXT.</p>
+
+			<a id="2.3" name="2.3"></a>
+			<h5>RCNavigationControl</h5>
+			<p>The BTSend example requires that samples/RCNavigator must be
+			uploaded and running on a NXT with leJOS firmware. See the section on
+			flashing the leJOS firmware in <a
+				href="../Preliminaries/GettingStarted.htm"> getting started</a> for
+			your OS, and <a href="../Preliminaries/CompileAndRun.htm">
+			compiling and running leJOS programs</a> on the NXT.</p>
+			<p><a href="#top">Back to top</a></p>
+
+
+			<a id="3" name="3"></a>
+			<h4>Application Fundamentals</h4>
+			<p>Below are some Android application fundamental considerations:</p>
+			<p>Further details on the topics touched on below, as well as
+			complete information on UI design and other topics are available from
+			the <a href="http://developer.android.com/guide/index.html"
+				target="_blank">Android Developer Site </a></p>
+
+			<a id="3.1" name="3.1"></a>
+			<h5>Connection</h5>
+			<p>You will need to pair with the NXT from your Android device
+			before being able to connect.</p>
+			<p>leJOS connection is done via the standard <code>lejos.pc.comm.NXTConnector</code>
+			method. leJOS will detect the Android environment and attempt to load
+			<code>lejos.pc.comm.NXTCommAndroid</code>. NXTCommAndroid is not
+			included in the pccomm.jar due to Android dependencies and must be
+			included in the src of your project.</p>
+			<img src="NXTCommAndroid.jpg" />
+			<p>You'll notice the LeJOSDroid method is static and returns a
+			connected NXTConnector. The reason is that the two examples which use
+			this code (BTSend and TachoCount), call it from another thread that
+			those examples create. The reasons will be discussed in the next
+			section on threading.</p>
+			<p>Example -- LeJOSDroid connection method:</p>
+			<div class="CodeBox"><pre><code>
+      
+
+    private final static String TAG = "LeJOSDroid";   			
+    &lt;--- used to label the logging
+      
+ 
+     
+    public static NXTConnector connect(final CONN_TYPE connection_type) {	
+    &lt;--- method to return connection
+	Log.d(TAG, " about to add LEJOS listener ");
+
+	NXTConnector conn = new NXTConnector();
+	conn.setDebug(true);
+	conn.addLogListener(new NXTCommLogListener() {
+
+	    public void logEvent(String arg0) {
+		Log.e(TAG + " NXJ log:", arg0);
+	    }
+
+	    public void logEvent(Throwable arg0) {
+		Log.e(TAG + " NXJ log:", arg0.getMessage(), arg0);
+	    }
+	});
+
+	switch (connection_type) {   	&lt;--- specifies the connection type i.e. LCP or packet
+	case LEGO_LCP:
+	    conn.connectTo("btspp://NXT", NXTComm.LCP);
+	    break;
+	case LEJOS_PACKET:
+	    conn.connectTo("btspp://");
+	    break;
+	}
+	
+	return conn;
+
+    }
+      </code></pre></div>
+			<p><a href="#top">Back to top</a></p>
+			<a id="3.2" name="3.2"></a>
+			<h5>Threading</h5>
+
+			<p>Most work in Android must be done off the main UI thread,
+			otherwise the user will see a <a
+				href="http://developer.android.com/guide/practices/design/responsiveness.html"
+				target="_blank">ANR (Android Non-Response) message</a> when there is
+			no response to an input event (e.g. key press, screen touch) within 5
+			seconds.</p>
+			<p>For this reason, the <a href="#2.2">BTSend</a> and <a
+				href="#2.1">TachoCount</a> samples are run in their own thread. In
+			particular, <code>BTSend</code> has a while loop that could take more
+			than 5 seconds. Similarly, <code>TachoCount</code> could run into ANR
+			problems if it were run on the main UI thread and included a method
+			that took longer than 5 seconds to execute which is possible using
+			LCP as some methods such as <code>Motor.rotate()</code> don't return
+			until after completing.</p>
+
+			<p>It should be noted that while the <code>NXTCommAndroid</code>
+			class creates threads internally for IO (one to read incoming and one
+			to write outgoing data via bluetooth), the <code>NXTCommAndroid
+			read()</code>method will block until data is available. Also, the <code>NXTCommAndroid
+			open()</code> methods used for connection creation will block until the
+			connection is made and IO streams are available. 
+			Since <code>lejos.pc.comm.NXTConnector.connectTo()</code>
+			methods ultimately call the <code>NXTCommAndroid open()</code> method
+			that blocks, calls to open connections should be done off the main UI
+			thread as done in the examples.</p>
+
+			<p>The <a href="#2.3">RCNavigationControl</a> example has a more
+			complex UI which isn't easily combined with LeJOSDroid and so is run
+			as a new activity. This new activity is, in fact now, the UI thread
+			that creates other threads to handle the connection and reading which
+			block. If an ANR message appears from work done on the main UI
+			thread, that work too will need to be threaded. In actuality, the
+			code to connect for RCNavigationControl works fine even if it is
+			taken out of it's own thread because in all likelyhood the user won't
+			be creating an input event (via a key press or screen touch for
+			example) while waiting for a connection to be made.</p>
+			<p><a href="#top">Back to top</a></p>
+			<a id="3.3" name="3.3"></a>
+			<h5>Internal Messaging</h5>
+			<p>One implication of Android threading is that <a
+				href="http://developer.android.com/reference/android/os/Handler.html"
+				target="_blank">Message Handlers</a> or <a
+				href="http://android.com/docs/reference/java/util/concurrent/BlockingQueue.html"
+				target="_blank">BlockingQueues</a> must be used to exchange data
+			between threads as direct communication is not advised.</p>
+			<p>RCNavigationControl is extremely illustrative of this point.
+			In the original <code>pcsamples/RCNavigationControl</code>, the <code>RCNavComms</code>
+			class is created while passing in the <code>RCNavigationControl</code>
+			instance in the constructor, and the instance is used to update the
+			UI.</p>
+			<div class="CodeBox"><pre><code>
+      public class RCNavigationControl extends javax.swing.JFrame{  //example for PC or MAC
+         ...
+           private RCNavComms communicator = new RCNavComms(this);   
+           &lt;------ This (using an instance to update the UI thread) is dangerous in 
+           Android with potential memory leaks and unpredictable behavior
+ }
+  </code></pre></div>
+			<div class="CodeBox"><pre><code>
+ public class RCNavComms { //example for PC or MAC
+     RCNavigationControl control;
+
+     public RCNavComms(RCNavigationControl control)
+     {
+         this.control = control;
+     }
+  
+    class Reader extends Thread{
+       ...
+         public void run(){
+            ...
+            control.showtRobotPosition(x, y, h);   
+            &lt;------ This (using an instance to update the UI thread) is dangerous in 
+            Android with potential memory leaks and unpredictable behavior
+            
+         }
+    }     
+}         
+      </code></pre></div>
+
+			<p>In comparision, the RCNavComms class for the Android example
+			uses a Handler that was passed in through the constructor (instead of
+			the RCNavigationControl instance).</p>
+			<div class="CodeBox"><pre><code>
+ public class RCNavComms{ //example for Android
+     Handler mUIMessageHandler;
+
+     public RCNavComms(Handler mUIMessageHandler){
+         this.mUIMessageHandler=mUIMessageHandler;
+    }
+     
+    public void sendPosToUIThread(float x, float y, float h) {
+  	     float[] pos= {x,y,h};
+  	     Bundle b = new Bundle();
+  	     b.putFloatArray(RCNavigationControl.ROBOT_POS, pos);
+  	     Message message_holder = new Message();
+		 message_holder.setData(b);
+		 mUIMessageHandler.sendMessage(message_holder);
+	}
+  
+    class Reader extends Thread{
+       ...
+         public void run(){
+         ...
+            sendPosToUIThread(x, y, h);  &lt;------ Sends a message via a Handler
+            
+         }
+    }     
+}         
+      </code></pre></div>
+			<div class="CodeBox"><pre><code>
+      
+       public class RCNavigationControl extends TabActivity{ //example for Android
+       ...
+      	class UIMessageHandler extends Handler {
+		float[] pos;
+
+		@Override
+		public void handleMessage(Message msg) {
+			//Log.d(TAG, "handleMessage");
+			switch (msg.what) {
+
+				case LeJOSDroid.MESSAGE:
+					//Log.d(TAG, (String) msg.getData().get(LeJOSDroid.MESSAGE_CONTENT));
+					mMessage.setText((String) msg.getData().get(LeJOSDroid.MESSAGE_CONTENT));
+					break;
+
+				default:
+					pos = msg.getData().getFloatArray(ROBOT_POS);
+					showtRobotPosition(pos[0], pos[1], pos[2]);
+			}
+
+		}
+	}
+      </code></pre></div>
+			<p>Please see the documentation to learn <a
+				href=">http://developer.android.com/reference/android/os/Handler.html"
+				target="_blank">more about Handlers</a>. While the
+			RCNavigationControl example does in fact work even without using a
+			Handler and passing in an instance to use to update the UI, it's very
+			true that Threads will run briefly as the UI thread if you try to
+			update the UI by passing in an instance and modifying the View (as
+			would be done by using the PC or MAC example). Views in Android are
+			decidedly single threaded and sanity checks may not catch what you
+			are doing, and thus lead to unpredictable behavior. Also, there is a
+			risk of <a
+				href="http://android-developers.blogspot.com/2009/01/avoiding-memory-leaks.html"
+				target="_blank">memory leaks</a>.</p>
+
+			<p><a href="#top">Back to top</a></p>
+			<a id="3.4" name="3.4"></a>
+			<h5>LifeCycle Basics</h5>
+			<p>Many of the LeJOSDroid methods such as <code>onCreate(Bundle
+			b), onPause(), onResume()</code> are part of the <a
+				href=" http://developer.android.com/guide/topics/fundamentals.html#actlife"
+				target="_blank">Android Activity lifecycle </a> and should be
+			understood before creating your own application.</p>
+			<p>For instance, some essential setup is actually done in <code>RCNavigationControl</code>
+			in <code>onResume()</code> instead of <code>onCreate()</code>. This
+			is to enable correct functioning when the application resumes from <code>onPause()</code>.
+
+			</p>
+			<div class="CodeBox"><pre><code> 
+       	@Override
+	    protected void onResume() {
+		    super.onResume();
+		    mUIMessageHandler = new UIMessageHandler();
+		    communicator = new RCNavComms(mUIMessageHandler);
+	}
+	</code></pre></div>
+			<p><a href="#top">Back to top</a></p>
+			<div class="NavBit">
+				<a target="_top" href="../Behaviors/BehaviorProgramming.htm">&#171;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
+				<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;
+				<a href="../index.htm">Next&nbsp;&#187;</a>
+			</div>
+			</td>
+		</tr>
+</table>
+</body>
+</html>

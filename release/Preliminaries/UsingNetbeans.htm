@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en"><head>
+<!-- METADATA --><title>Using NetBeans</title>
+
+<meta name="title" content="Using NetBeans" />
+<meta name="DC.Title" content="Using NetBeans" />
+<meta http-equiv="title" content="Using NetBeans" />
+<meta name="description" content="How to use Netbeans for leJOS NXJ" />
+<meta http-equiv="description" content="How to use Netbeans for leJOS NXJ" />
+<meta http-equiv="DC.Description" content="How to use Netbeans for leJOS NXJ" />
+<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+<meta name="VW96.objecttype" content="Document" />
+<meta http-equiv="content-language" content="en" />
+<meta name="DC.Language" scheme="RFC1766" content="English" />
+<meta name="distribution" content="global" />
+<meta name="resource-type" content="document" />
+<!-- SEARCH ENGINE -->
+<meta name="robots" content="all" />
+<!-- AUTHOR METADATA -->
+<meta name="Author" content="Lawrie Griffiths" />
+<!-- CSS -->
+<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
+<!-- ICON -->
+<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+</head>
+
+<body>
+<a id="top" name="top"></a><!-- N1: HEADER -->
+<table class="n1t1" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td valign="top"><img src="../r_media/images/tutorial_header1.jpg" /></td>
+<td align="right" valign="top"><img src="../r_media/images/tutorial_header2.jpg" /></td>
+</tr>
+</tbody>
+</table>
+<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+<table class="n2t1" cellpadding="0" cellspacing="0">
+<tr>
+	<td class="n2t1r1c1"><!-- LEFT NAVIGATION SYSTEM -->
+
+		<div class="nolinkLESSON">Using Netbeans</div>
+		<div class="linkAHEAD"><a href="#1">Installing Netbeans</a></div>
+		<div class="linkAHEAD"><a href="#2">Using the samples project</a></div>
+		<div class="linkAHEAD"><a href="#3">Using the pcsamples project</a></div>
+		<div class="linkAHEAD"><a href="#4">Installing the Netbeans plugin</a></div>
+		<div class="linkAHEAD"><a href="#5">Creating your own project using the Netbeans Plugin</a></div>
+	</td>
+<td><!-- BREADCRUMBS -->
+<div id="BreadCrumbs"> <a href="../index.htm" target="_top">Home Page</a>&gt; <a href="#">Using NetBeans</a> </div>
+<!-- NAVIGATION TOOL -->
+<div class="NavBit"> <a target="_top" href="../Preliminaries/GettingStarted.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../MenuSystem/MenuSystem.htm">&nbsp;Next&nbsp;»</a>
+</div>
+<!-- CONTENT AREA --><!-- CONTENT TITLE -->
+<div id="PageTitle">Using NetBeans</div>
+
+<a name="#1"></a>
+<h4>Installing Netbeans</h4>
+<p> You can download Netbeans from <a href="http://www.netbeans.org/downloads/index.html" target="_blank">Netbeans downloads</a>. 
+If you are only going to use Netbeans for leJOS NXJ programs, you will only need standard Java development capabilities
+- you will not need a version that supports the Java Enterprise Edition or other languages such as C++. A package such as "Java SE" is
+sufficient for leJOS NXJ. </p>
+
+<p>If you are not familiar with NetBeans, try the NetBeans quick start tutorial <a href="http://www.netbeans.org/kb/docs/java/quickstart.html" target="_blank">http://www.netbeans.org/kb/docs/java/quickstart.html</a>.</p>
+
+<p>The next two sections are about using the samples that come with leJOS NXJ. If you want to skip this and start creating your own project, 
+go to <a href="#4">Installing the Netbeans Plugin</a>.</p>
+
+<a name="#2"></a>
+<h4>Using the samples project</h4>
+
+<p>You can open the leJOS NXJ samples project by selecting
+File &gt; Open Project and browsing to the samples folder in the
+location where you installed the leJOS java projects. If you used the Windows installer this will be leJOSNXJProjects in your home directory.Otherwise it will be lejos_nxj/projects.</p>
+
+<p> There is a source folder within the samples project for
+each sample. Open up the BlueStats source folder and the "default
+package" that it contains and you will see the BlueStats.java sample
+file and a build.xml file. The build.xml file is a build file for the
+sample written using "ant". Ant is a build system specially designed
+for Java - it comes bundled with Netbeans.</p>
+
+<p> Ant build files have different "targets". The default
+target for the sample build.xml files is "uploadandrun". This means
+that if you run the build.xml file and select this target it will
+compile the Java source, link it with the standard leJOS classes
+(classes.jar) to produce a binary file and then upload ad run the
+binary file.</p>
+
+<p>Turn on your NXT, make sure it is connected by USB or
+can be connected to via Bluetooth. Then right-click on the build.xml
+and select "Run Target" and "uploadandrun":</p>
+
+<img src="netbeansbuild.jpg" />
+
+<p> You should see output like the following in the Console window:</p>
+
+<pre>
+Buildfile: C:\Users\Lawrie\leJOSProjects\samples\BlueStats\build.xml
+clean:
+compile:
+    [javac] Compiling 1 source file to C:\Users\Lawrie\leJOSProjects\samples\BlueStats
+link:
+     [java] Class 0: java.lang.Object
+     [java] Class 1: java.lang.Thread
+     [java] Class 2: java.lang.String
+     [java] Class 3: java.lang.Throwable
+     [java] Class 4: java.lang.Error
+     [java] Class 5: java.lang.OutOfMemoryError
+     [java] Class 6: java.lang.NoSuchMethodError
+     [java] Class 7: java.lang.StackOverflowError
+     [java] Class 8: java.lang.NullPointerException
+     [java] Class 9: java.lang.ClassCastException
+...
+     [java] Class 38: lejos.nxt.Flash
+     [java] Method 0: Class: java.lang.Object Signature: &gt;init&lt;()V PC 3222 Signature id 2
+     [java] Method 1: Class: java.lang.Object Signature: notifyAll()V Native id 5
+     [java] Method 2: Class: java.lang.Object Signature: wait()V Native id 6
+     [java] Method 3: Class: java.lang.Object Signature: wait(J)V Native id 7
+     [java] Method 4: Class: java.lang.Object Signature: toString()Ljava/lang/String; PC 3223 Signature id 95
+...
+     [java] Method 147: Class: lejos.nxt.Flash Signature: writePage([BI)V Native id 75
+     [java] Method 148: Class: lejos.nxt.Flash Signature: &gt;clinit&lt;()V PC 9337 Signature id 3
+     [java] Master record    : 16 bytes.
+     [java] Class records    : 39 (390 bytes).
+     [java] Field records    : 80 (80 bytes).
+     [java] Static fields    : 53 (106 bytes).
+     [java] Static state     : 53 (202 bytes).
+     [java] Constant records : 26 (104 bytes).
+     [java] Constant values  : 26 (252 bytes).
+     [java] Method records   : 149 (1788 bytes).
+     [java] Exception records: 67 (536 bytes).
+     [java] Code             : 117 (6122 bytes).
+     [java] Total            : 9597 bytes.
+uploadandrun:
+     [java] Found nxt name NOISY address 001653007848
+     [java] leJOS NXJ&gt; Upload successful in 1974 milliseconds
+BUILD SUCCESSFUL
+Total time: 4 seconds
+</pre>
+
+<p>This verbose output from the leJOS linker tells you all
+the classes and methods that have been included in your program. It is
+very useful for debugging your programs.</p>
+
+<p> You should see the Bluetooth statistics on your NXT LCD
+screen. You can stop the BlueStats program by pressing ESCAPE on the NXT.</p>
+
+<p> You can browse through the samples and try them out.
+Some of the samples need to communicate with a program on the PC - see
+"Using the PC samples project" below. Other samples need specific
+sensors attached to the NXT or a robot with specific characteristics -
+such as a steerable wheeled vehicle. See the comments at the start of
+each of the Java files to understand the requirements of the sample.</p>
+
+<p>Note that the samples project uses default package names
+for simplicity. This is not good practice for Java programming so when
+we create our own project, we will use a proper package name.</p>
+
+<p>Note also that the samples project contains multiple
+programs each with a main method. This is convenient for showing lots
+of examples of leJOS NXJ programming in one project, but is not best
+practice. When we create our own projects, we will have a separate
+Netbeans project for each leJOS NXJ program</p>
+
+<p><a href="#top">Back to top</a></p>
+
+<a name="3"></a>
+<h4>Using the PC samples project</h4>
+
+<p>You can open the leJOS NXJ samples project by selecting File &gt; Open Project and browsing to the samples folder in the
+location where you installed the leJOS java projects.</p> 
+
+<p>Open the BTSend folder. BTSend works with the BTReceive sample. BTSend.java runs on the PC and BTReceive.java runs on the NXT.</p>
+
+<p> There are no build files for the PC samples as they are not necessary. You can run 
+BTSend.java by right-clicking on it and selecting, "Run File" (after you have started BTReceive on the NXT).</p>
+   
+   <p>You can use BTSend with the NXTReceive sample instead. NXTReceive is similar to BTReceive but it lets you choose which protocol and which mode you want to use to send data.</p>
+   
+   <p>You can look through the other PC samples and try them out in a similar way. 
+   Some of them are paired with NXT samples. Look at the comment at the start of the Java files. Some of them run a subset of the leJOS NXJ API
+   on the PC using remote execution. AccelDemo, SensorTest and TachoCount are examples of this.
+   TachoCount shows you how to control which NXT brick you connect to if you have multiple NXT bricks available.</p>
+
+<p><a href="#top">Back to top</a></p>
+
+<a name="#4"></a>
+<h4>Installing the Netbeans Plugin</h4>
+<p>It is very easy to install the Netbeans Plugin. Just Open Netbeans.In Tools &gt; Plugins, click on the Downloaded tab, and click on Add Plugins.
+ Then browse to the directory where you installed the leJOS NXJ projects. In it, find NXJPlugin/build/nxjplugin.nbm .
+ Click on it, and it will be installed.
+</p>
+
+<p><a href="#top">Back to top</a></p>
+
+<a name="#5"></a>
+<h4>Creating your own project using the Netbeans Plugin</h4>
+
+<p>You should not try to write
+code for the NXT using the standard Java Project of NetBeans.
+Instead, you need a special type of project that
+will use the leJOS tools to link and upload your code. The easiest way
+to create a NXJ project is to use the NetBeans plugin. </p> 
+
+<p>If instead, you wish to create your own project with a custom ant build file, open the org.lejos.example project, and look at what that does. 
+It is a free form Java project. It is in fact, the template project that the Netbeans plugin uses.</p>
+
+<p>To create a NXJ project using the plugin, select File&gt;New Project. then "Samples". In the
+Projects tab, select "NXJSample" and click next.  The New Project window will open.
+Type in the name you want to use, such as "myproject" and click "finish'"</p>
+
+<p> You should now see "myproject" in the Projects tab.
+ In Source Packages &gt; sample
+you will see HelloWorld.java., which by
+default is the Main class in your project.  Click on it to
+open it in the editor.  </p>
+
+<p>The plugin copies a build.xml file and build.properties into your
+project.  You can select and run targets in build.xml just as you
+did with the Samples project. Or can use the various shourcut
+keys the work with standard Java projects that you learned in the
+NetBeans tutorials. (Do not use the &quot;Netbeans zip&quot; target unless you know what you are doing. It makes your project the template for the Netbeans plugin, but you need to rebuild and re-install the NXJPlugin project to activate this).</p>
+
+<p>You can rename the HelloWorld class by
+selecting the name, and using the Refactor &gt; Rename.
+Likewise, you can change the name of the package the same
+way.   After renaming it, you might wat to change the  project name, description and the &quot;main.class&quot; property in the build.xml file. This is not strictly necessary if you are only going to use the &quot;Run File&quot; and &quot;Compile File&quot; targets but changing &quot;main.class&quot; allows you to run the targets in the build.xml file by right-clicking on it. There is a bug in the 0.85 version of the plugin which means you will also need to change the &quot;program&quot; property to your new class name (without the package name). </p>
+
+<p>Right-click on your project, select &quot;Properties&quot; and go to &quot;Java Sources Classpath&quot;. 
+You will notice that there is a relative path to classes.jar. You might want to delete this and add an external jar file 
+and set it to classes.jar in your leJOS NXJ installation's lib folder.</p>
+
+<p> To test your project, right click on the java file of your main class, and select "Run File". This should compile, link and upload your
+program to the NXT and run it.</p>
+
+<p>If you want to change the target that Run File uses, go to the Files view and edit the nbproject/ide-file-targets.xml.</p>
+
+<p><a href="#top">Back to top</a></p>
+<!-- END CONTENT AREA -->
+<div class="NavBit"> <a target="_top" href="../Preliminaries/GettingStarted.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">&nbsp;TOC&nbsp;</a>&#8226;<a href="../MenuSystem/MenuSystem.htm">&nbsp;Next&nbsp;»</a>
+</div>
+</td>
+</tr>
+</table>
+</body></html>

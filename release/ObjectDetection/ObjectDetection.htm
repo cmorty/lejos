@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<title>Object Detection</title>
+		
+		<!-- METADATA -->
+		<meta name="title" content="TITLE" />
+		<meta name="DC.Title" content="TITLE" />
+		<meta http-equiv="title" content="TITLE" />
+		
+		<meta name="description" content="DESCRIPTION" />
+		<meta http-equiv="description" content="DESCRIPTION" />
+		<meta http-equiv="DC.Description" content="DESCRIPTION" />
+
+		<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+		<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+
+		<meta name='VW96.objecttype' content='Document' />
+		<meta http-equiv='content-language' content='en' />
+		<meta name='DC.Language' scheme='RFC1766' content='English' />
+		<meta name='distribution' content='global' />
+		<meta name='resource-type' content='document' />
+
+		<!-- SEARCH ENGINE -->
+		<meta name='robots' content='all' />
+
+		<!-- AUTHOR METADATA -->
+		<meta name='Author' content='Brian Bagnall' />
+		<link rel="me" href="http://www.lejos.org" />
+		
+		<!-- CSS -->
+		<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
+
+		<!-- ICON -->
+		<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+	</head>
+	<body>
+		<a id="top" name="top"></a>
+		<!-- N1: HEADER -->
+		<table cellpadding="0" cellspacing="0" class="n1t1">
+			<tr>
+				<td valign="top"><img src="../r_media/images/tutorial_header1.jpg" /></td>
+				<td align="right" valign="top"><img src="../r_media/images/tutorial_header2.jpg" /></td>
+			</tr>
+		</table>
+		<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+		<table cellpadding="0" cellspacing="0" class="n2t1">
+			<tr>
+				<td class="n2t1r1c1">
+					<!-- LEFT NAVIGATION SYSTEM -->
+					<div class="nolinkLESSON">Object Detection</div>
+					<div class="linkAHEAD"><a href="#1">Feature Detectors</a></div>
+					<div class="linkAHEAD"><a href="#2">Feature Listeners</a></div>
+					<div class="linkAHEAD"><a href="#3">Feature Data</a></div>
+					<div class="linkAHEAD2"><a href="#4">Single Reading</a></div>
+					<div class="linkAHEAD2"><a href="#5">Multiple Readings</a></div>
+					<div class="linkAHEAD"><a href="#6">Multiple Detectors</a></div>
+				</td>
+				<td>
+					<!-- BREADCRUMBS -->
+			        <div id="BreadCrumbs">
+			            <a href="../index.htm" target="_top">Home Page</a>&gt;
+			            <a href="#">Object Detection</a>
+			        </div>
+					<!-- NAVIGATION TOOL -->
+			        <div class="NavBit">
+			            <a target="_top" href="../WheeledVehicles\WheeledVehicles.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../LCD_Sensors/LCD_Sensors.htm">Next&nbsp;&raquo;</a>
+			        </div>
+					
+					<!-- CONTENT AREA -->
+					
+					<!-- CONTENT TITLE -->
+			        <div id="PageTitle">Object Detection</div>
+					<p>Object detection allows a robot to detect objects in its path and take some action, such
+					as avoiding the object. We chose the term <i>feature</i> to describe an object rather than
+					obstacle, because sometimes the object is something the robot wants to seek, rather than
+					avoid (such as a soccer ball). We didn't use the word "object" because it was a potentially 
+					confusing class name with object oriented Java programming.</p>
+					<a name="1"></a>
+					<h4>Feature Detectors</h4>
+					
+					<p>A FeatureDetector detects objects using a sensor, such as a touch sensor or ultrasonic
+					sensor. It is the main interface in the object detection package from which all data
+					originates. There are many benefits of using a FeatureDetector:</p>
+					<ul class="BlueArrows">
+					<li>Automatic scanning and reporting of data</li>
+					<li>A listener interface to segregate the "action-response" code</li>
+					<li>Allows one code segment to respond to data from multiple sensors</li>  
+					</ul>
+					<p>
+					There are currently two implementations:</p>
+					<ul class="BlueArrows">
+					<li>RangeFeatureDetector - uses RangeFinder classes, such as the LEGO UltrasonicSensor.</li>
+					<li>TouchFeatureDetector - uses Touch classes, such as the LEGO TouchSensor.</li>
+					</ul>
+
+					
+					<p>The RangeFeatureDetector allows you to specify some parameters for the sensor, such as the
+					maximum range you want it to report findings for, and the time between performing scans. 
+					Construct a simple RangeFeatureDetector as follows:</p>
+					
+			<div class="CodeBox">
+			<pre><code>
+int MAX_DISTANCE = 50; // In centimeters
+int PERIOD = 500; // In milliseconds
+UltrasonicSensor us = new UltrasonicSensor(SensorPort.S4);
+FeatureDetector fd = new RangeFeatureDetector(us, MAX_DISTANCE, PERIOD);		
+			</code></pre>
+			</div>
+					
+					<p>Once you have a FeatureDetector instantiated, you can perform a scan on it to retrieve data:</p>
+					
+			<div class="CodeBox">
+			<pre><code>
+Feature result = fd.scan();
+if(result != null)
+	System.out.println("Range: " + result.getRangeReading().getRange());
+			</code></pre>
+			</div>
+					
+					<p><i>Warning: Make sure to check for a null object before trying to read data from the returned Feature 
+					object, otherwise your code will throw a null pointer exception.</i></p>
+					
+					<p>The main benefit of a FeatureDeteector is the ability to automatically
+					notify other classes when an object is detected via a listener interface. The next section
+					discusses this in more detail.</p> 
+					
+					<a name="2"></a>
+					<h4>Feature Listeners</h4>
+					
+					<p>
+					Once you have a FeatureDetector instantiated, you can add a FeatureListener to it. The FeatureListener 
+					code will be notified when an object is detected via the FetureListener.featureDetected() method. There 
+					you can make your robot react to the detected object by performing some sort of action. The following 
+					code shows how to use a FeatureListener:
+					</p>
+					
+			<div class="CodeBox">
+			<pre><code>
+import lejos.nxt.*;
+import lejos.robotics.objectdetection.*;
+
+public class ObjectDetect implements FeatureListener {
+
+	public static int MAX_DETECT = 80;
+	
+	public static void main(String[] args) throws Exception {
+		
+		ObjectDetect listener = new ObjectDetect();
+		UltrasonicSensor us = new UltrasonicSensor(SensorPort.S4);
+		RangeFeatureDetector fd = new RangeFeatureDetector(us, MAX_DETECT, 500);
+		fd.addListener(listener);
+		Button.ENTER.waitForPressAndRelease();
+	}
+	
+	public void featureDetected(Feature feature, FeatureDetector detector) {
+		int range = (int)feature.getRangeReading().getRange();
+		Sound.playTone(1200 - (range * 10), 100);
+		System.out.println("Range:" + range);
+	}
+}
+
+			</code></pre>
+			</div>
+					
+					<a name="3"></a>
+					<h4>Feature data</h4>
+					
+					<p>
+					The most basic class to implement the Feature interface is the RangeFeature class. This class
+					is a data container, and the data is retrieved by these methods:</p>
+					<ul class="BlueArrows">
+					<li>getRangeReading() - returns a RangeReading object</li>
+					 <li>getRangeReadings() - returns a RangeReadings collection</li>
+					 <li>getTimeStamp() - returns the system time (in ms) when this data was collected</li>
+					 </ul>
+					<p>Some scanners are capable of returning multiple object detections, such as the LEGO
+					ultrasonic sensor. Other sensors are only capable of producing a single object detection.
+					In either case, they are both capable of producing data to fulfill both methods, as described
+					below.</p>
+					
+					<a name="4"></a>
+					<h5>Single Reading</h5>
+					<p>When the getRangeReading() method is called, it returns the closest object that was
+					detected by a scanner, even if it is capable of returning more than one hit.</p>
+					
+					<a name="5"></a>
+					<h5>Multiple Readings</h5>
+					<p>When the getRangeReadings() method is called, it returns the all objects it detected. If the
+					scanner is only capable of returning one hit, the RangeReadings object will contain only one
+					RangeReading.</p>
+					
+					<a name="6"></a>
+					<h4>Multiple Feature Detectors</h4>
+					
+					<p>
+					It is also possible to combine several different FeatureDetectors into one FeatureDetector
+					using the FusorDetector class. This is useful for robots that have a number of detector sensors
+					located on the robot (several bumpers at different locations and range sensors). The code to 
+					fuse many FeatureDetectors looks like this:
+					</p>
+					
+			<div class="CodeBox">
+			<pre><code>
+UltrasonicSensor us = new UltrasonicSensor(SensorPort.S4);
+FeatureDetector detector1 = new RangeFeatureDetector(us, MAX_DETECT,RANGE_READING_DELAY);
+
+Touch leftBump = new TouchSensor(SensorPort.S2);
+FeatureDetector detector2 = new TouchFeatureDetector(leftBump, 10, TOUCH_Y_OFFSET); 
+
+Touch rightBump = new TouchSensor(SensorPort.S3);
+FeatureDetector detector3 = new TouchFeatureDetector(rightBump, -10, TOUCH_Y_OFFSET); 
+
+FusorDetector fusion = new FusorDetector();
+fusion.addDetector(detector1);
+fusion.addDetector(detector2);
+fusion.addDetector(detector3);
+
+fusion.addListener(myFeatureListener);
+			
+			</code></pre>
+			</div>
+					
+					<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
+					<p>
+					<a href="#top">Back to top</a>
+					</p>
+					<!-- END CONTENT AREA -->
+					
+					<!-- NAVIGATION TOOL -->			
+					<br/>
+			        <div class="NavBit">
+			                <a target="_top" href="../WheeledVehicles/WheeledVehicles.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../LCD_Sensors/LCD_Sensors.htm">Next&nbsp;&raquo;</a>
+			        </div>
+					<br />
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
