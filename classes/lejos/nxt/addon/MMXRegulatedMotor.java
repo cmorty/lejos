@@ -485,7 +485,7 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
         int retVal=0;
         
         // try up to three times for tacho count if zero. This is because sometimes zero is returned even if motor is running. I don't
-        // know if this is a problem with the NXTMMX or the LeJOS quadrature encoder reader code
+        // know if this is a problem with the NXTMMX or i2c
         for (int i=0;i<3;i++) {
             //REG_TacPos =             0x62;//   0x66
             mux.getData(REG_TacPos, buffer, 4);
@@ -649,13 +649,13 @@ public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
                     latchRotStart=false;
                 }      
                 
-                // don't process weird tacho values that come in every so often (quadrature encoder read problem?)
+                // don't process weird tacho values that come in every so often (quadrature encoder read problem on NXTMMX?)
                 if (samples[index]>MOTOR_MAX_DPS) continue;
                 
                 // do 3 pt moving average
                 index++;
                 if (index>=samples.length) index=0;
-                // defeat moving avg on stall. NOte that this really only works well(fast) for unlimited duration runs because we have to
+                // defeat moving avg on stall. Note that this really only works well/fast for unlimited duration runs because we have to
                 // wait for NXTMMX status on rotates.
                 if (_isStalled) {
                     _degpersec=0f; 
