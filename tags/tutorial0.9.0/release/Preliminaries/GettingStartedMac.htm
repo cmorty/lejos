@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en">
+<head>
+  <title>Getting Started on OSX</title>
+  <!-- CSS -->
+  <link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" /><!-- ICONO -->
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+</head>
+<body>
+<a id="top" name="top"></a>
+<!-- N1: HEADER -->
+<table class="n1t1" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td><img src="../r_media/images/tutorial_header1.jpg" /></td>
+      <td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
+    </tr>
+  </tbody>
+</table>
+<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+<table class="n2t1" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td class="n2t1r1c1">
+      <div class="nolinkLESSON">Getting Started on OSX</div>
+      <div class="linkAHEAD"><a href="#1">Prerequisites</a></div>
+      <div class="linkAHEAD2"><a href="#2">Lego Software</a></div>
+      <div class="linkAHEAD2"><a href="#3">JDK</a></div>
+      <div class="linkAHEAD2"><a href="#4">LEJOS Software</a></div>
+      <div class="linkAHEAD2"><a href="#5">(Optional) Bluetooth</a></div>
+      <div class="linkAHEAD"><a href="#6">Environmental Set Up</a></div>
+      <div class="linkAHEAD"><a href="#7">Permissions</a></div>
+      <div class="linkAHEAD"><a href="#8">Configuring USB</a></div>
+      <div class="linkAHEAD"><a href="#9">(Optional) Testing</a></div>
+      <div class="linkAHEAD"><a href="#10">Flashing the Firmware</a></div>
+      <div class="linkAHEAD"><a href="#11">(Optional) Eclipse</a></div>
+      </td>
+      <td>
+        <div id="BreadCrumbs">
+            <a href="../index.htm" target="_top">Home Page</a>&gt;
+            <a href="#">Getting Started on OSX</a>
+        </div>
+      <div class="NavBit"> <a target="_top" href="../Preliminaries/Intro.htm">&#171;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
+      <a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/FirstProgram.htm">Next&nbsp;&#187;</a> </div>
+      <div id="PageTitle">Getting Started on OSX</div>
+      <p>This version of the tutorial is for the 0.9 release of leJOS NXJ and is compatible with OSX10.4 or higher and both intel and ppc processors.</p>
+      <a id="1" name="1"></a>
+      <h4>Prerequisites</h4>
+      <a id="2" name="2"></a>
+      <h5>Standard Lego Software</h5>     
+      <p> To run leJOS NXJ on OSX you will need the <a href="http://mindstorms.lego.com/support/updates/" target="_blank">standard Lego software</a> installed so that you can connect to your NXT using USB.
+      </p>
+      <p>Intel macs require the 10.5 firmware (fix) update. This is true for OSX10.4 intel users as well. We have had several users report that this works... (the 10.5 update installer actually checks if your OS is 10.3+).  PPC users need the 1.02 driver.</p>
+      <a id="3" name="3"></a>
+      <h5>Java Development Kit</h5>     
+      <p>You will also need a Java Development Kit (JDK). 
+      Note that a Java Runtime Environment (JRE) is not sufficient 
+      as it does not allow you to compile Java programs. You can download
+      the latest JDK from <a href="http://java.sun.com/" target="_blank">http://java.sun.com/</a>.
+      Follow the instructions for installing it. A 32 bit version of Java is required and for Leopard only Java 1.5 is 32 bit.  Snow Leopard Java 1.6 is both 32 and 64 bit.  LEJOS scripts such as <code>nxjbrowse</code> now set the -d32 flag to specify 32 bit.</p>
+      <p> <a href="#top">Back to top</a> </p>
+      <a id="4" name="4"></a>
+      <h5>Downloading and Untarring LEJOS Software</h5> 
+      <p>You can download the leJOS NXJ software from <a href="http://lejos.sourceforge.net/nxj-downloads.php" target="_blank">
+      The leJOS NXJ download page</a>.</p>
+      <p>Un-tar the release (you do not need to run the build script)</p>
+      <p> <a href="#top">Back to top</a> </p>
+      <a id="5" name="5"></a>
+      <h5>(Optional) Bluetooth Stack</h5> 
+      <p> If you want to communicate with the NXT over Bluetooth, you will need a Bluetooth dongle or built-in support on your Mac, 
+      and a Bluetooth software stack. LEJOS is distributed with a 3rd party stack that is configured by default -- bluecove.</p>
+      <p>Pairing the NXT with your Mac should be done by pair from the
+     computer. Browse for the device and enter a passcode of 1234 on
+     the mac.</p>
+      <p> <a href="#top">Back to top</a> </p>
+      <a id="6" name="6"></a>
+      <h4>Setting up the Environment</h4>
+      <h5>Environmental Variables</h5>
+      <p>LEJOS scripts such as <code>nxjbrowse</code> will set their own paths so that it isn't necessary to set up Environmental Variables in order to use them.  <a href="#7">Setting Permissions</a> is still required</p>
+      <p>The build files for the samples contained in /projects/samples do look for the NXJ_HOME.</p>
+      <p>For convenience and to use the samples' build files you need to set the following:</p>
+      <table border="1">
+        <tbody>
+          <tr>
+            <td><b>Variable</b></td>
+            <td><b>Value</b></td>
+            <td><b>Example</b></td>
+          </tr>
+          <tr>
+            <td>NXJ_HOME</td>
+            <td>The folder you installed leJOS NXJ into</td>
+            <td>/Users/me/lejos_nxj</td>
+          </tr>
+          <tr>
+            <td>JAVA_HOME</td>
+            <td>The folder where you installed the JDK </td>
+            <td>/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home</td>
+          </tr>
+          <tr>
+            <td>PATH</td>
+            <td>Add the bin folders for the JDK and leJOS</td>
+            <td>$JAVA_HOME/bin:$NXJ_HOME/bin;</td>
+          </tr>
+           <tr>
+            <td>DYLD_LIBRARY_PATH</td>
+            <td>(Only necessary for using the Eclipse plugin) Add the bin folders for Fantom driver</td>
+            <td>$NXJ_HOME/bin;</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <p>You can set these environment variables either as user or system variables 
+      depending on whether you want leJOS NXJ to be available to just the current user or to all users.
+      </p>
+    <h5>Set Up for Current User</h5>
+    <p>Create or Edit <code>~/.profile</code> and set your environment there.</p>
+    <p>If it does not exist, you can create it with TextEdit.  If it exists, you can open it from a command prompt:</p>
+    <pre><code>
+    $ open ~/.profile
+    </code></pre> 
+    <p>Example:</p>
+     <div class="CodeBox">
+      <pre><code>
+     export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home
+     export NXJ_HOME=/Users/me/lejos_nxj
+     export DYLD_LIBRARY_PATH=$NXJ_HOME/bin
+     export PATH=$PATH:$JAVA_HOME/bin:$NXJ_HOME/bin
+      </code></pre>
+      </div>
+      
+    <h5>Set Up for All Users</h5>
+    
+    <p>Same as for Current User set up except use:</p>
+    <pre><code>/etc/profile</code></pre>
+    <p>Example:</p>
+    <div class="CodeBox">
+      <pre><code>
+    # System-wide .profile for sh(1)
+
+     if [ -x /usr/libexec/path_helper ]; then
+        eval `/usr/libexec/path_helper -s`
+     fi
+
+     if [ "${BASH-no}" != "no" ]; then
+        [ -r /etc/bashrc ] &amp; . /etc/bashrc
+     fi
+     ## setloginpath added /usr/local/bin start at Fri Nov  2 18:44:47 EDT 2007
+     ## Do not remove the previous line
+     if [ `whoami` != "root" ]
+     then
+       export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home"
+       export NXJ_HOME="/Applications/lejos_nxj"
+       export DYLD_LIBRARY_PATH="$NXJ_HOME/bin"
+       PATH="$PATH:$NXJ_HOME/bin:$JAVA_HOME/bin"
+       export PATH
+     fi
+     ## Do not remove the next line
+     ## setloginpath added /usr/local/bin end at Fri Nov  2 18:44:47 EDT 2007 
+    </code></pre>
+      </div>  
+    <p> <a href="#top">Back to top</a> </p>
+     <a id="7" name="7"></a>
+      <h4>Setting Permissions</h4>
+      <p>Make the script files in the leJOS bin directory executable by cd'ing to that directory and executing the command.</p>
+      <pre><code>chmod +x *</code></pre>
+     <p> <a href="#top">Back to top</a> </p>     
+      <a id="8" name="8"></a>
+      <h4>Configuring USB</h4>
+      <p>The fantom driver is now distributed with leJOS and configured as the default.  There is no need any longer to do so in <code>$NXJ_HOME/bin/nxj.properties</code></p>
+      <p>This means no additional driver download is necessary. The <a href="#2">Standard Lego Software</a> is the only prerequisite.</p>
+	  <p>There is no need to compile jlibnxt as OSX does not use libusb for leJOS USB connection</p>
+     <p> <a href="#top">Back to top</a> </p>   
+       <a id="9" name="9"></a>
+      <h4>(Optional) Testing with <code>nxjbrowse</code></h4>
+      <p>Test it by running <code>nxjbrowse -u</code> you should be able to see your NXT.</p>
+       <p> <a href="#top">Back to top</a> </p>
+      <a id="10" name="10"></a>
+      <h4>Flashing the Firmware</h4>
+      <p>As leJOS NXJ is a firmware replacement, you will need to flash the firmware to your NXT. 
+      Note that this will overwrite any existing firmware. If you have a previous version of leJOS NXJ on your PC your existing files
+      will be preserved, but if you have the standard LEGO firmware or other third-party firmware on your NXT, existing files will be lost.
+      </p>
+      <p>Make sure your NXT is attached by its USB cable, and switch it on by pressing the orange button.</p>
+      <p>You can either use the command line <code>nxjflash</code> command or the <code>nxjflashg</code> GUI program.</p>
+      <p>Using the command line:</p>
+      <p>Type <code>nxjflash</code> to flash the leJOS NXJ firmware. If your NXT is in firmware update mode, the firmware will be updated. 
+      You will see some messages on your command window, and the NXT should show the leJOS splash screen and then the leJOS NXJ menu.
+      If your NXT has a previous version of the leJOS or LEGO firmware on it, a list of the NXTs connected to the USB will be shown, 
+      and you will be asked to input the number in the list of the NXT you want updated - this will be 1 if a single NXT is connected to your PC. 
+      If your NXT has other firmware on it, or if <code>nxjflash</code> fails, you must put your NXT into firmware update mode. 
+      Press the reset button (at the back of the NXT , upper left corner) for more than 4 seconds. 
+      A straightened paper clip could be useful for this. Your NXT will audibly tick when it is firmware update mode. 
+      Then try <code>nxjflash</code> again.
+      </p>
+      <p>Using the GUI version:</p>
+      <p>The GUI version of nxjflash is NXJFlashG. You start it by running the file nxjflashg from the leJOS NXJ bin folder. When the
+      program window opens, click on Start Program and follow the instructions. 
+      A more complete explanation is in the Windows tutorial "PC GUI Tools" section.  
+      </p>
+      <p> <a href="#top">Back to top</a> </p>
+      <a id="11" name="11"></a>
+      <h4>(Optional) Eclipse</h4>
+      <h5>Installation</h5>
+      <p>When installing the plug-in from http://lejos.sourceforge.net/tools/eclipse/plugin/nxj/, adding the
+     site alone doesn't work. You need to unselect the option, group by
+     category. The software seems to not be categorized. Then you
+     should see the option to install the plug-in.</p>
+      <h5>USB Connections</h5>
+      <p>The eclipse plugin does not find the libjfantom.jnilib driver we use for USB connections and USB connection will not work.   In eclipse, go to the lejos panel in the preferences window and select the "use bluetooth" options as USB is not available.</p>
+      <h5>Creating a New Project</h5>
+      <p>When creating a new project simply create a java project and
+     create a class (it will be a .java file). Right-click on the
+     project in the project explorer and select Lejos and Convert to
+     Lejos project.  This is only for projects that are intended to run on the NXT.  This is not for projects that run on your Mac.</p>
+     <p>If conversion fails, go to the preferences for eclipse (not the project settings), be sure that
+     the LEJOS_HOME text box is set to the top level lejos_nxj directory.</p>
+     <p>Make sure to omit the normal Mac OS X libraries from projects that will run on the NXT. Standard Java libraries can not run on the custom NXT JVM.</p>
+     <h5>PC API</h5>
+     <p>For programs running on your Mac (PC API),  you need to add the bluecove.jar file to the classpath for the "Run
+     configuration" for the project. To do that, go to Project Properties,
+     then Run/Debug settings, then edit the Launch configuration you've been
+     using. It will be in the "Launch Configurations" window. Then select
+     "User Entries" and "Add external jars...". Add bluecove.jar from
+     lejos_nxj/3rdparty/lib</p>
+     <p>You also need to force the jvm to run in 32-bit mode. To do this,
+     modify the project properties by adding the <code>-d32</code> argument to the "VM
+     Arguments" section of the "Arguments" tab.</p>
+     <p>Standard Mac OS X Java libraries are used to compile PC API programs</p>
+     <h5>Additional <a href="UsingEclipse.htm">information on using Eclipse </a></h5>
+      <p> <a href="#top">Back to top</a> </p>
+      <div class="NavBit"> <a target="_top" href="../Preliminaries/Intro.htm">&#171;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
+      <a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/FirstProgram.htm">Next&nbsp;&#187;</a> </div>
+      <br />
+      </td>
+      <td> <br />
+      </td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>
