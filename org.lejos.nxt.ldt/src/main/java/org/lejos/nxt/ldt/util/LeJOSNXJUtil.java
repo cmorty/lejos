@@ -128,6 +128,12 @@ public class LeJOSNXJUtil {
 		if (throwable != null)
 		{
 			pw.println(throwable);
+			Throwable t = throwable.getCause();
+			while (t != null)
+			{
+				pw.println("Caused by "+t);
+				t = t.getCause();
+			}
 			pw.println("See Eclipse error log for detailed stack trace.");
 			log(throwable);
 		}

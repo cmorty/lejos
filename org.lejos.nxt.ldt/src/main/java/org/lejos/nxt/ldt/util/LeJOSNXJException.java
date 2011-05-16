@@ -24,11 +24,4 @@ public class LeJOSNXJException extends Exception {
 	public LeJOSNXJException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 	}
-
-	public String getMessage() {
-		if(getCause()!=null)
-			return getCause().getMessage();
-		else
-			return super.getMessage();
-	}
 }
