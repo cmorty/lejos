@@ -676,9 +676,8 @@ public class NXTCommand implements NXTProtocol {
             byte [] rxData = new byte[rxLength];
 			System.arraycopy(reply, 4, rxData, 0, rxLength);
             return rxData;
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/**
@@ -846,6 +845,77 @@ public class NXTCommand implements NXTProtocol {
 		byte [] request = {SYSTEM_COMMAND_REPLY, DELETE_USER_FLASH};
 		byte [] reply = nxtComm.sendRequest(request, 3);
 		return reply[2];
+	}
+	
+	/**
+	 * leJOS-specific command to set the default program
+	 * 
+	 * @param name the default program name
+	 * @return the status (0 is success)
+	 * @throws IOException
+	 */
+	public byte setDefaultProgram(String name) throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_SET_DEFAULT_PROGRAM};
+		byte[] encName = null;
+		try {
+			encName = AsciizCodec.encode(name);
+		} catch (UnsupportedEncodingException e) {
+			return -1;
+		}
+		request = appendBytes(request, encName);
+		byte [] reply = nxtComm.sendRequest(request, 3);
+		return reply[2];
+	}
+	
+	/** 
+	 * leJOS-specific command to set the master volume level
+	 * 
+	 * @param volume the master volume level
+	 * @return the status (0 = success)
+	 * @throws IOException
+	 */
+	public byte setVolume(byte volume) throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_SET_VOLUME, volume};
+		byte [] reply = nxtComm.sendRequest(request, 3);
+		return reply[2];
+	}
+
+	/** 
+	 * leJOS-specific command to set the key click volume level
+	 * 
+	 * @param volume the key click volume level
+	 * @return the status (0 = success)
+	 * @throws IOException
+	 */
+	public byte setKeyClickVolume(byte volume) throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_SET_KEY_CLICK_VOLUME, volume};
+		byte [] reply = nxtComm.sendRequest(request, 3);
+		return reply[2];
+	}
+	
+	/**
+	 * leJOS-specific command to set auto-run on or off
+	 * 
+	 * @param on true = on, false = off
+	 * @return the status (0 = success)
+	 * @throws IOException
+	 */
+	public byte setAutoRun(boolean on) throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_SET_AUTO_RUN, (byte) (on ? 1 : 0)};
+		byte [] reply = nxtComm.sendRequest(request, 3);
+		return reply[2];		
+	}
+	
+	/**
+	 * leJOS-specific command to the the sleep time for the menu
+	 * @param seconds the number of seconds before shutdown
+	 * @return the status (0 = success)
+	 * @throws IOException
+	 */
+	public byte setSleepTime(byte seconds) throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_SET_SLEEP_TIME, seconds};
+		byte [] reply = nxtComm.sendRequest(request, 3);
+		return reply[2];		
 	}
 	
 	/**

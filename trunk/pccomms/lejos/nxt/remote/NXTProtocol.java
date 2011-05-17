@@ -76,6 +76,11 @@ public interface NXTProtocol {
 	// NXJ additions
 	public static byte NXJ_DISCONNECT = 0x20; 
 	public static byte NXJ_DEFRAG = 0x21;
+	public static byte NXJ_SET_DEFAULT_PROGRAM = 0x22;
+	public static byte NXJ_SET_SLEEP_TIME = 0x23;
+	public static byte NXJ_SET_VOLUME = 0x24;
+	public static byte NXJ_SET_KEY_CLICK_VOLUME = 0x25;
+	public static byte NXJ_SET_AUTO_RUN = 0x26;
 	
 	// Output state constants 
 	// "Mode":
