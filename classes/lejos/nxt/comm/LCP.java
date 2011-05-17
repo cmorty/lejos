@@ -103,10 +103,15 @@ public class LCP {
 
 	// System settings
 	
-	static final String defaultProgramProperty = "lejos.default_program";
-	static final String sleepTimeProperty = "lejos.sleep_time";
-    static final String defaultProgramAutoRunProperty = "lejos.default_autoRun";
-    static final int defaultSleepTime = 2;
+	private static final String defaultProgramProperty = "lejos.default_program";
+	private static final String sleepTimeProperty = "lejos.sleep_time";
+	private static final String defaultProgramAutoRunProperty = "lejos.default_autoRun";
+	private static final int defaultSleepTime = 2;
+    
+    private static byte menuMajorVersion = 0;
+    private static byte menuMinorVersion = 0;
+    private static byte menuPatchLevel = 0;
+    private static int menuRevision = 0;
 	
 	private LCP()
 	{
@@ -620,8 +625,12 @@ public class LCP {
 			reply[4] = (byte) NXT.getFirmwareMinorVersion();
 			reply[5] = (byte) NXT.getFirmwarePatchLevel();
 			setReplyInt(NXT.getFirmwareRevision(), reply, 6);
+			reply[10] = menuMajorVersion;
+			reply[11] = menuMinorVersion;
+			reply[12] = menuPatchLevel;
+			setReplyInt(menuRevision, reply, 13);
 			
-			len = 10;
+			len = 17;
 		}
 		
 		// NXJ GET VOLUME
@@ -728,5 +737,20 @@ public class LCP {
 		for(int i=0;i<filenameLength;i++) charBuffer[i] = (char) cmd[i+start];
 		return new String(charBuffer,0,filenameLength);
 	}
+	
+	/**
+	 * Store the menu version and revision
+	 * 
+	 * @param version the menu version in the form major.minor.patch
+	 * @param revision the menu revision number
+	 */
+	public static void setMenuVersion(String version, int revision ) {
+		StringTokenizer tokenizer = new StringTokenizer(version,".");
+		if (tokenizer.hasMoreElements())menuMajorVersion = (byte) Integer.parseInt(tokenizer.nextToken());
+		if (tokenizer.hasMoreElements()) menuMinorVersion = (byte) Integer.parseInt(tokenizer.nextToken());
+		if (tokenizer.hasMoreElements()) menuPatchLevel = (byte) Integer.parseInt(tokenizer.nextToken());
+		menuRevision = revision;
+	}
+	
 }
 
