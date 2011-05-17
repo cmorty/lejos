@@ -81,6 +81,12 @@ public interface NXTProtocol {
 	public static byte NXJ_SET_VOLUME = 0x24;
 	public static byte NXJ_SET_KEY_CLICK_VOLUME = 0x25;
 	public static byte NXJ_SET_AUTO_RUN = 0x26;
+	public static byte NXJ_GET_VERSION = 0x27;
+	public static byte NXJ_GET_DEFAULT_PROGRAM = 0x28;
+	public static byte NXJ_GET_SLEEP_TIME = 0x29;
+	public static byte NXJ_GET_VOLUME = 0x2A;
+	public static byte NXJ_GET_KEY_CLICK_VOLUME = 0x2B;
+	public static byte NXJ_GET_AUTO_RUN = 0x2C;
 	
 	// Output state constants 
 	// "Mode":

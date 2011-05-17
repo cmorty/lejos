@@ -44,6 +44,7 @@
   				<include name="lejos/nxt/remote/ErrorMessages.java"/>
   				<include name="lejos/nxt/remote/FileInfo.java"/>
   				<include name="lejos/nxt/remote/FirmwareInfo.java"/>
+  				<include name="lejos/nxt/remote/NXJFirmwareInfo.java"/>
   				<include name="lejos/nxt/remote/InputValues.java"/>
   				<include name="lejos/nxt/remote/NXTCommand.java"/>
   				<include name="lejos/nxt/remote/NXTCommRequest.java"/>
