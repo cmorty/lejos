@@ -741,14 +741,13 @@ public class LCP {
 	/**
 	 * Store the menu version and revision
 	 * 
-	 * @param version the menu version in the form major.minor.patch
+	 * @param version the menu version number
 	 * @param revision the menu revision number
 	 */
-	public static void setMenuVersion(String version, int revision ) {
-		StringTokenizer tokenizer = new StringTokenizer(version,".");
-		if (tokenizer.hasMoreElements())menuMajorVersion = (byte) Integer.parseInt(tokenizer.nextToken());
-		if (tokenizer.hasMoreElements()) menuMinorVersion = (byte) Integer.parseInt(tokenizer.nextToken());
-		if (tokenizer.hasMoreElements()) menuPatchLevel = (byte) Integer.parseInt(tokenizer.nextToken());
+	public static void setMenuVersion(int version, int revision ) {
+		menuMajorVersion = (byte) ((version >> 16)  & 0xFF);
+		menuMinorVersion = (byte) ((version >> 8)  & 0xFF);
+		menuPatchLevel = (byte) (version & 0xFF);
 		menuRevision = revision;
 	}
 	
