@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -286,6 +287,9 @@ public class LeJOSNXJUtil {
 	{
 		Preferences p = LeJOSNXJPlugin.getDefault().getPluginPreferences();
 		
+		dst.add("--writeorder");
+		dst.add("LE");
+		
 		if (p.getBoolean(PreferenceConstants.KEY_IS_VERBOSE))
 			dst.add("-v");
 	}
@@ -372,4 +376,24 @@ public class LeJOSNXJUtil {
 			}
 		}
 	}
+
+	public static int invokeTool(File nxjHome, String tool, List<String> args) throws LeJOSNXJException, ClassNotFoundException,
+			NoSuchMethodException, IllegalAccessException, InvocationTargetException
+	{
+		String[] args2 = new String[args.size()];
+		args.toArray(args2);
+		
+		ClassLoader cl = getCachedPCClassLoader(nxjHome);
+		Class<?> c = cl.loadClass(tool);
+		Method m = c.getDeclaredMethod("start", String[].class);
+		Object r1 = m.invoke(null, (Object)args2);
+		int r2 = ((Integer)r1).intValue();
+		return r2;
+	}
+
+
+	public static final String TOOL_UPLOAD = "lejos.pc.tools.NXJUpload";
+	public static final String TOOL_FLASH = "lejos.pc.tools.NXJFlash";
+	public static final String TOOL_LINK_AND_UPLOAD = "lejos.pc.tools.NXJLinkAndUpload";
+	public static final String TOOL_LINK = "lejos.pc.tools.NXJLink";
 }

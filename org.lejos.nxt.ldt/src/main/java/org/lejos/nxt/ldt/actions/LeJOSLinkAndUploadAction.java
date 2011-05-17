@@ -121,43 +121,51 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			pm.beginTask("Linking and uploading program to the brick...", IProgressMonitor.UNKNOWN);
 			try
 			{
-				
-				ClassLoader cl = LeJOSNXJUtil.getCachedPCClassLoader(nxjHome);
-				Class<?> c = cl.loadClass("lejos.pc.tools.NXJLinkAndUpload");
-				
-				ArrayList<String> args = new ArrayList<String>();
-				LeJOSNXJUtil.getUploadOpts(args, true);
-				LeJOSNXJUtil.getLinkerOpts(args);
-				args.add("--writeorder");
-				args.add("LE");
-				args.add("--bootclasspath");
-				args.add(classpathToString(cpl));
-				args.add("--classpath");
-				args.add(classpathToString(bcpl));
-				args.add("--output");
-				args.add(binaryPath);
-				args.add("--outputdebug");
-				args.add(binaryDebugPath);
-				args.add(fullClass);
-				String[] args2 = new String[args.size()];
-				args.toArray(args2);
-				
-				Method m = c.getDeclaredMethod("start", String[].class);
-				Object r1 = m.invoke(null, (Object)args2);
-				int r2 = ((Integer)r1).intValue();
-								
-				//TODO first link, then refreshLocal, then upload.
-				
-				if (r2 == 0)
-					LeJOSNXJUtil.message("program has been linked and uploaded successfully");
+				int r;
+				try
+				{
+					pm.subTask("Linking ...");
+					ArrayList<String> args = new ArrayList<String>();
+					LeJOSNXJUtil.getLinkerOpts(args);
+					args.add("--bootclasspath");
+					args.add(classpathToString(cpl));
+					args.add("--classpath");
+					args.add(classpathToString(bcpl));
+					args.add("--output");
+					args.add(binaryPath);
+					args.add("--outputdebug");
+					args.add(binaryDebugPath);
+					args.add(fullClass);
+	
+					r = LeJOSNXJUtil.invokeTool(nxjHome, LeJOSNXJUtil.TOOL_LINK, args);
+				}
+				finally
+				{
+					binary.refreshLocal(IResource.DEPTH_ZERO, pm);
+					binaryDebug.refreshLocal(IResource.DEPTH_ZERO, pm);
+				}
+			
+				if (r != 0)
+					LeJOSNXJUtil.message("linking the file failed with exit status "+r);
 				else
-					LeJOSNXJUtil.message("linking and uploading the file failed with exit status "+r2);
+				{
+					LeJOSNXJUtil.message("program has been linked successfully");
+					
+					pm.subTask("Uploading ...");					
+					ArrayList<String> args = new ArrayList<String>();
+					LeJOSNXJUtil.getUploadOpts(args, true);
+					args.add(binaryPath);
+					
+					r = LeJOSNXJUtil.invokeTool(nxjHome, LeJOSNXJUtil.TOOL_UPLOAD, args);
+					if (r == 0)
+						LeJOSNXJUtil.message("program has been uploaded");
+					else
+						LeJOSNXJUtil.message("uploading the program failed with exit status "+r);
+				}
 			}
 			finally
 			{
 				pm.done();
-				binary.refreshLocal(IResource.DEPTH_ZERO, pm);
-				binaryDebug.refreshLocal(IResource.DEPTH_ZERO, pm);
 			}
 		} catch (Throwable t) {
 			if (t instanceof InvocationTargetException)

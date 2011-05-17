@@ -2,7 +2,6 @@ package org.lejos.nxt.ldt.actions;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -56,44 +55,34 @@ public class LeJOSUploadAction implements IObjectActionDelegate {
 	}
 
 	private void uploadFile(IProgressMonitor progressMonitor, ArrayList<File> fileList) {
-		for (File f : fileList)
-		{
-			try {
-				progressMonitor.beginTask("Uploading file...", IProgressMonitor.UNKNOWN);
-				try
-				{
-					File nxjHome = LeJOSNXJUtil.getNXJHome();
-					ClassLoader cl = LeJOSNXJUtil.getCachedPCClassLoader(nxjHome);
-					Class<?> c = cl.loadClass("lejos.pc.tools.NXJUpload");
-					
-					//LeJOSNXJPlugin.getDefault().getConsole().activate();
-					
-					ArrayList<String> args = new ArrayList<String>();
-					LeJOSNXJUtil.getUploadOpts(args, false);
-					args.add(f.getAbsolutePath());
-					String[] args2 = new String[args.size()];
-					args.toArray(args2);
-					
-					Method m = c.getDeclaredMethod("start", String[].class);
-					Object r1 = m.invoke(null, (Object)args2);
-					int r2 = ((Integer)r1).intValue();
-					
-					if (r2 == 0)
-						LeJOSNXJUtil.message("file has been uploaded successfully");
-					else
-						LeJOSNXJUtil.message("uploading the file failed with exit status "+r2);
-				}
-				finally
-				{
-					progressMonitor.done();					
-				}
-			} catch (Throwable t) {
-				if (t instanceof InvocationTargetException)
-					t = ((InvocationTargetException)t).getTargetException();
+		try {
+			progressMonitor.beginTask("Uploading files...", IProgressMonitor.UNKNOWN);
+			try
+			{
+				File nxjHome = LeJOSNXJUtil.getNXJHome();
+				//LeJOSNXJPlugin.getDefault().getConsole().activate();
 				
-				// log
-				LeJOSNXJUtil.message("upload of " + f+" failed.", t);
+				ArrayList<String> args = new ArrayList<String>();
+				LeJOSNXJUtil.getUploadOpts(args, false);
+				for (File f : fileList)
+					args.add(f.getAbsolutePath());
+				
+				int r = LeJOSNXJUtil.invokeTool(nxjHome, LeJOSNXJUtil.TOOL_UPLOAD, args);
+				if (r == 0)
+					LeJOSNXJUtil.message("files have been uploaded successfully");
+				else
+					LeJOSNXJUtil.message("uploading "+fileList+" failed with exit status "+r);
 			}
+			finally
+			{
+				progressMonitor.done();					
+			}
+		} catch (Throwable t) {
+			if (t instanceof InvocationTargetException)
+				t = ((InvocationTargetException)t).getTargetException();
+			
+			// log
+			LeJOSNXJUtil.message("upload of " + fileList + " failed", t);
 		}
 	}
 

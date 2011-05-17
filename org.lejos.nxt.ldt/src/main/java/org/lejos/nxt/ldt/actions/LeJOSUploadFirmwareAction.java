@@ -3,6 +3,7 @@ package org.lejos.nxt.ldt.actions;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -59,21 +60,16 @@ public class LeJOSUploadFirmwareAction implements
 			{
 				// upload firmware
 				File nxjHome = LeJOSNXJUtil.getNXJHome();
-				ClassLoader cl = LeJOSNXJUtil.getCachedPCClassLoader(nxjHome);
-				Class<?> c = cl.loadClass("lejos.pc.tools.NXJFlash");
 				
-	//			String firmware = new File(nxjHome, "bin/lejos_nxt_rom.bin").getAbsolutePath();
-	//			String menu = new File(nxjHome, "bin/StartUpText.bin").getAbsolutePath();
-				String[] args = new String[] { };
+				ArrayList<String> args = new ArrayList<String>();
+//				args.add(new File(nxjHome, "bin/lejos_nxt_rom.bin").getAbsolutePath());
+//				args.add(new File(nxjHome, "bin/StartUpText.bin").getAbsolutePath());
 				
-				Method m = c.getDeclaredMethod("start", String[].class);
-				Object r1 = m.invoke(null, (Object)args);
-				int r2 = ((Integer)r1).intValue();
-				
-				if (r2 == 0)
+				int r = LeJOSNXJUtil.invokeTool(nxjHome, LeJOSNXJUtil.TOOL_FLASH, args);
+				if (r == 0)
 					LeJOSNXJUtil.message("firmware has been uploaded successfully");
 				else
-					LeJOSNXJUtil.message("flashing the firmware failed with exit status "+r2);
+					LeJOSNXJUtil.message("flashing the firmware failed with exit status "+r);
 			}
 			finally
 			{
