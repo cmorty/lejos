@@ -69,7 +69,7 @@ public class LeJOSUploadAction implements IObjectActionDelegate {
 					//LeJOSNXJPlugin.getDefault().getConsole().activate();
 					
 					ArrayList<String> args = new ArrayList<String>();
-					LeJOSNXJUtil.getCmdLineOpts(args, false);
+					LeJOSNXJUtil.getUploadOpts(args, false);
 					args.add(f.getAbsolutePath());
 					String[] args2 = new String[args.size()];
 					args.toArray(args2);
