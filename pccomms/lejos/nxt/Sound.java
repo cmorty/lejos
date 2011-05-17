@@ -1,6 +1,8 @@
 package lejos.nxt;
 
 import lejos.pc.comm.*;
+import lejos.util.Delay;
+
 import java.io.*;
 import lejos.nxt.remote.*;
 
@@ -17,6 +19,90 @@ public class Sound {
 	
 	// Make sure no one tries to instantiate this.
 	private Sound() {}
+	
+    public static int C2 = 523;
+	
+    /**
+     * Play a system sound.
+     * <TABLE BORDER=1>
+     * <TR><TH>aCode</TH><TH>Resulting Sound</TH></TR>
+     * <TR><TD>0</TD><TD>short beep</TD></TR>
+     * <TR><TD>1</TD><TD>double beep</TD></TR>
+     * <TR><TD>2</TD><TD>descending arpeggio</TD></TR>
+     * <TR><TD>3</TD><TD>ascending  arpeggio</TD></TR>
+     * <TR><TD>4</TD><TD>long, low buzz</TD></TR>
+     * </TABLE>
+     */
+    public static void systemSound(boolean aQueued, int aCode)
+    {
+        if (aCode == 0)
+            playTone(600, 200);
+        else if (aCode == 1)
+        {
+            playTone(600, 150);
+            pause(200);
+            playTone(600, 150);
+            pause(150);
+        }
+        else if (aCode == 2)// C major arpeggio
+            for (int i = 4; i < 8; i++)
+            {
+                playTone(C2 * i / 4, 100);
+                pause(100);
+            }
+        else if (aCode == 3)
+            for (int i = 7; i > 3; i--)
+            {
+                playTone(C2 * i / 4, 100);
+                pause(100);
+            }
+        else if (aCode == 4)
+        {
+            playTone(100, 500);
+            pause(500);
+        }
+    }
+    
+
+    /**
+     * Beeps once.
+     */
+    public static void beep()
+    {
+        systemSound(true, 0);
+    }
+
+    /**
+     * Beeps twice.
+     */
+    public static void twoBeeps()
+    {
+        systemSound(true, 1);
+    }
+
+    /**
+     * Downward tones.
+     */
+    public static void beepSequence()
+    {
+        systemSound(true, 3);
+    }
+
+    /**
+     * Upward tones.
+     */
+    public static void beepSequenceUp()
+    {
+        systemSound(true, 2);
+    }
+
+    /**
+     * Low buzz 
+     */
+    public static void buzz()
+    {
+        systemSound(true, 4);
+    }
 	
 	public static int playTone(int frequency, int duration) {
 		try {
@@ -69,4 +155,9 @@ public class Sound {
 			return -1;
 		}
 	}
+	
+    public static void pause(int t)
+    {
+        Delay.msDelay(t);
+    }  
 }
