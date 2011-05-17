@@ -2,7 +2,6 @@ package org.lejos.nxt.ldt.actions;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
