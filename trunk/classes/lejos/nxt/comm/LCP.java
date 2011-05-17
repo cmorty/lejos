@@ -3,6 +3,7 @@ package lejos.nxt.comm;
 import java.io.*;
 import lejos.nxt.*;
 import java.util.*;
+
 /**
  * 
  * Implements the Lego Communication Protocol,
@@ -21,7 +22,7 @@ public class LCP {
     private static int numFiles;	
 	private static char[] charBuffer = new char[20];
 	@SuppressWarnings("unchecked")
-	public static Queue<String>[] inBoxes = (Queue<String>[]) new Queue[20];
+	public static Queue<String>[] inBoxes = new Queue[20];
     
 	// Command types constants. Indicates type of packet being sent or received.
 	public static byte DIRECT_COMMAND_REPLY = 0x00;
@@ -54,6 +55,11 @@ public class LCP {
 	// NXJ additions
 	public static byte NXJ_DISCONNECT = 0x20; 
 	public static byte NXJ_DEFRAG = 0x21;
+	public static byte NXJ_SET_DEFAULT_PROGRAM = 0x22;
+	public static byte NXJ_SET_SLEEP_TIME = 0x23;
+	public static byte NXJ_SET_VOLUME = 0x24;
+	public static byte NXJ_SET_KEY_CLICK_VOLUME = 0x25;
+	public static byte NXJ_SET_AUTO_RUN = 0x26;
 	
 	// System Commands:
 	public static final byte OPEN_READ = (byte)0x80;
@@ -89,9 +95,15 @@ public class LCP {
 	public static final byte UNDEFINED_ERROR = (byte) 0x8A;
 	public static final byte NOT_IMPLEMENTED = (byte) 0xFD;
 
+	// System settings
+	
+	static final String defaultProgramProperty = "lejos.default_program";
+	static final String sleepTimeProperty = "lejos.sleep_time";
+    static final String defaultProgramAutoRunProperty = "lejos.default_autoRun";
 	
 	private LCP()
-	{		
+	{
+		// Do not instantiate - all methods are static
 	}
 	
 	/**
@@ -105,14 +117,14 @@ public class LCP {
 	    
 	    for(int i=0;i<reply.length;i++)reply[i] = 0;
 	    
-		reply[0] = REPLY_COMMAND;;
+		reply[0] = REPLY_COMMAND;
 		reply[1] = cmd[1];
 		
 		byte cmdId = cmd[1];
 		
 		// START PROGRAM
 		if (cmdId == START_PROGRAM) {
-			init_files();
+			initFiles();
 			currentProgram = getFile(cmd,2);
 			if (fileNames != null) {
 				for(int i=0;i<fileNames.length;i++) {
@@ -141,7 +153,7 @@ public class LCP {
 		// PLAY SOUND FILE
 		if (cmdId == PLAY_SOUND_FILE)
 		{
-			init_files();
+			initFiles();
 			String soundFile = getFile(cmd,3);
 			File f = new File(soundFile);
 			Sound.playSample(f, 50);
@@ -321,7 +333,7 @@ public class LCP {
 			byte rxLen = cmd[4];
 			SensorPort p = SensorPort.getInstance(port);
 			p.i2cEnable(I2CPort.LEGO_MODE);
-			int ret = p.i2cStart(cmd[5], cmd, 6, txLen-1, rxLen);
+			p.i2cStart(cmd[5], cmd, 6, txLen-1, rxLen);
             p.i2cWaitIOComplete();
 		}
 		
@@ -348,7 +360,7 @@ public class LCP {
 		// OPEN READ
 		if (cmdId == OPEN_READ)
 		{
-			init_files();
+			initFiles();
 			file = new File(getFile(cmd,2));
             try {
             	in = new FileInputStream(file);
@@ -364,7 +376,7 @@ public class LCP {
 		if (cmdId == OPEN_WRITE)
 		{
 			int size = getInt(cmd, 22);
-			init_files();
+			initFiles();
 			
 			// If insufficient flash memory, report an error			
 			if (size > File.freeMemory()) {
@@ -385,7 +397,7 @@ public class LCP {
 				} catch (Exception e) {
 					files = null;
 					File.reset(); // force read from file table
-					init_files();
+					initFiles();
 					reply[2] = DIRECTORY_FULL;
 				}
 			}
@@ -418,13 +430,15 @@ public class LCP {
 		{
 			try {
 				File.defrag();
-			}catch (IOException ioe) {}
+			}catch (IOException ioe) {
+				// Ignore exception
+			}
 		}
 
 		// FIND FIRST
 		if (cmdId == FIND_FIRST || cmdId == NXJ_FIND_FIRST)
 		{
-			init_files();
+			initFiles();
 			if (cmdId == FIND_FIRST) len = 28;
 			else len = 32;
 			if (numFiles == 0)
@@ -556,6 +570,42 @@ public class LCP {
 			numFiles = 0;
 		}
 		
+		// SET DEFAULT PROGRAM
+		if (cmdId == NXJ_SET_DEFAULT_PROGRAM) {
+			String fileName = getFile(cmd, 2);
+			initFiles();
+			File f = new File(fileName);
+			if (f.exists()) Settings.setProperty(defaultProgramProperty, fileName);
+		}
+		
+		// SET SLEEP TIME	
+		if (cmdId == NXJ_SET_SLEEP_TIME) {
+			Settings.setProperty(sleepTimeProperty, String.valueOf(cmd[2]));
+		}
+		
+		// SET AUTO RUN	
+		if (cmdId == NXJ_SET_AUTO_RUN) {
+			Settings.setProperty(defaultProgramAutoRunProperty, cmd[2] == 0 ? "OFF" : "ON");
+		}
+		
+		// SET VOLUME
+		if (cmdId == NXJ_SET_VOLUME) {
+			int volume = cmd[2];
+			if (volume >= 0 && volume <= 100) {
+				Sound.setVolume(volume);
+				Settings.setProperty(Sound.VOL_SETTING, String.valueOf(volume));
+			}
+		}
+		
+		// SET KEY VLICK VOLUME
+		if (cmdId == NXJ_SET_KEY_CLICK_VOLUME) {
+			int volume = cmd[2];
+			if (volume >= 0 && volume <= 100) {
+				Button.setKeyClickVolume(volume);
+				Settings.setProperty(Button.VOL_SETTING, String.valueOf(volume));
+			}
+		}
+		
 		return len;
 	}
 	
@@ -611,7 +661,7 @@ public class LCP {
 		reply[start+1] = getMSB(n);
 	}
 	
-	private static void init_files() {
+	private static void initFiles() {
 		if (files == null) {
 			files = File.listFiles();
 			numFiles = 0;
