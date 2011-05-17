@@ -726,9 +726,9 @@ public class DifferentialPilot implements
    * helper method used by steer(float) and steer(float,float,boolean)
    * sets _outsideSpeed, _insideSpeed, _steerRatio
    * @param turnRate
-   * @deprecated Access to this method will be private in NXJ version 1.0 when the CompassPilot is removed.
+   * .
    */
-  @Deprecated protected void steerPrep(final double turnRate)
+    void steerPrep(final double turnRate)
   {
 
     double rate = turnRate;
@@ -779,9 +779,8 @@ public class DifferentialPilot implements
 
   /**
    * called at start of a movement to inform the listeners  that a movement has started
-   * @deprecated Access to this method will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  @Deprecated protected void movementStart(boolean alert)
+   protected void movementStart(boolean alert)
   {
     if (isMoving())  movementStop();
     reset();
@@ -840,7 +839,7 @@ public class DifferentialPilot implements
    * Note: A DifferentialPilot robot can simulate a SteeringPilot robot by calling DifferentialPilot.setMinRadius()
    * and setting the value to something greater than zero (example: 15 cm).
    * 
-   * @param radius the radius in degrees
+   * @param radius  in degrees
    */
   public void setMinRadius(double radius)
   {
@@ -853,11 +852,10 @@ public class DifferentialPilot implements
   }
 
   /**
-   * @deprecated Access to this method will be private in NXJ version 1.0 when the CompassPilot is removed
-   * and ArcNavigator sample will need to be updated to not use these methods.
+   
    * @return The move distance since it last started moving
    */
-  @Deprecated public float getMovementIncrement()
+  public float getMovementIncrement()
   {
     float left = (getLeftCount() - _leftTC)/ _leftDegPerDistance;
     float right = (getRightCount() - _rightTC) / _rightDegPerDistance;
@@ -865,12 +863,11 @@ public class DifferentialPilot implements
   }
 
   /**
-   * @deprecated Access to this method will be private in NXJ version 1.0 when the CompassPilot is removed
-   * and ArcNavigator sample will need to be updated to not use these methods.
+ 
    * @return The angle rotated since rotation began.
    * 
    */
-  @Deprecated public float getAngleIncrement()
+ public float getAngleIncrement()
   {
     return /*_parity * */(((getRightCount() - _rightTC) / _rightTurnRatio) -
             ((getLeftCount()  - _leftTC) / _leftTurnRatio)) / 2.0f;
@@ -888,10 +885,9 @@ public class DifferentialPilot implements
 
   private float _turnRadius = 0;
   /**
-   * Left motor.
-   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
+   * Left motor..
    */
-  @Deprecated protected final RegulatedMotor _left;
+  protected final RegulatedMotor _left;
   /**
    * Right motor.
    * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
@@ -905,9 +901,8 @@ public class DifferentialPilot implements
   /**
    * The motor at the outside of the turn. set by steer(turnRate)
    * used by other steer methodsl
-   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  @Deprecated protected RegulatedMotor _outside;
+  protected RegulatedMotor _outside;
   /**
    * ratio of inside/outside motor speeds
    * set by steer(turnRate)
@@ -917,14 +912,13 @@ public class DifferentialPilot implements
   private boolean _steering = false;
   /**
    * Left motor degrees per unit of travel.
-   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  @Deprecated protected final float _leftDegPerDistance;
+ protected final float _leftDegPerDistance;
   /**
    * Right motor degrees per unit of travel.
-   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
+
    */
-  @Deprecated protected final float _rightDegPerDistance;
+   protected final float _rightDegPerDistance;
   /**
    * Left motor revolutions for 360 degree rotation of robot (motors running
    * in opposite directions). Calculated from wheel diameter and track width.
@@ -973,8 +967,7 @@ public class DifferentialPilot implements
   private ArrayList<MoveListener> _listeners= new ArrayList<MoveListener>();
   
   /**
-   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  @Deprecated protected Move.MoveType _type;
+   protected Move.MoveType _type;
 
 }
