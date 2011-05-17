@@ -907,6 +907,78 @@ public class NXTCommand implements NXTProtocol {
 	}
 	
 	/**
+	 * leJOS-specific command to get the master volume level
+	 * 
+	 * @return the master volume level
+	 * @throws IOException
+	 */
+	public int getVolume() throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_GET_VOLUME};
+		byte [] reply = nxtComm.sendRequest(request, 4);
+		return reply[3];		
+	}
+	
+	/**
+	 * leJOS-specific command to get the master volume level
+	 * 
+	 * @return the master volume level
+	 * @throws IOException
+	 */
+	public int getKeyClickVolume() throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_GET_KEY_CLICK_VOLUME};
+		byte [] reply = nxtComm.sendRequest(request, 4);
+		return reply[3];		
+	}
+	
+	/**
+	 * leJOS-specific command to get the auto run setring
+	 * 
+	 * @return the auto run setting
+	 * @throws IOException
+	 */
+	public boolean getAutoRun() throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_GET_AUTO_RUN};
+		byte [] reply = nxtComm.sendRequest(request, 4);
+		return (reply[3] == 1);		
+	}
+	
+	/**
+	 * leJOS-specific command to get the NXJ firmware version
+	 * 
+	 * @return a string with major version, minor version, and patch level
+	 * @throws IOException
+	 */
+	public String getNXJVersion() throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_GET_VERSION};
+		byte [] reply = nxtComm.sendRequest(request, 6);
+		return reply[3] + "." + reply[4] + "." + reply[5];	
+	}
+	
+	/**
+	 * leJOS-specific method to get the menu sleep time
+	 * 
+	 * @return the sleep time in seconds
+	 * @throws IOException
+	 */
+	public int getSleepTime() throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_GET_SLEEP_TIME};
+		byte [] reply = nxtComm.sendRequest(request, 4);
+		return reply[3];
+	}
+	
+	/**
+	 * leJOS-specific command to get the default program name
+	 * 
+	 * @return the default program name
+	 * @throws IOException
+	 */
+	public String getDefaultProgram() throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_GET_DEFAULT_PROGRAM};
+		byte [] reply = nxtComm.sendRequest(request, 23);
+		return new StringBuffer(new String(reply)).delete(0, 2).toString();		
+	}
+	
+	/**
 	 * leJOS-specific command to the the sleep time for the menu
 	 * @param seconds the number of seconds before shutdown
 	 * @return the status (0 = success)
