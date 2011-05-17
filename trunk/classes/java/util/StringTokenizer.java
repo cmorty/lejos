@@ -16,7 +16,7 @@ public class StringTokenizer implements Enumeration{
 	private String s;
 
 	/**
-	 * Assigns the delimeter as ',' by default.
+	 * Assigns the delimiter as ',' by default.
 	 * 
 	 * @param s String to be StringTokenizer
 	 */
