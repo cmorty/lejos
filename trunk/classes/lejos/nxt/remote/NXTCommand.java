@@ -950,8 +950,72 @@ public class NXTCommand implements NXTProtocol {
 	 */
 	public String getNXJVersion() throws IOException {
 		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_GET_VERSION};
-		byte [] reply = nxtComm.sendRequest(request, 6);
-		return reply[3] + "." + reply[4] + "." + reply[5];	
+		byte [] reply = nxtComm.sendRequest(request, 10);
+		int revision = (0xFF & reply[6]) | ((0xFF & reply[7]) << 8)| ((0xFF & reply[8]) << 16)| ((0xFF & reply[9]) << 24);
+		return reply[3] + "." + reply[4] + "." + reply[5] + "(" + revision + ")";
+		
+	}
+	
+	/**
+	 * leJOS-specific command to get the NXJ firmware and menu information
+	 * 
+	 * @return a NXJFirmwareInfo object containing all the version numbers
+	 * @throws IOException
+	 */
+	public NXJFirmwareInfo getNXJFirmwareInfo() throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_GET_VERSION};
+		byte [] reply = nxtComm.sendRequest(request, 10);
+		NXJFirmwareInfo info = new NXJFirmwareInfo();
+		info.firmwareMajorVersion = reply[3];
+		info.firmwareMinorVersion = reply[4];
+		info.firmwarePatchLevel = reply[5];
+		info.firmwareRevision = (0xFF & reply[6]) | ((0xFF & reply[7]) << 8)| ((0xFF & reply[8]) << 16)| ((0xFF & reply[9]) << 24);
+		return info;
+	}
+	
+	/**
+	 * Get LeJOS NXJ firmware major version
+	 * 
+	 * @return the major version
+	 * @throws IOException
+	 */
+	public int getNXJMajorVersion() throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_GET_VERSION};
+		byte [] reply = nxtComm.sendRequest(request, 10);
+		return reply[3];
+	}
+	
+	/** Get LeJOS NXJ firmware minor version
+	 * 
+	 * @return the minor version
+	 * @throws IOException
+	 */
+	public int getNXJMinorVersion() throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_GET_VERSION};
+		byte [] reply = nxtComm.sendRequest(request, 10);
+		return reply[4];
+	}
+	
+	/** Get LeJOS NXJ firmware patch leve;
+	 * 
+	 * @return the patch level
+	 * @throws IOException
+	 */
+	public int getNXJPatchLevel() throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_GET_VERSION};
+		byte [] reply = nxtComm.sendRequest(request, 10);
+		return reply[5];
+	}
+	
+	/** Get LeJOS NXJ firmware revision level
+	 * 
+	 * @return the revision level
+	 * @throws IOException
+	 */
+	public int getNXJRevision() throws IOException {
+		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_GET_VERSION};
+		byte [] reply = nxtComm.sendRequest(request, 10);
+		return (0xFF & reply[6]) | ((0xFF & reply[7]) << 8)| ((0xFF & reply[8]) << 16)| ((0xFF & reply[9]) << 24);
 	}
 	
 	/**
@@ -975,7 +1039,11 @@ public class NXTCommand implements NXTProtocol {
 	public String getDefaultProgram() throws IOException {
 		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_GET_DEFAULT_PROGRAM};
 		byte [] reply = nxtComm.sendRequest(request, 23);
-		return new StringBuffer(new String(reply)).delete(0, 2).toString();		
+		StringBuffer name =  new StringBuffer(new String(reply)).delete(0, 3);	
+		int lastPos = name.indexOf("\0");
+		if (lastPos < 0 || lastPos > 20) lastPos = 20;
+		name.delete(lastPos, name.length());
+		return name.toString();
 	}
 	
 	/**

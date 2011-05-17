@@ -619,8 +619,9 @@ public class LCP {
 			reply[3] =  (byte) NXT.getFirmwareMajorVersion();
 			reply[4] = (byte) NXT.getFirmwareMinorVersion();
 			reply[5] = (byte) NXT.getFirmwarePatchLevel();
+			setReplyInt(NXT.getFirmwareRevision(), reply, 6);
 			
-			len = 7;
+			len = 10;
 		}
 		
 		// NXJ GET VOLUME
@@ -630,7 +631,7 @@ public class LCP {
 		}
 		
 		// NXJ GET KEY CLICK VOLUME
-		if (cmdId == NXJ_GET_VOLUME) {
+		if (cmdId == NXJ_GET_KEY_CLICK_VOLUME) {
 			reply[3] = (byte) Button.getKeyClickVolume();
 			len = 4;
 		}
@@ -642,7 +643,7 @@ public class LCP {
 		}
 		
 		// NXJ GET AUTO RUN
-		if (cmdId == NXJ_GET_SLEEP_TIME) {
+		if (cmdId == NXJ_GET_AUTO_RUN) {
 			String autoRun = SystemSettings.getStringSetting(defaultProgramAutoRunProperty, "OFF");
 			reply[3] = (byte) (autoRun.equals("ON") ? 1 : 0);
 			len = 4;
@@ -651,7 +652,7 @@ public class LCP {
 		// NXJ GET DEFAULT PROGRAM
 		if (cmdId == NXJ_GET_DEFAULT_PROGRAM) {
 			String name = SystemSettings.getStringSetting(defaultProgramProperty, "");
-			for(int i=0;i<name.length() && i < 19;i++) 
+			for(int i=0;i<name.length() && i < 20;i++) 
 				reply[3+i] = (byte) name.charAt(i);
 			len = 23;
 		}
