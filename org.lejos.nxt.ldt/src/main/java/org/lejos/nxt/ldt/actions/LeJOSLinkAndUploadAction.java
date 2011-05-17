@@ -5,7 +5,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -106,12 +108,14 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			ArrayList<File> bcpl = new ArrayList<File>();
 			LeJOSNXJUtil.buildNXTClasspath(nxjHome, bcpl);
 
-			File projectRoot = project.getProject().getLocation().toFile();
 			String fullClass =LeJOSNXJUtil.getFullQualifiedClassName(javaType);
 			String simpleClass = LeJOSNXJUtil.getSimpleClassName(javaType);
 			
-			File binary = new File(projectRoot, simpleClass+".nxj");
-			File binaryDebug = new File(projectRoot, simpleClass+".nxd");
+			IProject project2 = project.getProject();
+			IFile binary = project2.getFile(simpleClass+".nxj");
+			IFile binaryDebug = project2.getFile(simpleClass+".nxd");
+			String binaryPath = binary.getLocation().toOSString();
+			String binaryDebugPath = binaryDebug.getLocation().toOSString();
 			
 			// upload program
 			pm.beginTask("Linking and uploading program to the brick...", IProgressMonitor.UNKNOWN);
@@ -122,7 +126,8 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 				Class<?> c = cl.loadClass("lejos.pc.tools.NXJLinkAndUpload");
 				
 				ArrayList<String> args = new ArrayList<String>();
-				LeJOSNXJUtil.getCmdLineOpts(args, true);
+				LeJOSNXJUtil.getUploadOpts(args, true);
+				LeJOSNXJUtil.getLinkerOpts(args);
 				args.add("--writeorder");
 				args.add("LE");
 				args.add("--bootclasspath");
@@ -130,9 +135,9 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 				args.add("--classpath");
 				args.add(classpathToString(bcpl));
 				args.add("--output");
-				args.add(binary.getAbsolutePath());
+				args.add(binaryPath);
 				args.add("--outputdebug");
-				args.add(binaryDebug.getAbsolutePath());
+				args.add(binaryDebugPath);
 				args.add(fullClass);
 				String[] args2 = new String[args.size()];
 				args.toArray(args2);
@@ -151,6 +156,8 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			finally
 			{
 				pm.done();
+				binary.refreshLocal(IResource.DEPTH_ZERO, pm);
+				binaryDebug.refreshLocal(IResource.DEPTH_ZERO, pm);
 			}
 		} catch (Throwable t) {
 			if (t instanceof InvocationTargetException)

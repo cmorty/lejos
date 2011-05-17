@@ -282,7 +282,15 @@ public class LeJOSNXJUtil {
 		}
 	}
 	
-	public static void getCmdLineOpts(List<String> dst, boolean linker) throws LeJOSNXJException
+	public static void getLinkerOpts(List<String> dst) throws LeJOSNXJException
+	{
+		Preferences p = LeJOSNXJPlugin.getDefault().getPluginPreferences();
+		
+		if (p.getBoolean(PreferenceConstants.KEY_IS_VERBOSE))
+			dst.add("-v");
+	}
+
+	public static void getUploadOpts(List<String> dst, boolean runnable) throws LeJOSNXJException
 	{
 		Preferences p = LeJOSNXJPlugin.getDefault().getPluginPreferences();
 		
@@ -309,15 +317,9 @@ public class LeJOSNXJUtil {
 			dst.add(p.getString(PreferenceConstants.KEY_CONNECTION_BRICK_NAME));
 		}
 		
-		if (linker)
-		{
-			if (p.getBoolean(PreferenceConstants.KEY_IS_VERBOSE))
-				dst.add("-v");
-			if (p.getBoolean(PreferenceConstants.KEY_RUN_AFTER_UPLOAD))
-				dst.add("-r");			
-		}
+		if (runnable && p.getBoolean(PreferenceConstants.KEY_RUN_AFTER_UPLOAD))
+			dst.add("-r");			
 	}
-
 
 	public static File resolvePath(IPath path) throws JavaModelException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
