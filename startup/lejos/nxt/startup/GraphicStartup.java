@@ -1191,6 +1191,8 @@ public class GraphicStartup {
         initThread.menu.start();
         // Tell thread to fade in again
         tuneThread.setState(3);
+        
+        LCP.setMenuVersion(VERSION, Integer.parseInt(REVISION.substring(11, REVISION.length() - 2)));
         initThread.menu.mainMenu();
 
         Utils.fadeOut();
