@@ -105,8 +105,6 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			LeJOSNXJUtil.getProjectClassPath(project, false, cpl);
 			
 			File nxjHome = LeJOSNXJUtil.getNXJHome();
-			ArrayList<File> bcpl = new ArrayList<File>();
-			LeJOSNXJUtil.buildNXTClasspath(nxjHome, bcpl);
 
 			String fullClass =LeJOSNXJUtil.getFullQualifiedClassName(javaType);
 			String simpleClass = LeJOSNXJUtil.getSimpleClassName(javaType);
@@ -129,10 +127,13 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 					pm.subTask("Linking ...");
 					ArrayList<String> args = new ArrayList<String>();
 					LeJOSNXJUtil.getLinkerOpts(args);
+					// Only use what is on the project classpath. No bootclasspath.
+					// classes.jar is expected to be part of the classpath.
+					// Otherwise boom!
 					args.add("--bootclasspath");
-					args.add(classpathToString(cpl));
+					args.add("");
 					args.add("--classpath");
-					args.add(classpathToString(bcpl));
+					args.add(classpathToString(cpl));
 					args.add("--output");
 					args.add(binaryPath);
 					args.add("--outputdebug");
