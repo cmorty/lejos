@@ -146,7 +146,7 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 				Object r1 = m.invoke(null, (Object)args2);
 				int r2 = ((Integer)r1).intValue();
 								
-				//TODO tell eclipse that two new files have been created/updated
+				//TODO first link, then refreshLocal, then upload.
 				
 				if (r2 == 0)
 					LeJOSNXJUtil.message("program has been linked and uploaded successfully");
