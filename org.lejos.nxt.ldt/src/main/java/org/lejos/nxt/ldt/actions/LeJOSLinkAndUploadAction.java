@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -120,6 +121,8 @@ public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
 			pm.beginTask("Linking and uploading program to the brick...", IProgressMonitor.UNKNOWN);
 			try
 			{
+				project2.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, pm);
+				
 				int r;
 				try
 				{
