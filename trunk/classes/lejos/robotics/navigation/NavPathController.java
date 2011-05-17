@@ -190,7 +190,7 @@ public class NavPathController implements PathController
     return poseProvider;
   }
   
-  private void waitForDestinationReached() { // TODO: Delete this method? Might be used by some other sample?
+  public void waitForDestinationReached() { // TODO: Delete this method? Might be used by some other sample?
 	  while (_keepGoing) Thread.yield();
   }
  
