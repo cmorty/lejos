@@ -60,7 +60,13 @@ public class LCP {
 	public static byte NXJ_SET_VOLUME = 0x24;
 	public static byte NXJ_SET_KEY_CLICK_VOLUME = 0x25;
 	public static byte NXJ_SET_AUTO_RUN = 0x26;
-	
+	public static byte NXJ_GET_VERSION = 0x27;
+	public static byte NXJ_GET_DEFAULT_PROGRAM = 0x28;
+	public static byte NXJ_GET_SLEEP_TIME = 0x29;
+	public static byte NXJ_GET_VOLUME = 0x2A;
+	public static byte NXJ_GET_KEY_CLICK_VOLUME = 0x2B;
+	public static byte NXJ_GET_AUTO_RUN = 0x2C;
+		
 	// System Commands:
 	public static final byte OPEN_READ = (byte)0x80;
 	public static final byte OPEN_WRITE = (byte)0x81;
@@ -100,6 +106,7 @@ public class LCP {
 	static final String defaultProgramProperty = "lejos.default_program";
 	static final String sleepTimeProperty = "lejos.sleep_time";
     static final String defaultProgramAutoRunProperty = "lejos.default_autoRun";
+    static final int defaultSleepTime = 2;
 	
 	private LCP()
 	{
@@ -142,6 +149,7 @@ public class LCP {
 				for(int i=0;i<currentProgram.length() && i < 19;i++) 
 					reply[3+i] = (byte) currentProgram.charAt(i); 
 			}
+			len = 23;
 		}
 		
 		// GET BATTERY LEVEL
@@ -570,7 +578,7 @@ public class LCP {
 			numFiles = 0;
 		}
 		
-		// SET DEFAULT PROGRAM
+		// NXJ SET DEFAULT PROGRAM
 		if (cmdId == NXJ_SET_DEFAULT_PROGRAM) {
 			String fileName = getFile(cmd, 2);
 			initFiles();
@@ -578,17 +586,17 @@ public class LCP {
 			if (f.exists()) Settings.setProperty(defaultProgramProperty, fileName);
 		}
 		
-		// SET SLEEP TIME	
+		// NXJ SET SLEEP TIME	
 		if (cmdId == NXJ_SET_SLEEP_TIME) {
 			Settings.setProperty(sleepTimeProperty, String.valueOf(cmd[2]));
 		}
 		
-		// SET AUTO RUN	
+		// NXJ SET AUTO RUN	
 		if (cmdId == NXJ_SET_AUTO_RUN) {
 			Settings.setProperty(defaultProgramAutoRunProperty, cmd[2] == 0 ? "OFF" : "ON");
 		}
 		
-		// SET VOLUME
+		// NXJ SET VOLUME
 		if (cmdId == NXJ_SET_VOLUME) {
 			int volume = cmd[2];
 			if (volume >= 0 && volume <= 100) {
@@ -597,13 +605,55 @@ public class LCP {
 			}
 		}
 		
-		// SET KEY VLICK VOLUME
+		// NXJ SET KEY CLICK VOLUME
 		if (cmdId == NXJ_SET_KEY_CLICK_VOLUME) {
 			int volume = cmd[2];
 			if (volume >= 0 && volume <= 100) {
 				Button.setKeyClickVolume(volume);
 				Settings.setProperty(Button.VOL_SETTING, String.valueOf(volume));
 			}
+		}
+		
+		// NXJ GET VERSION
+		if (cmdId == NXJ_GET_VERSION) {
+			reply[3] =  (byte) NXT.getFirmwareMajorVersion();
+			reply[4] = (byte) NXT.getFirmwareMinorVersion();
+			reply[5] = (byte) NXT.getFirmwarePatchLevel();
+			
+			len = 7;
+		}
+		
+		// NXJ GET VOLUME
+		if (cmdId == NXJ_GET_VOLUME) {
+			reply[3] = (byte) Sound.getVolume();
+			len = 4;
+		}
+		
+		// NXJ GET KEY CLICK VOLUME
+		if (cmdId == NXJ_GET_VOLUME) {
+			reply[3] = (byte) Button.getKeyClickVolume();
+			len = 4;
+		}
+		
+		// NXJ GET SLEEP TIME
+		if (cmdId == NXJ_GET_SLEEP_TIME) {
+			reply[3] = (byte) SystemSettings.getIntSetting(sleepTimeProperty, defaultSleepTime);
+			len = 4;
+		}
+		
+		// NXJ GET AUTO RUN
+		if (cmdId == NXJ_GET_SLEEP_TIME) {
+			String autoRun = SystemSettings.getStringSetting(defaultProgramAutoRunProperty, "OFF");
+			reply[3] = (byte) (autoRun.equals("ON") ? 1 : 0);
+			len = 4;
+		}	
+		
+		// NXJ GET DEFAULT PROGRAM
+		if (cmdId == NXJ_GET_DEFAULT_PROGRAM) {
+			String name = SystemSettings.getStringSetting(defaultProgramProperty, "");
+			for(int i=0;i<name.length() && i < 19;i++) 
+				reply[3+i] = (byte) name.charAt(i);
+			len = 23;
 		}
 		
 		return len;
