@@ -17,7 +17,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
-
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -43,11 +42,10 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-
 import lejos.nxt.remote.DeviceInfo;
 import lejos.nxt.remote.FileInfo;
-import lejos.nxt.remote.FirmwareInfo;
 import lejos.nxt.remote.InputValues;
+import lejos.nxt.remote.NXJFirmwareInfo;
 import lejos.nxt.remote.NXTCommand;
 import lejos.nxt.remote.NXTProtocol;
 import lejos.pc.comm.NXTComm;
@@ -571,19 +569,19 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	private void createInfoPanel() {
 		JPanel infoPanel = new JPanel();
 		DeviceInfo di = null;
-		FirmwareInfo fi = null;
+		NXJFirmwareInfo fi = null;
 		infoPanel.setLayout(new GridLayout(4, 2));
 		JLabel freeFlashLabel = new JLabel("Free flash:  ");
-		String protocolVersionString = "Unknown";
 		String firmwareVersionString = "Unknown";
+		String menuVersionString = "Unknown";
 		String freeFlashString = "Unknown";
 
 		if (nxtCommand != null) {
 			try {
 				di = nxtCommand.getDeviceInfo();
-				fi = nxtCommand.getFirmwareVersion();
-				protocolVersionString = fi.protocolVersion;
-				firmwareVersionString = fi.firmwareVersion;
+				fi = nxtCommand.getNXJFirmwareInfo();
+				firmwareVersionString = fi.getFirmwareVersion();
+				menuVersionString = fi.getMenuVersion();
 				freeFlashString = "" + di.freeFlash;
 			} catch (IOException ioe) {
 				showMessage("IO Exception getting device information");
@@ -597,10 +595,10 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		JLabel firmwareVersion = new JLabel(firmwareVersionString);
 		infoPanel.add(firmwareVersionLabel);
 		infoPanel.add(firmwareVersion);
-		JLabel protocolVersionLabel = new JLabel("Protocol version:");
-		JLabel protocolVersion = new JLabel(protocolVersionString);
-		infoPanel.add(protocolVersionLabel);
-		infoPanel.add(protocolVersion);
+		JLabel menuVersionLabel = new JLabel("Menu version");
+		JLabel menuVersion = new JLabel(menuVersionString);
+		infoPanel.add(menuVersionLabel);
+		infoPanel.add(menuVersion);
 		infoPanel.setPreferredSize(innerInfoPanelSize);
 		JPanel outerInfoPanel = new JPanel();
 		outerInfoPanel.setPreferredSize(infoPanelSize);
