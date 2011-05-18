@@ -63,8 +63,9 @@ import lejos.pc.comm.NXTInfo;
  */
 public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewerUI, ConsoleViewerUI {
 	// Constants
-	public static final int MAX_FILES = 30;
-	
+    private static final int LCD_WIDTH = 100;
+    private static final int LCD_HEIGHT = 64;
+    
 	private static final int LCP = 0;
 	private static final int RCONSOLE = 1;
 	private static final int DATALOG = 2;
@@ -119,7 +120,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	private JPanel controlPanel = new JPanel();
 	private JPanel dataPanel = new JPanel();
 	private JPanel otherPanel = new JPanel();
-	private JTextArea theConsoleLog = new JTextArea(22, 68);
+	private JTextArea theConsoleLog = new JTextArea(16, 68);
 	private JTextArea theDataLog = new JTextArea(20, 68);
 	private LabeledGauge batteryGauge = new LabeledGauge("Battery", 10000);
 	private JSlider[] sliders = new JSlider[3];
@@ -184,6 +185,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	private DataViewComms[] dvcs;
 	private ConsoleViewComms cvc;
 	private ConsoleViewComms[] cvcs;
+	private LCDDisplay lcd;
 
 	// Formatter
 	private static final NumberFormat FORMAT_FLOAT = NumberFormat.getNumberInstance();
@@ -420,6 +422,12 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		JLabel consoleTitleLabel = new JLabel("Output from RConsole");
 		consolePanel.add(consoleTitleLabel);
 		consolePanel.add(new JScrollPane(theConsoleLog));
+        lcd = new LCDDisplay();
+        lcd.clear();
+        lcd.setMinimumSize(new Dimension(LCD_WIDTH*2, LCD_HEIGHT*2));
+        lcd.setEnabled(true);
+        lcd.setPreferredSize(lcd.getMinimumSize());
+        consolePanel.add(lcd);
 	}
 
 	/**
@@ -733,7 +741,8 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		tablePane = new JScrollPane(table);
 		tablePane.setPreferredSize(filesAreaSize);
 		
-        new FileDrop( System.out, tablePane, /*dragBorder,*/ new FileDrop.Listener()
+		// Change first parameter to System.out to enable debugging
+        new FileDrop( null, tablePane, /*dragBorder,*/ new FileDrop.Listener()
         {   public void filesDropped( java.io.File[] files )
             {   for( int i = 0; i < files.length; i++ )
                 {   
@@ -1349,7 +1358,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 			ConsoleViewerUI ui = new ConsoleViewerSwingUI(this);
 			cvcs[row] = new ConsoleViewComms(ui, new ConsoleDebugDisplay(ui), true);
 			cvc = cvcs[row];
-			open = cvc.connectTo(nxts[row].name, nxts[row].deviceAddress, nxts[row].protocol, false);
+			open = cvc.connectTo(nxts[row].name, nxts[row].deviceAddress, nxts[row].protocol, true);
 	        if (!open) {
 	            showMessage("Failed to connect to RConsole");
 	            return;
@@ -1647,27 +1656,40 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		}
 	}
 	
+	/**
+	 * Used for console viewer
+	 */
 	public void logMessage(String msg) {
 		System.out.println(msg);
 	}
+	
+	/**
+	 * Used by console viewer
+	 */
 	public void connectedTo(String name, String address) {
+		System.out.println("Connected to " + name + "(" + address + ")");
 	}
 
+	/**
+	 * Used by console viewer
+	 */
 	public void setStatus(String msg) {
+		System.out.println("Status is " + msg);
 	}
 
+	/**
+	 * Used by console viewer
+	 */
 	public void append(String value) {
 		theConsoleLog.append(value);
 		theConsoleLog.setCaretPosition(theConsoleLog.getDocument().getLength());
 	}
 
+	/**
+	 * Used by console viewer
+	 */
     public void updateLCD(byte[] buffer)
     {
-
+    	lcd.update(buffer);
     }
-
-    public void exception(int classNo, int methodNo, int pc, int[] stackTrace)
-    {
-    }
-
 }
