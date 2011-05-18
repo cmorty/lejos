@@ -74,7 +74,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	private static final Dimension filesAreaSize = new Dimension(780, 300);
 	private static final Dimension filesPanelSize = new Dimension(500, 400);
 	private static final Dimension nxtButtonsPanelSize = new Dimension(220, 130);
-	private static final Dimension filesButtonsPanelSize = new Dimension(700,100);
+	private static final Dimension filesButtonsPanelSize = new Dimension(770,100);
 	private static final Dimension nxtTableSize = new Dimension(500, 100);	
 	private static final Dimension labelSize = new Dimension(60, 20);
 	private static final Dimension sliderSize = new Dimension(150, 50);
@@ -84,6 +84,10 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	private static final Dimension innerInfoPanelSize = new Dimension(280, 70);
 	private static final Dimension tonePanelSize = new Dimension(300, 110);
 	private static final Dimension i2cPanelSize = new Dimension(480, 170);
+	private static final Dimension volumePanelSize = new Dimension(180,150);
+	private static final Dimension sleepPanelSize = new Dimension(180,150);
+	private static final Dimension defaultProgramPanelSize = new Dimension(250,150);
+	
 	private static final int fileNameColumnWidth = 400;
 	
 	private static final String title = "NXJ Control Center";
@@ -104,6 +108,8 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	private static final int[] sensorModeValues = { RAWMODE, BOOLEANMODE, PCTFULLSCALEMODE };
 	
 	private final String[] motorNames = { "A", "B", "C" };
+	
+	private final String[] volumeLevels = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
 
 	// GUI components
 	private Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
@@ -115,6 +121,10 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	private JTable table;
 	private JScrollPane tablePane;
 	private JPanel filesPanel = new JPanel();
+	private JPanel settingsPanel = new JPanel();
+	private JPanel volumePanel = new JPanel();
+	private JPanel sleepPanel = new JPanel();
+	private JPanel defaultProgramPanel = new JPanel();
 	private JPanel consolePanel = new JPanel();
 	private JPanel monitorPanel = new JPanel();
 	private JPanel controlPanel = new JPanel();
@@ -144,6 +154,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	private JButton runButton = new JButton("Run program");
 	private JButton nameButton = new JButton("Set Name");
 	private JButton formatButton = new JButton("Format");
+	private JButton setDefaultButton = new JButton("Set Default");
 	private JRadioButton usbButton = new JRadioButton("USB");
 	private JRadioButton bluetoothButton = new JRadioButton("Bluetooth");
 	private JRadioButton bothButton = new JRadioButton("Both", true);
@@ -292,6 +303,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		createMonitorPanel();
 		createControlPanel();
 		createMiscellaneousPanel();
+		createSettingsPanel();
 
 		// set the size of the files panel
 		filesPanel.setPreferredSize(filesPanelSize);
@@ -318,9 +330,14 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		filesPanel.removeAll();
 		createFilesPanel();
 		
-		// Recreate miscellaneous panel
+		// Recreate miscellaneous and settings panel
 		otherPanel.removeAll();
 		createMiscellaneousPanel();
+		settingsPanel.removeAll();
+		volumePanel.removeAll();
+		sleepPanel.removeAll();
+		defaultProgramPanel.removeAll();
+		createSettingsPanel();
 		
 		// Process buttons
 
@@ -328,6 +345,13 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		deleteButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				deleteFiles();
+			}
+		});
+		
+		// Set Default button
+		setDefaultButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				setDefaultProgram();
 			}
 		});
 
@@ -443,6 +467,152 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		commandPanel.add(dataDownloadButton);
 		dataPanel.add(commandPanel, BorderLayout.SOUTH);
 	}
+	
+	/**
+	 * Layout for settings panel
+	 */
+	private void createSettingsPanel() {
+		createVolumePanel();
+		createSleepPanel();
+		createDefaultProgramPanel();
+		settingsPanel.add(volumePanel);
+		settingsPanel.add(sleepPanel);
+		settingsPanel.add(defaultProgramPanel);
+	}
+	
+	/**
+	 * Layout for sound volume levels
+	 */
+	private void createVolumePanel() {
+		volumePanel.setBorder(etchedBorder);
+		JLabel volumesLabel = new JLabel("Volume settings");
+		JLabel volumeLabel = new JLabel("Master Volume:");
+		JPanel volumeDropdownPanel = new JPanel();
+		final JComboBox volumeList = new JComboBox(volumeLevels);
+		JLabel keyClickVolumeLabel = new JLabel("Key Click Volume:");
+		final JComboBox volumeList2 = new JComboBox(volumeLevels);
+		volumePanel.add(volumesLabel);
+		volumeDropdownPanel.add(volumeLabel);
+		volumeDropdownPanel.add(volumeList);
+		volumePanel.add(volumeDropdownPanel);
+		JPanel clickDropdownPanel = new JPanel();
+		clickDropdownPanel.add(keyClickVolumeLabel);
+		clickDropdownPanel.add(volumeList2);
+		volumePanel.add(clickDropdownPanel);
+		volumePanel.setPreferredSize(volumePanelSize);
+		
+		if (nxtCommand != null) {
+			try {
+				int volume = nxtCommand.getVolume();
+				volumeList.setSelectedIndex(volume/10);
+				int keyClickVolume = nxtCommand.getKeyClickVolume();
+				volumeList2.setSelectedIndex(keyClickVolume/10);
+			} catch(IOException e) {
+				showMessage("Failed to get volume settings");
+			}
+		}
+		
+		JButton setButton = new JButton("Set");
+		volumePanel.add(setButton);
+		
+		setButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (nxtCommand == null) return;
+					nxtCommand.setVolume((byte) (volumeList.getSelectedIndex()*10));
+					nxtCommand.setKeyClickVolume((byte) (volumeList2.getSelectedIndex()*10));
+				} catch (IOException ioe) {
+					showMessage("Failed to set volumes");
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Layout for sleep timer panel
+	 */
+	private void createSleepPanel() {
+		sleepPanel.setBorder(etchedBorder);
+		JLabel menuSettings = new JLabel("Menu Settings");
+		JLabel sleepLabel = new JLabel("Menu sleep time:");
+		final JComboBox sleepList = new JComboBox(volumeLevels);
+		sleepPanel.add(menuSettings);
+		JPanel sleepDropdownPanel = new JPanel();
+		sleepDropdownPanel.add(sleepLabel);
+		sleepDropdownPanel.add(sleepList);
+		sleepPanel.add(sleepDropdownPanel);
+		sleepPanel.setPreferredSize(sleepPanelSize);
+		if (nxtCommand != null) {
+			try {
+				int sleep = nxtCommand.getSleepTime();
+				if (sleep >= 0 && sleep <= 10) sleepList.setSelectedIndex(sleep);
+			} catch(IOException e) {
+				showMessage("Failed to get sleep timer setting");
+			}
+		}
+		JButton setButton = new JButton("Set");
+		sleepPanel.add(setButton);
+		
+		setButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (nxtCommand == null) return;
+					nxtCommand.setSleepTime((byte) (sleepList.getSelectedIndex()));
+				} catch (IOException ioe) {
+					showMessage("Failed to set volumes");
+				}
+			}
+		});
+	}
+	
+	private void createDefaultProgramPanel() {
+		defaultProgramPanel.setBorder(etchedBorder);
+		defaultProgramPanel.setPreferredSize(defaultProgramPanelSize);
+		JPanel labelDefaultPanel = new JPanel();
+		JLabel defaultProgramSettings = new JLabel("Default Program Settings");
+		defaultProgramPanel.add(defaultProgramSettings);
+		JPanel defProgPanel = new JPanel();
+		JLabel defaultProgramLabel = new JLabel("Default program:");
+		JLabel defaultProgram = new JLabel();
+		defProgPanel.add(defaultProgramLabel);
+		defProgPanel.add(defaultProgram);
+		labelDefaultPanel.add(defProgPanel);
+		defaultProgramPanel.add(labelDefaultPanel);
+		final JCheckBox autoRun = new JCheckBox();
+		
+		if (nxtCommand != null) {
+			try {
+				String defProg = nxtCommand.getDefaultProgram();
+				defaultProgram.setText(defProg);
+				if (defProg.length() > 0) {
+					JPanel autoRunPanel = new JPanel();
+					JLabel autoRunLabel = new JLabel("Auto Run:");
+					autoRunPanel.add(autoRunLabel);
+					autoRunPanel.add(autoRun);
+					defaultProgramPanel.add(autoRunPanel);
+					boolean autoRunSetting = nxtCommand.getAutoRun();
+					autoRun.setSelected(autoRunSetting);
+					
+					JButton setButton = new JButton("Set");
+					defaultProgramPanel.add(setButton);
+					
+					setButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							try {
+								if (nxtCommand == null) return;
+								nxtCommand.setAutoRun(autoRun.isSelected());
+							} catch (IOException ioe) {
+								showMessage("Failed to set default program settings");
+							}
+						}
+					});
+				}
+			} catch(IOException e) {
+				showMessage("Failed to get default program settings");
+			}
+		}
+	
+	}
 
 	/**
 	 *  Lay out Monitor Panel
@@ -501,6 +671,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	private void createLCPTabs() {
 		tabbedPane.removeAll();
 		tabbedPane.addTab("Files", filesPanel);
+		tabbedPane.addTab("Settings", settingsPanel);
 		tabbedPane.addTab("Monitor", monitorPanel);
 		tabbedPane.addTab("Control", controlPanel);
 		tabbedPane.addTab("Miscellaneous", otherPanel);
@@ -534,6 +705,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		buttonPanel.add(runButton);
 		buttonPanel.add(soundButton);
 		buttonPanel.add(formatButton);
+		buttonPanel.add(setDefaultButton);
 		buttonPanel.setPreferredSize(filesButtonsPanelSize);
 		filesPanel.add(buttonPanel, BorderLayout.SOUTH);
 	}
@@ -1037,7 +1209,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	private void updateSensors() {
 		if (nxtCommand == null) return;
 		for (int i = 0; i < 4; i++) {
-			int max = 1024;
+			int max = 1023;
 			sensorPanels[i].setRawVal(sensorValues[i].rawADValue);
 			if (sensorValues[i].sensorMode == PCTFULLSCALEMODE) max = 100;
 			else if (sensorValues[i].sensorMode == BOOLEANMODE) max = 1;
@@ -1071,6 +1243,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 				updateConnectButton(true);
 				if (nxts[row].connectionState == NXTConnectionState.LCP_CONNECTED) {
 					nxtCommand = nxtCommands[row];
+					if (nxtCommand == null) return;
 					showFiles();
 				}
 				if (nxts[row].connectionState == NXTConnectionState.DATALOG_CONNECTED) {
@@ -1082,6 +1255,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 			} else {
 				updateConnectButton(false);
 				clearFiles();
+				nxtCommand = null;
 			}
 		}
 	}
@@ -1286,7 +1460,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 			if (nxts[row].connectionState == NXTConnectionState.LCP_CONNECTED) {// Connected, so disconnect
 				try {
 					nxtCommand = nxtCommands[row];
-					nxtCommand.close();
+					if (nxtCommand != null) nxtCommand.close();
 					nxts[row].connectionState = NXTConnectionState.DISCONNECTED;
 				} catch (IOException ioe) {
 					showMessage("IOException while disconnecting");
@@ -1433,6 +1607,9 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		}
 	}
 	
+	/**
+	 * Upload the specified file
+	 */
 	private void uploadFile(File file) {
 		if (file.getName().length() > 20) {
 			showMessage("File name is more than 20 characters");
@@ -1453,11 +1630,14 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	 * Download the selected file
 	 */
 	private void download() {
-		int i = table.getSelectedRow();
-		if (i < 0) return;
+		int row = table.getSelectedRow();
+		if (row < 0) {
+			noFileSelected();
+			return;
+		}
 		
-		String fileName = fm.getFile(i).fileName;
-		int size = fm.getFile(i).fileSize;
+		String fileName = fm.getFile(row).fileName;
+		int size = fm.getFile(row).fileSize;
 		JFileChooser fc = new JFileChooser();
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fc.setSelectedFile(new File(fileName));
@@ -1475,11 +1655,16 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	 * Run the selected file.
 	 */
 	private void runFile() {
+		if (nxtCommand == null) return;
 		int row = table.getSelectedRow();
-		if (row < 0) return;
+		if (row < 0) {
+			noFileSelected();
+			return;
+		}
 		String fileName = fm.getFile(row).fileName;
 		
 		try {
+			
 			nxtCommand.startProgram(fileName);
 			nxtCommand.close();
 			nxtCommand = null;
@@ -1580,7 +1765,10 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	 */
 	private void playSoundFile() {
 		int row = table.getSelectedRow();
-		if (row < 0) return;
+		if (row < 0) {
+			noFileSelected();
+			return;
+		}
 		
 		String fileName = fm.getFile(row).fileName;
 		try {
@@ -1653,6 +1841,26 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 			fm.fetchFiles(nxtCommand);
 		} catch (IOException ioe) {
 			showMessage("IO Exception formatting file system");
+		}
+	}
+	
+	private void noFileSelected() {
+		showMessage("No file selected");
+	}
+	
+	private void setDefaultProgram() {
+		if (nxtCommand == null) return;
+		int row = table.getSelectedRow();
+		if (row < 0) {
+			noFileSelected();
+			return;
+		}
+		
+		String fileName = fm.getFile(row).fileName;
+		try {
+			nxtCommand.setDefaultProgram(fileName);
+		} catch (IOException ioe) {
+			showMessage("IO setting default program");
 		}
 	}
 	

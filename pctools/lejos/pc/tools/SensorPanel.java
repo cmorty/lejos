@@ -11,7 +11,7 @@ import javax.swing.*;
  */
 public class SensorPanel extends JPanel {
 	private static final long serialVersionUID = 3592127880184905255L;
-	private static final int DEFAULT_MAX_RAW_VALUE = 1024;
+	private static final int DEFAULT_MAX_RAW_VALUE = 1023;
 	private static final int DEFAULT_MAX_SCALED_VALUE = 100;
 	private static final Dimension PANEL_SIZE = new Dimension(120,350);
 	

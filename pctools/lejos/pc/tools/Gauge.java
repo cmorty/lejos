@@ -14,7 +14,7 @@ import javax.swing.JComponent;
  */
 public class Gauge extends JComponent {
 	private static final long serialVersionUID = -4319426278542773674L;
-	private int value = 0, maxValue = 1024;
+	private int value = -1, maxValue = 1023;
 	private Dimension size;
 	private double gaugeWidth, gaugeHeight;
 	private int centerX,  centerY;
