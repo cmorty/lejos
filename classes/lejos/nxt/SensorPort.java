@@ -1235,7 +1235,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
             int writeOffset, int writeLen, byte[] readBuf, int readOffset,
             int readLen)
     {
-		int ret = i2cStart(deviceAddress, writeBuf, writeOffset, writeLen, readLen);
+		int ret = i2cStartById(iPortId, deviceAddress, writeBuf, writeOffset, writeLen, readLen);
         if (ret == ERR_BUS_BUSY)
         {
             // The bus is busy (clock and/or data lines not pulled up to 1).
@@ -1243,12 +1243,16 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
             // on to the bus, or because no sensor is plugged in. So we wait
             // for a short while for it to become free and try again.
             i2cEvent.waitEvent(I2C_BUS_FREE << iPortId, I2C_BUS_FREE_TIMEOUT);
-            ret = i2cStart(deviceAddress, writeBuf, writeOffset, writeLen, readLen);
+            ret = i2cStartById(iPortId, deviceAddress, writeBuf, writeOffset, writeLen, readLen);
         }
-		if (ret < 0) return ret;
-        i2cWaitIOComplete();
-		ret = i2cComplete(readBuf, readOffset, readLen);
-        return ret;
+		if (ret < 0)
+			return ret;
+		
+        // No need to wait for high speed ports
+        if (!i2cHighSpeed)
+            i2cEvent.waitEvent(I2C_IO_COMPLETE << iPortId, NXTEvent.WAIT_FOREVER);
+        
+		return i2cCompleteById(iPortId, readBuf, readOffset, readLen);
     }
 
 
