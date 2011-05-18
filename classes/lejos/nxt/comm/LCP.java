@@ -239,10 +239,9 @@ public class LCP {
 			byte run_state = 0;
 			if (m.isMoving()) run_state = 0x20; // 0x20 = RUNNING
 			reply[8] = run_state; // Run state
-			// 9 - 12 = Tacho Limit is currently ignored.
-			// In future, it could get this from Motor if a
-			// rotate() or rotateTo() command is in progress.
-			
+			int limit = m.getLimitAngle();
+			// Tacho Limit
+			setReplyInt(limit, reply,9);		
 			// TachoCount just returns same as RotationCount:
 			setReplyInt(tacho,reply,13);
 			
@@ -263,7 +262,8 @@ public class LCP {
 			int norm = 1023 - raw;
 			
 			reply[3] = port;
-			reply[4] = 1;
+			reply[4] = 1; // Assume data is always valid
+			              // reply[5] left zero as calibration not supported
 			reply[6] = (byte) p.getType();
 			reply[7] = (byte) p.getMode();
 			setReplyShortInt(raw, reply, 8);
