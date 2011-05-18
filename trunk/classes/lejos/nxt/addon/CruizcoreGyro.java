@@ -18,12 +18,12 @@ import lejos.util.EndianTools;
  */
 public class CruizcoreGyro extends I2CSensor {
 
-	/**
+	/*
 	 * Documentation can be obtained here: http://xgl.minfinity.com/Downloads/Downloads.html
 	 * The documentation and the conversion in the NXC sample code indicate,
 	 * that 16bit signed little endian values are returned.
 	 */
-	
+
 	private byte[] inBuf = new byte[11];
 	private static final byte GYRO_ADDRESS = 0x02;
 	
