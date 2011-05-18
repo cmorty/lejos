@@ -131,6 +131,7 @@
   		<copy overwrite="true" todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/util/Delay.java"/>
+  				<include name="lejos/util/EndianTools.java"/>
   				<include name="lejos/util/Matrix.java"/>
   				<include name="lejos/util/LUDecomposition.java"/>
   				<include name="lejos/util/KalmanFilter.java"/>
