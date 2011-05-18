@@ -664,7 +664,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		sensorSelectPanel.add(sensorLabel);
 		sensorSelectPanel.add(sensorList);
 		JLabel addressLabel = new JLabel("Address:");
-		JFormattedTextField address = new JFormattedTextField(new Integer(2));
+		JFormattedTextField address = new JFormattedTextField(new Integer(1));
 		address.setColumns(2);
 		sensorSelectPanel.add(addressLabel);
 		sensorSelectPanel.add(address);
@@ -1525,7 +1525,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		try {
 			if (nxtCommand == null)	return;
 			nxtCommand.setInputMode(
-					sensorList.getSelectedIndex(),
+					sensorList2.getSelectedIndex(),
 					sensorTypeValues[sensorTypeList.getSelectedIndex()],
 					sensorModeValues[sensorModeList.getSelectedIndex()]);
 		} catch (IOException ioe) {
