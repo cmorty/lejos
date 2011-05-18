@@ -260,7 +260,7 @@ public class LCP {
 			SensorPort p = SensorPort.getInstance(port);
 			int raw = p.readRawValue();
 			int scaled = p.readValue();
-			int norm = 1024 - raw;
+			int norm = 1023 - raw;
 			
 			reply[3] = port;
 			reply[4] = 1;
@@ -268,7 +268,8 @@ public class LCP {
 			reply[7] = (byte) p.getMode();
 			setReplyShortInt(raw, reply, 8);
 			setReplyShortInt(norm, reply, 10);
-			setReplyShortInt(scaled, reply, 12);		
+			setReplyShortInt(scaled, reply, 12);
+			setReplyShortInt(scaled, reply, 14); // Set calibrated to scaled
 			len = 16;						
 		}
 		
