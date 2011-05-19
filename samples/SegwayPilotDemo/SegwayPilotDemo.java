@@ -4,14 +4,14 @@ import lejos.robotics.*;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveListener;
 import lejos.robotics.navigation.MoveProvider;
-import lejos.robotics.navigation.SegwayPilot;
+import lejos.robotics.navigation.SegowayPilot;
 
 /**
- * <p>This class demonstrates the movement capabilities of the SegwayPilot by tracing three squares on the floor.
+ * <p>This class demonstrates the movement capabilities of the SegowayPilot by tracing three squares on the floor.
  * It also implements a MoveListener to demonstrate the move reporting abilities of all XxxPilot classes. 
- * As of version 0.9 the SegwayPilot.rotate() method is very poor, but we will improve this for version 1.0.</p>
+ * As of version 0.9 the SegowayPilot.rotate() method is very poor, but we will improve this for version 1.0.</p>
  * 
- * <p>The Segway and SegwayPilot classes require a HiTechnic gyro sensor. Mount the sensor on the left side of the 
+ * <p>The Segoway and SegowayPilot classes require a HiTechnic gyro sensor. Mount the sensor on the left side of the 
  * robot. See <a href="http://laurensvalk.com/nxt-2_0-only/anyway">this model</a> for the proper orientation.</p>
  * 
  * @author BB
@@ -26,7 +26,7 @@ public class SegwayPilotDemo implements MoveListener {
 		GyroSensor g = new GyroSensor(SensorPort.S1);
 				
 		// The track width is for the AnyWay. Make sure to use the appropriate wheel size.
-		SegwayPilot pilot = new SegwayPilot(left, right, g, SegwayPilot.WHEEL_SIZE_NXT2, 10.45); 
+		SegowayPilot pilot = new SegowayPilot(left, right, g, SegowayPilot.WHEEL_SIZE_NXT2, 10.45); 
 		
 		// If the robot is tippy, try slowing down the speed:
 		pilot.setTravelSpeed(80);

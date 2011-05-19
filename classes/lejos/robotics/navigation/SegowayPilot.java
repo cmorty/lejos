@@ -1,11 +1,11 @@
 package lejos.robotics.navigation;
 
 import java.util.ArrayList;
-import lejos.nxt.addon.GyroSensor; // TODO: Purely for constructor. SegwayPilot code doesn't use GyroSensor. Use Gyroscope interface. 
+import lejos.nxt.addon.GyroSensor; // TODO: Purely for constructor. SegowayPilot code doesn't use GyroSensor. Use Gyroscope interface. 
 import lejos.robotics.EncoderMotor;
 
 /* DEVELOPER NOTES:
- * TODO: Currently no option to build Segway with opposite motor directions. I assume you can just flip the gyro to
+ * TODO: Currently no option to build Segoway with opposite motor directions. I assume you can just flip the gyro to
  * the opposite side of the robot (right to left) and it will balance. Technically AnyWay and HTWay motors 
  * must be backwards because forward motion makes the tachometers go negative. Should allow users to switch direction
  * of motors.
@@ -24,20 +24,20 @@ import lejos.robotics.EncoderMotor;
  */
 
 /**
- * <p>Allow standard moves with a Segway robot. Currently the robot has a 5 second delay between moves to allow
+ * <p>Allow standard moves with a Segoway robot. Currently the robot has a 5 second delay between moves to allow
  * it some time to rebalance and straighten out uneven tacho rotations. This can be changed with setMoveDelay().</p>
  *  
- * <p>This code will work with any Segway robot, but tall Segway robots will have problems balancing when the robot
+ * <p>This code will work with any Segway-style robot, but tall robots will have problems balancing when the robot
  * is moving. To counteract this, use larger wheels and/or slow down the speed using setTravelSpeed(). Make sure the 
  * battery is <b>fully charged</b>. The robot is more stable on carpet than hardwood at higher speeds.</p> 
  *  
  * <p>The default speed is 50, which can be changed with setTravelSpeed().</p>  
  * 
- * @see lejos.robotics.navigation.Segway
+ * @see lejos.robotics.navigation.Segoway
  * @author BB
  *
  */
-public class SegwayPilot extends Segway implements ArcRotateMoveController {
+public class SegowayPilot extends Segoway implements ArcRotateMoveController {
 	
 	private int move_delay = 5000; // amount to delay between moves
 	
@@ -53,7 +53,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 	private ArrayList<MoveListener> listeners= new ArrayList<MoveListener>();
 
 	/**
-	 * Creates an instance of SegwayPilot.
+	 * Creates an instance of SegowayPilot.
 	 * 
 	 * @param left The left motor. 
 	 * @param right The right motor. 
@@ -61,7 +61,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 	 * @param wheelDiameter The diameter of the wheel. For convenience, use the WHEEL_SIZE_XXX constants.
 	 * @param trackWidth Distance between the center of the right tire and left tire. Use the same units as wheelDiameter.
 	 */
-	public SegwayPilot(EncoderMotor left, EncoderMotor right, GyroSensor gyro, double wheelDiameter, double trackWidth) {
+	public SegowayPilot(EncoderMotor left, EncoderMotor right, GyroSensor gyro, double wheelDiameter, double trackWidth) {
 		super (left, right, gyro, wheelDiameter);
 
 		// Initialize move target, which keeps the robot stationary when it starts. Ideally these 
@@ -205,7 +205,7 @@ public class SegwayPilot extends Segway implements ArcRotateMoveController {
 	// value unless it performs extraordinarily stable between movement.
 	
 	/**
-	 * Set the delay between movements which allows the Segway to recover balance. Default value is 
+	 * Set the delay between movements which allows the Segoway to recover balance. Default value is 
 	 * five seconds (5000 millis).
 	 */
 	public void setMoveDelay(int millis) {
