@@ -177,7 +177,7 @@ public class LeJOSNXJUtil {
 		String nxjHome = LeJOSNXJPlugin.getDefault().getPluginPreferences()
 				.getString(PreferenceConstants.KEY_NXJ_HOME);
 		
-		if (nxjHome == null || nxjHome.isEmpty())
+		if (nxjHome == null || nxjHome.length() <= 0)
 			throw new LeJOSNXJException("NXJ_HOME is not set. Please specify it in the plug-in's preferences");
 		
 		File f = new File(nxjHome);
