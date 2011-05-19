@@ -76,5 +76,8 @@ public class Button {
 			return buttons;
 		}
 	}
-
+	
+	public static int readButtons() {
+		return NXTFrame.getButtons();
+	}
 }
