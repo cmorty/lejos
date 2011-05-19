@@ -22,14 +22,14 @@ import lejos.nxt.LCD;
  * calibration, the robot backs up against the wall until it falls forward. When it detects the
  * forward fall, it start the balance loop.</p>
  * 
- * <p>NOTE: In order to make the Segway move and navigate, use the SegwayPilot class.</p> 
+ * <p>NOTE: In order to make the robot move and navigate, use the SegowayPilot class.</p> 
  * 
  * <p><i>This code is based on the <a href="http://www.hitechnic.com/blog/gyro-sensor/htway/">HTWay</a> by HiTechnic.</i></p>
  * 
  * @author BB
  *
  */
-public class Segway extends Thread { // TODO: Thread should be a private inner class.
+public class Segoway extends Thread { // TODO: Thread should be a private inner class.
 
 	// Motors and gyro:
 	private GyroSensor gyro; 
@@ -145,7 +145,7 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 	private long mrcDeltaP1 = 0;
 
 	/**
-	 * Creates an instance of the Segway, prompts the user to lay Segway flat for gyro calibration,
+	 * Creates an instance of the Segoway, prompts the user to lay Segoway flat for gyro calibration,
 	 * then begins self-balancing thread. Wheel diameter is used in balancing equations.
 	 *  
 	 *  <li>NXT 1.0 wheels = 5.6 cm
@@ -157,7 +157,7 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 	 * @param gyro A HiTechnic gyro sensor
 	 * @param wheelDiameter diameter of wheel, preferably use cm (printed on side of LEGO tires in mm)
 	 */
-	public Segway(EncoderMotor left, EncoderMotor right, GyroSensor gyro, double wheelDiameter) {
+	public Segoway(EncoderMotor left, EncoderMotor right, GyroSensor gyro, double wheelDiameter) {
 		this.left_motor = left;
 		this.right_motor = right;
 		// Optional code to accept BasicMotor: this.right_motor = (NXTMotor)right;
@@ -193,7 +193,7 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 		int  i, gMin, gMax, g;
 
 		LCD.clear();
-		LCD.drawString("leJOS NXJ Segway",0,1);
+		LCD.drawString("leJOS NXJ Segoway",0,1);
 
 		LCD.drawString("Lay robot down", 0, 4);
 		LCD.drawString("flat to get gyro", 0, 5);
@@ -231,11 +231,11 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 	}
 
 	/**
-	 * Warn user the Segway is about to start balancing. 
+	 * Warn user the Segoway is about to start balancing. 
 	 */
 	private void startBeeps() {
 		LCD.clear();
-		LCD.drawString("leJOS NXJ Segway", 0, 1);
+		LCD.drawString("leJOS NXJ Segoway", 0, 1);
 		LCD.drawString("Balance in", 0, 3);
 
 		// Play warning beep sequence to indicate balance about to start
@@ -396,7 +396,7 @@ public class Segway extends Thread { // TODO: Thread should be a private inner c
 		long cLoop = 0;
 		
 		LCD.clear();
-		LCD.drawString("leJOS NXJ Segway", 0, 1);
+		LCD.drawString("leJOS NXJ Segoway", 0, 1);
 		LCD.drawString("Balancing", 0, 4);
 
 		tMotorPosOK = System.currentTimeMillis();
