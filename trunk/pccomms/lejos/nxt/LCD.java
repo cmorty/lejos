@@ -66,6 +66,7 @@ public class LCD extends JPanel
     }
     
     public static void drawString(String str, int x, int y) {
+    	//System.out.println("drawString: " + str);
         // Draw each character separately to get the 1-pixel gap on the right
         for (int i=0;i<str.length();i++) LCD.drawChar(str.charAt(i), x+i, y);  	
     }
@@ -94,11 +95,11 @@ public class LCD extends JPanel
     }
     
     public static void asyncRefresh() {
-    	// Does nothing
+    	singleton.repaint();
     }
     
     public static void setAutoRefresh(boolean on) {
-    	// Does nothing
+    	auto = on;
     }
     
     public static void setPixel(int x, int y, int color) {
@@ -134,6 +135,7 @@ public class LCD extends JPanel
     
     public static void clear()
     {
+    	//System.out.println("clear");
         singleton.lcdGC.setColor(new Color(155, 205, 155, 255));
         singleton.lcdGC.fillRect(0, 0, singleton.lcd.getWidth(), singleton.lcd.getHeight());
         if (auto) singleton.repaint();
