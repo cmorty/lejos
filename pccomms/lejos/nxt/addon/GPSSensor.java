@@ -16,6 +16,10 @@ import lejos.nxt.I2CSensor;
  *
 */
 public class GPSSensor extends I2CSensor {
+	/*
+	 * Documentation can be found here: http://www.dexterindustries.com/download.html#dGPS
+	 */
+	
 	public static final byte DGPS_I2C_ADDR = 0x06;      /*!< Barometric sensor device address */
 	public static final byte DGPS_CMD_UTC   = 0x00;      /*!< Fetch UTC */
 	public static final byte DGPS_CMD_STATUS = 0x01;      /*!< Status of satellite link: 0 no link, 1 link */

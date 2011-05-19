@@ -3,6 +3,7 @@ package lejos.nxt.addon;
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 import lejos.util.Delay;
+import lejos.util.EndianTools;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -10,15 +11,21 @@ import lejos.util.Delay;
  */
 
 /**
- * This Class manages the Micro Infinity CruizcoreGyro.
+ * This Class manages the Micro Infinity Cruizcore XG1300L
  * 
  * @author Daniele Benedettelli, February 2011
  * @version 1.0
  */
 public class CruizcoreGyro extends I2CSensor {
 
+	/*
+	 * Documentation can be obtained here: http://xgl.minfinity.com/Downloads/Downloads.html
+	 * The documentation and the conversion in the NXC sample code indicate,
+	 * that 16bit signed little endian values are returned.
+	 */
+
 	private byte[] inBuf = new byte[11];
-	private static final byte GYRO_ADDRESS = 0x01; // actually 0x02 >> 1
+	private static final byte GYRO_ADDRESS = 0x02;
 	
 	// values returned are signed short integers multiplied by 100
 	private static final byte ANGLE = 0x42; // 0x43 (2 Bytes)
@@ -52,9 +59,7 @@ public class CruizcoreGyro extends I2CSensor {
 	 * @param port the port the sensor is attached to
 	 */
 	public CruizcoreGyro(I2CPort port) {
-		super(port);
-		port.setType(TYPE_LOWSPEED);
-		this.address = GYRO_ADDRESS;
+		super(port, GYRO_ADDRESS, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
 	}
 	
 	/**
@@ -66,11 +71,11 @@ public class CruizcoreGyro extends I2CSensor {
 	public boolean readAllData() {
 		int ret = getData(ANGLE,inBuf,10);
 		if (ret==0) {
-			angle = inBuf[1]*256 + inBuf[0];
-			rate = inBuf[3]*256 + inBuf[2];
-			accel[0] = inBuf[5]*256 + inBuf[4];
-			accel[1] = inBuf[7]*256 + inBuf[6];
-			accel[2] = inBuf[9]*256 + inBuf[8];
+			angle = EndianTools.decodeShortLE(inBuf, 0);
+			rate = EndianTools.decodeShortLE(inBuf, 2);
+			accel[0] = EndianTools.decodeShortLE(inBuf, 4);
+			accel[1] = EndianTools.decodeShortLE(inBuf, 6);
+			accel[2] = EndianTools.decodeShortLE(inBuf, 8);
 		} 
 		return ret==0;
 	}
@@ -149,9 +154,9 @@ public class CruizcoreGyro extends I2CSensor {
 	public int[] getAccel() {
 		int ret = getData(ACCEL_X,inBuf,6);
 		if (ret==0) {
-			accel[0] = inBuf[1]*256 + inBuf[0];
-			accel[1] = inBuf[3]*256 + inBuf[2];
-			accel[2] = inBuf[5]*256 + inBuf[4];
+			accel[0] = EndianTools.decodeShortLE(inBuf, 0);
+			accel[1] = EndianTools.decodeShortLE(inBuf, 2);
+			accel[2] = EndianTools.decodeShortLE(inBuf, 4);
 		} 
 		return accel;
 	}
@@ -168,9 +173,9 @@ public class CruizcoreGyro extends I2CSensor {
 	public int getAccel(int axis) {
 		int ret = 0;
 		if ( axis>=0 && axis<=2 ) 
-			ret = getData(ACCEL_X+axis,inBuf,2);
+			ret = getData(ACCEL_X + 2*axis, inBuf, 2);
 		if (ret==0) {
-			accel[axis] = inBuf[1]*256 + inBuf[0];
+			accel[axis] = EndianTools.decodeShortLE(inBuf, 0);
 		} 
 		return accel[axis];
 	}	
@@ -183,7 +188,7 @@ public class CruizcoreGyro extends I2CSensor {
 	public int getAngle() {
 		int ret = getData(ANGLE,inBuf,2);
 		if (ret==0) {
-			angle =  inBuf[1]*256 + inBuf[0];
+			angle =  EndianTools.decodeShortLE(inBuf, 0);
 			return angle;
 		}
 		return 0;
@@ -197,7 +202,7 @@ public class CruizcoreGyro extends I2CSensor {
 	public int getRate() {
 		int ret = getData(RATE,inBuf,2);
 		if (ret==0) {
-			return inBuf[1]*256 + inBuf[0];
+			return EndianTools.decodeShortLE(inBuf, 0);
 		}
 		return 0;
 	}
