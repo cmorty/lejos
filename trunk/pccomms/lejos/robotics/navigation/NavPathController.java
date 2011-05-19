@@ -69,6 +69,7 @@ public class NavPathController implements PathController
 	  setPathFinder(pathFinder);
   }
   
+  // TODO: Should this method be part of PathController interface too?
   public void setPathFinder(PathFinder pathFinder) {
 	  this.pathFinder = pathFinder; 
 	  final PathController pc = this; // Grab reference to NavPathController object for inner class
@@ -84,13 +85,14 @@ public class NavPathController implements PathController
 	  });	  
   }
   
+//TODO: Should this method be part of PathController interface too?
   public PathFinder getPathFinder() {
 	  return pathFinder;
   }
   
   /** returns <code> false </code> if the the final waypoint has been reached or interrupt() has been called
    */
-  public boolean isGoing()
+  private boolean isGoing()
   {
 	  return _keepGoing;
   }
@@ -103,10 +105,6 @@ public class NavPathController implements PathController
     while(_keepGoing) Thread.yield();
   }
  
-  /**
-   * This method will navigate to a point. If a PathFinder was used in the constructor, it will rely
-   * on it to calculate a series of waypoints to get to the destination.
-   */
   public void goTo(WayPoint destination, boolean immediateReturn)
   {
     // Check if using PathFinder:
@@ -120,24 +118,20 @@ public class NavPathController implements PathController
     }
   }
 
-  /**
-   * This method will navigate to a point. If a PathFinder was used in the constructor, it will rely
-   * on it to calculate a series of waypoints to get to the destination.
-   */
   public void goTo(WayPoint destination) {
    
 	  goTo(destination, false);
 	// TODO: It would be helpful to return boolean if it got to destination successfully.
   }
 
-  /**
-   * This method will navigate to a point. If a PathFinder was used in the constructor, it will rely
-   * on it to calculate a series of waypoints to get to the destination.
-   */
   public void goTo(double x, double y) {
 	  goTo(new WayPoint(x, y));
   }
 
+  public void goTo(double x, double y, double heading) {
+	  goTo(new WayPoint(x, y, heading));
+  }
+  
   public void addListener(WayPointListener aListener)
   {
     if(listeners == null )listeners = new ArrayList<WayPointListener>();
@@ -150,12 +144,6 @@ public class NavPathController implements PathController
     targetListeners.add(targetListener);
   }
 
-  /**
-   * Returns a reference to the MoveController.
-   * The Navigator pose will be automatically updated as a result of methods
-   * executed on the MoveController.
-   * @return reference to the MoveController
-   */
   public MoveController getMoveController(){ return _pilot;}
 
   public void addWayPoint(WayPoint aWayPoint)
@@ -183,10 +171,10 @@ public class NavPathController implements PathController
   }
 
   /**
-   * Returns the waypoint to which the robot is moving
-   * @return the waypoint to which the robot is moving
+   * Returns the waypoint to which the robot is presently moving.
+   * @return the waypoint
    */
-  public WayPoint getWayPoint()
+  public WayPoint getWayPoint() // TODO: Delete this method? Or add to PathController interface? Might be used by some other sample?
   {
     if(_route.size() <= 0 ) return null;
     return _route.get(0);
@@ -202,14 +190,14 @@ public class NavPathController implements PathController
     return poseProvider;
   }
   
-  public void waitForDestinationReached() {
+  public void waitForDestinationReached() { // TODO: Delete this method? Might be used by some other sample?
 	  while (_keepGoing) Thread.yield();
   }
  
   /**
    * This inner class runs the thread that processes the waypoint queue
    */
-  protected  class Nav extends Thread
+  private class Nav extends Thread
   {
     boolean more = true;
 
@@ -289,7 +277,7 @@ public class NavPathController implements PathController
             for(WayPointListener l : targetListeners)
               l.nextWaypoint(_destination);
           }
-                    
+          
           if (_keepGoing && 0 < _route.size()) {_route.remove(0);}
           _keepGoing = _keepGoing && 0 < _route.size();
           Thread.yield();
@@ -299,15 +287,15 @@ public class NavPathController implements PathController
     }  // end run
   } // end Nav class
 
-  protected Nav _nav ;
-  protected ArrayList<WayPoint> _route  = new ArrayList<WayPoint>() ;
-  protected ArrayList<WayPointListener> listeners;
-  protected ArrayList<WayPointListener> targetListeners;
-  protected boolean _keepGoing = false;
-  protected MoveController _pilot;
-  protected PoseProvider poseProvider;
-  protected PathFinder pathFinder = null;
-  protected Pose _pose = new Pose();
-  protected WayPoint _destination;
-  protected double _radius;
+  private Nav _nav ;
+  private ArrayList<WayPoint> _route  = new ArrayList<WayPoint>() ;
+  private ArrayList<WayPointListener> listeners;
+  private ArrayList<WayPointListener> targetListeners;
+  private boolean _keepGoing = false;
+  private MoveController _pilot;
+  private PoseProvider poseProvider;
+  private PathFinder pathFinder = null;
+  private Pose _pose = new Pose();
+  private WayPoint _destination;
+  private double _radius;
 }

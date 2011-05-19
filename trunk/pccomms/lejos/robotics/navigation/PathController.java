@@ -51,6 +51,15 @@ public interface PathController
   public void goTo(double x, double y);
   
   /**
+   * This method will navigate to a point. If a PathFinder was used in the constructor, it will rely
+   * on it to calculate a series of waypoints to get to the destination.
+   * @param x The x coordinate
+   * @param y The y coordinate
+   * @param heading The target angle to arrive at (in degrees)
+   */
+  public void goTo(double x, double y, double heading);
+  
+  /**
    * Moves the robot through the sequence of waypoints
    * contained in the route.
    * Informs its listeners of each waypoint reached. The waypoint is removed
@@ -96,8 +105,11 @@ public interface PathController
   public void addTargetListener(WayPointListener targetListener);
   
   /**
-   * Note: There is no corresponding setMoveController() method because the type of robot vehicle could
-   * not change after the program starts, unless it was physically a transformer robot.
+   * <p>Returns a reference to the MoveController. The Navigator pose will be automatically updated 
+   * as a result of methods executed on the MoveController.</p>
+   * 
+   * <p>Note: There is no corresponding setMoveController() method because the type of robot vehicle 
+   * could not change after the program starts, unless it was physically a transformer robot.</p>
    * @return the MoveController
    */
   public MoveController getMoveController();
