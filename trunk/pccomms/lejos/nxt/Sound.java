@@ -104,12 +104,11 @@ public class Sound {
         systemSound(true, 4);
     }
 	
-	public static int playTone(int frequency, int duration) {
+	public static void playTone(int frequency, int duration) {
 		try {
-			return nxtCommand.playTone(frequency, duration);
+			nxtCommand.playTone(frequency, duration);
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
-			return -1;
 		}
 	}
 	
