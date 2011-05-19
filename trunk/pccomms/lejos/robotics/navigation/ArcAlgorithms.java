@@ -67,8 +67,8 @@ public class ArcAlgorithms { // TODO Change access from public to package level 
 	 */
 	public static Move [][] getAvailablePaths(Pose start, float turnRadius1, Pose destination, float turnRadius2) {
 		
-		// TODO: These variables can perhaps be calculated based on existing parameters?
-		final int PATHS = 4; // Currently doesn't calculate Pilot.backward() movement along P2 to P3
+		// TODO: These constants can perhaps be calculated based on existing parameters?
+		final int PATHS = 4; // Currently doesn't calculate Pilot.backward() movement along P2 to P3. Would make this 8.
 		final int MOVES_PER_PATH = 3;
 				
 		Move [] [] paths = new Move [PATHS] [MOVES_PER_PATH];
@@ -95,17 +95,18 @@ public class ArcAlgorithms { // TODO Change access from public to package level 
 			// Find the p2 equivalent on the inner circle 
 			p2inner = ArcAlgorithms.findP2(startCircle, targetCircle, innerRadius);
 			
-			// To find arcLength, need to make new p1 that sits on inner circle.
-			Point p1inner = ArcAlgorithms.findPointOnHeading(start.getLocation(), start.getHeading() + 90, turnRadius1);
+			// To find arcLength, need to make new p1 that sits on inner circle. NOTE: turnRadius1 was a bug. Now turnRadius2. 
+			Point p1inner = ArcAlgorithms.findPointOnHeading(start.getLocation(), start.getHeading() + 90, turnRadius2);
 			
 			// Find new heading:
 			float sArc = ArcAlgorithms.getArc(p1inner, p2inner, innerRadius, start.getHeading(), true);
 			newHeading = ArcAlgorithms.getHeading(start.getHeading(), sArc);
+			
 		} // END OF UNEQUAL RADII CODE
 		
 		// Find points p2 and p3:
-		Point p2 = ArcAlgorithms.findPointOnHeading(p2inner, newHeading - 90, turnRadius2);
-		Point p3 = ArcAlgorithms.findPointOnHeading(targetCircle, newHeading - 90, turnRadius2);
+		Point p2 = ArcAlgorithms.findPointOnHeading(p2inner, newHeading - 90, turnRadius2); // TODO: turnRadius2? Not turnRadius1?
+		Point p3 = ArcAlgorithms.findPointOnHeading(targetCircle, newHeading - 90, turnRadius2);// TODO: turnRadius2? Not turnRadius1?
 		
 		// Find distance to drive straight segment:
 		float p2p3 = ArcAlgorithms.distBetweenPoints(p2, p3);
@@ -114,7 +115,7 @@ public class ArcAlgorithms { // TODO Change access from public to package level 
 		float startArcF = ArcAlgorithms.getArc(start.getLocation(), p2, turnRadius1, start.getHeading(), true);
 		float startArcB = ArcAlgorithms.getArcBackward(startArcF);
 						
-		// Find arc lengths (forward and backward) to drive on targetCircle:
+		// Find arc lengths (forward and backward) to drive on targetCircle: TODO: Swap p3 and destination & remove -ve?
 		float targetArcF = -ArcAlgorithms.getArc(destination.getLocation(), p3, turnRadius2, destination.getHeading(), false);
 		float targetArcB = ArcAlgorithms.getArcBackward(targetArcF); // Prefer this for speed. It is exact.
 		
@@ -271,23 +272,21 @@ public class ArcAlgorithms { // TODO Change access from public to package level 
 	public static float getTriangleAngle(Point p1, Point p2, Point pa) {
 		// Now calculate lengths of all lines on our P1-Pa-P2 triangle
 		double a = distBetweenPoints(p1, p2);
-		//System.out.println("a: " + a);
+		
 		double b = distBetweenPoints(p1, pa);
-		//System.out.println("b: " + b);
+		
 		double c = distBetweenPoints(pa, p2);
-		//System.out.println("c: " + c);
 		
 		double angle = Math.pow(c, 2) - Math.pow(a, 2) - Math.pow(b, 2);
-		//System.out.println("tri angle: " + angle);
+		
 		angle = angle / (-2 * a * b);
-		//System.out.println("tri angle (after div): " + angle);
+		
 		// TODO: At this point if angle is outside -1 to +1 then Math.acos() causes NaN. I think artifact decimal numbers
 		// were causing the number to be >1 when it should not have been. This is a kludge to fix that:
 		if(angle < -1 & angle > -1.1) angle = -1;
 		if(angle > 1 & angle < 1.1) angle = 1;
 		
 		angle = Math.acos(angle);
-		//System.out.println("tri angle (after acos): " + angle);
 		return (float)Math.toDegrees(angle);
 	}
 	
@@ -322,10 +321,9 @@ public class ArcAlgorithms { // TODO Change access from public to package level 
 		radius = -radius; // Kludge. Should really correct my equations.
 		
 		Point pa = ArcAlgorithms.findPointOnHeading(p1, heading, radius*2);
-		//System.out.println("pa: " + pa);
 		float arcLength = ArcAlgorithms.getTriangleAngle(p1, p2, pa);
 		arcLength *= -2;
-		//System.out.println("arclength: " + arcLength);
+		
 		// TODO: Bit of a hack here. Math should be able to do it without conditional if-branches
 		if(radius < 0) arcLength = 360 + arcLength;
 		if(!forward) {
@@ -440,13 +438,10 @@ public class ArcAlgorithms { // TODO Change access from public to package level 
 		double a1 = p3.x - c.x;
 		double o = p3.y - c.y;
 		double angle = Math.atan2(o , a1) - Math.asin(radius / z);
-		//System.out.println("findP2 angle: " + Math.toDegrees(angle));
 		
 		double x = distP2toP3(radius, z);
 		double a2 = x * Math.cos(angle);
-		//System.out.println("a2: " + a2);
 		double o1 = x * Math.sin(angle);
-		//System.out.println("o1: " + o1);
 		
 		double x2 = p3.x - a2;
 		double y2 = p3.y - o1;
