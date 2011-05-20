@@ -170,7 +170,7 @@
 		</java>
 	</target>
 	
-	<target name="runonpc" description="Run on the PC using pccomm API">
+	<target name="runonpc" depends="clean" description="Run on the PC using pccomm API">
 		<javac srcdir="${src}" destdir="${src}" includeantruntime="false" verbose="false">
 			<classpath refid="lejos.pc" />
 			<classpath path="${src}" />
