@@ -28,6 +28,8 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 	// the leJOS NXJ console
 	private IOConsole console;
 	private PrintWriter consoleWriter;
+
+	public static final String CONSOLE_CHARSET = "utf8";
 	
 	/**
 	 * The constructor
@@ -83,7 +85,7 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 	public IOConsole getConsole() {
 		if (console == null) {
 			// create console
-			console = new IOConsole("leJOS NXJ", null, getImageDescriptor("icons/nxt.jpg"), "utf8", false);
+			console = new IOConsole("leJOS NXJ", null, getImageDescriptor("icons/nxt.jpg"), LeJOSNXJPlugin.CONSOLE_CHARSET, false);
 			// add to console manager
 			ConsolePlugin plugin = ConsolePlugin.getDefault();
 			IConsoleManager conMan = plugin.getConsoleManager();

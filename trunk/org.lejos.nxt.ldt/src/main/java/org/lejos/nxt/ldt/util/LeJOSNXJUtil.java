@@ -251,8 +251,8 @@ public class LeJOSNXJUtil {
 		InputStreamReader cinsr;
 		try
 		{
-//			consw = new OutputStreamWriter(cons, "utf8");
-			cinsr = new InputStreamReader(cins, "utf8");
+//			consw = new OutputStreamWriter(cons, CONSOLE_CHARSET);
+			cinsr = new InputStreamReader(cins, LeJOSNXJPlugin.CONSOLE_CHARSET);
 		}
 		catch (UnsupportedEncodingException e1)
 		{
