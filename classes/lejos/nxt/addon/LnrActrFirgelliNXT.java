@@ -209,7 +209,7 @@ public class LnrActrFirgelliNXT {
 
     private synchronized void toExtent(int direction, int ticks) {
         // the MoveDetector thread sets _isMoving. The MoveDetector does this when _doActuate is set true. _doActuate is
-        // set by doAction() which is called for extend or retract. The Actuatro thread calls this method when _doActuate=true
+        // set by doAction() which is called for extend or retract. The Actuator thread calls this method when _doActuate=true
         int power = _power;
         int tacho=0;
         _motorPort.resetTachoCount();
