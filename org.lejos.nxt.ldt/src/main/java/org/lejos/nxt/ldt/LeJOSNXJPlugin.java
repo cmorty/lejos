@@ -20,7 +20,9 @@ import org.osgi.framework.BundleContext;
 public class LeJOSNXJPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.lejos.nxt.ldt";
+	public static final String ID = "org.lejos.nxt.ldt";
+	
+	public static final String CONSOLE_CHARSET = "utf8";	
 
 	// The shared instance
 	private static LeJOSNXJPlugin plugin;
@@ -29,8 +31,6 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 	private IOConsole console;
 	private PrintWriter consoleWriter;
 
-	public static final String CONSOLE_CHARSET = "utf8";
-	
 	/**
 	 * The constructor
 	 */
@@ -79,7 +79,7 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+		return imageDescriptorFromPlugin(ID, path);
 	}
 
 	public IOConsole getConsole() {
@@ -93,7 +93,7 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 			
 			try
 			{
-				consoleWriter = new PrintWriter(new OutputStreamWriter(console.newOutputStream(), "utf8"), true);
+				consoleWriter = new PrintWriter(new OutputStreamWriter(console.newOutputStream(), CONSOLE_CHARSET), true);
 			}
 			catch (UnsupportedEncodingException e)
 			{

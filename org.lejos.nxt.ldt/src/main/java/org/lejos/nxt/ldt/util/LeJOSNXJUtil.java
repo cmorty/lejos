@@ -141,7 +141,7 @@ public class LeJOSNXJUtil {
 
 	public static void log(Throwable throwable) {
 		// log to error log
-		Status status = new Status(IStatus.ERROR, LeJOSNXJPlugin.PLUGIN_ID, throwable.getMessage(), throwable);
+		Status status = new Status(IStatus.ERROR, LeJOSNXJPlugin.ID, throwable.getMessage(), throwable);
 		LeJOSNXJPlugin.getDefault().getLog().log(status);
 	}
 
