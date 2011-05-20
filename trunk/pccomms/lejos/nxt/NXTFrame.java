@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,46 +18,53 @@ import javax.swing.JPanel;
  */
 public class NXTFrame extends JFrame  {
 	private static final long serialVersionUID = 1L;
-	private static int buttonPressed = 0;
-	public static Object anyButton = new Object();
+	private static int buttonsPressed = 0;
+	// Monitor for button presses
+	private static Object monitor = new Object();
 	private static NXTFrame singleton = null;
 
+	/**
+	 * Create the frame
+	 */
 	public NXTFrame() {
 		buildGUI();
 	}
 	
+	/**
+	 * Create and lay out the controls
+	 */
 	private void buildGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Remote NXT");
 		JButton enter = new JButton("ENTER");
 		JButton escape = new JButton("ESCAPE");
-		JButton left = new JButton("LEFT");
-		JButton right = new JButton("RIGHT");
+		JButton left = new JButton("<");
+		JButton right = new JButton(">");
 		
 		enter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				buttonPressed |= Button.ID_ENTER;
+				buttonsPressed |= Button.ID_ENTER;
 				buttonNotify();
 			}
 		});
 		
 		escape.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				buttonPressed |= Button.ID_ESCAPE;
+				buttonsPressed |= Button.ID_ESCAPE;
 				buttonNotify();
 			}
 		});
 		
 		left.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				buttonPressed |= Button.ID_LEFT;
+				buttonsPressed |= Button.ID_LEFT;
 				buttonNotify();
 			}
 		});
 		
 		right.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				buttonPressed |= Button.ID_RIGHT;
+				buttonsPressed |= Button.ID_RIGHT;
 				buttonNotify();
 			}
 		});
@@ -82,6 +90,12 @@ public class NXTFrame extends JFrame  {
 		getContentPane().add(content);
 	}
 	
+	/**
+	 * Return the singleton frame.
+	 * Create it and set it visible if not already done.
+	 * 
+	 * @return the NXT frame
+	 */
 	public static NXTFrame getSingleton() {
 		if (singleton == null) {
 			singleton = new NXTFrame();
@@ -90,19 +104,46 @@ public class NXTFrame extends JFrame  {
 		return singleton;
 	}
 	
+	/**
+	 * Test if a button or set of buttons is pressed
+	 * If they are unset them, and return true
+	 * 
+	 * @param code the button identifier
+	 * @return true iff the buttons are pressed
+	 */
 	public static boolean isPressed(int code) {
-		boolean pressed = (buttonPressed & code) != 0;
-		buttonPressed &= ~code; // unset bits
+		boolean pressed = (buttonsPressed & code) != 0;
+		buttonsPressed &= ~code; // unset bits
+		// System.out.println("Code:" + code  + ", pressed:" + pressed);
 		return pressed;
 	}
 	
+	/**
+	 * Get the button mask, which indicates which buttons have been pressed,
+	 * but not consumed.
+	 * 
+	 * @return the button mask
+	 */
 	public static int getButtons() {
-		return buttonPressed;
+		//System.out.println("getButtons:" + buttonPressed);
+		return buttonsPressed;
 	}
 	
+	// Notify all listeners of a button press
 	private static void buttonNotify() {
-		synchronized(anyButton) {
-			anyButton.notifyAll();
+		synchronized(monitor) {
+			monitor.notifyAll();
 		}
+	}
+	
+	public static int waitForButtons() {
+		synchronized(monitor) {
+			try {
+				NXTFrame.monitor.wait();
+			} catch (InterruptedException e) {
+				// Ignore
+			}
+		}
+		return buttonsPressed;
 	}
 }

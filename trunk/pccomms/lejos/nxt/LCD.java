@@ -26,6 +26,8 @@ public class LCD extends JPanel
     private static LCD singleton = new LCD();
     private static Color white = new Color(155, 205, 155, 255);
     private static Color black = new Color(0,0,0,255);
+    // Start NXT frame
+    static NXTFrame frame = NXTFrame.getSingleton();
  
     private static boolean auto = true;
     

@@ -10,9 +10,10 @@ public class Button {
 	public static final int ID_LEFT = 0x2;
 	public static final int ID_RIGHT = 0x4;
 	public static final int ID_ESCAPE = 0x8;
-	private int iCode;
-	private NXTFrame frame = NXTFrame.getSingleton();
+	// Start NXT Frame
+	static NXTFrame frame = NXTFrame.getSingleton();
 	
+	private int iCode;
 	/**
 	 * The Enter button.
 	 */
@@ -43,41 +44,29 @@ public class Button {
 	}
 	
 	public void waitForPressAndRelease() {
-		synchronized(NXTFrame.anyButton) {
-			for(;;) {
-				try {
-					NXTFrame.anyButton.wait();
-				} catch (InterruptedException e) {
-					// Ignore
-				}
-				System.out.println("Buttons:" + NXTFrame.getButtons());
-				if ((NXTFrame.getButtons() & iCode) != 0) {
-					// Call isPressed to claim the button press
-					NXTFrame.isPressed(iCode);
-					break;
-				}
-			
-			}
+		for(;;) { // Loop until a press of this button is detected
+			int buttons = NXTFrame.waitForButtons();
+			//System.out.println("Waitfor:" + buttons);
+			if ((buttons & iCode) != 0) {
+				// Call isPressed to claim the button press
+				NXTFrame.isPressed(iCode);
+				break;
+			}	
 		}
 	}
 	
 	public static int waitForPress() {
-		int buttons = 0;
-		synchronized(NXTFrame.anyButton) { 
-			try {
-				NXTFrame.anyButton.wait();
-				buttons = NXTFrame.getButtons();
-				// Call isPressed to clear all buttons
-				NXTFrame.isPressed(buttons);
-			} catch (InterruptedException e) {
-				// Ignore
-			}
-			System.out.println("Buttons: " + NXTFrame.getButtons());
-			return buttons;
-		}
+		int buttons = NXTFrame.waitForButtons();
+		// Call isPressed to clear all buttons
+		NXTFrame.isPressed(buttons);
+		//System.out.println("Buttons: " + NXTFrame.getButtons());
+		return buttons;
 	}
 	
 	public static int readButtons() {
-		return NXTFrame.getButtons();
+		int buttons = NXTFrame.getButtons();
+		// Call isPressed to clear all buttons
+		NXTFrame.isPressed(buttons);
+		return buttons;
 	}
 }
