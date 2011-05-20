@@ -126,6 +126,14 @@
   				<include name="lejos/robotics/objectdetection/package.html"/>
   			</fileset>
   		</copy>
+  		<mkdir dir="lejos/robotics/subsumption"/>
+  		<delete dir="lejos/robotics/subsumption" includes="*.java, package.html"/>
+  		<copy overwrite="true"  todir=".">
+  			<fileset dir="../classes">
+  				<include name="lejos/robotics/subsumption/*.java"/>
+  				<include name="lejos/robotics/subsumption/package.html"/>
+  			</fileset>
+  		</copy>
   		<mkdir dir="lejos/util/"/>
   		<delete dir="lejos/util/" includes="*.java, package.html"/>
   		<copy overwrite="true" todir=".">
