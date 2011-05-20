@@ -2,7 +2,7 @@ package lejos.nxt.addon;
 
 import lejos.nxt.addon.NXTMMX;
 
-import lejos.robotics.DCMotor;
+import lejos.robotics.EncoderMotor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
 
@@ -26,7 +26,7 @@ import lejos.util.Delay;
  * @author Kirk P. Thompson  
  *
  */
-public class MMXRegulatedMotor implements RegulatedMotor, DCMotor{
+public class MMXRegulatedMotor implements RegulatedMotor, EncoderMotor{
     private NXTMMX mux;
     private boolean rampUp = true; 
     private final boolean controlSpeed = true;  // no public accessor so I made final to ensure

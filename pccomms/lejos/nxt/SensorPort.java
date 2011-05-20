@@ -23,6 +23,8 @@ public class SensorPort implements NXTProtocol, LegacySensorPort, I2CPort  {
 	public static SensorPort S3 = new SensorPort(2);
 	public static SensorPort S4 = new SensorPort(3);
 	
+	private static SensorPort[] ports = {S1,S2,S3,S4};
+	
 	
 	private SensorPort(int port) {
 		id = port;
@@ -30,6 +32,10 @@ public class SensorPort implements NXTProtocol, LegacySensorPort, I2CPort  {
 	
 	public int getId() {
 		return id;
+	}
+	
+	public static SensorPort getInstance(int port) {
+		return ports[port];
 	}
 	
 	public void setTypeAndMode(int type, int mode) {
