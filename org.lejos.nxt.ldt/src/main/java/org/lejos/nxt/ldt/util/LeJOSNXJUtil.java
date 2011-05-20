@@ -49,6 +49,9 @@ import org.lejos.nxt.ldt.preferences.PreferenceConstants;
  */
 public class LeJOSNXJUtil {
 
+	public static final String LIBDIR_PC = "pc";
+	public static final String LIBDIR_NXT = "nxt";
+
 	public static boolean getJavaProjectFromSelection(ISelection selection, Collection<IJavaProject> dst) {
 		boolean foundInvalid = false;
 		if (selection instanceof IStructuredSelection) {
@@ -155,12 +158,12 @@ public class LeJOSNXJUtil {
 		return element.getElementName();
 	}
 
-	private static void walkDir(File dir, Collection<File> dst)
+	private static void walkTreeAndReturnJARS(File dir, Collection<File> dst)
 	{
 		for (File e : dir.listFiles())
 		{
 			if (e.isDirectory())
-				walkDir(e, dst);
+				walkTreeAndReturnJARS(e, dst);
 			else
 			{
 				if (e.getName().toLowerCase().endsWith(".jar"))
@@ -187,22 +190,24 @@ public class LeJOSNXJUtil {
 		return f;
 	}
 	
+	public static void buildClasspath(File nxjHome, String subdir, Collection<File> dst) throws LeJOSNXJException
+	{
+		File f1 = new File(nxjHome, "lib");
+		File f2 = new File(f1, subdir);
+		if (!f2.isDirectory())
+			throw new LeJOSNXJException(f2+" is not a directory");
+		
+		walkTreeAndReturnJARS(f2, dst);
+	}
+	
 	public static void buildNXTClasspath(File nxjHome, Collection<File> dst) throws LeJOSNXJException
 	{
-		File f = new File(nxjHome, "lib/nxt");
-		if (!f.isDirectory())
-			throw new LeJOSNXJException("NXJ_HOME="+nxjHome+" does not point to a leJOS installation");
-			
-		walkDir(f, dst);
+		buildClasspath(nxjHome, LIBDIR_NXT, dst);
 	}
 	
 	public static void buildPCClasspath(File nxjHome, Collection<File> dst) throws LeJOSNXJException
 	{
-		File f = new File(nxjHome, "lib/pc");
-		if (!f.isDirectory())
-			throw new LeJOSNXJException("NXJ_HOME="+nxjHome+" does not point to a leJOS installation");
-		
-		walkDir(f, dst);
+		buildClasspath(nxjHome, LIBDIR_PC, dst);
 	}
 	
 	

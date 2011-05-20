@@ -122,7 +122,19 @@
       </initializer>
    </extension>
    <extension
-         point="org.eclipse.ui.views">
+         point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+            class="org.lejos.nxt.ldt.container.LeJOSLibContainerInitializer"
+            id="org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER">
+      </classpathContainerInitializer>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+            class="org.lejos.nxt.ldt.container.LeJOSLibContainerPage"
+            id="org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER"
+            name="LeJOS Library Container">
+      </classpathContainerPage>
    </extension>
 
 </plugin>
