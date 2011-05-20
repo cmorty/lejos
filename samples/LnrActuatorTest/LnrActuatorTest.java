@@ -2,6 +2,7 @@ import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.MotorPort;
 import lejos.nxt.addon.LinearActuator;
+import lejos.nxt.addon.LnrActrFirgelliNXT;
 
 import lejos.util.Delay;
 
@@ -17,7 +18,7 @@ import lejos.util.Delay;
  * @author Kirk P. Thompson
  */
 public class LnrActuatorTest {
-    private LinearActuator _la;
+    private LnrActrFirgelliNXT _la;
     private MotorPort _motorPort;
     
     public LnrActuatorTest() {
@@ -35,7 +36,7 @@ public class LnrActuatorTest {
         LCD.drawString("ESC=Exit",0,7);
         int power = 100;
         _motorPort=MotorPort.A;
-        _la = new LinearActuator(_motorPort);
+        _la = new LnrActrFirgelliNXT(_motorPort);
         _la.setPower(power);
         LCD.drawString("power=" + power + "  ",0,4);
         while (!Button.ESCAPE.isPressed()) {
