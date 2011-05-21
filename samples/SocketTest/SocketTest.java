@@ -52,7 +52,9 @@ public class SocketTest {
 		LCD.drawString(waiting,0,0);
 		btc = Bluetooth.waitForConnection();
 		LCD.clear();
-		sock = new Socket("localhost", 8081, btc);
+		// Set the NXTConnection to be used by Socket
+		NXTSocketUtils.setNXTConnection(btc);
+		sock = new Socket("localhost", 8081);
 
 		LCD.drawString(connected,0,0);
 	}
