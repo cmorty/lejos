@@ -27,10 +27,10 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
  * @author Matthias Paul Scholz
  */
 
-public class leJOSNXJPreferencePage extends FieldEditorPreferencePage implements
+public class PreferencePage extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
 
-	public leJOSNXJPreferencePage() {
+	public PreferencePage() {
 		super(GRID);
 		setPreferenceStore(LeJOSNXJPlugin.getDefault().getPreferenceStore());
 		setDescription("Preferences for leJOS NXJ");

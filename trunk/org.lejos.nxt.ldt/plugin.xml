@@ -111,7 +111,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="leJOS NXJ"
-            class="org.lejos.nxt.ldt.preferences.leJOSNXJPreferencePage"
+            class="org.lejos.nxt.ldt.preferences.PreferencePage"
             id="org.lejos.nxt.ldt.preferences.leJOSNXJPreferencePage">
       </page>
    </extension>
