@@ -136,5 +136,13 @@
             name="LeJOS Library Container">
       </classpathContainerPage>
    </extension>
+   <extension
+         point="org.eclipse.ant.core.antProperties">
+      <antProperty
+            class="org.lejos.nxt.ldt.ant.NXJHomeProvider"
+            eclipseRuntime="false"
+            name="nxj.home">
+      </antProperty>
+   </extension>
 
 </plugin>
