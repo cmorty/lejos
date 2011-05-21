@@ -1,5 +1,14 @@
 package org.lejos.nxt.ldt.preferences;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -8,6 +17,9 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.lejos.nxt.ldt.LeJOSNXJPlugin;
+import org.lejos.nxt.ldt.container.LeJOSLibContainer;
+import org.lejos.nxt.ldt.util.LeJOSNXJException;
+import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 /**
  * This class represents a preference page that is contributed to the
@@ -63,6 +75,37 @@ public class leJOSNXJPreferencePage extends FieldEditorPreferencePage implements
 		addField(new StringFieldEditor(
 				PreferenceConstants.KEY_CONNECTION_BRICK_NAME, "&Name",
 				getFieldEditorParent()));
+	}
+	
+	@Override
+	public boolean performOk() {
+		boolean b = super.performOk();
+		
+		IPath p1 = LeJOSLibContainer.ID.append(LeJOSNXJUtil.LIBDIR_NXT);
+		IPath p2 = LeJOSLibContainer.ID.append(LeJOSNXJUtil.LIBDIR_NXT);
+		IClasspathContainer[] tmp = new IClasspathContainer[1];
+		
+		IWorkspace ws = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot wsr = ws.getRoot();
+		IProject[] projects = wsr.getProjects();
+		for (IProject p : projects)
+		{
+			try
+			{
+				if (p.isOpen() && p.isNatureEnabled(JavaCore.NATURE_ID))
+				{
+					IJavaProject jp = JavaCore.create(p);
+					JavaCore.setClasspathContainer(p1, new IJavaProject[] {jp}, tmp, null);
+					JavaCore.setClasspathContainer(p2, new IJavaProject[] {jp}, tmp, null);
+				}
+			}
+			catch (Exception e)
+			{
+				LeJOSNXJUtil.log(e);
+			}
+		}
+		
+		return b;
 	}
 
 	/*
