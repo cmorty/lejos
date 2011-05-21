@@ -6,6 +6,8 @@ import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.lejos.nxt.ldt.util.LeJOSNXJException;
+import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 
 public class LeJOSLibContainerInitializer extends ClasspathContainerInitializer {
@@ -13,7 +15,15 @@ public class LeJOSLibContainerInitializer extends ClasspathContainerInitializer 
 	@Override
 	public void initialize(IPath containerPath, IJavaProject project) throws CoreException
 	{
-		LeJOSLibContainer container = new LeJOSLibContainer(containerPath);
+		System.out.println("init");
+		LeJOSLibContainer container;
+		try {
+			container = new LeJOSLibContainer(containerPath);
+		} catch (LeJOSNXJException e) {
+			LeJOSNXJUtil.log(e);
+			// JDT will show an error when using null
+			container = null;
+		}
 		JavaCore.setClasspathContainer(containerPath, new IJavaProject[] { project }, new IClasspathContainer[] { container }, null);
 	}
 
@@ -26,7 +36,7 @@ public class LeJOSLibContainerInitializer extends ClasspathContainerInitializer 
 	@Override
 	public void requestClasspathContainerUpdate(IPath containerPath, IJavaProject project, IClasspathContainer containerSuggestion)	throws CoreException
 	{
-		JavaCore.setClasspathContainer(containerPath, new IJavaProject[] { project }, new IClasspathContainer[] { containerSuggestion }, null);
+		this.initialize(containerPath, project);
 	}
 
 }

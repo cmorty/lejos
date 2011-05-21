@@ -59,28 +59,24 @@ public class LeJOSLibContainer implements IClasspathContainer {
     
     
     // path string that uniquiely identifies this container instance
-    private final IPath _path;
-    private final int option;
+    private final IPath path;
+    private final String name;
+    private final IClasspathEntry[] cp;
   
-    public LeJOSLibContainer(IPath path) {
-        _path = path;
-        option = getOptionFromPath(path);
+    public LeJOSLibContainer(IPath path) throws LeJOSNXJException {
+        int option = getOptionFromPath(path);
+        
+        this.path = path;
+        this.name = "LeJOS "+getOptionName(option);
+        this.cp = createClasspath(option);
     }
     
-    public IClasspathEntry[] getClasspathEntries() {
-    	
+    private IClasspathEntry[] createClasspath(int option) throws LeJOSNXJException {
         ArrayList<File> entryList = new ArrayList<File>();
         
-        try
-        {
-	    	File nxjHome = LeJOSNXJUtil.getNXJHome();
-	    	String subdir = getOptionKey(option);    	
-	    	LeJOSNXJUtil.buildClasspath(nxjHome, subdir, entryList);
-        }
-        catch (LeJOSNXJException e)
-        {
-        	LeJOSNXJUtil.log(e);
-        }
+    	File nxjHome = LeJOSNXJUtil.getNXJHome();
+    	String subdir = getOptionKey(option);    	
+    	LeJOSNXJUtil.buildClasspath(nxjHome, subdir, entryList);
     	
         int len = entryList.size();
         IClasspathEntry[] entryArray = new IClasspathEntry[entryList.size()];
@@ -88,10 +84,14 @@ public class LeJOSLibContainer implements IClasspathContainer {
         	entryArray[i] = JavaCore.newLibraryEntry(new Path(entryList.get(i).getAbsolutePath()), null, null);
         
         return entryArray;
+	}
+
+	public IClasspathEntry[] getClasspathEntries() {
+    	return cp;
     }
     
     public String getDescription() {
-        return "LeJOS "+getOptionName(option);
+        return name;
     }
 
     public int getKind() {
@@ -99,7 +99,7 @@ public class LeJOSLibContainer implements IClasspathContainer {
     }    
     
     public IPath getPath() {
-        return _path;
+        return path;
     }
     
 }
