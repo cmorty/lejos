@@ -100,6 +100,10 @@ public class LCD extends JPanel
     	singleton.repaint();
     }
     
+    public static void asyncRefreshWait() {
+    	// Does nothing
+    }
+    
     public static void setAutoRefresh(boolean on) {
     	auto = on;
     }
@@ -138,9 +142,16 @@ public class LCD extends JPanel
     public static void clear()
     {
     	//System.out.println("clear");
-        singleton.lcdGC.setColor(new Color(155, 205, 155, 255));
-        singleton.lcdGC.fillRect(0, 0, singleton.lcd.getWidth(), singleton.lcd.getHeight());
+        singleton.lcdGC.setColor(white);
+        singleton.lcdGC.fillRect(0, 0, LCD_WIDTH, LCD_HEIGHT);
         if (auto) singleton.repaint();
+    }
+    
+    public static void clear(int row) {
+    	//System.out.println("clear");
+        singleton.lcdGC.setColor(white);
+        singleton.lcdGC.fillRect(row * CELL_WIDTH, 0, LCD_WIDTH, CELL_HEIGHT);
+        if (auto) singleton.repaint();   	
     }
     
     /**
@@ -167,8 +178,8 @@ public class LCD extends JPanel
     {
         int offset = 0;
         int row = 0;
-        lcdGC.setColor(new Color(155, 205, 155, 255));
-        lcdGC.fillRect(0, 0, lcd.getWidth(), lcd.getHeight());
+        lcdGC.setColor(white);
+        lcdGC.fillRect(0, 0, LCD_WIDTH, LCD_HEIGHT);
         lcdGC.setColor(new Color(0, 0, 0, 255));
         for(row = 0; row < 64; row += 8)
             for(int x = 0; x < LCD_WIDTH; x++)

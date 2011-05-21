@@ -139,6 +139,7 @@
   		<copy overwrite="true" todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/util/Delay.java"/>
+  				<include name="lejos/util/DebugMessages.java"/>
   				<include name="lejos/util/EndianTools.java"/>
   				<include name="lejos/util/Integration.java"/>
   				<include name="lejos/util/KalmanFilter.java"/>
