@@ -15,7 +15,6 @@ public class LeJOSLibContainerInitializer extends ClasspathContainerInitializer 
 	@Override
 	public void initialize(IPath containerPath, IJavaProject project) throws CoreException
 	{
-		System.out.println("init");
 		LeJOSLibContainer container;
 		try {
 			container = new LeJOSLibContainer(containerPath);
