@@ -34,4 +34,8 @@
 	<target name="debugtool" description="run debugtool" >
 		<ant antfile="../samplebuild.xml" target="debugtool"/>
 	</target>
+	
+	<target name="runonpc" description="run on PC using pccomm API" >
+		<ant antfile="../samplebuild.xml" target="runonpc"/>
+	</target>
 </project>
