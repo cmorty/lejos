@@ -1,6 +1,7 @@
 package org.lejos.nxt.ldt.container;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -75,7 +76,7 @@ public class LeJOSLibContainerPage extends WizardPage
 
     public IClasspathEntry getSelection() {
     	int i = this._dirCombo.getSelectionIndex();
-        IPath containerPath = LeJOSLibContainer.ID.append(LeJOSLibContainer.getOptionKey(i));
+        IPath containerPath = new Path(LeJOSLibContainer.ID+"/"+LeJOSLibContainer.getOptionKey(i));
         return JavaCore.newContainerEntry(containerPath);
     }
 

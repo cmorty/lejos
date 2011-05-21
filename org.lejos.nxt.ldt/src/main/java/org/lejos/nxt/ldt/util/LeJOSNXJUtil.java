@@ -111,8 +111,12 @@ public class LeJOSNXJUtil {
 		return null;
 	}
 
+	public static boolean isLeJOSProject(IProject project) throws CoreException {
+		return project.isNatureEnabled(leJOSNature.NATURE_ID);
+	}
+
 	public static boolean isLeJOSProject(IJavaProject project) throws CoreException {
-		return project.getProject().hasNature(leJOSNature.NATURE_ID);
+		return isLeJOSProject(project.getProject());
 	}
 
 	public static void message(String message) {

@@ -13,7 +13,7 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 
 public class LeJOSLibContainer implements IClasspathContainer {
-    public final static Path ID = new Path("org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER");
+	public static final String ID = "org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER";
     
     private static final int DEFAULT_OPTION = 0;
     
