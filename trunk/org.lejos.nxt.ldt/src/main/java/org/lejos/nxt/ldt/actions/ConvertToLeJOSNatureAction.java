@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -15,6 +16,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.lejos.nxt.ldt.builder.leJOSNature;
+import org.lejos.nxt.ldt.container.LeJOSLibContainer;
 import org.lejos.nxt.ldt.util.LeJOSNXJException;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
@@ -119,25 +121,56 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 		for (File e : tmp)
 			nxjFiles.add(new Path(e.getAbsolutePath()));
 		
-		// get existing classpath
-		IClasspathEntry[] existingClasspath = project.getRawClasspath();
 		// create new classpath with additional leJOS libraries last
 		ArrayList<IClasspathEntry> newClasspath = new ArrayList<IClasspathEntry>();
+		Path lcp = new Path(LeJOSLibContainer.ID+"/"+LeJOSNXJUtil.LIBDIR_NXT);
+		IClasspathEntry lc = JavaCore.newContainerEntry(lcp);
+		
+		// get existing classpath
+		IClasspathEntry[] existingClasspath = project.getRawClasspath();
 		for (IClasspathEntry cpEntry : existingClasspath) {
-			if (cpEntry.getEntryKind() == IClasspathEntry.CPE_CONTAINER
-					&& cpEntry.getPath().segment(0).equals("org.eclipse.jdt.launching.JRE_CONTAINER")) {
-				// skip JRE/JDK
-			} else if (nxjFiles.contains(cpEntry.getPath().makeAbsolute())) {
-				// skip
-			} else {
-				// e.g. source container
+			boolean skip = false;
+			boolean insertBefore = false;
+			switch (cpEntry.getEntryKind())
+			{
+				case IClasspathEntry.CPE_CONTAINER:
+					IPath p = cpEntry.getPath();
+					if (p != null && p.segmentCount() > 0)
+					{
+						String s = p.segment(0);
+						if (s.equals("org.eclipse.jdt.launching.JRE_CONTAINER")
+								|| s.equals(LeJOSLibContainer.ID)) {
+							// skip JRE/JDK and leJOS container
+							skip = true;
+						}
+					}
+					insertBefore = true;
+					break;
+				case IClasspathEntry.CPE_LIBRARY:
+					if (nxjFiles.contains(cpEntry.getPath().makeAbsolute())) {
+						skip = true;
+					}
+					insertBefore = true;
+					break;
+				case IClasspathEntry.CPE_PROJECT:
+				case IClasspathEntry.CPE_VARIABLE:
+					insertBefore = true;
+				default:
+					skip = false;
+					
+			}
+			
+			if (insertBefore && lc != null) {
+				newClasspath.add(lc);
+				lc = null;
+			}
+			if (!skip) {
 				newClasspath.add(cpEntry);
 			}
 		}
 		
-		// add the other cp entries
-		for (Path e : nxjFiles)
-			newClasspath.add(JavaCore.newLibraryEntry(e, null, null));
+		if (lc != null)
+			newClasspath.add(lc);
 		
 		// set new classpath to project
 		IClasspathEntry[] cpEntries = new IClasspathEntry[newClasspath.size()];

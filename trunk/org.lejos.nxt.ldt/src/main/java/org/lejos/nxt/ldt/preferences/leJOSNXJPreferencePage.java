@@ -81,8 +81,8 @@ public class leJOSNXJPreferencePage extends FieldEditorPreferencePage implements
 	public boolean performOk() {
 		boolean b = super.performOk();
 		
-		IPath p1 = LeJOSLibContainer.ID.append(LeJOSNXJUtil.LIBDIR_NXT);
-		IPath p2 = LeJOSLibContainer.ID.append(LeJOSNXJUtil.LIBDIR_NXT);
+		IPath p1 = new Path(LeJOSLibContainer.ID+"/"+LeJOSNXJUtil.LIBDIR_NXT);
+		IPath p2 = new Path(LeJOSLibContainer.ID+"/"+LeJOSNXJUtil.LIBDIR_NXT);
 		IClasspathContainer[] tmp = new IClasspathContainer[1];
 		
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
