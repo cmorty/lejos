@@ -20,7 +20,8 @@ import lejos.robotics.navigation.Pose;
  * changes of direction occur.  Since the robot is not point, the lines representing
  * the obstacles should be lengthened so the actual robot will miss the actual obstacles.
  * Use the lengthenLines() method to do this.
- * Uses the A* algorithm, a variant of the Dijkstra shortest path algorithm
+ * Uses modification of the A* algorithm,which is a  a variant of the
+ * Dijkstra shortest path algorithm.  This variant adds nodes needed.
  * It uses the Node inner class for its internal representation of points.
  *
  * @author Roger Glassey
@@ -33,7 +34,6 @@ public class ShortestPathFinder// implements PathFinder
 public ShortestPathFinder(LineMap map)
 {
   setMap(map);
-
 }
 /**
  * Finds the shortest path from start to finish using the map (or collection of lines)
@@ -49,7 +49,7 @@ public ShortestPathFinder(LineMap map)
   }
 
   /**
- * Finds the shortest path from start to finish using the map (or collection of lines)
+ * Finds the shortest path from start to finish using the map ( collection of lines)
  * in the constructor.
  * @param start  the initial robot pose
  * @param finish the final robot location
@@ -63,50 +63,55 @@ public ShortestPathFinder(LineMap map)
     return findPath(start.getLocation(), finish, _map);
   }
   /**
-   * finds the shortest path between start  and finish Points whild avoiding the obstacles
-   * in the map
+   * finds the shortest path between start  and finish Points while
+   * avoiding the obstacles represented by lines in the map
    * @param start : the beginning of the path
    * @param finish : the destination
    * @param theMap  that contains the obstacles
-   * @return an array list of waypoints.  If no path exists, returns null
+   * @return an array list of waypoints.  If no path exists, returns null and throws
+   * an exception.
    */
   
-  private ArrayList<WayPoint> findPath(Point start, Point finish, ArrayList<Line> theMap)throws DestinationUnreachableException
+  private ArrayList<WayPoint> findPath(Point start, Point finish, ArrayList<Line>
+          theMap)throws DestinationUnreachableException
   {
     _map = theMap;
     initialize(); // in case this method has already been called before
     Node source = new Node(start);
-    Node destination = new Node(finish);  // current destination
+    _destination = new Node(finish);  // current destination
+    if(_debug) System.out.println(" Start "+source +" Destination "+_destination);
     source.setSourceDistance(0);
     _reached.add(source);
-    _candidate.add(destination);
-    Node from;  // current start node
+    _candidate.add(_destination);
+    Node from;  // current start node; in _reached;
     Node dest;  // current destination node
-    int index = _candidate.size()-1;  //index of current destination in candidate set
+    _index = 0;//index of current destination in candidate list
+    /* This list is kept in order of increasing straight line distance to the
+     * destination. If a new node is reached, the index is reset to 0.
+    */
     boolean failed = false;
-  // Te real work is here:
-    while (! _reached.contains(destination) && !failed)
+  // The real work is here:
+    while (! _reached.contains(_destination) && !failed)
     {
       _count++;
-      // get temporary destination from inCandidateSet set
-      dest = _candidate.get(index);  // temporary destination
-      from = getBest(dest);  //best predecessor in reached
-      
-      float distance = from.getDistance(dest);
-      if (distance >= BIG)  // dest is known to be blocked  from best node in  _reached
+      // get temporary destination from candidate list
+      dest = _candidate.get(_index);
+       if(_debug) System.out.println("dest " +dest.getX()+" , "+dest.getY()+" index "+_index);
+      from = getBest(dest);  //best predecessor in _reached set
+      float distance = from.getDistance(dest);// straight line distance
+           if(_debug) System.out.println(" best possible node in reached  "+from +" distance "+distance);
+      if (distance >= BIG)  // dest is known to be blocked from best node in  _reached
       {
-        index--;  // try another temporary start node
-        failed = index < 0; // tried the whole stack.
-      } else
+          if(_debug) System.out.println("dest already blocked  ");
+        _index++; // try another temporary destination node, next farther from destination
+        failed = _index == _candidate.size(); // tried all camdidates
+      } else  // is temp dest reachable from the best reached node?
       {
-        int candSize = _candidate.size();// dest is not known to be blocked  from  best  reached node
-        if (segmentBlocked(from, dest))
-        { // this method call possibly created and added new nodes to the _candidate set
-          from.block(dest);//  Record dest as not directly reachable
-          if(_candidate.size()>candSize) // new candidates added
-                 index = _candidate.size() - 1;  // search from top  from top of stack
-            else if(candSize >= 1 && index > 0) index--; // keep earching down
-        } else  // not blocked  so dest node has is  reached
+        if (segmentBlocked(from, dest)) //line between from and dest intersects a map line
+        { // this method call may have  created  and added new nodes (line ends) to the _candidate list
+          from.block(dest);// Record in from node that  dest is not  directly reachable
+
+        } else  // not blocked  so dest node has  been reacheds- add it to set
         {
           if (distance < .05f) // essentially same node as best node in _reached,
           { // so will not be a separate way point in the route
@@ -117,11 +122,12 @@ public ShortestPathFinder(LineMap map)
             dest.setPredecessor(from); // allows backtracking to recover the path
             dest.setSourceDistance(from.getSourceDistance() + from.getDistance(dest));
           }
-          // move dest from _candidate to _reached
+          // move dest from _candidate list  to _reached
           _reached.add(dest);
-          _candidate.remove(dest);  // pop the stack
-          if(_candidate.size()>0)index = _candidate.size() - 1; //start from top
-        } // end else  dest not blocked
+          _candidate.remove(dest);
+          _index = 0;  // start over with a new node in reached set.
+          if(_debug) System.out.println("Moved from candidate to reached "+dest);
+        } // end else  dest not blocked  snf id now in _reached
       } // end else dest not previously blocked
     }// end while
     if (failed)
@@ -129,41 +135,14 @@ public ShortestPathFinder(LineMap map)
       throw new DestinationUnreachableException();
 //      return null;
     }
+    System.out.println("DONE");
 
-    return getRoute(destination);
+    return getRoute(_destination);
   }
 
- public void setMap(ArrayList<Line> theMap)
- {
-   _map = theMap;
- }
      
- public void setMap(LineMap theMap)
- {
-     Line [] lines = theMap.getLines();
-    for(int i = 0; i < lines.length; i++)
-    _map.add(lines[i]);
- }
-
 
  /**
-  * lengthens all the lines in the map by delta at each end
-  * @param delta   added to each end of each  line
-  */
- public void lengthenLines( float delta)
- {
-   for (Line line : _map)
-   {
-     line.lengthen(delta);
-   }
- }
-  protected void initialize()
-  {
-    _reached = new ArrayList<Node>();
-    _candidate = new ArrayList<Node>();
-  }
-
-  /**
    * helper method for findPath(). Determines if the straight line segment 
    * crosses a line on the map.
    * Side effect: creates nodes at the end of the blocking line and adds them to the _candidate set
@@ -171,7 +150,7 @@ public ShortestPathFinder(LineMap map)
    * @param theDest the end of the line segment
    * @return  true if the segment is blocked
    */
-  protected boolean segmentBlocked(final Node from, final Node theDest)
+  private boolean segmentBlocked(final Node from, final Node theDest)
   {
     Node to = new Node(theDest.getLocation()); // alias the destination
     Node n1 = null; // one end of the blocking line
@@ -192,24 +171,56 @@ public ShortestPathFinder(LineMap map)
     }
     if (blocked)  // add end points of the blocking segment to  inCandidateSet set
     {
+     if(_debug) System.out.println("  blocked from " + from + " to " + theDest);
       Point p1 =  line.getP1();
       Point  p2 = line.getP2();
       n1 = new Node((float)p1.getX(),(float)p1.getY());
       if(!inReachedSet(n1) &&!inCandidateSet(n1))
       {
         n1.setSourceDistance(from.getSourceDistance() + from.getDistance(n1));
-        _candidate.add(n1);
+//        _candidate.add(n1);
+        int i =  addToCandidate(n1);
+        _index = (_index < 0 ) ? _index : i ;
+//        System.out.println("Candidate add "+n1.toString()+" Source Distance "
+//                +n1.getSourceDistance());
       }
        n2 = new Node((float)p2.getX(),(float)p2.getY());
        if(!inReachedSet(n2) && !inCandidateSet(n2))
       {
         n2.setSourceDistance(from.getSourceDistance() + from.getDistance(n2));
-        _candidate.add(n2);
+//        _candidate.add(n2);
+        addToCandidate(n2);
+//         System.out.println("Candidate add "+n2+" Source Distance "
+//                +n2.getSourceDistance());
       }
     }
     return blocked;
   }
+/**
+ * keep candidate list sorted in order on increasing distance to destination
+ * return index of Node n in _candidate
+ * @param n
+ *
+ */
+  private int addToCandidate (Node n)
+    {
+      float distance = n.getDistance(_destination);
+      int indx = -1;
+      for (Node c : _candidate)
+      {
+          if ( distance  < c.getDistance(_destination))
+          {
+               indx = _candidate.indexOf(c);
+              _candidate.add(indx,n);
+              break;
+          }
+      }
+       if(indx == -1) _candidate.add(n);
+      System.out.println(n+" added to candidate index " + _candidate.indexOf(n)
+              + " destination distance "+distance);
+      return _candidate.indexOf(n);
 
+  }
   /**
    * Helper method for findPath() <br>
    * returns the  node in  the Reached set, whose distance from the start node plus
@@ -217,7 +228,7 @@ public ShortestPathFinder(LineMap map)
    * @param currentDestination : the current destination node, (in the Candidate set)
    * @return the node the node which could be the last node in the shortest path
    */
-  protected  Node getBest(Node currentDestination)
+  private  Node getBest(Node currentDestination)
   {
     Node best = _reached.get(0);
     float minDist = best._sourceDistance + best.getDistance(currentDestination);
@@ -239,7 +250,7 @@ public ShortestPathFinder(LineMap map)
    * @param aNode
    * @return true if aNode has been reached already
    */
-  protected boolean inReachedSet(final Node  aNode)
+  private boolean inReachedSet(final Node  aNode)
   {
     boolean found = false;
     for (Node n : _reached)
@@ -255,7 +266,7 @@ public ShortestPathFinder(LineMap map)
    * @param aNode
    * @return true if aNode has been reached already
    */
-  protected boolean inCandidateSet(final Node aNode)
+  private boolean inCandidateSet(final Node aNode)
   {
     boolean found = false;
     for (Node n : _candidate)
@@ -272,7 +283,7 @@ public ShortestPathFinder(LineMap map)
    * @param destination
    * @return the route of the shortest path
    */
-protected  ArrayList<WayPoint> getRoute(Node destination)
+private  ArrayList<WayPoint> getRoute(Node destination)
 {
     ArrayList<WayPoint> route = new ArrayList <WayPoint>();
     Node n = destination;
@@ -284,7 +295,38 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
     } while (n != null);
     return route;
 }
-  protected ArrayList<Line> getMap()
+ public void setMap(ArrayList<Line> theMap)
+  {
+   _map = theMap;
+ }
+
+ public void setMap(LineMap theMap)
+ {
+     Line [] lines = theMap.getLines();
+    for(int i = 0; i < lines.length; i++)
+    _map.add(lines[i]);
+ }
+
+ public void setDebug(boolean yes )
+    { _debug = yes; }
+
+ /**
+  * lengthens all the lines in the map by delta at each end
+  * @param delta   added to each end of each  line
+  */
+ public void lengthenLines( float delta)
+ {
+   for (Line line : _map)
+   {
+     line.lengthen(delta);
+   }
+ }
+  private void initialize()
+  {
+    _reached = new ArrayList<Node>();
+    _candidate = new ArrayList<Node>();
+  }
+  public ArrayList<Line> getMap()
   {
    return _map;
   }
@@ -319,39 +361,45 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
   //***********  instance variables in ShortestPathFinder *******************
   private ArrayList<WayPointListener> listeners ;
   
-  protected    int _count =  0;
+  private    int _count =  0;
+
   /**
    * set by segmentBlocked() used by findPath()
    */
-  protected boolean _blocked = false;
+  private boolean _blocked = false;
+
+  private int  _index; // location of current destination in _candidate
 
   private static final float BIG = 999999999;
 
+  private Node _destination;
   /**
    * the set of nodes that are candidates for being in the shortest path, but
    * whose distance from the start node is not yet known
+   * stored as a list, in increasing order of straight list distance to destination
    */
-  protected ArrayList<Node> _candidate = new ArrayList<Node>();
+  private ArrayList<Node> _candidate = new ArrayList<Node>();
 
   /**
    * the set of nodes that are candidates for being in the shortest path, and
    * whose distance from the start node is known
    */
- protected  ArrayList<Node> _reached = new ArrayList<Node>();
+ private  ArrayList<Node> _reached = new ArrayList<Node>();
   /**  
    * The map of the obstacles
    */
-  protected  ArrayList<Line> _map = new ArrayList<Line>();
+  private  ArrayList<Line> _map = new ArrayList<Line>();
 
+    private boolean _debug = false;
 
 //************Begin definition of Node class  **********************
- protected class Node
+ private  class Node
 {
   public Node(Point p)
   {
     _p = p;
   }
-  public Node(float x, float y)
+  private Node(float x, float y)
   {
     this(new Point(x,y));
   }
@@ -362,7 +410,7 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
  * @param theLine  endpoints to check
  * @return true if this node is an end of the line
  */
-  public boolean atEndOfLine(Line theLine)
+  private  boolean atEndOfLine(Line theLine)
   {
     return _p.equals(theLine.getP1()) || _p.equals(theLine.getP2());
   }
@@ -370,7 +418,7 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
    * set the distance of this Node from the source
    * @param theDistance
    */
-  public void setSourceDistance(float theDistance)
+  private void setSourceDistance(float theDistance)
   {
     _sourceDistance = theDistance;
   }
@@ -378,25 +426,26 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
    * return the shortest path length to this node from the start node
    * @return shortest distance
    */
-  public float getSourceDistance(){return _sourceDistance;}
+ private  float getSourceDistance(){return _sourceDistance;}
 
   /**
    * get the straight line distance from this node to aPoint
    * @param aPoint
    * @return the distance
    */
-  public float getDistance(Point aPoint)
+  private  float getDistance(Point aPoint)
   {
 
     return (float)_p.distance(aPoint);
   }
 
   /**
-   * return the straight distance from this node to aNode
+   * return the straight line distance from this node to aNode
+   * or a big number if the straight line is known to be blocked
    * @param aNode
    * @return the distance
    */
-  public float getDistance(Node aNode)
+   private float getDistance(Node aNode)
   {
     if(_blocked.indexOf(aNode) > -1) return BIG;
     else return getDistance(aNode.getLocation());
@@ -406,16 +455,16 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
    * return the location of this node
    * @return the location
    */
- public Point getLocation()
+ private Point getLocation()
  {
    return _p;
  }
 
  /**
-  * add aNode to list of nodes not a neighbour of this Node
+  * add aNode to list of nodes not a neighbou\r of this Node
   * @param aNode
   */
- public void block(Node aNode)
+ private  void block(Node aNode)
  {
    _blocked.add(aNode);
  }
@@ -424,30 +473,31 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
   * set the predecessor of this node in the shortest path from the start node
   * @param thePredecessor
   */
- public void setPredecessor(Node thePredecessor)
+private void setPredecessor(Node thePredecessor)
  {_predecessor = thePredecessor;}
  /**
   * get the predecessor of this node in the shortest path from the start
   * @return the predecessor node
   */
- public Node getPredecessor() { return _predecessor;}
+ private  Node getPredecessor() { return _predecessor;}
 
  /**
   * get the X coordinate of this node
   * @return X coordinate
   */
-  public float getX(){return (float)_p.getX();}
+  private  float getX(){return (float)_p.getX();}
   /**
-   * get the Y coordinate of thes Node
+   * get the Y coordinate of the Node
    * @return Y coordinate
    */
-  public float getY(){return (float)_p.getY();}
-  public String toString(){return " "+getX()+" , "+getY()+" ";}
-  protected Point _p;
-  protected float _sourceDistance;
-  protected Node _predecessor;
+  private float getY(){return (float)_p.getY();}
+  public  String toString(){return " "+getX()+" , "+getY()+" ";}
+  private  Point _p;
+  private float _sourceDistance;
+  private Node _predecessor;
   public ArrayList<Node> _blocked = new ArrayList<Node>();
-  private float BIG = 100000;
+
+
  }
 // ****************   end Node class ****************************
 
