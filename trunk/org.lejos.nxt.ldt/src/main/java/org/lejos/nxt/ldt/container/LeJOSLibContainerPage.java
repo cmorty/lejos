@@ -14,12 +14,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-/**
- * This classpath container page colects the directory and the file extensions for a new 
- * or existing SimpleDirContainer.  
- * 
- * @author Aaron J Tarter
- */
+
 public class LeJOSLibContainerPage extends WizardPage 
                implements IClasspathContainerPage, IClasspathContainerPageExtension {
 

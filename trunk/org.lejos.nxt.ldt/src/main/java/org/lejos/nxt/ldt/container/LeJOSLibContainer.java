@@ -11,12 +11,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.lejos.nxt.ldt.util.LeJOSNXJException;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
-/**
- * This classpath container add archive files from a configured project directory to the
- * classpath as CPE_LIBRARY entries, and it attaches -src archives as source attachments.
- * 
- * @author Aaron J Tarter
- */
+
 public class LeJOSLibContainer implements IClasspathContainer {
     public final static Path ID = new Path("org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER");
     

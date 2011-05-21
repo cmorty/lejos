@@ -7,14 +7,7 @@ import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
-/**
- * This classpath container initializer constructs a SimpleDirContainer with the
- * give container path and Java project. It then validates the container before
- * setting it in the classpath. If the container is invalid, it fails silently
- * and logs an error to the Eclipse error log.
- * 
- * @author Aaron J Tarter
- */
+
 public class LeJOSLibContainerInitializer extends ClasspathContainerInitializer {
 
 	@Override
