@@ -6,7 +6,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -80,9 +80,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 	public boolean performOk() {
 		boolean b = super.performOk();
 		
+		ClasspathContainerInitializer init = JavaCore.getClasspathContainerInitializer(LeJOSLibContainer.ID);
 		IPath p1 = new Path(LeJOSLibContainer.ID+"/"+LeJOSNXJUtil.LIBDIR_NXT);
-		IPath p2 = new Path(LeJOSLibContainer.ID+"/"+LeJOSNXJUtil.LIBDIR_NXT);
-		IClasspathContainer[] tmp = new IClasspathContainer[1];
+		IPath p2 = new Path(LeJOSLibContainer.ID+"/"+LeJOSNXJUtil.LIBDIR_PC);
 		
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot wsr = ws.getRoot();
@@ -94,8 +94,10 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 				if (p.isOpen() && p.isNatureEnabled(JavaCore.NATURE_ID))
 				{
 					IJavaProject jp = JavaCore.create(p);
-					JavaCore.setClasspathContainer(p1, new IJavaProject[] {jp}, tmp, null);
-					JavaCore.setClasspathContainer(p2, new IJavaProject[] {jp}, tmp, null);
+					if (JavaCore.getClasspathContainer(p1, jp) != null)
+						init.initialize(p1, jp);
+					if (JavaCore.getClasspathContainer(p2, jp) != null)
+						init.initialize(p2, jp);
 				}
 			}
 			catch (Exception e)
