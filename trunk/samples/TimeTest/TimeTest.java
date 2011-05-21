@@ -48,7 +48,9 @@ public class TimeTest {
 		LCD.drawString(waiting, 0, 0);
 		btc = Bluetooth.waitForConnection();
 		LCD.clear();
-		sock = new Socket(host, port, btc);
+		// Set the connection to be used by Socket
+		NXTSocketUtils.setNXTConnection(btc);
+		sock = new Socket(host, port);
 		LCD.drawString(connected, 0, 0);
 	}
 
