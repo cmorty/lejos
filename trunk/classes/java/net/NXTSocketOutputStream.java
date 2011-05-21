@@ -23,6 +23,7 @@ class NXTSocketOutputStream extends OutputStream {
         buffer = new byte[buffSize];
 	}
 	
+	@Override
     public void write(int b) throws IOException {
     	if (numBytes == buffer.length) {
     		flush();
@@ -45,6 +46,7 @@ class NXTSocketOutputStream extends OutputStream {
     	flush();
     }
     
+   @Override
 	public void flush() throws IOException{
 		if (numBytes > 0) {
 			if (conn.write(buffer, numBytes) < 0) throw new IOException();

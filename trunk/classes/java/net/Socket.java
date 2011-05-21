@@ -31,10 +31,10 @@ public class Socket{
 	 * @throws IOException If the host does not respond or the proxy is
 	 * 	not running
 	 */
-	public Socket(String host, int port, NXTConnection nxtc) throws IOException {
+	public Socket(String host, int port) throws IOException {
 		this.host = host;
 		this.port = port;
-		this.nxtc = nxtc;
+		this.nxtc = NXTSocketUtils.getNXTConnection();
 		inFromProxy = new DataInputStream(nxtc.openInputStream());
 		outToProxy = new DataOutputStream(nxtc.openOutputStream());
 		negotiateConnection();
