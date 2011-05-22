@@ -17,7 +17,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @author Matthias Paul Scholz
  */
-public class LeJOSNXJPlugin extends AbstractUIPlugin {
+public class LeJOSPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String ID = "org.lejos.nxt.ldt";
@@ -25,7 +25,7 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 	public static final String CONSOLE_CHARSET = "utf8";	
 
 	// The shared instance
-	private static LeJOSNXJPlugin plugin;
+	private static LeJOSPlugin plugin;
 
 	// the leJOS NXJ console
 	private IOConsole console;
@@ -34,7 +34,7 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 	/**
 	 * The constructor
 	 */
-	public LeJOSNXJPlugin() {
+	public LeJOSPlugin() {
 	}
 
 	/*
@@ -66,7 +66,7 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 	 * 
 	 * @return the shared instance
 	 */
-	public static LeJOSNXJPlugin getDefault() {
+	public static LeJOSPlugin getDefault() {
 		return plugin;
 	}
 
@@ -85,7 +85,7 @@ public class LeJOSNXJPlugin extends AbstractUIPlugin {
 	public IOConsole getConsole() {
 		if (console == null) {
 			// create console
-			console = new IOConsole("leJOS NXJ", null, getImageDescriptor("icons/nxt.jpg"), LeJOSNXJPlugin.CONSOLE_CHARSET, false);
+			console = new IOConsole("leJOS NXJ", null, getImageDescriptor("icons/nxt.jpg"), LeJOSPlugin.CONSOLE_CHARSET, false);
 			// add to console manager
 			ConsolePlugin plugin = ConsolePlugin.getDefault();
 			IConsoleManager conMan = plugin.getConsoleManager();

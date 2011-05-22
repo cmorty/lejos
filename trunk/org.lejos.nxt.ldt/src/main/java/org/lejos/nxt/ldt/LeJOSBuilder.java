@@ -1,4 +1,4 @@
-package org.lejos.nxt.ldt.builder;
+package org.lejos.nxt.ldt;
 
 import java.util.Map;
 
@@ -25,7 +25,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Matthias Paul Scholz
  *
  */
-public class leJOSBuilder extends IncrementalProjectBuilder {
+public class LeJOSBuilder extends IncrementalProjectBuilder {
 
 	class LeJOSDeltaVisitor implements IResourceDeltaVisitor {
 		/*
@@ -70,7 +70,7 @@ public class leJOSBuilder extends IncrementalProjectBuilder {
 		}
 
 		private void addMarker(SAXParseException e, int severity) {
-			leJOSBuilder.this.addMarker(file, e.getMessage(), e
+			LeJOSBuilder.this.addMarker(file, e.getMessage(), e
 					.getLineNumber(), severity);
 		}
 
@@ -87,7 +87,7 @@ public class leJOSBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	public static final String BUILDER_ID = "org.lejos.nxt.ldt.leJOSBuilder";
+	public static final String ID = "org.lejos.nxt.ldt.leJOSBuilder";
 
 	private static final String MARKER_TYPE = "org.lejos.nxt.ldt.xmlProblem";
 

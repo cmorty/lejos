@@ -39,8 +39,8 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.console.IOConsole;
-import org.lejos.nxt.ldt.LeJOSNXJPlugin;
-import org.lejos.nxt.ldt.builder.leJOSNature;
+import org.lejos.nxt.ldt.LeJOSNature;
+import org.lejos.nxt.ldt.LeJOSPlugin;
 import org.lejos.nxt.ldt.preferences.PreferenceConstants;
 
 /**
@@ -114,7 +114,7 @@ public class LeJOSNXJUtil {
 	}
 
 	public static boolean isLeJOSProject(IProject project) throws CoreException {
-		return project.isNatureEnabled(leJOSNature.NATURE_ID);
+		return project.isNatureEnabled(LeJOSNature.ID);
 	}
 
 	public static boolean isLeJOSProject(IJavaProject project) throws CoreException {
@@ -123,7 +123,7 @@ public class LeJOSNXJUtil {
 
 	public static void message(String message) {
 		// log to leJOS NXJ console
-		PrintWriter console = LeJOSNXJPlugin.getDefault().getConsoleWriter();
+		PrintWriter console = LeJOSPlugin.getDefault().getConsoleWriter();
 		console.println(message);
 		// log to error log
 		//LeJOSNXJPlugin.getDefault().logEvent(message);
@@ -131,7 +131,7 @@ public class LeJOSNXJUtil {
 
 	public static void message(String msg, Throwable throwable) {
 		// log to leJOS NXJ console
-		PrintWriter pw = LeJOSNXJPlugin.getDefault().getConsoleWriter();
+		PrintWriter pw = LeJOSPlugin.getDefault().getConsoleWriter();
 		if (msg != null)
 			pw.println(msg);
 		if (throwable != null)
@@ -150,8 +150,8 @@ public class LeJOSNXJUtil {
 
 	public static void log(Throwable throwable) {
 		// log to error log
-		Status status = new Status(IStatus.ERROR, LeJOSNXJPlugin.ID, throwable.getMessage(), throwable);
-		LeJOSNXJPlugin.getDefault().getLog().log(status);
+		Status status = new Status(IStatus.ERROR, LeJOSPlugin.ID, throwable.getMessage(), throwable);
+		LeJOSPlugin.getDefault().getLog().log(status);
 	}
 
 	public static String getFullQualifiedClassName(IType element) {
@@ -237,7 +237,7 @@ public class LeJOSNXJUtil {
 
 	private static void initializeSystemContext(ClassLoader cl, File nxjHome) throws LeJOSNXJException
 	{
-		LeJOSNXJPlugin p = LeJOSNXJPlugin.getDefault();
+		LeJOSPlugin p = LeJOSPlugin.getDefault();
 		IOConsole con = p.getConsole();
 		Writer consw = p.getConsoleWriter();
 //		OutputStream cons = con.newOutputStream();
@@ -247,7 +247,7 @@ public class LeJOSNXJUtil {
 		try
 		{
 //			consw = new OutputStreamWriter(cons, CONSOLE_CHARSET);
-			cinsr = new InputStreamReader(cins, LeJOSNXJPlugin.CONSOLE_CHARSET);
+			cinsr = new InputStreamReader(cins, LeJOSPlugin.CONSOLE_CHARSET);
 		}
 		catch (UnsupportedEncodingException e1)
 		{
@@ -281,7 +281,7 @@ public class LeJOSNXJUtil {
 	{
 		// get NXJ_HOME
 		IPreferencesService service = Platform.getPreferencesService();
-		String nxjHome = service.getString(LeJOSNXJPlugin.ID, PreferenceConstants.KEY_NXJ_HOME, "", null);
+		String nxjHome = service.getString(LeJOSPlugin.ID, PreferenceConstants.KEY_NXJ_HOME, "", null);
 		
 		if (nxjHome == null || nxjHome.length() <= 0)
 			throw new LeJOSNXJException("NXJ_HOME is not set. Please specify it in the plug-in's preferences");
@@ -302,7 +302,7 @@ public class LeJOSNXJUtil {
 		dst.add("--writeorder");
 		dst.add("LE");
 		
-		if (service.getBoolean(LeJOSNXJPlugin.ID, PreferenceConstants.KEY_IS_VERBOSE, false, contexts))
+		if (service.getBoolean(LeJOSPlugin.ID, PreferenceConstants.KEY_IS_VERBOSE, false, contexts))
 			dst.add("-v");
 	}
 
@@ -312,7 +312,7 @@ public class LeJOSNXJUtil {
 //		IScopeContext[] contexts = new IScopeContext[] {new ProjectScope(project)};
 		IScopeContext[] contexts = null;
 		
-		String connectionType = service.getString(LeJOSNXJPlugin.ID, PreferenceConstants.KEY_CONNECTION_TYPE, null, contexts);
+		String connectionType = service.getString(LeJOSPlugin.ID, PreferenceConstants.KEY_CONNECTION_TYPE, null, contexts);
 		if (PreferenceConstants.VAL_PROTOCOL_BLUETOOTH.equals(connectionType))
 			dst.add("-b");
 		else if (PreferenceConstants.VAL_PROTOCOL_USB.equals(connectionType))
@@ -324,18 +324,18 @@ public class LeJOSNXJUtil {
 		else
 			throw new LeJOSNXJException("illegal connection type");
 		
-		if (service.getBoolean(LeJOSNXJPlugin.ID, PreferenceConstants.KEY_CONNECT_TO_BRICK_ADDRESS, false, contexts))
+		if (service.getBoolean(LeJOSPlugin.ID, PreferenceConstants.KEY_CONNECT_TO_BRICK_ADDRESS, false, contexts))
 		{
 			dst.add("-d");
-			dst.add(service.getString(LeJOSNXJPlugin.ID, PreferenceConstants.KEY_CONNECTION_BRICK_ADDRESS, "", contexts));
+			dst.add(service.getString(LeJOSPlugin.ID, PreferenceConstants.KEY_CONNECTION_BRICK_ADDRESS, "", contexts));
 		}
-		if (service.getBoolean(LeJOSNXJPlugin.ID, PreferenceConstants.KEY_CONNECT_TO_NAMED_BRICK, false, contexts))
+		if (service.getBoolean(LeJOSPlugin.ID, PreferenceConstants.KEY_CONNECT_TO_NAMED_BRICK, false, contexts))
 		{
 			dst.add("-n");
-			dst.add(service.getString(LeJOSNXJPlugin.ID, PreferenceConstants.KEY_CONNECTION_BRICK_NAME, "", contexts));
+			dst.add(service.getString(LeJOSPlugin.ID, PreferenceConstants.KEY_CONNECTION_BRICK_NAME, "", contexts));
 		}
 		
-		if (runnable && service.getBoolean(LeJOSNXJPlugin.ID, PreferenceConstants.KEY_RUN_AFTER_UPLOAD, false, contexts))
+		if (runnable && service.getBoolean(LeJOSPlugin.ID, PreferenceConstants.KEY_RUN_AFTER_UPLOAD, false, contexts))
 			dst.add("-r");			
 	}
 

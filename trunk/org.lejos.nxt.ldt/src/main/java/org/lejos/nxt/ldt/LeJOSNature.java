@@ -1,4 +1,4 @@
-package org.lejos.nxt.ldt.builder;
+package org.lejos.nxt.ldt;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
@@ -12,12 +12,12 @@ import org.eclipse.core.runtime.CoreException;
  * @author Matthias Paul Scholz
  * 
  */
-public class leJOSNature implements IProjectNature {
+public class LeJOSNature implements IProjectNature {
 
 	/**
 	 * ID of this project nature
 	 */
-	public static final String NATURE_ID = "org.lejos.nxt.ldt.leJOSNature";
+	public static final String ID = "org.lejos.nxt.ldt.leJOSNature";
 
 	private IProject project;
 
@@ -31,7 +31,7 @@ public class leJOSNature implements IProjectNature {
 		ICommand[] commands = desc.getBuildSpec();
 
 		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(leJOSBuilder.BUILDER_ID)) {
+			if (commands[i].getBuilderName().equals(LeJOSBuilder.ID)) {
 				return;
 			}
 		}
@@ -39,7 +39,7 @@ public class leJOSNature implements IProjectNature {
 		ICommand[] newCommands = new ICommand[commands.length + 1];
 		System.arraycopy(commands, 0, newCommands, 0, commands.length);
 		ICommand command = desc.newCommand();
-		command.setBuilderName(leJOSBuilder.BUILDER_ID);
+		command.setBuilderName(LeJOSBuilder.ID);
 		newCommands[newCommands.length - 1] = command;
 		desc.setBuildSpec(newCommands);
 		project.setDescription(desc, null);
@@ -54,7 +54,7 @@ public class leJOSNature implements IProjectNature {
 		IProjectDescription description = getProject().getDescription();
 		ICommand[] commands = description.getBuildSpec();
 		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(leJOSBuilder.BUILDER_ID)) {
+			if (commands[i].getBuilderName().equals(LeJOSBuilder.ID)) {
 				ICommand[] newCommands = new ICommand[commands.length - 1];
 				System.arraycopy(commands, 0, newCommands, 0, i);
 				System.arraycopy(commands, i + 1, newCommands, i,

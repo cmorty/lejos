@@ -12,7 +12,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.lejos.nxt.ldt.LeJOSNXJPlugin;
+import org.lejos.nxt.ldt.LeJOSPlugin;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 /**
@@ -20,13 +20,13 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
  * @see IWorkbenchWindowActionDelegate
  * @author Matthias Paul Scholz
  */
-public class LeJOSUploadFirmwareAction implements
+public class UploadFirmwareAction implements
 		IWorkbenchWindowActionDelegate {
 
 	/**
 	 * The constructor.
 	 */
-	public LeJOSUploadFirmwareAction() {
+	public UploadFirmwareAction() {
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class LeJOSUploadFirmwareAction implements
 	}
 
 	private void flashFirmware(IProgressMonitor progressMonitor) {
-		LeJOSNXJPlugin.getDefault().getConsole().activate();
+		LeJOSPlugin.getDefault().getConsole().activate();
 		
 		try {
 			progressMonitor.beginTask("Uploading firmware...", IProgressMonitor.UNKNOWN);

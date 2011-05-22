@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: leJOS NXJ plugin
 Bundle-SymbolicName: org.lejos.nxt.ldt; singleton:=true
 Bundle-Version: 0.9.0.qualifier
-Bundle-Activator: org.lejos.nxt.ldt.LeJOSNXJPlugin
+Bundle-Activator: org.lejos.nxt.ldt.LeJOSPlugin
 Bundle-Vendor: www.lejos.org
 Require-Bundle: org.eclipse.ant.core,
  org.eclipse.core.resources,

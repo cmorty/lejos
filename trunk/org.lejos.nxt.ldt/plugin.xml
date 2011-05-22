@@ -17,7 +17,7 @@
       <builder
             hasNature="true">
          <run
-               class="org.lejos.nxt.ldt.builder.leJOSBuilder">
+               class="org.lejos.nxt.ldt.LeJOSBuilder">
          </run>
       </builder>
    </extension>
@@ -38,7 +38,7 @@
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="org.lejos.nxt.ldt.builder.leJOSNature">
+               class="org.lejos.nxt.ldt.LeJOSNature">
          </run>
       </runtime>
       <requires-nature id="org.eclipse.jdt.core.javanature" />
@@ -87,7 +87,7 @@
          <action
                label="Upload &amp;Firmware"
                icon="icons/nxj.jpg"
-               class="org.lejos.nxt.ldt.actions.LeJOSUploadFirmwareAction"
+               class="org.lejos.nxt.ldt.actions.UploadFirmwareAction"
                tooltip="Downloads the firmware to the NXT brick"
                menubarPath="leJOSNXJMenu/leJOSNXJGroup"
                toolbarPath="org.lejos.nxt.ldt/DownloadFirmware"
@@ -108,7 +108,7 @@
                path="additions">
          </menu>
          <action
-               class="org.lejos.nxt.ldt.actions.LeJOSLinkAndUploadAction"
+               class="org.lejos.nxt.ldt.actions.LinkAndUploadAction"
                enablesFor="1"
                icon="icons/nxj.jpg"
                id="org.lejos.nxt.ldt.actions.LeJOSLinkAndUploadAction"
@@ -117,7 +117,7 @@
                tooltip="Links and uploads the selected program to the NXT brick">
          </action>
          <action
-               class="org.lejos.nxt.ldt.actions.LeJOSUploadAction"
+               class="org.lejos.nxt.ldt.actions.UploadAction"
                enablesFor="+"
                icon="icons/nxj.jpg"
                id="org.lejos.nxt.ldt.actions.LeJOSUploadAction"
@@ -126,7 +126,7 @@
                tooltip="Uploads the selected file to the NXT brick">
          </action>
          <action
-               class="org.lejos.nxt.ldt.actions.ConvertToLeJOSNatureAction"
+               class="org.lejos.nxt.ldt.actions.ConvertToLeJOSProjectAction"
                enablesFor="+"
                icon="icons/nxj.jpg"
                id="org.lejos.nxt.ldt.ConvertToLeJOSNatureAction"

@@ -16,7 +16,7 @@ import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.lejos.nxt.ldt.LeJOSNXJPlugin;
+import org.lejos.nxt.ldt.LeJOSPlugin;
 import org.lejos.nxt.ldt.container.LeJOSLibContainer;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
@@ -32,7 +32,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 
 	public PreferencePage() {
 		super(GRID);
-		setPreferenceStore(LeJOSNXJPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(LeJOSPlugin.getDefault().getPreferenceStore());
 		setDescription("Preferences for leJOS NXJ");
 	}
 
