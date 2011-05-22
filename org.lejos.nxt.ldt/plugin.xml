@@ -53,6 +53,15 @@
       </initializer>
    </extension>
    <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            description="contains the absolute path to the LeJOS JDK"
+            name="nxj.home"
+            resolver="org.lejos.nxt.ldt.variables.NXJHomeResolver"
+            supportsArgument="false">
+      </variable>
+   </extension>
+   <extension
          point="org.eclipse.help.toc">
       <toc
             file="toc.xml"
