@@ -48,8 +48,9 @@ import org.lejos.nxt.ldt.preferences.PreferenceConstants;
  */
 public class LeJOSNXJUtil {
 
-	public static final String LIBDIR_PC = "pc";
-	public static final String LIBDIR_NXT = "nxt";
+	public static final String LIBDIR = "lib";
+	public static final String LIBSUBDIR_PC = "pc";
+	public static final String LIBSUBDIR_NXT = "nxt";
 
 	public static boolean getJavaProjectFromSelection(ISelection selection, Collection<IJavaProject> dst) {
 		boolean foundInvalid = false;
@@ -179,7 +180,7 @@ public class LeJOSNXJUtil {
 	
 	public static void buildClasspath(File nxjHome, String subdir, Collection<File> dst) throws LeJOSNXJException
 	{
-		File f1 = new File(nxjHome, "lib");
+		File f1 = new File(nxjHome, LIBDIR);
 		File f2 = new File(f1, subdir);
 		if (!f2.isDirectory())
 			throw new LeJOSNXJException(f2+" is not a directory");
@@ -189,12 +190,12 @@ public class LeJOSNXJUtil {
 	
 	public static void buildNXTClasspath(File nxjHome, Collection<File> dst) throws LeJOSNXJException
 	{
-		buildClasspath(nxjHome, LIBDIR_NXT, dst);
+		buildClasspath(nxjHome, LIBSUBDIR_NXT, dst);
 	}
 	
 	public static void buildPCClasspath(File nxjHome, Collection<File> dst) throws LeJOSNXJException
 	{
-		buildClasspath(nxjHome, LIBDIR_PC, dst);
+		buildClasspath(nxjHome, LIBSUBDIR_PC, dst);
 	}
 	
 	

@@ -18,8 +18,8 @@ public class LeJOSLibContainer implements IClasspathContainer {
     private static final int DEFAULT_OPTION = 0;
     
     private static final String[][] options = {
-    		{ LeJOSNXJUtil.LIBDIR_NXT, "NXT Runtime" },
-    		{ LeJOSNXJUtil.LIBDIR_PC, "PC Libraries" },
+    		{ LeJOSNXJUtil.LIBSUBDIR_NXT, "NXT Runtime" },
+    		{ LeJOSNXJUtil.LIBSUBDIR_PC, "PC Libraries" },
     	};
     
     static int getOptionCount()

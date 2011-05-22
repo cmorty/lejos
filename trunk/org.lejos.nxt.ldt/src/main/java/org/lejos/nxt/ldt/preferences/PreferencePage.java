@@ -81,8 +81,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 		boolean b = super.performOk();
 		
 		ClasspathContainerInitializer init = JavaCore.getClasspathContainerInitializer(LeJOSLibContainer.ID);
-		IPath p1 = new Path(LeJOSLibContainer.ID+"/"+LeJOSNXJUtil.LIBDIR_NXT);
-		IPath p2 = new Path(LeJOSLibContainer.ID+"/"+LeJOSNXJUtil.LIBDIR_PC);
+		IPath p1 = new Path(LeJOSLibContainer.ID+"/"+LeJOSNXJUtil.LIBSUBDIR_NXT);
+		IPath p2 = new Path(LeJOSLibContainer.ID+"/"+LeJOSNXJUtil.LIBSUBDIR_PC);
 		
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot wsr = ws.getRoot();
