@@ -36,8 +36,7 @@ import org.apache.commons.cli.ParseException;
  * 
  *  Graphical file browser for leJOS NXJ.
  *  Supports uploading,, downloading, and deleting files.
- *  Also supports running programs, defragging the file system
- *  and setting the name of the NXT.
+ *  Also supports running programs, and setting the name of the NXT.
  *
  *  @author Lawrie Griffiths <lawrie.griffiths@ntlworld.com>
  */
@@ -191,14 +190,14 @@ public class NXJBrowser
     JButton uploadButton = new JButton("Upload file");
     JButton downloadButton = new JButton("Download file");
     JButton runButton = new JButton("Run program");
-    JButton defragButton = new JButton("Defrag");
+    JButton setDefaultButton = new JButton("Set as default");
     JButton nameButton = new JButton("Set Name");
     
     buttonPanel.add(deleteButton);
     buttonPanel.add(uploadButton);
     buttonPanel.add(downloadButton);
     buttonPanel.add(runButton);
-    buttonPanel.add(defragButton);
+    buttonPanel.add(setDefaultButton);
     buttonPanel.add(nameButton);
 
     frame.getContentPane().add(new JScrollPane(buttonPanel), BorderLayout.SOUTH);
@@ -222,9 +221,11 @@ public class NXJBrowser
       }
     });
 
-    defragButton.addActionListener(new ActionListener() {
+    setDefaultButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ae) {
-          defragFS(frame, fm);
+          int i = table.getSelectedRow();
+          String fileName = fm.getFile(i).fileName;
+          setDefault(fileName);
         }
       });
     
@@ -351,6 +352,16 @@ private void defragFS(final JFrame frame, final ExtendedFileModel fm) {
 		  showMessage("IOException during defrag");
 	  }
 	  frame.setCursor(normalCursor);
+}
+
+private void setDefault(String name) {
+	frame.setCursor(hourglassCursor);
+	  try {
+		  nxtCommand.setDefaultProgram(name);
+	  } catch (IOException ioe) {
+		  showMessage("IOException during set default");
+	  }
+	  frame.setCursor(normalCursor);	
 }
 
 private void runFile(final ExtendedFileModel fm, int i) {
