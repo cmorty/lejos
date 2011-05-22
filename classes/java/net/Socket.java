@@ -27,7 +27,6 @@ public class Socket{
 	 * Constructor: Pass an open NXT connection and socket details.
 	 * @param host The name of the host with which the socket will be opened
 	 * @param port The port to connect to
-	 * @param nxtc The NXT connection
 	 * @throws IOException If the host does not respond or the proxy is
 	 * 	not running
 	 */
@@ -44,10 +43,9 @@ public class Socket{
 	
 	/**
 	 * Constructor. Use if the socket is intended not to connect to a host
-	 * @param nxtc the connection the socket is made over
 	 */
-	public Socket(NXTConnection nxtc) {
-		this.nxtc = nxtc;
+	public Socket() {
+		this.nxtc = NXTSocketUtils.getNXTConnection();
 	}
 	
 	/**
