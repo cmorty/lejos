@@ -7,6 +7,9 @@ import java.io.PrintStream;
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 
+/**
+ * Matrix implementation derived from the JAMA project
+ */
 public class Matrix implements Cloneable, java.io.Serializable {
 
 /* ------------------------
@@ -149,6 +152,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
    /** Clone the Matrix object.
    */
 
+   @Override
    public Object clone () {
       return this.copy();
    }

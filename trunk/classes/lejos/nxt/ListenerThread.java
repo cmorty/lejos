@@ -1,7 +1,7 @@
 package lejos.nxt;
 
 /**
- * Utility class for dispatching events to button, sensor and serial listeners.
+ * Utility class for dispatching events to button,  and sensor port listeners.
  * Re-worked to use new event mechanism by Andy
  * @author Paul Andrews, Andy
  */

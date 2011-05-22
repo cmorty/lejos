@@ -1,7 +1,7 @@
 package lejos.util;
 
 /**
- *  Proportional <tt>&lt;P&gt;</tt>, Integral <tt>&lt;I&gt;</tt>, Derivitive <tt>&lt;D&gt;</tt> controller implementation.
+ *  Proportional <tt>&lt;P&gt;</tt>, Integral <tt>&lt;I&gt;</tt>, Derivative <tt>&lt;D&gt;</tt> controller implementation.
  *  
  *  <code>P</code> depends on the present error, <code>I</code> on the accumulation of past errors, and <code>D</code> is a 
  *  prediction of future errors, based on 
@@ -15,7 +15,7 @@ package lejos.util;
  * Larger values decrease overshoot, but slow down transient response and may lead to instability due to signal noise amplification in the differentiation of the error.
  *  <p><b>Definitions:</b>
  *  <ul>
- *  <li>MV - Manipulated Variable. What the PID contoller calculates to be used as the input to the process (i.e. motor speed).
+ *  <li>MV - Manipulated Variable. What the PID controller calculates to be used as the input to the process (i.e. motor speed).
  *  <LI>PV - Process Variable. The measurement of the process value.
  *  <LI>SP - Setpoint. The desired value that the PID controller works to achieve through process changes by MV.
  *  <li>error - The difference between PV and MV.

@@ -7,7 +7,7 @@ import java.io.*;
  * It writes to the bottom line of the screen, scrolling the
  * LCD up one line when writing to character position 0, 
  * and starting a new line when the position reaches 16
- * or a new line character is wriiten. 
+ * or a new line character is written. 
  * 
  * Used by System.out.println.
  * 
@@ -17,6 +17,7 @@ import java.io.*;
 public class LCDOutputStream extends OutputStream {
 	private int pos = 0;
 	
+	@Override
 	public void write(int c) {	
 		if (c == '\n') {
 			pos = 0;

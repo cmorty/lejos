@@ -18,12 +18,11 @@ public class ServerSocket {
 	/**
 	 * Constructor. Creates a new Server Socket over a Bluetooth or USB connection
 	 * @param port The port to listen on
-	 * @param nxtc The connection to open
 	 * @throws IOException 
 	 */
-	public ServerSocket(int port, NXTConnection nxtc) throws IOException {
+	public ServerSocket(int port) throws IOException {
 		this.port = port;
-		this.nxtc = nxtc;
+		this.nxtc = NXTSocketUtils.getNXTConnection();
 		negotiateConnection();
 	}
 	
@@ -63,6 +62,6 @@ public class ServerSocket {
 		dis.readBoolean();
 		dos.close();
 		dis.close();
-		return new Socket(nxtc);		
+		return new Socket();		
 	}
 }
