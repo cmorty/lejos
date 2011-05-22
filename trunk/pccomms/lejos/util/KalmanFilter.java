@@ -5,6 +5,9 @@ package lejos.util;
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 
+/** 
+ * Implementation of a Kalman filter using the Matrix class
+ */
 public class KalmanFilter {
   private Matrix a, b, c, i, q, r, at, ct;
   private Matrix mu, sigma, muBar, sigmaBar, gain;
