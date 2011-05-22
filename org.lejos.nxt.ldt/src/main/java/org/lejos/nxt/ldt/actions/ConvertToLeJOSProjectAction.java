@@ -123,7 +123,7 @@ public class ConvertToLeJOSProjectAction implements IObjectActionDelegate {
 		
 		// create new classpath with additional leJOS libraries last
 		ArrayList<IClasspathEntry> newClasspath = new ArrayList<IClasspathEntry>();
-		Path lcp = new Path(LeJOSLibContainer.ID+"/"+LeJOSNXJUtil.LIBDIR_NXT);
+		Path lcp = new Path(LeJOSLibContainer.ID+"/"+LeJOSNXJUtil.LIBSUBDIR_NXT);
 		IClasspathEntry lc = JavaCore.newContainerEntry(lcp);
 		
 		// get existing classpath
