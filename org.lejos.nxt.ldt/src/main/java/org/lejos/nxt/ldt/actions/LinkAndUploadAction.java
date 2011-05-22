@@ -30,14 +30,14 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
  * @author Matthias Paul Scholz
  * 
  */
-public class LeJOSLinkAndUploadAction implements IObjectActionDelegate {
+public class LinkAndUploadAction implements IObjectActionDelegate {
 
 	private ISelection _selection;
 
 	/**
 	 * The constructor.
 	 */
-	public LeJOSLinkAndUploadAction() {
+	public LinkAndUploadAction() {
 	}
 
 	public void run(IAction action) {

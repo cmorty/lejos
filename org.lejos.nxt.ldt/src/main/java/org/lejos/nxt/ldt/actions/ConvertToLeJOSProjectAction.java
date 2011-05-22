@@ -15,7 +15,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
-import org.lejos.nxt.ldt.builder.leJOSNature;
+import org.lejos.nxt.ldt.LeJOSNature;
 import org.lejos.nxt.ldt.container.LeJOSLibContainer;
 import org.lejos.nxt.ldt.util.LeJOSNXJException;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
@@ -27,7 +27,7 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
  * @author Matthias Paul Scholz
  * 
  */
-public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
+public class ConvertToLeJOSProjectAction implements IObjectActionDelegate {
 
 	private ISelection selection;
 
@@ -80,7 +80,7 @@ public class ConvertToLeJOSNatureAction implements IObjectActionDelegate {
 				for (String e : natures)
 					newNatures.add(e);
 				
-				newNatures.add(leJOSNature.NATURE_ID);
+				newNatures.add(LeJOSNature.ID);
 				String[] tmp = new String[newNatures.size()];
 				newNatures.toArray(tmp);
 				description.setNatureIds(tmp);
