@@ -1,5 +1,8 @@
 package lejos.util;
 
+/**
+ * Tools for manipulating numbers in little-endian and big-endian encodings
+ */
 public class EndianTools
 {
 	public static long decodeLongBE(byte[] b, int off)

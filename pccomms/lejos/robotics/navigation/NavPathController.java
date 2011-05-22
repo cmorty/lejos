@@ -38,8 +38,8 @@ public class NavPathController implements PathController
   }
   
   /**
-   * Creates a PathController using a custom poseProvider, rather than the default tachometer pose
-   * provider.
+   * Creates a PathController using a custom poseProvider, rather than the default
+   * OdometryPoseProvider.  
    * @param pilot
    * @param poseProvider
    */
@@ -89,10 +89,17 @@ public class NavPathController implements PathController
   public PathFinder getPathFinder() {
 	  return pathFinder;
   }
-  
+
+  /**
+   * @param aRoute 
+   */
+  public void setRoute(Collection<WayPoint>aRoute)
+    {
+      _route = (ArrayList<WayPoint>) aRoute;
+  }
   /** returns <code> false </code> if the the final waypoint has been reached or interrupt() has been called
    */
-  private boolean isGoing()
+  public  boolean isGoing()
   {
 	  return _keepGoing;
   }
@@ -101,6 +108,7 @@ public class NavPathController implements PathController
   {
     _route = (ArrayList<WayPoint>) aRoute;
     _keepGoing = true;
+    _singleStep = false;
     if(immediateReturn)return;
     while(_keepGoing) Thread.yield();
   }
@@ -108,6 +116,7 @@ public class NavPathController implements PathController
   public void goTo(WayPoint destination, boolean immediateReturn)
   {
     // Check if using PathFinder:
+      _singleStep = false;
 	if(pathFinder == null) 
 		addWayPoint(destination);
 	else
@@ -132,6 +141,17 @@ public class NavPathController implements PathController
 	  goTo(new WayPoint(x, y, heading));
   }
   
+  /**
+   * If the queue is not empty, the robot will go the first  WayPoint in the
+   * queue and then stop. Meanwhile, isGoing() returns true.
+   * This method returns immediately.  
+   */
+  public void goToNext()
+    {
+      if(_route.size()== 0 ) return;
+      else _singleStep = true;
+      if(_route.size() > 0 ) _keepGoing = true;
+  }
   public void addListener(WayPointListener aListener)
   {
     if(listeners == null )listeners = new ArrayList<WayPointListener>();
@@ -161,6 +181,7 @@ public class NavPathController implements PathController
   public void resume()
   {
     if(_route.size() > 0 ) _keepGoing = true;
+    _singleStep = false;
   }
 
   public void flushQueue()
@@ -234,12 +255,11 @@ public class NavPathController implements PathController
   			for(int i=0;i<moves.length;i++) {
   				((ArcMoveController) _pilot).travelArc(moves[i].getArcRadius(), moves[i].getDistanceTraveled());
   			}
-          }
-          
           while (_pilot.isMoving() && _keepGoing)
           {
             Thread.yield();
-          }
+          }                                }
+          // direction change complete
           
           if(!_keepGoing) break;
          
@@ -280,6 +300,7 @@ public class NavPathController implements PathController
           
           if (_keepGoing && 0 < _route.size()) {_route.remove(0);}
           _keepGoing = _keepGoing && 0 < _route.size();
+          if(_singleStep)_keepGoing = false;
           Thread.yield();
         } // end while keepGoing
         Thread.yield();
@@ -292,6 +313,7 @@ public class NavPathController implements PathController
   private ArrayList<WayPointListener> listeners;
   private ArrayList<WayPointListener> targetListeners;
   private boolean _keepGoing = false;
+  private boolean _singleStep = false;
   private MoveController _pilot;
   private PoseProvider poseProvider;
   private PathFinder pathFinder = null;
