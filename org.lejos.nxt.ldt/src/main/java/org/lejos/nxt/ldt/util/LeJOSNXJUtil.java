@@ -25,10 +25,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -280,8 +277,8 @@ public class LeJOSNXJUtil {
 	public static File getNXJHome() throws LeJOSNXJException
 	{
 		// get NXJ_HOME
-		IPreferencesService service = Platform.getPreferencesService();
-		String nxjHome = service.getString(LeJOSPlugin.ID, PreferenceConstants.KEY_NXJ_HOME, "", null);
+		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
+		String nxjHome = p.getString(PreferenceConstants.KEY_NXJ_HOME, null);
 		
 		if (nxjHome == null || nxjHome.length() <= 0)
 			throw new LeJOSNXJException("NXJ_HOME is not set. Please specify it in the plug-in's preferences");
@@ -295,24 +292,20 @@ public class LeJOSNXJUtil {
 	
 	public static void getLinkerOpts(List<String> dst) throws LeJOSNXJException
 	{
-		IPreferencesService service = Platform.getPreferencesService();		
-//		IScopeContext[] contexts = new IScopeContext[] {new ProjectScope(project)};
-		IScopeContext[] contexts = null;
+		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
 		
 		dst.add("--writeorder");
 		dst.add("LE");
 		
-		if (service.getBoolean(LeJOSPlugin.ID, PreferenceConstants.KEY_IS_VERBOSE, false, contexts))
+		if (p.getBoolean(PreferenceConstants.KEY_IS_VERBOSE, false))
 			dst.add("-v");
 	}
 
 	public static void getUploadOpts(List<String> dst, boolean runnable) throws LeJOSNXJException
 	{
-		IPreferencesService service = Platform.getPreferencesService();		
-//		IScopeContext[] contexts = new IScopeContext[] {new ProjectScope(project)};
-		IScopeContext[] contexts = null;
+		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
 		
-		String connectionType = service.getString(LeJOSPlugin.ID, PreferenceConstants.KEY_CONNECTION_TYPE, null, contexts);
+		String connectionType = p.getString(PreferenceConstants.KEY_CONNECTION_TYPE, null);
 		if (PreferenceConstants.VAL_PROTOCOL_BLUETOOTH.equals(connectionType))
 			dst.add("-b");
 		else if (PreferenceConstants.VAL_PROTOCOL_USB.equals(connectionType))
@@ -324,18 +317,18 @@ public class LeJOSNXJUtil {
 		else
 			throw new LeJOSNXJException("illegal connection type");
 		
-		if (service.getBoolean(LeJOSPlugin.ID, PreferenceConstants.KEY_CONNECT_TO_BRICK_ADDRESS, false, contexts))
+		if (p.getBoolean(PreferenceConstants.KEY_CONNECT_TO_BRICK_ADDRESS, false))
 		{
 			dst.add("-d");
-			dst.add(service.getString(LeJOSPlugin.ID, PreferenceConstants.KEY_CONNECTION_BRICK_ADDRESS, "", contexts));
+			dst.add(p.getString(PreferenceConstants.KEY_CONNECTION_BRICK_ADDRESS, ""));
 		}
-		if (service.getBoolean(LeJOSPlugin.ID, PreferenceConstants.KEY_CONNECT_TO_NAMED_BRICK, false, contexts))
+		if (p.getBoolean(PreferenceConstants.KEY_CONNECT_TO_NAMED_BRICK, false))
 		{
 			dst.add("-n");
-			dst.add(service.getString(LeJOSPlugin.ID, PreferenceConstants.KEY_CONNECTION_BRICK_NAME, "", contexts));
+			dst.add(p.getString(PreferenceConstants.KEY_CONNECTION_BRICK_NAME, ""));
 		}
 		
-		if (runnable && service.getBoolean(LeJOSPlugin.ID, PreferenceConstants.KEY_RUN_AFTER_UPLOAD, false, contexts))
+		if (runnable && p.getBoolean(PreferenceConstants.KEY_RUN_AFTER_UPLOAD, false))
 			dst.add("-r");			
 	}
 
