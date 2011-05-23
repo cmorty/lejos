@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -72,19 +73,19 @@ public class ConvertToLeJOSProjectAction implements IObjectActionDelegate {
 		LeJOSNXJUtil.getJavaProjectFromSelection(selection, list);
 		for (IJavaProject project : list)
 		{
+			IProject project2 = project.getProject();
 			try {
-				IProjectDescription description = project.getProject().getDescription();
-				String[] natures = description.getNatureIds();
+				IProjectDescription description = project2.getDescription();
 	
 				LinkedHashSet<String> newNatures = new LinkedHashSet<String>();
-				for (String e : natures)
+				newNatures.add(LeJOSNature.ID);
+				for (String e : description.getNatureIds())
 					newNatures.add(e);
 				
-				newNatures.add(LeJOSNature.ID);
 				String[] tmp = new String[newNatures.size()];
 				newNatures.toArray(tmp);
 				description.setNatureIds(tmp);
-				project.getProject().setDescription(description, null);
+				project2.setDescription(description, null);
 	
 				// update classpath
 				updateClasspath(project);
@@ -96,11 +97,11 @@ public class ConvertToLeJOSProjectAction implements IObjectActionDelegate {
 	//			project.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
 				
 				// log
-				LeJOSNXJUtil.message("project " + project.getProject().getName()
+				LeJOSNXJUtil.message("project " + project2.getName()
 						+ " now is a leJOS NXJ project");
 			} catch (Throwable t) {
 				// log
-				LeJOSNXJUtil.message("project " + project.getProject().getName()+" was not converted.", t);
+				LeJOSNXJUtil.message("project " + project2.getName()+" was not converted.", t);
 			}
 		}
 	}
