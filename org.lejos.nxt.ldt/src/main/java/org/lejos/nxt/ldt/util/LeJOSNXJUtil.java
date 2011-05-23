@@ -59,7 +59,17 @@ public class LeJOSNXJUtil {
 			for (Iterator<?> it = ss.iterator(); it.hasNext();) {
 				Object element = it.next();
 				if (element instanceof IJavaProject) {
+					// we see IJavaProjects when selecting in package explorer
 					dst.add((IJavaProject) element);
+				} else if (element instanceof IProject) {
+					// we see IProjects when selecting in project explorer, or navigator.
+					IProject p = (IProject) element;
+					try {
+						if (p.isOpen() && p.isNatureEnabled(JavaCore.NATURE_ID))
+							dst.add(JavaCore.create(p));
+					} catch (CoreException e) {
+						foundInvalid = true;
+					}
 				} else {
 					foundInvalid = true;
 				}
@@ -92,8 +102,14 @@ public class LeJOSNXJUtil {
 			for (Iterator<?> it = ss.iterator(); it.hasNext(); ) {
 				Object element = it.next();
 				if (element instanceof IJavaElement) {
+					// we see IJavaProjects when selecting in package explorer
 					IJavaElement e = (IJavaElement) element;
 					return e;
+				} else if (element instanceof IFile) {
+					// we see IFile when selecting in project explorer, or navigator.
+					IJavaElement e = JavaCore.create((IFile)element);
+					if (e != null)
+						return e;
 				}
 			}
 		}
