@@ -95,7 +95,7 @@
          </menu>
          <action
                label="Upload &amp;Firmware"
-               icon="icons/nxj.jpg"
+               icon="icons/nxj.png"
                class="org.lejos.nxt.ldt.actions.UploadFirmwareAction"
                tooltip="Downloads the firmware to the NXT brick"
                menubarPath="leJOSNXJMenu/leJOSNXJGroup"
@@ -119,7 +119,7 @@
          <action
                class="org.lejos.nxt.ldt.actions.LinkAndUploadAction"
                enablesFor="1"
-               icon="icons/nxj.jpg"
+               icon="icons/nxj.png"
                id="org.lejos.nxt.ldt.actions.LeJOSLinkAndUploadAction"
                label="&amp;Link and Upload Program to the NXT Brick"
                menubarPath="org.lejos.nxt.ldt.leJOSNXJPopupMenu/leJOSNXJGroup"
@@ -128,7 +128,7 @@
          <action
                class="org.lejos.nxt.ldt.actions.UploadAction"
                enablesFor="+"
-               icon="icons/nxj.jpg"
+               icon="icons/nxj.png"
                id="org.lejos.nxt.ldt.actions.LeJOSUploadAction"
                label="&amp;Upload File to the NXT Brick"
                menubarPath="org.lejos.nxt.ldt.leJOSNXJPopupMenu/leJOSNXJGroup"
@@ -137,7 +137,7 @@
          <action
                class="org.lejos.nxt.ldt.actions.ConvertToLeJOSProjectAction"
                enablesFor="+"
-               icon="icons/nxj.jpg"
+               icon="icons/nxj.png"
                id="org.lejos.nxt.ldt.ConvertToLeJOSNatureAction"
                label="Convert to leJOS NXJ project"
                menubarPath="org.lejos.nxt.ldt.leJOSNXJPopupMenu/leJOSNXJGroup"
@@ -152,6 +152,14 @@
             class="org.lejos.nxt.ldt.preferences.PreferencePage"
             id="org.lejos.nxt.ldt.preferences.leJOSNXJPreferencePage">
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.projectNatureImages">
+      <image
+            icon="icons/project.png"
+            id="org.lejos.nxt.ldt.leJOSNature.image"
+            natureId="org.lejos.nxt.ldt.leJOSNature">
+      </image>
    </extension>
 
 </plugin>
