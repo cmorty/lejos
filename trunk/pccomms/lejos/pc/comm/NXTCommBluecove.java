@@ -175,9 +175,8 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 		if (is == null)
 			return new byte[0];
 
-		do {
-			length = is.read(); // First byte specifies length of packet.
-		} while (length < 0);
+		length = is.read(); // First byte specifies length of packet.
+		if (length < 0) throw new IOException("End of stream");
 
 		int lengthMSB = is.read(); // Most Significant Byte value
 		length = (0xFF & length) | ((0xFF & lengthMSB) << 8);
