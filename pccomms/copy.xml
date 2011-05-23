@@ -21,11 +21,12 @@
   				<include name="lejos/nxt/BasicMotor.java"/>
   				<include name="lejos/nxt/BasicMotorPort.java"/>
   				<include name="lejos/nxt/BasicSensorPort.java"/>
-  				<include name="lejos/nxt/LegacySensorPort.java"/>
-  				<include name="lejos/nxt/LightSensor.java"/>
   				<include name="lejos/nxt/Colors.java"/>
   				<include name="lejos/nxt/ColorSensor.java"/>
   				<include name="lejos/nxt/Colors.java"/>
+				<include name="lejos/nxt/LegacySensorPort.java"/>
+				<include name="lejos/nxt/LightSensor.java"/>
+  				<include name="lejos/nxt/NXTMotor.java"/>
   				<include name="lejos/nxt/SensorConstants.java"/>
   				<include name="lejos/nxt/SoundSensor.java"/>
   				<include name="lejos/nxt/TouchSensor.java"/>
