@@ -11,7 +11,7 @@
    </extension>
 
    <extension
-         id="leJOSBuilder"
+         id="org.lejos.nxt.ldt.leJOSBuilder"
          name="leJOS Project Builder"
          point="org.eclipse.core.resources.builders">
       <builder
@@ -33,7 +33,7 @@
       </persistent>
    </extension>
    <extension
-         id="leJOSNature"
+         id="org.lejos.nxt.ldt.leJOSNature"
          name="leJOS Project Nature"
          point="org.eclipse.core.resources.natures">
       <runtime>
