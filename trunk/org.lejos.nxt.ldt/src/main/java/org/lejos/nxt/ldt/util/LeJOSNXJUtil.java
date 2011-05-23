@@ -120,11 +120,7 @@ public class LeJOSNXJUtil {
 	}
 
 	public static void message(String message) {
-		// log to leJOS NXJ console
-		PrintWriter console = LeJOSPlugin.getDefault().getConsoleWriter();
-		console.println(message);
-		// log to error log
-		//LeJOSNXJPlugin.getDefault().logEvent(message);
+		message(message, null);
 	}
 
 	public static void message(String msg, Throwable throwable) {
@@ -144,6 +140,15 @@ public class LeJOSNXJUtil {
 			pw.println("See Eclipse error log for detailed stack trace.");
 			log(throwable);
 		}
+	}
+
+	public static void error(String message) {
+		error(message, null);
+	}
+
+	public static void error(String msg, Throwable throwable) {
+		LeJOSPlugin.getDefault().getConsole().activate();
+		message(msg, throwable);
 	}
 
 	public static void log(Throwable throwable) {

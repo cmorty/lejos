@@ -149,7 +149,7 @@ public class LinkAndUploadAction implements IObjectActionDelegate {
 				}
 			
 				if (r != 0)
-					LeJOSNXJUtil.message("linking the file failed with exit status "+r);
+					LeJOSNXJUtil.error("linking the file failed with exit status "+r);
 				else
 				{
 					LeJOSNXJUtil.message("program has been linked successfully");
@@ -163,7 +163,7 @@ public class LinkAndUploadAction implements IObjectActionDelegate {
 					if (r == 0)
 						LeJOSNXJUtil.message("program has been uploaded");
 					else
-						LeJOSNXJUtil.message("uploading the program failed with exit status "+r);
+						LeJOSNXJUtil.error("uploading the program failed with exit status "+r);
 				}
 			}
 			finally
@@ -175,7 +175,7 @@ public class LinkAndUploadAction implements IObjectActionDelegate {
 				t = ((InvocationTargetException)t).getTargetException();
 			
 			// log
-			LeJOSNXJUtil.message("Linking or uploading the program failed", t);
+			LeJOSNXJUtil.error("Linking or uploading the program failed", t);
 		}
 	}
 
