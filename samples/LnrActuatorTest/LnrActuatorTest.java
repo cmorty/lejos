@@ -48,15 +48,15 @@ public class LnrActuatorTest {
                 Delay.msDelay(200);
             }
             if (Button.LEFT.isPressed()){
-                _la.retract(200, true);
+                _la.actuate(-200, true);
                 while (Button.LEFT.isPressed()) Thread.yield();
-                _la.stopActuator();
+                _la.stop();
                 Delay.msDelay(200);
             }
             if (Button.RIGHT.isPressed()){
-                _la.extend(200, true);
+                _la.actuate(200, true);
                 while (Button.RIGHT.isPressed()) Thread.yield();
-                _la.stopActuator();
+                _la.stop();
                 Delay.msDelay(200);
             }
             Delay.msDelay(100);            
