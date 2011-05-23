@@ -97,11 +97,10 @@ public class ConvertToLeJOSProjectAction implements IObjectActionDelegate {
 	//			project.setOption(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
 				
 				// log
-				LeJOSNXJUtil.message("project " + project2.getName()
-						+ " now is a leJOS NXJ project");
+				LeJOSNXJUtil.message("project " + project2.getName() + " now is a leJOS NXJ project");
 			} catch (Throwable t) {
 				// log
-				LeJOSNXJUtil.message("project " + project2.getName()+" was not converted.", t);
+				LeJOSNXJUtil.error("project " + project2.getName()+" was not converted.", t);
 			}
 		}
 	}

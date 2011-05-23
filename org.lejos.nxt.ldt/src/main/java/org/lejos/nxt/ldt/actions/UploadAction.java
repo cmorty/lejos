@@ -71,7 +71,7 @@ public class UploadAction implements IObjectActionDelegate {
 				if (r == 0)
 					LeJOSNXJUtil.message("files have been uploaded successfully");
 				else
-					LeJOSNXJUtil.message("uploading "+fileList+" failed with exit status "+r);
+					LeJOSNXJUtil.error("uploading "+fileList+" failed with exit status "+r);
 			}
 			finally
 			{
@@ -82,7 +82,7 @@ public class UploadAction implements IObjectActionDelegate {
 				t = ((InvocationTargetException)t).getTargetException();
 			
 			// log
-			LeJOSNXJUtil.message("upload of " + fileList + " failed", t);
+			LeJOSNXJUtil.error("upload of " + fileList + " failed", t);
 		}
 	}
 

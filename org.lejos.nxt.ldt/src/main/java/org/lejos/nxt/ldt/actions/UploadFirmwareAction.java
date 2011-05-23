@@ -65,7 +65,7 @@ public class UploadFirmwareAction implements
 				if (r == 0)
 					LeJOSNXJUtil.message("firmware has been uploaded successfully");
 				else
-					LeJOSNXJUtil.message("flashing the firmware failed with exit status "+r);
+					LeJOSNXJUtil.error("flashing the firmware failed with exit status "+r);
 			}
 			finally
 			{
@@ -76,7 +76,7 @@ public class UploadFirmwareAction implements
 				t = ((InvocationTargetException)t).getTargetException();
 			
 			// log
-			LeJOSNXJUtil.message("flashing the firmware failed", t);
+			LeJOSNXJUtil.error("flashing the firmware failed", t);
 		}
 	}
 	
