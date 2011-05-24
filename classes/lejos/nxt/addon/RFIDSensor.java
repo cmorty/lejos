@@ -9,9 +9,8 @@ import lejos.util.Delay;
  */
 
 /**
- * Support for the Codatex RFID Sensor.
- * See www.codatex,com for details.
- * Notes this device requires delays between various commands for them to
+ * Support for the <a href="http://www.codatex.com">Codatex RFID Sensor</a>.
+ * This device requires delays between various commands for them to
  * function correctly, it also enters a sleep mode and requires to be woken up.
  * The methods in this class fall into two categories.
  * Basic commands
