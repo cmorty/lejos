@@ -99,6 +99,7 @@ public class TinyVMTool extends AbstractTool
          computedClasspath, all);
       for (int i = 0; i < entryClassNames.length; i++)
       {
+          //TODO check that main is public and complain otherwise
          if (!result.hasMain(entryClassNames[i]))
          {
             throw new TinyVMException("Class " + entryClassNames[i]
