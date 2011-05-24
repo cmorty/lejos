@@ -23,11 +23,20 @@
     <packaging>jar</packaging>
 
     <build>
-        <!-- copy to canonical source dir @todo better solution is to move project source folders under a common parent folder, eg: 'src/main/java'. -->
         <resources>
+            <!-- copy to canonical source dir @todo better solution is to move project source folders under a common parent folder, eg: 'src/main/java'. -->
             <resource>
                 <directory>lejos</directory>
                 <targetPath>../../src/main/java/lejos</targetPath>
+            </resource>
+
+            <resource>
+                <!-- @todo maybe move such resource files to canonical 'resource' tree? -->
+                <directory>.</directory>
+                <includes>
+                    <include>lejos/util/jni/*.properties</include>
+                    <include>lejos/pc/comm/*.bin</include>
+                </includes>
             </resource>
         </resources>
 
