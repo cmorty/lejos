@@ -1,5 +1,7 @@
 package org.lejos.nxt.ldt;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -27,21 +29,23 @@ public class LeJOSNature implements IProjectNature {
 	 * @see org.eclipse.core.resources.IProjectNature#configure()
 	 */
 	public void configure() throws CoreException {
+		ArrayList<ICommand> newCommands = new ArrayList<ICommand>();
+		
 		IProjectDescription desc = project.getDescription();
 		ICommand[] commands = desc.getBuildSpec();
-
-		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(LeJOSBuilder.ID)) {
-				return;
+		for (ICommand c : commands) {
+			if (!LeJOSBuilder.ID.equals(c.getBuilderName())) {
+				newCommands.add(c);
 			}
 		}
 
-		ICommand[] newCommands = new ICommand[commands.length + 1];
-		System.arraycopy(commands, 0, newCommands, 0, commands.length);
 		ICommand command = desc.newCommand();
 		command.setBuilderName(LeJOSBuilder.ID);
-		newCommands[newCommands.length - 1] = command;
-		desc.setBuildSpec(newCommands);
+		newCommands.add(command);
+		
+		commands = new ICommand[newCommands.size()];
+		newCommands.toArray(commands);
+		desc.setBuildSpec(commands);
 		project.setDescription(desc, null);
 	}
 
@@ -51,18 +55,20 @@ public class LeJOSNature implements IProjectNature {
 	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
 	 */
 	public void deconfigure() throws CoreException {
-		IProjectDescription description = getProject().getDescription();
-		ICommand[] commands = description.getBuildSpec();
-		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(LeJOSBuilder.ID)) {
-				ICommand[] newCommands = new ICommand[commands.length - 1];
-				System.arraycopy(commands, 0, newCommands, 0, i);
-				System.arraycopy(commands, i + 1, newCommands, i,
-						commands.length - i - 1);
-				description.setBuildSpec(newCommands);
-				return;
+		ArrayList<ICommand> newCommands = new ArrayList<ICommand>();
+		
+		IProjectDescription desc = project.getDescription();
+		ICommand[] commands = desc.getBuildSpec();
+		for (ICommand c : commands) {
+			if (!LeJOSBuilder.ID.equals(c.getBuilderName())) {
+				newCommands.add(c);
 			}
 		}
+
+		commands = new ICommand[newCommands.size()];
+		newCommands.toArray(commands);
+		desc.setBuildSpec(commands);
+		project.setDescription(desc, null);
 	}
 
 	/*
