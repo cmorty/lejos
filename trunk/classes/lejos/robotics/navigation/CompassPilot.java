@@ -10,7 +10,7 @@ import lejos.util.Delay;
  */
 
 /**
- * A Pilot that keeps track of direction using a CompassSensor.
+ * A Pilot that keeps track of direction using a DirectionFinder.
  * @deprecated  This class will disappear in NXJ version 1.0. Compass should be added to a PoseProvider. 
  * @see lejos.robotics.localization.PoseProvider#getPose()
  */

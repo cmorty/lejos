@@ -9,13 +9,11 @@ import lejos.robotics.*;
  */
 
 /**
- * Abstraction for a HiTechnic or Mindsensors compass.
+ * This class supports the <a href="http://mindsensors.com">Mindsensors</a> compass sensor.
  * 
  */
-public class CompassSensor extends I2CSensor implements DirectionFinder {
+public class CompassMindSensor extends I2CSensor implements DirectionFinder {
 	byte[] buf = new byte[2];
-	private static final String MINDSENSORS_ID = "mndsnsrs";
-	private boolean isMindsensors; // For comparing HiTechnic vs. Mindsensors
 	private float cartesianCalibrate = 0; // Used by both cartesian methods. 
 	
 	// Mindsensors.com constants:
@@ -23,25 +21,21 @@ public class CompassSensor extends I2CSensor implements DirectionFinder {
 	private final static byte BEGIN_CALIBRATION = 0x43;
 	private final static byte END_CALIBRATION = 0x44;
 	
-	// HiTechnic constants:
-	private final static byte MEASUREMENT_MODE = 0x00;
-
     /**
      * Create a compass sensor object
      * @param port Sensor port for the compass
      * @param address The I2C address used by the sensor
      */
-	public CompassSensor(I2CPort port, int address)
+	public CompassMindSensor(I2CPort port, int address)
 	{
 		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
-		isMindsensors = (this.getProductID().equals(MINDSENSORS_ID));
 	}
 
    /**
      * Create a compass sensor object
      * @param port Sensor port for the compass
      */
-	public CompassSensor(I2CPort port)
+	public CompassMindSensor(I2CPort port)
     {
         this(port, DEFAULT_I2C_ADDRESS);
     }
@@ -55,19 +49,18 @@ public class CompassSensor extends I2CSensor implements DirectionFinder {
 	public float getDegrees() {		
 		int ret = getData(0x42, buf, 2);
 		if(ret != 0) return -1;
+
+		// TODO: The following commented out code works when Mindsensors compass in integer mode
+		// Add ability to set to integer mode.
+		/*int iHeading = (0xFF & buf[0]) | ((0xFF & buf[1]) << 8);
+		float dHeading = iHeading / 10.00F;*/
 		
-		if(isMindsensors) { // Check if this is mindsensors
-			// NOTE: The following only works when Mindsensors compass in integer mode
-			/*int iHeading = (0xFF & buf[0]) | ((0xFF & buf[1]) << 8);
-			float dHeading = iHeading / 10.00F;*/
-			// Byte mode (default - will use Integer mode later)
-			int dHeading = (0xFF & buf[0]);
-			dHeading = dHeading * 360;
-			dHeading = dHeading / 255;
-			return dHeading;
-		} else {
-			return ((buf[0] & 0xff)<< 1) + buf[1];
-		}
+		// Byte mode (default - will use Integer mode later)
+		int dHeading = (0xFF & buf[0]);
+		dHeading = dHeading * 360;
+		dHeading = dHeading / 255;
+		return dHeading;
+
 	}
 	/**
 	 * Compass readings increase clockwise from 0 to 360, but Cartesian
@@ -96,8 +89,7 @@ public class CompassSensor extends I2CSensor implements DirectionFinder {
 	/**
 	 * Starts calibration for Mindsensors.com compass. Must rotate *very* 
 	 * slowly ,taking at least 20 seconds per rotation.
-	 * Mindsensors: At least 2 full rotations.
-	 * HiTechnic: 1.5 to 2 full rotations.
+	 * At least 2 full rotations.
 	 * Must call stopCalibration() when done.
 	 */
 	public void startCalibration() {
@@ -111,10 +103,7 @@ public class CompassSensor extends I2CSensor implements DirectionFinder {
 	 *
 	 */
 	public void stopCalibration() {
-		if(isMindsensors)
-			buf[0] = END_CALIBRATION;
-		else
-			buf[0] = MEASUREMENT_MODE;
+		buf[0] = END_CALIBRATION;
 		super.sendData(COMMAND, buf, 1);
 	}
 }

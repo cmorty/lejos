@@ -7,7 +7,7 @@ import lejos.util.KalmanFilter;
 import lejos.util.Matrix;
 import lejos.util.PilotProps;
 import lejos.nxt.*;
-import lejos.nxt.addon.CompassSensor;
+import lejos.nxt.addon.CompassMindSensor;
 import lejos.nxt.comm.RConsole;
 
 /**
@@ -50,7 +50,7 @@ public class KalmanTest2 {
 	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
 		
     UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S1);
-    CompassSensor compass = new CompassSensor(SensorPort.S2);
+    CompassMindSensor compass = new CompassMindSensor(SensorPort.S2);
     Random rand = new Random();
     Matrix a = new Matrix(new double[][]{{1,0},{0,1}}); // Position is only changed by control
     Matrix b = new Matrix(new double[][]{{1,0},{0,1}}); // Velocity is in cm/sec

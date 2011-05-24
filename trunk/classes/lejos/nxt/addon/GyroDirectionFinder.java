@@ -10,7 +10,7 @@ import lejos.robotics.DirectionFinder;
 /**
  * Implementation of the <code>DirectionFinder</code> interface that integrates repeated rate-of-turn readings from a 
  * <code>{@link GyroSensor}</code>
- * into a continuously updated heading. This class is very similar to <code>{@link CompassSensor}</code>, 
+ * into a continuously updated heading. This class is very similar to <code>{@link CompassMindSensor}</code>, 
  * except that the direction returned does not convey true heading (north, south, etc) but rather
  * relative heading change since the last time <code>setDegrees()</code> or <code>resetCartesianZero()</code> was called.
  * @see GyroSensor
