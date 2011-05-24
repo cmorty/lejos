@@ -119,6 +119,7 @@ public class LinkAndUploadAction implements IObjectActionDelegate {
 			pm.beginTask("Linking and uploading program to the brick...", IProgressMonitor.UNKNOWN);
 			try
 			{
+				//TODO ask user to save files with changes
 				project2.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, pm);
 				
 				int r;
