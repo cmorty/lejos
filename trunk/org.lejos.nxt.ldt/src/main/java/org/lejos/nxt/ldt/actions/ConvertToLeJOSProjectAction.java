@@ -2,10 +2,12 @@ package org.lejos.nxt.ldt.actions;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -38,7 +40,7 @@ public class ConvertToLeJOSProjectAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		setLeJOSNature();
+		addLeJOSNature();
 	}
 
 	/*
@@ -68,24 +70,14 @@ public class ConvertToLeJOSProjectAction implements IObjectActionDelegate {
 	 * 
 	 * @param project
 	 */
-	private void setLeJOSNature() {
+	private void addLeJOSNature() {
 		ArrayList<IJavaProject> list = new ArrayList<IJavaProject>();
 		LeJOSNXJUtil.getJavaProjectFromSelection(selection, list);
 		for (IJavaProject project : list)
 		{
 			IProject project2 = project.getProject();
 			try {
-				IProjectDescription description = project2.getDescription();
-	
-				LinkedHashSet<String> newNatures = new LinkedHashSet<String>();
-				newNatures.add(LeJOSNature.ID);
-				for (String e : description.getNatureIds())
-					newNatures.add(e);
-				
-				String[] tmp = new String[newNatures.size()];
-				newNatures.toArray(tmp);
-				description.setNatureIds(tmp);
-				project2.setDescription(description, null);
+				addLeJOSNature(project2);
 	
 				// update classpath
 				updateClasspath(project);
@@ -103,6 +95,19 @@ public class ConvertToLeJOSProjectAction implements IObjectActionDelegate {
 				LeJOSNXJUtil.error("project " + project2.getName()+" was not converted.", t);
 			}
 		}
+	}
+
+	public static void addLeJOSNature(IProject project) throws CoreException {
+		IProjectDescription description = project.getDescription();
+
+		LinkedHashSet<String> newNatures = new LinkedHashSet<String>();
+		newNatures.add(LeJOSNature.ID);
+		newNatures.addAll(Arrays.asList(description.getNatureIds()));
+		
+		String[] tmp = new String[newNatures.size()];
+		newNatures.toArray(tmp);
+		description.setNatureIds(tmp);
+		project.setDescription(description, null);
 	}
 
 	/**
