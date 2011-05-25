@@ -22,7 +22,8 @@ public class NewPCProjectPageOne extends NewJavaProjectWizardPageOne {
 		Path lcp = new Path(LeJOSLibContainer.ID+"/"+LeJOSNXJUtil.LIBSUBDIR_PC);
 		
 		int len = oldEntries.length;
-		IClasspathEntry[] newEntries = new IClasspathEntry[len];
+		IClasspathEntry[] newEntries = new IClasspathEntry[len + 1];
+		System.arraycopy(oldEntries, 0, newEntries, 0, len);
 		newEntries[len] = JavaCore.newContainerEntry(lcp);
 		
 		return newEntries;
