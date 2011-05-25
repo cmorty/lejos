@@ -29,6 +29,19 @@ if "%OS%" == "Windows_NT" goto :winnt
 	set "%~1=%~f2"
 	goto :eof
 
+:set_java_and_javac
+	set "JAVA=%~2\bin\java"
+	set "JAVAC=%~2\bin\javac"
+	if not exist "%JAVA%" (
+		echo The %~1 variable does not point to the root directory
+		echo of a JRE or JDK.
+	) else if not exist "%JAVAC%" (
+		echo The %~1 variable seems to point to the root directory
+		echo of a JRE. It should point to the root directory of a JDK.
+		echo Otherwise, some tools might not work.
+	)
+	goto :eof
+
 :winnt
 	setlocal
 	if not "%NXJ_HOME%" == "" (
@@ -42,11 +55,9 @@ if "%OS%" == "Windows_NT" goto :winnt
 	call :build_classpath NXJ_CP_NXT "%NXJ_HOME%\lib\nxt"
 
 	if not "%LEJOS_NXT_JAVA_HOME%" == "" (
-		set "JAVA=%LEJOS_NXT_JAVA_HOME%\bin\java"
-		set "JAVAC=%LEJOS_NXT_JAVA_HOME%\bin\javac"
+		call :set_java_and_javac LEJOS_NXT_JAVA_HOME "%LEJOS_NXT_JAVA_HOME%" 
 	) else if not "%JAVA_HOME%" == "" (
-		set "JAVA=%JAVA_HOME%\bin\java"
-		set "JAVAC=%JAVA_HOME%\bin\javac"
+		call :set_java_and_javac JAVA_HOME "%JAVA_HOME%" 
 	) else (
 		set "JAVA=java"
 		set "JAVAC=javac"
