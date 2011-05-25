@@ -105,6 +105,39 @@
       </actionSet>
    </extension>
    <extension
+         point="org.eclipse.ui.ide.projectNatureImages">
+      <image
+            icon="icons/project.png"
+            id="org.lejos.nxt.ldt.leJOSNature.image"
+            natureId="org.lejos.nxt.ldt.leJOSNature">
+      </image>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.lejos.nxt.ldt.category1"
+            name="LeJOS">
+      </category>
+      <wizard
+            category="org.lejos.nxt.ldt.category1"
+            class="org.lejos.nxt.ldt.wizard.NewNXTProject"
+            finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
+            icon="icons/wizard.png"
+            id="org.lejos.nxt.ldt.wizard1"
+            name="LeJOS NXT Project"
+            project="true">
+      </wizard>
+      <wizard
+            category="org.lejos.nxt.ldt.category1"
+            class="org.lejos.nxt.ldt.wizard.NewPCProject"
+            finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
+            icon="icons/wizard.png"
+            id="org.lejos.nxt.ldt.wizard2"
+            name="LeJOS PC Project"
+            project="true">
+      </wizard>
+   </extension>
+   <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             adaptable="true"
@@ -152,14 +185,6 @@
             class="org.lejos.nxt.ldt.preferences.PreferencePage"
             id="org.lejos.nxt.ldt.preferences.leJOSNXJPreferencePage">
       </page>
-   </extension>
-   <extension
-         point="org.eclipse.ui.ide.projectNatureImages">
-      <image
-            icon="icons/project.png"
-            id="org.lejos.nxt.ldt.leJOSNature.image"
-            natureId="org.lejos.nxt.ldt.leJOSNature">
-      </image>
    </extension>
 
 </plugin>
