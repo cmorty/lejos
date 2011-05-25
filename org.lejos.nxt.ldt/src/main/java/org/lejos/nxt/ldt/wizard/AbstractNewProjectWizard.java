@@ -15,6 +15,11 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 public abstract class AbstractNewProjectWizard extends Wizard implements INewWizard, IExecutableExtension{
 
+	/*
+	 * code partly inspired or copied from
+	 * org.eclipse.jdt.internal.ui.wizards.JavaProjectWizard 
+	 */
+	
 	protected NewJavaProjectWizardPageOne pageOne;
 	protected NewJavaProjectWizardPageTwo pageTwo;
 	protected IConfigurationElement fConfigElement;

@@ -2,11 +2,7 @@ package org.lejos.nxt.ldt.wizard;
 
 
 public class NewNXTProject extends AbstractNewProjectWizard {
-	/*
-	 * code partly inspired or copied from
-	 * org.eclipse.jdt.internal.ui.wizards.JavaProjectWizard 
-	 */
-	
+
 	public NewNXTProject() {
 		super();
 		pageOne = new NewNXTProjectPageOne();
