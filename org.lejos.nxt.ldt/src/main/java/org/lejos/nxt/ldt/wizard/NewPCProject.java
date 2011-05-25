@@ -9,9 +9,9 @@ public class NewPCProject extends AbstractNewProjectWizard {
 		pageOne = new NewPCProjectPageOne();
 		pageTwo = new NewJavaProjectWizardPageTwo(pageOne);
 		
-		pageOne.setTitle("New LeJOS NXT Project");
-		pageOne.setDescription("Create a new LeJOS Project for programs running on the NXT");
+		pageOne.setTitle("New LeJOS PC Project");
+		pageOne.setDescription("Create a new LeJOS Project for remote controlling the NXT");
 		
-	    setWindowTitle("New LeJOS NXT Project");
+	    setWindowTitle("New LeJOS PC Project");
 	}
 }
