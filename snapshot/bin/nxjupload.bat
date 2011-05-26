@@ -6,6 +6,10 @@ if "%OS%" == "Windows_NT" goto :winnt
 	echo Please upgrade to Windows 2000 or later.
 	goto :eof
 
+:append_jar
+	set "TMP_CP=%TMP_CP%;%~1"
+	goto :eof
+
 :build_classpath
 	if not exist "%~2" (
 	  echo Your NXJ_HOME variable seems to be incorrect.
@@ -14,10 +18,11 @@ if "%OS%" == "Windows_NT" goto :winnt
 	  exit /B 1
 	)
 
-	set "%~1="
+	set "TMP_CP="
 	for /R "%~2" %%i in (*.jar) do (
-		set "%~1=!%~1!;%%i"
+		call :append_jar "%%i"
 	)
+	set "%~1=%TMP_CP:~1%"
 	goto :eof
 
 :normalize_path
@@ -25,8 +30,8 @@ if "%OS%" == "Windows_NT" goto :winnt
 	goto :eof
 
 :set_java_and_javac
-	set "JAVA=!%~1!\bin\java"
-	set "JAVAC=!%~1!\bin\javac"
+	set "JAVA=%~2\bin\java"
+	set "JAVAC=%~2\bin\javac"
 	if not exist "%JAVA%" (
 		echo The variable %~1 does not point to the root directory
 		echo of a JRE or JDK.
@@ -38,8 +43,7 @@ if "%OS%" == "Windows_NT" goto :winnt
 	goto :eof
 
 :winnt
-	setlocal EnableDelayedExpansion
-	
+	setlocal
 	if not "%NXJ_HOME%" == "" (
 		set "NXJ_BIN=%NXJ_HOME%\bin"
 	) else (
@@ -51,9 +55,9 @@ if "%OS%" == "Windows_NT" goto :winnt
 	call :build_classpath NXJ_CP_NXT "%NXJ_HOME%\lib\nxt"
 
 	if not "%LEJOS_NXT_JAVA_HOME%" == "" (
-		call :set_java_and_javac LEJOS_NXT_JAVA_HOME 
+		call :set_java_and_javac LEJOS_NXT_JAVA_HOME "%LEJOS_NXT_JAVA_HOME%" 
 	) else if not "%JAVA_HOME%" == "" (
-		call :set_java_and_javac JAVA_HOME 
+		call :set_java_and_javac JAVA_HOME "%JAVA_HOME%" 
 	) else (
 		set "JAVA=java"
 		set "JAVAC=javac"
