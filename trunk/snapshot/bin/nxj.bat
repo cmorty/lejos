@@ -12,10 +12,10 @@ if "%OS%" == "Windows_NT" goto :winnt
 
 :build_classpath
 	if not exist "%~2" (
-	  echo Your NXJ_HOME variable seems to be incorrect.
-	  echo The following folder does not exist:
-	  echo   "%~2"
-	  exit /B 1
+		echo Your NXJ_HOME variable seems to be incorrect.
+		echo The following folder does not exist:
+		echo   "%~2"
+		exit /B 1
 	)
 
 	set "TMP_CP="
@@ -30,14 +30,16 @@ if "%OS%" == "Windows_NT" goto :winnt
 	goto :eof
 
 :set_java_and_javac
-	set "JAVA=%~2\bin\java"
-	set "JAVAC=%~2\bin\javac"
+	set "JAVA=%~2\bin\java.exe"
+	set "JAVAC=%~2\bin\javac.exe"
 	if not exist "%JAVA%" (
-		echo The variable %~1 does not point to the root directory
-		echo of a JRE or JDK.
+		echo The variable %~1 does not point to the root directory of
+		echo a JRE or JDK. The following executable does not exist:
+		echo   "%JAVA%" 
+		exit /B 1
 	) else if not exist "%JAVAC%" (
-		echo The variable %~1 seems to point to the root directory
-		echo of a JRE. It should point to the root directory of a JDK.
+		echo The variable %~1 seems to point to the root directory of
+		echo a JRE. It should point to the root directory of a JDK.
 		echo Otherwise, some tools might not work.
 	)
 	goto :eof
@@ -59,8 +61,8 @@ if "%OS%" == "Windows_NT" goto :winnt
 	) else if not "%JAVA_HOME%" == "" (
 		call :set_java_and_javac JAVA_HOME "%JAVA_HOME%" 
 	) else (
-		set "JAVA=java"
-		set "JAVAC=javac"
+		set "JAVA=java.exe"
+		set "JAVAC=javac.exe"
 	)
 
 
