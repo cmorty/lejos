@@ -3,17 +3,18 @@
       id="org.lejos.nxt.ldt.feature"
       label="leJOS NXJ plugin"
       version="0.9.0.qualifier"
-      provider-name="www.lejos.org">
+      provider-name="The leJOS Team"
+      plugin="org.lejos.nxt.ldt">
 
-   <description url="http://www.lejos.org">
+   <description>
       Eclipse features for leJOS NXJ
    </description>
 
-   <copyright url="http://www.lejos.org">
+   <copyright>
       Copyrighted to the leJOS project
    </copyright>
 
-   <license url="http://www.lejos.org">
+   <license>
       Licensed under the GPL
    </license>
 
