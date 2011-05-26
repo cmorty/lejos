@@ -95,7 +95,7 @@
          </menu>
          <action
                label="Upload &amp;Firmware"
-               icon="icons/nxj.png"
+               icon="icons/nxj_16x16.png"
                class="org.lejos.nxt.ldt.actions.UploadFirmwareAction"
                tooltip="Downloads the firmware to the NXT brick"
                menubarPath="leJOSNXJMenu/leJOSNXJGroup"
@@ -122,7 +122,7 @@
             category="org.lejos.nxt.ldt.category1"
             class="org.lejos.nxt.ldt.wizard.NewNXTProject"
             finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
-            icon="icons/nxj.png"
+            icon="icons/nxj_16x16.png"
             id="org.lejos.nxt.ldt.wizard1"
             name="LeJOS NXT Project"
             project="true">
@@ -131,7 +131,7 @@
             category="org.lejos.nxt.ldt.category1"
             class="org.lejos.nxt.ldt.wizard.NewPCProject"
             finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
-            icon="icons/nxj.png"
+            icon="icons/nxj_16x16.png"
             id="org.lejos.nxt.ldt.wizard2"
             name="LeJOS PC Project"
             project="true">
@@ -152,7 +152,7 @@
          <action
                class="org.lejos.nxt.ldt.actions.LinkAndUploadAction"
                enablesFor="1"
-               icon="icons/nxj.png"
+               icon="icons/nxj_16x16.png"
                id="org.lejos.nxt.ldt.actions.LeJOSLinkAndUploadAction"
                label="&amp;Link and Upload Program to the NXT Brick"
                menubarPath="org.lejos.nxt.ldt.leJOSNXJPopupMenu/leJOSNXJGroup"
@@ -161,7 +161,7 @@
          <action
                class="org.lejos.nxt.ldt.actions.UploadAction"
                enablesFor="+"
-               icon="icons/nxj.png"
+               icon="icons/nxj_16x16.png"
                id="org.lejos.nxt.ldt.actions.LeJOSUploadAction"
                label="&amp;Upload File to the NXT Brick"
                menubarPath="org.lejos.nxt.ldt.leJOSNXJPopupMenu/leJOSNXJGroup"
@@ -170,7 +170,7 @@
          <action
                class="org.lejos.nxt.ldt.actions.ConvertToLeJOSProjectAction"
                enablesFor="+"
-               icon="icons/nxj.png"
+               icon="icons/nxj_16x16.png"
                id="org.lejos.nxt.ldt.ConvertToLeJOSNatureAction"
                label="Convert to leJOS NXJ project"
                menubarPath="org.lejos.nxt.ldt.leJOSNXJPopupMenu/leJOSNXJGroup"
