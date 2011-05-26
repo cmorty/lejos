@@ -25,6 +25,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.putBoolean(PreferenceConstants.KEY_CONNECT_TO_BRICK_ADDRESS, false);
 		store.putBoolean(PreferenceConstants.KEY_CONNECT_TO_NAMED_BRICK, false);
 		store.put(PreferenceConstants.KEY_CONNECTION_TYPE, PreferenceConstants.VAL_PROTOCOL_BOTH);
+		
+		// use value of NXJ_HOME by default
+		store.put(PreferenceConstants.KEY_NXJ_HOME, System.getenv("NXJ_HOME"));
 	}
 
 }
