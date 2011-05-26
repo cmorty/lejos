@@ -123,8 +123,9 @@
             class="org.lejos.nxt.ldt.wizard.NewNXTProject"
             finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
             icon="icons/nxj_16x16.png"
-            id="org.lejos.nxt.ldt.wizard1"
+            id="org.lejos.nxt.ldt.NewNXTProjectWizard"
             name="LeJOS NXT Project"
+            preferredPerspectives="org.eclipse.jdt.ui.JavaPerspective"
             project="true">
       </wizard>
       <wizard
@@ -132,10 +133,23 @@
             class="org.lejos.nxt.ldt.wizard.NewPCProject"
             finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
             icon="icons/nxj_16x16.png"
-            id="org.lejos.nxt.ldt.wizard2"
+            id="org.lejos.nxt.ldt.NewPCProjectWizard"
             name="LeJOS PC Project"
+            preferredPerspectives="org.eclipse.jdt.ui.JavaPerspective"
             project="true">
       </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <newWizardShortcut
+               id="org.lejos.nxt.ldt.NewNXTProjectWizard">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.lejos.nxt.ldt.NewPCProjectWizard">
+         </newWizardShortcut>
+      </perspectiveExtension>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
