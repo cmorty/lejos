@@ -18,9 +18,33 @@ function my_readlink() {
 	my_resolve "$TMP1" "$TMP2"
 }
 function my_build_cp() {
-	local TMP_CP="$(find "$1" -name "*.jar" -print0 | tr "\0" "$SEP")"
+	local DIR="$1"
+	if [ ! -d "$DIR" ]; then
+		echo "The variable NXJ_HOME seems to be set to wrong path." 1>&2
+		echo "The following directory does not exist does not exist:" 1>&2
+		echo "  \"$DIR\""1>&2
+		return;
+	fi
+
+	local TMP_CP="$(find "$DIR" -name "*.jar" -print0 | tr "\0" "$SEP")"
 	# remove last $SEP 
 	echo ${TMP_CP%?}
+}
+function set_java_and_javac() {
+	local VAR="$1"
+	JAVA="${!VAR}/bin/java"
+	JAVAC="${!VAR}/bin/javac"
+	
+	if [ ! -x "$JAVA" ]; then
+		echo "The variable $VAR does not point to the root directory" 1>&2
+		echo "of a JRE or JDK. The following file does not exist or" 1>&2
+		echo "is not executable:" 1>&2
+		echo "  \"$JAVA\"" 1>&2
+	elif [ ! -x "$JAVAC" ]; then
+		echo "The variable $VAR seems to point to the root directory" 1>&2
+		echo "of a JRE. It should point to the root directory of a JDK." 1>&2
+		echo "Otherwise, some tools might not work." 1>&2
+	fi
 }
 
 NXJ_COMMAND="$(basename -- "$0")"
@@ -37,11 +61,9 @@ else
 fi
 
 if [ -n "$LEJOS_NXT_JAVA_HOME" ]; then
-	JAVA="$LEJOS_NXT_JAVA_HOME/bin/java"
-	JAVAC="$LEJOS_NXT_JAVA_HOME/bin/javac"
+	set_java_and_javac LEJOS_NXT_JAVA_HOME
 elif [ -n "$JAVA_HOME" ]; then
-	JAVA="$JAVA_HOME/bin/java"
-	JAVAC="$JAVA_HOME/bin/javac"
+	set_java_and_javac JAVA_HOME
 else
 	JAVA="java"
 	JAVAC="javac"
