@@ -77,6 +77,7 @@ public class ConvertToLeJOSProjectAction implements IObjectActionDelegate {
 		{
 			IProject project2 = project.getProject();
 			try {
+				removeLeJOSNature(project2);
 				addLeJOSNature(project2);
 	
 				// update classpath
@@ -95,6 +96,19 @@ public class ConvertToLeJOSProjectAction implements IObjectActionDelegate {
 				LeJOSNXJUtil.error("project " + project2.getName()+" was not converted.", t);
 			}
 		}
+	}
+
+	public static void removeLeJOSNature(IProject project) throws CoreException {
+		IProjectDescription description = project.getDescription();
+
+		LinkedHashSet<String> newNatures = new LinkedHashSet<String>();
+		newNatures.addAll(Arrays.asList(description.getNatureIds()));
+		newNatures.remove(LeJOSNature.ID);
+		
+		String[] tmp = new String[newNatures.size()];
+		newNatures.toArray(tmp);
+		description.setNatureIds(tmp);
+		project.setDescription(description, null);
 	}
 
 	public static void addLeJOSNature(IProject project) throws CoreException {
