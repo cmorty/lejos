@@ -112,10 +112,22 @@ public class LCP {
     private static byte menuMinorVersion = 0;
     private static byte menuPatchLevel = 0;
     private static int menuRevision = 0;
+    
+    private static LCPMessageListener listener = null;
 	
 	private LCP()
 	{
 		// Do not instantiate - all methods are static
+	}
+	
+	/**
+	 * Add a listener for incoming LCP messages. 
+	 * Currently only one listener is supported.
+	 * 
+	 * @param listener the LCP message listener
+	 */
+	public static void addMessageListener(LCPMessageListener aListener) {
+		listener = aListener;
 	}
 	
 	/**
@@ -575,6 +587,13 @@ public class LCP {
 				}
 			}
 			len = 64;
+		}
+		
+		// MESSAGE_WRITE
+		if (cmdId == MESSAGE_WRITE) {
+			if (listener != null) {
+				listener.messageReceived(cmd[2], new String(cmd,4,cmd[3]));
+			}	
 		}
 		
 		// DELETE USE FLASH
