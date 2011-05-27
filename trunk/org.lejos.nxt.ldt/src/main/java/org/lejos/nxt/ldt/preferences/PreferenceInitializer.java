@@ -27,7 +27,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.put(PreferenceConstants.KEY_CONNECTION_TYPE, PreferenceConstants.VAL_PROTOCOL_BOTH);
 		
 		// use value of NXJ_HOME by default
-		store.put(PreferenceConstants.KEY_NXJ_HOME, System.getenv("NXJ_HOME"));
+		String nxjHome = System.getenv("NXJ_HOME");
+		if (nxjHome != null)
+			store.put(PreferenceConstants.KEY_NXJ_HOME, nxjHome);
 	}
 
 }
