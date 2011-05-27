@@ -62,6 +62,76 @@
       </variable>
    </extension>
    <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.lejos.nxt.ldt.launch.LaunchNXTConfigDelegate"
+            id="org.lejos.nxt.ldt.launchConfigurationType1"
+            modes="debug,run"
+            name="LeJOS NXT Programs"
+            public="true"
+            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.lejos.nxt.ldt.launch.LaunchNXTConfigTabGroup"
+            id="org.lejos.nxt.ldt.launchConfigurationTabGroup1"
+            type="org.lejos.nxt.ldt.launchConfigurationType1">
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="org.lejos.nxt.ldt.launchConfigurationType1"
+            icon="icons/nxj_16x16.png"
+            id="org.lejos.nxt.ldt.launchConfigurationTypeImage1">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="org.lejos.nxt.ldt.launch.LaunchNXTShortcut"
+            icon="icons/nxj_16x16.png"
+            id="org.lejos.nxt.ldt.shortcut1"
+            label="Run on NXT"
+            modes="run,debug">
+         <configurationType
+               id="org.lejos.nxt.ldt.launchConfigurationType1">
+         </configurationType>
+         <description
+               description="Run on NXT"
+               mode="run">
+         </description>
+         <description
+               description="Run on NXT"
+               mode="debug">
+         </description>
+         <contextualLaunch>
+            <enablement>
+          <with variable="selection">
+             <count value="1"/>
+              <iterate>
+               <and>
+                     <test
+                           property="org.eclipse.jdt.launching.hasProjectNature"
+                           args="org.lejos.nxt.ldt.leJOSNature"/>
+              	 <or>
+              	   <test property="org.eclipse.jdt.launching.hasMain"/>
+              	   <test property="org.eclipse.jdt.launching.isContainer"/>
+              	   <test property="org.eclipse.jdt.launching.isPackageFragment"/>
+              	   <test property="org.eclipse.jdt.launching.isPackageFragmentRoot"/>
+              	 </or>
+               </and>
+              </iterate>
+             </with>
+             
+            </enablement>
+         </contextualLaunch>
+      </shortcut>
+   </extension>
+   <extension
          point="org.eclipse.help.toc">
       <toc
             file="toc.xml"
