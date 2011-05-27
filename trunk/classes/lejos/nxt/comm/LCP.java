@@ -22,7 +22,7 @@ public class LCP {
     private static int numFiles;	
 	private static char[] charBuffer = new char[20];
 	@SuppressWarnings("unchecked")
-	public static Queue<String>[] inBoxes = new Queue[20];
+	public static InBox[] inBoxes = new InBox[20];
     
 	// Command types constants. Indicates type of packet being sent or received.
 	public static byte DIRECT_COMMAND_REPLY = 0x00;
@@ -124,7 +124,7 @@ public class LCP {
 	 * Add a listener for incoming LCP messages. 
 	 * Currently only one listener is supported.
 	 * 
-	 * @param listener the LCP message listener
+	 * @param aListener the LCP message listener
 	 */
 	public static void addMessageListener(LCPMessageListener aListener) {
 		listener = aListener;
@@ -689,10 +689,28 @@ public class LCP {
 		return len;
 	}
 	
+	/**
+	 * Write a message to a remote inbox
+	 * @param mailbox the remote inbox
+	 * @param msg the message
+	 */
 	public static void messageWrite(int mailbox, String msg) {
 		if (mailbox < inBoxes.length) {
-			if (inBoxes[mailbox] == null) inBoxes[mailbox] = new Queue<String>();
+			if (inBoxes[mailbox] == null) inBoxes[mailbox] = new InBox();
 			inBoxes[mailbox].push(msg);			
+		}
+	}
+	
+	/**
+	 * Update a message in the inbox, or add a new one if no match
+	 * @param mailbox the remote mail box
+	 * @param key an initial prefix of the string
+	 * @param msg the new message
+	 */
+	public static void updateMsg(int mailbox, String key, String msg) {		
+		if (mailbox < inBoxes.length) {
+			if (inBoxes[mailbox] == null) inBoxes[mailbox] = new InBox();
+			inBoxes[mailbox].updateMessage(key, msg);			
 		}
 	}
 	
