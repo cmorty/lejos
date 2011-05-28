@@ -65,7 +65,7 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             delegate="org.lejos.nxt.ldt.launch.LaunchNXTConfigDelegate"
-            id="org.lejos.nxt.ldt.launchConfigurationType1"
+            id="org.lejos.nxt.ldt.LaunchType"
             modes="debug,run"
             name="LeJOS NXT Programs"
             public="true"
@@ -77,16 +77,16 @@
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
             class="org.lejos.nxt.ldt.launch.LaunchNXTConfigTabGroup"
-            id="org.lejos.nxt.ldt.launchConfigurationTabGroup1"
-            type="org.lejos.nxt.ldt.launchConfigurationType1">
+            id="org.lejos.nxt.ldt.LaunchNXTTabGroup"
+            type="org.lejos.nxt.ldt.LaunchType">
       </launchConfigurationTabGroup>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            configTypeID="org.lejos.nxt.ldt.launchConfigurationType1"
+            configTypeID="org.lejos.nxt.ldt.LaunchType"
             icon="icons/nxj_16x16.png"
-            id="org.lejos.nxt.ldt.launchConfigurationTypeImage1">
+            id="org.lejos.nxt.ldt.LaunchTypeImage">
       </launchConfigurationTypeImage>
    </extension>
    <extension
@@ -94,11 +94,11 @@
       <shortcut
             class="org.lejos.nxt.ldt.launch.LaunchNXTShortcut"
             icon="icons/nxj_16x16.png"
-            id="org.lejos.nxt.ldt.shortcut1"
+            id="org.lejos.nxt.ldt.LaunchNXTShortcut"
             label="Run on NXT"
             modes="run,debug">
          <configurationType
-               id="org.lejos.nxt.ldt.launchConfigurationType1">
+               id="org.lejos.nxt.ldt.LaunchType">
          </configurationType>
          <description
                description="Run on NXT"
@@ -185,11 +185,11 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <category
-            id="org.lejos.nxt.ldt.category1"
+            id="org.lejos.nxt.ldt.leJOSWizardCategory"
             name="LeJOS">
       </category>
       <wizard
-            category="org.lejos.nxt.ldt.category1"
+            category="org.lejos.nxt.ldt.leJOSWizardCategory"
             class="org.lejos.nxt.ldt.wizard.NewNXTProject"
             finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
             icon="icons/nxj_16x16.png"
@@ -199,7 +199,7 @@
             project="true">
       </wizard>
       <wizard
-            category="org.lejos.nxt.ldt.category1"
+            category="org.lejos.nxt.ldt.leJOSWizardCategory"
             class="org.lejos.nxt.ldt.wizard.NewPCProject"
             finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
             icon="icons/nxj_16x16.png"
@@ -213,6 +213,24 @@
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <newWizardShortcut
+               id="org.lejos.nxt.ldt.NewNXTProjectWizard">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.lejos.nxt.ldt.NewPCProjectWizard">
+         </newWizardShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <newWizardShortcut
+               id="org.lejos.nxt.ldt.NewNXTProjectWizard">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.lejos.nxt.ldt.NewPCProjectWizard">
+         </newWizardShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
          <newWizardShortcut
                id="org.lejos.nxt.ldt.NewNXTProjectWizard">
          </newWizardShortcut>
