@@ -75,15 +75,44 @@ public class LeJOSLibContainer implements IClasspathContainer {
         ArrayList<File> entryList = new ArrayList<File>();
         
     	File nxjHome = LeJOSNXJUtil.getNXJHome();
-    	String subdir = getOptionKey(option);    	
+    	String subdir = getOptionKey(option);
     	LeJOSNXJUtil.buildClasspath(nxjHome, subdir, entryList);
     	
         int len = entryList.size();
         IClasspathEntry[] entryArray = new IClasspathEntry[entryList.size()];
         for (int i=0; i<len; i++)
-        	entryArray[i] = JavaCore.newLibraryEntry(new Path(entryList.get(i).getAbsolutePath()), null, null);
-        
+        {
+        	File lib = entryList.get(i);
+        	File src = guessSource(lib);
+        	System.out.println(lib+" "+src);
+        	IPath lib2 = Path.fromOSString(lib.getAbsolutePath());
+        	IPath src2 = (src == null) ? null : Path.fromOSString(src.getAbsolutePath()); 
+        	entryArray[i] = JavaCore.newLibraryEntry(lib2, src2, null);
+        }
         return entryArray;
+	}
+
+	private File guessSource(File lib) throws LeJOSNXJException {
+		File parent = lib.getParentFile();
+		File project = new File(LeJOSNXJUtil.getNXJHome(), "projects");
+		String basename = lib.getName();
+		int i = basename.lastIndexOf('.');
+		if (i >= 0)
+			basename = basename.substring(0, i);
+		
+		File[] test = new File[] {
+				new File(parent, basename+".zip"),
+				new File(parent, basename+"-src.zip"),
+				new File(project, basename),
+				new File(project, basename+".zip"),
+				new File(project, basename+"-src.zip"),
+			};
+		
+		for (File f : test)
+			if (f.exists())
+				return f;
+		
+		return null;
 	}
 
 	public IClasspathEntry[] getClasspathEntries() {
