@@ -46,7 +46,7 @@ table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
      <span class="comment">*/</span>
      <span class="ST0">public</span> <span class="ST0">void</span> showRotation(<span class="ST0">int</span> row )
     {
-        <span class="ST0">while</span>(Motor.A.isRotating())
+        <span class="ST0">while</span>(Motor.A.isMoving())
         {
             LCD.drawInt(Motor.A.getTachoCount(),4, 0, row);
             <span class="ST0">if</span>(Button.readButtons()&gt;0) Motor.A.stop();
