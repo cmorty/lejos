@@ -146,6 +146,13 @@
       </classpathContainerInitializer>
    </extension>
    <extension
+         point="org.eclipse.jdt.launching.classpathProviders">
+      <classpathProvider
+            class="org.lejos.nxt.ldt.launch.LaunchNXTClasspathProvider"
+            id="org.lejos.nxt.ldt.LaunchNXTClasspathProvider">
+      </classpathProvider>
+   </extension>
+   <extension
          point="org.eclipse.jdt.ui.classpathContainerPage">
       <classpathContainerPage
             class="org.lejos.nxt.ldt.container.LeJOSLibContainerPage"
