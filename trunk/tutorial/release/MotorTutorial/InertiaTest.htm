@@ -23,22 +23,25 @@ table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
 
 
 <span class="comment">/**</span>
-<span class="comment"> * </span><span class="comment">Test</span> <span class="comment">the</span> <span class="comment">overshoot</span> <span class="comment">after</span> <span class="comment">stop</span><span class="comment">() </span><span class="comment">at</span> <span class="comment">different</span> <span class="comment">speeds</span><span class="comment">;</span>
+<span class="comment"> * </span><span class="comment">Test the overshoot after stop() with different values of speed and acceleration </span>
 <span class="comment"> * </span><span class="ST1">@author</span> <span class="comment">Roger</span>
  <span class="comment">*/</span>
 <span class="ST0">public</span> <span class="ST0">class</span> InertiaTest
 {
    <span class="ST0">public</span> <span class="ST0">static</span> <span class="ST0">void</span> main(String[] args)
    {      
-        LCD.drawString(<span class="character">&quot;</span><span class="character">Inertia Test</span><span class="character">&quot;</span>, 0, 0);  <span class="comment">// just so the program will not start immeditely</span>
-        Button.waitForPress();           
-        rotate720();
+        LCD.drawString(<span class="character">&quot;</span><span class="character">Inertia Test</span><span class="character">&quot;</span>, 0, 0); 
+        Button.waitForPress();   <span class="comment">// just so the program will not start immediately</span>         ; 
+        Motor.A.setAcceleration(8000); <span class="comment" >// try again with acceleration 1000;</span>
         Motor.A.resetTachoCount();
         Motor.A.setSpeed(800);
+        rotate720();
+        Motor.A.resetTachoCount();
+        Motor.A.setSpeed(400);
         rotate720();  
    }
    <span class="comment">/**</span>
-<span class="comment">    * </span><span class="comment">helper</span> <span class="comment">method</span><span class="comment"> - </span><span class="comment">rotates</span> <span class="comment">to</span><span class="comment"> 720, </span><span class="comment">stops</span><span class="comment">, </span><span class="comment">display</span> <span class="comment">tacho</span> <span class="comment">count</span><span class="comment">, </span><span class="comment">wait</span><span class="comment">;</span>
+<span class="comment">    * </span><span class="comment">helper</span> <span class="comment">method</span><span class="comment"> - </span><span class="comment">rotates</span> <span class="comment">to</span><span class="comment"> 720, </span><span class="comment">stops</span><span class="comment">, </span><span class="comment">display</span> <span class="comment">tacho</span> <span class="comment">count</span><span class="comment">, </span><span class="comment">waits</span><span class="comment">;</span>
     <span class="comment">*/</span>
    <span class="ST0">public</span> <span class="ST0">static</span> <span class="ST0">void</span> rotate720()
    {
@@ -46,10 +49,9 @@ table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
         <span class="ST0">int</span> count = 0;
         <span class="ST0">while</span>( count &lt; 720 )count = Motor.A.getTachoCount();         
         Motor.A.stop();
-<span class="comment">//       Motor.A.flt();</span>
         LCD.drawInt(count , 0, 1);
-        <span class="ST0">while</span>(Motor.A.getActualSpeed()&gt;0);
-        LCD.drawInt(Motor.A.getTachoCount(), 7,1 );    
+        <span class="ST0">while</span>(Motor.A.isMoving());
+        LCD.drawInt(Motor.A.getTachoCount(), o,2 );    
         Button.waitForPress();
         LCD.clear();
    }
