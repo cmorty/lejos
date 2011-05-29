@@ -44,6 +44,7 @@ public class LeJOSPlugin extends AbstractUIPlugin {
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -56,6 +57,7 @@ public class LeJOSPlugin extends AbstractUIPlugin {
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
@@ -87,8 +89,8 @@ public class LeJOSPlugin extends AbstractUIPlugin {
 			// create console
 			console = new IOConsole("leJOS NXJ", null, getImageDescriptor("icons/nxt.jpg"), LeJOSPlugin.CONSOLE_CHARSET, false);
 			// add to console manager
-			ConsolePlugin plugin = ConsolePlugin.getDefault();
-			IConsoleManager conMan = plugin.getConsoleManager();
+			ConsolePlugin cplugin = ConsolePlugin.getDefault();
+			IConsoleManager conMan = cplugin.getConsoleManager();
 			conMan.addConsoles(new IConsole[] { console });
 			
 			try

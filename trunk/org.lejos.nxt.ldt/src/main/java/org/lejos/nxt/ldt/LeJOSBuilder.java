@@ -22,6 +22,7 @@ public class LeJOSBuilder extends IncrementalProjectBuilder {
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
 	 *      java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		
 		// nothing to do yet

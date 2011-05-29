@@ -49,10 +49,10 @@ public class ConvertToLeJOSProjectAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		this.selection = selection;
+	public void selectionChanged(IAction action, ISelection newSelection) {
+		this.selection = newSelection;
 		ArrayList<IJavaProject> list = new ArrayList<IJavaProject>();
-		LeJOSNXJUtil.getJavaProjectFromSelection(selection, list);
+		LeJOSNXJUtil.getJavaProjectFromSelection(newSelection, list);
 		action.setEnabled(!list.isEmpty());
 	}
 
