@@ -16,8 +16,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.actions.ActionDelegate;
 import org.lejos.nxt.ldt.LeJOSNature;
 import org.lejos.nxt.ldt.container.LeJOSLibContainer;
 import org.lejos.nxt.ldt.util.LeJOSNXJException;
@@ -30,7 +29,7 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
  * @author Matthias Paul Scholz
  * 
  */
-public class ConvertToLeJOSProjectAction implements IObjectActionDelegate {
+public class ConvertToLeJOSProjectAction extends ActionDelegate {
 
 	private ISelection selection;
 
@@ -39,6 +38,7 @@ public class ConvertToLeJOSProjectAction implements IObjectActionDelegate {
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		addLeJOSNature();
 	}
@@ -49,20 +49,12 @@ public class ConvertToLeJOSProjectAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection newSelection) {
 		this.selection = newSelection;
 		ArrayList<IJavaProject> list = new ArrayList<IJavaProject>();
 		LeJOSNXJUtil.getJavaProjectFromSelection(newSelection, list);
 		action.setEnabled(!list.isEmpty());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction,
-	 *      org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
 	/**

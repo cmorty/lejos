@@ -15,11 +15,10 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.progress.IProgressService;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
@@ -30,16 +29,11 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
  * @author Matthias Paul Scholz
  * 
  */
-public class LinkAndUploadAction implements IObjectActionDelegate {
+public class LinkAndUploadAction extends ActionDelegate {
 
 	private ISelection _selection;
 
-	/**
-	 * The constructor.
-	 */
-	public LinkAndUploadAction() {
-	}
-
+	@Override
 	public void run(IAction action) {
 		IJavaElement javaElement = LeJOSNXJUtil.getFirstJavaElementFromSelection(_selection);
 		if (javaElement == null)
@@ -68,19 +62,10 @@ public class LinkAndUploadAction implements IObjectActionDelegate {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.
-	 * action.IAction, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
 	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
 	 * .IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		_selection = selection;
 		
