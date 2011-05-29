@@ -18,6 +18,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 * 
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences store = new DefaultScope().getNode(LeJOSPlugin.ID);
 		store.putBoolean(PreferenceConstants.KEY_IS_VERBOSE, false);

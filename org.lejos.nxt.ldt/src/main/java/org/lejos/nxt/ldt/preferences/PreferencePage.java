@@ -41,6 +41,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 	 * GUI blocks needed to manipulate various types of preferences. Each field
 	 * editor knows how to save and restore itself.
 	 */
+	@Override
 	public void createFieldEditors() {
 		// NXJ_HOME
 		addField(new DirectoryFieldEditor(PreferenceConstants.KEY_NXJ_HOME,
