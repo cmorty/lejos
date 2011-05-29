@@ -312,7 +312,7 @@ public class LeJOSNXJUtil {
 		return f;
 	}
 	
-	public static void getLinkerOpts(List<String> dst) throws LeJOSNXJException
+	public static void getLinkerOpts(List<String> dst)
 	{
 		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
 		
@@ -354,7 +354,8 @@ public class LeJOSNXJUtil {
 			dst.add("-r");			
 	}
 
-	public static File resolvePath(IPath path) throws JavaModelException {
+	public static File resolvePath(IPath path)
+	{
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource res = root.findMember(path);
 		if (res != null)

@@ -31,12 +31,6 @@ public class LeJOSPlugin extends AbstractUIPlugin {
 	private IOConsole console;
 	private PrintWriter consoleWriter;
 
-	/**
-	 * The constructor
-	 */
-	public LeJOSPlugin() {
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
