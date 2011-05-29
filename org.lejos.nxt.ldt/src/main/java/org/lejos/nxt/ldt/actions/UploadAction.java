@@ -8,11 +8,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.progress.IProgressService;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
@@ -23,16 +22,11 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
  * @author Matthias Paul Scholz
  * 
  */
-public class UploadAction implements IObjectActionDelegate {
+public class UploadAction extends ActionDelegate {
 
 	private ISelection _selection;
 
-	/**
-	 * The constructor.
-	 */
-	public UploadAction() {
-	}
-
+	@Override
 	public void run(IAction action) {
 		final ArrayList<File> tmp = new ArrayList<File>();
 		LeJOSNXJUtil.getFilesFromSelection(_selection, tmp);
@@ -90,19 +84,10 @@ public class UploadAction implements IObjectActionDelegate {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.
-	 * action.IAction, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
 	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
 	 * .IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		_selection = selection;
 		ArrayList<File> tmp = new ArrayList<File>();

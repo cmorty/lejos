@@ -9,9 +9,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.actions.ActionDelegate;
 import org.lejos.nxt.ldt.LeJOSPlugin;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
@@ -20,14 +20,7 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
  * @see IWorkbenchWindowActionDelegate
  * @author Matthias Paul Scholz
  */
-public class UploadFirmwareAction implements
-		IWorkbenchWindowActionDelegate {
-
-	/**
-	 * The constructor.
-	 */
-	public UploadFirmwareAction() {
-	}
+public class UploadFirmwareAction extends ActionDelegate implements IWorkbenchWindowActionDelegate {
 
 	/**
 	 * The action has been activated. The argument of the method represents the
@@ -35,6 +28,7 @@ public class UploadFirmwareAction implements
 	 * 
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
+	@Override
 	public void run(IAction action) {
 		// open progress monitor
 		Job flash = new Job("flashing leJOS firmware") {
@@ -79,32 +73,8 @@ public class UploadFirmwareAction implements
 			LeJOSNXJUtil.error("flashing the firmware failed", t);
 		}
 	}
-	
-	/**
-	 * Selection in the workbench has been changed. We can change the state of
-	 * the 'real' action here if we want, but this can only happen after the
-	 * delegate has been created.
-	 * 
-	 * @see IWorkbenchWindowActionDelegate#selectionChanged
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-	}
 
-	/**
-	 * We can use this method to dispose of any system resources we previously
-	 * allocated.
-	 * 
-	 * @see IWorkbenchWindowActionDelegate#dispose
-	 */
-	public void dispose() {
-	}
-
-	/**
-	 * We will cache window object in order to be able to provide parent shell
-	 * for the message dialog.
-	 * 
-	 * @see IWorkbenchWindowActionDelegate#init
-	 */
 	public void init(IWorkbenchWindow window) {
+		// do nothing
 	}
 }
