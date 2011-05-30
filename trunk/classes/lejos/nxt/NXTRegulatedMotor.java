@@ -107,6 +107,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
     {
         synchronized (reg)
         {
+            this.stalled = stalled;
             if (listener != null)
             {
                 if (velocity == 0)
