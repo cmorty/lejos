@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN"
+                            "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Menu">
+        <folder name="Window">
+            <file name="nxjplugincode-NXJToolsTopComponent.shadow">
+                <!--nxjplugincode.NXJToolsTopComponent-->
+                <attr name="originalFile" stringvalue="Actions/Window/nxjplugincode-NXJToolsTopComponent.instance"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Windows2">
+        <folder name="Components">
+            <file name="NXJToolsTopComponent.settings">
+                <!--nxjplugincode.NXJToolsTopComponent--><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE settings PUBLIC "-//NetBeans//DTD Session settings 1.0//EN" "http://www.netbeans.org/dtds/sessionsettings-1_0.dtd">
+<settings version="1.0">
+  <instance class="nxjplugincode.NXJToolsTopComponent"/>
+</settings>
+]]></file>
+        </folder>
+        <folder name="Modes">
+            <folder name="editor">
+                <file name="NXJToolsTopComponent.wstcref">
+                    <!--nxjplugincode.NXJToolsTopComponent--><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tc-ref PUBLIC "-//NetBeans//DTD Top Component in Mode Properties 2.0//EN" "http://www.netbeans.org/dtds/tc-ref2_0.dtd">
+<tc-ref version="2.0">
+  <tc-id id="NXJToolsTopComponent"/>
+  <state opened="true"/>
+</tc-ref>
+]]></file>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Actions">
+        <folder name="Window">
+            <file name="nxjplugincode-NXJToolsTopComponent.instance">
+                <!--nxjplugincode.NXJToolsTopComponent-->
+                <attr
+                    methodvalue="org.openide.windows.TopComponent.openAction" name="instanceCreate"/>
+                <attr name="component" newvalue="nxjplugincode.NXJToolsTopComponent"/>
+                <attr name="preferredID" stringvalue="NXJToolsTopComponent"/>
+                <attr
+                    bundlevalue="nxjplugincode.Bundle#CTL_NXJToolsAction" name="displayName"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="xml">
+        <folder name="entities">
+            <folder name="nxjplugincode">
+                <file name="NXJTools" url="nbres:/org/netbeans/modules/settings/resources/properties-1_0.dtd">
+                    <!--nxjplugincode.NXJToolsTopComponent-->
+                    <attr name="hint.originalPublicID" stringvalue="-//nxjplugincode//NXJTools//EN"/>
+                </file>
+            </folder>
+        </folder>
+        <folder name="memory">
+            <folder name="nxjplugincode">
+                <file name="NXJToolsTopComponent">
+                    <!--nxjplugincode.NXJToolsTopComponent-->
+                    <attr name="settings.providerPath" stringvalue="xml/lookups//nxjplugincode/NXJTools.instance"/>
+                </file>
+            </folder>
+        </folder>
+        <folder name="lookups">
+            <folder name="nxjplugincode">
+                <file name="NXJTools.instance">
+                    <!--nxjplugincode.NXJToolsTopComponent-->
+                    <attr
+                        methodvalue="org.netbeans.api.settings.Factory.create" name="instanceCreate"/>
+                    <attr
+                        methodvalue="org.netbeans.api.settings.Factory.properties" name="settings.convertor"/>
+                    <attr name="settings.instanceClass" stringvalue="nxjplugincode.NXJToolsTopComponent"/>
+                    <attr name="settings.instanceOf" stringvalue="nxjplugincode.NXJToolsTopComponent"/>
+                    <attr boolvalue="true" name="xmlproperties.preventStoring"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>
