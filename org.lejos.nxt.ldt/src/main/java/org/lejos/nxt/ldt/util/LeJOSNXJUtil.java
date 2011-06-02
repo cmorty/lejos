@@ -410,8 +410,7 @@ public class LeJOSNXJUtil {
 	public static int invokeTool(File nxjHome, String tool, List<String> args) throws LeJOSNXJException, ClassNotFoundException,
 			NoSuchMethodException, IllegalAccessException, InvocationTargetException
 	{
-		String[] args2 = new String[args.size()];
-		args.toArray(args2);
+		String[] args2 = args.toArray(new String[args.size()]);
 		
 		ClassLoader cl = getCachedPCClassLoader(nxjHome);
 		Class<?> c = cl.loadClass(tool);

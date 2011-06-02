@@ -184,8 +184,7 @@ public class ConvertToLeJOSProjectAction extends ActionDelegate {
 			newClasspath.add(lc);
 		
 		// set new classpath to project
-		IClasspathEntry[] cpEntries = new IClasspathEntry[newClasspath.size()];
-		newClasspath.toArray(cpEntries);
+		IClasspathEntry[] cpEntries = newClasspath.toArray(new IClasspathEntry[newClasspath.size()]);
 		project.setRawClasspath(cpEntries, null);
 	}
 }
