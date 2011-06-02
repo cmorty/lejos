@@ -43,8 +43,7 @@ public class LeJOSNature implements IProjectNature {
 		command.setBuilderName(LeJOSBuilder.ID);
 		newCommands.add(command);
 		
-		commands = new ICommand[newCommands.size()];
-		newCommands.toArray(commands);
+		commands = newCommands.toArray(new ICommand[newCommands.size()]);
 		desc.setBuildSpec(commands);
 		project.setDescription(desc, null);
 	}
@@ -65,8 +64,7 @@ public class LeJOSNature implements IProjectNature {
 			}
 		}
 
-		commands = new ICommand[newCommands.size()];
-		newCommands.toArray(commands);
+		commands = newCommands.toArray(new ICommand[newCommands.size()]);
 		desc.setBuildSpec(commands);
 		project.setDescription(desc, null);
 	}
