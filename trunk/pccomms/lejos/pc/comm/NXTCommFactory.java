@@ -16,14 +16,20 @@ import lejos.util.jni.OSInfo;
 
 /**
  * 
- * Creates a version of NTComm appropriate to the OS in use and protocol
+ * Creates a version of <code>{@link NXTComm}</code> appropriate to the OS in use and protocol
  * (Bluetooth or USB) that is requested.
- * 
+ *  
  */
 public class NXTCommFactory {
 
-	public static final int USB = 1;
+    /** Use USB for the connection
+     */
+    public static final int USB = 1;
+    /** Use Bluetooth for the connection
+     */
 	public static final int BLUETOOTH = 2;
+    /** Use either USB or Bluetooth for the connection. Normally, USB is tested first since it fails faster.
+     */
 	public static final int ALL_PROTOCOLS = USB | BLUETOOTH;
 
 	private static final OSInfo osinfo;

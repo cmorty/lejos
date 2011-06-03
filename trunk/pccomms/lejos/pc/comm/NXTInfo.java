@@ -4,8 +4,8 @@ package lejos.pc.comm;
  * Structure containing information about a specific NXT
  * and the potential connections to it. 
  * 
- * Returned from the NXTComm search method.
- *
+ * Returned from the <code>{@link NXTComm#search}</code> method.
+ * @see NXTComm
  */
 public class NXTInfo {
 	
@@ -44,10 +44,10 @@ public class NXTInfo {
 	public NXTInfo() {}
 	
 	/**
-	 * Create a NXTInfo that is used to connect to 
+	 * Create a <code>NXTInfo</code> that is used to connect to 
 	 * a NXT via Bluetooth using the Bluetooth address.
 	 * 
-	 * @param protocol the protocol to use (USB or BLUETOOTH)
+	 * @param protocol the protocol to use: <code>{@link NXTCommFactory#USB}</code> or <code>{@link NXTCommFactory#BLUETOOTH}</code>
 	 * @param name the name of the NXT
 	 * @param address the Bluetooth address with optional colons between hex pairs.
 	 */	
