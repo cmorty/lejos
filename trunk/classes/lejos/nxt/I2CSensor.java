@@ -101,7 +101,9 @@ public class I2CSensor implements SensorConstants {
         if (len >= ioBuf.length)
         	throw new IllegalArgumentException();
         ioBuf[0] = (byte)register;
-        System.arraycopy(buf, offset, ioBuf, 1, len);
+		// avoid NPE in case length==0 and data==null
+        if (len > 0)
+        	System.arraycopy(buf, offset, ioBuf, 1, len);
         return port.i2cTransaction(address, ioBuf, 0, len+1, null, 0, 0);
 	}
 
