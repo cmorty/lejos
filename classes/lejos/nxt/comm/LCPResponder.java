@@ -1,5 +1,5 @@
 package lejos.nxt.comm;
-import lejos.nxt.*;
+
 /**
  * Support for LCP commands
  * 
@@ -29,7 +29,9 @@ public class LCPResponder extends Thread {
     protected synchronized void waitConnect()
     {
         while (running && (conn = connector.waitForConnection(0, NXTConnection.LCP)) == null)
-            try{wait(50);}catch(Exception e){}
+            try{wait(50);}catch(Exception e){
+            	// Ignore exception
+            }
     }
     
     /**
@@ -77,6 +79,7 @@ public class LCPResponder extends Thread {
             disconnect();
     }
     
+    @Override
 	public void run() 
 	{
 		byte[] inMsg = new byte[64];
@@ -110,5 +113,14 @@ public class LCPResponder extends Thread {
         running = false;
         connector.cancel();
         if (conn != null) disconnect();
+    }
+    
+    /**
+     * Checks whether there is an active connection
+     * 
+     * @return true iff the responder is connected
+     */
+    public boolean isConnected() {
+    	return (conn != null);
     }
 }
