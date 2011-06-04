@@ -154,10 +154,12 @@ public class I2CSensor implements SensorConstants {
 	 * @param length the number of bytes
 	 */
 	public int sendData(int register, byte [] data, int offset, int length) {
-		byte [] txData = {(byte)address, (byte) register};
 		byte [] sendData = new byte[length+2];
-		System.arraycopy(txData,0,sendData,0,2);
-		System.arraycopy(data,offset,sendData,2,length);
+		sendData[0] = (byte) address;
+		sendData[1] = (byte) register;
+		// avoid NPE in case length==0 and data==null
+		if (length > 0)
+			System.arraycopy(data,offset,sendData,2,length);
 		try {
 			return nxtCommand.LSWrite(this.port, sendData, (byte)0);
 		} catch (IOException ioe) {
