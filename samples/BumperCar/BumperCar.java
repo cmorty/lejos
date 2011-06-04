@@ -58,7 +58,7 @@ class DriveForward implements Behavior
     {
       Thread.yield(); //don't exit till suppressed
     }
-    Motor.A.stop(); // not strictly necessary, but good programming practice
+    Motor.A.stop(); 
     Motor.C.stop();
   }
 }
@@ -76,7 +76,7 @@ class DetectWall implements Behavior
   public boolean takeControl()
   {
     sonar.ping();
-    //Sound.pause(20);
+    
     return touch.isPressed() || sonar.getDistance() < 25;
   }
 
