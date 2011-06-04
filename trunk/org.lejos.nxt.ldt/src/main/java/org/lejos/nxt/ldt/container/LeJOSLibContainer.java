@@ -84,7 +84,6 @@ public class LeJOSLibContainer implements IClasspathContainer {
         {
         	File lib = entryList.get(i);
         	File src = guessSource(lib);
-        	System.out.println(lib+" "+src);
         	IPath lib2 = Path.fromOSString(lib.getAbsolutePath());
         	IPath src2 = (src == null) ? null : Path.fromOSString(src.getAbsolutePath()); 
         	entryArray[i] = JavaCore.newLibraryEntry(lib2, src2, null);
