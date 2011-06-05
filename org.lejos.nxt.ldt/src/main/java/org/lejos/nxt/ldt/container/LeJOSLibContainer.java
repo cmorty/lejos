@@ -16,10 +16,13 @@ public class LeJOSLibContainer implements IClasspathContainer {
 	public static final String ID = "org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER";
     
     private static final int DEFAULT_OPTION = 0;
-    
+    private static final int IDX_KEY = 0;
+    private static final int IDX_NAME = 1;
+    private static final int IDX_SYSTEM = 2;
+       
     private static final String[][] options = {
-    		{ LeJOSNXJUtil.LIBSUBDIR_NXT, "NXT Runtime" },
-    		{ LeJOSNXJUtil.LIBSUBDIR_PC, "PC Libraries" },
+    		{ LeJOSNXJUtil.LIBSUBDIR_NXT, "NXT Runtime", "true" },
+    		{ LeJOSNXJUtil.LIBSUBDIR_PC, "PC Libraries", "false" },
     	};
     
     static int getOptionCount()
@@ -29,18 +32,23 @@ public class LeJOSLibContainer implements IClasspathContainer {
     
     static String getOptionKey(int i)
     {
-    	return options[i][0];
+    	return options[i][IDX_KEY];
     }
     
     static String getOptionName(int i)
     {
-    	return options[i][1];
+    	return options[i][IDX_NAME];
+    }
+    
+    static boolean isSystemContainer(int i)
+    {
+    	return Boolean.parseBoolean(options[i][IDX_SYSTEM]);
     }
     
     static int getOptionIndex(String s)
     {
     	for (int i=0; i<options.length; i++)
-    		if (options[i][0].equals(s))
+    		if (getOptionKey(i).equals(s))
     			return i;
     	
     	return -1;
@@ -123,7 +131,7 @@ public class LeJOSLibContainer implements IClasspathContainer {
     }
 
     public int getKind() {
-        return IClasspathContainer.K_APPLICATION;
+        return IClasspathContainer.K_SYSTEM;
     }    
     
     public IPath getPath() {

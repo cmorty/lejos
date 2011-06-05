@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -247,6 +248,14 @@ public class MainTypeSelectDialog extends FilteredItemsSelectionDialog
 	{
 		if (item instanceof IType)
 			return ((IType) item).getElementName();
+		
+		return null;
+	}
+
+	public IType openAndGetResult()
+	{
+		if (this.open() == Window.OK)
+			return (IType)this.getFirstResult();
 		
 		return null;
 	}
