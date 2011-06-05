@@ -1,6 +1,6 @@
 package org.lejos.nxt.ldt.launch;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 
@@ -30,7 +30,7 @@ import org.lejos.nxt.ldt.LeJOSPlugin;
  * @since 3.3
  * 
  */
-public class SelectDialog extends FilteredItemsSelectionDialog
+public class MainTypeSelectDialog extends FilteredItemsSelectionDialog
 {
 	static protected IJavaElement getDeclaringElement(IType type)
 	{
@@ -171,10 +171,10 @@ public class SelectDialog extends FilteredItemsSelectionDialog
 	private HashSet<IType> elements = new HashSet<IType>();
 
 
-	public SelectDialog(Shell shell, IType[] elements, String title)
+	public MainTypeSelectDialog(Shell shell, Collection<IType> result, String title)
 	{
 		super(shell, false);
-		this.elements.addAll(Arrays.asList(elements));
+		this.elements.addAll(result);
 		setTitle(title);
 		setMessage("Select &type (? = any character, * = any String, TZ = TimeZone)");
 		setInitialPattern("**"); //$NON-NLS-1$
