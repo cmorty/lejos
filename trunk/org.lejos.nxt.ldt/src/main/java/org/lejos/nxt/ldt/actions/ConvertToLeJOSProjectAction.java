@@ -122,9 +122,8 @@ public class ConvertToLeJOSProjectAction extends ActionDelegate {
 	 * @param aProject
 	 *            a java project
 	 */
-	private void updateClasspath(IJavaProject project) throws JavaModelException, LeJOSNXJException {
-		// TODO set source attachement of classes.jar
-		
+	private void updateClasspath(IJavaProject project) throws JavaModelException, LeJOSNXJException
+	{
 		File nxjHome = LeJOSNXJUtil.getNXJHome();
 		ArrayList<File> tmp = new ArrayList<File>();
 		LeJOSNXJUtil.buildNXTClasspath(nxjHome, tmp);

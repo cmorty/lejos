@@ -5,6 +5,9 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
@@ -65,6 +68,19 @@ public class LeJOSPlugin extends AbstractUIPlugin {
 	public static LeJOSPlugin getDefault() {
 		return plugin;
 	}
+	
+	public static Shell getShell() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null)
+			return window.getShell();
+			
+		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+		if (windows.length > 0)
+			return windows[0].getShell();
+		
+		return null;
+	}	
+
 
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in

@@ -5,6 +5,8 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
@@ -18,6 +20,7 @@ import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.lejos.nxt.ldt.LeJOSPlugin;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 public class MainMethodSearchHelper
@@ -54,7 +57,7 @@ public class MainMethodSearchHelper
 		}
 	}
 
-	public void searchMainMethods(IProgressMonitor pm, IJavaSearchScope scope, Collection<IType> dst)
+	public void searchMainMethods(IProgressMonitor pm, IJavaSearchScope scope, Collection<IType> dst) throws CoreException
 	{
 		pm.beginTask("Searching for main methods...", 100);
 		try
@@ -65,14 +68,7 @@ public class MainMethodSearchHelper
 			SearchParticipant[] participants = new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() };
 			IProgressMonitor searchMonitor = new SubProgressMonitor(pm, 100);
 			ResultAggregator collector = new ResultAggregator(dst);
-			try
-			{
-				new SearchEngine().search(pattern, participants, scope,	collector, searchMonitor);
-			}
-			catch (CoreException ce)
-			{
-				LeJOSNXJUtil.log(ce);
-			}
+			new SearchEngine().search(pattern, participants, scope,	collector, searchMonitor);
 		}
 		finally
 		{
@@ -81,16 +77,37 @@ public class MainMethodSearchHelper
 	}
 
 	public void searchMainMethods(IRunnableContext context, final IJavaSearchScope scope, final Collection<IType> dst)
-		throws InvocationTargetException, InterruptedException
+		throws InterruptedException, CoreException
 	{
-		context.run(true, true, new IRunnableWithProgress()
-			{
-				public void run(IProgressMonitor pm)
-						throws InvocationTargetException
+		try
+		{
+			context.run(true, true, new IRunnableWithProgress()
 				{
-					searchMainMethods(pm, scope, dst);
-				}
-			});
+					public void run(IProgressMonitor pm) throws InvocationTargetException
+					{
+						try
+						{
+							searchMainMethods(pm, scope, dst);
+						}
+						catch (CoreException e)
+						{
+							throw new InvocationTargetException(e);
+						}
+					}
+				});
+		}
+		catch (InvocationTargetException e)
+		{
+			Throwable e2 = e.getTargetException();
+			if (e2 instanceof Error)
+				throw (Error)e2;
+			if (e2 instanceof RuntimeException)
+				throw (RuntimeException)e2;
+			if (e2 instanceof CoreException)
+				throw (CoreException)e2;
+			
+			throw new CoreException(new Status(IStatus.ERROR, LeJOSPlugin.ID, "unexpected exception", e2));
+		}
 	}
 
 }

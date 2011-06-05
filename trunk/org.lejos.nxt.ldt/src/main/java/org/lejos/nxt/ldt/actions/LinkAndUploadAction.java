@@ -91,8 +91,8 @@ public class LinkAndUploadAction extends ActionDelegate {
 			
 			File nxjHome = LeJOSNXJUtil.getNXJHome();
 
-			String fullClass =LeJOSNXJUtil.getFullQualifiedClassName(javaType);
-			String simpleClass = LeJOSNXJUtil.getSimpleClassName(javaType);
+			String fullClass = javaType.getFullyQualifiedName();
+			String simpleClass = javaType.getTypeQualifiedName();
 			
 			IProject project2 = project.getProject();
 			IFile binary = project2.getFile(simpleClass+".nxj");
@@ -156,12 +156,13 @@ public class LinkAndUploadAction extends ActionDelegate {
 			{
 				pm.done();
 			}
-		} catch (Throwable t) {
-			if (t instanceof InvocationTargetException)
-				t = ((InvocationTargetException)t).getTargetException();
+		} catch (Exception t) {
+			Throwable t2 = t;
+			if (t2 instanceof InvocationTargetException)
+				t2 = ((InvocationTargetException)t).getTargetException();
 			
 			// log
-			LeJOSNXJUtil.error("Linking or uploading the program failed", t);
+			LeJOSNXJUtil.error("Linking or uploading the program failed", t2);
 		}
 	}
 

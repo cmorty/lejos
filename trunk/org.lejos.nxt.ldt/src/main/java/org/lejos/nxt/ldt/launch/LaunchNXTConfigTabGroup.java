@@ -7,23 +7,24 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab;
-import org.eclipse.jdt.debug.ui.launchConfigurations.JavaMainTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
-public class LaunchNXTConfigTabGroup extends AbstractLaunchConfigurationTabGroup {
-	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
+public class LaunchNXTConfigTabGroup extends AbstractLaunchConfigurationTabGroup
+{
+	public void createTabs(ILaunchConfigurationDialog dialog, String mode)
+	{
 		setTabs(new ILaunchConfigurationTab[] {
-				new JavaMainTab(),
-				new JavaClasspathTab(),
-				new SourceLookupTab(),
-				new CommonTab(),
-			});
+					new LaunchNXTMainTab(),
+					new JavaClasspathTab(),
+					new SourceLookupTab(),
+					new CommonTab(),
+				});
 	}
-	
+
 	@Override
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration)
+	{
 		super.setDefaults(configuration);
-		
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER,
 				LaunchNXTClasspathProvider.ID);
 	}

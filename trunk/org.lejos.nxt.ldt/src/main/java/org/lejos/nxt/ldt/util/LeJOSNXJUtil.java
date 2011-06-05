@@ -173,16 +173,6 @@ public class LeJOSNXJUtil {
 		LeJOSPlugin.getDefault().getLog().log(status);
 	}
 
-	public static String getFullQualifiedClassName(IType element) {
-		String fullQualifiedName = element.getFullyQualifiedName('$');
-		return fullQualifiedName;
-	}
-
-	public static String getSimpleClassName(IType element) {
-		// returns only "Nested" for class "foo.bar.Outer.Nested"
-		return element.getElementName();
-	}
-
 	private static void walkTreeAndReturnJARS(File dir, Collection<File> dst)
 	{
 		for (File e : dir.listFiles())
