@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
@@ -131,7 +130,8 @@ public class LeJOSLibContainer implements IClasspathContainer {
     }
 
     public int getKind() {
-        return IClasspathContainer.K_SYSTEM;
+    	// K_DEFAULT_SYSTEM is also used by JREContainer
+        return IClasspathContainer.K_DEFAULT_SYSTEM;
     }    
     
     public IPath getPath() {
