@@ -88,6 +88,7 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 			else
 			{
 				LeJOSNXJUtil.message("program has been linked successfully");
+				LeJOSNXJUtil.message("uploading ...");
 				
 				monitor.subTask("Uploading ...");					
 				ArrayList<String> args = new ArrayList<String>();
