@@ -130,9 +130,10 @@ public class LeJOSLibContainer implements IClasspathContainer {
     }
 
     public int getKind() {
-    	// K_DEFAULT_SYSTEM is also used by JREContainer
-        return IClasspathContainer.K_DEFAULT_SYSTEM;
-    }    
+    	// K_SYSTEM doesn't seem to need a custom IRuntimeClasspathEntryResolver
+    	// K_DEFAULT_SYSTEM is used by JREContainer, but requires a custom IRuntimeClasspathEntryResolver
+        return IClasspathContainer.K_SYSTEM;
+    }
     
     public IPath getPath() {
         return path;
