@@ -127,9 +127,11 @@ public class ConvertToLeJOSProjectAction extends ActionDelegate {
 		File nxjHome = LeJOSNXJUtil.getNXJHome();
 		ArrayList<File> tmp = new ArrayList<File>();
 		LeJOSNXJUtil.buildNXTClasspath(nxjHome, tmp);
-		LinkedHashSet<Path> nxjFiles = new LinkedHashSet<Path>();
+		LinkedHashSet<IPath> nxjFiles = new LinkedHashSet<IPath>();
 		for (File e : tmp)
-			nxjFiles.add(new Path(e.getAbsolutePath()));
+			nxjFiles.add(LeJOSNXJUtil.toPath(e));
+		
+		nxjFiles.add(LeJOSNXJUtil.toPath(new File(nxjHome, LeJOSNXJUtil.LIBDIR+"/classes.jar")));
 		
 		// create new classpath with additional leJOS libraries last
 		ArrayList<IClasspathEntry> newClasspath = new ArrayList<IClasspathEntry>();

@@ -25,6 +25,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -352,6 +353,11 @@ public class LeJOSNXJUtil {
 			path = res.getLocation();
 		
 		return path.toFile();
+	}
+	
+	public static IPath toPath(File f)
+	{
+		return Path.fromOSString(f.getAbsolutePath());
 	}
 
 	/**
