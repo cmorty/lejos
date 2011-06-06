@@ -284,6 +284,7 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		}
 	}
 
+	@Override
 	public boolean isValid(ILaunchConfiguration config)
 	{
 		setErrorMessage(null);
