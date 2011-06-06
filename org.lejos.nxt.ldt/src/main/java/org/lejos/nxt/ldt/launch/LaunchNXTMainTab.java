@@ -284,29 +284,37 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		}
 	}
 
-	public boolean isValid(ILaunchConfiguration config) {
+	public boolean isValid(ILaunchConfiguration config)
+	{
 		setErrorMessage(null);
 		setMessage(null);
 		String pname = projectText.getText().trim();
-		if (pname.length() > 0) {
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IStatus status = workspace.validateName(pname, IResource.PROJECT);
-			if (!status.isOK()) {
-				setErrorMessage("Illegal project name: "+pname); 
-				return false;
-			}
-			IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(pname);
-			if (!project.exists()) {
-				setErrorMessage("Project "+pname+" does not exist"); 
-				return false;
-			}
-			if (!project.isOpen()) {
-				setErrorMessage("Project "+pname+" is closed"); 
-				return false;
-			}
+		if (pname.length() <= 0)
+		{
+			setErrorMessage("Project not specified"); 
+			return false;
+		}
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IStatus status = workspace.validateName(pname, IResource.PROJECT);
+		if (!status.isOK())
+		{
+			setErrorMessage("Illegal project name: "+pname); 
+			return false;
+		}
+		IProject project= workspace.getRoot().getProject(pname);
+		if (!project.exists())
+		{
+			setErrorMessage("Project "+pname+" does not exist"); 
+			return false;
+		}
+		if (!project.isOpen())
+		{
+			setErrorMessage("Project "+pname+" is closed"); 
+			return false;
 		}
 		String mname = mainText.getText().trim();
-		if (mname.length() <= 0) {
+		if (mname.length() <= 0)
+		{
 			setErrorMessage("Main type not specified"); 
 			return false;
 		}
