@@ -2,14 +2,18 @@ package org.lejos.nxt.ldt.launch;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
@@ -46,30 +50,20 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 	private Button fProjButton;
 	private Button fSearchButton;
 	
-	private IJavaProject getJavaProject()
+	private static IWorkspaceRoot getRoot()
 	{
-		String projectName = projectText.getText().trim();
-		if (projectName.length() <= 0)
-			return null;
-		
-		return getJavaModel().getJavaProject(projectName);		
+		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 	
-	private static IJavaModel getJavaModel()
-	{
-		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
-	}
-
 	private static IJavaProject[] getLejosProjects() throws CoreException
 	{
-		IJavaProject[] projects = getJavaModel().getJavaProjects();
+		IProject[] projects = getRoot().getProjects();
 		ArrayList<IJavaProject> projects2 = new ArrayList<IJavaProject>();
-		for (IJavaProject p : projects)
-			if (p.getProject().isNatureEnabled(LeJOSNature.ID))
-				projects2.add(p);
+		for (IProject p : projects)
+			if (p.exists() && p.isOpen() && p.getProject().isNatureEnabled(LeJOSNature.ID))
+				projects2.add(JavaCore.create(p));
 		
-		projects = projects2.toArray(new IJavaProject[projects2.size()]);
-		return projects;
+		return projects2.toArray(new IJavaProject[projects2.size()]);
 	}
 	
 	private void handleProjectButtonSelected()
@@ -97,13 +91,27 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		}
 	}
 	
+	private IProject getProject()
+	{
+		String name = projectText.getText().trim();
+		if (name.length() <= 0)
+			return null;
+		
+		return getRoot().getProject(name);
+	}
+	
+	private IJavaProject getJavaProject()
+	{
+		return JavaCore.create(getProject());		
+	}
+	
 	private void handleSearchButtonSelected()
 	{
 		IJavaProject project = getJavaProject();
 		IJavaElement[] elements;
 		try
 		{
-			if (project != null && project.exists())
+			if (project != null && project.exists() && project.isOpen())
 				elements = new IJavaElement[] { project };
 			else
 				elements = getLejosProjects();
@@ -269,16 +277,90 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 				// Simply grab the first main type found in the searched element
 				IType mainType = result.get(0);
 				config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainType.getFullyQualifiedName());
-				String name = getLaunchConfigurationDialog().generateName(mainType.getTypeQualifiedName());
+				// JDT uses mainType.getTypeQualifiedName('$'), but that is not consistent with the launch short cut 
+				String name = getLaunchConfigurationDialog().generateName(mainType.getTypeQualifiedName('.'));
 				config.rename(name);
 			}
 		}
 	}
 
+	public boolean isValid(ILaunchConfiguration config) {
+		setErrorMessage(null);
+		setMessage(null);
+		String pname = projectText.getText().trim();
+		if (pname.length() > 0) {
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IStatus status = workspace.validateName(pname, IResource.PROJECT);
+			if (!status.isOK()) {
+				setErrorMessage("Illegal project name: "+pname); 
+				return false;
+			}
+			IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(pname);
+			if (!project.exists()) {
+				setErrorMessage("Project "+pname+" does not exist"); 
+				return false;
+			}
+			if (!project.isOpen()) {
+				setErrorMessage("Project "+pname+" is closed"); 
+				return false;
+			}
+		}
+		String mname = mainText.getText().trim();
+		if (mname.length() <= 0) {
+			setErrorMessage("Main type not specified"); 
+			return false;
+		}
+		return true;
+	}
+	
 	public void performApply(ILaunchConfigurationWorkingCopy config)
 	{
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectText.getText().trim());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainText.getText().trim());
+		this.updateMappedResource(config);
+	}
+	
+	private static IResource getMainResource(ILaunchConfiguration candidate) throws CoreException
+	{
+		String pname = candidate.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+		if (pname.length() > 0)
+		{
+			IProject project = getRoot().getProject(pname);
+			String mname = candidate.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "");
+			if (mname.length() > 0)
+			{
+				if (project != null && project.exists() && project.isOpen()) {
+					IJavaProject jproject = JavaCore.create(project);
+					if (jproject != null && jproject.exists() && jproject.isOpen()) {
+						// replace $ with . for nested classes 
+						IType type = jproject.findType(mname.replace('$', '.'));
+						if (type != null) {
+							return type.getUnderlyingResource();
+						}
+					}
+				}
+			}
+			return project;
+		}
+		return null;
+	}
+
+	private void updateMappedResource(ILaunchConfigurationWorkingCopy config) {
+		try
+		{
+			IResource resource = getMainResource(config);
+			IResource[] resources;
+			if (resource == null)
+				resources = null;
+			else
+				resources = new IResource[] { resource };
+			
+			config.setMappedResources(resources);
+		}
+		catch (CoreException ce)
+		{
+			setErrorMessage(ce.getMessage());
+		}
 	}
 	
 	@Override
