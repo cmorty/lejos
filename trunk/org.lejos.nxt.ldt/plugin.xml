@@ -95,19 +95,11 @@
             class="org.lejos.nxt.ldt.launch.LaunchNXTShortcut"
             icon="icons/nxj_16x16.png"
             id="org.lejos.nxt.ldt.LaunchNXTShortcut"
-            label="Run on NXT"
+            label="LeJOS NXT Program"
             modes="run,debug">
          <configurationType
                id="org.lejos.nxt.ldt.LaunchType">
          </configurationType>
-         <description
-               description="Run on NXT"
-               mode="run">
-         </description>
-         <description
-               description="Run on NXT"
-               mode="debug">
-         </description>
          <contextualLaunch>
             <enablement>
           <with variable="selection">
