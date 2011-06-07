@@ -6,17 +6,27 @@
 		<title>leJOS NXJ Eclipse Plug-In: Creating a leJOS NXJ project</title>
 	</head>
 
-<body>
-<h1>Creating a leJOS NXJ project</h1>
-To compile programs with the leJOS NXJ API and upload them to the NXT brick, you need to create a project of the appropriate type.
-This is done the following way:
-<ol>
-<li>Create (or import) a Java project.</li>
-<li>Select the project in the <b>Package Explorer</b> of the Java perspective and open its context menu.</li>
-<li>Navigate to the <em>leJOS NXJ</em> menu and select <em>Convert to leJOS NXJ project</em>. The project's nature will be changed 
-and the classpath will be adapted so that the leJOS NXJ jars will be used for compilation and linkage.</li>
-</ol>
-Note; if some error occurs, consult Eclipse's <b>Console</b> view for details. 
-
-</body>
+	<body>
+		<h1>Creating a leJOS NXJ project</h1>
+		<p>The plugin provides two kinds of projects:</p>
+		<ul>
+			<li>LeJOS NXT Projects</li>
+			<li>LeJOS PC Project</li>
+		</ul>
+		<p>LeJOS NXT projects allow you to write and upload Java programs to the Lego NXT brick.
+		You know whether your project is a LeJOS NXT project, if the little leJOS icon is attached to your project.</p>
+		<p>LeJOS PC projects allow you to write Java programs, that run locally on your PC but can remote control
+		the NXT brick via USB or Bluetooth.</p>
+		<p>To create a new LeJOS project (either NXT or PC), select <em>File&rarr;New&rarr;Project...</em>
+		from the main menu bar. Now, unfold the leJOS categroy and select the project type you want.
+		Type in the name of the Project, make all the adjustments you'd like to make, and click Finish.</p>
+		<p>There may be projects created with an old version of the plugin. You may convert them to
+		new-style LeJOS NXT projects by selecting <em>leJOS NXJ&rarr;Convert to leJOS NXJ project</em>
+		in the project's context menu.</p>
+		<p>There is no automatic conversion for old-style LeJOS PC projects. To convert them,
+		edit the build path of the project, and use the "Add Library..." Button to add
+		the LeJOS PC libraries to the build path after removing all refernces to pccomms.jar, pctools.jar and friends.</p>
+		<p><b>Warning:</b> a project intended for running on the NXT must never include the LeJOS PC libraries in its build path.
+		Similarly, a project intended for being run on the PC must never include the LeJOS NXT runtime in its build path.</p>
+	</body>
 </html>
