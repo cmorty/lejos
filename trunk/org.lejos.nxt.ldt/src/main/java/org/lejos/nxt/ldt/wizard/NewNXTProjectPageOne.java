@@ -36,6 +36,12 @@ public class NewNXTProjectPageOne extends NewJavaProjectWizardPageOne {
 	}
 	
 	@Override
+	public String getCompilerCompliance()
+	{
+		return JavaCore.VERSION_1_6;
+	}
+	
+	@Override
 	public IClasspathEntry[] getDefaultClasspathEntries() {
 		Path lcp = new Path(LeJOSLibContainer.ID+"/"+LeJOSNXJUtil.LIBSUBDIR_NXT);
 		IClasspathEntry lc = JavaCore.newContainerEntry(lcp);
