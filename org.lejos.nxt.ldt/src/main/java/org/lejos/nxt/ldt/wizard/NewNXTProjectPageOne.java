@@ -38,7 +38,8 @@ public class NewNXTProjectPageOne extends NewJavaProjectWizardPageOne {
 	@Override
 	public String getCompilerCompliance()
 	{
-		return JavaCore.VERSION_1_6;
+		// return JavaCore.VERSION_1_6;
+		return null;
 	}
 	
 	@Override
