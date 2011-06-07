@@ -8,13 +8,19 @@
 
 	<body>
 		<h1>Uploading a leJOS NXJ program to the NXT brick</h1>
-		<p>To link and upload a leJOS NXJ program to the NXT brick, perform the following steps:</p>
+		<p>Note that LeJOS PC projects are launched the normal way, just like any other Java project.</p>
+		<p>To link and upload a program to the NXT brick, first make sure that
+		the project is a LeJOS NXT project by checking for a little LeJOS icon
+		next to the project name. If the project is not a LeJOS NXT project, or
+		you haven't created a project yet, follow <a href="lejosproject.html">these</a>
+		instructions. Once a LeJOS NXT project is set up, follow these steps:</p>
 		<ol>
-			<li>In the <b>Package Explorer</b> of the Java perspective, select the .java file that contains the program's main class 
-			and open its context menu.</li>
-			<li>Navigate to the <em>leJOS NXJ</em> menu and select <em>Upload program to the NXT brick</em>. The required classes will be linked 
-			and uploaded to the NXT brick.
-			<br>Note that the verbosity of this feature (including logging of the signatures of the classes that get uploaded to the brick)
+			<li>In the <b>Package Explorer</b> of the Java perspective,
+			right click on the project, a package, a *.java file or a class</li>
+			<li>Select <em>Run As&rarr;LeJOS NXT Program</em></li>
+			<li>Eclipse might ask you to select the main class, if multiple suitable classes exist in your selection</li>
+			<li>Two new files with the name of the class will appear in the root directory of the project</li>
+			<li><b>Note</b> that the verbosity of this feature (including logging of the signatures of the classes that get uploaded to the brick)
 			can be enhanced by checking the <em>verbose</em> box of the <em>leJOS NXJ</em> <a href="configuration.html">preferences page</a>.</li>
 			<li>Use the leJOS menu on the brick to run the program.</li> 
 		</ol>  
