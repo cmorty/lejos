@@ -1,7 +1,6 @@
 package lejos.robotics;
 
-
-import lejos.nxt.*;
+import lejos.nxt.Sound;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.RangeReading;
 
@@ -22,8 +21,8 @@ import lejos.robotics.RangeReading;
 public class LightScanner
 {
 
-   NXTRegulatedMotor head;
-   LightSensor eye;
+   RegulatedMotor head;
+   LightDetector eye;
    private int _numReadings;
    private RangeReadings _readings;
    /**
@@ -58,17 +57,16 @@ public class LightScanner
     * has been passed, and the angle at which the maximum occurred is the angle
     * of the beacon.
     * @param headMotor
-    * @param lightPort
+    * @param lightDetector 
     * @param minBeaconLight
     * @param background 
     */
-   public LightScanner(NXTRegulatedMotor headMotor, SensorPort lightPort,
+   public LightScanner(RegulatedMotor headMotor, LightDetector lightDetector,
            int minBeaconLight, int background)
    {
       head = headMotor;
       head.setSpeed(lightSpeed);
-      eye = new LightSensor(lightPort);
-      eye.setFloodlight(false);
+      eye = lightDetector;
       _background = background;
       _lightMin = minBeaconLight;
    }
@@ -126,7 +124,7 @@ public class LightScanner
       int k = 0;
       while (_scanning && head.isMoving())
       {
-         light = eye.readNormalizedValue();
+         light = eye.getNormalizedLightValue();
          if (!beacon && light > _lightMin)//seeing beacon
          {
             beacon = true;
@@ -225,7 +223,7 @@ public class LightScanner
 
    private int normalize(int arc, int dir)
    {
-      if (dir > 0) // normaoize art between 0 and 360
+      if (dir > 0) // normalize art between 0 and 360
       {
          while (arc < 0) arc += 360;
          while (arc > 360)   arc -= 360;
