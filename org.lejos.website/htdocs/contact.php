@@ -101,6 +101,87 @@
       <table width="100%">
 
         <tr> 
+          <td><b>leJOS Forums</b></td>
+        </tr>
+        <tr> 
+          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+        </tr>
+        <tr> 
+          <td>Please contact us via the <a href="forum/">forum</a>. Go there, if you have questions, would like to report a bug,
+          or want to contribute to leJOS. Alternatively you can email to the <a href="https://lists.sourceforge.net/lists/listinfo/lejos-developers">lejos-developers</a>
+          mailing list. But be aware that it is a moderated list. 
+          </td>
+        </tr>
+        
+        <tr><td>&nbsp;</td></tr>
+        
+        <tr> 
+          <td valign="top"><b>developers</b></td>
+        </tr>
+        <tr> 
+          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+        </tr>
+        <tr> 
+          <td height="88" valign="top">If you would like to contribute to this 
+            project by becoming a developer yourself, please contact one of the project admins (Lawrie, Brian, or Andy).
+            <br /><br />
+              <table border="0" cellpadding="0" cellspacing="0">
+                <tr> 
+                  <td><a href="#" onclick="a='@'; this.href='mail'+'to:lgriffiths'+a+'users.sourceforge.net'">Lawrie Griffiths</a></td>
+                  <td>&nbsp;&nbsp;Developer</td>
+                	<td>&nbsp;&nbsp;<a href="http://homepage.ntlworld.com/lawrie.griffiths/" target="_blank">Web</a></td>
+                </tr>
+                <tr> 
+                  <td><a href="#" onclick="a='@'; this.href='mail'+'to:gloomyandy'+a+'users.sourceforge.net'">Andy Shaw</a></td>
+                  <td>&nbsp;&nbsp;Developer</td>
+                  <td></td>
+                </tr>
+                <tr> 
+                  <td><a href="#" onclick="a='@'; this.href='mail'+'to:rogergla'+a+'users.sourceforge.net'">Roger Glassey</a></td>
+                  <td>&nbsp;&nbsp;Developer</td>
+                  <td></td>
+                </tr>
+                <tr> 
+                  <td><a href="#" onclick="a='@'; this.href='mail'+'to:skoehler'+a+'users.sourceforge.net'">Sven Köhler</a></td>
+                  <td>&nbsp;&nbsp;Developer</td>
+                  <td></td>
+                </tr>
+                <tr> 
+                  <td><a href="#" onclick="a='@'; this.href='mail'+'to:bbagnall'+a+'users.sourceforge.net'">Brian Bagnall</a></td>
+                  <td>&nbsp;&nbsp;Developer/Webmaster</td>
+                  <td>&nbsp;&nbsp;<a href="http://www.mts.net/~kbagnall/mindstorms" target="_blank">Web</a></td>
+                </tr>
+                <tr> 
+                  <td><a href="#" onclick="a='@'; this.href='mail'+'to:esmetaman'+a+'users.sourceforge.net'">Juan Antonio Bre&ntilde;a Moral</a></td>
+                  <td>&nbsp;&nbsp;Webmaster/Developer</td>
+                 <td>&nbsp;&nbsp;<a href="http://www.juanantonio.info" target="_blank">Web</a></td>
+                 </tr>
+                <tr> 
+                  <td><a href="#" onclick="a='@'; this.href='mail'+'to:starblue'+a+'users.sourceforge.net'">J&uuml;rgen Stuber</a></td>
+                  <td>&nbsp;&nbsp;Developer (inactive)</td>
+                	<td>&nbsp;&nbsp;<a href="http://www.jstuber.net/" target="_blank">Web</a></td>
+                </tr>
+                <tr> 
+                  <td><a href="#" onclick="a='@'; this.href='mail'+'to:mpscholz'+a+'users.sourceforge.net'">Matthias Paul Scholz</a></td>
+                  <td>&nbsp;&nbsp;Developer/Webmaster (inactive)</td>
+                  <td>&nbsp;&nbsp;<a href="http://mynxt.matthiaspaulscholz.eu" target="_blank">Web</a></td>
+                 </tr>
+                <tr> 
+                  <td><a href="#" onclick="a='@'; this.href='mail'+'to:jhsolorz'+a+'users.sourceforge.net'">Jose Solorzano</a></td>
+                  <td colspan="2">&nbsp;&nbsp;Initial Developer of leJOS (inactive)</td>
+                </tr>
+                <tr> 
+                  <td colspan="3"><br />
+                    <a href="https://sourceforge.net/project/memberlist.php?group_id=9339">View 
+                    all members</a></td>
+                </tr>
+              </table>
+          </td>
+        </tr>
+        
+        <tr><td>&nbsp;</td></tr>
+
+        <tr> 
           <td><b>Lugnet Message Base</b></td>
         </tr>
         <tr> 
@@ -109,90 +190,10 @@
         <tr> 
           <td>Need a question answered? Try out the Lugnet news group. 
             <ul>
-
-              <li><a href="http://news.lugnet.com/robotics/rcx/java/">Lugnet News Group</a></li>
+              <li><a href="http://news.lugnet.com/robotics/rcx/java/">Lugnet News Group</a><br />
+              	(outdated, mostly about leJOS RCX, not leJOS NXJ)
+              </li>
             </ul>
-            <br />
-            &nbsp;</td>
-        </tr>
-
-
-        <tr> 
-          <td><b>lejos-discussion</b></td>
-
-        </tr>
-        <tr> 
-          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
-        </tr>
-        <tr> 
-          <td>This mailing list is for discussion about the use of leJOS: 
-            <ul>
-              <li><a href="http://lists.sourceforge.net/lists/listinfo/lejos-discussion">Subscribe/Unsubscribe/Preferences</a></li>
-              <li><a href="http://sourceforge.net/mailarchive/forum.php?forum_id=552">lejos-discussion 
-                archive</a>, <a href="http://news.gmane.org/gmane.comp.java.lejos" target="_blank">archive on gmane</a></li>
-
-            </ul>
-            <br />
-            &nbsp;</td>
-        </tr>
-        <tr> 
-          <td valign="top"><b>developers</b></td>
-        </tr>
-        <tr> 
-          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
-
-        </tr>
-        <tr> 
-          <td height="88" valign="top">If you would like to contribute to this 
-            project by becoming a developer, please contact one of the project admins.
-            <br /><br />
-              <table border="0" cellpadding="0" cellspacing="0">
-                <tr> 
-                  <td><a name="andrews" href="#andrews" onclick="a='@'; this.href='mail'+'to:mpandrews'+a+'users.sourceforge.net'">Paul Andrews</a> </td>
-                  <td>&nbsp;&nbsp;Developer</td>
-                <td>&nbsp;&nbsp;<a href="http://www.jools.net/" target="_blank">Web</a></td>
-                </tr>
-                <tr> 
-                  <td><a name="stuber" href="#stuber" onclick="a='@'; this.href='mail'+'to:starblue'+a+'users.sourceforge.net'">J&uuml;rgen Stuber</a></td>
-                  <td>&nbsp;&nbsp;Developer</td>
-                	<td>&nbsp;&nbsp;<a href="http://www.jstuber.net/" target="_blank">Web</a></td>
-                </tr>
-                <tr> 
-                  <td><a name="griffiths" href="#griffiths" onclick="a='@'; this.href='mail'+'to:lawrie.griffiths'+a+'ntlworld.com'">Lawrie Griffiths</a></td>
-                  <td>&nbsp;&nbsp;Developer</td>
-                	<td>&nbsp;&nbsp;<a href="http://homepage.ntlworld.com/lawrie.griffiths/" target="_blank">Web</a></td>
-                </tr>
-                <tr> 
-                  <td><a name="bagnall" href="#bagnall" onclick="a='@'; this.href='mail'+'to:bbagnall'+a+'users.sourceforge.net'">Brian Bagnall</a></td>
-                  <td>&nbsp;&nbsp;Developer/Webmaster</td>
-                  <td>&nbsp;&nbsp;<a href="http://www.mts.net/~kbagnall/mindstorms" target="_blank">Web</a></td>
-                 </tr>
-                <tr> 
-                  <td><a name="scholz" href="#scholz" onclick="a='@'; this.href='mail'+'to:mpscholz'+a+'users.sourceforge.net'">Matthias Paul Scholz</a></td>
-                  <td>&nbsp;&nbsp;Developer/Webmaster</td>
-                  <td>&nbsp;&nbsp;<a href="http://mynxt.matthiaspaulscholz.eu" target="_blank">Web</a></td>
-                 </tr>
-                <tr> 
-                  <td><a name="rinkens" href="#rinkens" onclick="a='@'; this.href='mail'+'to:rinkens'+a+'users.sourceforge.net'">Tim Rinkens</a></td>
-                  <td>&nbsp;&nbsp;Webmaster</td>
-                 <td>&nbsp;&nbsp;<a href="http://rcxtools.sourceforge.net/" target="_blank">Web</a></td>
-                 </tr>
-                <tr> 
-                  <td><a name="rinkens" href="#jab" onclick="a='@'; this.href='mail'+'to:esmetaman'+a+'users.sourceforge.net'">Juan Antonio Bre&ntilde;a Moral</a></td>
-                  <td>&nbsp;&nbsp;Webmaster/Developer</td>
-                 <td>&nbsp;&nbsp;<a href="http://www.juanantonio.info" target="_blank">Web</a></td>
-                 </tr>
-                <tr> 
-                  <td><a name="solorzano" href="#solorzano" onclick="a='@'; this.href='mail'+'to:jhsolorz'+a+'users.sourceforge.net'">Jose Solorzano</a></td>
-                  <td colspan="3">&nbsp;&nbsp;Initial Developer of leJOS (no longer active)</td>
-                </tr>
-                <tr> 
-                  <td colspan="3"><br />
-
-                    <a href="https://sourceforge.net/project/memberlist.php?group_id=9339">View 
-                    all members</a></td>
-                </tr>
-              </table>
           </td>
         </tr>
       </table>
