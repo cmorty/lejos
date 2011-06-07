@@ -179,23 +179,6 @@
           </td>
         </tr>
         
-        <tr><td>&nbsp;</td></tr>
-
-        <tr> 
-          <td><b>Lugnet Message Base</b></td>
-        </tr>
-        <tr> 
-          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
-        </tr>
-        <tr> 
-          <td>Need a question answered? Try out the Lugnet news group. 
-            <ul>
-              <li><a href="http://news.lugnet.com/robotics/rcx/java/">Lugnet News Group</a><br />
-              	(outdated, mostly about leJOS RCX, not leJOS NXJ)
-              </li>
-            </ul>
-          </td>
-        </tr>
       </table>
 
 </div>
