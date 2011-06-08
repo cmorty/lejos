@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IAccessRule;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
@@ -92,8 +95,10 @@ public class LeJOSLibContainer implements IClasspathContainer {
         	File lib = entryList.get(i);
         	File src = guessSource(lib);
         	IPath lib2 = LeJOSNXJUtil.toPath(lib);
-        	IPath src2 = (src == null) ? null : LeJOSNXJUtil.toPath(src); 
-        	entryArray[i] = JavaCore.newLibraryEntry(lib2, src2, null);
+        	IPath src2 = (src == null) ? null : LeJOSNXJUtil.toPath(src);        	
+        	IAccessRule[] accessRules = { JavaCore.newAccessRule(new Path("**/internal/**"), IAccessRule.K_DISCOURAGED) };
+        	IClasspathAttribute[] attributes = {};
+        	entryArray[i] = JavaCore.newLibraryEntry(lib2, src2, null, accessRules, attributes, false);
         }
         return entryArray;
 	}
