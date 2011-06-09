@@ -5,6 +5,23 @@ import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Vector;
 
+/**
+ * Simple subset implementation of Stax parser.
+ * Does not deal with namespaces.
+ * QName not supported.
+ * Has very little error checking.
+ * Only supports CDATA attributes.
+ * Does not currently respect class, abstract class and interface distinctions.
+ * Never gives SPACE events. White space is mainly thrown away.
+ * Does not support DTDs.
+ * XML event classes not supported.
+ * getLocation not yet supported.
+ * Only ascii encoding supported.
+ * Processing instructions not supported.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class XMLStreamReader implements XMLStreamConstants {
 	private InputStream in;
 	private boolean eof = false;
@@ -22,6 +39,7 @@ public class XMLStreamReader implements XMLStreamConstants {
 	private char quote;
 	private String attrName, attrValue;
 	private boolean quoted = false;
+	private String version;
 	
 	public XMLStreamReader(InputStream stream) {
 		in = stream;
@@ -50,15 +68,22 @@ public class XMLStreamReader implements XMLStreamConstants {
 		}
 	}
 	
+	/**
+	 * Read the next token from the input stream and return the corresponding event.
+	 * 
+	 * @return the event
+	 */
 	public int next() {
 		StringBuffer s = new StringBuffer();
 		
+		// Generate START_DOCUMENT event at the start of the document
 		if (!started) {
 			started = true;
 			c = getChar();
 			return START_DOCUMENT;
 		}
 		
+		// Generate END_DOCUMENT event at the end of the document
 		if (eof) {
 			if (!ended) {
 				ended = true;
@@ -74,6 +99,7 @@ public class XMLStreamReader implements XMLStreamConstants {
 			return event;
 		}
 
+		// Tag
 		if (c == '<') {
 			attributes = new Hashtable<String,String>();
 			attrNames = new Vector<String>();
@@ -81,18 +107,23 @@ public class XMLStreamReader implements XMLStreamConstants {
 			numAttributes = 0;
 			event = START_ELEMENT;
 			
-			if ((c = getChar()) == '/') {
+			if ((c = getChar()) == '/') { // end tag
 				event=END_ELEMENT;
 				c = getChar();
 			}
 			
-			if (c == '?') {
+			if (c == '?') { // ?xml tag
 				while (!eof && (c = getChar()) != '<'); // Skip <?xml
 				c = getChar();
 			}
 			
-			if (c == '!') {
-				while (!eof && (c = getChar()) != '<'); // comment
+			if (c == '!') { // Comment
+				getChar();getChar(); //Skip --
+				while (!eof && (c = getChar()) != '>') {
+					s.append(c);
+				}
+				s.delete(s.length()-2,s.length()); // remove --
+				text = s.toString();
 				c = getChar();
 				return COMMENT;
 			}
@@ -143,43 +174,145 @@ public class XMLStreamReader implements XMLStreamConstants {
 		return CHARACTERS;
 	}
 	
+	/**
+	 * Check if there are more tokens in the stream
+	 * 
+	 * @return true iff there are more tokens
+	 */
 	boolean hasNext() {
 		return !eof;
 	}
 	
+	/**
+	 * Close the stream.
+	 */
 	public void close() {
 		// Does nothing
 	}
 	
+	/**
+	 * Get the local name for the tag.
+	 * Only applies if the current event is START_ELEMENT or END_ELEMENT.
+	 * 
+	 * @return the local name
+	 */
 	public String getLocalName() {
 		return localName;
 	}
 	
+	/**
+	 * Get the text for the contents of a tag.
+	 * Only applies if the current event is CHARACTERS or COMMENT
+	 * 
+	 * @return the text
+	 */
 	public String getText() {
 		return text;
 	}
 	
+	/**
+	 * This is supposed to give an error if the element contains more than text
+	 * 
+	 * @return the text
+	 */
 	public String getElementText() {
 		return text;
 	}
 	
+	/**
+	 * Get the attribute count for the current element
+	 * 
+	 * @return the attribute count
+	 */
 	public int getAttributeCount() {
 		return numAttributes;
 	}
 	
+	/**
+	 * Get the local name of an attribute
+	 * 
+	 * @param index the attribute index
+	 * @return the local name
+	 */
 	public String getAttributeLocalName(int index) {
 		return attrNames.elementAt(index);
 	}
 	
+	/**
+	 * Look up an attribute value using its name
+	 * 
+	 * @param namespaceURI not used
+	 * @param localName the name of the atrribute
+	 * @return the attribute value
+	 */
 	public String getAttributeValue(String namespaceURI, String localName) {
 		return attributes.get(localName);
 	}
 	
+	/**
+	 * Get the value of an attribute
+	 * 
+	 * @param index the index of the attribute
+	 * @return the attribute value
+	 */
 	public String getAttributeValue(int index) {
 		return attrValues.elementAt(index);
 	}
 	
+	/**
+	 * Get the type of an attribute. Current only CDATA attributes are supported.
+	 * 
+	 * @param index the index of the attribute
+	 * @return the attribute type
+	 */
 	public String getAttributeType(int index) {
 		return "CDATA";
+	}
+	
+	/**
+	 * Get the current event
+	 * 
+	 * @return the event type
+	 */
+	public int getEventType(){
+		return event;
+	}
+
+	/**
+	 * Get the length of the text
+	 * 
+	 * @return the text length
+	 */
+	public int getTextLength() {
+		return text.length();
+	}
+	
+	/**
+	 * Get the text as a character array
+	 * 
+	 * @return the text as a character array
+	 */
+	public char[] getTextCharacters() {
+		return text.toCharArray();
+	}
+	
+	/**
+	 * Get the next tag
+	 * 
+	 * @return the tag event
+	 */
+	public int nextTag() {
+		while (true) {
+			int e = next();
+			if (e == START_ELEMENT || e == END_ELEMENT) return e;
+		}
+	}
+	
+	public boolean hasText() {
+		return (text != null && text.length() > 0);
+	}
+	
+	public Location getLocation() {
+		return new Location(line, pos);
 	}
 }
