@@ -34,10 +34,9 @@ public class XMLStreamReader implements XMLStreamConstants {
 	private String text;
 	private int numAttributes = 0;
 	private char c;
-	private int line = 0;
-	private int pos = 0;
+	private int line = 0, pos = 0, column = 0;;
 	private char quote;
-	private String attrName, attrValue;
+	private String attrName,attrValue;
 	private boolean quoted = false;
 	private String version;
 	
@@ -53,12 +52,13 @@ public class XMLStreamReader implements XMLStreamConstants {
 				return ' ';
 			}
 			pos++;
+			column++;
 			char ch = (char) b;
 			if (ch == '\r') ch = ' ';
 			if (ch == '\t') ch = ' ';
 			if (ch == '\n') {
 				line++;
-				pos = 0;
+				column = 0;
 				ch = ' ';
 			}	  
 			return ch;
@@ -313,6 +313,6 @@ public class XMLStreamReader implements XMLStreamConstants {
 	}
 	
 	public Location getLocation() {
-		return new Location(line, pos);
+		return new Location(line, column, pos);
 	}
 }
