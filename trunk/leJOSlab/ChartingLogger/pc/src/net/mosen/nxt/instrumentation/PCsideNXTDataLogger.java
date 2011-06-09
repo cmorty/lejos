@@ -1,0 +1,481 @@
+package net.mosen.nxt.instrumentation;
+
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import java.util.HashSet;
+
+
+/**
+ * This class provides the PC side of a NXT datalogger. One instance per log session. The session ends when NXT ends the connection.
+ * @see PCConnectionManager
+ */
+public class PCsideNXTDataLogger {
+    private final byte ATTENTION1 = (byte)(0xff&0xff);
+    private final byte ATTENTION2 = (byte)(0xab&0xff);
+    private final byte COMMAND_ITEMSPERLINE = 0;
+    private final byte COMMAND_DATATYPE     = 1;    
+    private final byte    DT_INTEGER = 0;        // sub-commands of COMMAND_DATATYPE
+    private final byte    DT_LONG    = 1;
+    private final byte    DT_FLOAT   = 2;
+    private final byte    DT_DOUBLE  = 3;
+    private final byte    DT_STRING  = 4;
+    private final byte COMMAND_SETHEADERS   = 2;  
+    private final byte COMMAND_FLUSH        = 3; 
+    
+    private final String THISCLASS;
+
+    /** For holding read and parsed objects (values) and their output format
+     */
+    private class ReadValsStruct{
+        public Object value = null;
+        public String format = "-1d";
+    }
+    
+    /** For listener registration. Does notifications for log data recieved, EOF, and header name changes
+     */
+    public interface LoggerListener {
+        /** Invoked when a log line (all fields read as per headers) is logged. TODO clear this up
+         * @param logLine The line data.
+         */
+        void logLineAvailable(String logLine);
+
+        /**Invoked when an <code>EOFException</code> occurs from the <code>PCConnectionManager</code>.
+         * @see net.mosen.nxt.instrumentation.NXTConnectionManager
+         */
+        void dataInputStreamEOF();
+
+        /** Invoked when the log field headers are initially set or changed. 
+         * @param logFields The array of header values
+         */
+        void logFieldNamesChanged(String[] logFields);
+    }
+
+    /** Internal Logger implementation 'cause we must eat our own dogfood too...
+     */
+    private class Self_Logger implements LoggerListener{
+        public void logLineAvailable(String logLine){
+            if (validLogFile) {
+                try {
+                    fw.write(logLine);
+                } catch (IOException e) {
+                    // TODO what to do?
+                    System.out.print("!** logLineAvailableEvent IOException: logline=\"" + logLine + "\"");
+                    e.printStackTrace();
+                }
+            }
+//            System.out.print(logLine);
+        }
+
+        public void dataInputStreamEOF() {
+//            BTManagerEOF=true;
+            dbg("!** dataInputStreamEOF from NXT");
+            try {
+                fw.close();
+            } catch (IOException e) {
+                // TODO
+                System.out.print("!** dataInputStreamEOF IOException in fw.close()");
+                e.printStackTrace();
+            }
+        }
+
+        public void logFieldNamesChanged(String[] logFields) {
+            StringBuilder sb = new StringBuilder();
+            dbg("!** New headers");
+            for (int i=0;i<logFields.length;i++) {
+                sb.append(logFields[i]);
+                if (i<logFields.length-1) sb.append("\t");
+            }
+            sb.append("\n");
+            if (validLogFile) {
+                try {
+                    fw.write(sb.toString());
+                } catch (IOException e) {
+                    // TODO what to do?
+                    System.out.print("!** logFieldNamesChanged IOException: sb.toString()=\"" + sb.toString() + "\"");
+                    e.printStackTrace();
+                }
+            }
+//            System.out.print(sb.toString());
+        }
+    }
+
+    private boolean connectionManagerEOF = false;
+    private PCConnectionManager connectionManager = null;
+    private File logFile = null;
+    private FileWriter fw;
+    private HashSet<LoggerListener> listeners = new HashSet<LoggerListener>();
+    private StringBuilder logLine = new StringBuilder();
+    private Self_Logger dataLogger;
+    private boolean validLogFile=false;;
+    private int elementsPerLine = 1;
+    private ReadValsStruct[] readVals = new ReadValsStruct[elementsPerLine];
+    
+    
+    /**Create an instance. logging output goes to STDOUT and specified logfile. <code>connectionManager</code>
+     * connection must already be established.
+     * @param connManager the instance to use for the connection
+     * @param logFile the log file name to use. File will be overwrriten if exists
+     * @see net.mosen.nxt.instrumentation.PCConnectionManager
+     */
+    public PCsideNXTDataLogger(PCConnectionManager connManager, File logFile) {
+        String[] thisClass = this.getClass().getName().split("[\\s\\.]");
+        THISCLASS=thisClass[thisClass.length-1];
+        
+        if (!connManager.isConnected()) return;
+        
+        this.connectionManager = connManager;
+        this.logFile = logFile;
+        validLogFile=!(logFile==null);
+        // internal logger callback object
+        this.dataLogger = new Self_Logger();
+        addLoggerListener(dataLogger);
+        
+        // AIC for detecting EOF from PCBTManager
+        PCConnectionManager.IOStateListener EOFListener = new PCConnectionManager.IOStateListener(){
+            public void EOFEvent(int BufferedBytes) {
+                dbg("!** EOFEvent from PCConnectionManager");
+                connectionManagerEOF=true;
+            }
+        };
+        this.connectionManager.addIOStateListener(EOFListener);
+    }
+
+    /** Create an instance. logging output goes to STDOUT only since no file specified.
+     * @param connManager the instance to use for the connection
+     */
+    public PCsideNXTDataLogger(PCConnectionManager connManager) {
+        this(connManager,null);
+    }
+
+    private void dbg(String msg){
+        System.out.println(THISCLASS + "-" + msg);
+    }
+    
+    /** 1st arg is NXT name, 2nd is log file name. If no file specified, STDOUT is used. Default connection is to "NXT"
+     * @param args
+     */
+    public static void main(String[] args){
+        PCConnectionManager btmanager = new PCConnectionManager();
+        String connectTo="NXT";
+        System.out.println("args:");
+        for (int i=0;i<args.length;i++) System.out.println(i + ": " + args[i]);
+        System.out.println("----------------");
+        if (args.length>0) {
+            connectTo=args[0];
+        }
+        System.out.println("Attempting to connect to " + connectTo + "...");
+        if (!btmanager.connect(connectTo)) System.exit(-1);
+        PCsideNXTDataLogger dlogger=null;
+        if (args.length>1) {
+            dlogger = new PCsideNXTDataLogger(btmanager,new File(args[1]));
+        } else {
+            dlogger = new PCsideNXTDataLogger(btmanager);
+        }
+        
+        // start the logger
+        dlogger.startLogging();
+    }
+    
+    /** Register a Logger listener.
+     * @param listener The Logger listener instance to register
+     * @see LoggerListener
+     * @see #removeLoggerListener
+     */
+    public void addLoggerListener(LoggerListener listener) {
+//        dbg("Listener: " + listener.toString());
+        listeners.add(listener);
+    }
+
+    /** De-register a logger listener.
+     * @param listener The Logger listener instance to deregister
+     * @return <code>true</code> if listener was deregistered. <code>false</code> if passed listener was not regsitered to
+     * begin with so thus could not be deregistered.
+     * @see LoggerListener
+     * @see #addLoggerListener
+     */
+    public boolean removeLoggerListener(LoggerListener listener) {
+        return listeners.remove(listener);
+    }
+    
+
+    private void doWait(int sleepval) {
+        try {
+            Thread.sleep(sleepval);
+        } catch (InterruptedException e) {
+            // TODO
+        }
+    }
+    
+    
+
+    private boolean isATTN(byte[] ba){
+        if (!(ba[0]==ATTENTION1 && ba[1]==ATTENTION2)) return false;
+        final int XORMASK = 0xff;
+        int total=0;
+        for (int i=0;i<4;i++) total+=ba[i];
+        if (((total^XORMASK)&0xff)==0) return true;
+        return false;
+    }
+    
+    /** Start the logging. After the NXT closes the connection, the logging session ends and this instance evaporates
+     * @throws IOException
+     */
+    public void startLogging(){ //) throws IOException { // TODO maybe remove exception and handle it locally (here)?
+        //        int retVal=-1, retVal2=-1;
+        
+        int endOfLineCycler=0;
+        byte[] readBytes = new byte[4];
+        boolean isCommand;
+        byte streamedDataType = DT_INTEGER;
+        byte[] tempBytes;
+        
+        if (validLogFile) {
+            try {
+                dbg("log file is:" + logFile.getCanonicalPath());
+                if (!logFile.exists())
+                    logFile.createNewFile();
+                fw = new FileWriter(logFile);
+            } catch (IOException e) {
+                dbg("startLogging(): IOException in creating file: " + e.toString());
+                validLogFile=false;
+            }
+        }
+        
+        mainloop:
+        while (true) {
+            // get 4 bytes from the PCBTManager
+            try {
+                getBytes(readBytes,4);
+            } catch (EOFException e) {
+                dbg("startLogging(): EOFException in getBytes(4): " + e);
+                break;
+            }
+            // do we need to pay attention?
+            isCommand = isATTN(readBytes);
+            // if we have an ATTENTION request...
+            if (isCommand) {
+                // get the 2 command bytes from the PCBTManager
+                try {
+                    getBytes(readBytes,2);
+                } catch (EOFException e) {
+                    dbg("startLogging(): EOFException in getBytes(command bytes): " + e);
+                    break;
+                }
+                // do valid commands
+                switch(readBytes[0]) {
+                    case COMMAND_ITEMSPERLINE: // byte 3=0: Set elementsPerLine to 4th byte
+                        elementsPerLine = ((int)readBytes[1])&0xff;
+                        // if we have residual, output it
+                        if (endOfLineCycler>0) dumpLine(); // send readvals[] to output
+                        endOfLineCycler = 0;
+                        readVals = new ReadValsStruct[elementsPerLine]; // set to new bounds. 
+                        break;
+                    case COMMAND_DATATYPE:
+                        streamedDataType = readBytes[1];
+                        //if (streamedDataType==DT_STRING); // TODO maybe temporarily set elementsPerLine to 1 here?
+                        break;
+                    case COMMAND_SETHEADERS:
+                        elementsPerLine=((int)readBytes[1])&0xff;
+                        // if we have residual, output it
+                        if (endOfLineCycler>0) dumpLine(); // send readvals[] to output
+                        // get the headers from the stream
+                        String[] fieldNames = new String[elementsPerLine];
+                        for (int i=0;i<elementsPerLine;i++){
+                            try {
+                                getBytes(readBytes,4);
+                                fieldNames[i]=this.parseString(readBytes);
+                            } catch (EOFException e){
+                                break mainloop;
+                            }
+                        }
+                        // notify all listeners of new header label event
+                        for (LoggerListener listener: listeners) {
+                            listener.logFieldNamesChanged(fieldNames);
+                        }
+                        endOfLineCycler = 0;
+                        readVals = new ReadValsStruct[elementsPerLine]; // set to new bounds. 
+                        break;
+                    case COMMAND_FLUSH:
+                        if (endOfLineCycler>0) dumpLine(); // send readvals[] to output
+                        endOfLineCycler = 0;
+                        readVals = new ReadValsStruct[elementsPerLine]; // set to new bounds. 
+                        break;
+                    default:
+                        // allow to pass through to if no CASE matches (this should not happen)
+                        isCommand = false;
+                }
+            }
+            
+            // If not a command, output the data
+            if (!isCommand) {
+                switch(streamedDataType) {
+                    case DT_INTEGER:
+                        // Parse an int from the 4 bytes
+                        readVals[endOfLineCycler] = new ReadValsStruct();
+                        readVals[endOfLineCycler].value = new Integer(this.parseInt(readBytes));
+                        readVals[endOfLineCycler].format = "-1d";
+                        break;
+                    case DT_LONG:
+                        // Parse a long from the 4 + 4 more bytes
+                        readVals[endOfLineCycler] = new ReadValsStruct();
+                        tempBytes = new byte[8];
+                        System.arraycopy(readBytes,0,tempBytes,0,4);
+                        try {
+                            getBytes(readBytes,4);
+                        } catch (EOFException e){
+                            break mainloop;
+                        }
+                        System.arraycopy(readBytes,0,tempBytes,4,4);
+                        readVals[endOfLineCycler].value = new Long(this.parseLong(tempBytes));
+                        readVals[endOfLineCycler].format = "-1d";
+                        break;
+                    case DT_FLOAT:
+                        readVals[endOfLineCycler] = new ReadValsStruct();
+                        readVals[endOfLineCycler].value = new Float(this.parseFloat(readBytes));
+                        readVals[endOfLineCycler].format = "-32.16e";
+                        break;
+                    case DT_DOUBLE:
+                        // Parse a long from the 4 + 4 more bytes
+                        readVals[endOfLineCycler] = new ReadValsStruct();
+                        tempBytes = new byte[8];
+                        System.arraycopy(readBytes,0,tempBytes,0,4);
+                        try {
+                            getBytes(readBytes,4);
+                        } catch (EOFException e){
+                            break mainloop;
+                        }
+                        System.arraycopy(readBytes,0,tempBytes,4,4);
+                        readVals[endOfLineCycler].value = new Double(this.parseDouble(tempBytes));
+//                        dbg(this.parseLong(tempBytes));
+                        readVals[endOfLineCycler].format = "-32.16e";
+                        break;
+                    case DT_STRING:
+                        readVals[endOfLineCycler] = new ReadValsStruct();
+                        try {
+                            readVals[endOfLineCycler].value = new String(this.parseString(readBytes));
+                        } catch (EOFException e){
+                            break mainloop;
+                        }
+                        readVals[endOfLineCycler].format = "s";
+                        break;
+                    // TODO add DOUBLE case
+                    
+                    default:
+                        dbg("!** Invalid streamedDataType:" + streamedDataType);
+                }
+                // if we have cycled through enough items, do EOL and output the entire line as a formatted string
+                if (endOfLineCycler == elementsPerLine - 1) {
+                    // send readvals[] to output and reset endOfLineCycler, readVals[]
+                    dumpLine(); 
+                    endOfLineCycler = 0;
+                    readVals = new ReadValsStruct[elementsPerLine]; // set to new bounds. 
+                } else
+                    endOfLineCycler++;
+            } // END BLOCK: If not a command, output the data
+        } // END BLOCK: while
+        
+        // notify all listeners of EOF event
+        for (LoggerListener listener: listeners) {
+            listener.dataInputStreamEOF();
+        }
+    }
+
+    /** send readvals[] to output and reset endOfLineCycler, readVals[]
+     */
+    private void dumpLine() {
+        for (int i = 0; i < readVals.length; i++) {
+            if (readVals[i]==null) continue;
+            this.logLine.append(String.format("%1$" + readVals[i].format, readVals[i].value).trim());
+            if (i < readVals.length - 1)
+                this.logLine.append("\t");
+        }
+        this.logLine.append("\n");
+
+        // notify all listeners that a new line of data fields is available
+        for (LoggerListener listener: listeners) {
+            listener.logLineAvailable(logLine.toString());
+        }
+        this.logLine = new StringBuilder();
+    }
+    
+    private void hexByteOut(String desc, long value, int bits) {
+//        value = value & 0xffffffff;
+        StringBuilder sb1 = new StringBuilder(bits-bits/8-1);
+        int pow=0;
+        for (int i=bits-1;i>=0;i--) {
+            pow= (int)Math.pow(2,i);
+            if((pow&value)==pow) sb1.append("1"); else sb1.append("0");
+           if(i%8==0)sb1.append(" ");
+        }
+        //long BinValReprsntn = Long.valueOf(strBinary);
+        System.out.format("%3$7s: %1$ 9d 0x%1$0" + bits/4 + "x: %2$s\n" , value, sb1.toString(), desc);
+    }
+    
+    private void getBytes(byte[] readBytes, int byteCount) throws EOFException
+    {
+        // wait until byteCount bytes are avail or we have a EOF
+        while (connectionManager.available() < byteCount) {
+            if (connectionManagerEOF) throw new EOFException("getBytes(): EOF in btmanager and partial data avail. byteCount=" + byteCount);
+            doWait(50);
+        }
+       
+        // Get 4 bytes from the buffer. Null pointer if the poll() method in btmanager.getByte() has no data. TODO verify poll() behaviour
+        for (int i=0;i<byteCount;i++) {
+            readBytes[i]=connectionManager.getByte();
+        }
+    }
+
+    
+    /**
+     * big endian
+     * @param ba The 4 byte array to convert to an int
+     * @return The integer value of the 4 bytes
+     */
+    private final int parseInt(byte[] ba) {   
+        return  (ba[0] << 24) | 
+                ((ba[1] & 0xFF) << 16) | 
+                ((ba[2] & 0xFF) << 8) | 
+                (ba[3] & 0xFF);
+    }
+    
+    private final long parseLong(byte[] ba) {   
+        return  ((long)ba[0] << 56) | 
+                ((long)(ba[1] & 0xFF) << 48) | 
+                ((long)(ba[2] & 0xFF) << 40) | 
+                ((long)(ba[3] & 0xFF) << 32) |
+                ((long)(ba[4] & 0xFF) << 24) |
+                ((ba[5] & 0xFF) << 16) | 
+                ((ba[6] & 0xFF) << 8)  | 
+                 (ba[7] & 0xFF);
+    }
+    
+    private final float parseFloat(byte[] ba) {
+       return Float.intBitsToFloat(parseInt(ba));
+    }
+    
+    private final Double parseDouble(byte[] ba) {
+       return Double.longBitsToDouble(parseLong(ba));
+    }
+    
+    private final String parseString(byte[] ba) throws EOFException{
+        byte[] tempBytes = new byte[4];
+        StringBuilder sb = new StringBuilder();
+        
+        tempBytes = ba;   
+        // get all the next bytes (chunks of 4) up until the first null (0) to make the string
+        outerloop: 
+        for(;;) {
+            for(int i=0;i<4;i++) {
+                if (tempBytes[i]==0) break outerloop;
+                sb = sb.append(new String(tempBytes, i, 1));
+            }
+            getBytes(tempBytes,4);
+        }
+        
+        return sb.toString();
+    }
+    
+}
