@@ -15,6 +15,7 @@
 		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" source="1.5" target="1.5">
 			<classpath location="build"/>
 			<classpath location="3rdparty/lib/bluecove.jar"/>
+			<classpath location="3rdparty/lib/stax-api-1.0.1.jar"/>
 		</javac>
 		<mkdir dir="lib"/>
     	<jar destfile="lib/pccomm.jar" update="false">
