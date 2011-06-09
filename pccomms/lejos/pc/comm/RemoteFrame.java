@@ -23,6 +23,10 @@ public abstract class RemoteFrame extends JPanel implements ActionListener, Mous
   // Data input and output streams for communicating with the NXT
   protected DataOutputStream dos;
   protected DataInputStream dis;
+  
+  public RemoteFrame() {
+	  
+  }
 
   /**
    * Create a frame to display the panel in
@@ -53,7 +57,7 @@ public abstract class RemoteFrame extends JPanel implements ActionListener, Mous
 
     // Connect to NXT
     this.nxtName = nxtName;
-    connect();
+    connect(nxtName);
   }
 
   /**
@@ -65,7 +69,7 @@ public abstract class RemoteFrame extends JPanel implements ActionListener, Mous
   /**
    * Connect to the NXT
    */
-  protected void connect() {
+  public void connect(String nxtName) {
     NXTConnector conn = new NXTConnector();
 
     if (!conn.connectTo(nxtName, null, NXTCommFactory.BLUETOOTH)) {
@@ -86,9 +90,6 @@ public abstract class RemoteFrame extends JPanel implements ActionListener, Mous
     System.exit(1);
   }
   
-  /**
-   * Find the closest particle to the mouse click
-   */
   public void mouseClicked(MouseEvent me) {
   }
 
