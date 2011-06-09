@@ -439,7 +439,7 @@
              author="true"
              destdir="${release.pc.docs}"
              source="1.5"
-    	     classpath="${release.3rdparty.libs}/bluecove.jar"
+    	     classpath="${release.3rdparty.libs}/bluecove.jar;${release.3rdparty.libs}/stax-api-1.0.1.jar"
              defaultexcludes="yes">
       <fileset dir="${javasrc}/pccomms">
       		<include name="lejos/**/*.java"/>
