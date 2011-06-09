@@ -298,14 +298,30 @@ public class XMLStreamReader implements XMLStreamConstants {
 		}
 	}
 	
+	/**
+	 * Test if current element has text
+	 * 
+	 * @return true iff the current element has text
+	 */
 	public boolean hasText() {
 		return (text != null && text.length() > 0);
 	}
 	
+	/**
+	 * Get the location in the document
+	 * 
+	 * @return the location in the document
+	 */
 	public Location getLocation() {
 		return new Location(line, column, pos);
 	}
 	
+	/**
+	 * Get the full text for an element, omitting comments
+	 * 
+	 * @return the text
+	 * @throws XMLStreamException
+	 */
 	public String getElementText() throws XMLStreamException {
 		if(getEventType() != XMLStreamConstants.START_ELEMENT) {
 			throw new XMLStreamException(
@@ -337,22 +353,47 @@ public class XMLStreamReader implements XMLStreamConstants {
 		return buf.toString();
     }
 	
+	/**
+	 * Test whether the current event is white space
+	 * 
+	 * @return true iff on white space
+	 */
 	public boolean isWhiteSpace() {
 		return (c == ' ');
 	}
 	
+	/**
+	 * Test whether the current event is START_DOCUMENT
+	 * 
+	 * @return true iff at start of document
+	 */
 	public boolean isStartElement() {
 		return !started;
 	}
 	
+	/**
+	 * Test whether the current event is END_DOCUMENT
+	 * 
+	 * @return true iff at the end of the document
+	 */
 	public boolean isEndElement() {
 		return eof;
 	}
 	
+	/**
+	 * Test whether the current event is CHARACTERS
+	 * 
+	 * @return true iff on a CHARACTER event
+	 */
 	public boolean isCharacters() {
 		return (event == CHARACTERS);
 	}
 	
+	/**
+	 * Get the offset of this chunk of text
+	 * 
+	 * @return the offset (always zero)
+	 */
 	public int getTextStart() {
 		return 0;
 	}
