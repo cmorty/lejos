@@ -17,6 +17,7 @@ import java.util.Vector;
  * XML event classes not supported.
  * Only ascii encoding supported.
  * Processing instructions not supported.
+ * Properties are not supported.
  * 
  * @author Lawrie Griffiths
  *
@@ -33,7 +34,7 @@ public class XMLStreamReader implements XMLStreamConstants {
 	private String text;
 	private int numAttributes = 0;
 	private char c;
-	private int line = 0, pos = 0, column = 0;;
+	private int line = 0, pos = 0, column = 0;
 	private char quote;
 	private String attrName,attrValue;
 	private boolean quoted = false;
@@ -232,7 +233,7 @@ public class XMLStreamReader implements XMLStreamConstants {
 	 * Look up an attribute value using its name
 	 * 
 	 * @param namespaceURI not used
-	 * @param localName the name of the atrribute
+	 * @param localName the name of the attribute
 	 * @return the attribute value
 	 */
 	public String getAttributeValue(String namespaceURI, String localName) {
