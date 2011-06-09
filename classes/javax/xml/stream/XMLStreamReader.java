@@ -15,7 +15,6 @@ import java.util.Vector;
  * Never gives SPACE events. White space is mainly thrown away.
  * Does not support DTDs.
  * XML event classes not supported.
- * getLocation not yet supported.
  * Only ascii encoding supported.
  * Processing instructions not supported.
  * 
