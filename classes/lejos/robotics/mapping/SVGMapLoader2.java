@@ -16,8 +16,6 @@ import lejos.geom.Line;
 import lejos.geom.Point;
 import lejos.geom.Rectangle;
 
-import org.w3c.dom.Element;
-
 public class SVGMapLoader2 {
 
 	private List mapLines;
