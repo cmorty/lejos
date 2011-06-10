@@ -11,8 +11,9 @@ NXT sample TestLogger.java located at \lejos\trunk\leJOSlab\ChartingLogger\nxt\s
 Please report anything you deem reportable to lejos@mosen.net. Comments, suggestions, constructive criticism always
 welcome.
 
-You will need JFreeCHart 1.0.13. Go to http://www.jfree.org/jfreechart/. I included the classes in the 
-ChartingLogger.jar but the download from jfree.org provides source, etc. (What a developer craves! It's got 
+Developers, you will need JFreeCHart 1.0.13 (jfreechart-1.0.13.zip) and the JCommon lib (jcommon-1.0.16.zip). These files are
+in the same directory as this file. Go to http://www.jfree.org/jfreechart/ for information. I included the classes in the 
+ChartingLogger.jar but the zip files provide source, etc. as per the LGPL. (What a developer craves! It's got 
 electrolytes!)
 
 Chart management:
