@@ -1,7 +1,9 @@
 package lejos.robotics.mapping;
 
 import lejos.geom.*;
+
 import java.io.*;
+
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.navigation.Pose;
 
@@ -131,8 +133,34 @@ public class LineMap implements RangeMap {
       boundingRect = new Rectangle(dis.readFloat(),dis.readFloat(),dis.readFloat(),dis.readFloat());
   }
   
+  /**
+   * Get the lines as an array
+   * 
+   * @return the lines as an array
+   */
   public Line[] getLines() {
 	  return lines;
+  }
+  
+  /**
+   * Create an SVG map file
+   * 
+   * @param fileName the name of the file to create or overwrite
+   * @throws IOException
+   */
+  public void createSVGFile(String fileName) throws IOException {
+    File mapFile = new File(fileName);
+    FileOutputStream fos = new FileOutputStream(mapFile);
+    PrintStream ps = new PrintStream(fos);
+    ps.println("<svg width=\"" + boundingRect.width + "\" height=\"" + boundingRect.height + "\" xmlns=\"http://www.w3.org/2000/svg\">");
+    ps.println("<g>");
+    for(int i=0;i<lines.length;i++) {
+      ps.println("<line stroke=\"#000000\" x1=\"" + lines[i].x1 + "\" y1=\"" + lines[i].y1 + "\" x2=\"" + lines[i].x2 + "\" y2=\"" + lines[i].y2 + "\"/>");
+    }
+    ps.println("</g>");
+    ps.println("</svg>");
+    ps.close();
+    fos.close();
   }
 }
 
