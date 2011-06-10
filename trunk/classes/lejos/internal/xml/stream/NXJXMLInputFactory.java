@@ -1,6 +1,11 @@
-package javax.xml.stream;
+package lejos.internal.xml.stream;
 
 import java.io.InputStream;
+
+import javax.xml.stream.StreamFilter;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * A leJOS NXJ implementation of XMLInputFactory. 

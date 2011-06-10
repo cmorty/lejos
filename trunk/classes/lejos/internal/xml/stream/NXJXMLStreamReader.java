@@ -1,11 +1,18 @@
-package javax.xml.stream;
+package lejos.internal.xml.stream;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
+import javax.xml.stream.Location;
+import javax.xml.stream.StreamFilter;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 
 /**
  * Simple subset implementation of Stax parser.
@@ -485,10 +492,6 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 		return 0;
 	}
 	
-	public String getNamespacePrefix() {
-		return null;
-	}
-	
 	public String getNamespaceURI() {
 		return null;
 	}
@@ -501,11 +504,48 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 		return null;
 	}
 	
-	public String gePIData() {
+	public String getPIData() {
 		return null;
 	}
 	
 	public String getPITarget() {
 		return null;
+	}
+
+	public boolean isAttributeSpecified(int index) {
+		return false;
+	}
+
+	public String getNamespacePrefix(int index) {
+		return null;
+	}
+
+	public NamespaceContext getNamespaceContext() {
+		return null;
+	}
+
+	public int getTextCharacters(int sourceStart, char[] target,
+			int targetStart, int length) throws XMLStreamException {
+		return 0;
+	}
+
+	public boolean hasName() {
+		return false;
+	}
+
+	public String getPrefix() {
+		return null;
+	}
+
+	public String getVersion() {
+		return null;
+	}
+
+	public boolean isStandalone() {
+		return false;
+	}
+
+	public boolean standaloneSet() {
+		return false;
 	}
 }

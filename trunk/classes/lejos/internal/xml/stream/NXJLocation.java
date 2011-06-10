@@ -1,4 +1,6 @@
-package javax.xml.stream;
+package lejos.internal.xml.stream;
+
+import javax.xml.stream.Location;
 
 public class NXJLocation implements Location {
 	private int line, column, pos;

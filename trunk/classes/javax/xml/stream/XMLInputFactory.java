@@ -2,6 +2,8 @@ package javax.xml.stream;
 
 import java.io.InputStream;
 
+import lejos.internal.xml.stream.NXJXMLInputFactory;
+
 public abstract class XMLInputFactory {
 	public static XMLInputFactory newInstance() {
 		return new NXJXMLInputFactory();
