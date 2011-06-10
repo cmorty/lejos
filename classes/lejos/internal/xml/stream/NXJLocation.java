@@ -22,4 +22,12 @@ public class NXJLocation implements Location {
 	public int getLineNumber() {
 		return line;
 	}
+
+	public String getPublicId() {
+		return null;
+	}
+
+	public String getSystemId() {
+		return null;
+	}
 }
