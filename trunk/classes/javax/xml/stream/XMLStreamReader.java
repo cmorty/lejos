@@ -2,22 +2,30 @@ package javax.xml.stream;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
 
 /**
  * Simple subset implementation of Stax parser.
  * Does not deal with namespaces.
  * QName not supported.
  * Has very little error checking.
- * Only supports CDATA attributes.
+ * Embedded CDATA not supported.
+ * Only supports attributes of type CDATA.
  * Does not currently respect class, abstract class and interface distinctions.
  * Never gives SPACE events. White space is mainly thrown away.
  * Does not support DTDs.
+ * XML event streams are not supported (only the cursor API).
+ * Event allocators and consumers not supported.
  * XML event classes not supported.
  * Only ascii encoding supported.
  * Processing instructions not supported.
  * Properties are not supported.
+ * Filter semantics are not correct.
+ * XML writing is not supported.
+ * Resolving not supported.
+ * Reporting not supported.
+ * getVersion not supported.
  * 
  * @author Lawrie Griffiths
  *
@@ -28,8 +36,8 @@ public class XMLStreamReader implements XMLStreamConstants {
 	private String localName;
 	private int event;
 	private Hashtable<String, String> attributes = new Hashtable<String,String>();
-	private Vector<String> attrNames = new Vector<String>();
-	private Vector<String> attrValues = new Vector<String>();
+	private ArrayList<String> attrNames = new ArrayList<String>();
+	private ArrayList<String> attrValues = new ArrayList<String>();
 	private boolean started = false , ended = false;
 	private String text;
 	private int numAttributes = 0;
@@ -39,6 +47,7 @@ public class XMLStreamReader implements XMLStreamConstants {
 	private String attrName,attrValue;
 	private boolean quoted = false;
 	private String version;
+	private StreamFilter filter = null;
 	
 	public XMLStreamReader(InputStream stream) {
 		in = stream;
@@ -73,23 +82,41 @@ public class XMLStreamReader implements XMLStreamConstants {
 	 * 
 	 * @return the event
 	 */
-	public int next() {
+	public int next() throws XMLStreamException {
+		if (filter == null) return unfilteredNext();
+		
+		while(true) {
+			int e = unfilteredNext();
+			if (filter.accept(this)) return e;
+		}
+	}
+	
+	/**
+	 * Read the next token from the input stream and return the corresponding event.
+	 * 
+	 * @return the event
+	 */
+	private int unfilteredNext() throws XMLStreamException {
 		StringBuffer s = new StringBuffer();
+		text = null;
+		localName = null;
 		
 		// Generate START_DOCUMENT event at the start of the document
 		if (!started) {
 			started = true;
 			c = getChar();
-			return START_DOCUMENT;
+			event = START_DOCUMENT;
+			return event;
 		}
 		
 		// Generate END_DOCUMENT event at the end of the document
 		if (eof) {
 			if (!ended) {
 				ended = true;
-				return END_DOCUMENT;
+				event = END_DOCUMENT;
+				return event;
 			}
-			return 0;
+			throw new XMLStreamException("Read past end of document");
 		}
 		
 		// Empty tag (start + end)
@@ -102,8 +129,8 @@ public class XMLStreamReader implements XMLStreamConstants {
 		// Tag
 		if (c == '<') {
 			attributes = new Hashtable<String,String>();
-			attrNames = new Vector<String>();
-			attrValues = new Vector<String>();
+			attrNames = new ArrayList<String>();
+			attrValues = new ArrayList<String>();
 			numAttributes = 0;
 			event = START_ELEMENT;
 			
@@ -125,7 +152,9 @@ public class XMLStreamReader implements XMLStreamConstants {
 				s.delete(s.length()-2,s.length()); // remove --
 				text = s.toString();
 				c = getChar();
-				return COMMENT;
+				event = COMMENT;
+				
+				return event;
 			}
 			
 			while (!eof) {
@@ -149,8 +178,8 @@ public class XMLStreamReader implements XMLStreamConstants {
 					s = new StringBuffer();
 					if (!attrName.equals("xmlns")) {
 						attributes.put(attrName, attrValue);
-						attrNames.addElement(attrName);
-						attrValues.addElement(attrValue);
+						attrNames.add(attrName);
+						attrValues.add(attrValue);
 						numAttributes++;
 					}
 				} else {
@@ -170,8 +199,9 @@ public class XMLStreamReader implements XMLStreamConstants {
 			c = getChar();
 		}
 		text = s.toString();
-
-		return CHARACTERS;
+		event = CHARACTERS;
+		
+		return event;
 	}
 	
 	/**
@@ -197,6 +227,7 @@ public class XMLStreamReader implements XMLStreamConstants {
 	 * @return the local name
 	 */
 	public String getLocalName() {
+		if (event != START_ELEMENT && event != END_ELEMENT) throw new IllegalStateException();
 		return localName;
 	}
 	
@@ -207,6 +238,7 @@ public class XMLStreamReader implements XMLStreamConstants {
 	 * @return the text
 	 */
 	public String getText() {
+		if (event != CHARACTERS && event != COMMENT) throw new IllegalStateException();
 		return text;
 	}
 	
@@ -216,6 +248,7 @@ public class XMLStreamReader implements XMLStreamConstants {
 	 * @return the attribute count
 	 */
 	public int getAttributeCount() {
+		if (event != START_ELEMENT) throw new IllegalStateException();
 		return numAttributes;
 	}
 	
@@ -226,7 +259,8 @@ public class XMLStreamReader implements XMLStreamConstants {
 	 * @return the local name
 	 */
 	public String getAttributeLocalName(int index) {
-		return attrNames.elementAt(index);
+		if (event != START_ELEMENT) throw new IllegalStateException();
+		return attrNames.get(index);
 	}
 	
 	/**
@@ -237,6 +271,7 @@ public class XMLStreamReader implements XMLStreamConstants {
 	 * @return the attribute value
 	 */
 	public String getAttributeValue(String namespaceURI, String localName) {
+		if (event != START_ELEMENT) throw new IllegalStateException();
 		return attributes.get(localName);
 	}
 	
@@ -247,7 +282,8 @@ public class XMLStreamReader implements XMLStreamConstants {
 	 * @return the attribute value
 	 */
 	public String getAttributeValue(int index) {
-		return attrValues.elementAt(index);
+		if (event != START_ELEMENT) throw new IllegalStateException();
+		return attrValues.get(index);
 	}
 	
 	/**
@@ -257,6 +293,7 @@ public class XMLStreamReader implements XMLStreamConstants {
 	 * @return the attribute type
 	 */
 	public String getAttributeType(int index) {
+		if (event != START_ELEMENT) throw new IllegalStateException();
 		return "CDATA";
 	}
 	
@@ -275,6 +312,7 @@ public class XMLStreamReader implements XMLStreamConstants {
 	 * @return the text length
 	 */
 	public int getTextLength() {
+		if (event != CHARACTERS && event != COMMENT) throw new IllegalStateException();
 		return text.length();
 	}
 	
@@ -284,6 +322,7 @@ public class XMLStreamReader implements XMLStreamConstants {
 	 * @return the text as a character array
 	 */
 	public char[] getTextCharacters() {
+		if (event != CHARACTERS && event != COMMENT) throw new IllegalStateException();
 		return text.toCharArray();
 	}
 	
@@ -292,7 +331,7 @@ public class XMLStreamReader implements XMLStreamConstants {
 	 * 
 	 * @return the tag event
 	 */
-	public int nextTag() {
+	public int nextTag() throws XMLStreamException {
 		while (true) {
 			int e = next();
 			if (e == START_ELEMENT || e == END_ELEMENT) return e;
@@ -341,7 +380,7 @@ public class XMLStreamReader implements XMLStreamConstants {
 				// skipping
 			} else if(eventType == XMLStreamConstants.END_DOCUMENT) {
 			 throw new XMLStreamException(
-					 "unexpected end of document when reading element text content", this);
+					 "unexpected end of document when reading element text content");
 			} else if(eventType == XMLStreamConstants.START_ELEMENT) {
 			 throw new XMLStreamException(
 					 "element text content may not contain START_ELEMENT", getLocation());
@@ -397,5 +436,13 @@ public class XMLStreamReader implements XMLStreamConstants {
 	 */
 	public int getTextStart() {
 		return 0;
+	}
+	
+	public InputStream getInputStream() {
+		return in;
+	}
+	
+	public void setFilter(StreamFilter filter) {
+		this.filter = filter;
 	}
 }
