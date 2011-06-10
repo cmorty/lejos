@@ -21,9 +21,10 @@ public class NXTConnector extends NXTCommLoggable
 	private boolean debugOn = false;
     
 	/**
-	 * Connect to any NXT over any protocol in PACKET mode
+	 * Connect to any NXT over any protocol in <code>NXTComm.PACKET</code> mode
 	 * 
-	 * @return 0 true iff the open succeeded
+	 * @return <code>true</code> if the connection succeeded
+     * @see NXTComm#PACKET
 	 */
     public boolean connectTo() {
     	return connectTo(null, null, NXTCommFactory.ALL_PROTOCOLS, NXTComm.PACKET);
@@ -31,9 +32,10 @@ public class NXTConnector extends NXTCommLoggable
     
 	/**
 	 * Connect to any NXT over any protocol specifying mode
-	 * @param mode the NXTComm mode (PACKET, LCP, or RAW)
+	 * @param mode the NXTComm mode (<code>{@link NXTComm#PACKET}</code>, <code>{@link NXTComm#LCP}</code>, or 
+     * <code>{@link NXTComm#RAW}</code>)
 	 * 
-	 * @return 0 true iff the open succeeded
+	 * @return <code>true</code> if the connection succeeded
 	 */
     public boolean connectTo(int mode) {
     	return connectTo(null, null, NXTCommFactory.ALL_PROTOCOLS, mode);
@@ -42,22 +44,23 @@ public class NXTConnector extends NXTCommLoggable
     /**
      * Connect to a specified NXT in packet mode
      * 
-     * @param nxt the name of the NXT to connect to or null for any
-     * @param addr the address of the NXT to connect to or null
-     * @param protocols the protocols to use
-     * @return true iff the open succeeded
+     * @param nxt the name of the NXT to connect to or <code>null</code> for any
+     * @param addr the address of the NXT to connect to or <code>null</code>
+     * @param protocols the protocols to use: <code>{@link NXTCommFactory#ALL_PROTOCOLS}</code>,
+     * <code>{@link NXTCommFactory#BLUETOOTH}</code>, or <code>{@link NXTCommFactory#USB}</code>
+     * @return <code>true</code> if the connection succeeded
      */
     public boolean connectTo(String nxt, String addr, int protocols) {
     	return connectTo(nxt, addr, protocols, NXTComm.PACKET);
     }
-    
     /**
-     * Search for a NXT
+     * Search for one or more NXTs and return an array of <code>NXTInfo</code> instances for those found.
      * 
-     * @param nxt the name of the NXT to connect to or null for any
-     * @param addr the address of the NXT to connect to or null 
-     * @param protocols the protocols to use
-     * @return 0 if opened successfully, -1 if failed, 1 if there is a list to choose from
+     * @param nxt the name of the NXT to connect to or <code>null</code> for any
+     * @param addr the address of the NXT to connect to or <code>null</code> 
+     * @param protocols the protocols to use: <code>{@link NXTCommFactory#ALL_PROTOCOLS}</code>,
+     * <code>{@link NXTCommFactory#BLUETOOTH}</code>, or <code>{@link NXTCommFactory#USB}</code>
+     * @return an array of <code>NXTInfo</code> instances for found NXTs
      */
 	public NXTInfo[] search(String nxt, String addr, int protocols)
 	{
@@ -202,10 +205,13 @@ public class NXTConnector extends NXTCommLoggable
     /**
      * Connect to a NXT
      * 
-     * @param nxt the name of the NXT to connect to or null for any
-     * @param addr the address of the NXT to connect to or null 
-     * @param protocols the protocols to use
-     * @return 0 if opened successfully, -1 if failed, 1 if there is a list to choose from
+     * @param nxt the name of the NXT to connect to or <code>null</code> for any
+     * @param addr the address of the NXT to connect to or <code>null</code> 
+     * @param protocols the protocols to use: <code> {@link NXTCommFactory#ALL_PROTOCOLS}</code>,
+     * <code> {@link NXTCommFactory#BLUETOOTH}</code>, or <code> {@link NXTCommFactory#USB}</code>
+     * @param mode the NXTComm mode (<code>{@link NXTComm#PACKET}</code>, <code>{@link NXTComm#LCP}</code>, or 
+     * <code>{@link NXTComm#RAW}</code>)
+     * @return <code>true</code> if the connection succeeded
      */
 	public boolean connectTo(String nxt, String addr, int protocols, int mode)
 	{
@@ -248,10 +254,10 @@ public class NXTConnector extends NXTCommLoggable
 	}
 	
 	/**
-	 * Connect to a NXT using a NXTInfo
+	 * Connect to a NXT using a <code>NXTInfo</code> instance
 	 * @param nxtInfo
 	 * @param mode
-	 * @return true iff the connection succeeded
+	 * @return <code>true</code> if the connection succeeded
 	 */
 	public boolean connectTo(NXTInfo nxtInfo, int mode) {
 		this.nxtInfo = nxtInfo;
@@ -294,9 +300,10 @@ public class NXTConnector extends NXTCommLoggable
 
 	/**
 	 * Connect to a device by URL
-	 * @param deviceURL
-	 * @param mode the mode (NXTComm.LCP or NXTComm.PACKET)
-	 * @return true iff the connection succeeded
+	 * @param deviceURL i.e. <code>btspp://[name], usb://[name]</code>
+	 * @param mode the mode (<code>{@link NXTComm#PACKET}</code>, <code>{@link NXTComm#LCP}</code>, or 
+     * <code>{@link NXTComm#RAW}</code>)
+	 * @return <code>true</code> if the connection succeeded
 	 */
 	public boolean connectTo(String deviceURL, int mode) {
 		String protocolString = "";
@@ -333,9 +340,10 @@ public class NXTConnector extends NXTCommLoggable
 	}
 	
 	/**
-	 * Connect to a device by URL in packet mode
-	 * @param deviceURL
-	 * @return true iff the connection succeeded
+	 * Connect to a device by URL in <code>NXTComm.PACKET</code> mode
+	 * @param deviceURL i.e. <code>btspp://[name], usb://[name]</code>
+	 * @return <code>true</code> if the connection succeeded
+     * @see NXTComm#PACKET
 	 */
 	public boolean connectTo(String deviceURL) {
 		return connectTo(deviceURL, NXTComm.PACKET);
@@ -349,37 +357,37 @@ public class NXTConnector extends NXTCommLoggable
 	}
 
 	/**
-	 * @return the InputStream for this connection;
+	 * @return the <code>InputStream</code> for this connection;
 	 */
 	public InputStream getInputStream() {return is;}
     
 	/**
-	 * @return the DataInputStream for this connection;
+	 * @return the <code>DataInputStream</code> for this connection;
 	 */
 	public DataInputStream getDataIn() {return dataIn;}
 
 	/**
-	 * @return the OutputSteram for this connection;
+	 * @return the <code>OutputStream</code> for this connection;
 	 */
 	public OutputStream getOutputStream() {return os;}
  
 	/**
-	 * @return the DataOutputStream for this connection
+	 * @return the <code>DataOutputStream</code> for this connection
 	 */
 	public DataOutputStream getDataOut() {return dataOut;}
 
 	/**
-	 * @return the NXTInfo for this connection
+	 * @return the <code>NXTInfo</code> for this connection
 	 */   
 	public  NXTInfo getNXTInfo () {return nxtInfo;}
 	
 	/**
-	 * @return the array of NXTInfos for this connection
+	 * @return the array of <code>NXTInfo</code>s for this connection
 	 */   
 	public  NXTInfo[] getNXTInfos () {return nxtInfos;}
 	
 	/**
-	 * @return the NXTComm for this connection
+	 * @return the <code>NXTComm</code> for this connection
 	 */   
 	public  NXTComm getNXTComm () {return nxtComm;}
 	
@@ -399,7 +407,7 @@ public class NXTConnector extends NXTCommLoggable
 	/**
 	 * Set debugging on or off
 	 * 
-	 * @param debug true for on, false for off
+	 * @param debug <code>true</code> for on, <code>false</code> for off
 	 */
 	public void setDebug(boolean debug) {
 		debugOn = debug;
