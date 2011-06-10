@@ -1,4 +1,4 @@
-package javax.xml.stream;
+package javax.xml.namespace;
 
 public class QName {
 	private String localName;
