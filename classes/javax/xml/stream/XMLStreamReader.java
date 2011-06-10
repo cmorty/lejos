@@ -8,7 +8,7 @@ import java.util.Hashtable;
 /**
  * Simple subset implementation of Stax parser.
  * Does not deal with namespaces.
- * QName not supported.
+ * QName not fully supported.
  * Has very little error checking.
  * Embedded CDATA not supported.
  * Only supports attributes of type CDATA.
@@ -444,5 +444,67 @@ public class XMLStreamReader implements XMLStreamConstants {
 	
 	public void setFilter(StreamFilter filter) {
 		this.filter = filter;
+	}
+	
+	public void require(int type, String namespaceURI, String localName) throws XMLStreamException {
+		if (type != event || (localName != null && !this.localName.equals(localName))) {
+			throw new XMLStreamException(localName + " required");
+		}
+	}
+	
+	public String getAttributeNamespace(int index) {
+		return null;
+	}
+	
+	public Object getProperty(String name) {
+		return null;
+	}
+	
+	public String getAttributePrefix(int index) {
+		return null;
+	}
+	
+	public QName getAttributeName(int index) {
+		return new QName(attrNames.get(index));
+	}
+	
+	public String getCharacterEncodingScheme() {
+		return null;
+	}
+	
+	public String getEncoding() {
+		return null;
+	}
+	
+	public QName getName() {
+		return new QName(localName);
+	}
+	
+	public int getNamespaceCount() {
+		return 0;
+	}
+	
+	public String getNamespacePrefix() {
+		return null;
+	}
+	
+	public String getNamespaceURI() {
+		return null;
+	}
+	
+	public String getNamespaceURI(int index) {
+		return null;
+	}
+	
+	public String getNamespaceURI(String prefix) {
+		return null;
+	}
+	
+	public String gePIData() {
+		return null;
+	}
+	
+	public String getPITarget() {
+		return null;
 	}
 }
