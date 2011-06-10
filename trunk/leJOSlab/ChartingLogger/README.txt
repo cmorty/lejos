@@ -19,9 +19,10 @@ electrolytes!)
 Chart management:
 Zoom extents: Doubleclick or click-drag to left, and/or up
 Zoom window: CLick-drag (to right and down) release
+Zoom dynamic: Use mouse wheel
 Slider changes domain scale dynamically from 0.1 to 100% of (domain) X dataset extents/range
 Tootip: Hover over data point and series name, x-y val is shown
-left-click moves crosshair to nearest x-y datapoint. Displays coordinate in lower rigth of chart
+left-click moves crosshair to nearest x-y datapoint. Displays coordinate in lower right of chart
 
 -Kirk Thompson
 lejos@mosen.net
@@ -31,3 +32,4 @@ TODO
 -------------------
 Add LGPL license and attribution to Dave Gilbert (Thanks for such a great lib, Dave!) in the frame
 Javadoc
+add multi-range axis support
