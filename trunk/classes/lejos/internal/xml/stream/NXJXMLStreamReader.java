@@ -18,7 +18,6 @@ import javax.xml.stream.XMLStreamReader;
  * Simple subset implementation of Stax parser.
  * Does not fully support namespaces and prefixes.
  * QName not fully supported.
- * Has very little error checking.
  * Embedded CDATA not supported.
  * Only supports attributes of type CDATA.
  * Never gives SPACE events. White space is mainly thrown away.
@@ -29,11 +28,12 @@ import javax.xml.stream.XMLStreamReader;
  * Only ascii encoding supported.
  * Processing instructions not supported.
  * Properties are not supported.
- * Filter semantics are not correct.
+ * Filter semantics are not correct, but should work in most cases.
  * XML writing is not supported.
  * Resolving not supported.
  * Reporting not supported.
- * getVersion not supported.
+ * Comments not parsed correctly (if they contain '>')
+ * Not much validity checking of the XML.
  * 
  * @author Lawrie Griffiths
  *
@@ -50,19 +50,26 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 	private String text;
 	private int numAttributes = 0;
 	private char c;
-	private int line = 0, pos = 0, column = 0;
+	private int line = 1, pos = 0, column = 0;
 	private char quote;
 	private String attrName,attrValue;
 	private boolean quoted = false;
 	private String version;
 	private StreamFilter filter = null;
 	private String namespaceURI;
-	String prefix;
+	private String prefix;
 	private Hashtable<String,String> nameSpaces = new Hashtable<String,String>();
-	int namespaceCount;
+	private int namespaceCount;
+	private String encoding;
+	private boolean gotTag = false;
+	private int tag;
 	
-	public NXJXMLStreamReader(InputStream stream) {
+	public NXJXMLStreamReader(InputStream stream) throws XMLStreamException {
 		in = stream;
+		c = getChar();
+		tag = unfilteredNext(); // Read ?xml
+		if (tag != 0) gotTag = true; // No ?xml, so we have read ahead
+		event = START_DOCUMENT;
 	}
 	
 	private char getChar() {
@@ -109,19 +116,19 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 	 * @return the event
 	 */
 	private int unfilteredNext() throws XMLStreamException {
+		
+		if (gotTag) {
+			gotTag = false;
+			event = tag;
+			return event;
+		}
+		
 		StringBuffer s = new StringBuffer();
 		text = null;
 		localName = null;
 		namespaceCount = 0;
-		
-		// Generate START_DOCUMENT event at the start of the document
-		if (!started) {
-			started = true;
-			c = getChar();
-			event = START_DOCUMENT;
-			return event;
-		}
-		
+		char lastC = 0;
+			
 		// Generate END_DOCUMENT event at the end of the document
 		if (eof) {
 			if (!ended) {
@@ -152,16 +159,14 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 				c = getChar();
 			}
 			
-			if (c == '?') { // ?xml tag
-				while (!eof && (c = getChar()) != '<'); // Skip <?xml
-				c = getChar();
-			}
-			
 			if (c == '!') { // Comment
-				getChar();getChar(); //Skip --
+				char c1 = getChar();
+				char c2 = getChar();
+				if (c1 != '-' || c2 != '-') throw new XMLStreamException("Comment must start with <--");
 				while (!eof && (c = getChar()) != '>') {
 					s.append(c);
 				}
+				if (eof) throw new XMLStreamException("eof reached while processing a comment");
 				s.delete(s.length()-2,s.length()); // remove --
 				text = s.toString();
 				c = getChar();
@@ -171,10 +176,13 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 			}
 			
 			while (!eof) {
-				if ((c == '>' || c == '/') && !quoted) {
+				lastC = c;
+				
+				if ((c == '>' || c == '/') && !quoted) { // end of tag
 					c = getChar();
 					break;
 				}
+				
 				if (c == ' ' && !quoted) {
 					if (numAttributes == 0) {
 						localName = s.toString();
@@ -210,12 +218,19 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 				}
 				c = getChar();
 			}
+			if (eof && lastC != '>') throw new XMLStreamException("Eof reached while reading tag");
 			
 			if (numAttributes == 0) localName = s.toString();
 			int colon = localName.indexOf(':');
 			if (colon > 0) {
 				prefix = localName.substring(0,colon);
 				localName = localName.substring(colon+1);
+			}
+			
+			if (localName.equals("?xml")) {
+				version = attributes.get("version");
+				encoding = attributes.get("encoding");
+				return 0; // Special return for XML version
 			}
 			return event;
 		} 		
@@ -226,6 +241,7 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 			s.append(c);
 			c = getChar();
 		}
+		if (eof) throw new XMLStreamException("Eof reached while reading text");
 		text = s.toString();
 		event = CHARACTERS;
 		
@@ -497,11 +513,11 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 	}
 	
 	public String getCharacterEncodingScheme() {
-		return null;
+		return encoding;
 	}
 	
 	public String getEncoding() {
-		return null;
+		return encoding;
 	}
 	
 	public QName getName() {
@@ -558,7 +574,7 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 	}
 
 	public String getVersion() {
-		return null;
+		return version;
 	}
 
 	public boolean isStandalone() {
