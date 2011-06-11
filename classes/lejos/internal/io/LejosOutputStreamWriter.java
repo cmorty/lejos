@@ -1,11 +1,11 @@
-package lejos.io;
+package lejos.internal.io;
 
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
-import lejos.charset.CharsetEncoder;
+import lejos.internal.charset.CharsetEncoder;
 
 /**
  * Abstract Single Byte Character Set OutputStream Writer.

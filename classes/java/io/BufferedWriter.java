@@ -1,7 +1,7 @@
 package java.io;
 
-import lejos.charset.Latin1Encoder;
-import lejos.io.LejosOutputStreamWriter;
+import lejos.internal.charset.Latin1Encoder;
+import lejos.internal.io.LejosOutputStreamWriter;
 
 /**
  * NOTE: Text writing is not synchronized either like standard Java.

@@ -1,9 +1,9 @@
 package java.io;
 
-import lejos.charset.CharsetEncoder;
-import lejos.charset.Latin1Encoder;
-import lejos.charset.UTF8Encoder;
-import lejos.io.LejosOutputStreamWriter;
+import lejos.internal.charset.CharsetEncoder;
+import lejos.internal.charset.Latin1Encoder;
+import lejos.internal.charset.UTF8Encoder;
+import lejos.internal.io.LejosOutputStreamWriter;
 
 public class OutputStreamWriter extends LejosOutputStreamWriter
 {
