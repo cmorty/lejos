@@ -16,7 +16,7 @@ import javax.xml.stream.XMLStreamReader;
 
 /**
  * Simple subset implementation of Stax parser.
- * Does not deal with namespaces.
+ * Does not fully support namespaces and prefixes.
  * QName not fully supported.
  * Has very little error checking.
  * Embedded CDATA not supported.
@@ -56,6 +56,10 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 	private boolean quoted = false;
 	private String version;
 	private StreamFilter filter = null;
+	private String namespaceURI;
+	String prefix;
+	private Hashtable<String,String> nameSpaces = new Hashtable<String,String>();
+	int namespaceCount;
 	
 	public NXJXMLStreamReader(InputStream stream) {
 		in = stream;
@@ -108,6 +112,7 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 		StringBuffer s = new StringBuffer();
 		text = null;
 		localName = null;
+		namespaceCount = 0;
 		
 		// Generate START_DOCUMENT event at the start of the document
 		if (!started) {
@@ -184,11 +189,21 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 					quoted = false;
 					attrValue = s.toString();
 					s = new StringBuffer();
-					if (!attrName.equals("xmlns")) {
+					if (!attrName.startsWith("xmlns")) {
 						attributes.put(attrName, attrValue);
 						attrNames.add(attrName);
 						attrValues.add(attrValue);
 						numAttributes++;
+					} else {
+						String namespace = attrValue;
+						int colon = attrName.indexOf(':');
+						
+						if (colon < 0) {
+							namespaceURI = namespace;
+						} else {
+							nameSpaces.put(attrName.substring(colon+1), namespace);
+						}
+						namespaceCount++;
 					}
 				} else {
 					s.append(c);
@@ -197,6 +212,11 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 			}
 			
 			if (numAttributes == 0) localName = s.toString();
+			int colon = localName.indexOf(':');
+			if (colon > 0) {
+				prefix = localName.substring(0,colon);
+				localName = localName.substring(colon+1);
+			}
 			return event;
 		} 		
 		
@@ -489,11 +509,11 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 	}
 	
 	public int getNamespaceCount() {
-		return 0;
+		return namespaceCount;
 	}
 	
 	public String getNamespaceURI() {
-		return null;
+		return namespaceURI;
 	}
 	
 	public String getNamespaceURI(int index) {
@@ -501,7 +521,7 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 	}
 	
 	public String getNamespaceURI(String prefix) {
-		return null;
+		return nameSpaces.get(prefix);
 	}
 	
 	public String getPIData() {
@@ -530,11 +550,11 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 	}
 
 	public boolean hasName() {
-		return false;
+		return localName != null;
 	}
 
 	public String getPrefix() {
-		return null;
+		return prefix;
 	}
 
 	public String getVersion() {
