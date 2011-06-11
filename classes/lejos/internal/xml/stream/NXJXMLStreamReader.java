@@ -128,6 +128,7 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 		localName = null;
 		namespaceCount = 0;
 		char lastC = 0;
+		boolean gotLocalName = false;
 			
 		// Generate END_DOCUMENT event at the end of the document
 		if (eof) {
@@ -184,9 +185,10 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 				}
 				
 				if (c == ' ' && !quoted) {
-					if (numAttributes == 0) {
+					if (!gotLocalName) {
 						localName = s.toString();
 						s = new StringBuffer();
+						gotLocalName = true;
 					}
 				} else if (c == '=' && !quoted) {
 					attrName = s.toString();
@@ -220,7 +222,7 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 			}
 			if (eof && lastC != '>') throw new XMLStreamException("Eof reached while reading tag");
 			
-			if (numAttributes == 0) localName = s.toString();
+			if (!gotLocalName) localName = s.toString();
 			int colon = localName.indexOf(':');
 			if (colon > 0) {
 				prefix = localName.substring(0,colon);
@@ -241,7 +243,6 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 			s.append(c);
 			c = getChar();
 		}
-		if (eof) throw new XMLStreamException("Eof reached while reading text");
 		text = s.toString();
 		event = CHARACTERS;
 		
