@@ -1,4 +1,4 @@
-package lejos.pc.comm;
+package lejos.pc.remote;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,7 +11,7 @@ import lejos.geom.Rectangle;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.Pose;
 
-public class MapPanel extends RemoteFrame {
+public class MapPanel extends RemotePanel {
 	private static final long serialVersionUID = 1L;
 	protected LineMap map;
 	protected Line[] lines;
@@ -53,29 +53,29 @@ public class MapPanel extends RemoteFrame {
 		paintMap((Graphics2D) g);		
 	}
 	
-	  /**
-	   * Paint the pose using Ellipse2D
-	   * 
-	   * @param g2d the Graphics2D object
-	   */
-	  public void paintPose(Graphics2D g2d, Pose pose) {
-	    Ellipse2D c = new Ellipse2D.Float(xOffset + pose.getX() * pixelsPerUnit - 1, yOffset + pose.getY() * pixelsPerUnit - 1, 2, 2);
-	    Line rl = getArrowLine(pose);
-	    Line2D l2d = new Line2D.Float(rl.x1, rl.y1, rl.x2, rl.y2);
-	    g2d.draw(l2d);
-	    g2d.draw(c);
-	  }
-	  
-	  /**
-	   * Create a Line that represents the direction of the pose
-	   * 
-	   * @param pose the pose
-	   * @return the arrow line
-	   */
-	  private Line getArrowLine(Pose pose) {
-	    return new Line(xOffset + pose.getX() * pixelsPerUnit,
-	    		        yOffset + pose.getY() * pixelsPerUnit, 
-	    		        xOffset + pose.getX() * pixelsPerUnit + ARROW_LENGTH * (float) Math.cos(Math.toRadians(pose.getHeading())), 
-	    		        yOffset + pose.getY() * pixelsPerUnit + ARROW_LENGTH * (float) Math.sin(Math.toRadians(pose.getHeading())));
-	  }
+	/**
+	 * Paint the pose using Ellipse2D
+	 * 
+	 * @param g2d the Graphics2D object
+	 */
+	public void paintPose(Graphics2D g2d, Pose pose) {
+		Ellipse2D c = new Ellipse2D.Float(xOffset + pose.getX() * pixelsPerUnit - 1, yOffset + pose.getY() * pixelsPerUnit - 1, 2, 2);
+		Line rl = getArrowLine(pose);
+		Line2D l2d = new Line2D.Float(rl.x1, rl.y1, rl.x2, rl.y2);
+		g2d.draw(l2d);
+		g2d.draw(c);
+	}
+  
+	/**
+	 * Create a Line that represents the direction of the pose
+	 * 
+	 * @param pose the pose
+	 * @return the arrow line
+	 */
+	private Line getArrowLine(Pose pose) {
+		return new Line(xOffset + pose.getX() * pixelsPerUnit,
+    		        yOffset + pose.getY() * pixelsPerUnit, 
+    		        xOffset + pose.getX() * pixelsPerUnit + ARROW_LENGTH * (float) Math.cos(Math.toRadians(pose.getHeading())), 
+    		        yOffset + pose.getY() * pixelsPerUnit + ARROW_LENGTH * (float) Math.sin(Math.toRadians(pose.getHeading())));
+	}
 }

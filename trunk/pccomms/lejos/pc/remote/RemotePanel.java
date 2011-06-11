@@ -1,31 +1,31 @@
-package lejos.pc.comm;
+package lejos.pc.remote;
 
 import javax.swing.*;
-
 import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
+import java.util.ArrayList;
+import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTConnector;
 
 /**
  * This class is useful for creating a PC GUI Application that connects to the NXT
  * and exchanges data with it using Java streams.
  * 
- * 
  * @author Lawrie Griffiths
  *
  */
-public abstract class RemoteFrame extends JPanel implements ActionListener, MouseListener {
+public abstract class RemotePanel extends JPanel implements ActionListener, MouseListener {
   private static final long serialVersionUID = 1L;
-
-  // The name of the NXT to connect to
-  protected String nxtName;
+  
+  private ArrayList<CommandButton> buttons = new ArrayList<CommandButton>();
+  private JPanel buttonPanel = new JPanel();
 
   // Data input and output streams for communicating with the NXT
   protected DataOutputStream dos;
   protected DataInputStream dis;
   
-  public RemoteFrame() {
-	  
+  public RemotePanel() {
   }
 
   /**
@@ -46,25 +46,6 @@ public abstract class RemoteFrame extends JPanel implements ActionListener, Mous
     frame.setVisible(true);
     return (frame);
   }
-
-  /**
-   * Create the GUI elements the map and the particle set and connect to the
-   * NXT.
-   */
-  public RemoteFrame(String nxtName) throws IOException {
-    
-    addMouseListener(this);
-
-    // Connect to NXT
-    this.nxtName = nxtName;
-    connect(nxtName);
-  }
-
-  /**
-   * Process buttons
-   */
-  public void actionPerformed(ActionEvent e) {
-   }
  
   /**
    * Connect to the NXT
@@ -105,11 +86,35 @@ public abstract class RemoteFrame extends JPanel implements ActionListener, Mous
   public void mousePressed(MouseEvent me) {
   }
   
-  protected JButton createButton(String text) {
-	JButton button = new JButton(text);
-	add(button);
-	button.addActionListener(this);
-	return button;
+  public void createButton(CommandButton button) {
+	  buttons.add(button);
+	  button.addActionListener(this);
+	  buttonPanel.add(button);
+  }
+  
+  public JButton createButton(String name) {
+	  JButton button = new JButton(name);
+	  button.addActionListener(this);
+	  return button;
+  }
+ 
+  /**
+   * Process buttons
+   */
+  public void actionPerformed(ActionEvent e) {
+	  sendCommand(((CommandButton) e.getSource()).getCommand());
+  }
+  
+  /**
+   * Send a command to the NXT
+   */
+  private void sendCommand(Command command) {
+    try {
+      dos.writeByte(command.getValue());
+      dos.flush();
+    } catch (IOException ioe) {
+      error("IO Exception");
+    }
   }
 }
 
