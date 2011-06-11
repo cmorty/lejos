@@ -1,9 +1,9 @@
 package java.io;
 
-import lejos.charset.CharsetDecoder;
-import lejos.charset.Latin1Decoder;
-import lejos.charset.UTF8Decoder;
-import lejos.io.LejosInputStreamReader;
+import lejos.internal.charset.CharsetDecoder;
+import lejos.internal.charset.Latin1Decoder;
+import lejos.internal.charset.UTF8Decoder;
+import lejos.internal.io.LejosInputStreamReader;
 
 public class InputStreamReader extends LejosInputStreamReader
 {

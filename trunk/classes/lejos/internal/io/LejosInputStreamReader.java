@@ -1,10 +1,10 @@
-package lejos.io;
+package lejos.internal.io;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
-import lejos.charset.CharsetDecoder;
+import lejos.internal.charset.CharsetDecoder;
 
 public class LejosInputStreamReader extends Reader
 {

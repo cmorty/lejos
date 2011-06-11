@@ -1,4 +1,4 @@
-package lejos.charset;
+package lejos.internal.charset;
 
 public class Latin1Encoder implements CharsetEncoder
 {
