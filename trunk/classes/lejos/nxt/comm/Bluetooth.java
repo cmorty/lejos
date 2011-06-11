@@ -859,9 +859,10 @@ public class Bluetooth extends NXTCommDevice
 
 	/**
 	 * Wait for a remote device to connect.
-	 * @param timeout time in ms to wait for connection, 0 == wait for ever
-     * @param mode the I/O mode to be used for this connection. <code>NXTConnection.RAW, .LCP, or .PACKET</code>
-	 * @param pin the pin to use, null use current default
+	 * @param timeout time in ms to wait for connection, 0 = wait for ever
+     * @param mode the I/O mode to be used for this connection. <code>{@link NXTConnection#RAW}</code>, 
+     * <code>{@link NXTConnection#LCP}</code>, or <code>{@link NXTConnection#PACKET}</code>
+	 * @param pin the pin to use (ASCII representation), <code>null</code> use current default
 	 * @return a BTConnection
 	 */
 	public static BTConnection waitForConnection(int timeout, int mode, byte[] pin)
@@ -950,8 +951,9 @@ public class Bluetooth extends NXTCommDevice
 
 	/**
 	 * Uses the current default PIN
-     * @param timeout time in ms to wait for connection, 0 == wait for ever
-     * @param mode the I/O mode to be used for this connection. <code>NXTConnection.RAW, .LCP, or .PACKET</code>
+     * @param timeout time in ms to wait for connection, 0 = wait forever
+     * @param mode the I/O mode to be used for this connection. <code>{@link NXTConnection#RAW}</code>, 
+     * <code>{@link NXTConnection#LCP}</code>, or <code>{@link NXTConnection#PACKET}</code>
      * @return the Bluetooth connection
 	 */
 	public static BTConnection waitForConnection(int timeout, int mode)
@@ -973,12 +975,13 @@ public class Bluetooth extends NXTCommDevice
     /**
      * Connect to the specified device, either by name or address
      * @param target String name or address
-     * @param mode I/O mode for this connection. <code>NXTConnection.RAW, .LCP, or .PACKET</code>
-     * @param pin The pin to use for this connection
-     * @return BTConnection object or null
+     * @param mode I/O mode for this connection.  <code>{@link NXTConnection#RAW}</code>, 
+     * <code>{@link NXTConnection#LCP}</code>, or <code>{@link NXTConnection#PACKET}</code>
+     * @param pin The pin to use for this connection. Use ASCII representation.
+     * @return <code>BTConnection</code> object or <code>null</code>
      */
-    public static BTConnection connect(String target, int mode, byte[] pin)
-    {
+    public static BTConnection connect(String target, int mode, byte[] pin) {
+
         if (target == null) return null;
         if (isAddress(target))
             return connect(stringToAddress(target), mode, pin);
@@ -997,8 +1000,9 @@ public class Bluetooth extends NXTCommDevice
     /**
      * Connect to the specified device, either by name or address
      * @param target String name or address
-     * @param mode I/O mode for this connection. <code>NXTConnection.RAW, .LCP, or .PACKET</code>
-     * @return BTConnection object or null
+     * @param mode I/O mode for this connection. <code>{@link NXTConnection#RAW}</code>, 
+     * <code>{@link NXTConnection#LCP}</code>, or <code>{@link NXTConnection#PACKET}</code>
+     * @return <code>BTConnection</code> object or <code>null</code>
      */
     public static BTConnection connect(String target, int mode)
     {
@@ -1007,11 +1011,12 @@ public class Bluetooth extends NXTCommDevice
 
 
 	/**
-	 * Connects to a Device by it's Byte-Device-Address Array
-	 * Uses the current default pin
+	 * Connects to a Device by it's Byte-Device-Address Array.
+	 * Uses the current default pin.
 	 * 
 	 * @param device_addr byte-Array with device-Address
-	 * @return BTConnection Object or null
+	 * @return <code>BTConnection</code> Object or <code>null</code>
+     * @see #getPin
 	 */
 	private static BTConnection connect(byte[] device_addr) {
 		return connect(device_addr, 0, null);
@@ -1021,9 +1026,10 @@ public class Bluetooth extends NXTCommDevice
 	 * Connects to a Device by it's Byte-Device-Address Array
 	 * 
 	 * @param device_addr byte-Array with device-Address
-	 * @param mode The data mode. Either PACKET, LCP, or RAW found in <code>NXTConnection</code>
-	 * @param pin the pin to use. Must be ASCII code, so '0' = 48
-	 * @return BTConnection Object or null
+	 * @param mode The data mode. <code>{@link NXTConnection#RAW}</code>, 
+     * <code>{@link NXTConnection#LCP}</code>, or <code>{@link NXTConnection#PACKET}</code>
+	 * @param pin the pin to use. Must be ASCII code, so '0' = 48, etc.
+	 * @return <code>BTConnection</code> Object or <code>null</code>
 	 */
 	private static BTConnection connect(byte[] device_addr, int mode, byte[] pin) {
 		
@@ -1067,7 +1073,7 @@ public class Bluetooth extends NXTCommDevice
 
 	
 	/**
-	 * Get the Bluetooth signal strength (link quality)
+	 * Get the Bluetooth signal strength (link quality).
 	 * Higher values mean stronger signal.
 	 *
      * @param handle The handle/channel of the connection
@@ -1171,12 +1177,15 @@ public class Bluetooth extends NXTCommDevice
 	
 	/**
 	 * The internal Chip has a list of already paired Devices. This Method returns a 
-	 * Vector-List which contains all the known Devices on the List. These need not be reachable. 
-	 * To connect to a "not-known"-Device, you should use the Inquiry-Process. 
-	 * The pairing-Process can also be done with the original Lego-Firmware. The List of known 
-	 * devices will not get lost, when installing the LeJOS Firmware. 
+	 * Vector-List which contains all the known Devices on the List. These need not be reachable.
+     * <p>
+	 * To connect to a "not-known"-device, you should use the Inquiry-Process. 
+	 * The pairing-Process can also be done with the original Lego-Firmware. 
+     * <p>
+     * The List of known 
+	 * devices will not get lost when installing the LeJOS Firmware. 
 	 * 
-	 * @return Vector with List of known Devices
+	 * @return <code>Vector&lt;RemoteDevice&gt;</code> with List of known Devices
 	 */
 	public static Vector<RemoteDevice> getKnownDevicesList() {
 		//1 RConsole.print("getKnownDevicesList\n");
@@ -1208,12 +1217,13 @@ public class Bluetooth extends NXTCommDevice
 			return retVec;
 		}
 	}
-	
+	// TODO check BTDevice v.s RemoteDevice KPT 6/10/11
+    // (javdoc used to ref BTDevice but no ref found).
 	/**
 	 * Gets a Device of the BC4-Chips internal list of known Devices 
-	 * (those who have been paired before) into the BTDevice Object. 
+	 * (those who have been paired before) into the <code>RemoteDevice</code> Object.  
 	 * @param fName Friendly-Name of the device
-	 * @return BTDevice Object or null, if not found.
+	 * @return <code>RemoteDevice</code> Object or <code>null</code>, if not found.
 	 */
 	public static RemoteDevice getKnownDevice(String fName) {
 		RemoteDevice btd = null;
@@ -1249,7 +1259,7 @@ public class Bluetooth extends NXTCommDevice
 	/**
 	 * Add device to known devices
 	 * @param d Remote Device
-	 * @return true if add was successful
+	 * @return <code>true</code> if add was successful
 	 */
 	public static boolean addDevice(RemoteDevice d) {
 		String addr = d.getDeviceAddr();
@@ -1274,7 +1284,7 @@ public class Bluetooth extends NXTCommDevice
 	/**
 	 * Remove device from known devices
 	 * @param d Remote Device
-	 * @return true if remove was successful
+	 * @return <code>true</code> if remove was successful
 	 */
 	public static boolean removeDevice(RemoteDevice d) {
 		String addr = d.getDeviceAddr();
@@ -1293,7 +1303,8 @@ public class Bluetooth extends NXTCommDevice
 
     /**
      * Cancel a Bluetooth inquiry process that has been started using startInquire
-     * @return true if the request is cancelled false if there is an error.
+     * @return <code>true</code> if the request is cancelled, <code>false</code> if there is an error.
+     * @see #inquireNotify
      */
 	public static boolean cancelInquiry() {
 		synchronized (Bluetooth.sync)
@@ -1322,6 +1333,7 @@ public class Bluetooth extends NXTCommDevice
 	 * @param maxDevices the maximum number of devices to discover
      * @param timeout the timeout value in units of 1.28 seconds
      * @param listy The listener to notify
+     * @see #cancelInquiry
 	 */
 	/*
 	 * DEV NOTES: 
@@ -1621,8 +1633,8 @@ public class Bluetooth extends NXTCommDevice
 	/**
 	 * Get the operating mode (stream breaking or not) 
 	 * 
-	 * @return 0 = stream breaking mode, 1 = don't break stream mode
-	 *		   < 0 Error
+	 * @return 0 = stream breaking mode, 1 = don't break stream mode,
+	 *		   &lt; 0 Error
 	 */
 	public static int getOperatingMode() {
 		//1 RConsole.print("getOperatingMode\n");
@@ -1641,8 +1653,8 @@ public class Bluetooth extends NXTCommDevice
 	/**
 	 * Set Bluetooth visibility (discoverable) on or off for the local device
 	 * 
-	 * @param visible true to set visibility on, false to set it off
-	 * @return < 0 error 
+	 * @param visible <code>true</code> to set visibility on, <code>false</code> to set it off
+	 * @return &lt; 0 error 
 	 */
 	public static int setVisibility(byte visible) {
 		//1 RConsole.print("setVisibility\n");
@@ -1662,7 +1674,7 @@ public class Bluetooth extends NXTCommDevice
 	 * Reset the settings of the BC4 chip to the factory defaults.
 	 * The NXT should be restarted after this.
 	 *
-     * @return 0 if ok < 0 if error
+     * @return 0 if ok, &lt; 0 if error
      */
 	public static int setFactorySettings() {
 		//1 RConsole.print("setFactorySettings\n");
@@ -1682,7 +1694,7 @@ public class Bluetooth extends NXTCommDevice
 	 * Set the operating mode
 	 * 
 	 * @param mode 0 = Stream breaking, 1 don't break stream 
-	 * @return	< 0 error
+	 * @return	&lt; 0 error
 	 */
 	public static int setOperatingMode(byte mode) {
 		//1 RConsole.print("setOperatingMode\n");
@@ -1700,10 +1712,11 @@ public class Bluetooth extends NXTCommDevice
 	
 	/**
 	 * Force a reset of the Bluetooth module.
-	 * Notes:
-	 * After this call power will be on.
-	 * Any existing connections will be closed
+	 * <p><b>Notes:</b><ul><li>
+	 * After this call, power will be on.<li>
+	 * Any existing connections will be closed.<li>
 	 * Any listening threads will be aborted
+     * </ul>
 	 * 
 	 */	
 	public static void reset()
@@ -1719,8 +1732,8 @@ public class Bluetooth extends NXTCommDevice
 
     /**
      * Cancel a long running command issued on another thread.
-     * NOTE: Currently only the WaitForConnection calls can be cancelled.
-     * @return true if the command was cancelled, false otherwise.
+     * <p><b>NOTE:</b><br> Currently only the WaitForConnection calls can be cancelled.
+     * @return <code>true</code> if the command was cancelled, <code>false</code> otherwise.
      */
     public static boolean cancelConnect()
     {
@@ -1869,9 +1882,9 @@ public class Bluetooth extends NXTCommDevice
     static NXTCommConnector connector = null;
     
     /**
-     * Provides access to the singleton connection object.
+     * Provides access to the singleton <code>NXTCommConnector</code> connection object.
      * This object can be used to create new connections.
-     * @return the connector object
+     * @return the <code>NXTCommConnector</code> object
      */
     public static NXTCommConnector getConnector()
     {
