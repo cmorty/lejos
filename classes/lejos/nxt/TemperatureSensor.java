@@ -18,7 +18,7 @@ public class TemperatureSensor extends I2CSensor
 	protected final static int REG_TEMPERATURE 	= 0x00;
 	protected final static int REG_CONFIG 	= 0x01;
 	
-	public enum TempAccuracy {
+	public enum Accuracy {
 		/** 0.5 C° accuracy */
 		C0_5(0x00, 28),
 		/** 0.25 C° accuracy */
@@ -31,7 +31,7 @@ public class TemperatureSensor extends I2CSensor
 		final int bitmask;
 		final int delay;
 
-		private TempAccuracy(int index, int wait) {
+		private Accuracy(int index, int wait) {
 			this.bitmask = index;
 			this.delay = wait;
 		}
@@ -45,8 +45,8 @@ public class TemperatureSensor extends I2CSensor
 			return this.delay;
 		}
 		
-		static TempAccuracy toAccuracy(int index) {
-			for (TempAccuracy tempAccuracy : values()) {
+		static Accuracy toAccuracy(int index) {
+			for (Accuracy tempAccuracy : values()) {
 				if(tempAccuracy.bitmask==index) {
 					return tempAccuracy;
 				}
@@ -60,19 +60,19 @@ public class TemperatureSensor extends I2CSensor
 		super(port, I2C_ADDRESS, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
 	}
 
-	public float getTemp() {
+	public float getTemperature() {
 		byte[] buf = new byte[2];
 		getData(REG_TEMPERATURE, buf, 2);
 		return EndianTools.decodeShortBE(buf, 0)  * 0x1p-8f;
 	}
 	
-	public TempAccuracy getAccuracy() {
+	public Accuracy getAccuracy() {
 		byte[] buf = new byte[1];
 		getData(REG_CONFIG, buf, 1);
-		return TempAccuracy.toAccuracy(buf[0] & 0x60);
+		return Accuracy.toAccuracy(buf[0] & 0x60);
 	}
 	
-	public void setAccuracy(TempAccuracy ta) {
+	public void setAccuracy(Accuracy ta) {
 		//TODO preserve other bits
 		sendData(REG_CONFIG, (byte) ta.bitmask);
 	}
