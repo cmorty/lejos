@@ -81,7 +81,7 @@ public class NXTConnector extends NXTCommLoggable
 			try {
 				nxtComm = nxtCommUSB = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
 			} catch (NXTCommException e) {
-				log("Failed to load USB comms driver: " + e.getMessage());
+				logException("Error: Failed to load USB comms driver.", e);
 			}
 			if (addr != null && addr.length() > 0) {
 				log("Using USB device with address = " + addr);
@@ -95,7 +95,7 @@ public class NXTConnector extends NXTCommLoggable
 					if (nxtInfos.length == 0) 
 						debug((searchParam == null ? "No NXT found using USB: " : (searchParam + " not found using USB: ")) +  "Is the NXT switched on and the USB cable connected?");
 				} catch (NXTCommException ex) {
-					log("Search Failed: " + ex.getMessage());
+					logException("Error: Search failed.", ex);
 				}
 			}
 		}
@@ -202,7 +202,20 @@ public class NXTConnector extends NXTCommLoggable
 		return nxtInfos;
 	}
 	
-    /**
+    private void logException(String message, Throwable e)
+    {
+    	log(message);
+    	while (e != null)
+    	{
+    		log("Caused by "+e.toString());
+    		StackTraceElement[] st = e.getStackTrace();
+    		if (st != null && st.length > 0)
+    			log("\tat "+e.getStackTrace()[0]);
+    		e = e.getCause();
+    	}
+	}
+
+	/**
      * Connect to a NXT
      * 
      * @param nxt the name of the NXT to connect to or <code>null</code> for any
