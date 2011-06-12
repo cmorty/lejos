@@ -102,7 +102,7 @@
 							<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 							<td class="n3t2r">
 							<b>May 16, 2011 1:46 PM</b><br />
-<p><b>After a long delay, leJOS NXJ 0.9</b> is available for <a href="http://sourceforge.net/projects/lejos/files/">download</a>. We owe Lawrie Griffiths a big thanks for all the time and work he put into making this release happen. Some of the new changes include preliminary Android OS support, a new icon-based menu system, updating the Java language to support such things as generics, and nanosecond support (see the System class)! We've also added many new classes to support new sensors, as well as reworking the navigation API to accomodate different robot types, object detection, and path finding.</p>
+<b>After a long delay, leJOS NXJ 0.9</b> is available for <a href="http://sourceforge.net/projects/lejos/files/">download</a>. We owe Lawrie Griffiths a big thanks for all the time and work he put into making this release happen. Some of the new changes include preliminary Android OS support, a new icon-based menu system, updating the Java language to support such things as generics, and nanosecond support (see the System class)! We've also added many new classes to support new sensors, as well as reworking the navigation API to accomodate different robot types, object detection, and path finding.
 
 <p>We are very interested in having everyone test this release and provide comments as this will be our last revision cycle before the big 1.0 release. If you have any suggestions, now is the time to let us know in the <a href="http://lejos.sourceforge.net/forum/">forums</a>.</p>
 
