@@ -144,9 +144,15 @@ public class NXJFlash implements NXJFlashUI {
 			SystemContext.err.println("No NXT found. Please check that the device is turned on and connected.");
 			return 1;
 		}
-		
-		updater.updateDevice(nxt, memoryImage, fs, true, true, true);
-		return 0;
+		try
+		{
+			updater.updateDevice(nxt, memoryImage, fs, true, true, true);
+			return 0;
+		}
+		finally
+		{
+			nxt.close();
+		}
 	}
 
 	private byte[] createFileImage(File file) throws IOException
