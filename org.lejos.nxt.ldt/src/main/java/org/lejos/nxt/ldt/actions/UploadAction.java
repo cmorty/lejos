@@ -57,7 +57,7 @@ public class UploadAction extends ActionDelegate {
 				//LeJOSNXJPlugin.getDefault().getConsole().activate();
 				
 				ArrayList<String> args = new ArrayList<String>();
-				LeJOSNXJUtil.getUploadOpts(args, false);
+				LeJOSNXJUtil.getUploadOpts(args);
 				for (File f : fileList)
 					args.add(f.getAbsolutePath());
 				
