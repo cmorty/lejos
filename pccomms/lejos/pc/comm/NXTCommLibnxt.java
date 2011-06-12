@@ -36,6 +36,7 @@ public class NXTCommLibnxt extends NXTCommUSB implements JNIClass {
     
 	void devClose(long nxt)
     {
+		// Attention: is called from NXTCommUSB.finalize
         jlibnxt_close(nxt);
     }
     

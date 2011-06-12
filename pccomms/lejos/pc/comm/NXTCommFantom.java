@@ -50,6 +50,7 @@ public class NXTCommFantom extends NXTCommUSB implements JNIClass {
     
 	void devClose(long nxt)
     {
+		// Attention: is called from NXTCommUSB.finalize
         jfantom_close(nxt);
     }
     

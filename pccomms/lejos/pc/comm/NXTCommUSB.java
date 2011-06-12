@@ -146,23 +146,29 @@ public abstract class NXTCommUSB implements NXTComm {
         String name = null;
         long nxt = devOpen(dev);
         if (nxt == 0) return name;
-		byte[] request = { NXTProtocol.SYSTEM_COMMAND_REPLY, NXTProtocol.GET_DEVICE_INFO };
-        if (devWrite(nxt, request, 0, request.length) > 0)
+        try
         {
-            int ret = devRead(nxt, inBuf, 0, 33);
-            if (ret >= 33)
-            {
-                char nameChars[] = new char[16];
-                int len = 0;
-
-                for (int i = 0; i < 15 && inBuf[i + 3] != 0; i++) {
-                    nameChars[i] = (char) inBuf[i + 3];
-                    len++;
-                }
-                name = new String(nameChars, 0, len);
-            }
+			byte[] request = { NXTProtocol.SYSTEM_COMMAND_REPLY, NXTProtocol.GET_DEVICE_INFO };
+	        if (devWrite(nxt, request, 0, request.length) > 0)
+	        {
+	            int ret = devRead(nxt, inBuf, 0, 33);
+	            if (ret >= 33)
+	            {
+	                char nameChars[] = new char[16];
+	                int len = 0;
+	
+	                for (int i = 0; i < 15 && inBuf[i + 3] != 0; i++) {
+	                    nameChars[i] = (char) inBuf[i + 3];
+	                    len++;
+	                }
+	                name = new String(nameChars, 0, len);
+	            }
+	        }
         }
-        devClose(nxt);
+        finally
+        {
+        	devClose(nxt);
+        }
         return name;
     }
 
@@ -385,24 +391,34 @@ public abstract class NXTCommUSB implements NXTComm {
 		this.nxtInfo = nxtInfo;
 		this.nxtInfo.nxtPtr = devOpen(nxtInfo);
         if (this.nxtInfo.nxtPtr == 0) return false;
-        // now the connection is open
-		nxtInfo.connectionState = (mode == LCP ? NXTConnectionState.LCP_CONNECTED : NXTConnectionState.PACKET_STREAM_CONNECTED);
-        if (mode == RAW || mode == LCP) return true;
-        // Now try and switch to packet mode for normal read/writes
-		byte[] request = { NXTProtocol.SYSTEM_COMMAND_REPLY, NXTProtocol.NXJ_PACKET_MODE };
-        byte [] ret = null;
-        try {
-            ret = sendRequest(request, USB_BUFSZ);
-        } catch(IOException e)
+        boolean success = false;
+        try
         {
-            ret = null;
+	        // now the connection is open
+			nxtInfo.connectionState = (mode == LCP ? NXTConnectionState.LCP_CONNECTED : NXTConnectionState.PACKET_STREAM_CONNECTED);
+	        if (mode == RAW || mode == LCP) return true;
+	        // Now try and switch to packet mode for normal read/writes
+			byte[] request = { NXTProtocol.SYSTEM_COMMAND_REPLY, NXTProtocol.NXJ_PACKET_MODE };
+	        byte [] ret = null;
+	        try {
+	            ret = sendRequest(request, USB_BUFSZ);
+	        } catch(IOException e)
+	        {
+	            ret = null;
+	        }
+	        // Check the response. We are looking for a non standard response of
+	        // 0x02, 0xfe, 0xef
+	        if (ret != null && ret.length >= 3 && ret[0] == 0x02 && ret[1] == (byte)0xfe && ret[2] == (byte)0xef)
+	            packetMode = true;
+	        EOF = false;
+	        success = true;
         }
-        // Check the response. We are looking for a non standard response of
-        // 0x02, 0xfe, 0xef
-        if (ret != null && ret.length >= 3 && ret[0] == 0x02 && ret[1] == (byte)0xfe && ret[2] == (byte)0xef)
-            packetMode = true;
-        EOF = false;
-		return true;
+        finally
+        {
+        	if (!success)
+        		devClose(nxtInfo.nxtPtr);
+        }
+		return success;
 	}
 	
     public boolean open(NXTInfo nxt) throws NXTCommException
@@ -415,21 +431,34 @@ public abstract class NXTCommUSB implements NXTComm {
      */
 	public void close() throws IOException {
         if (nxtInfo == null || nxtInfo.nxtPtr == 0) return;
-        try {
-            flushBuffer();
-            if (packetMode)
-            {
-                writeEOF();
-                while (!EOF)
-                    read();
-            }
-        }
-        catch (IOException e)
+        try
         {
-            System.out.println("Got exception during close: " + e);
+	        try {
+	            flushBuffer();
+	            if (packetMode)
+	            {
+	                writeEOF();
+	                while (!EOF)
+	                    read();
+	            }
+	        }
+	        catch (IOException e)
+	        {
+	            System.out.println("Got exception during close: " + e);
+	        }
         }
-		devClose(nxtInfo.nxtPtr);
-        nxtInfo.nxtPtr = 0;
+        finally
+        {
+			devClose(nxtInfo.nxtPtr);
+	        nxtInfo.nxtPtr = 0;
+        }
+	}
+	
+	@Override
+	protected void finalize() throws Throwable
+	{
+		if (nxtInfo != null && nxtInfo.nxtPtr != 0)
+			devClose(nxtInfo.nxtPtr);
 	}
 
     /**
