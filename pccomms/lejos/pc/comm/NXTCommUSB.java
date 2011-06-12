@@ -232,6 +232,9 @@ public abstract class NXTCommUSB implements NXTComm {
      */
     int rawRead(byte [] buf, int offset, int len, boolean wait) throws IOException
     {
+    	if (nxtInfo == null || nxtInfo.nxtPtr == 0)
+    		throw new IOException("NXTComm is closed");
+    	
         int ret;
         while((ret=devRead(nxtInfo.nxtPtr, buf, offset, len)) == 0 && wait)
             {}
@@ -252,6 +255,9 @@ public abstract class NXTCommUSB implements NXTComm {
      */
     int rawWrite(byte[] buf, int offset, int len, boolean wait) throws IOException
     {
+    	if (nxtInfo == null || nxtInfo.nxtPtr == 0)
+    		throw new IOException("NXTComm is closed");
+    	
         int written = 0;
         while (written < len)
         {
@@ -396,21 +402,23 @@ public abstract class NXTCommUSB implements NXTComm {
         {
 	        // now the connection is open
 			nxtInfo.connectionState = (mode == LCP ? NXTConnectionState.LCP_CONNECTED : NXTConnectionState.PACKET_STREAM_CONNECTED);
-	        if (mode == RAW || mode == LCP) return true;
-	        // Now try and switch to packet mode for normal read/writes
-			byte[] request = { NXTProtocol.SYSTEM_COMMAND_REPLY, NXTProtocol.NXJ_PACKET_MODE };
-	        byte [] ret = null;
-	        try {
-	            ret = sendRequest(request, USB_BUFSZ);
-	        } catch(IOException e)
+	        if (mode != RAW && mode != LCP)
 	        {
-	            ret = null;
+		        // Now try and switch to packet mode for normal read/writes
+				byte[] request = { NXTProtocol.SYSTEM_COMMAND_REPLY, NXTProtocol.NXJ_PACKET_MODE };
+		        byte [] ret = null;
+		        try {
+		            ret = sendRequest(request, USB_BUFSZ);
+		        } catch(IOException e)
+		        {
+		            ret = null;
+		        }
+		        // Check the response. We are looking for a non standard response of
+		        // 0x02, 0xfe, 0xef
+		        if (ret != null && ret.length >= 3 && ret[0] == 0x02 && ret[1] == (byte)0xfe && ret[2] == (byte)0xef)
+		            packetMode = true;
+		        EOF = false;
 	        }
-	        // Check the response. We are looking for a non standard response of
-	        // 0x02, 0xfe, 0xef
-	        if (ret != null && ret.length >= 3 && ret[0] == 0x02 && ret[1] == (byte)0xfe && ret[2] == (byte)0xef)
-	            packetMode = true;
-	        EOF = false;
 	        success = true;
         }
         finally
@@ -433,7 +441,9 @@ public abstract class NXTCommUSB implements NXTComm {
      * Close the current device.
      */
 	public void close() throws IOException {
-        if (nxtInfo == null || nxtInfo.nxtPtr == 0) return;
+        if (nxtInfo == null || nxtInfo.nxtPtr == 0)
+        	return;
+        
         try
         {
 	        try {
@@ -472,6 +482,9 @@ public abstract class NXTCommUSB implements NXTComm {
      * @throws java.io.IOException Thrown on errors.
      */
     public byte[] sendRequest(byte [] data, int replyLen) throws IOException {
+    	if (nxtInfo == null || nxtInfo.nxtPtr == 0)
+    		throw new IOException("NXTComm is closed");
+    	
         int written = devWrite(nxtInfo.nxtPtr, data, 0, data.length);
         if (written <= 0) throw new IOException("Failed to send data");
         if (replyLen == 0) return new byte [0];
