@@ -66,8 +66,8 @@ public class NXTCommFactory {
 			
 			try {
 				return newNXTCommInstance(nxtCommName);
-			} catch (Throwable t) {
-				throw new NXTCommException("Cannot load USB driver: ",t);
+			} catch (Exception t) {
+				throw new NXTCommException("Cannot load USB driver",t);
 			}
 		}
 
