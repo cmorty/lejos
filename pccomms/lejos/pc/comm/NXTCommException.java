@@ -22,13 +22,4 @@ public class NXTCommException extends Exception {
 	public NXTCommException(Throwable arg0) {
 		super(arg0);
 	}
-
-	public String getMessage() {
-		//TODO get rid of this, and output cause-message at appropriate places
-		if((getCause()!=null)&&(getCause().getMessage()!=null))
-			return getCause().getMessage();
-		
-		return super.getMessage();
-	}
-	
 }
