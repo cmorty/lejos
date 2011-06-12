@@ -416,7 +416,10 @@ public abstract class NXTCommUSB implements NXTComm {
         finally
         {
         	if (!success)
+        	{
         		devClose(nxtInfo.nxtPtr);
+    	        nxtInfo.nxtPtr = 0;
+        	}
         }
 		return success;
 	}
