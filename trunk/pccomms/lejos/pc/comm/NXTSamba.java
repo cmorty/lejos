@@ -608,14 +608,9 @@ public class NXTSamba {
     /**
      * Close the device.
      */
-    public void close()
+    public void close() throws IOException
     {
-        try {
-            nxtComm.close();
-        } catch (IOException e)
-        {
-            System.err.println("I/O exception during close");
-        }
+    	nxtComm.close();
     }
    
     /**

@@ -141,7 +141,16 @@ public class NXJFlashG extends javax.swing.JFrame {
 						fs = updater.createFilesystemImage();
 					NXTSamba nxt = openDevice();
 					if (nxt != null)
-						updater.updateDevice(nxt, memoryImage, fs, true, true, true);
+					{
+						try
+						{
+							updater.updateDevice(nxt, memoryImage, fs, true, true, true);
+						}
+						finally
+						{
+							nxt.close();
+						}
+					}
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(msgPanel,
 							"Bad news: An error has occurred " + e,

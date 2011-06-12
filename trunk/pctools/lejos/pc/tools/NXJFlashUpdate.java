@@ -399,7 +399,6 @@ public class NXJFlashUpdate {
 	public void rebootDevice(NXTSamba nxt) throws IOException {
 		ui.message("Restarting the device.");
 		nxt.reboot();
-		nxt.close();
 	}
 
 	/**
