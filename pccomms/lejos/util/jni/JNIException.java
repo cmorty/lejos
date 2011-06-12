@@ -2,6 +2,8 @@ package lejos.util.jni;
 
 public class JNIException extends Exception {
 
+	private static final long serialVersionUID = -5982243842620794272L;
+
 	public JNIException() {
 		super();
 	}
