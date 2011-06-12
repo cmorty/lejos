@@ -42,6 +42,8 @@ public class StaxTest {
 		    		System.out.print(parser.getAttributeLocalName(i) + "=\"" + parser.getAttributeValue(i) + "\" ");
 		    	}
 		    	System.out.println();
+		    } else if (event == XMLStreamConstants.END_ELEMENT) {
+		    	System.out.println("/" + parser.getLocalName());
 		    }
 		}
 		Button.waitForPress();
