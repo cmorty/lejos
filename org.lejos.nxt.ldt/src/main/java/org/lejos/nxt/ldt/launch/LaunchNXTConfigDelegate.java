@@ -19,7 +19,9 @@ import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDelegate {
 	public static final String ID_TYPE = "org.lejos.nxt.ldt.LaunchType";
-
+	
+	//TODO we should make sure, that uploads to the same NXT are executed sequentially, not in parallel
+	
 	public void launch(ILaunchConfiguration configuration, String mode,	ILaunch launch, IProgressMonitor monitor)
 		throws CoreException
 	{
