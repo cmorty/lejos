@@ -12,4 +12,6 @@ public abstract class XMLInputFactory {
 	public abstract XMLStreamReader createXMLStreamReader(InputStream stream) throws XMLStreamException;
 	
 	public abstract XMLStreamReader createStreamReader(XMLStreamReader reader, StreamFilter filter) throws XMLStreamException;
+	
+	public abstract XMLEventReader createXMLEventReader(InputStream stream) throws XMLStreamException;
 }
