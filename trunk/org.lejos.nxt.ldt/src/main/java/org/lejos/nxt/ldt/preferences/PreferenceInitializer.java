@@ -21,11 +21,18 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences store = new DefaultScope().getNode(LeJOSPlugin.ID);
-		store.putBoolean(PreferenceConstants.KEY_IS_VERBOSE, false);
-		store.putBoolean(PreferenceConstants.KEY_RUN_AFTER_UPLOAD, false);
+		store.put(PreferenceConstants.KEY_CONNECTION_TYPE, PreferenceConstants.VAL_CONNECTION_TYPE_BOTH);
 		store.putBoolean(PreferenceConstants.KEY_CONNECT_TO_BRICK_ADDRESS, false);
 		store.putBoolean(PreferenceConstants.KEY_CONNECT_TO_NAMED_BRICK, false);
-		store.put(PreferenceConstants.KEY_CONNECTION_TYPE, PreferenceConstants.VAL_PROTOCOL_BOTH);
+		
+		store.putBoolean(PreferenceConstants.KEY_NORMAL_RUN_AFTER_UPLOAD, true);
+		store.putBoolean(PreferenceConstants.KEY_NORMAL_LINK_VERBOSE, false);
+		store.putBoolean(PreferenceConstants.KEY_NORMAL_START_CONSOLE, false);
+		
+		store.putBoolean(PreferenceConstants.KEY_DEBUG_RUN_AFTER_UPLOAD, true);
+		store.putBoolean(PreferenceConstants.KEY_DEBUG_LINK_VERBOSE, false);
+		store.putBoolean(PreferenceConstants.KEY_DEBUG_START_CONSOLE, false);
+		store.put(PreferenceConstants.KEY_DEBUG_MONITOR_TYPE, PreferenceConstants.VAL_DEBUG_TYPE_NORMAL);
 		
 		// use value of NXJ_HOME by default
 		String nxjHome = System.getenv("NXJ_HOME");

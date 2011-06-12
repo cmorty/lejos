@@ -32,6 +32,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -41,7 +42,10 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.lejos.nxt.ldt.LeJOSNature;
+import org.lejos.nxt.ldt.LeJOSPlugin;
+import org.lejos.nxt.ldt.preferences.PreferenceConstants;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
+import org.lejos.nxt.ldt.util.PrefsResolver;
 
 public class LaunchNXTMainTab extends JavaLaunchTab {
 
@@ -49,6 +53,14 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 	private Text mainText;
 	private Button fProjButton;
 	private Button fSearchButton;
+	private Button normalRun;
+	private Button normalVerbose;
+	private Button normalConsole;
+	private Button debugRun;
+	private Button debugVerbose;
+	private Button debugConsole;
+	private Button debugMonitorNormal;
+	private Button debugMonitorRemote;
 	
 	private static IWorkspaceRoot getRoot()
 	{
@@ -143,28 +155,20 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		}
 		MainTypeSelectDialog mtsd = new MainTypeSelectDialog(getShell(), result, "Select Main Class");
 		IType type = mtsd.openAndGetResult();
-		if (type != null)
-		{
-			mainText.setText(type.getFullyQualifiedName());
-			projectText.setText(type.getJavaProject().getElementName());
-		}
+		if (type == null)
+			return;
+		
+		projectText.setText(type.getJavaProject().getElementName());
+		mainText.setText(type.getFullyQualifiedName());
 	}	
 
 	private void createProjectEditor(Composite parent, ModifyListener updater)
 	{
-		Group g = new Group(parent, SWT.NONE);
-		g.setLayout(new GridLayout(2, false));
-		g.setText("&Project:");
-		g.setFont(parent.getFont());
-		GridData gd1 = new GridData(GridData.FILL_HORIZONTAL);
-		gd1.horizontalSpan = 1;
-		g.setLayoutData(gd1);
+		Group g = newGroup(parent, 2, "&Project:");
 		
 		Text t = new Text(g, SWT.SINGLE | SWT.BORDER);
+		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		t.setFont(g.getFont());
-		GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
-		gd2.horizontalSpan = 1;
-		t.setLayoutData(gd2);
 		
 		projectText = t;
 		projectText.addModifyListener(updater);
@@ -181,19 +185,11 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 	
 	private void createMainTypeEditor(Composite parent, ModifyListener updater)
 	{
-		Group g = new Group(parent, SWT.NONE);
-		g.setLayout(new GridLayout(2, false));
-		g.setText("&Main Class:");
-		g.setFont(parent.getFont());
-		GridData gd1 = new GridData(GridData.FILL_HORIZONTAL);
-		gd1.horizontalSpan = 1;
-		g.setLayoutData(gd1);
+		Group g = newGroup(parent, 2, "&Main Class:");
 		
 		Text t = new Text(g, SWT.SINGLE | SWT.BORDER);
+		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		t.setFont(g.getFont());
-		GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
-		gd2.horizontalSpan = 1;
-		t.setLayoutData(gd2);
 		
 		mainText = t;
 		mainText.addModifyListener(updater);
@@ -236,15 +232,87 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 					updateLaunchConfigurationDialog();
 				}
 			};
+			
+		SelectionListener updater2 = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}			
+		};
 				
 		createProjectEditor(comp, updater);
 		createVerticalSpacer(comp, 1);
 		createMainTypeEditor(comp, updater);
+		createVerticalSpacer(comp, 1);
+		createOptionEditor(comp, updater2);
+		
+		
 		setControl(comp);
+	}
+	
+	private Group newGroup(Composite p, int cols, String text)
+	{
+		Group g = new Group(p, SWT.NONE);
+		g.setLayout(new GridLayout(2, false));
+		g.setText(text);
+		g.setFont(p.getFont());
+		GridData gd1 = new GridData(GridData.FILL_HORIZONTAL);
+		g.setLayoutData(gd1);
+		return g;
+	}
+
+	private void createOptionEditor(Composite parent, SelectionListener updater)
+	{
+		Group g = newGroup(parent, 2, "When in run mode:");
+
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		this.normalRun = createCheckButton(g, "&Run program after upload");
+		this.normalVerbose = createCheckButton(g, "Link &verbose");
+		this.normalConsole = createCheckButton(g, "Start nxj&console after upload (not functional yet)");
+		
+		this.normalRun.addSelectionListener(updater);
+		this.normalVerbose.addSelectionListener(updater);
+		this.normalConsole.addSelectionListener(updater);
+		this.normalConsole.setLayoutData(gd);
+		
+		createVerticalSpacer(parent, 1);
+		g = newGroup(parent, 2, "When in debug mode:");
+
+		this.debugRun = createCheckButton(g, "&Run program after upload");
+		this.debugVerbose = createCheckButton(g, "Link &verbose");
+		this.debugConsole = createCheckButton(g, "Start nxj&console after upload (not functional yet)");
+
+		this.debugRun.addSelectionListener(updater);
+		this.debugVerbose.addSelectionListener(updater);
+		this.debugConsole.addSelectionListener(updater);
+		this.debugConsole.setLayoutData(gd);
+		
+		this.debugMonitorNormal = createRadioButton(g, "Normal Debug Monitor");
+		this.debugMonitorRemote = createRadioButton(g, "Remote Debug Monitor");
+		
+		this.debugMonitorNormal.addSelectionListener(updater);
+		this.debugMonitorRemote.addSelectionListener(updater);
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config)
 	{
+		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
+		config.setAttribute(LaunchConstants.KEY_NORMAL_RUN_AFTER_UPLOAD,
+				p.getBoolean(PreferenceConstants.KEY_NORMAL_RUN_AFTER_UPLOAD, true));
+		config.setAttribute(LaunchConstants.KEY_NORMAL_LINK_VERBOSE,
+				p.getBoolean(PreferenceConstants.KEY_NORMAL_LINK_VERBOSE, false));
+		config.setAttribute(LaunchConstants.KEY_NORMAL_START_CONSOLE,
+				p.getBoolean(PreferenceConstants.KEY_NORMAL_START_CONSOLE, false));
+		
+		config.setAttribute(LaunchConstants.KEY_DEBUG_RUN_AFTER_UPLOAD,
+				p.getBoolean(PreferenceConstants.KEY_DEBUG_RUN_AFTER_UPLOAD, true));
+		config.setAttribute(LaunchConstants.KEY_DEBUG_LINK_VERBOSE,
+				p.getBoolean(PreferenceConstants.KEY_DEBUG_LINK_VERBOSE, false));
+		config.setAttribute(LaunchConstants.KEY_DEBUG_START_CONSOLE,
+				p.getBoolean(PreferenceConstants.KEY_DEBUG_START_CONSOLE, false));
+		config.setAttribute(LaunchConstants.KEY_DEBUG_MONITOR_TYPE,
+				p.getString(PreferenceConstants.KEY_DEBUG_MONITOR_TYPE, null));
+		
 		IJavaElement context = getContext();
 		if (context != null)
 			initializeJavaProject(context, config);
@@ -326,6 +394,25 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 	{
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectText.getText().trim());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainText.getText().trim());
+		
+		config.setAttribute(LaunchConstants.KEY_NORMAL_RUN_AFTER_UPLOAD, normalRun.getSelection());
+		config.setAttribute(LaunchConstants.KEY_NORMAL_LINK_VERBOSE, normalVerbose.getSelection());
+		config.setAttribute(LaunchConstants.KEY_NORMAL_START_CONSOLE, normalConsole.getSelection());
+		
+		config.setAttribute(LaunchConstants.KEY_DEBUG_RUN_AFTER_UPLOAD, debugRun.getSelection());
+		config.setAttribute(LaunchConstants.KEY_DEBUG_LINK_VERBOSE, debugVerbose.getSelection());
+		config.setAttribute(LaunchConstants.KEY_DEBUG_START_CONSOLE, debugConsole.getSelection());
+		
+		String v;
+		if (debugMonitorNormal.getSelection())
+			v = PreferenceConstants.VAL_DEBUG_TYPE_NORMAL;
+		else if (debugMonitorRemote.getSelection())
+			v = PreferenceConstants.VAL_DEBUG_TYPE_REMOTE;
+		else
+			v = null;
+			
+		config.setAttribute(LaunchConstants.KEY_DEBUG_MONITOR_TYPE, v);
+		
 		this.updateMappedResource(config);
 	}
 	
@@ -376,10 +463,38 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 	public void initializeFrom(ILaunchConfiguration config)
 	{
 		super.initializeFrom(config);
-		String projectName = extractConfigValue(config, IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME);
-		String mainTypeName = extractConfigValue(config, IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME);
-		projectText.setText(projectName);
-		mainText.setText(mainTypeName);
+		projectText.setText(extractConfigValue(config, IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME));
+		mainText.setText(extractConfigValue(config, IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME));
+		normalRun.setSelection(extractConfigBool(config, LaunchConstants.KEY_NORMAL_RUN_AFTER_UPLOAD, true));
+		normalVerbose.setSelection(extractConfigBool(config, LaunchConstants.KEY_NORMAL_LINK_VERBOSE, false));
+		normalConsole.setSelection(extractConfigBool(config, LaunchConstants.KEY_NORMAL_START_CONSOLE, false));
+		debugRun.setSelection(extractConfigBool(config, LaunchConstants.KEY_DEBUG_RUN_AFTER_UPLOAD, true));
+		debugVerbose.setSelection(extractConfigBool(config, LaunchConstants.KEY_DEBUG_LINK_VERBOSE, false));
+		debugConsole.setSelection(extractConfigBool(config, LaunchConstants.KEY_DEBUG_START_CONSOLE, false));
+		debugMonitorNormal.setSelection(extractConfigRadio(config, LaunchConstants.KEY_DEBUG_MONITOR_TYPE,
+				PreferenceConstants.VAL_DEBUG_TYPE_NORMAL));
+		debugMonitorRemote.setSelection(extractConfigRadio(config, LaunchConstants.KEY_DEBUG_MONITOR_TYPE,
+				PreferenceConstants.VAL_DEBUG_TYPE_REMOTE));
+	}
+	
+	private boolean extractConfigRadio(ILaunchConfiguration config, String key, String val)
+	{
+		return val.equals(extractConfigValue(config, key));
+	}
+	
+	private boolean extractConfigBool(ILaunchConfiguration config, String key, boolean def)
+	{
+		boolean r;
+		try
+		{
+			r = config.getAttribute(key, def);
+		}
+		catch (CoreException ce)
+		{
+			setErrorMessage(ce.getMessage());
+			r = def;
+		}
+		return r;
 	}
 
 	private String extractConfigValue(ILaunchConfiguration config, String key)

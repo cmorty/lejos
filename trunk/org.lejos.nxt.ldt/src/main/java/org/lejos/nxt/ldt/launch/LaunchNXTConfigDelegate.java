@@ -14,6 +14,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
+import org.lejos.nxt.ldt.preferences.PreferenceConstants;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDelegate {
@@ -26,6 +27,18 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 			monitor = new NullProgressMonitor();
 		
 		monitor.beginTask("Launching "+configuration.getName()+"...", 3); //$NON-NLS-1$
+		
+		boolean verbose = configuration.getAttribute(LaunchConstants.PREFIX
+				+ mode + LaunchConstants.SUFFIX_LINK_VERBOSE, false);
+		boolean run = configuration.getAttribute(LaunchConstants.PREFIX + mode
+				+ LaunchConstants.SUFFIX_RUN_AFTER_UPLOAD, true);
+		boolean debugNormal = PreferenceConstants.VAL_DEBUG_TYPE_NORMAL
+				.equals(configuration.getAttribute(LaunchConstants.PREFIX
+						+ mode + LaunchConstants.SUFFIX_MONITOR_TYPE, ""));
+		boolean debugRemote = PreferenceConstants.VAL_DEBUG_TYPE_REMOTE
+				.equals(configuration.getAttribute(LaunchConstants.PREFIX
+						+ mode + LaunchConstants.SUFFIX_MONITOR_TYPE, ""));
+
 		if (monitor.isCanceled())
 			return;
 		
@@ -64,7 +77,14 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 			{
 				monitor.subTask("Linking ...");
 				ArrayList<String> args = new ArrayList<String>();
-				LeJOSNXJUtil.getLinkerOpts(args);
+				args.add("--writeorder");
+				args.add("LE");
+				if (verbose)
+					args.add("-v");
+				if (debugNormal)
+					args.add("-g");
+				else if (debugRemote)
+					args.add("-gr");
 				args.add("--bootclasspath");
 				args.add(classpathToString(bootpath));
 				args.add("--classpath");
@@ -92,7 +112,9 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 				
 				monitor.subTask("Uploading ...");					
 				ArrayList<String> args = new ArrayList<String>();
-				LeJOSNXJUtil.getUploadOpts(args, true);
+				LeJOSNXJUtil.getUploadOpts(args);
+				if (run)
+					args.add("-r");			
 				args.add(binaryPath);
 				
 				r = LeJOSNXJUtil.invokeTool(nxjHome, LeJOSNXJUtil.TOOL_UPLOAD, args);

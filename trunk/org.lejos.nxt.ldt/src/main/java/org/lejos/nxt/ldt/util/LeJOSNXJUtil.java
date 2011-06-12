@@ -303,27 +303,16 @@ public class LeJOSNXJUtil {
 		return f;
 	}
 	
-	public static void getLinkerOpts(List<String> dst)
-	{
-		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
-		
-		dst.add("--writeorder");
-		dst.add("LE");
-		
-		if (p.getBoolean(PreferenceConstants.KEY_IS_VERBOSE, false))
-			dst.add("-v");
-	}
-
-	public static void getUploadOpts(List<String> dst, boolean runnable) throws LeJOSNXJException
+	public static void getUploadOpts(List<String> dst) throws LeJOSNXJException
 	{
 		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
 		
 		String connectionType = p.getString(PreferenceConstants.KEY_CONNECTION_TYPE, null);
-		if (PreferenceConstants.VAL_PROTOCOL_BLUETOOTH.equals(connectionType))
+		if (PreferenceConstants.VAL_CONNECTION_TYPE_BLUETOOTH.equals(connectionType))
 			dst.add("-b");
-		else if (PreferenceConstants.VAL_PROTOCOL_USB.equals(connectionType))
+		else if (PreferenceConstants.VAL_CONNECTION_TYPE_USB.equals(connectionType))
 			dst.add("-u");
-		else if (PreferenceConstants.VAL_PROTOCOL_BOTH.equals(connectionType))
+		else if (PreferenceConstants.VAL_CONNECTION_TYPE_BOTH.equals(connectionType))
 		{
 			// don't add anything, since usb+bluetooth is default
 		}
@@ -340,9 +329,6 @@ public class LeJOSNXJUtil {
 			dst.add("-n");
 			dst.add(p.getString(PreferenceConstants.KEY_CONNECTION_BRICK_NAME, ""));
 		}
-		
-		if (runnable && p.getBoolean(PreferenceConstants.KEY_RUN_AFTER_UPLOAD, false))
-			dst.add("-r");			
 	}
 
 	public static File resolvePath(IPath path)
