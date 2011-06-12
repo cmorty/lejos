@@ -56,18 +56,18 @@ public class TemperatureSensor extends I2CSensor
 		
 	}
 
+	private final byte[] buf = new byte[2];
+	
 	public TemperatureSensor(I2CPort port) {
 		super(port, I2C_ADDRESS, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
 	}
 
 	public float getTemperature() {
-		byte[] buf = new byte[2];
 		getData(REG_TEMPERATURE, buf, 2);
 		return EndianTools.decodeShortBE(buf, 0)  * 0x1p-8f;
 	}
 	
 	public Accuracy getAccuracy() {
-		byte[] buf = new byte[1];
 		getData(REG_CONFIG, buf, 1);
 		return Accuracy.toAccuracy(buf[0] & 0x60);
 	}
