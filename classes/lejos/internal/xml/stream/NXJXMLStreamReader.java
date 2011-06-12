@@ -125,7 +125,6 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 		
 		StringBuffer s = new StringBuffer();
 		text = null;
-		localName = null;
 		namespaceCount = 0;
 		char lastC = 0;
 		boolean gotLocalName = false;
@@ -146,6 +145,8 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 			c = getChar();
 			return event;
 		}
+		
+		localName = null;
 
 		// Tag
 		if (c == '<') {
@@ -584,5 +585,9 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 
 	public boolean standaloneSet() {
 		return false;
+	}
+	
+	public Hashtable<String,String> getAttributes() {
+		return attributes;
 	}
 }

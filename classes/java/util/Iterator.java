@@ -17,7 +17,7 @@ public interface Iterator<E>
 	
 	/**
 	 * 
-	 * @return Returns the next element in the interation.
+	 * @return Returns the next element in the iteration.
 	 */
 	public E next();
 	
