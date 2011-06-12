@@ -385,10 +385,16 @@ public class NXTCommand implements NXTProtocol {
 	 */
 	public void close() throws IOException {
 		if (!open) return;
-		open = false;
-		byte[] request = { SYSTEM_COMMAND_REPLY, NXJ_DISCONNECT };
-		nxtComm.sendRequest(request, 3); // Tell NXT to disconnect
-		nxtComm.close();
+		try
+		{
+			open = false;
+			byte[] request = { SYSTEM_COMMAND_REPLY, NXJ_DISCONNECT };
+			nxtComm.sendRequest(request, 3); // Tell NXT to disconnect
+		}
+		finally
+		{
+			nxtComm.close();
+		}
 	}
 
 	/**

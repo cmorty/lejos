@@ -40,22 +40,25 @@ public class Upload extends NXTCommLoggable {
 		if (protocols == 0)
 			protocols = NXTCommFactory.USB | NXTCommFactory.BLUETOOTH;
 
-		boolean connected = fConnector.connectTo(name, address, protocols);
-		
+		boolean connected = fConnector.connectTo(name, address, protocols);		
 		if (!connected)
-			throw new NXTNotFoundException(
-					"No NXT found - is it switched on and plugged in (for USB)?");
+			throw new NXTNotFoundException("No NXT found - is it switched on and plugged in (for USB)?");
 		
-		fNXTCommand.setNXTComm(fConnector.getNXTComm());
-
-		log(fNXTCommand.uploadFile(f, nxtFileName));
-		
-		if (run) {
-			fNXTCommand.setVerify(false);
-			fNXTCommand.startProgram(nxtFileName);
+		try
+		{
+			fNXTCommand.setNXTComm(fConnector.getNXTComm());
+	
+			log(fNXTCommand.uploadFile(f, nxtFileName));
+			
+			if (run) {
+				fNXTCommand.setVerify(false);
+				fNXTCommand.startProgram(nxtFileName);
+			}			
 		}
-		
-		fNXTCommand.close();
+		finally
+		{
+			fNXTCommand.close();
+		}
 	}
 	
 	/**
