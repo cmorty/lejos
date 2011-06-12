@@ -1,7 +1,14 @@
 package lejos.pc.comm;
 
-import java.io.*; 
-import java.util.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Connects to a NXT using Bluetooth or USB (or either) and supplies input and output
@@ -108,7 +115,7 @@ public class NXTConnector extends NXTCommLoggable
 			try {
 				nxtComm = nxtCommBluetooth = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
 			} catch (NXTCommException e) {
-				log("Failed to load Bluetooth comms driver: " + e.getMessage());
+				logException("Error: Failed to load Bluetooth comms driver.", e);
 				return nxtInfos;
 			}
 			
@@ -173,7 +180,7 @@ public class NXTConnector extends NXTCommLoggable
 				try {
 					nxtInfos = nxtComm.search(searchParam, NXTCommFactory.BLUETOOTH);
 				} catch (NXTCommException ex) { 
-					log("Search Failed: " + ex.getMessage());
+					logException("Error: Search failed.", ex);
 				}
 				
 				debug("Inquiry found " + nxtInfos.length + " NXTs");
@@ -189,7 +196,7 @@ public class NXTConnector extends NXTCommLoggable
 				try {
 					NXTCommFactory.saveNXJCache(props,"Results from Bluetooth inquiry");
 				} catch (IOException ex) {
-					log("Failed to write cache file: " + ex.getMessage());
+					logException("Error: Failed to write cache file.", ex);
 				}
 			}
 		}
@@ -253,7 +260,7 @@ public class NXTConnector extends NXTCommLoggable
 					log("Failed to open " + nxtInfos[i].name + " " + nxtInfos[i].deviceAddress);
 				}
 			} catch (NXTCommException ex) { 
-				log("Exception in open: " + ex.getMessage());
+				logException("Error: Exception in open.", ex);
 			}
 		}
 
@@ -279,7 +286,7 @@ public class NXTConnector extends NXTCommLoggable
 				try {
 					nxtComm = nxtCommUSB = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
 				} catch (NXTCommException e) {
-					log("Failed to load USB comms driver: " + e.getMessage());
+					logException("Error: Failed to load USB comms driver.", e);
 					return false;
 				}
 			}
@@ -290,7 +297,7 @@ public class NXTConnector extends NXTCommLoggable
 				try {
 					nxtComm = nxtCommBluetooth = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
 				} catch (NXTCommException e) {
-					log("Failed to load Bluetooth comms driver: " + e.getMessage());
+					logException("Error: Failed to load Bluetooth comms driver.", e);
 					return false;
 				}
 			}
@@ -306,7 +313,7 @@ public class NXTConnector extends NXTCommLoggable
 			setStreams();
 			return true;
 		} catch (NXTCommException e) {
-			log("Exception connecting to NXT: " + e.getMessage());
+			logException("Error: Exception connecting to NXT.", e);
 			return false;
 		}
 	}
