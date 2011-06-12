@@ -502,7 +502,7 @@ public class Bluetooth extends NXTCommDevice
 				}
                 // Wait for data to arrive or for a timeout
                 event = btEvent.waitEvent(BT_READABLE|BT_NEWCMD, CMD_TIME);
-			} while (reqState > RS_IDLE || event > 0);
+			} while (reqState > RS_IDLE || (event & BT_READABLE) != 0);
 
 			//RConsole.print("Process cmd end\n");
 		}
@@ -715,7 +715,9 @@ public class Bluetooth extends NXTCommDevice
 		{
 			reqState = RS_IDLE;
 			cancelTimeout();
+            // Inform everyone that the command is complete/aborted
 			Bluetooth.sync.notifyAll();
+            btEvent.notifyEvent(BT_NEWCMD);
 		}
 	}
 	

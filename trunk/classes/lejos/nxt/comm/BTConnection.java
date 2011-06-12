@@ -256,6 +256,8 @@ public class BTConnection extends NXTConnection
 			recv();
 			// Give the app chance to process it
 			try{wait(1);}catch(Exception e){}
+            // Connection may have been closed down, check for this and give up
+            if (state == CS_IDLE) return;
             cnt++;
 		}
         //RConsole.println("flush cnt " + cnt);
