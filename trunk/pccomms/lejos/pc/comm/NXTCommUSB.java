@@ -1,9 +1,12 @@
 package lejos.pc.comm;
 
-import lejos.nxt.remote.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Vector;
+
+import lejos.nxt.remote.NXTProtocol;
 
 /**
  * Base Implementation of NXTComm for USB
@@ -373,6 +376,9 @@ public abstract class NXTCommUSB implements NXTComm {
      * @return true if the device is now open, false otherwise.
      */
 	public boolean open(NXTInfo nxtInfo, int mode) {
+		if (nxtInfo != null && nxtInfo.nxtPtr != 0)
+			throw new IllegalStateException("NXTComm is not closed");
+		
 		nxtInfo.connectionState = NXTConnectionState.DISCONNECTED;
         // Is the info valid enough to connect directly?
         if (!devIsValid(nxtInfo))
