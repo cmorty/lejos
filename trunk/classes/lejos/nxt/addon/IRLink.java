@@ -24,7 +24,7 @@ public class IRLink extends I2CSensor implements Opcode, IRTransmitter {
 	 * 
 	 * ProductId: "HiTechnc"
 	 * SensorType: "IRLink"
-	 * (confirmed for version " V1,2")
+	 * (confirmed for version " V1.2")
 	 */
 	
 	//Registers
