@@ -67,7 +67,7 @@ public class AccelHTSensor extends I2CSensor implements Accelerometer {
 	 * @return Acceleration e.g. 9810 mg (falling on earth)
 	 */
 	public int getYAccel() {
-		int ret = getData(BASE_ACCEL + OFF_Y_HIGH, buf, 1);
+		int ret = getData(BASE_ACCEL + OFF_Y_HIGH, buf, 0, 1);
 		if (ret != 0)
 			return ERROR;
 		ret = getData(BASE_ACCEL + OFF_Y_2BITS, buf, 1, 1);
