@@ -45,7 +45,7 @@ public class AccelMindSensor extends I2CSensor implements Accelerometer {
 
 	/**
 	 * Tilt of sensor along X-axis (see top of Mindsensors.com sensor for
-	 * diagram of axis). 128 is level.
+	 * diagram of axis). 0 is level.
 	 * 
 	 * @return X tilt value, or {@link #ERROR} if call failed
 	 */
@@ -58,7 +58,8 @@ public class AccelMindSensor extends I2CSensor implements Accelerometer {
 	}
 
 	/**
-	 * Returns Y tilt value.
+	 * Returns Y tilt value (see top of Mindsensors.com sensor for
+	 * diagram of axis). 0 is level.
 	 * 
 	 * @return Y tilt value, or {@link #ERROR} if call failed
 	 */
@@ -71,7 +72,8 @@ public class AccelMindSensor extends I2CSensor implements Accelerometer {
 	}
 
 	/**
-	 * Returns Z tilt value.
+	 * Returns Z tilt value (see top of Mindsensors.com sensor for
+	 * diagram of axis). 0 is level.
 	 * 
 	 * @return Z tilt value, or {@link #ERROR} if call failed
 	 */
