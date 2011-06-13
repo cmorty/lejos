@@ -18,10 +18,10 @@ public class TiltTest {
 			
 		while(!Button.ESCAPE.isPressed()) {
 			LCD.clear();
-			LCD.drawString("Tilt", 0, 0);
-			LCD.drawInt(tilt.getXTilt(), 6, 0, 1);
-			LCD.drawInt(tilt.getYTilt(), 6, 0, 2);
-			LCD.drawInt(tilt.getZTilt(), 6, 0, 3);
+			// LCD.drawString("Tilt", 0, 0);
+			// LCD.drawInt(tilt.getXTilt(), 6, 0, 1);
+			// LCD.drawInt(tilt.getYTilt(), 6, 0, 2);
+			// LCD.drawInt(tilt.getZTilt(), 6, 0, 3);
 			LCD.drawString("Accel", 0, 4);
 			LCD.drawInt(tilt.getXAccel(), 6, 0, 5);
 			LCD.drawInt(tilt.getYAccel(), 6, 0, 6);
