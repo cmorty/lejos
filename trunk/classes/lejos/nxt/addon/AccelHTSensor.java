@@ -19,8 +19,9 @@ public class AccelHTSensor extends I2CSensor implements Accelerometer {
 	 * Documentation: http://www.hitechnic.com/cgi-bin/commerce.cgi?preadd=action&key=NAC1040
 	 * Some details from HTAC-driver.h from http://rdpartyrobotcdr.sourceforge.net/
 	 * 
-	 * ProductId: HITECHNC
-	 * SensorType: Accel.
+	 * ProductId: "HITECHNC"
+	 * SensorType: "Accel."
+	 * (confirmed for version " V1.1")
 	 * 
 	 * Tested by Michael Mirwaldt:
 	 * one 4byte read is 20% faster than 2 reads of 1 byte.
