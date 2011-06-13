@@ -12,12 +12,20 @@ import java.util.*;
  */
 
 /**
- * Supports for HiTechnic IRLink - see  http://www.hitechnic.com/.
+ * Supports for HiTechnic NXT IRLink Sensor (NIL1046) IRLink.
  * 
  * @author Lawrie Griffiths
  *
  */
 public class IRLink extends I2CSensor implements Opcode, IRTransmitter {
+	
+	/*
+	 * Documentation: http://www.hitechnic.com/cgi-bin/commerce.cgi?preadd=action&key=NIL1046
+	 * 
+	 * ProductId: "HiTechnc"
+	 * SensorType: "IRLink"
+	 * (confirmed for version " V1,2")
+	 */
 	
 	//Registers
 	private final static byte TX_BUFFER = 0x40; // 40 to 4C
