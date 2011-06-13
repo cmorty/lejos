@@ -1,12 +1,12 @@
 package lejos.pc.remote;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 public class Message {
 	private String name;
-	private Hashtable<String,MessageElement> message;
+	private HashMap<String,MessageElement> message;
 	
-	public Message(String name, Hashtable<String,MessageElement> message) {
+	public Message(String name, HashMap<String,MessageElement> message) {
 		this.name = name;
 		this.message = message;	
 	}
@@ -15,7 +15,7 @@ public class Message {
 		return name;
 	}
 	
-	public Hashtable<String,MessageElement> getMessage() {
+	public HashMap<String,MessageElement> getMessageElements() {
 		return message;
 	}
 	
