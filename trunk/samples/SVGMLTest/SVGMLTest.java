@@ -4,12 +4,13 @@ import java.io.FileInputStream;
 import lejos.geom.Line;
 import lejos.geom.Rectangle;
 import lejos.robotics.mapping.LineMap;
+import lejos.robotics.mapping.SVGMapLoader;
 
 /**
  * This example has been designed to test the new way to load LineMaps created
  * in SVG Format.
  * 
- * Create a file "Room2.svg" with the following XML Code:
+ * Create a file "Room.svg" with the following XML Code:
  * 
  * 	<?xml version="1.0"?>
 	<svg width="640" height="480" xmlns="http://www.w3.org/2000/svg">
@@ -30,13 +31,10 @@ import lejos.robotics.mapping.LineMap;
  */
 public class SVGMLTest {
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) throws Exception {
 		
 		System.out.println("1. Loading Map in SVG Format");
-		File f = new File("Room2.svg");
+		File f = new File("Room.svg");
 		FileInputStream in = new FileInputStream(f);
 		SVGMapLoader svgml = new SVGMapLoader(in);
 		LineMap lm = svgml.readLineMap();
