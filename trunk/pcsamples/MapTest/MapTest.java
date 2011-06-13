@@ -1,8 +1,14 @@
 import java.awt.*;
 import lejos.pc.remote.MapPanel;
+import lejos.pc.remote.MessageElement.ElementType;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.mapping.SVGMapLoader;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import lejos.pc.remote.*;
+
 
 public class MapTest extends MapPanel {
   private static LineMap map;
@@ -25,6 +31,18 @@ public class MapTest extends MapPanel {
 	FileInputStream in = new FileInputStream(f);
 	
 	map = (new SVGMapLoader(in)).readLineMap();
+	
+	MessageElement x = new MessageElement("x",ElementType.FLOAT);
+	MessageElement y = new MessageElement("y",ElementType.FLOAT);
+	MessageElement heading = new MessageElement("heading",ElementType.FLOAT);
+	ArrayList<MessageElement> elements = new ArrayList<MessageElement>(); 
+	elements.add(x);
+	elements.add(y);
+	elements.add(heading);
+	Message reply = new Message("getPose", elements);
+	
+	lejos.pc.remote.Command getPose = new lejos.pc.remote.Command((byte) 0, null, reply);
+	
 	
 	MapTest mapTest = new MapTest(map, 0,0,2);
 	
