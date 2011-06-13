@@ -45,10 +45,10 @@ public class AccelHTSensor extends I2CSensor implements Accelerometer {
 	}
 
 	/**
-	 * Acceleration along X axis. Positive or negative values in mg. (g =
-	 * acceleration due to gravity = 9.81 m/s^2)
+	 * Acceleration along X axis. Positive or negative values.
+	 * A value of 200 is equivalent to 1g.
 	 * 
-	 * @return Acceleration e.g. 9810 mg (falling on earth) or {@link #ERROR}.
+	 * @return x-axis acceleration or {@link #ERROR}.
 	 */
 	public int getXAccel() {
 		int ret = getData(BASE_ACCEL + OFF_X_HIGH, buf, 0, 1);
@@ -61,10 +61,10 @@ public class AccelHTSensor extends I2CSensor implements Accelerometer {
 	}
 
 	/**
-	 * Acceleration along Y axis. Positive or negative values in mg. (g =
-	 * acceleration due to gravity = 9.81 m/s^2)
+	 * Acceleration along Y axis. Positive or negative values.
+	 * A value of 200 is equivalent to 1g.
 	 * 
-	 * @return Acceleration e.g. 9810 mg (falling on earth) or {@link #ERROR}.
+	 * @return y-axis acceleration or {@link #ERROR}.
 	 */
 	public int getYAccel() {
 		int ret = getData(BASE_ACCEL + OFF_Y_HIGH, buf, 0, 1);
@@ -77,10 +77,10 @@ public class AccelHTSensor extends I2CSensor implements Accelerometer {
 	}
 
 	/**
-	 * Acceleration along Z axis. Positive or negative values in mg. (g =
-	 * acceleration due to gravity = 9.81 m/s^2)
+	 * Acceleration along Z axis. Positive or negative values.
+	 * A value of 200 is equivalent to 1g.
 	 * 
-	 * @return Acceleration e.g. 9810 mg (falling on earth) or {@link #ERROR}.
+	 * @return z-axis acceleration or {@link #ERROR}.
 	 */
 	public int getZAccel() {
 		int ret = getData(BASE_ACCEL + OFF_Z_HIGH, buf, 0, 1);
