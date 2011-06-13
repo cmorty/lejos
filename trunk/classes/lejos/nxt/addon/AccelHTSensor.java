@@ -86,7 +86,7 @@ public class AccelHTSensor extends I2CSensor implements Accelerometer {
 		int ret = getData(BASE_ACCEL + OFF_Z_HIGH, buf, 0, 1);
 		if (ret != 0)
 			return ERROR;
-		ret = getData(BASE_ACCEL + OFF_Z_2BITS, buf, 0, 1);
+		ret = getData(BASE_ACCEL + OFF_Z_2BITS, buf, 1, 1);
 		if (ret != 0)
 			return ERROR;
 		return (buf[0] << 2) | (buf[1] & 0xFF);
