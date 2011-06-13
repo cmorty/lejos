@@ -47,7 +47,7 @@ public class AccelMindSensor extends I2CSensor implements Accelerometer {
 	 * Tilt of sensor along X-axis (see top of Mindsensors.com sensor for
 	 * diagram of axis). 128 is level.
 	 * 
-	 * @return X tilt value, or -1 if call failed
+	 * @return X tilt value, or {@link #ERROR} if call failed
 	 */
 	public int getXTilt() {
 		int ret = getData(BASE_TILT + OFF_X_TILT, buf, 1);
@@ -60,7 +60,7 @@ public class AccelMindSensor extends I2CSensor implements Accelerometer {
 	/**
 	 * Returns Y tilt value.
 	 * 
-	 * @return Y tilt value, or -1 if call failed
+	 * @return Y tilt value, or {@link #ERROR} if call failed
 	 */
 	public int getYTilt() {
 		int ret = getData(BASE_TILT + OFF_Y_TILT, buf, 1);
@@ -73,7 +73,7 @@ public class AccelMindSensor extends I2CSensor implements Accelerometer {
 	/**
 	 * Returns Z tilt value.
 	 * 
-	 * @return Z tilt value, or -1 if call failed
+	 * @return Z tilt value, or {@link #ERROR} if call failed
 	 */
 	public int getZTilt() {
 		int ret = getData(BASE_TILT + OFF_Z_TILT, buf, 1);
@@ -87,7 +87,7 @@ public class AccelMindSensor extends I2CSensor implements Accelerometer {
 	 * Acceleration along X axis. Positive or negative values in mg. (g =
 	 * acceleration due to gravity = 9.81 m/s^2)
 	 * 
-	 * @return Acceleration e.g. 9810 mg (falling on earth)
+	 * @return Acceleration e.g. 9810 mg (falling on earth) or {@link #ERROR}.
 	 */
 	public int getXAccel() {
 		int ret = getData(BASE_ACCEL + OFF_X_ACCEL, buf, 2);
@@ -101,7 +101,7 @@ public class AccelMindSensor extends I2CSensor implements Accelerometer {
 	 * Acceleration along Y axis. Positive or negative values in mg. (g =
 	 * acceleration due to gravity = 9.81 m/s^2)
 	 * 
-	 * @return Acceleration e.g. 9810 mg (falling on earth)
+	 * @return Acceleration e.g. 9810 mg (falling on earth) or {@link #ERROR}.
 	 */
 	public int getYAccel() {
 		int ret = getData(BASE_ACCEL + OFF_Y_ACCEL, buf, 2);
@@ -115,7 +115,7 @@ public class AccelMindSensor extends I2CSensor implements Accelerometer {
 	 * Acceleration along Z axis. Positive or negative values in mg. (g =
 	 * acceleration due to gravity = 9.81 m/s^2)
 	 * 
-	 * @return Acceleration e.g. 9810 mg (falling on earth)
+	 * @return Acceleration e.g. 9810 mg (falling on earth) or {@link #ERROR}.
 	 */
 	public int getZAccel() {
 		int ret = getData(BASE_ACCEL + OFF_Z_ACCEL, buf, 2);
