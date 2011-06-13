@@ -88,7 +88,7 @@ public class Pilot
 	{
 		_left = leftMotor;
 		_right = rightMotor;
-		_degPerDistance = 360/((double)Math.PI*wheelDiameter);
+		_degPerDistance = (360/3.14159265)*wheelDiameter;
 		_turnRatio = trackWidth/wheelDiameter;
 		//_left.regulateSpeed(true); !!!
 		//_left.smoothAcceleration(true); !!!
@@ -197,7 +197,7 @@ public class Pilot
 	 */
 	public int getAngle()
 	{
-		return  _parity*(int)Math.floor(((getRightCount()-getLeftCount())/(2*_turnRatio)) + 0.5f);
+		return  _parity*(int)(((getRightCount()-getLeftCount())/(2*_turnRatio)) + 0.5f);
 	}
 	
 	/**
