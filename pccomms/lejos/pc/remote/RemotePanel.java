@@ -5,9 +5,7 @@ import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTConnector;
 import lejos.robotics.navigation.Pose;
@@ -121,7 +119,7 @@ public abstract class RemotePanel extends JPanel implements ActionListener, Mous
       dos.writeByte(command.getValue());
       dos.flush();
       Message request = command.getRequest();
-      Collection<MessageElement> c = request.getMessageElements().values();
+      ArrayList<MessageElement> c = request.getMessageElements();
       for(MessageElement e : c ) {
     	  switch (e.getType()) {
     		  case BYTE: dos.writeByte((Byte) data.get(e.getName())); break;
@@ -135,7 +133,7 @@ public abstract class RemotePanel extends JPanel implements ActionListener, Mous
   private HashMap<String,Number> readReply(Command command) throws IOException {
 	  HashMap<String,Number> data = new HashMap<String,Number>();
       Message reply = command.getReply();
-      Collection<MessageElement> c = reply.getMessageElements().values();
+      ArrayList<MessageElement> c = reply.getMessageElements();
       for(MessageElement e : c ) {
     	  switch (e.getType()) {
     		  case BYTE: data.put(e.getName(), (Byte) dis.readByte()); break;
