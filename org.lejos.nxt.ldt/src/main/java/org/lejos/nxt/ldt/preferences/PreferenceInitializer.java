@@ -20,7 +20,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
-		IEclipsePreferences store = new DefaultScope().getNode(LeJOSPlugin.ID);
+		IEclipsePreferences store = DefaultScope.INSTANCE.getNode(LeJOSPlugin.ID);
 		store.put(PreferenceConstants.KEY_CONNECTION_TYPE, PreferenceConstants.VAL_CONNECTION_TYPE_BOTH);
 		store.putBoolean(PreferenceConstants.KEY_CONNECT_TO_BRICK_ADDRESS, false);
 		store.putBoolean(PreferenceConstants.KEY_CONNECT_TO_NAMED_BRICK, false);
