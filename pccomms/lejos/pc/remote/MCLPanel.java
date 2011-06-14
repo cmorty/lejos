@@ -18,8 +18,8 @@ public class MCLPanel extends MapPanel {
 	protected float arrowLength;
 	protected MCLPoseProvider mcl;
 	
-	  // The maximum size of a cluster of particles for a located robot (in cm)
-	  private static final int MAX_CLUSTER_SIZE = 25;
+	// The maximum size of a cluster of particles for a located robot (in cm)
+	protected static final int MAX_CLUSTER_SIZE = 25;
 
 	public MCLPanel(LineMap map, float xOffset, float yOffset, float pixelsPerUnit, MCLPoseProvider mcl, float arrowLength) {
 		super(map, xOffset, yOffset, pixelsPerUnit);
@@ -37,7 +37,7 @@ public class MCLPanel extends MapPanel {
 		Graphics2D g2d = (Graphics2D) g;
 		paintMap(g2d);
 		paintParticles(g2d);
-		paintLocation(g2d);
+		paintRobot(g2d);
 	}
 	
 	/**
@@ -62,7 +62,7 @@ public class MCLPanel extends MapPanel {
 	 * 
 	 * @param g2d the Graphics2D object
 	 */
-	private void paintLocation(Graphics2D g2d) {
+	protected void paintRobot(Graphics2D g2d) {
 		float minX = mcl.getMinX();
 		float maxX = mcl.getMaxX();
 		float minY = mcl.getMinY();
