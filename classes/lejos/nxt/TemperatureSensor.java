@@ -77,5 +77,29 @@ public class TemperatureSensor extends I2CSensor
 		sendData(REG_CONFIG, (byte) ta.bitmask);
 	}
 	
+	/**
+	 * Sensor does not support Lego standard I2C layout.
+	 */
+	@Override
+	public String getProductID() {
+		throw new UnsupportedOperationException();
+	}
+	
+	/**
+	 * Sensor does not support Lego standard I2C layout.
+	 */
+	@Override
+	public String getSensorType() {
+		throw new UnsupportedOperationException();
+	}
+	
+	/**
+	 * Sensor does not support Lego standard I2C layout.
+	 */
+	@Override
+	public String getVersion() {
+		throw new UnsupportedOperationException();
+	}
+	
 	// TODO sensor can be turned off and on, supports single-shot and continous mode
 }
