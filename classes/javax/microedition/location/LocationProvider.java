@@ -46,10 +46,16 @@ public abstract class LocationProvider {
 	public abstract int getState();
 	
 	/**
-	 * This is a factory method to retrieve an instance of LocationProvider. With leJOS NXJ 
-	 * the LocationProvider is the class ??? i.e. a Bluetooth GPS unit. It looks through all the paired
+	 * <p>This is a factory method to retrieve an instance of LocationProvider. With leJOS NXJ 
+	 * the LocationProvider is by default a Bluetooth GPS unit. It looks through all the paired
 	 * Bluetooth devices on your NXT brick and tries connecting to any that are identified as
-	 * GPS units.
+	 * GPS units.</p>
+	 * <p>This API was not designed to allow location providers plugged into different sensor ports.
+	 * To retrieve a LocationProvider from the lejos.addon.GPSSensor class, use GPSSensor.getLocationProvider().
+	 * </p> 
+	 * 
+	 * @see lejos.nxt.addon.GPSSensor
+	 * 
 	 * @param criteria Just use null instead of an actual Criteria object
 	 * @return a LocationProvider that is a Bluetooth GPS already paired with your NXT brick 
 	 * @throws LocationException
