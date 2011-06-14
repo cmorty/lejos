@@ -4,6 +4,7 @@ import lejos.geom.*;
 
 import java.io.*;
 
+import lejos.robotics.Transmittable;
 import lejos.robotics.mapping.RangeMap;
 import lejos.robotics.navigation.Pose;
 
@@ -18,7 +19,7 @@ import lejos.robotics.navigation.Pose;
  * @author Lawrie Griffiths
  * 
  */
-public class LineMap implements RangeMap {
+public class LineMap implements RangeMap, Transmittable {
   private Line[] lines;
   private Rectangle boundingRect;
 
@@ -100,7 +101,7 @@ public class LineMap implements RangeMap {
    * @param dos the stream
    * @throws IOException
    */
-  public void dumpMap(DataOutputStream dos) throws IOException {
+  public void dumpObject(DataOutputStream dos) throws IOException {
       dos.writeInt(lines.length);
       for(int i=0;i<lines.length;i++) {
         dos.writeFloat(lines[i].x1);
@@ -121,7 +122,7 @@ public class LineMap implements RangeMap {
    * @param dis the stream
    * @throws IOException
    */
-  public void loadMap(DataInputStream dis) throws IOException {
+  public void loadObject(DataInputStream dis) throws IOException {
       lines = new Line[dis.readInt()];
       for(int i=0;i<lines.length;i++) {
         float x1 = dis.readFloat();

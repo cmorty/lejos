@@ -20,7 +20,7 @@ import lejos.robotics.localization.MCLParticle;
  * @author Lawrie Griffiths
  *
  */
-public class MCLParticleSet {
+public class MCLParticleSet implements Transmittable {
   // Constants
   private static final float BIG_FLOAT = 10000f;
   // Static variables
@@ -376,7 +376,7 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
    * @param dos the data output stream
    * @throws IOException
    */
-  public void dumpParticles(DataOutputStream dos) throws IOException {
+  public void dumpObject(DataOutputStream dos) throws IOException {
       dos.writeInt(numParticles());
       for (int i = 0; i < numParticles(); i++) {
           MCLParticle part = getParticle(i);
@@ -398,7 +398,7 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
    * @param dis the data input stream
    * @throws IOException
    */
-  public void loadParticles(DataInputStream dis) throws IOException {
+  public void loadObject(DataInputStream dis) throws IOException {
 	numParticles = dis.readInt();
     particles = new MCLParticle[numParticles];
     for (int i = 0; i < numParticles; i++) {
