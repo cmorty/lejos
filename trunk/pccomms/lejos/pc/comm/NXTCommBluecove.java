@@ -1,10 +1,21 @@
 package lejos.pc.comm;
 
-import javax.microedition.io.*;
-import javax.bluetooth.*;
-import java.io.*;
-import java.util.Vector;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Enumeration;
+import java.util.Vector;
+
+import javax.bluetooth.BluetoothStateException;
+import javax.bluetooth.DeviceClass;
+import javax.bluetooth.DiscoveryAgent;
+import javax.bluetooth.DiscoveryListener;
+import javax.bluetooth.LocalDevice;
+import javax.bluetooth.RemoteDevice;
+import javax.bluetooth.ServiceRecord;
+import javax.bluetooth.UUID;
+import javax.microedition.io.Connector;
+import javax.microedition.io.StreamConnection;
 
 /**
  * Implementation of NXTComm using the Bluecove libraries 
@@ -40,9 +51,9 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 				} catch (InterruptedException e) {
 					System.err.println(e.getMessage());
 				}
-			} catch(Throwable t) {
+			} catch(Exception e) {
 				//System.err.println(e.getMessage());
-				throw new NXTCommException("Bluetooth stack not detected",t); 
+				throw new NXTCommException("Bluetooth stack not detected", e); 
 			}
 		}
 
@@ -124,7 +135,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 			return true;
 		} catch (IOException e) {
 			nxt.connectionState = NXTConnectionState.DISCONNECTED;
-			throw new NXTCommException("Open of " + nxt.name + " failed: " + e.getMessage());
+			throw new NXTCommException("Open of " + nxt.name + " failed.", e);
 		}
 	}
 
