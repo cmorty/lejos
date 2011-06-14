@@ -377,7 +377,7 @@ public abstract class NXTCommUSB implements NXTComm {
      */
 	public boolean open(NXTInfo nxtInfo, int mode) {
 		if (nxtInfo != null && nxtInfo.nxtPtr != 0)
-			throw new IllegalStateException("NXTComm is not closed");
+			throw new IllegalStateException("NXTComm is already open.");
 		
 		nxtInfo.connectionState = NXTConnectionState.DISCONNECTED;
         // Is the info valid enough to connect directly?
