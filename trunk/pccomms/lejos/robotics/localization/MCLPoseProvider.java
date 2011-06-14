@@ -7,6 +7,8 @@ import lejos.robotics.navigation.MoveProvider;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.RangeScanner;
+import lejos.robotics.Transmittable;
+
 import java.awt.Rectangle;
 import lejos.robotics.localization.PoseProvider;
 import java.io.*;
@@ -31,7 +33,7 @@ import java.io.*;
  * @author Lawrie Griffiths and Roger Glassey
  */
 
-public class MCLPoseProvider implements PoseProvider, MoveListener
+public class MCLPoseProvider implements PoseProvider, MoveListener, Transmittable
 {
 
   private MCLParticleSet particles;
@@ -439,7 +441,7 @@ public RangeScanner getScanner()
    * @param dos the data output stream
    * @throws IOException
    */
-  public void dumpEstimation(DataOutputStream dos) throws IOException
+  public void dumpObject(DataOutputStream dos) throws IOException
   {
     dos.writeFloat(_x);
     dos.writeFloat(_y);
@@ -459,7 +461,7 @@ public RangeScanner getScanner()
    * @param dis the data input stream
    * @throws IOException
    */
-  public void loadEstimation(DataInputStream dis) throws IOException
+  public void loadObject(DataInputStream dis) throws IOException
   {
     _x = dis.readFloat();
     _y = dis.readFloat();

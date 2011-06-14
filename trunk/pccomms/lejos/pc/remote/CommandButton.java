@@ -7,6 +7,7 @@ public class CommandButton extends JButton {
 	private Command command;
 	
 	public CommandButton(String name, Command command) {
+		super(name);
 		this.name = name;
 		this.command = command;
 	}

@@ -1,6 +1,7 @@
 package lejos.pc.remote;
 
 import javax.swing.*;
+
 import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
@@ -20,13 +21,18 @@ import lejos.robotics.navigation.Pose;
 public abstract class RemotePanel extends JPanel implements ActionListener, MouseListener {
   private static final long serialVersionUID = 1L;
   
-  private ArrayList<CommandButton> buttons = new ArrayList<CommandButton>();
-  private JPanel buttonPanel = new JPanel();
+  protected static final int CANVAS_OFFSET = 50;
+  
+  protected ArrayList<CommandButton> buttons = new ArrayList<CommandButton>();
+  protected JPanel buttonPanel = new JPanel();
 
   // Data input and output streams for communicating with the NXT
   protected DataOutputStream dos;
   protected DataInputStream dis;
-  protected Pose pose;
+  
+  public RemotePanel() {
+	  add(buttonPanel);
+  }
 
   /**
    * Create a frame to display the panel in
@@ -66,9 +72,16 @@ public abstract class RemotePanel extends JPanel implements ActionListener, Mous
   /**
    * Print the error message and exit
    */
-  protected void error(String msg) {
+  protected void fatal(String msg) {
     System.err.println(msg);
     System.exit(1);
+  }
+  
+  /**
+   * Show a pop-up message
+   */
+  public void error(String msg) {
+	JOptionPane.showMessageDialog(this, msg);
   }
   
   public void mouseClicked(MouseEvent me) {
@@ -102,13 +115,14 @@ public abstract class RemotePanel extends JPanel implements ActionListener, Mous
    * Process buttons
    */
   public void actionPerformed(ActionEvent e) {
+	if (dos == null) return;
 	try {
 	  Command c = ((CommandButton) e.getSource()).getCommand();
 	  sendCommand(c, null);
 	  HashMap<String,Number> reply = readReply(c);
 	  updateData(c.getReply(),reply);
 	} catch (IOException ioe) {
-	  // Todo: 
+	  error("Command failed with I/O error");
 	}
   }
   
@@ -116,6 +130,10 @@ public abstract class RemotePanel extends JPanel implements ActionListener, Mous
    * Send a command to the NXT
    */
   private void sendCommand(Command command, HashMap<String,Number> data) throws IOException {
+	  if (dos == null) {
+		  error("Not connected");
+		  return;
+	  }
       dos.writeByte(command.getValue());
       dos.flush();
       Message request = command.getRequest();
@@ -131,6 +149,10 @@ public abstract class RemotePanel extends JPanel implements ActionListener, Mous
   }
   
   private HashMap<String,Number> readReply(Command command) throws IOException {
+	  if (dis == null) {
+		  error("Not connected");
+		  return null;
+	  }
 	  HashMap<String,Number> data = new HashMap<String,Number>();
       Message reply = command.getReply();
       ArrayList<MessageElement> c = reply.getMessageElements();
@@ -145,10 +167,9 @@ public abstract class RemotePanel extends JPanel implements ActionListener, Mous
 	  return data;
   }
   
-  private void updateData(Message reply, HashMap<String,Number> data) {
-	if (reply.getName().equals("getPose")) {
-	  pose = new Pose((Float) data.get("x"), (Float) data.get("y"), (Float) data.get("heading"));
-  	}	  
+  protected void updateData(Message reply, HashMap<String,Number> data) {
+	  
   }
+
 }
 
