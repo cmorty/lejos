@@ -1,5 +1,11 @@
 package lejos.nxt.addon;
 
+import javax.microedition.location.GPSLocationProvider;
+import javax.microedition.location.Location;
+import javax.microedition.location.LocationException;
+import javax.microedition.location.LocationListener;
+import javax.microedition.location.LocationProvider;
+
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 import lejos.util.EndianTools;
@@ -10,7 +16,8 @@ import lejos.util.EndianTools;
  */
 
 /**
- * Class for controlling dGPS sensor from Dexter Industries
+ * Class for controlling dGPS sensor from Dexter Industries. Documentation for this sensor
+ * can be found at <a href="http://www.dexterindustries.com/download.html#dGPS">Dexter Industries</a>.
  *
  * @author Mark Crosbie  <mark@mastincrosbie.com>
  * 22 January, 2011
@@ -69,7 +76,12 @@ public class GPSSensor extends I2CSensor {
 
 
     /**
-     * Read the current latitude in degrees (positive=North, negative=South)
+     * <p>Read the current latitude in degrees as an <b>8-digit</b> integer. The traditional format for latitude returns
+     * the degrees and minutes as follows:</p>
+     * <i>38° 88’ 94.63” N</i>
+     * <p>This sensor returns the same value as an integer ddmmmmmm, as follows:</p>
+     * <i>38.889463</i>
+     * <p>As you can see, positive=North, negative=South.</p>
      * @return current latitude in decimal degrees
      */
     public int getLat(){
@@ -81,7 +93,13 @@ public class GPSSensor extends I2CSensor {
     }
 
 	/**
-	* Read the current longitude in degrees (positive=East, negative=West)
+	* <p>Read the current longitude in degrees as a <b>9-digit</b> integer. The traditional format for longitude returns the degrees
+	* and minutes, as follows:</p>
+     * <i>77°04’85.54” W</i>
+     * <p>This sensor returns the same degrees and minutes value as an integer dddmmmmmm, as follows:</p>
+     * <p><i>-77048554</i> Technically there is a zero in front of this number. For degrees larger than 99,
+     * a one will be the leading number.</p>
+     * <p>As you can see, positive=East, negative=West.</p>
 	* @return current longitude in decimal degrees
 	*/ 
     public int getLong() {
@@ -107,7 +125,7 @@ public class GPSSensor extends I2CSensor {
     }
 
     /**
-     * Read the current heading in degrees
+     * Read the current heading in degrees as reported by the GPS chip.
      * @return current heading in degrees
      */
     public int getHeading() {
@@ -119,8 +137,11 @@ public class GPSSensor extends I2CSensor {
     }
 
     /**
-     * Read the current relative heading in degrees
-     * Angle travelled since last request. See dGPS manual.
+     * <p>Read the current relative heading in degrees. The relative heading is the angle of travel
+     * since the last request of this method. The first time this method is called, the GPS coordinates
+     * are stored in this chip. The second time it is called it reports the angle between the current 
+     * coordinates and the coordinates from the previous call.</p> 
+     * (See dGPS manual.)
      * @return relative head
      */
      public int getRelativeHeading() {
@@ -180,5 +201,9 @@ public class GPSSensor extends I2CSensor {
     	 EndianTools.encodeIntBE(longitude, args, 0);
 
     	 return this.sendData(DGPS_CMD_SLONG, args, 0, 4);
+     }
+     
+     public LocationProvider getLocationProvider() {
+    	 return new GPSLocationProvider();
      }
 }
