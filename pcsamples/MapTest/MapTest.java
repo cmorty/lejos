@@ -42,12 +42,14 @@ public class MapTest extends MapPanel {
 	Message reply = new Message("getPose", elements);
 	
 	lejos.pc.remote.Command getPose = new lejos.pc.remote.Command((byte) 0, null, reply);
+	CommandButton poseButton = new CommandButton("Get Pose", getPose);
 	
 	
 	MapTest mapTest = new MapTest(map, 0,0,2);
 	
     openInJFrame(mapTest, FRAME_WIDTH, FRAME_HEIGHT, "Map Test", Color.white);
     
-    mapTest.connect(args[1]);
+    mapTest.createButton(poseButton);
+    //mapTest.connect(args[1]);
   }
 }
