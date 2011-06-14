@@ -18,9 +18,22 @@ import lejos.robotics.PressureDetector;
  */
 public class DPressure500 implements SensorConstants, PressureDetector {
 	private ADSensorPort port;
-	private static final float DPRESS_VREF = 4.85f; // NXT voltage
-	private static final float DPRESS_DIVISOR = 0.0018f; 
-	private static final float DPRESS_OFFSET = 0.04f;
+	
+	/*
+	 * Formula from DPRESS-driver.h:
+	 * vRef = 4.85
+	 * vOut = rawValue * vRef / 1023
+	 * result = (vOut / vRef - CAL1) / CAL2
+	 */
+	private static final double CAL1 = 0.04;
+	private static final double CAL2 = 0.0018;
+	
+	/* 
+	 * Optimized:
+	 * result = rawValue * DPRESS_MULT - DPRESS_OFFSET;
+	 */
+	private static final float DPRESS_MULT = (float)(1.0 / CAL2 / 1023);
+	private static final float DPRESS_OFFSET = (float)(CAL1 / CAL2);
 	
     public DPressure500(ADSensorPort port) {
 		this.port = port;
@@ -33,7 +46,6 @@ public class DPressure500 implements SensorConstants, PressureDetector {
      * @return the pressure in kPa
      */
     public float getPressure() {
-    	float vOut = ((port.readRawValue() * DPRESS_VREF) / 1023f);
-    	return ((vOut / DPRESS_VREF) - DPRESS_OFFSET) / DPRESS_DIVISOR;
+    	return port.readRawValue() * DPRESS_MULT - DPRESS_OFFSET;
     }
 }
