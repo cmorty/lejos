@@ -15,7 +15,7 @@ import lejos.util.EndianTools;
  * 
  * <p>The sensor uses an integer-based representation of latitude and longitude values.
  * Assume that you want to convert the value of 77 degrees, 2 minutes and 54.79 seconds
- * to the integer-based representation. The integer value is computed as follows:</p>
+ * to the integer-based representation. The integer value is computed as follows:
  * <code>R = 1000000 * (D + M / 60 + S / 3600)</code>
  * where <code>D=77</code>, <code>M=2</code>, and <code>S=54.79</code>.
  * For the given values, the result is the integer value 77048553.
