@@ -1,19 +1,32 @@
 package javax.microedition.location;
 
+import lejos.nxt.SensorPort;
 import lejos.nxt.addon.GPSSensor;
 
-public class GPSLocationProvider extends LocationProvider {
+/**
+ * <p>LocationProvider implementation for Dexter Industries dGPS.</p>
+ * <p>NOTE: The sensor can not return altitude, so Location will contain 0 for altitude.</p> 
+ * @author BB
+ *
+ */
+class GPSLocationProvider extends LocationProvider {
 		
 		private GPSSensor gps;
 		Thread listyThread;
 		private boolean listenerRunning;
 		
+		GPSLocationProvider(SensorPort port) {
+			gps = new GPSSensor(port);
+		}
+		
 		@Override
 		public Location getLocation(int timeout) throws LocationException,
 				InterruptedException {
 			
-			float latitude = gps.getLat();
-			float longitude = gps.getLong();
+			// Convert from ddmmmmmm to degrees in WGS84 datum 
+			double latitude = gps.getLat()/1000000.0;
+			// Convert from dddmmmmmm to degrees in WGS84 datum
+			double longitude = gps.getLong()/1000000.0;
 			float altitude = 0; // TODO:
 			float horizontalAccuracy = 0, verticalAccuracy = 0; // TODO:
 			float speed = gps.getVelocity()/100; // Convert from cm/s to m/s
@@ -43,13 +56,19 @@ public class GPSLocationProvider extends LocationProvider {
 		public void setLocationListener(final LocationListener listener,
 				final int interval, int timeout, int maxAge) {
 			final LocationProvider parent = this;
+			final int delay;
+			if(interval<0) {
+				delay = 500;
+			} else {
+				delay = interval;
+			}
 			
 			listyThread = new Thread() {
 				public void run() {
 					while(listenerRunning) {
 						try {
 							listener.locationUpdated(parent, parent.getLocation(0));
-							Thread.sleep(interval);
+							Thread.sleep(delay);
 						} catch (LocationException e) {
 							// TODO Auto-generated catch block
 						} catch (InterruptedException e) {

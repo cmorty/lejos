@@ -5,7 +5,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 /**
- * This is the starting point for applications using this API and represents a source of
+ * This is the starting point for applications using the Location API and represents a source of
  * the location information. A LocationProvider represents a location-providing module,
  * generating Locations.
  * <p>
@@ -14,7 +14,7 @@ import java.util.Vector;
  * the responsibility of the implementation to return the correct LocationProvider-derived
  * object.
  * <p>
- * Rather than passing an actual Criteria object to getInstance(), just use null because leJOS NXJ has no need for criteria arguments.
+ * @see javax.microedition.location.LocationProvider#getInstance(Criteria)
  *
  * @author BB
  */
@@ -46,12 +46,14 @@ public abstract class LocationProvider {
 	public abstract int getState();
 	
 	/**
-	 * <p>This is a factory method to retrieve an instance of LocationProvider. With leJOS NXJ 
-	 * the LocationProvider is by default a Bluetooth GPS unit. It looks through all the paired
+	 * <p>This is a factory method to retrieve an instance of LocationProvider. You can use either a Bluetooth
+	 * GPS receiver or the dGPS by Dexter Industries.</p>
+	 *  
+	 * <p>To select Bluetooth, any Criteria object will do, or a null value. This class looks through all the paired
 	 * Bluetooth devices on your NXT brick and tries connecting to any that are identified as
 	 * GPS units.</p>
-	 * <p>This API was not designed to allow location providers plugged into different sensor ports.
-	 * To retrieve a LocationProvider from the lejos.addon.GPSSensor class, use GPSSensor.getLocationProvider().
+	 * 
+	 * <p>To select dGPS, submit a dGPSCriteria object. The dGPSCriteria constructor specifies the SensorPort.
 	 * </p> 
 	 * 
 	 * @see lejos.nxt.addon.GPSSensor
@@ -67,7 +69,13 @@ public abstract class LocationProvider {
 	 * allow the user to select the appropriate source via a Properties file. - BB
 	 */
 	public static LocationProvider getInstance(Criteria criteria) throws LocationException {
-		return new BTGPSLocationProvider();
+		
+		// Check if null?
+		if(criteria instanceof dGPSCriteria) {
+			dGPSCriteria crit = (dGPSCriteria)criteria;
+			return new GPSLocationProvider(crit.getPort());
+		}
+			return new BTGPSLocationProvider();
 	}
 	
 	/**
