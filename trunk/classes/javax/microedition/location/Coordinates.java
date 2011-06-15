@@ -161,59 +161,61 @@ UNTESTED as of April 7, 2009 - BB
 	 */
 	public static String convert(double coordinate, int outputType)
 			throws IllegalArgumentException {
-		if ((coordinate < -180.0) || (coordinate > 180.0))
+		if ((coordinate < -180.0) || (coordinate > 180.0) || (coordinate != coordinate))
 			throw new IllegalArgumentException();
 
-		// treat negative values correctly
-		int degrees;
-		if (coordinate >= 0.0) {
-			degrees = (int) Math.floor(coordinate);
-		} else {
-			degrees = (int) Math.ceil(coordinate);
+		// 14 is max length, example: -123:12:12.123
+		StringBuilder sb = new StringBuilder(14);
+		
+		if (coordinate < 0)
+		{
+			coordinate = -coordinate;
+			sb.append("-");
 		}
 
-		// The decimal string
-		String DD = Integer.toString(degrees);
-
-		// The minute string
-		double decimalFracDegrees = Math.abs((coordinate - degrees) * 100.0);
-		int minutes = (int) (Math.floor(decimalFracDegrees * 0.6));
-		String MM = Integer.toString(minutes);
-
-		if (outputType == DD_MM_SS) {
-			// The seconds string
-			double decimalFracMin = (decimalFracDegrees * 0.6 - minutes) * 100.0;
-			// Math.round(x) does not exist in CLDC/MIDP but it is equivalent to
-			// Math.floor(x + 0.5d)
-			int ss = (int) Math.floor(decimalFracMin * 0.6 + 0.5d);
-			String SS = Integer.toString(ss);
-			if (SS.length() == 1)
-				SS = "0" + SS;
-			// The decimal fraction part of seconds, up to 3 significant digits
-			int decimalFracSec = (int) Math
-					.floor((decimalFracMin * 0.6 - ss) * 1000.0 + 0.5d);
-			String SS_d = dropTrailingZeros(decimalFracSec);
-			String out = DD + ":" + MM;
-			// output only significant figures
-			if (SS_d != null) {
-				out = out + ":" + SS + "." + SS_d;
-			} else if (!SS.equals("00")) {
-				out = out + ":" + SS;
+		int r;
+		switch (outputType)
+		{
+			case DD_MM:
+			{
+				//convert to milli-minutes
+				r = (int)(coordinate * 60000 + 0.5);
+				sb.append(r / 60000);
+				break;
 			}
-			return out;
-		} else if (outputType == DD_MM) {
-			// The decimal fraction part of minutes, up to 5 significant digits
-			double decimalFracMin = (decimalFracDegrees * 0.6 - minutes) * 100000.0;
-			int ss = (int) Math.floor(decimalFracMin + 0.5d);
-			String MM_d = dropTrailingZeros(ss);
-			String out = DD + ":" + MM;
-			// output only significant figures
-			if (MM_d != null) {
-				out = out + "." + MM_d;
+			case DD_MM_SS:
+			{
+				//convert to milli-seconds
+				r = (int)(coordinate * 3600000 + 0.5);
+				sb.append(r / 3600000);
+				sb.append(':');
+				
+				r = r % 3600000;
+				sb.append((char)('0' + r / 600000));
+				sb.append((char)('0' + r / 60000 % 10));
+				break;
 			}
-			return out;
-		} else
-			throw new IllegalArgumentException();
+			default:
+				throw new IllegalArgumentException();
+		}
+		
+		r = r % 60000;
+		sb.append(':');
+		sb.append((char)('0' + r / 10000));
+		sb.append((char)('0' + r / 1000 % 10));
+		
+		r = r % 1000;
+		if (r != 0)
+		{
+			sb.append('.');
+			do
+			{
+				sb.append((char)('0' + r / 100));
+				r = r * 10 % 1000;
+			} while (r != 0);
+		}
+		
+		return sb.toString(); 
 	}
 
 	/**
