@@ -1,11 +1,5 @@
 package lejos.nxt.addon;
 
-import javax.microedition.location.GPSLocationProvider;
-import javax.microedition.location.Location;
-import javax.microedition.location.LocationException;
-import javax.microedition.location.LocationListener;
-import javax.microedition.location.LocationProvider;
-
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 import lejos.util.EndianTools;
@@ -16,8 +10,14 @@ import lejos.util.EndianTools;
  */
 
 /**
- * Class for controlling dGPS sensor from Dexter Industries. Documentation for this sensor
- * can be found at <a href="http://www.dexterindustries.com/download.html#dGPS">Dexter Industries</a>.
+ * <p>Class for controlling dGPS sensor from Dexter Industries. Documentation for this sensor
+ * can be found at <a href="http://www.dexterindustries.com/download.html#dGPS">Dexter Industries</a>.</p>
+ * 
+ * <p>You can use the standard <code>javax.microedition.location</code> package with this class by
+ * using a <code>dGPSCriteria</code> object to request a LocationProvider as follows:</p>
+ * <p><code>dGPSCriteria criteria = new gGPSCriteria(SensorPort.S1);<br>
+ * LocationProvider lp = LocationProvider.getInstance(criteria);
+ * </p></code>
  *
  * @author Mark Crosbie  <mark@mastincrosbie.com>
  * 22 January, 2011
@@ -201,9 +201,5 @@ public class GPSSensor extends I2CSensor {
     	 EndianTools.encodeIntBE(longitude, args, 0);
 
     	 return this.sendData(DGPS_CMD_SLONG, args, 0, 4);
-     }
-     
-     public LocationProvider getLocationProvider() {
-    	 return new GPSLocationProvider();
      }
 }

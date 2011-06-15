@@ -53,9 +53,13 @@ public class Coordinates{
 	}
 
 	/**
-	 * Get latitude
+	 * <p>Returns the latitude component of this coordinate. Positive values indicate northern 
+	 * latitude and negative values southern latitude.</p>
 	 * 
-	 * @return the latitude
+	 * <p>The latitude is given in WGS84 datum.</p>
+	 * @return the latitude in degrees
+	 * @see setLatitude(double)
+	 * 
 	 */
 	public double getLatitude() {
 		return latitude;
@@ -76,9 +80,12 @@ public class Coordinates{
 	}
 
 	/**
-	 * Get Longitude
-	 * 
-	 * @return the longitude
+	 *  <p>Returns the longitude component of this coordinate. Positive values indicate eastern longitude 
+	 *  and negative values western longitude.</p>
+	 *  <p>The longitude is given in WGS84 datum.</p>
+	 *  
+	 *  @return the longitude in degrees
+	 *  @see setLongitude(double)
 	 */
 	public double getLongitude() {
 		return longitude;
