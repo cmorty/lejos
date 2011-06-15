@@ -24,9 +24,9 @@ class GPSLocationProvider extends LocationProvider {
 				InterruptedException {
 			
 			// Convert from ddmmmmmm to degrees in WGS84 datum 
-			double latitude = gps.getLat()/1000000.0;
+			double latitude = gps.getLatitude()/1000000.0;
 			// Convert from dddmmmmmm to degrees in WGS84 datum
-			double longitude = gps.getLong()/1000000.0;
+			double longitude = gps.getLongitude()/1000000.0;
 			float altitude = 0; // TODO:
 			float horizontalAccuracy = 0, verticalAccuracy = 0; // TODO:
 			float speed = gps.getVelocity()/100; // Convert from cm/s to m/s

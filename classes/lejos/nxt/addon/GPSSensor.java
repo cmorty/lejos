@@ -84,7 +84,7 @@ public class GPSSensor extends I2CSensor {
      * <p>As you can see, positive=North, negative=South.</p>
      * @return current latitude in decimal degrees
      */
-    public int getLat(){
+    public int getLatitude(){
     	byte reply[] = new byte[4];
 
     	this.getData(DGPS_CMD_LAT, reply, 0, 4);
@@ -102,7 +102,7 @@ public class GPSSensor extends I2CSensor {
      * <p>As you can see, positive=East, negative=West.</p>
 	* @return current longitude in decimal degrees
 	*/ 
-    public int getLong() {
+    public int getLongitude() {
    	 	byte reply[] = new byte[4];
 
     	this.getData(DGPS_CMD_LONG, reply, 0, 4);
