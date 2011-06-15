@@ -13,6 +13,14 @@ import lejos.util.EndianTools;
  * <p>Class for controlling dGPS sensor from Dexter Industries. Documentation for this sensor
  * can be found at <a href="http://www.dexterindustries.com/download.html#dGPS">Dexter Industries</a>.</p>
  * 
+ * <p>The sensor uses an integer-based representation of latitude and longitude values.
+ * Assume that you want to convert the value of 77 degrees, 2 minutes and 54.79 seconds
+ * to the integer-based representation. The integer value is computed as follows:</p>
+ * <code>R = 1000000 * (D + M / 60 + S / 3600)</code>
+ * where <code>D=77</code>, <code>M=2</code>, and <code>S=54.79</code>.
+ * For the given values, the result is the integer value 77048553.
+ * Basically, the sensor return decimal degrees times a million.</p>
+ * 
  * <p>You can use the standard <code>javax.microedition.location</code> package with this class by
  * using a <code>dGPSCriteria</code> object to request a LocationProvider as follows:</p>
  * <p><code>dGPSCriteria criteria = new gGPSCriteria(SensorPort.S1);<br>
@@ -76,12 +84,10 @@ public class GPSSensor extends I2CSensor {
 
 
     /**
-     * <p>Read the current latitude in degrees as an <b>8-digit</b> integer. The traditional format for latitude returns
-     * the degrees and minutes as follows:</p>
-     * <i>38° 88’ 94.63” N</i>
-     * <p>This sensor returns the same value as an integer ddmmmmmm, as follows:</p>
-     * <i>38.889463</i>
-     * <p>As you can see, positive=North, negative=South.</p>
+	 * <p>Read the current latitude as an integer value (decimal degrees times a million).
+	 * See {@linkplain GPSSensor here} for explanation.  
+     * positive=North, negative=South.</p>
+     * 
      * @return current latitude in decimal degrees
      */
     public int getLatitude(){
@@ -93,15 +99,12 @@ public class GPSSensor extends I2CSensor {
     }
 
 	/**
-	* <p>Read the current longitude in degrees as a <b>9-digit</b> integer. The traditional format for longitude returns the degrees
-	* and minutes, as follows:</p>
-     * <i>77°04’85.54” W</i>
-     * <p>This sensor returns the same degrees and minutes value as an integer dddmmmmmm, as follows:</p>
-     * <p><i>-77048554</i> Technically there is a zero in front of this number. For degrees larger than 99,
-     * a one will be the leading number.</p>
-     * <p>As you can see, positive=East, negative=West.</p>
-	* @return current longitude in decimal degrees
-	*/ 
+	 * <p>Read the current longitude as an integer value (decimal degrees times a million).
+	 * See {@linkplain GPSSensor here} for explanation.  
+	 * positive=East, negative=West.</p>
+     * 
+	 * @return current longitude in decimal degrees
+	 */ 
     public int getLongitude() {
    	 	byte reply[] = new byte[4];
 
