@@ -10,13 +10,13 @@ package lejos.nxt;
 public class SystemSettings {
 
 	private static final int SETTINGS_PAGE = 0; 
-	private static final int MAX_SETTING_SIZE = 16; 	
+	private static final int MAX_SETTING_SIZE = 21; 	
 	private static byte[] buf = new byte[256];
 	private static final String version = "NXJ Settings 1.0"; 
 	private static final String versionName = "settings.version"; 
 	
-	// Add to this String array to define new persistent
-	// settings. There is a maximum of 16 including the version.
+	// Add to this String array to define new persistent settings.
+	// There is a maximum of (256 / MAX_SETTING_SIZE) including the version.
 	private static final String[] names = {
 		versionName, "lejos.volume", "lejos.default_program", "lejos.keyclick_volume",
 		"lejos.default_autoRun", "lejos.sleep_time", "lejos.usb_serno", "lejos.usb_name",
