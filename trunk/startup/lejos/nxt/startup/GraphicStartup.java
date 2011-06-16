@@ -839,7 +839,7 @@ public class GraphicStartup {
 	                file.exec();
 	                break;
 	            case 1:
-	            	if (fileName.length() > 16){
+	            	if (fileName.length() > SystemSettings.MAX_SETTING_SIZE){
 	            		msg("Filename Too Big");
 	            		fileMenu(file);
 	            	}

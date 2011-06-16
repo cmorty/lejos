@@ -9,8 +9,8 @@ package lejos.nxt;
  */
 public class SystemSettings {
 
+	public static final int MAX_SETTING_SIZE = 21; 	
 	private static final int SETTINGS_PAGE = 0; 
-	private static final int MAX_SETTING_SIZE = 21; 	
 	private static final String CURRENT_VERSION = "NXJ Settings 1.1"; 
 	private static final String VERSION_NAME = "settings.version"; 
 	
