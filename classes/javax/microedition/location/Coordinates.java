@@ -190,8 +190,7 @@ UNTESTED as of April 7, 2009 - BB
 				sb.append(r / 3600000);
 				sb.append(':');
 				
-				r = r % 3600000;
-				sb.append((char)('0' + r / 600000));
+				sb.append((char)('0' + r / 600000 % 6));
 				sb.append((char)('0' + r / 60000 % 10));
 				break;
 			}
@@ -199,9 +198,8 @@ UNTESTED as of April 7, 2009 - BB
 				throw new IllegalArgumentException();
 		}
 		
-		r = r % 60000;
 		sb.append(':');
-		sb.append((char)('0' + r / 10000));
+		sb.append((char)('0' + r / 10000 % 6));
 		sb.append((char)('0' + r / 1000 % 10));
 		
 		r = r % 1000;
