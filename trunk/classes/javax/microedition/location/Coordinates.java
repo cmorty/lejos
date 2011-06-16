@@ -161,7 +161,7 @@ UNTESTED as of April 7, 2009 - BB
 	 */
 	public static String convert(double coordinate, int outputType)
 			throws IllegalArgumentException {
-		if ((coordinate < -180.0) || (coordinate > 180.0) || (coordinate != coordinate))
+		if ((coordinate < -180.0) || (coordinate >= 180.0) || (coordinate != coordinate))
 			throw new IllegalArgumentException();
 
 		// 14 is max length, example: -123:12:12.123
