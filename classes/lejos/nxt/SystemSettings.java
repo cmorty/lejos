@@ -13,6 +13,7 @@ public class SystemSettings {
 	private static final int SETTINGS_PAGE = 0; 
 	private static final String CURRENT_VERSION = "NXJ Settings 1.1"; 
 	private static final String VERSION_NAME = "settings.version"; 
+	private static final int VERSION_SLOT = 0;
 	
 	// Add to this String array to define new persistent settings.
 	// There is a maximum of (256 / MAX_SETTING_SIZE) including the version.
@@ -31,10 +32,11 @@ public class SystemSettings {
 		Flash.readPage(buf, SETTINGS_PAGE);
 		// Intialize page to all zeros and set version in slot 0,
 		// if settings not already set up.
-		if (!CURRENT_VERSION.equals(getSlotValue(0))) {
+		if (!CURRENT_VERSION.equals(getSlotValue(VERSION_SLOT))) {
 			for (int i = 0; i < buf.length; i++)
 				buf[i] = 0;
-			setSetting(VERSION_NAME, CURRENT_VERSION);
+			
+			setSlotValue(VERSION_SLOT, CURRENT_VERSION);
 		}
 	}
 	
@@ -75,6 +77,8 @@ public class SystemSettings {
 
 		for (int i = len; i < MAX_SETTING_SIZE; i++)
 			buf[off + i] = 0;
+		
+		Flash.writePage(buf, SETTINGS_PAGE);
 	}
 	
 	/**
@@ -140,11 +144,10 @@ public class SystemSettings {
 	 */
 	public static void setSetting(String key, String value) {
 		int slot = getSlotIndex(key);
-		if (slot < 0)
+		if (slot < 0 || slot == VERSION_SLOT)
 			throw new IllegalArgumentException("unsupported key");
 		
 		setSlotValue(slot, value);
-		Flash.writePage(buf, SETTINGS_PAGE);
 	}	
 	
 	/**
