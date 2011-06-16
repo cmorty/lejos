@@ -65,15 +65,13 @@ public class SystemSettings {
 		if (len > MAX_SETTING_SIZE)
 			throw new IllegalArgumentException("value too large");
 		
+		for (int i = 0; i < len; i++)
+			if (value.charAt(i) > 0xFF)
+				throw new IllegalArgumentException("unsupported character");
+
 		int off = slot * MAX_SETTING_SIZE;
 		for (int i = 0; i < len; i++)
-		{
-			char c = value.charAt(i);
-			if (c > 0xFF)
-				throw new IllegalArgumentException("unsupported character");
-			
-			buf[off + i] = (byte) c;
-		}
+			buf[off + i] = (byte) value.charAt(i);
 
 		for (int i = len; i < MAX_SETTING_SIZE; i++)
 			buf[off + i] = 0;
