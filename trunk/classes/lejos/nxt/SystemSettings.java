@@ -30,7 +30,7 @@ public class SystemSettings {
 		Flash.readPage(buf, SETTINGS_PAGE);
 		// Intialize page to all zeros and set version in slot 0,
 		// if settings not already set up.
-		if (!getValue(0).equals(version)) {
+		if (!getSlotValue(0).equals(version)) {
 			for(int i=0;i<Flash.BYTES_PER_PAGE;i++) buf[i] = 0;
 			setSetting(versionName,version);
 		};
@@ -43,11 +43,12 @@ public class SystemSettings {
 	 * @return the slot number (0 - 15)
 	 *
 	 */
-	static int getSlot(String key)
+	private static int getSlotIndex(String key)
 	{
-		for(int i= 0;i<names.length;i++) {
-			if (names[i].equals(key)) return i;
-		}
+		for(int i= 0;i<names.length;i++)
+			if (names[i].equals(key))
+				return i;
+		
 		return -1;
 	}
 	
@@ -57,16 +58,23 @@ public class SystemSettings {
 	 * @param slot the slot (0 - 15)
 	 * @param value the String value
 	 */
-	static void setSlot(int slot, String value) {
+	private static void setSlotValue(int slot, String value) {
 		int len = value.length();
 		if (len > MAX_SETTING_SIZE)
 			throw new IllegalArgumentException("value too large");
 		
-		for(int i=0;i<MAX_SETTING_SIZE;i++)
-			buf[slot*MAX_SETTING_SIZE+i] = 0;
+		int off = slot * MAX_SETTING_SIZE;
+		for (int i = 0; i < len; i++)
+		{
+			char c = value.charAt(i);
+			if (c > 0xFF)
+				throw new IllegalArgumentException("unsupported character");
+			
+			buf[off + i] = (byte) c;
+		}
 
-		for(int i=0;i<len;i++)
-			buf[slot*MAX_SETTING_SIZE+i] = (byte)value.charAt(i);
+		for (int i = len; i < MAX_SETTING_SIZE; i++)
+			buf[off + i] = 0;
 	}
 	
 	/**
@@ -75,11 +83,14 @@ public class SystemSettings {
 	 * @param slot the slot number
 	 * @return the contents of the slot as a String
 	 */
-	static String getValue(int slot) {
-		int l = 0;
-		for(int i=0;i<MAX_SETTING_SIZE && buf[slot*MAX_SETTING_SIZE+i] != 0;i++) l++;
-		char[] chars = new char[l];
-		for(int i=0;i<l;i++) chars[i] = (char) buf[slot*MAX_SETTING_SIZE+i];
+	private static String getSlotValue(int slot) {
+		int off = slot * MAX_SETTING_SIZE; 
+		int len = 0;
+		while (len < MAX_SETTING_SIZE && buf[off + len] != 0)
+			len++;
+		char[] chars = new char[len];
+		for (int i = 0; i < len; i++)
+			chars[i] = (char)(buf[off + i] & 0xFF);
 		return new String(chars);
 	}
 	
@@ -91,14 +102,15 @@ public class SystemSettings {
 	 * @return the value
 	 */
 	public static String getStringSetting(String key, String defaultValue) {
-		int slot = getSlot(key);
-		if (slot < 0) return defaultValue;
-		else {
-			String s = getValue(slot);
-			if (s.length() == 0) return defaultValue;
-			else return s;
-		}
+		int slot = getSlotIndex(key);
+		if (slot < 0)
+			return defaultValue;
 
+		String s = getSlotValue(slot);
+		if (s.length() == 0)
+			return defaultValue;
+		
+		return s;
 	}
 	
 	/**
@@ -110,14 +122,13 @@ public class SystemSettings {
 	 */
 	public static int getIntSetting(String key, int defaultValue) {
 		String s = getStringSetting(key, null);
-		if (s == null) {
+		if (s == null)
 			return defaultValue;
-		} else {
-			try {
-				return Integer.parseInt(s);
-			} catch (NumberFormatException e) {
-				return defaultValue;
-			}
+			
+		try {
+			return Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+			return defaultValue;
 		}
 	}
 	
@@ -127,14 +138,14 @@ public class SystemSettings {
 	 * @param key the name of the setting
 	 * @param value the value to set it to
 	 */
-	static void setSetting(String key, String value) {
-		int slot = getSlot(key);
+	public static void setSetting(String key, String value) {
+		int slot = getSlotIndex(key);
 		if (slot < 0)
 			throw new IllegalArgumentException("unsupported key");
 		
-		setSlot(slot, value);
+		setSlotValue(slot, value);
 		Flash.writePage(buf, SETTINGS_PAGE);
-	}
+	}	
 	
 	/**
 	 * Get the names of the the leJOS NXJ Settings
