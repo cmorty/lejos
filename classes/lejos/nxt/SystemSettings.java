@@ -11,17 +11,18 @@ public class SystemSettings {
 
 	private static final int SETTINGS_PAGE = 0; 
 	private static final int MAX_SETTING_SIZE = 21; 	
-	private static byte[] buf = new byte[256];
-	private static final String version = "NXJ Settings 1.0"; 
-	private static final String versionName = "settings.version"; 
+	private static final String CURRENT_VERSION = "NXJ Settings 1.1"; 
+	private static final String VERSION_NAME = "settings.version"; 
 	
 	// Add to this String array to define new persistent settings.
 	// There is a maximum of (256 / MAX_SETTING_SIZE) including the version.
-	private static final String[] names = {
-		versionName, "lejos.volume", "lejos.default_program", "lejos.keyclick_volume",
+	private static final String[] NAMES = {
+		VERSION_NAME, "lejos.volume", "lejos.default_program", "lejos.keyclick_volume",
 		"lejos.default_autoRun", "lejos.sleep_time", "lejos.usb_serno", "lejos.usb_name",
 		"lejos.bluetooth_pin"
 	};
+	
+	private static byte[] buf = new byte[256];
 	
 	/**
 	 * Read the settings page
@@ -30,10 +31,11 @@ public class SystemSettings {
 		Flash.readPage(buf, SETTINGS_PAGE);
 		// Intialize page to all zeros and set version in slot 0,
 		// if settings not already set up.
-		if (!getSlotValue(0).equals(version)) {
-			for(int i=0;i<Flash.BYTES_PER_PAGE;i++) buf[i] = 0;
-			setSetting(versionName,version);
-		};
+		if (!CURRENT_VERSION.equals(getSlotValue(0))) {
+			for (int i = 0; i < buf.length; i++)
+				buf[i] = 0;
+			setSetting(VERSION_NAME, CURRENT_VERSION);
+		}
 	}
 	
 	/**
@@ -45,8 +47,8 @@ public class SystemSettings {
 	 */
 	private static int getSlotIndex(String key)
 	{
-		for(int i= 0;i<names.length;i++)
-			if (names[i].equals(key))
+		for(int i= 0;i<NAMES.length;i++)
+			if (NAMES[i].equals(key))
 				return i;
 		
 		return -1;
@@ -153,6 +155,6 @@ public class SystemSettings {
 	 * @return a String array of the names
 	 */
 	static String[] getSettingNames() {
-		return names;
+		return NAMES;
 	}
 }
