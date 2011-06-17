@@ -145,26 +145,26 @@ public class NavMapControl extends JFrame implements ActionListener, RemoteContr
     */
    public void actionPerformed(ActionEvent e)
    {		
-      if (e.getSource() == stopButton) com.sendData(Command.STOP.ordinal(),
+      if (e.getSource() == stopButton) com.sendData(NavCommand.STOP.ordinal(),
                0,0,0,true);
       else if(e.getSource() == goToButton){ 
          readXY();
-         com.sendData(Command.GOTO.ordinal(),30*_x,30*_y,0,true);
+         com.sendData(NavCommand.GOTO.ordinal(),30*_x,30*_y,0,true);
       }
       else if(e.getSource() == setPoseButton) {
          readRXY();
          readHeading(); 
-         com.sendData( Command.SETPOSE.ordinal(),30*_Rx,30*_Ry,_heading,true);
+         com.sendData( NavCommand.SETPOSE.ordinal(),30*_Rx,30*_Ry,_heading,true);
    }
       else if (e.getSource() == rotateButton)
       { 
          
          readAngle();
-          com.sendData(Command.ROTATE.ordinal(),_angle,0,0,true);
+          com.sendData(NavCommand.ROTATE.ordinal(),_angle,0,0,true);
       }
       else if (e.getSource() == travelButton){
          readDistance();
-         com.sendData(Command.TRAVEL.ordinal(),30*_distance,0,0,true);
+         com.sendData(NavCommand.TRAVEL.ordinal(),30*_distance,0,0,true);
       }
       else if(e.getSource()== connectButton)
       {
@@ -283,12 +283,12 @@ public class NavMapControl extends JFrame implements ActionListener, RemoteContr
       public void execute(int code, float v0, float v1, float v2, boolean bit)
   {
      
-     Command action = Command.values()[code];
+     NavCommand action = NavCommand.values()[code];
              message = "received  code:"+action  +" "+ v0+"  "+v1+" ="+v2+bit;
              System.out.println(message);
               setMessage(message);
               textStatus.setText( message);//inform user /  
-              if(action  == Command.POSE)
+              if(action  == NavCommand.POSE)
               {              
                  _Rx = v0/30;
                  _Ry = v1/30;
@@ -299,7 +299,7 @@ public class NavMapControl extends JFrame implements ActionListener, RemoteContr
                  headingField.setText(" "+_heading);
                   System.out.println(" pose "+_x+" "+_y+" "+_heading);
               }     
-              else if(action  == Command.OBSTACLE) 
+              else if(action  == NavCommand.OBSTACLE) 
                  canvas.drawObstacle(v0/30,v1/30);
   }
 
