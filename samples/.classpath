@@ -52,6 +52,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="PilotParams"/>
 	<classpathentry excluding="build.xml" kind="src" path="PilotTester"/>
 	<classpathentry excluding="build.xml" kind="src" path="RCNavigator"/>
+	<classpathentry excluding="build.xml" kind="src" path="RCNavMapper"/>
 	<classpathentry excluding="build.xml" kind="src" path="RCPilot"/>
 	<classpathentry excluding="build.xml" kind="src" path="RCXEmulator"/>
 	<classpathentry excluding="build.xml" kind="src" path="RCXLLCMonitor"/>

@@ -96,36 +96,36 @@ public class RCNavMapper  implements RCVehicle,   FeatureListener
  */
    public  void execute(int code, float v0, float v1, float v2, boolean immediate)
     {
-         Command command = Command.values()[code];  // convert int to enum     
+         NavCommand command = NavCommand.values()[code];  // convert int to enum     
          LCD.clear();
          LCD.drawString(command.toString(),0,0);
          Sound.playTone(800 + 100 * code, 200);;
-         if(command == Command.STOP)
+         if(command == NavCommand.STOP)
          {
             pilot.stop();
             nav.flushQueue();
             report(pp.getPose());
          }
-         else if(command == Command.GOTO ) 
+         else if(command == NavCommand.GOTO ) 
          {
             nav.addWayPoint(new WayPoint(v0, v1));
             _report = true;
             detector.enableDetection(true);
          }
-         else if(command == Command.TRAVEL) 
+         else if(command == NavCommand.TRAVEL) 
          {
             float distance = v0;
             LCD.drawString("D " + Math.round(distance), 0, 2);
             pilot.travel(distance, true);
             _report = true;
             detector.enableDetection(true);
-         }else if (command == Command.ROTATE)
+         }else if (command == NavCommand.ROTATE)
       {
          float angle = v0;
          pilot.rotate(angle,true);
          _report = true;
          LCD.drawString("A " + Math.round(angle), 0, 2);
-      } else if (command == Command.SETPOSE)
+      } else if (command == NavCommand.SETPOSE)
       {
          pp.setPose(new Pose(v0, v1, v2));
          report(pp.getPose());
@@ -137,7 +137,7 @@ public class RCNavMapper  implements RCVehicle,   FeatureListener
  */
    public void report(Pose pose)
     {
-       int code = Command.POSE.ordinal();
+       int code = NavCommand.POSE.ordinal();
        comm.sendData( code,  pose.getX(),pose.getY(),pose.getHeading(),
                nav.isGoing());
 System.out.println("Pose "+(int)pose.getX()+" "+(int)pose.getY()
@@ -146,7 +146,7 @@ System.out.println("Pose "+(int)pose.getX()+" "+(int)pose.getY()
    
    public void report(Point aPoint)
    {
-      int code = Command.OBSTACLE.ordinal();
+      int code = NavCommand.OBSTACLE.ordinal();
       comm.sendData(code, aPoint.x, aPoint.y, 0, false);
    }
            
