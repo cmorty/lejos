@@ -343,4 +343,9 @@ public class RemoteMotor implements RegulatedMotor, DCMotor, NXTProtocol {
 	    // 100 degree/second * Voltage
 		return battery.getVoltage() * 100.0f;
 	}
+
+	public void setStallThreshold(int error, int time) {
+		// TODO Auto-generated method stub
+		
+	}
 }

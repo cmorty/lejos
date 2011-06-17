@@ -670,4 +670,9 @@ public class MMXRegulatedMotor implements RegulatedMotor, EncoderMotor{
             }
         }
     }
+
+	public void setStallThreshold(int error, int time) {
+		// TODO Auto-generated method stub
+		
+	}
 }
