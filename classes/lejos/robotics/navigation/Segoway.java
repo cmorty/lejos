@@ -173,6 +173,7 @@ public class Segoway extends Thread { // TODO: Thread should be a private inner 
 		startBeeps();
 		
 		// Start balance thread
+		this.setDaemon(true);
 		this.start();		
 	}
 
