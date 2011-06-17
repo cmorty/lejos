@@ -415,6 +415,13 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>RCNavMapper</label>
+                    <type>java</type>
+                    <location>RCNavMapper</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>RCXPortTest</label>
                     <type>java</type>
                     <location>RCXPortTest</location>
@@ -513,6 +520,20 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>StaxEvent</label>
+                    <type>java</type>
+                    <location>StaxEvent</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>StaxTest</label>
+                    <type>java</type>
+                    <location>StaxTest</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>SteerNavDemo</label>
                     <type>java</type>
                     <location>SteerNavDemo</location>
@@ -530,6 +551,13 @@
                     <label>Subsumption2</label>
                     <type>java</type>
                     <location>Subsumption2</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>SVGMLTest</label>
+                    <type>java</type>
+                    <location>SVGMLTest</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -876,6 +904,11 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>RCNavMapper</label>
+                        <location>RCNavMapper</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>RCXPortTest</label>
                         <location>RCXPortTest</location>
                         <excludes>**.class,**.nxj</excludes>
@@ -946,6 +979,16 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>StaxEvent</label>
+                        <location>StaxEvent</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>StaxTest</label>
+                        <location>StaxTest</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>SteerNavDemo</label>
                         <location>SteerNavDemo</location>
                         <excludes>**.class,**.nxj</excludes>
@@ -958,6 +1001,11 @@
                     <source-folder style="packages">
                         <label>Subsumption2</label>
                         <location>Subsumption2</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>SVGMLTest</label>
+                        <location>SVGMLTest</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -1085,6 +1133,10 @@
                 <package-root>MotorTester</package-root>
                 <package-root>ObjectDetect</package-root>
                 <package-root>PathFinding</package-root>
+                <package-root>StaxTest</package-root>
+                <package-root>SVGMLTest</package-root>
+                <package-root>StaxEvent</package-root>
+                <package-root>RCNavMapper</package-root>
                 <classpath mode="compile">../classes/lib/classes.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
