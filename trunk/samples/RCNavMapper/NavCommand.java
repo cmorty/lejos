@@ -7,7 +7,7 @@
  * and the RCNavigator that runs on the NXT
  * @author Roger Glassey
  */
-public enum Command
+public enum NavCommand
 {
   STOP,ROTATE, TRAVEL, GOTO, FIX, POSE, SETPOSE, OBSTACLE,
   PINGFRONT, PINGLEFT, PINGRIGHT; 
