@@ -12,8 +12,7 @@ import javax.swing.UIManager;
 import org.jfree.chart.ChartFrame;
 
 
-/** Swing application entry point for NXTChartingLogger client
- * 
+/** Swing application entry point for NXT Charting Logger GUI client
  * 
  *  @author Kirk P. Thompson
  */

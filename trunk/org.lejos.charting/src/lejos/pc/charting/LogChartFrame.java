@@ -39,6 +39,9 @@ import org.jfree.chart.ChartPanel;
 //import javax.swing.SwingWorker;
 
 
+/** The main GUI window for NXT Charting Logger.
+ * @author Kirk P. Thompson
+ */
 public class LogChartFrame extends JFrame {
     private final String THISCLASS;
     
@@ -110,7 +113,9 @@ public class LogChartFrame extends JFrame {
     }
 
 
-    public void closeCurrentConnection(){
+    /** invoked by ChartingLogger on window close to clean up and close connection 
+     */
+    void closeCurrentConnection(){
         SwingUtilities.invokeLater(new Runnable(){
             public void run() {
                 jButtonConnect.setText("Connect");
@@ -128,7 +133,7 @@ public class LogChartFrame extends JFrame {
     private class SelfLogger implements DataLogger.LoggerListener{
         public void logLineAvailable(String logLine) {
             // tell the chart it has some data
-            loggingChartPanel.addDataPoints(logLine);
+            loggingChartPanel.loggingChartPanel.addDataPoints(logLine);
             // send to redirected STDOUT (status text area)
             toLogArea(logLine);
         }
@@ -143,7 +148,7 @@ public class LogChartFrame extends JFrame {
 
         public void logFieldNamesChanged(String[] logFields) {
             System.out.println("client:logFieldNamesChanged");
-            loggingChartPanel.setSeries(logFields);
+            loggingChartPanel.loggingChartPanel.setSeries(logFields);
             StringBuilder sb = new StringBuilder();
             for (int i=0;i<logFields.length;i++){
                 sb.append(logFields[i]);
@@ -158,9 +163,9 @@ public class LogChartFrame extends JFrame {
             toLogArea(sb.toString());
             if (theLogFile!=null) {
                 if (theLogFile.isFile()) {
-                    loggingChartPanel.setTitle(getCanonicalName(theLogFile));
+                    loggingChartPanel.getChart().setTitle(getCanonicalName(theLogFile));
                 } else {
-                    loggingChartPanel.setTitle("");
+                    loggingChartPanel.getChart().setTitle("");
                 }
             }
         }
@@ -345,8 +350,12 @@ public class LogChartFrame extends JFrame {
                     dataLogger = new DataLogger(connectionManager, theLogFile,fileAction==1);
                     dataLogger.addLoggerListener(loggerHook);
 //                    dataLogger.addLoggerListener(parent);
-                    dataLogger.startLogging();
-                }
+                            try {
+                                dataLogger.startLogging();
+                            } catch (IOException e) {
+                                System.out.println(THISCLASS+" IOException in makeConnection():" + e);
+                            }
+                        }
             }).start();
         } 
         return isNXTConnected;
@@ -373,7 +382,7 @@ public class LogChartFrame extends JFrame {
                 value += .1f;
             }
         }
-        loggingChartPanel.setTitle("Sample Dataset");
+        loggingChartPanel.getChart().setTitle("Sample Dataset");
 //        loggingChartPanel.initZoomWorkaround();
         System.out.println("Sample dataset generation complete");
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

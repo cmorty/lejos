@@ -10,11 +10,12 @@ import java.util.HashSet;
 
 /**
  * This class provides the PC side of the <code>NXTDataLogger</code>. One instance per log session. The session ends when NXT ends the connection.
- * <p>This calls can also be used stand-alone on the command line. First arg is the NXT name, second is the log file name. 
+ * <p>This class can also be used stand-alone on the command line. First arg is the NXT name, second is the log file name. 
  * If no file specified, STDOUT is used for output and no file is created. Default connection is to "NXT". File specified is 
  * overwritten if it exists.
  * @see LoggerComms
- * @see net.mosen.nxt.instrumentation.NXTDataLogger // TODO rename
+ * @see net.mosen.nxt.instrumentation.NXTDataLogger 
+ * @author Kirk P. Thompson
  */
 public class DataLogger {
     private final byte ATTENTION1 = (byte)(0xff&0xff);
@@ -80,6 +81,7 @@ public class DataLogger {
             dbg("!** dataInputStreamEOF from NXT");
             try {
                 if (fw!=null) fw.close();
+                fw=null;
             } catch (IOException e) {
                 // TODO
                 System.out.print("!** dataInputStreamEOF IOException in fw.close()");
@@ -123,8 +125,9 @@ public class DataLogger {
     /**Create an instance. logging output goes to STDOUT and specified logfile. <code>LoggerComms</code>
      * connection must already be established.
      * @param connManager the instance to use for the connection
-     * @param logFile the log file name to use. File will be overwrriten if exists
+     * @param logFile the log file name to use. File will be overwritten if exists
      * @see LoggerComms
+     * @see #startLogging
      */
     public DataLogger(LoggerComms connManager, File logFile, boolean fileAppend) {
         String[] thisClass = this.getClass().getName().split("[\\s\\.]");
@@ -152,6 +155,7 @@ public class DataLogger {
 
     /** Create an instance. logging output goes to STDOUT only since no file specified.
      * @param connManager the instance to use for the connection
+     * @see #DataLogger(LoggerComms, File, boolean)
      */
     public DataLogger(LoggerComms connManager) {
         this(connManager,null,false);
@@ -161,7 +165,7 @@ public class DataLogger {
         System.out.println(THISCLASS + "-" + msg);
     }
     
-    /** 1st arg is NXT name, 2nd is log file name. If no file specified, STDOUT is used. Default connection is to "NXT". File is 
+    /** Execute the logger from a command line. 1st arg is NXT name, 2nd is log file name. If no file specified, STDOUT is used. Default connection is to "NXT". File is 
      * overwritten if exists
      * @param args
      */
@@ -184,7 +188,12 @@ public class DataLogger {
         }
         
         // start the logger
-        dlogger.startLogging();
+        try {
+            dlogger.startLogging();
+        } catch (IOException e) {
+            System.out.println("IOException in startLogging(): " + e);
+            e.printStackTrace();
+        }
     }
     
     /**Register a Logger listener.
@@ -231,18 +240,22 @@ public class DataLogger {
         return false;
     }
     
-    /** Start the logging. After the NXT closes the connection, the logging session ends and this instance evaporates
-     * @throws IOException
+    /** Start the logging. After the NXT closes the connection (i.e on EOF), the logging session ends and this instance is no longer
+     * connected. A new instance must be created to log again.
+     * @throws IOException if connection has not been established
      */
-    public void startLogging(){ //) throws IOException { // TODO maybe remove exception and handle it locally (here)?
-        //        int retVal=-1, retVal2=-1;
-        
+    public void startLogging() throws IOException { 
         int endOfLineCycler=0;
         byte[] readBytes = new byte[4];
         boolean isCommand;
         byte streamedDataType = DT_INTEGER;
         byte[] tempBytes;
         String FQPfileName=null;
+        
+        if (!this.connectionManager.isConnected()) {
+            throw new IOException("No Connection in startLogging()!");
+        }
+        
         if (validLogFile) {
             try {
                 FQPfileName = logFile.getCanonicalPath();

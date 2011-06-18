@@ -46,6 +46,7 @@ import org.jfree.ui.RectangleInsets;
 
 
 /** JFreeChart object in a ChartPanel. Includes methods to add titles (headers), series datapoints, and change domain scaling
+ * @author Kirk P. Thompson
  */
 public class LoggingChart extends ChartPanel{
     private final String THISCLASS;
@@ -108,7 +109,7 @@ public class LoggingChart extends ChartPanel{
              //Thread.currentThread().interrupt();
          }
     }
-    
+
     // required by JDeveloper to use/render in graphical GUI editor
     private void jbInit() throws Exception {
         setLayout(null);
@@ -121,12 +122,15 @@ public class LoggingChart extends ChartPanel{
         System.out.println(THISCLASS + "-" + msg);
     }
 
-    
-    protected void setTitle(String title){
-        //TextTitle title = new TextTitle("", new Font("Arial", Font.PLAIN, 12));
-        getChart().setTitle(title);
-        this.chartDirty=true;
-    }
+
+    /** Set the Title of the JFreeChart
+     * @param title The title
+     */
+//    protected void setTitle(String title){
+//        //TextTitle title = new TextTitle("", new Font("Arial", Font.PLAIN, 12));
+//        getChart().setTitle(title);
+//        this.chartDirty=true;
+//    }
     
 //    private JFreeChart getBlankChart(Plot plot){
 //        return new JFreeChart(null, new Font("Arial", Font.PLAIN, 12), plot, true);
