@@ -1,3 +1,0 @@
-trying to figur eout SVD-Jdevelpor confilct on saved auth credentials
-
-commit 2
