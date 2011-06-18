@@ -1,0 +1,192 @@
+package lejos.pc.charting;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Rectangle;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.event.AxisChangeEvent;
+import org.jfree.chart.event.AxisChangeListener;
+import org.jfree.chart.event.ChartChangeEvent;
+import org.jfree.chart.event.ChartChangeListener;
+import org.jfree.chart.event.ChartProgressEvent;
+import org.jfree.chart.event.ChartProgressListener;
+import org.jfree.data.Range;
+import org.jfree.data.xy.XYSeriesCollection;
+
+/** Jpanel with LoggingChart, slider, x-y label, owcount label
+ */
+public class CustomChartPanel extends JPanel implements ChangeListener, AxisChangeListener, ChartProgressListener, ChartChangeListener{
+    private final int SLIDER_MAX= 1000;
+    private LoggingChart loggingChartPanel = new LoggingChart();
+    private JSlider domainScaleSlider = new JSlider();
+    private JLabel xYValueLabel = new JLabel();
+    private JLabel domainWidthLabel = new JLabel();
+    private boolean sliderSetFlag=false;
+    private JLabel dataRowsLabel = new JLabel();
+        
+    public CustomChartPanel() {
+        try {
+            jbInit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void jbInit() throws Exception {
+        this.setLayout( null );
+        this.setSize(new Dimension(732, 477));
+        this.setOpaque(true);
+        this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+
+        this.setBackground(Color.white);
+//        this.setBounds(new Rectangle(1, 1, 800, 300));
+        loggingChartPanel.setOpaque(false);
+        loggingChartPanel.setPreferredSize(new Dimension(800, 300));
+        loggingChartPanel.setMinimumSize(new Dimension(400, 200));
+        loggingChartPanel.getChart().getXYPlot().getDomainAxis().addChangeListener(this);
+        loggingChartPanel.getChart().addProgressListener(this);
+        
+        domainScaleSlider.setOpaque(false);
+        // .1-100
+        domainScaleSlider.setMinimum(1);
+        domainScaleSlider.setMaximum(SLIDER_MAX);
+        domainScaleSlider.setMajorTickSpacing(1);
+        domainScaleSlider.setValue(SLIDER_MAX);
+        domainScaleSlider.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        domainScaleSlider.setRequestFocusEnabled(false);
+        domainScaleSlider.setFocusable(false);   
+        domainScaleSlider.addChangeListener(this);
+        domainScaleSlider.setToolTipText("Use slider to change domain scale");
+        
+        
+        xYValueLabel.setFocusable(false);
+        xYValueLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        xYValueLabel.setText("--, --");
+        xYValueLabel.setToolTipText("The X:Y coordinate of the crosshair");
+        
+        // updates the x,y label and domain scale slider
+        domainWidthLabel.setFocusable(false);
+        domainWidthLabel.setHorizontalAlignment(JTextField.LEFT);
+        domainWidthLabel.setText("Domain Scale");
+        domainWidthLabel.setToolTipText("The domain axis length in ms");
+        
+        dataRowsLabel.setText("data rows");
+        dataRowsLabel.setToolTipText("The number of rows logged");
+        
+        SpringLayout layout=new SpringLayout();
+        this.setLayout(layout);
+//        this.setSize(new Dimension(732, 419));
+//        this.setPreferredSize(new Dimension(600, 300));
+        this.add(domainScaleSlider, null);
+        this.add(dataRowsLabel, null);
+        this.add(domainWidthLabel, null);
+        this.add(xYValueLabel, null);
+        this.add(loggingChartPanel, null);
+        
+        this.getChart().addChangeListener(this); // to capture dataset changes to populate row count
+        
+        // set up springs
+        layout.putConstraint(SpringLayout.WEST, loggingChartPanel, 0, SpringLayout.WEST, this);
+        layout.putConstraint(SpringLayout.SOUTH, loggingChartPanel, -20, SpringLayout.SOUTH, this);
+        layout.putConstraint(SpringLayout.NORTH, loggingChartPanel, 0, SpringLayout.NORTH, this);
+        layout.putConstraint(SpringLayout.EAST, loggingChartPanel, -5, SpringLayout.EAST, this);
+        
+        layout.putConstraint(SpringLayout.SOUTH, domainScaleSlider, -5, SpringLayout.SOUTH, this);
+        layout.putConstraint(SpringLayout.WEST, domainScaleSlider, 20, SpringLayout.WEST, loggingChartPanel);
+        
+        layout.putConstraint(SpringLayout.SOUTH, domainWidthLabel, 0, SpringLayout.SOUTH, domainScaleSlider);
+        layout.putConstraint(SpringLayout.WEST, domainWidthLabel, 10, SpringLayout.EAST, domainScaleSlider);
+        
+        layout.putConstraint(SpringLayout.SOUTH, dataRowsLabel, 0, SpringLayout.SOUTH, domainScaleSlider);
+        layout.putConstraint(SpringLayout.EAST, dataRowsLabel, 430, SpringLayout.WEST, this);
+        
+        layout.putConstraint(SpringLayout.SOUTH, xYValueLabel, 0,SpringLayout.SOUTH, domainScaleSlider);
+        layout.putConstraint(SpringLayout.EAST, xYValueLabel, -30, SpringLayout.EAST, this);
+        
+    }
+    
+    protected JFreeChart getChart() {
+        return loggingChartPanel.getChart();
+    }
+    
+    protected int setSeries(String[] seriesNames){
+        return loggingChartPanel.setSeries(seriesNames);
+    }
+    
+    protected void addDataPoints(String logLine) {
+        loggingChartPanel.addDataPoints(logLine);
+    }
+    
+    protected void setTitle(String title){
+        loggingChartPanel.setTitle(title);
+    }
+    
+//    protected void initZoomWorkaround(){
+//        // WORKAROUND ALERT: we do this to establish internal vars in chart classes so initial restoreAutoBounds() does the Y axis as well
+//        loggingChartPanel.zoomOutBoth(0,0);
+//        loggingChartPanel.restoreAutoBounds();
+//    }
+    
+    public void axisChanged(AxisChangeEvent event) {
+        Range domainRange = ((NumberAxis)event.getAxis()).getRange();
+        domainWidthLabel.setText(String.format("%1$-3d ms",(long)domainRange.getLength()));
+        
+        // return if no series yet
+        if (loggingChartPanel.getChart().getXYPlot().getSeriesCount()==0) return;
+        
+        double minXVal = ((XYSeriesCollection)loggingChartPanel.getChart().getXYPlot().getDataset()).getSeries(0).getMinX();
+        double maxXVal = ((XYSeriesCollection)loggingChartPanel.getChart().getXYPlot().getDataset()).getSeries(0).getMaxX();
+        // set the flag to not update the chart because the chart is updating the slider here
+        sliderSetFlag=false;
+        domainScaleSlider.setValue((int)((float)domainRange.getLength()/(maxXVal-minXVal)*SLIDER_MAX));
+        // this ensures that the mouse wheel zoom works after messing with slider and not clicking on chart
+        if (!loggingChartPanel.getChart().isNotify()) loggingChartPanel.getChart().setNotify(true);
+    }
+    
+    public void chartProgress(ChartProgressEvent event) {
+        long xval = (long)loggingChartPanel.getChart().getXYPlot().getDomainCrosshairValue();
+        double yval = loggingChartPanel.getChart().getXYPlot().getRangeCrosshairValue();
+        xYValueLabel.setText(String.format("%1$,6d : %2$,7.3f", xval, yval));
+    }
+    
+    public void stateChanged(ChangeEvent e) {
+        if (e.getSource()==domainScaleSlider) {
+            // if not being triggered by the chart setting slider to match scale (i.e. on a zoom, resize, etc.)...
+            if (sliderSetFlag) {
+                // set the domain scale based on slider value
+                loggingChartPanel.setDomainScale(domainScaleSlider.getValue());
+            } 
+            sliderSetFlag=true;
+        }
+    }
+
+    public void chartChanged(ChartChangeEvent event) {
+        try {
+//            if (event.getChart()==null) return;
+//            if (event.getChart().getXYPlot()==null) return;
+//            if (event.getChart().getXYPlot().getDataset()==null) return;
+            if (event.getChart().getXYPlot().getDataset().getSeriesCount()==0) return;
+            dataRowsLabel.setText(String.format("%1$-,1d rows", event.getChart().getXYPlot().getDataset().getItemCount(0)));
+        } catch (NullPointerException e) {
+            ; // do nothing
+        }
+
+    }
+}
