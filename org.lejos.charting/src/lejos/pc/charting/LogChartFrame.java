@@ -441,6 +441,7 @@ public class LogChartFrame extends JFrame {
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         jfc.setApproveButtonText("Select");
         jfc.setDialogTitle("Select Directory");
+        jfc.setDialogType(JFileChooser.OPEN_DIALOG);
         int returnVal = jfc.showOpenDialog(this);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             FQPathTextArea.setText(getCanonicalName(jfc.getSelectedFile()));
