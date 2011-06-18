@@ -19,6 +19,12 @@ public interface RegulatedMotor extends BaseMotor, Tachometer {
    */
 	public void addListener(RegulatedMotorListener listener);
 
+	/**
+	 * Removes the RegulatedMotorListener from this class.
+	 * @return The RegulatedMotorListener that was removed, if any. Null if none existed.
+	 */
+	public RegulatedMotorListener removeListener();
+	
     /**
      * Causes motor to stop, pretty much
      * instantaneously. In other words, the
