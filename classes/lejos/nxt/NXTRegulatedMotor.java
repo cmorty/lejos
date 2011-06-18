@@ -311,6 +311,12 @@ public class NXTRegulatedMotor implements RegulatedMotor
     {
         this.listener = listener;
     }
+    
+    public RegulatedMotorListener removeListener() {
+		RegulatedMotorListener old = this.listener;
+		this.listener = null;
+		return old;
+	}
 
     /**
      * Rotate by the request number of degrees.

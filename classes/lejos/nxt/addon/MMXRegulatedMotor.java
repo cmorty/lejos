@@ -150,6 +150,12 @@ public class MMXRegulatedMotor implements RegulatedMotor, EncoderMotor{
         _listener = listener;
     }
 
+    public RegulatedMotorListener removeListener() {
+		RegulatedMotorListener old = _listener;
+		_listener = null;
+		return old;
+	}
+    
     /**	 Return the maximum speed of the motor. It is a general assumption that the maximum speed of a Motor is
 	 *    100 degrees/second * Voltage.
      * @return The maximum speed in degrees per second

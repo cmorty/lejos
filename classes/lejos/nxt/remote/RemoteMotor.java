@@ -326,7 +326,13 @@ public class RemoteMotor implements RegulatedMotor, DCMotor, NXTProtocol {
 	 */
 	public void addListener(RegulatedMotorListener listener) {
 		this.listener = listener;
-		
+		// TODO: Currently not completely implemented in RemoteMotor!
+	}
+	
+	public RegulatedMotorListener removeListener() {
+		RegulatedMotorListener old = this.listener;
+		this.listener = null;
+		return old;
 	}
 	
     public boolean isStalled()
