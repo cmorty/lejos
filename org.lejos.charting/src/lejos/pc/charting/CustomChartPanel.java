@@ -30,11 +30,13 @@ import org.jfree.chart.event.ChartProgressListener;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYSeriesCollection;
 
-/** Jpanel with LoggingChart, slider, x-y label, owcount label
+/** JPanel acting as a container for the LoggingChart ChartPanel, domain slider, x-y label, and rowcount label. Use
+ * SpringLayout to position components but JPanel width must be adjusted if used in other classes.
+ * @author Kirk P. Thompson
  */
 public class CustomChartPanel extends JPanel implements ChangeListener, AxisChangeListener, ChartProgressListener, ChartChangeListener{
     private final int SLIDER_MAX= 1000;
-    private LoggingChart loggingChartPanel = new LoggingChart();
+    LoggingChart loggingChartPanel = new LoggingChart();
     private JSlider domainScaleSlider = new JSlider();
     private JLabel xYValueLabel = new JLabel();
     private JLabel domainWidthLabel = new JLabel();
@@ -125,18 +127,31 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
     protected JFreeChart getChart() {
         return loggingChartPanel.getChart();
     }
-    
-    protected int setSeries(String[] seriesNames){
-        return loggingChartPanel.setSeries(seriesNames);
-    }
-    
-    protected void addDataPoints(String logLine) {
-        loggingChartPanel.addDataPoints(logLine);
-    }
-    
-    protected void setTitle(String title){
-        loggingChartPanel.setTitle(title);
-    }
+
+//    /** Wrapper for <code>LoggingChart.setSeries()</code>
+//     * @param seriesNames
+//     * @return
+//     * @see LoggingChart#setSeries
+//     */
+//    protected int setSeries(String[] seriesNames){
+//        return loggingChartPanel.setSeries(seriesNames);
+//    }
+//
+//    /** Wrapper for <code>LoggingChart.addDataPoints()</code>
+//     * @param logLine
+//     * @see LoggingChart#setSeries
+//     */
+//    protected void addDataPoints(String logLine) {
+//        loggingChartPanel.addDataPoints(logLine);
+//    }
+//
+//    /** Wrapper for <code>LoggingChart.setTitle()</code>
+//     * @param title
+//     * @see LoggingChart#setTitle
+//     */
+//    protected void setTitle(String title){
+//        loggingChartPanel.setTitle(title);
+//    }
     
 //    protected void initZoomWorkaround(){
 //        // WORKAROUND ALERT: we do this to establish internal vars in chart classes so initial restoreAutoBounds() does the Y axis as well

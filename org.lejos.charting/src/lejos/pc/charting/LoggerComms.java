@@ -275,11 +275,12 @@ public class LoggerComms {
     
    
     /**Connect to a listening NXT. The NXT must be running <code>NXTDataLogger</code> with the <code>waitForConnection()</code>
-     * method called.
-     * @param NXT The name or address of the NXT to connect to
+     * method called. 
+     * @param NXT The name or address of the NXT to connect to. Be aware that NXT names are case-sensitive.
      * @return <code>true</code> if successful connection with Data input/output streams established. <code>false</code>
      * if the connection failed.
      * @see NXTDataLogger
+     * 
      */
     public boolean connect(String NXT){
         this.conn = new NXTConnector();
@@ -297,8 +298,12 @@ public class LoggerComms {
         
         // connect to NXT over USB or BT
         NXTInfo[] theNXTInfo = this.conn.search(NXT,null,NXTCommFactory.ALL_PROTOCOLS);
+        if (theNXTInfo.length==0) {
+            dbg("No NXT found. Returning false.");
+            return false;
+        }
         isConnConnected = this.conn.connectTo(theNXTInfo[0], NXTComm.PACKET);
-        
+        dbg("isConnConnected=" + isConnConnected);
         // ref the DIS/DOS to class vars
         if (isConnConnected) {
             this.dis = this.conn.getDataIn();
