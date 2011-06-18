@@ -1,22 +1,23 @@
 package lejos.robotics;
 
 /**
- * <p>This class returns a regMotor that rotates in the reverse direction of a regular regMotor. All tachometer
+ * <p>This class returns a motor that rotates in the reverse direction of a regular motor. All tachometer
  * readings are also reversed.</p> 
  * 
- * <p>Use the factory method MirrorMotor.invertMotor(RegulatedMotor) to retrieve an inverted regMotor.</p>
+ * <p>Use the factory method MirrorMotor.invertMotor(RegulatedMotor) to retrieve an inverted motor.</p>
  * 
  * @author BB
  *
  */
 public class MirrorMotor implements RegulatedMotor, RegulatedMotorListener {
-	// Dev Notes: ReverseMotor, AntiMotor, InverseMotor, OppositeMotor, ContraryMotor, MirrorMotor
+	
 	private RegulatedMotor regMotor;
 	private RegulatedMotorListener regListener;
+	
 	/**
-	 * Returns an inverted regulated regMotor.
-	 * @param regMotor A RegulatedMotor, such as Motor.A.
-	 * @return An inverted regulated regMotor.
+	 * Returns an inverted RegulatedMotor.
+	 * @param motor A RegulatedMotor, such as Motor.A.
+	 * @return An inverted RegulatedMotor.
 	 */
 	public static RegulatedMotor invertMotor(RegulatedMotor motor) {
 		if(motor instanceof MirrorMotor) {
@@ -26,6 +27,18 @@ public class MirrorMotor implements RegulatedMotor, RegulatedMotorListener {
 		return new MirrorMotor(motor);
 	}
 	
+	/**
+	 * Returns an inverted EncoderMotor.
+	 * @param motor An EncoderMotor, such as NXTMotor.
+	 * @return An inverted EncoderMotor.
+	 */
+	public static EncoderMotor invertMotor(EncoderMotor motor) {
+		if(motor instanceof ReversedEncoderMotor) {
+			return ((ReversedEncoderMotor) motor).encoderMotor;
+		}
+		return new ReversedEncoderMotor(motor);
+	}
+						
 	private MirrorMotor(RegulatedMotor motor) {
 		// Make motor listener this regListener
 		regListener = motor.removeListener(); // OK if listener is null
@@ -137,11 +150,13 @@ public class MirrorMotor implements RegulatedMotor, RegulatedMotorListener {
 
 	public void rotationStarted(RegulatedMotor motor, int tachoCount,
 			boolean stalled, long timeStamp) {
-		regListener.rotationStarted(this, -tachoCount, stalled, timeStamp);
+		if(regListener!=null)
+			regListener.rotationStarted(this, -tachoCount, stalled, timeStamp);
 	}
 
 	public void rotationStopped(RegulatedMotor motor, int tachoCount,
 			boolean stalled, long timeStamp) {
-		regListener.rotationStarted(this, -tachoCount, stalled, timeStamp);
+		if(regListener!=null)
+				regListener.rotationStarted(this, -tachoCount, stalled, timeStamp);
 	}
 }
