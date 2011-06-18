@@ -38,7 +38,8 @@ public class DataLogger {
         public String format = "-1d";
     }
     
-    /** For listener registration. Does notifications for log data recieved, EOF, and header name changes
+    /** Change listener to notify of events when log data has been recieved, a data stream EOF, and header name changed.
+     * @see  #addLoggerListener
      */
     public interface LoggerListener {
         /** Invoked when a log line (all fields read as per headers) is logged. 
@@ -196,11 +197,11 @@ public class DataLogger {
         listeners.add(listener);
     }
 
-    /**De-register a logger listener.
-     * @param listener The Logger listener instance to deregister
-     * @return <code>true</code> if listener was deregistered. <code>false</code> if passed listener was not regsitered to
-     * begin with so thus could not be deregistered.
-     * @see LoggerListener
+    /**Remove a logger listener.
+     * @param listener The <code>LoggerListener</code> instance to de-register
+     * @return <code>true</code> if passed <code>listener</code> was removed. <code>false</code> if passed 
+     * <code>listener</code> was not registered to begin with.
+     * @see DataLogger.LoggerListener
      * @see #addLoggerListener
      */
     public boolean removeLoggerListener(LoggerListener listener) {
