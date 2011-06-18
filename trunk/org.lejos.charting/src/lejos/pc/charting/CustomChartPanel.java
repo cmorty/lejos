@@ -161,7 +161,7 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
     
     public void axisChanged(AxisChangeEvent event) {
         Range domainRange = ((NumberAxis)event.getAxis()).getRange();
-        domainWidthLabel.setText(String.format("%1$-3d ms",(long)domainRange.getLength()));
+        domainWidthLabel.setText(String.format("%1$-,3d ms",(long)domainRange.getLength()));
         
         // return if no series yet
         if (loggingChartPanel.getChart().getXYPlot().getSeriesCount()==0) return;
