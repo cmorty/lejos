@@ -326,7 +326,13 @@ public class RemoteMotor implements RegulatedMotor, DCMotor, NXTProtocol {
 	 */
 	public void addListener(RegulatedMotorListener listener) {
 		this.listener = listener;
-		
+		// TODO: Currently not completely implemented in RemoteMotor!
+	}
+	
+	public RegulatedMotorListener removeListener() {
+		RegulatedMotorListener old = this.listener;
+		this.listener = null;
+		return old;
 	}
 	
     public boolean isStalled()
@@ -342,5 +348,10 @@ public class RemoteMotor implements RegulatedMotor, DCMotor, NXTProtocol {
 	    // It is generally assumed, that the maximum accurate speed of Motor is
 	    // 100 degree/second * Voltage
 		return battery.getVoltage() * 100.0f;
+	}
+
+	public void setStallThreshold(int error, int time) {
+		// TODO Auto-generated method stub
+		
 	}
 }
