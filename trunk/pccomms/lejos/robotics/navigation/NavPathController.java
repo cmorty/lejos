@@ -188,7 +188,7 @@ public class NavPathController implements PathController
   {
     _keepGoing = false;
     _pilot.stop();
-    for(int i = _route.size()-1 ; i > 0; i++)_route.remove(i);
+    _route.clear();
   }
 
   /**

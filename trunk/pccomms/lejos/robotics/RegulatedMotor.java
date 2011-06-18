@@ -19,6 +19,12 @@ public interface RegulatedMotor extends BaseMotor, Tachometer {
    */
 	public void addListener(RegulatedMotorListener listener);
 
+	/**
+	 * Removes the RegulatedMotorListener from this class.
+	 * @return The RegulatedMotorListener that was removed, if any. Null if none existed.
+	 */
+	public RegulatedMotorListener removeListener();
+	
     /**
      * Causes motor to stop, pretty much
      * instantaneously. In other words, the
@@ -118,6 +124,16 @@ public interface RegulatedMotor extends BaseMotor, Tachometer {
    * @return true if stalled
    */
    boolean isStalled();
+   
+   /**
+    * Set the parameters for detecting a stalled motor. A motor will be recognized as 
+    * stalled if the movement error (the amount the motor lags the regulated position) 
+    * is greater than error for a period longer than time.
+	*
+	* @param error The error threshold
+    * @param time The time that the error threshold needs to be exceeded for.
+    */
+   void setStallThreshold(int error, int time); 
    
    /**
     * Set the required rate of acceleration degrees/s/s
