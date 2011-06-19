@@ -1,0 +1,20 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>leJOS NXJ Eclipse Plug-In: Ant integration</title>
+	</head>
+
+	<body>
+		<h1>Integration with Eclipse's Ant features</h1>
+		<p>We recommend that you write a build.xml for your project. This can be run from within Eclipse,
+		the command line, or pretty much any other Java IDE.</p>
+		<p>One typical task for the build.xml is to obtain the path to the leJOS JDK.
+		The leJOS Eclipse plug-in makes this particularly easy: When you will
+		run an Ant build from within Eclipse, the variable nxj.home is set to
+		the path configured in the preferences page of the leJOS Eclipse plug-in.</p>
+		<p>Inside the build.xml, you may set nxj.home to a suitable default.
+		When run from inside Eclipse, the value of the nxj.home variable is overridden.</p>		 
+	</body>
+</html>
