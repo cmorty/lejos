@@ -32,6 +32,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="LineFollower"/>
 	<classpathentry excluding="build.xml" kind="src" path="Listen"/>
 	<classpathentry excluding="build.xml" kind="src" path="LnrActuatorTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="MapTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MatrixTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MemoryTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MonitorTest"/>
@@ -79,6 +80,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="Subsumption1"/>
 	<classpathentry excluding="build.xml" kind="src" path="Subsumption2"/>
 	<classpathentry excluding="build.xml" kind="src" path="SVGMLTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="TestLogger"/>
 	<classpathentry excluding="build.xml" kind="src" path="TiltTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="TimeTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="Tune"/>
