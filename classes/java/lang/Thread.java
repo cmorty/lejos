@@ -1,8 +1,20 @@
 package java.lang;
 
 /**
- * A thread of execution (or task). Now handles priorities, daemon threads
- * and interruptions.
+ * A thread of execution (or task).<p>
+ * 
+ * Thread objects represent the unit of execution within leJOS. Each thread
+ * object when started will execute concurrently with other threads. The system
+ * automatically creates the initial thread and calls the programs entry point.
+ * <p>
+ * In leJOS thread scheduling is purely priority based. Lower priority threads will
+ * not run at all if there is a higher priority thread that is runnable. Threads of
+ * equal priority will be time sliced on a round robin basis, the current time slice
+ * used by leJOS is 2ms. <br>
+ * <b>Note:</b> This means that if a thread calls yield and there are no threads of 
+ * equal priority available to run then the original thread will continue to
+ * execute (but with a new time slice). yield can not be used to allow lower
+ * priority threads to execute. 
  */
 public class Thread implements Runnable
 {
@@ -46,11 +58,20 @@ public class Thread implements Runnable
   
   private String name;
 
+  /**
+   * Returns true if the thread has been started and has not yet terminated.
+   * @return true if the thread is alive, false if not
+   */
   public final boolean isAlive()
   {
     return _TVM_state > 1;
   }    
 
+  /**
+   * Initialise a new thread object
+   * @param name string name of the thread
+   * @param target the method to be called when the thread starts
+   */
   private void init(String name, Runnable target)
   {
   	Thread t = currentThread();
@@ -70,26 +91,57 @@ public class Thread implements Runnable
     // type.
     this._TVM_waitingOn = target;
   }
-  
+
+  /**
+   * Create a new Thread. The thread will inherit the priority and daemon state 
+   * of the creating thread.
+   * Execution is started by calling the start method.
+   */
   public Thread()
   {
     init("", null);
   }
 
+  /**
+   * Create a new Thread. The thread will inherit the priority and daemon state 
+   * of the creating thread.
+   * Execution is started by calling the start method. The thread will have the specified
+   * name.
+   * @param name The name to attach to this thread object
+   */
   public Thread (String name)
   {
     init(name, null);
   }
 
+  /**
+   * Create a new Thread. The thread will inherit the priority and daemon state of the creating thread.
+   * Execution is started by calling the start method. If target is not null then the run method
+   * of target will be called, when the thread starts. If target is null then the run method of
+   * the thread object will be called.
+   * @param target The object whose run method is called
+   */
   public Thread(Runnable target)
   {
       init("", target);
   }
-  
+ 
+  /**
+   * Create a new Thread. The thread will inherit the priority and daemon state of the creating thread.
+   * Execution is started by calling the start method. If target is not null then the run method
+   * of target will be called, when the thread starts. If target is null then the run method of
+   * the thread object will be called.
+   * @param target The object whose run method is called
+   * @param name The name to be used for the thread
+   */
   public Thread(Runnable target, String name)
   {
       init(name, target);
   }
+
+  /* (non-Javadoc)
+   * @see java.lang.Runnable#run()
+   */
   public void run()
   {
     // If the thead was created with a runnable it will be stored in waitingOn
@@ -98,10 +150,33 @@ public class Thread implements Runnable
       ((Runnable)_TVM_waitingOn).run();
   }
   
+  /**
+   * Called to start the execution of the new thread. A thread can only be started once.
+   */
   public final native void start();
+  
+  /**
+   * Temporally suspends execution of this thread to allow other threads to run.
+   */
   public static native void yield();
+  
+  /**
+   * Suspends execution of the thread for the specified amount of time.
+   * @param aMilliseconds Number of milliseconds to sleep for
+   * @throws InterruptedException
+   */
   public static native void sleep (long aMilliseconds) throws InterruptedException;
+  
+  /**
+   * Return a reference to the currently executing thread.
+   * @return The current thread
+   */
   public static native Thread currentThread();
+  
+  /**
+   * Returns the priority of this thread.
+   * @return the thread priority
+   */
   public final native int getPriority();
 
   /**
@@ -121,11 +196,12 @@ public class Thread implements Runnable
   {
       this.name = name;
   }
+  
   /**
    * Set the priority of this thread. Higher number have higher priority.
    * The scheduler will always run the highest priority thread in preference
    * to any others. If more than one thread of that priority exists the
-   * scheduler will time-slice them. In order for lower priority threas
+   * scheduler will time-slice them. In order for lower priority threads
    * to run a higher priority thread must cease to be runnable. i.e. it
    * must exit, sleep or wait on a monitor. It is not sufficient to just
    * yield.
@@ -142,7 +218,19 @@ public class Thread implements Runnable
    * and an InterruptedException will be thrown.
    */
   public native void interrupt();
+  
+  /**
+   * Test to see if the current thread is in an interrupted state, if so return true,
+   * otherwise return false. After this call the thread will no longer be in an interrupted state.
+   * 
+   * @return true if the thread is in an interrupted state, false otherwise
+   */
   public static native boolean interrupted();
+  
+  /**
+   * Tests to see if the thread is in an interrupted state, but does not clear this state.
+   * @return true if the thread is in an interrupted state, false otherwise
+   */
   public final native boolean isInterrupted();
   
   /**
@@ -150,12 +238,27 @@ public class Thread implements Runnable
    * not prevent a JVM from exiting.
    */
   public final native boolean isDaemon();
-  public final native void setDaemon(boolean on);
   
   /**
-   * Join not yet implemented
+   * Sets the daemon state of the thread. If a thread is a daemon thread its existence will
+   * not prevent a JVM from exiting.
+   * @param on set to true to mark the thread as daemon, false otherwise
+   */
+  public final native void setDaemon(boolean on);
+  
+
+  /**
+   * Waits for the thread to terminate, or for the operation to be interrupted.
+   * @throws InterruptedException
    */
   public final native void join() throws InterruptedException;
+  
+  /**
+   * Waits for the thread to terminate, or for the specified amount of time, or for the current thread to
+   * be interrupted.
+   * @param timeout The maximum time to wait in milliseconds
+   * @throws InterruptedException
+   */
   public final native void join(long timeout) throws InterruptedException;
 }
 
