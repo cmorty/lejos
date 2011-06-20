@@ -133,7 +133,7 @@ public class LogChartFrame extends JFrame {
     private class SelfLogger implements DataLogger.LoggerListener{
         public void logLineAvailable(String logLine) {
             // tell the chart it has some data
-            loggingChartPanel.loggingChartPanel.addDataPoints(logLine);
+            loggingChartPanel.addDataPoints(logLine);
             // send to redirected STDOUT (status text area)
             toLogArea(logLine);
         }
@@ -148,7 +148,7 @@ public class LogChartFrame extends JFrame {
 
         public void logFieldNamesChanged(String[] logFields) {
             System.out.println("client:logFieldNamesChanged");
-            loggingChartPanel.loggingChartPanel.setSeries(logFields);
+            loggingChartPanel.setSeries(logFields);
             StringBuilder sb = new StringBuilder();
             for (int i=0;i<logFields.length;i++){
                 sb.append(logFields[i]);
