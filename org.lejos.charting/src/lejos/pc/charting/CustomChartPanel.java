@@ -36,7 +36,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  */
 public class CustomChartPanel extends JPanel implements ChangeListener, AxisChangeListener, ChartProgressListener, ChartChangeListener{
     private final int SLIDER_MAX= 1000;
-    LoggingChart loggingChartPanel = new LoggingChart();
+    private LoggingChart loggingChartPanel = new LoggingChart();
     private JSlider domainScaleSlider = new JSlider();
     private JLabel xYValueLabel = new JLabel();
     private JLabel domainWidthLabel = new JLabel();
@@ -203,5 +203,36 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
             ; // do nothing
         }
 
+    }
+    
+    /** Set the width of the x-axis (domain) scale centered around current midpoint of domain scale. Uses a scaled integer 1-1000 
+     * (meaning 0.1-100.0). Values outside this
+     * range will cause the method to immediately exit without doing any changes. Existing domain extents (min, max X values) define
+     * the total range. 
+     * 
+     * @param domainWidth The [scaled integer] width in % (1-1000) of range of x domain extents
+     */
+    public void setDomainScale(int domainWidth) {
+        loggingChartPanel.setDomainScale(domainWidth);
+    }
+    
+    /**Add series data to the dataset. Pass a string representing a line of tab-delimited numeric values. The number of
+     * values must match the header count in setSeries().
+     * 
+     * @param logLine the logger line from the NXT. This is a sting of tab-delimited numeric values.
+     */
+    public void addDataPoints(String logLine){
+        loggingChartPanel.addDataPoints(logLine);
+    }
+    
+    /** Set the passed series/header names as new XYseries in the dataset. Existing series are wiped. Must be at least two items
+     * in the array or any existing series is left intact and method exits with 0. First item is set as domain label and should
+     * be: system time in millseconds.
+     * 
+     * @param seriesNames Array of series names
+     * @return The number of series created
+     */
+    int setSeries(String[] seriesNames){
+        return loggingChartPanel.setSeries(seriesNames);
     }
 }

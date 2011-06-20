@@ -198,7 +198,7 @@ public class LoggingChart extends ChartPanel{
      * @param seriesNames Array of series names
      * @return The number of series created
      */
-    protected int setSeries(String[] seriesNames){
+    int setSeries(String[] seriesNames){
         // TODO clone existing chart and put it in a new frame and display before we whack the dataset
         if (seriesNames.length<2) return 0;
         
@@ -245,7 +245,7 @@ public class LoggingChart extends ChartPanel{
      * 
      * @param logLine the logger line from the NXT. This is a sting of tab-delimited numeric values.
      */
-    protected void addDataPoints(String logLine) {
+    void addDataPoints(String logLine) {
         
         String[] values = logLine.split("\t");
         if (values.length<2) {
@@ -320,7 +320,7 @@ public class LoggingChart extends ChartPanel{
      * 
      * @param domainWidth The [scaled integer] width in % (1-1000) of range of x domain extents
      */
-    protected void setDomainScale(int domainWidth) { 
+    void setDomainScale(int domainWidth) { 
         // set this.domainWidth
         setDomainWidth(domainWidth);
         
