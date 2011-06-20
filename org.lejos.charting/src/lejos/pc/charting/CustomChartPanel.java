@@ -229,10 +229,12 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
      * in the array or any existing series is left intact and method exits with 0. First item is set as domain label and should
      * be: system time in millseconds.
      * 
+     * 
      * @param seriesNames Array of series names
      * @return The number of series created
      */
     int setSeries(String[] seriesNames){
+    // TODO change to not specify timestamp and do timestamp automatically
         return loggingChartPanel.setSeries(seriesNames);
     }
 }
