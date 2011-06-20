@@ -12,7 +12,7 @@ import lejos.robotics.objectdetection.*;
 public class ObjectDetect implements FeatureListener {
 
 	/**
-	 * Maximum distance to report a detected object. Default is 50 cm.
+	 * Maximum distance to report a detected object. Default is 80 cm.
 	 */
 	public static int MAX_DETECT = 80;
 	
