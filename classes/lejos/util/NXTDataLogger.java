@@ -4,7 +4,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import java.io.InputStream;
+
+import java.util.ArrayList;
+
 import lejos.nxt.LCD;
+import lejos.nxt.Sound;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
 import lejos.nxt.comm.USB;
@@ -16,7 +21,7 @@ import lejos.util.Delay;
  * Logger class for the NXT that supports real time data logging of most primitive datatypes. <code>NXTDataLogger</code> communicates with 
  * <code>lejos.pc.charting.DataLogger</code> via Bluetooth or USB. 
  * <p>
- * Hints for high speed logging:
+ * Hints for "high speed" logging:
  * <ul>
  * <li>Try to keep your datatypes the same across <code>logXxx()</code> calls to avoid the protocol
  * overhead that is incurred when 
@@ -57,6 +62,8 @@ public class NXTDataLogger {
     private byte itemsPerLine=1;
     private int timeStampCycler=1;
     private int flushBytes=0;
+    private String[] headerLabels=null;
+    private ArrayList<Float> logCache = new ArrayList<Float>();
     
     /**
      * Establish a data logger instance
@@ -87,9 +94,10 @@ public class NXTDataLogger {
      * @see #closeConnection()
      */
     public boolean waitForConnection(int timeout, int connectionType) {
+        final int INIT_TIME=2000;
         if (connectionType!=CONN_BLUETOOTH && connectionType!=CONN_USB) return false;
-        timeout=Math.abs(timeout);
-        if (isConnected) {
+        timeout=Math.abs(timeout)+INIT_TIME;
+        if (this.isConnected) {
             closeConnection(dos);
         }
         LCD.drawString("Initializing.. ",0,2);
@@ -98,7 +106,7 @@ public class NXTDataLogger {
         // try to connect from PC, the conn fails 
         new Thread(new Runnable(){
             public void run(){
-                Delay.msDelay(1000);
+                Delay.msDelay(INIT_TIME);
                 LCD.drawString("WAITING FOR CONN",0,2);
             }
         }).start();
@@ -117,8 +125,8 @@ public class NXTDataLogger {
         
         dis = theConnection.openDataInputStream();
         dos = theConnection.openDataOutputStream();
-        isConnected = true;
-        return isConnected;
+        this.isConnected = (dis!=null&&dos!=null);
+        return this.isConnected;
     }
 
     /** Close the current open connection. The data stream is flushed and closed. After calling this method, 
@@ -134,11 +142,12 @@ public class NXTDataLogger {
         sendATTN();
         byte[] command = {COMMAND_FLUSH,-1};
         sendCommand(command);
-        isConnected = false;
+        this.isConnected = false;
         
         try {
             passedDOS.flush();
-            // wait for the hardware to finish any "flushing". I found that without this, the last data may be lost.
+            // wait for the hardware to finish any "flushing". I found that without this, the last data may be lost if the program ends
+            // or dos is set to null right after the flush().
             Delay.msDelay(100); 
             if (dis!=null) dis.close();
             if (passedDOS!=null) passedDOS.close();
@@ -168,7 +177,7 @@ public class NXTDataLogger {
         }
     }
 
-    /** Send an ATTENTION request. Commands usually follow. There is no response mechanism.
+    /** Send an ATTENTION request. Commands usually follow. There is no response/handshake mechanism.
      */
     private void sendATTN(){
         final int XORMASK = 0xff;
@@ -187,9 +196,9 @@ public class NXTDataLogger {
     /** ensures that the System.currentTimeMillis() value is the first in every row. rows are based on header count. cyclic
      */
     private void checkTimeStamp(){
-        if (timeStampCycler==1) writeLong(System.currentTimeMillis(),false);
-        timeStampCycler++;
-        if (timeStampCycler>=(((int)itemsPerLine)&0xff)) timeStampCycler=1;
+        if (this.timeStampCycler==1) writeLong(System.currentTimeMillis(),false);
+        this.timeStampCycler++;
+        if (this.timeStampCycler>=(((int)itemsPerLine)&0xff)) this.timeStampCycler=1;
     }
 
 
@@ -236,7 +245,7 @@ public class NXTDataLogger {
     }
     
     private synchronized void writeLong(long value, boolean doTimeStampCheck) {
-        if (!isConnected) return;    
+        if (!this.isConnected) return;    
         if (doTimeStampCheck) checkTimeStamp();
         if (currentDataType != DT_LONG) setDataType(DT_LONG);        
         try {
@@ -255,7 +264,7 @@ public class NXTDataLogger {
       * @see java.io.DataOutputStream#writeFloat
       */
     public synchronized void logFloat(float value) {
-        if (!isConnected) return;
+        if (!this.isConnected) return;
         checkTimeStamp();
         if (currentDataType != DT_FLOAT) setDataType(DT_FLOAT);        
         try {
@@ -275,7 +284,7 @@ public class NXTDataLogger {
      * @see java.io.DataOutputStream#writeDouble
      */
     public synchronized void logDouble(double value) {
-        if (!isConnected) return;
+        if (!this.isConnected) return;
         checkTimeStamp();
         if (currentDataType != DT_DOUBLE) setDataType(DT_DOUBLE);        
         try {
@@ -289,7 +298,7 @@ public class NXTDataLogger {
 
 
     // TODO
-    /** Don't quite know how to handle this is the chart so it is commented for now
+    /** Don't quite know how to handle this is the chart so it is private for now
      * @param strData The <code>String</code> to log
      */
     private final synchronized void writeStringLine(String strData){
@@ -307,12 +316,13 @@ public class NXTDataLogger {
     * @param value The <code>String</code> value to <code>logString()</code>.
     * @see java.io.DataOutputStream#write(byte)
     */
+    // TODO set to private until I figure out/decide if I want to publish this method
     private final synchronized void logString(String strData) {
         writeString(strData,true);
     }
     
     private void writeString(String strData, boolean executeNormal) {
-        if (!isConnected) return;
+        if (!this.isConnected) return;
         if(executeNormal) checkTimeStamp();
         if (currentDataType != DT_STRING && executeNormal) setDataType(DT_STRING);       
         
@@ -362,18 +372,138 @@ public class NXTDataLogger {
       * @param headerLabels The array of header labels to use for the data log
       */
     public void setHeaders(String[] headerLabels) {
-        if (!isConnected) return;
         if (headerLabels.length==0) return;
         if (headerLabels.length>255) return;
-        timeStampCycler=1;
+        this.headerLabels = headerLabels;
+        if (!this.isConnected) return;
+        this.timeStampCycler=1;
         byte[] command = {COMMAND_SETHEADERS,0};        
         sendATTN();
-        command[1] = (byte)(headerLabels.length+1&0xff); 
+        command[1] = (byte)(this.headerLabels.length+1&0xff); 
         this.itemsPerLine = command[1];
         sendCommand(command);
         writeString("System_ms", false);
         for (String item: headerLabels){
             writeString(item, false);
+        }
+    }
+    
+    /**
+     * write a float  value to the log cache for deferred transmit
+     * @param v
+     */
+    public void writeLog(float v)
+    {
+      Float f = new Float(v);
+       this.logCache.add(f);
+    }
+
+    /**
+    * write 2 float values to the log cache for deferred transmit
+    * @param v0
+    * @param v1
+    */
+    public void writeLog(float v0, float v1)
+    {
+      writeLog(v0);
+      writeLog(v1);
+    }
+    /**
+    * write 3 float values to the log cache for deferred transmit
+    * @param v0
+    * @param v1
+    * @param v2
+    */
+    public void writeLog(float v0, float v1, float v2)
+    {
+      writeLog(v0,v1);
+      writeLog(v2);
+    }
+    /**
+     * write 4 float values to the log cache for deferred transmit
+     * @param v0
+     * @param v1
+     * @param v2
+     * @param v3
+     */
+    public void writeLog(float v0, float v1, float v2, float v3)
+    {
+      writeLog(v0, v1);
+      writeLog(v2,v3);
+    }
+
+    /**
+     * Transmit the deferred log values to the PC via USB or bluetooth.<br>
+     * Displays menu of choices for transmission mode. Scroll to select, press ENTER <br>
+     * Then displays "wait for BT" or "wait for USB".  In DataViewer, click on "StartDownload"
+     * When finished, displays the number values sent, and asks "Resend?".
+     * Press ESC to exit the program, any other key to resend.  <br>
+     * Then start the download in DataViewer.
+     */
+    public void transmit() {
+        NXTConnection connection = null;
+        DataOutputStream dataOut = null;
+        InputStream is = null;
+        String[] items = { " USB", " Bluetooth" };
+        TextMenu tm = new TextMenu(items, 2, "Transmit using");
+        int s = tm.select();
+        LCD.clear();
+        if (s == 0) {
+            LCD.drawString("wait for USB", 0, 0);
+            connection = USB.waitForConnection();
+
+        } else {
+            LCD.drawString("wait for BT", 0, 0);
+            connection = Bluetooth.waitForConnection();
+        }
+        {
+            try {
+                is = connection.openInputStream();
+                dataOut = connection.openDataOutputStream();
+            } catch (Exception ie) {
+            }
+        }
+        LCD.drawString("connected", 0, 1);
+        boolean more = true;
+        while (more) {
+            try {
+                LCD.clear();
+                LCD.drawString("Wait for Viewer", 0, 0);
+                int b = 0;
+                b = is.read();
+                LCD.drawInt(b, 8, 1);
+            } catch (IOException ie) {
+                LCD.drawString("no connection", 0, 0);
+            }
+
+            LCD.clear();
+            LCD.drawString("sending ", 0, 0);
+            LCD.drawInt(logCache.size(), 4, 8, 0);
+            try {
+
+                dataOut.writeInt(logCache.size());
+                dataOut.flush();
+                for (int i = 0; i < logCache.size(); i++) {
+                    Float v = logCache.get(i);
+                    dataOut.writeFloat(v.floatValue());
+                }
+                dataOut.flush();
+                dataOut.close();
+            } catch (IOException e) {
+                LCD.drawString("write error", 0, 0);
+                LCD.refresh();
+            }
+            LCD.clear();
+            Sound.beepSequence();
+            LCD.drawString("Sent " + logCache.size(), 0, 0);
+            tm.setTitle("Resend?         ");
+            String[] itms = { "Yes", "No" };
+            tm.setItems(itms);
+            more = 0 == tm.select();
+        }
+        try {
+            dataOut.close();
+        } catch (IOException e) {
         }
     }
 }
