@@ -477,6 +477,7 @@ public class UltrasonicSensor extends I2CSensor implements RangeFinder
 		ping();
 		int [] dists = new int[8]; // 8 is max number of return pings from ultrasonic sensor
 		int numScans = getDistances(dists);
+		if (numScans <= 0) return new float[0];
 		float [] distsF = new float[numScans];
 		for(int i=0;i<numScans;i++){
 			distsF[i] = dists[i];
