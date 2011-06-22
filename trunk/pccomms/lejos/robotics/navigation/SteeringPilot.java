@@ -16,15 +16,16 @@ import lejos.robotics.RegulatedMotorListener;
  */
 
 /**
- * Vehicles that are controlled by the SteeringPilot class use a similar steering mechanism to a car, in which the 
- * front wheels pivot from side to side to control direction.
- * If you issue a command for travel(1000) and then issue a command travel(-500) before
+ * <p>Vehicles that are controlled by the SteeringPilot class use a similar steering mechanism to a car, in which the 
+ * front wheels pivot from side to side to control direction.</p>
+ * 
+ * <p>If you issue a command for travel(1000) and then issue a command travel(-500) before
  * it completes the travel(1000) movement, it will call stop, properly inform movement listeners that 
  * the forward movement was halted, and then start moving backward 500 units. This makes movements from the SteeringPilot
- * leak-proof and incorruptible. 
+ * leak-proof and incorruptible.</p> 
  *
- * Note: A DifferentialPilot robot can simulate a SteeringPilot robot by calling {@link DifferentialPilot#setMinRadius(double)}
- * and setting the value to something greater than zero (example: 15 cm).
+ * <p>Note: A DifferentialPilot robot can simulate a SteeringPilot robot by calling {@link DifferentialPilot#setMinRadius(double)}
+ * and setting the value to something greater than zero (example: 15 cm).</p>
  * 
  * @see lejos.robotics.navigation.DifferentialPilot#setMinRadius(double)
  * @author BB
@@ -36,7 +37,10 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 	private lejos.robotics.RegulatedMotor steeringMotor;
 	private double minTurnRadius;
 	private double driveWheelDiameter;
+	
+	 // TODO: For both of these would rather just reverse direction of individual motors at the Motor class.
 	private boolean reverseDriveMotor;
+	private boolean reverseSteering; // TODO: This isn't really implemented yet in constructor.
 	
 	private boolean isMoving;
 	private int oldTacho;
@@ -60,8 +64,8 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 	private MoveListener listener = null;
 	
 	/**
-	 * Creates an instance of the SteeringPilot. The drive wheel measurements are written on the side of the LEGO tire, such
-	 * as 56 x 26. In this case, the diameter is 56 mm or 5.6 centimeters.
+	 * <p>Creates an instance of the SteeringPilot. The drive wheel measurements are written on the side of the LEGO tire, such
+	 * as 56 x 26 (= 56 mm or 5.6 centimeters).</p>
 	 * 
 	 * The accuracy of this class is dependent on physical factors:
 	 * <li> the surface the vehicle is driving on (hard smooth surfaces are much better than carpet)
@@ -71,6 +75,10 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 	 * <li> When using SteeringPilot with ArcPoseController, the starting position of the robot is also important. Is it truly
 	 * lined up with the x axis? Are your destination targets on the floor accurately measured? 
 	 * 
+	 * <p>Note: If your drive motor is geared for faster movement, you must multiply the wheel size by the 
+	 * gear ratio. e.g. If gear ratio is 3:1, multiply wheel diameter by 3.  If your drive motor is geared for
+	 * slower movement, divide wheel size by gear ratio.</p> 
+	 * 	 * 
 	 * @param driveWheelDiameter The diameter of the wheel(s) used to propel the vehicle.
 	 * @param driveMotor The motor used to propel the vehicle, such as Motor.B
 	 * @param reverseDriveMotor Use true if rotating the drive motor forward causes the vehicle to drive backward. 
@@ -92,6 +100,70 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 		this.minRight = rightTurnTacho;
 		
 		this.isMoving = false;	
+	}
+	
+	/**
+	 * <p>This method calibrates the steering mechanism by turning the wheels all the way to the right and
+	 * left until they encounter resistance and recording the tachometer values. These values determine the
+	 * outer bounds of steering. The center steering value is the average of the two. NOTE: This method only
+	 * works with steering robots that are symmetrical (same maximum steering threshold left and right). </p> 
+	 *   
+	 *   TODO: Should be able to get steering parity right from this class! No need to fish for boolean.
+	 * <p>When you run the method, if you notice the wheels turn left first, then right, it means you need
+	 * to set the reverse parameter to true for proper calibration. NOTE: The next time you run the calibrate
+	 * method it will still turn left first, but...  </p>
+	 * @param reverse Reverses the direction of the steering motor.
+	 */
+	public void calibrateSteering() {
+		
+		// TODO: Not really necessary to check for stall. Could just rotate for about 2 seconds and take a tacho reading. 
+		// This would help with RemoteMotor and remote SteeringPilot, which doesn't implement isStalled().
+		
+		steeringMotor.setSpeed(100);
+		steeringMotor.setStallThreshold(10, 100);
+				
+		steeringMotor.forward();
+		while(!steeringMotor.isStalled()) Thread.yield();
+		int r = steeringMotor.getTachoCount();
+		
+		steeringMotor.backward();
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		while(!steeringMotor.isStalled()) Thread.yield();
+		int l = steeringMotor.getTachoCount();
+					
+		int center = (l + r) / 2; // TODO: Maybe reset tacho to zero? Seems like there is no center variable.
+		
+		/*
+		System.out.println("Left " + l);
+		System.out.println("Right " + r);
+		System.out.println("Center " + center);
+		*/
+		
+		// Adjust values so they are still meaningful when tachocount is reset to zero below (0 = center):
+		r -= center;
+		l -= center;
+		/* System.out.println("LEFT " + l);
+		System.out.println("RIGHT " + r); */
+				
+		minRight = reverseSteering ? l : r;
+		minLeft = reverseSteering ? r : l;
+		
+		// TODO: I'm not sure if reverse steering works yet with actual SteeringPilot class. 
+		
+		/* TODO: I'm not totally satisfied with this final step in calibration. It invariably doesn't quite rotate
+		 * to the center value (off by one) and then all subsequent center positions are off by one degree. Would
+		 * rather store the center/left/right values and use them, but this class wasn't programmed that way with 
+		 * calibration and values in mind.  
+		 */
+		steeringMotor.rotateTo(center);
+		// System.out.println("CENTER:" + steeringMotor.getTachoCount());
+		steeringMotor.resetTachoCount();
+		//steeringMotor.flt();
+		steeringMotor.setStallThreshold(50,1000); // Reset to defaults.
 	}
 	
 	/**
@@ -153,9 +225,12 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 		travelArc(turnRadius, distance, false);
 	}
 
+	// TODO: Currently the DifferentialPilot goes forward if radius is negative. This goes backwards.
 	public void travelArc(double turnRadius, double distance, boolean immediateReturn) throws IllegalArgumentException {
 		
-		if(turnRadius < this.getMinRadius()) throw new IllegalArgumentException("Turn radius can't be less than " + this.getMinRadius());
+		// Hack here because JVM causes extra decimals for Math.abs function?
+		double diff = this.getMinRadius() - Math.abs(turnRadius); 
+		if(diff > 0.1) throw new IllegalArgumentException("Turn radius can't be less than " + this.getMinRadius());
 		
 		// 1. Check if moving. If so, call stop.
 		if(isMoving) stop();

@@ -22,7 +22,7 @@ public class MCLPanel extends MapPanel {
 	protected static final int MAX_CLUSTER_SIZE = 25;
 
 	public MCLPanel(LineMap map, float xOffset, float yOffset, float pixelsPerUnit, MCLPoseProvider mcl, float arrowLength) {
-		super(map, xOffset, yOffset, pixelsPerUnit);
+		super(null, null);
 		this.mcl = mcl;
 		this.particles = mcl.getParticles();
 		numParticles = particles.numParticles();

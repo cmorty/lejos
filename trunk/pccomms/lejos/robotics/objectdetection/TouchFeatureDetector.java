@@ -49,6 +49,8 @@ public class TouchFeatureDetector extends FeatureDetectorAdapter {
 	 * @param yOffset The offset (in units e.g. cm) forward or back of center. Forward is positive, back is negative.
 	 */
 	public TouchFeatureDetector(Touch touchSensor, double xOffset, double yOffset) {
+		// TODO: Probably better to accept distance and range value instead! Simpler, more consistent
+		
 		super(DELAY);
 		this.touch_sensor = touchSensor;
 		//this.x_offset = xOffset;

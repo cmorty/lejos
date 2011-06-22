@@ -1,6 +1,9 @@
 package lejos.pc.remote;
 
+import java.awt.Dimension;
 import java.io.*;
+
+import lejos.geom.Rectangle;
 import lejos.pc.comm.*;
 import lejos.robotics.mapping.*;
 import lejos.robotics.navigation.*;
@@ -11,7 +14,7 @@ public class PCNavigationModel {
 	protected String nxtName;
 	protected DataInputStream dis;
 	protected DataOutputStream dos;
-	protected enum Event {LOAD_MAP, GOTO, MOVE_STARTED, MOVE_STOPPED};
+	protected enum Event {LOAD_MAP, GOTO, TRAVEL, ROTATE, STOP, GET_POSE, SET_POSE, RANDOM_MOVE, TAKE_READINGS, MOVE_STARTED, MOVE_STOPPED};
 	protected Pose targetPose, currentPose;
 	protected NavigationPanel panel;
 	protected MCLParticleSet particles;
@@ -64,6 +67,9 @@ public class PCNavigationModel {
 			FileInputStream is = new FileInputStream(mapFile);
 			SVGMapLoader mapLoader = new SVGMapLoader(is);
 			map = mapLoader.readLineMap();
+			Rectangle boundingRect = map.getBoundingRect();
+			panel.setMapSize(new Dimension((int) (boundingRect.width * 2), (int) (boundingRect.height * 2)));
+			panel.repaint();
 			sendEvent(Event.LOAD_MAP);
 			if (dos != null) map.dumpObject(dos);
 		} catch (Exception ioe) {
@@ -80,7 +86,7 @@ public class PCNavigationModel {
 		}
 	}
 	
-	protected void goTo(Pose p) {
+	public void goTo(Pose p) {
 		try {
 			dos.writeByte(Event.GOTO.ordinal());
 			dos.writeFloat(p.getX());
@@ -90,6 +96,28 @@ public class PCNavigationModel {
 		} catch (IOException ioe) {
 			panel.error("IO Exception in goTo");
 		}		
+	}
+	
+	public void travel(float distance) {
+		System.out.println("Sending travel " + distance);
+		try {
+			dos.writeByte(Event.TRAVEL.ordinal());
+			dos.writeFloat(distance);
+			dos.flush();
+		} catch (IOException ioe) {
+			panel.error("IO Exception in travel");
+		}
+	}
+	
+	public void rotate(float angle) {
+		System.out.println("Sending rotate " + angle);
+		try {
+			dos.writeByte(Event.ROTATE.ordinal());
+			dos.writeFloat(angle);
+			dos.flush();
+		} catch (IOException ioe) {
+			panel.error("IO Exception in rotate");
+		}
 	}
 	
 	class Receiver implements Runnable {
