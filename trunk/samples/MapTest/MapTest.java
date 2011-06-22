@@ -17,7 +17,9 @@ public class MapTest {
     	
     	DifferentialPilot robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
     	PathController navigator = new NavPathController(robot); 	
-    	NXTNavigationModel model = new NXTNavigationModel();   	
+    	NXTNavigationModel model = new NXTNavigationModel();
+    	model.addPilot(robot);
     	model.addNavigator(navigator);
+    	model.addPoseProvider(navigator.getPoseProvider());
 	}
 }
