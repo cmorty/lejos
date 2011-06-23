@@ -17,13 +17,11 @@ import lejos.pc.comm.NXTConnector;
  *
  */
 public class Upload extends NXTCommLoggable {	
-	private NXTCommand fNXTCommand;
 	private NXTConnector fConnector;
 	
 	public Upload() {
 		super();
 		fConnector = new NXTConnector();
-		fNXTCommand = new NXTCommand();
 	}
 
 	public void upload(String name, String address, int protocols,
@@ -43,18 +41,19 @@ public class Upload extends NXTCommLoggable {
 		
 		try
 		{
-			fNXTCommand.setNXTComm(fConnector.getNXTComm());
+			NXTCommand nxtCommand = new NXTCommand();
+			nxtCommand.setNXTComm(fConnector.getNXTComm());
 	
-			log(fNXTCommand.uploadFile(f, nxtFileName));
+			log(nxtCommand.uploadFile(f, nxtFileName));
 			
 			if (run)
 			{
-				fNXTCommand.setVerify(false);
-				fNXTCommand.startProgram(nxtFileName);
+				nxtCommand.setVerify(false);
+				nxtCommand.startProgram(nxtFileName);
 			}
 			else
 			{
-				fNXTCommand.disconnect();
+				nxtCommand.disconnect();
 			}			
 		}
 		finally

@@ -140,7 +140,12 @@ public class NXJFlashG extends javax.swing.JFrame {
 					if (format)
 						fs = updater.createFilesystemImage();
 					NXTSamba nxt = openDevice();
-					if (nxt != null)
+					if (nxt == null)
+					{
+						System.err
+								.println("Unable to locate the device in firmware update mode.\nPlease place the device in reset mode and try again.");
+					}
+					else
 					{
 						try
 						{
@@ -176,32 +181,25 @@ public class NXJFlashG extends javax.swing.JFrame {
 		NXTSamba openDevice() throws NXTCommException, IOException {
 			// First look to see if there are any devices already in SAM-BA mode
 			NXTSamba samba = updater.openSambaDevice(0);
-			if (samba == null) {
-				NXTInfo[] nxts;
-				progressTxt
-						.append("\nNo devices in firmware update mode were found.\nSearching for other NXT devices.\n");
-				NXTConnector conn = new NXTConnector();
-				nxts = conn.search(null, null, NXTCommFactory.USB);
-				if (nxts.length <= 0) {
-					JOptionPane
-							.showMessageDialog(
-									msgPanel,
-									"No NXT found. \nPlease check that it's turned on and connected.",
-									"Warning", JOptionPane.WARNING_MESSAGE);
-					return null;
-				}
-				progressTxt.append("Found " + nxts[0].name
-						+ " Bluetooth address  " + nxts[0].deviceAddress
-						+ "\n\n");
-				// Force into firmware update mode.
-				updater.resetDevice(nxts[0]);
-				samba = updater.openSambaDevice(30000);
+			if (samba != null)
+				return samba;
+			
+			NXTInfo[] nxts;
+			progressTxt.append("\nNo devices in firmware update mode were found.\nSearching for other NXT devices.\n");
+			NXTConnector conn = new NXTConnector();
+			nxts = conn.search(null, null, NXTCommFactory.USB);
+			if (nxts.length <= 0) {
+				JOptionPane.showMessageDialog(msgPanel,
+								"No NXT found. \nPlease check that it's turned on and connected.",
+								"Warning", JOptionPane.WARNING_MESSAGE);
+				return null;
 			}
-			if (samba == null) {
-				System.err
-						.println("Unable to locate the device in firmware update mode.\nPlease place the device in reset mode and try again.");
-			}
-			return samba;
+			progressTxt.append("Found " + nxts[0].name
+					+ " Bluetooth address  " + nxts[0].deviceAddress
+					+ "\n\n");
+			// Force into firmware update mode.
+			updater.resetDevice(nxts[0]);
+			return updater.openSambaDevice(30000);
 		}
 
 	}
