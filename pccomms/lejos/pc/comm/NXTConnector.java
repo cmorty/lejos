@@ -18,12 +18,10 @@ import java.util.Properties;
  */
 public class NXTConnector extends NXTCommLoggable
 {
+	//TODO switch to Input/OutputStream instead of DataInput/OutputStream
 	private DataInputStream dataIn;
 	private DataOutputStream dataOut;
-	private InputStream is;
-	private OutputStream os;
 	private NXTInfo nxtInfo;
-	private NXTInfo[] nxtInfos;
 	private NXTComm nxtCommUSB = null, nxtCommBluetooth = null, nxtComm = null;
 	private boolean debugOn = false;
     
@@ -78,7 +76,7 @@ public class NXTConnector extends NXTCommLoggable
        	
        	// reset the relevant instance variables
 		nxtComm = null;
-		nxtInfos = new NXTInfo[0];
+		NXTInfo[] nxtInfos = new NXTInfo[0];
 
 		debug("Protocols = " + protocols);
 		debug("Search Param = " + searchParam);
@@ -92,13 +90,12 @@ public class NXTConnector extends NXTCommLoggable
 			}
 			if (addr != null && addr.length() > 0) {
 				log("Using USB device with address = " + addr);
-				nxtInfo = new NXTInfo(NXTCommFactory.USB, name, addr);
 				nxtInfos = new NXTInfo[1];
-				nxtInfos[0] = nxtInfo;
+				nxtInfos[0] = new NXTInfo(NXTCommFactory.USB, name, addr);
 			} else if (nxtComm != null){
 				debug("Searching for " + searchFor + " using USB");
 				try {
-					nxtInfos = nxtComm.search(searchParam, NXTCommFactory.USB);
+					nxtInfos = nxtComm.search(searchParam);
 					if (nxtInfos.length == 0) 
 						debug((searchParam == null ? "No NXT found using USB: " : (searchParam + " not found using USB: ")) +  "Is the NXT switched on and the USB cable connected?");
 				} catch (NXTCommException ex) {
@@ -122,9 +119,8 @@ public class NXTConnector extends NXTCommLoggable
 			// If address specified, connect by address
 			if (addr != null && addr.length() > 0) {
 				log("Using Bluetooth device with address = " + addr);
-				nxtInfo = new NXTInfo(NXTCommFactory.BLUETOOTH, name, addr);
 				nxtInfos = new NXTInfo[1];
-				nxtInfos[0] = nxtInfo;
+				nxtInfos[0] = new NXTInfo(NXTCommFactory.BLUETOOTH, name, addr);
 				return nxtInfos;
 			}
 			
@@ -178,7 +174,7 @@ public class NXTConnector extends NXTCommLoggable
 			if (nxtInfos.length == 0) {
 				log("Searching for " + searchFor + " using Bluetooth inquiry");
 				try {
-					nxtInfos = nxtComm.search(searchParam, NXTCommFactory.BLUETOOTH);
+					nxtInfos = nxtComm.search(searchParam);
 				} catch (NXTCommException ex) { 
 					logException("Error: Search failed.", ex);
 				}
@@ -239,13 +235,11 @@ public class NXTConnector extends NXTCommLoggable
        	
        	// reset all the instance variables associated with the connection
 		nxtInfo = null;
-		is = null;
-		os = null;
 		dataIn = null;
 		dataOut = null;
 		
 		// Search for matching NXTs
-		search(nxt, addr, protocols);
+		NXTInfo[] nxtInfos = search(nxt, addr, protocols);
 		
 		// Try each available NXT in turn
 		for(int i=0;i<nxtInfos.length;i++) {
@@ -370,41 +364,38 @@ public class NXTConnector extends NXTCommLoggable
 	}
 	
 	private void setStreams() {
-		is = nxtComm.getInputStream();
 		dataIn = new DataInputStream(nxtComm.getInputStream());
-		os = nxtComm.getOutputStream();
-		dataOut = new DataOutputStream(os);
+		dataOut = new DataOutputStream(nxtComm.getOutputStream());
 	}
 
 	/**
 	 * @return the <code>InputStream</code> for this connection;
 	 */
-	public InputStream getInputStream() {return is;}
+	public InputStream getInputStream() {return dataIn;}
     
-	/**
-	 * @return the <code>DataInputStream</code> for this connection;
-	 */
-	public DataInputStream getDataIn() {return dataIn;}
-
 	/**
 	 * @return the <code>OutputStream</code> for this connection;
 	 */
-	public OutputStream getOutputStream() {return os;}
+	public OutputStream getOutputStream() {return dataOut;}
  
 	/**
-	 * @return the <code>DataOutputStream</code> for this connection
+	 * @return the <code>DataInputStream</code> for this connection;
+	 * @deprecated use {@link #getInputStream()} instead
 	 */
+	@Deprecated
+	public DataInputStream getDataIn() {return dataIn;}
+
+	/**
+	 * @return the <code>DataOutputStream</code> for this connection
+	 * @deprecated use {@link #getOutputStream()} instead
+	 */
+	@Deprecated
 	public DataOutputStream getDataOut() {return dataOut;}
 
 	/**
 	 * @return the <code>NXTInfo</code> for this connection
 	 */   
 	public  NXTInfo getNXTInfo () {return nxtInfo;}
-	
-	/**
-	 * @return the array of <code>NXTInfo</code>s for this connection
-	 */   
-	public  NXTInfo[] getNXTInfos () {return nxtInfos;}
 	
 	/**
 	 * @return the <code>NXTComm</code> for this connection

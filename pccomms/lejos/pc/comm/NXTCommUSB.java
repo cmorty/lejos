@@ -321,10 +321,9 @@ public abstract class NXTCommUSB implements NXTComm {
      * Locate available nxt devices and return them. Optionally filter the list
      * to those that match name.
      * @param name The name to search for. If null return all devices.
-     * @param protocol The protocol to search for, must be USB
      * @return The list of devices.
      */
-	public NXTInfo[] search(String name, int protocol) {
+	public NXTInfo[] search(String name) {
 		Vector<NXTInfo> nxtInfos = devFind();
         if (nxtInfos.size() == 0) return new NXTInfo[0];
         Iterator<NXTInfo> devs = nxtInfos.iterator();

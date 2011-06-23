@@ -143,7 +143,7 @@ public class NXTSamba {
 
 		// Look for a USB one first
 
-        nxtInfos = nxtComm.search("%%NXT-SAMBA%%", NXTCommFactory.USB);
+        nxtInfos = nxtComm.search("%%NXT-SAMBA%%");
         if (nxtInfos.length > 0) {
             return nxtInfos;
         }
