@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import javax.swing.JPanel;
@@ -18,11 +21,13 @@ public class MapPanel extends JPanel {
 	private static final long serialVersionUID = 1L;;
 	protected float xOffset, yOffset, pixelsPerUnit;
 	protected static final float ARROW_LENGTH = 10f;
-	protected static final int ROBOT_SIZE = 2;
+	protected static final int ROBOT_SIZE = 10;
 	protected PCNavigationModel model;
+	NavigationPanel parent;
 	protected Dimension size;;
 	protected int closest = -1;
 	protected float arrowLength;
+	protected int gridSize = 20;
 	
 	// The maximum size of a cluster of particles for a located robot (in cm)
 	protected static final int MAX_CLUSTER_SIZE = 25;
@@ -34,6 +39,8 @@ public class MapPanel extends JPanel {
 		this.yOffset = yOffset;
 		this.pixelsPerUnit = pixelsPerUnit;
 		setPreferredSize(size);
+		parent = (NavigationPanel) getParent();
+		setBackground(Color.WHITE);
 	}
 	
 	public void setSize(Dimension size) {
@@ -63,6 +70,7 @@ public class MapPanel extends JPanel {
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		paintGrid((Graphics2D) g);
 		paintMap((Graphics2D) g);
 		MCLParticleSet particles = model.getParticles();
 		if (particles != null) paintParticles((Graphics2D) g);
@@ -77,22 +85,25 @@ public class MapPanel extends JPanel {
 	 */
 	protected void paintRobot(Graphics2D g2d) {
 		MCLPoseProvider mcl = model.getMCL();
-		if (mcl == null) return;
-		float minX = mcl.getMinX();
-		float maxX = mcl.getMaxX();
-		float minY = mcl.getMinY();
-		float maxY = mcl.getMaxY();
-		Pose estimatedPose = mcl.getPose();
-		//System.out.println("Estimate = " + minX + " , " + maxX + " , " + minY + " , " + maxY);
-		if (maxX - minX > 0 && maxX - minX <= MAX_CLUSTER_SIZE && 
-				maxY - minY > 0 && maxY - minY <= MAX_CLUSTER_SIZE) {
-			Ellipse2D c = new Ellipse2D.Float(
-        					xOffset + minX * pixelsPerUnit, 
-        					yOffset + minY * pixelsPerUnit, (maxX - minX)  * pixelsPerUnit, 
-        					(maxY - minY)  * pixelsPerUnit);
-			g2d.setColor(Color.blue);
-			g2d.draw(c);
-			paintPose(g2d,estimatedPose);
+		if (mcl == null) {
+			paintPose(g2d, model.getRobotPose());
+		} else {
+			float minX = mcl.getMinX();
+			float maxX = mcl.getMaxX();
+			float minY = mcl.getMinY();
+			float maxY = mcl.getMaxY();
+			Pose estimatedPose = mcl.getPose();
+			//System.out.println("Estimate = " + minX + " , " + maxX + " , " + minY + " , " + maxY);
+			if (maxX - minX > 0 && maxX - minX <= MAX_CLUSTER_SIZE && 
+					maxY - minY > 0 && maxY - minY <= MAX_CLUSTER_SIZE) {
+				Ellipse2D c = new Ellipse2D.Float(
+	        					xOffset + minX * pixelsPerUnit, 
+	        					yOffset + minY * pixelsPerUnit, (maxX - minX)  * pixelsPerUnit, 
+	        					(maxY - minY)  * pixelsPerUnit);
+				g2d.setColor(Color.blue);
+				g2d.draw(c);
+				paintPose(g2d,estimatedPose);
+			}
 		}
 	}
 	
@@ -102,11 +113,23 @@ public class MapPanel extends JPanel {
 	 * @param g2d the Graphics2D object
 	 */
 	public void paintPose(Graphics2D g2d, Pose pose) {
+		g2d.setColor(Color.RED);
 		Ellipse2D c = new Ellipse2D.Float(xOffset + pose.getX() * pixelsPerUnit - 1, yOffset + pose.getY() * pixelsPerUnit - 1, ROBOT_SIZE, ROBOT_SIZE);
-		Line rl = getArrowLine(pose);
-		Line2D l2d = new Line2D.Float(rl.x1, rl.y1, rl.x2, rl.y2);
-		g2d.draw(l2d);
-		g2d.draw(c);
+		//Line rl = getArrowLine(pose);
+		//Line2D l2d = new Line2D.Float(rl.x1, rl.y1, rl.x2, rl.y2);
+		//g2d.draw(l2d);
+		g2d.fill(c);
+	}
+	
+	public void paintGrid(Graphics2D g2d) {
+		if (gridSize <= 0) return;
+		g2d.setColor(Color.GREEN);
+		for(int i=0; i<this.getHeight(); i+=gridSize) {
+			g2d.drawLine(0,i, this.getWidth()-1,i);		
+		}
+		for(int i=0; i<this.getWidth(); i+=gridSize) {
+			g2d.drawLine(i,0, i,this.getHeight()-1);		
+		}
 	}
 	
 	/**
