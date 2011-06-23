@@ -7,15 +7,21 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import lejos.pc.remote.*;
+import lejos.robotics.localization.MCLPoseProvider;
+import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.WayPoint;
 
-public class MapTest extends NavigationPanel {
+public class MCLTest extends NavigationPanel {
   private static final long serialVersionUID = 1L;
 
   // GUI Window size
   private static final int FRAME_WIDTH = 1000;
   private static final int FRAME_HEIGHT = 800;
+  
+  private static final int NUM_PARTICLES = 300;
+  private static final int NUM_READINGS = 3;
+  private static MCLPoseProvider mcl;
   
   private JLabel xLabel = new JLabel("X:");
   private JTextField xField = new JTextField(6);
@@ -39,10 +45,10 @@ public class MapTest extends NavigationPanel {
    * Then connect to the NXT.
    */
   public static void main(String[] args) throws Exception {
-	  (new MapTest()).run();
+	  (new MCLTest()).run();
   }
   
-  public MapTest() {
+  public MCLTest() {
 		connectPanel.add(nxtLabel);
 		connectPanel.add(nxtName);
 		connectPanel.add(connectButton);
@@ -63,7 +69,7 @@ public class MapTest extends NavigationPanel {
 		gotoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				try {
-					model.goTo(new WayPoint( new Pose(Float.parseFloat(xField.getText()), 
+					model.goTo(new WayPoint(new Pose(Float.parseFloat(xField.getText()), 
 						Float.parseFloat(yField.getText()), Float.parseFloat(headingField.getText()))));
 				} catch (NumberFormatException e) {}
 			}
@@ -96,6 +102,8 @@ public class MapTest extends NavigationPanel {
   public void run() throws Exception {   
 	model.setPanel(this);
 	model.loadMap("Room.svg");
+	mcl = new MCLPoseProvider(null,null, model.getMap(),NUM_PARTICLES,0);
+	model.setParticleSet(mcl.getParticles());
 	
     openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, "Map Test", Color.white);;
   }
