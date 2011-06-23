@@ -29,7 +29,7 @@ import lejos.nxt.remote.NXTProtocol;
  *
  */
 public abstract class NXTCommUSB implements NXTComm {
-	private NXTInfo nxtInfo;
+	private long nxtPtr;
     private boolean packetMode = false;
     private boolean EOF = false;
     static final int USB_BUFSZ = 64;
@@ -146,9 +146,9 @@ public abstract class NXTCommUSB implements NXTComm {
      */
     private String getName(NXTInfo dev)
     {
-        String name = null;
         long nxt = devOpen(dev);
-        if (nxt == 0) return name;
+        if (nxt == 0)
+        	return null;
         try
         {
 			byte[] request = { NXTProtocol.SYSTEM_COMMAND_REPLY, NXTProtocol.GET_DEVICE_INFO };
@@ -159,20 +159,19 @@ public abstract class NXTCommUSB implements NXTComm {
 	            {
 	                char nameChars[] = new char[16];
 	                int len = 0;
-	
-	                for (int i = 0; i < 15 && inBuf[i + 3] != 0; i++) {
-	                    nameChars[i] = (char) inBuf[i + 3];
+	                while (len < 15 && inBuf[len + 3] != 0) {
+	                    nameChars[len] = (char) inBuf[len + 3];
 	                    len++;
 	                }
-	                name = new String(nameChars, 0, len);
+	                return new String(nameChars, 0, len);
 	            }
 	        }
+	        return null;
         }
         finally
         {
         	devClose(nxt);
         }
-        return name;
     }
 
     /**
@@ -235,11 +234,11 @@ public abstract class NXTCommUSB implements NXTComm {
      */
     int rawRead(byte [] buf, int offset, int len, boolean wait) throws IOException
     {
-    	if (nxtInfo == null || nxtInfo.nxtPtr == 0)
+    	if (nxtPtr == 0)
     		throw new IOException("NXTComm is closed");
     	
         int ret;
-        while((ret=devRead(nxtInfo.nxtPtr, buf, offset, len)) == 0 && wait)
+        while((ret=devRead(nxtPtr, buf, offset, len)) == 0 && wait)
             {}
         if (ret < 0) throw new IOException("Error in read");
         if (ret == 0) return 0;
@@ -258,14 +257,14 @@ public abstract class NXTCommUSB implements NXTComm {
      */
     int rawWrite(byte[] buf, int offset, int len, boolean wait) throws IOException
     {
-    	if (nxtInfo == null || nxtInfo.nxtPtr == 0)
+    	if (nxtPtr == 0)
     		throw new IOException("NXTComm is closed");
     	
         int written = 0;
         while (written < len)
         {
             int ret;
-            while ((ret = devWrite(nxtInfo.nxtPtr, buf, offset + written, len - written)) == 0 && wait)
+            while ((ret = devWrite(nxtPtr, buf, offset + written, len - written)) == 0 && wait)
                 {}
             if (ret < 0) throw new IOException("Error in write");
             if (ret == 0) return written;
@@ -376,9 +375,12 @@ public abstract class NXTCommUSB implements NXTComm {
      * @return true if the device is now open, false otherwise.
      */
 	public boolean open(NXTInfo nxtInfo, int mode) {
-		if (nxtInfo != null && nxtInfo.nxtPtr != 0)
+		if (nxtPtr != 0)
 			throw new IllegalStateException("NXTComm is already open.");
 		
+        if (nxtInfo == null)
+        	return false;
+        
 		nxtInfo.connectionState = NXTConnectionState.DISCONNECTED;
         // Is the info valid enough to connect directly?
         if (!devIsValid(nxtInfo))
@@ -394,15 +396,16 @@ public abstract class NXTCommUSB implements NXTComm {
                 NXTInfo nxt = devs.next();
                 if (addr.equalsIgnoreCase(nxt.deviceAddress))
                 {
+                	//TODO caller expects, that nxtInfo.connectionState is set, however, here nxtInfo is overridden with some other temporrary object
                     nxtInfo = nxt;
                     break;
                 }
             }
         }
-        if (nxtInfo == null) return false;
-		this.nxtInfo = nxtInfo;
-		this.nxtInfo.nxtPtr = devOpen(nxtInfo);
-        if (this.nxtInfo.nxtPtr == 0) return false;
+		nxtPtr = devOpen(nxtInfo);
+        if (nxtPtr == 0)
+        	return false;
+        
         boolean success = false;
         try
         {
@@ -431,8 +434,9 @@ public abstract class NXTCommUSB implements NXTComm {
         {
         	if (!success)
         	{
-        		devClose(nxtInfo.nxtPtr);
-    	        nxtInfo.nxtPtr = 0;
+        		devClose(nxtPtr);
+    	        nxtPtr = 0;
+    	        nxtInfo = null;
         	}
         }
 		return success;
@@ -447,7 +451,7 @@ public abstract class NXTCommUSB implements NXTComm {
      * Close the current device.
      */
 	public void close() throws IOException {
-        if (nxtInfo == null || nxtInfo.nxtPtr == 0)
+        if (nxtPtr == 0)
         	return;
         
         try
@@ -468,16 +472,16 @@ public abstract class NXTCommUSB implements NXTComm {
         }
         finally
         {
-			devClose(nxtInfo.nxtPtr);
-	        nxtInfo.nxtPtr = 0;
+			devClose(nxtPtr);
+	        nxtPtr = 0;
         }
 	}
 	
 	@Override
 	protected void finalize() throws Throwable
 	{
-		if (nxtInfo != null && nxtInfo.nxtPtr != 0)
-			devClose(nxtInfo.nxtPtr);
+		if (nxtPtr != 0)
+			devClose(nxtPtr);
 	}
 
     /**
@@ -488,14 +492,14 @@ public abstract class NXTCommUSB implements NXTComm {
      * @throws java.io.IOException Thrown on errors.
      */
     public byte[] sendRequest(byte [] data, int replyLen) throws IOException {
-    	if (nxtInfo == null || nxtInfo.nxtPtr == 0)
+    	if (nxtPtr == 0)
     		throw new IOException("NXTComm is closed");
     	
-        int written = devWrite(nxtInfo.nxtPtr, data, 0, data.length);
+        int written = devWrite(nxtPtr, data, 0, data.length);
         if (written <= 0) throw new IOException("Failed to send data");
         if (replyLen == 0) return new byte [0];
         byte[] ret = new byte[replyLen];
-        int len = devRead(nxtInfo.nxtPtr, ret, 0, replyLen);
+        int len = devRead(nxtPtr, ret, 0, replyLen);
         if (len <= 0) throw new IOException("Failed to read reply");
         return ret; 
     }

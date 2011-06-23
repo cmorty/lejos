@@ -26,12 +26,6 @@ public class NXTInfo {
 	String btResourceString;
 	
 	/**
-	 * A pointer to the NXT. Dependent on the
-	 * version of NXTComm used.
-	 */
-	long nxtPtr;
-	
-	/**
 	 * The protocol used to connect to the NXT: USB or BLUETOOTH.
 	 */
 	public int protocol = 0;
@@ -57,18 +51,7 @@ public class NXTInfo {
 		this.protocol = protocol;
 	}
 
-	/**
-	 * copy constructor
-	 * @param info
-	 */
-	public NXTInfo(NXTInfo info) {
-		super();
-		this.btResourceString = info.btResourceString;
-		this.connectionState = info.connectionState;
-		this.deviceAddress = info.deviceAddress;
-		this.name = info.name;
-		this.nxtPtr = info.nxtPtr;
-		this.protocol = info.protocol;
-	}
+	//TODO remove connectionState, it doesn't belong here
+	//TODO also btResourceString doesn't seem to be appropriate
 	
 }

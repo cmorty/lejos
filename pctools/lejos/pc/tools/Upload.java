@@ -29,9 +29,6 @@ public class Upload extends NXTCommLoggable {
 	public void upload(String name, String address, int protocols,
 			File f, String nxtFileName, boolean run) throws NXTNotFoundException, IOException {
 		
-		// Under some circumstances the filename might be a full package name
-		// Remove all but the last two components
-		
 		if (nxtFileName.length() > NXTCommand.MAX_FILENAMELENGTH) {
 			throw new IllegalArgumentException(nxtFileName
 					+ ": Filename is more than 20 characters");
@@ -53,11 +50,13 @@ public class Upload extends NXTCommLoggable {
 			if (run) {
 				fNXTCommand.setVerify(false);
 				fNXTCommand.startProgram(nxtFileName);
-			}			
+			}
+			
+			fNXTCommand.disconnect();
 		}
 		finally
 		{
-			fNXTCommand.close();
+			fConnector.close();
 		}
 	}
 	
