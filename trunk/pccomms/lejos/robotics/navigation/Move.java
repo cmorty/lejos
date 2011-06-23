@@ -1,5 +1,11 @@
 package lejos.robotics.navigation;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+import lejos.robotics.Transmittable;
+
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
@@ -11,12 +17,12 @@ package lejos.robotics.navigation;
  * @author Lawrie Griffiths
  *
  */
-public class Move {
+public class Move implements Transmittable {
 	/**
 	 * The type of  movement made in sufficient detail to allow errors
 	 * in the movement to be modeled.
 	 */
-	public enum MoveType {TRAVEL, ROTATE, ARC, STOP};
+	public enum MoveType {TRAVEL, ROTATE, ARC, STOP}
 	private float distanceTraveled, angleTurned;
 	private MoveType moveType;
 	private float arcRadius = Float.POSITIVE_INFINITY;
@@ -45,7 +51,7 @@ public class Move {
 		// TODO: This works fine, but could use convertDistanceToAngle() instead here?
 		if (Math.abs(angle) > 0.5) {
 			double turnRad = Math.toRadians(angle);
-			arcRadius = (float) ((double) distance / turnRad);
+			arcRadius = (float) (distance / turnRad);
 		}
 		this.timeStamp = System.currentTimeMillis();
 	}
@@ -97,16 +103,16 @@ public class Move {
   public void setValues(MoveType type, float distance, float angle,boolean isMoving)
   {
     this.moveType = Move.calcMoveType(distance, angle);
-		this.distanceTraveled = distance;
-		this.angleTurned = angle;
-		this.isMoving = isMoving;
-		// TODO: This works fine, but could use convertDistanceToAngle() instead here?
-		if (Math.abs(angle) > 0.5) 
-		{
-			double turnRad = Math.toRadians(angle);
-			arcRadius = (float) ((double) distance / turnRad);
-		}
-		this.timeStamp = System.currentTimeMillis();
+	this.distanceTraveled = distance;
+	this.angleTurned = angle;
+	this.isMoving = isMoving;
+	// TODO: This works fine, but could use convertDistanceToAngle() instead here?
+	if (Math.abs(angle) > 0.5) 
+	{
+		double turnRad = Math.toRadians(angle);
+		arcRadius = (float) (distance / turnRad);
+	}
+	this.timeStamp = System.currentTimeMillis();
   }
 
 	/**
@@ -233,6 +239,23 @@ public class Move {
 	 */
 	public static float convertAngleToDistance(float angle, float turnRadius){
 		return (float)((angle * 2 * Math.PI * turnRadius) / 360);
+	}
+
+	public void dumpObject(DataOutputStream dos) throws IOException {
+		dos.writeByte(moveType.ordinal());
+		dos.writeFloat(travelSpeed);
+		dos.writeFloat(rotateSpeed);
+		dos.writeFloat(distanceTraveled);
+		dos.writeFloat(angleTurned);
+		dos.flush();
+	}
+
+	public void loadObject(DataInputStream dis) throws IOException {
+		moveType = MoveType.values()[dis.readByte()];
+		travelSpeed = dis.readFloat();
+		rotateSpeed = dis.readFloat();
+		distanceTraveled = dis.readFloat();
+		angleTurned = dis.readFloat();
 	}
 	
 }

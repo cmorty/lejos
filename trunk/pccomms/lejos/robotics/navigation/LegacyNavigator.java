@@ -180,6 +180,11 @@ public float getAngle()
   {
     setPose(x,y,heading);
   }
+  
+  public void setMoveSpeed(float speed) {
+	  setTravelSpeed(speed);
+  }
+  
 /**
  * sets the robots movement speed  - distance units/second
  * @param speed
@@ -188,6 +193,11 @@ public float getAngle()
   {
     pilot.setTravelSpeed(speed);
   }
+  
+  public void setTurnSpeed(float speed) {
+	  setRotateSpeed(speed);
+  }
+  
 /**
  * sets the robot turn speed  -degrees/second
  * @param speed
@@ -329,6 +339,10 @@ public float getAngle()
     updatePose();
     _current = !isMoving();
     return _pose.angleTo(new Point(x, y));
+  }
+  
+  public void updatePosition() {
+	  updatePose();
   }
 
     public void updatePose()
