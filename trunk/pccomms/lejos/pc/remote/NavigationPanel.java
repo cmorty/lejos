@@ -10,6 +10,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -25,7 +26,7 @@ import lejos.robotics.NavigationModel;
 
 public class NavigationPanel extends JPanel implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
-	protected float xOffset = 10f, yOffset = 10f, pixelsPerUnit = 2f;
+	protected float xOffset = 0f, yOffset = 0f, pixelsPerUnit = 2f;
 	protected PCNavigationModel model = new PCNavigationModel();
 	protected MapPanel mapPanel = new MapPanel(model, new Dimension(600,700), this);
 	protected JPanel formPanel = new JPanel();
@@ -37,6 +38,8 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected JTextField yField = new JTextField(5);
 	protected JPanel controlPanel = new JPanel();
 	protected JSlider slider = new JSlider(100,500,200);
+	protected JLabel gridLabel = new JLabel("Grid:");
+	protected JCheckBox gridCheck = new JCheckBox();
 	
 	public NavigationPanel() {
 		buildGUI();
@@ -60,6 +63,9 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		mapPanel.addMouseListener(this);
 		
 		controlPanel.add(slider);
+		controlPanel.add(gridLabel);
+		controlPanel.add(gridCheck);
+		gridCheck.setSelected(true);
 		
 		slider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -68,6 +74,12 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 				mapPanel.repaint();
 			}
 		});
+		
+		gridCheck.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {;
+				mapPanel.repaint();
+			}
+		});	
 	}
 	/**
 	 * Print the error message and exit

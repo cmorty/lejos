@@ -116,6 +116,7 @@ public class MapPanel extends JPanel {
 	
 	public void paintGrid(Graphics2D g2d) {
 		if (gridSize <= 0) return;
+		if (!parent.gridCheck.isSelected()) return;
 		g2d.setColor(Color.GREEN);
 		for(int i=0; i<this.getHeight(); i+=gridSize*parent.pixelsPerUnit) {
 			g2d.drawLine(0,i, this.getWidth()-1,i);		
