@@ -28,6 +28,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	protected float projection = 10;
 	protected float border = 0;
 	protected float maxDistance = 40;
+	protected boolean autoSendPose = true;
 	
 	public NXTNavigationModel() {
 		Thread receiver = new Thread(new Receiver());
@@ -72,8 +73,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 			while(true) {
 				try {
 					byte event = dis.readByte();
-					log("Event received:" +  event);
-					
+					log("Event:" +  NavEvent.values()[event].name());
 					if (event ==  NavEvent.LOAD_MAP.ordinal()) {
 						if (map == null) map = new LineMap();
 						map.loadObject(dis);
@@ -91,10 +91,11 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							float distance = dis.readFloat();
 							pilot.travel(distance);
 						}
-					} else if (pilot != null && pilot instanceof RotateMoveController) {
+					} else if (event == NavEvent.ROTATE.ordinal() && pilot != null && pilot instanceof RotateMoveController) {
 						float angle = dis.readFloat();
 						((RotateMoveController) pilot).rotate(angle);
 					} else if (event == NavEvent.GET_POSE.ordinal() && pp != null) {
+						System.out.println("setting pose");
 						dos.writeByte(NavEvent.SET_POSE.ordinal());
 						pp.getPose().dumpObject(dos);
 					} else if (event == NavEvent.SET_POSE.ordinal() && pp != null) {
@@ -158,6 +159,10 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		try {
 			dos.writeByte(NavEvent.MOVE_STOPPED.ordinal());
 			event.dumpObject(dos);
+			if (pp != null && autoSendPose) {
+				dos.writeByte(NavEvent.SET_POSE.ordinal());
+				pp.getPose().dumpObject(dos);
+			}
 		} catch (IOException ioe) {
 			fatal("IOException in moveStarted");	
 		}	
