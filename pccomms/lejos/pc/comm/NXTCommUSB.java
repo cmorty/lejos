@@ -35,6 +35,7 @@ public abstract class NXTCommUSB implements NXTComm {
     static final int USB_BUFSZ = 64;
     static final String VENDOR_ATMEL = "0x03EB";
     static final String PRODUCT_SAMBA = "0x6124";
+    static final String SAMBA_NXT_NAME = "%%NXT-SAMBA%%";
     
     private byte[] inBuf = new byte[USB_BUFSZ*8];
     private byte[] outBuf = new byte[USB_BUFSZ*8];
@@ -302,7 +303,7 @@ public abstract class NXTCommUSB implements NXTComm {
             // Look to see if this is a Samba device
             if (getAddressString(addr, 2).equals(VENDOR_ATMEL) && 
                     getAddressString(addr, 3).equals(PRODUCT_SAMBA))
-                info.name = "%%NXT-SAMBA%%";
+                info.name = SAMBA_NXT_NAME;
             info.deviceAddress = getAddressString(addr, -2);
             // if the device address is "000000000000" then it is not
             // supplying a serial number. This is either a very old version

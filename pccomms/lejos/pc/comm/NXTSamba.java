@@ -143,7 +143,7 @@ public class NXTSamba {
 
 		// Look for a USB one first
 
-        nxtInfos = nxtComm.search("%%NXT-SAMBA%%");
+        nxtInfos = nxtComm.search(NXTCommUSB.SAMBA_NXT_NAME);
         if (nxtInfos.length > 0) {
             return nxtInfos;
         }
@@ -554,6 +554,7 @@ public class NXTSamba {
      */
 	public boolean open(NXTInfo nxt) throws IOException
     {
+		boolean success = false;
 		if (nxtComm.open(nxt, NXTComm.RAW))
         {
             try
@@ -585,16 +586,22 @@ public class NXTSamba {
                 writeBytes(HELPER_CODEADR, helper_code);
                 // And set the the clock into PLL/2 mode ready for writing
                 writeWord(0xfffffc30, 0x7);
-                return true;
+                success = true;
             }
             catch (IOException e)
             {
                 // Some sort of error
             }
-            // Unable to sync things make sure the device is closed.
-            nxtComm.close();
+            finally
+            {
+            	if (!success)
+            	{
+	                // Unable to sync things make sure the device is closed.
+	                nxtComm.close();
+            	}
+            }
         }
-        return false;
+        return success;
 	}
 	
 	private static void encodeInt(byte[] code, int off, int value)
