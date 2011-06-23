@@ -1,9 +1,8 @@
 package lejos.robotics;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
+import lejos.nxt.Button;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTCommConnector;
 import lejos.nxt.comm.NXTConnection;
@@ -12,13 +11,8 @@ import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.*;
 
-public class NXTNavigationModel implements MoveListener{
-	protected LineMap map;
-	protected String nxtName;
-	protected DataInputStream dis;
-	protected DataOutputStream dos;
-	protected enum Event {LOAD_MAP, GOTO, TRAVEL, ROTATE, STOP, GET_POSE, SET_POSE, RANDOM_MOVE, TAKE_READINGS, MOVE_STARTED, MOVE_STOPPED}
-	protected Pose targetPose, currentPose;
+public class NXTNavigationModel extends NavigationModel implements MoveListener{
+	protected Pose targetPose = null, currentPose = new Pose(0,0,0);
 	protected MCLParticleSet particles;
 	protected PathController navigator;
 	protected MoveController pilot;
@@ -37,12 +31,10 @@ public class NXTNavigationModel implements MoveListener{
 		System.out.println(message);
 	}
 	
-	public boolean hasMap() {
-		return map != null;
-	}
-	
-	public LineMap getMap() {
-		return map;
+	public void fatal(String message) {
+		System.out.println(message);
+		Button.waitForPress();
+		System.exit(1);
 	}
 	
 	public void addNavigator(PathController navigator) {
@@ -76,10 +68,9 @@ public class NXTNavigationModel implements MoveListener{
 						map.loadObject(dis);
 					} else if (event == Event.GOTO.ordinal()) {
 						if (navigator != null) {
-							float x = dis.readFloat();
-							float y = dis.readFloat();
-							float heading = dis.readFloat();
-							navigator.goTo(new WayPoint(new Pose(x,y,heading)));
+							targetPose = new Pose(0,0,0);
+							targetPose.loadObject(dis);
+							navigator.goTo(new WayPoint(targetPose));
 						}
 					} else if (event == Event.STOP.ordinal()) {
 						if (pilot != null) {
@@ -93,9 +84,15 @@ public class NXTNavigationModel implements MoveListener{
 					} else if (pilot != null && pilot instanceof RotateMoveController) {
 						float angle = dis.readFloat();
 						((RotateMoveController) pilot).rotate(angle);
+					} else if (event == Event.GET_POSE.ordinal() && pp != null) {
+						dos.writeByte(Event.SET_POSE.ordinal());
+						pp.getPose().dumpObject(dos);
+					} else if (event == Event.SET_POSE.ordinal() && pp != null) {
+						currentPose.loadObject(dis);
+						pp.setPose(currentPose);
 					}
 				} catch (Exception ioe) {
-					error("Exception in receiver");
+					fatal("Exception in receiver");
 				}
 			}
 			
@@ -105,28 +102,18 @@ public class NXTNavigationModel implements MoveListener{
 	public void moveStarted(Move event, MoveProvider mp) {
 		try {
 			dos.writeByte(Event.MOVE_STARTED.ordinal());
-			dos.writeByte(event.getMoveType().ordinal());
-			dos.writeFloat(event.getTravelSpeed());
-			dos.writeFloat(event.getRotateSpeed());
-			dos.writeFloat(event.getDistanceTraveled());
-			dos.writeFloat(event.getAngleTurned());
-			dos.flush();
+			event.dumpObject(dos);
 		} catch (IOException ioe) {
-			System.out.println("IOException in moveStarted");	
+			fatal("IOException in moveStarted");	
 		}	
 	}
 
 	public void moveStopped(Move event, MoveProvider mp) {
 		try {
 			dos.writeByte(Event.MOVE_STOPPED.ordinal());
-			dos.writeByte(event.getMoveType().ordinal());
-			dos.writeFloat(event.getTravelSpeed());
-			dos.writeFloat(event.getRotateSpeed());
-			dos.writeFloat(event.getDistanceTraveled());
-			dos.writeFloat(event.getAngleTurned());
-			dos.flush();
+			event.dumpObject(dos);
 		} catch (IOException ioe) {
-			System.out.println("IOException in moveStarted");	
+			fatal("IOException in moveStarted");	
 		}	
 	}
 }
