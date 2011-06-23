@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * 
  * @author Lawrie Griffiths
  */
-public class RangeReadings extends ArrayList<RangeReading>  { 
+public class RangeReadings extends ArrayList<RangeReading> implements Transmittable  { 
 	private int numReadings;
   
   public RangeReadings(int numReadings) {
@@ -90,7 +90,7 @@ public class RangeReadings extends ArrayList<RangeReading>  {
    * @param dos the stream
    * @throws IOException
    */
-  public void dumpReadings(DataOutputStream dos) throws IOException {
+  public void dumpObject(DataOutputStream dos) throws IOException {
     for (RangeReading r: this) {
       dos.writeFloat(r.getAngle());
       dos.writeFloat(r.getRange());
@@ -103,7 +103,7 @@ public class RangeReadings extends ArrayList<RangeReading>  {
    * @param dis the stream
    * @throws IOException
    */
-  public void loadReadings(DataInputStream dis) throws IOException {
+  public void loadObject(DataInputStream dis) throws IOException {
     for (int i = 0; i < getNumReadings(); i++) {
       setRange(i, dis.readFloat(),dis.readFloat());
     }        

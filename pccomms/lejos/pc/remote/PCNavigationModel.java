@@ -6,16 +6,20 @@ import java.io.*;
 import lejos.geom.Rectangle;
 import lejos.pc.comm.*;
 import lejos.robotics.NavigationModel;
+import lejos.robotics.RangeReadings;
 import lejos.robotics.mapping.*;
 import lejos.robotics.navigation.*;
 import lejos.robotics.localization.*;
 
 public class PCNavigationModel extends NavigationModel {
-	protected Pose targetPose = new Pose(0,0,0), currentPose = new Pose(0,0,0);
+	protected Pose currentPose = new Pose(0,0,0);
+	protected WayPoint target = new WayPoint(0,0);
 	protected NavigationPanel panel;
 	protected MCLParticleSet particles;
 	protected MCLPoseProvider mcl;
 	protected Move lastMove = new Move(0,0,false);
+	protected RangeReadings readings = new RangeReadings(0);
+	protected int closest = -1;
 	
 	public PCNavigationModel() {
 		Thread receiver = new Thread(new Receiver());
@@ -92,11 +96,11 @@ public class PCNavigationModel extends NavigationModel {
 		}
 	}
 	
-	public void goTo(Pose p) {
+	public void goTo(WayPoint wp) {
 		try {
 			dos.writeByte(NavEvent.GOTO.ordinal());
-			targetPose = p;
-			p.dumpObject(dos);
+			target = wp;
+			wp.dumpObject(dos);
 		} catch (IOException ioe) {
 			panel.error("IO Exception in goTo");
 		}		
@@ -142,6 +146,24 @@ public class PCNavigationModel extends NavigationModel {
 		}
 	}
 	
+	public void randomMove() {
+		try {
+			dos.writeByte(NavEvent.RANDOM_MOVE.ordinal());
+			dos.flush();
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in randomMove");
+		}
+	}
+	
+	public void takeReadings() {
+		try {
+			dos.writeByte(NavEvent.TAKE_READINGS.ordinal());
+			dos.flush();
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in takeReadings");
+		}
+	}
+	
 	class Receiver implements Runnable {
 		public void run() {
 			while(true) {
@@ -151,16 +173,34 @@ public class PCNavigationModel extends NavigationModel {
 						continue;
 					}
 					byte event = dis.readByte();
-					panel.log("Event received:" +  event);
+					panel.log("Event received:" +  NavEvent.values()[event].name());
 					if (event == NavEvent.MOVE_STARTED.ordinal() || event == NavEvent.MOVE_STOPPED.ordinal()) {
 						panel.log("Reading Move object");
 						lastMove.loadObject(dis);
+					} else if (event == NavEvent.SET_POSE.ordinal()) {
+						currentPose.loadObject(dis);
+					} else if (event == NavEvent.PARTICLE_SET.ordinal()) {
+						if (particles != null) {
+							particles.loadObject(dis);
+						}
+					} else if (event == NavEvent.RANGE_READINGS.ordinal()) {
+						readings.loadObject(dis);
+					} else if (event == NavEvent.WAYPOINT_REACHED.ordinal()) {
+						target.loadObject(dis);
+					} else if (event == NavEvent.CLOSEST_PARTICLE.ordinal()) {
+						if (particles != null) {
+							closest = dis.readInt();
+						}
+					} else if (event == NavEvent.ESTIMATED_POSE.ordinal()) {
+						if (mcl != null) {
+							mcl.loadObject(dis);
+						}
 					}
+					panel.repaint();
 				} catch (Exception ioe) {
 					panel.fatal("Exception in receiver: " + ioe);
 				}
-			}
-			
+			}		
 		}	
 	}
 }

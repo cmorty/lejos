@@ -4,9 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import javax.swing.JPanel;
@@ -19,27 +16,23 @@ import lejos.robotics.navigation.Pose;
 
 public class MapPanel extends JPanel {
 	private static final long serialVersionUID = 1L;;
-	protected float xOffset, yOffset, pixelsPerUnit;
 	protected static final float ARROW_LENGTH = 10f;
-	protected static final int ROBOT_SIZE = 10;
+	protected static final int ROBOT_SIZE = 5;
 	protected PCNavigationModel model;
 	NavigationPanel parent;
 	protected Dimension size;;
 	protected int closest = -1;
 	protected float arrowLength;
-	protected int gridSize = 20;
+	protected int gridSize = 10;
 	
 	// The maximum size of a cluster of particles for a located robot (in cm)
 	protected static final int MAX_CLUSTER_SIZE = 25;
 	
-	public MapPanel(PCNavigationModel model, Dimension size, float xOffset, float yOffset, float pixelsPerUnit) {
+	public MapPanel(PCNavigationModel model, Dimension size, NavigationPanel parent) {
 		this.size = size;
 		this.model = model;
-		this. xOffset = xOffset;
-		this.yOffset = yOffset;
-		this.pixelsPerUnit = pixelsPerUnit;
 		setPreferredSize(size);
-		parent = (NavigationPanel) getParent();
+		this.parent = parent;
 		setBackground(Color.WHITE);
 	}
 	
@@ -60,10 +53,10 @@ public class MapPanel extends JPanel {
 		g2d.setColor(Color.black);
 		for (int i = 0; i < lines.length; i++) {
 			Line2D line = new Line2D.Float(
-    		  xOffset + lines[i].x1 * pixelsPerUnit, 
-    		  yOffset + lines[i].y1 * pixelsPerUnit, 
-    		  xOffset + lines[i].x2 * pixelsPerUnit, 
-    		  yOffset + lines[i].y2 * pixelsPerUnit);
+    		  parent.xOffset + lines[i].x1 * parent.pixelsPerUnit, 
+    		  parent.yOffset + lines[i].y1 * parent.pixelsPerUnit, 
+    		  parent.xOffset + lines[i].x2 * parent.pixelsPerUnit, 
+    		  parent.yOffset + lines[i].y2 * parent.pixelsPerUnit);
 			g2d.draw(line);
 		}
 	}
@@ -97,9 +90,9 @@ public class MapPanel extends JPanel {
 			if (maxX - minX > 0 && maxX - minX <= MAX_CLUSTER_SIZE && 
 					maxY - minY > 0 && maxY - minY <= MAX_CLUSTER_SIZE) {
 				Ellipse2D c = new Ellipse2D.Float(
-	        					xOffset + minX * pixelsPerUnit, 
-	        					yOffset + minY * pixelsPerUnit, (maxX - minX)  * pixelsPerUnit, 
-	        					(maxY - minY)  * pixelsPerUnit);
+	        					parent.xOffset + minX * parent.pixelsPerUnit, 
+	        					parent.yOffset + minY * parent.pixelsPerUnit, (maxX - minX)  * parent.pixelsPerUnit, 
+	        					(maxY - minY)  * parent.pixelsPerUnit);
 				g2d.setColor(Color.blue);
 				g2d.draw(c);
 				paintPose(g2d,estimatedPose);
@@ -114,7 +107,7 @@ public class MapPanel extends JPanel {
 	 */
 	public void paintPose(Graphics2D g2d, Pose pose) {
 		g2d.setColor(Color.RED);
-		Ellipse2D c = new Ellipse2D.Float(xOffset + pose.getX() * pixelsPerUnit - 1, yOffset + pose.getY() * pixelsPerUnit - 1, ROBOT_SIZE, ROBOT_SIZE);
+		Ellipse2D c = new Ellipse2D.Float(parent.xOffset + pose.getX() * parent.pixelsPerUnit - 1, parent.yOffset + pose.getY() * parent.pixelsPerUnit - 1, ROBOT_SIZE * parent.pixelsPerUnit, ROBOT_SIZE * parent.pixelsPerUnit);
 		//Line rl = getArrowLine(pose);
 		//Line2D l2d = new Line2D.Float(rl.x1, rl.y1, rl.x2, rl.y2);
 		//g2d.draw(l2d);
@@ -124,10 +117,10 @@ public class MapPanel extends JPanel {
 	public void paintGrid(Graphics2D g2d) {
 		if (gridSize <= 0) return;
 		g2d.setColor(Color.GREEN);
-		for(int i=0; i<this.getHeight(); i+=gridSize) {
+		for(int i=0; i<this.getHeight(); i+=gridSize*parent.pixelsPerUnit) {
 			g2d.drawLine(0,i, this.getWidth()-1,i);		
 		}
-		for(int i=0; i<this.getWidth(); i+=gridSize) {
+		for(int i=0; i<this.getWidth(); i+=gridSize*parent.pixelsPerUnit) {
 			g2d.drawLine(i,0, i,this.getHeight()-1);		
 		}
 	}
@@ -157,10 +150,10 @@ public class MapPanel extends JPanel {
 	 * @return the arrow line
 	 */
 	protected Line getArrowLine(Pose pose) {
-		return new Line(xOffset + pose.getX() * pixelsPerUnit,
-    		        yOffset + pose.getY() * pixelsPerUnit, 
-    		        xOffset + pose.getX() * pixelsPerUnit + ARROW_LENGTH * (float) Math.cos(Math.toRadians(pose.getHeading())), 
-    		        yOffset + pose.getY() * pixelsPerUnit + ARROW_LENGTH * (float) Math.sin(Math.toRadians(pose.getHeading())));
+		return new Line(parent.xOffset + pose.getX() * parent.pixelsPerUnit,
+    		        parent.yOffset + pose.getY() * parent.pixelsPerUnit, 
+    		        parent.xOffset + pose.getX() * parent.pixelsPerUnit + ARROW_LENGTH * (float) Math.cos(Math.toRadians(pose.getHeading())), 
+    		        parent.yOffset + pose.getY() * parent.pixelsPerUnit + ARROW_LENGTH * (float) Math.sin(Math.toRadians(pose.getHeading())));
 	}
 	
 	public void setClosest(int closest) {

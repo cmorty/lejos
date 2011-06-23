@@ -15,16 +15,19 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import lejos.robotics.NavigationModel;
 
 public class NavigationPanel extends JPanel implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
-	protected float xOffset = 10, yOffset = 10, pixelsPerUnit = 2;
+	protected float xOffset = 10f, yOffset = 10f, pixelsPerUnit = 2f;
 	protected PCNavigationModel model = new PCNavigationModel();
-	protected MapPanel mapPanel = new MapPanel(model, new Dimension(600,700), xOffset, yOffset, pixelsPerUnit);
+	protected MapPanel mapPanel = new MapPanel(model, new Dimension(600,700), this);
 	protected JPanel formPanel = new JPanel();
 	protected JPanel connectPanel = new JPanel();
 	protected JPanel statusPanel = new JPanel();
@@ -32,6 +35,8 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected JTextField xField = new JTextField(5);
 	protected JLabel yLabel = new JLabel("Y:");
 	protected JTextField yField = new JTextField(5);
+	protected JPanel controlPanel = new JPanel();
+	protected JSlider slider = new JSlider(100,500,200);
 	
 	public NavigationPanel() {
 		buildGUI();
@@ -41,8 +46,10 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		formPanel.setBorder(BorderFactory.createTitledBorder("Commands"));
 		connectPanel.setBorder(BorderFactory.createTitledBorder("Connect"));
 		statusPanel.setBorder(BorderFactory.createTitledBorder("Status"));
+		controlPanel.setBorder(BorderFactory.createTitledBorder("Controls"));
 		add(connectPanel);
 		add(statusPanel);
+		add(controlPanel);
 		add(formPanel);
 		add(mapPanel);
 		statusPanel.add(xLabel);
@@ -51,6 +58,16 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		statusPanel.add(yField);
 		mapPanel.addMouseMotionListener(this);
 		mapPanel.addMouseListener(this);
+		
+		controlPanel.add(slider);
+		
+		slider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider)e.getSource();
+				pixelsPerUnit = source.getValue() / 100f;
+				mapPanel.repaint();
+			}
+		});
 	}
 	/**
 	 * Print the error message and exit
@@ -127,10 +144,10 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	    Point pt = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), this);
 	    
 	    JPopupMenu menu = new JPopupMenu(); 
-	    menu.add(new MenuAction(NavigationModel.NavEvent.FIND_CLOSEST, "Find Closest", pt)); 
-	    menu.add(new MenuAction(NavigationModel.NavEvent.ADD_WAYPOINT, "Add Way Point",pt));
-	    menu.add(new MenuAction(NavigationModel.NavEvent.GOTO, "Go To",pt));
-	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_POSE, "Set pose",pt));
+	    menu.add(new MenuAction(NavigationModel.NavEvent.FIND_CLOSEST, "Find Closest", me.getPoint(), model, this)); 
+	    menu.add(new MenuAction(NavigationModel.NavEvent.ADD_WAYPOINT, "Add Way Point",me.getPoint(), model, this));
+	    menu.add(new MenuAction(NavigationModel.NavEvent.GOTO, "Go To",me.getPoint(),model, this));
+	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_POSE, "Set pose",me.getPoint(),model, this));
 	
 	    menu.show(this, pt.x, pt.y);
 	}
