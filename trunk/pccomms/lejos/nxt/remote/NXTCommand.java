@@ -377,18 +377,27 @@ public class NXTCommand implements NXTProtocol {
 		int batteryLevel = (0xFF & reply[3]) | ((0xFF & reply[4]) << 8);
 		return batteryLevel;
 	}
-
+	
 	/**
 	 * Call the close() command when your program ends, otherwise you will have
 	 * to turn the NXT brick off/on before you run another program.
-	 * 
+	 * @deprecated call disconnect, then close the underlying NXTComm
 	 */
+	@Deprecated
 	public void close() throws IOException {
 		if (!open) return;
 		open = false;
+		this.disconnect();
+		nxtComm.close();
+	}
+
+	/**
+	 * Tell the NXT that the connection is aborted.
+	 * @throws IOException
+	 */
+	public void disconnect() throws IOException {
 		byte[] request = { SYSTEM_COMMAND_REPLY, NXJ_DISCONNECT };
 		nxtComm.sendRequest(request, 3); // Tell NXT to disconnect
-		nxtComm.close();
 	}
 
 	/**
