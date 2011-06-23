@@ -9,9 +9,11 @@ public abstract class NavigationModel {
 	protected String nxtName;
 	protected DataInputStream dis;
 	protected DataOutputStream dos;
+	protected int numReadings = 0;
 	public enum NavEvent {LOAD_MAP, GOTO, TRAVEL, ROTATE, STOP, GET_POSE, 
-		SET_POSE, RANDOM_MOVE, TAKE_READINGS, FIND_CLOSEST, ADD_WAYPOINT,
-		MOVE_STARTED, MOVE_STOPPED}
+		SET_POSE, RANDOM_MOVE, TAKE_READINGS, FIND_CLOSEST, ADD_WAYPOINT, PARTICLE_SET,
+		RANGE_READINGS, MOVE_STARTED, MOVE_STOPPED, WAYPOINT_REACHED, CLOSEST_PARTICLE, 
+		ESTIMATED_POSE}
 	
 	public boolean hasMap() {
 		return map != null;
@@ -19,5 +21,9 @@ public abstract class NavigationModel {
 	
 	public LineMap getMap() {
 		return map;
+	}
+	
+	public void setNumReadings(int number) {
+		numReadings = number;
 	}
 }
