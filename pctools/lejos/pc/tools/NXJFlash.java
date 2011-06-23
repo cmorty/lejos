@@ -63,31 +63,30 @@ public class NXJFlash implements NXJFlashUI {
 	NXTSamba openDevice() throws NXTCommException, IOException {
 		// First look to see if there are any devices already in SAM-BA mode
 		NXTSamba samba = updater.openSambaDevice(0);
+		if (samba != null)
+			return samba;
 
 		// Look for devices in non-SAM-BA mode and reset them
-		if (samba == null) {
-			NXTInfo[] nxts;
-			SystemContext.out.println("No devices in firmware update mode were found.\nSearching for other NXT devices.");
-			NXTConnector conn = new NXTConnector();
-			nxts = conn.search(null, null, NXTCommFactory.USB);
-			if (nxts.length <= 0)
-				return null;
-			
-			int devNo = 0;
-			do {
-				SystemContext.out.println("The following NXT devices have been found:");
-				for (int i = 0; i < nxts.length; i++)
-					SystemContext.out.println("  " + (i + 1) + ":  " + nxts[i].name
-							+ "  " + nxts[i].deviceAddress);
-				SystemContext.out.println("Select the device to update, or enter 0 to exit.");
-				devNo = getChoice("Device number to update (0 to exit): ", 0, nxts.length);
-			} while (devNo < 0 || devNo > nxts.length);
-			if (devNo == 0)
-				return null;
-			updater.resetDevice(nxts[devNo - 1]);
-			samba = updater.openSambaDevice(30000);
-		}
-		return samba;
+		NXTInfo[] nxts;
+		SystemContext.out.println("No devices in firmware update mode were found.\nSearching for other NXT devices.");
+		NXTConnector conn = new NXTConnector();
+		nxts = conn.search(null, null, NXTCommFactory.USB);
+		if (nxts.length <= 0)
+			return null;
+		
+		int devNo = 0;
+		do {
+			SystemContext.out.println("The following NXT devices have been found:");
+			for (int i = 0; i < nxts.length; i++)
+				SystemContext.out.println("  " + (i + 1) + ":  " + nxts[i].name
+						+ "  " + nxts[i].deviceAddress);
+			SystemContext.out.println("Select the device to update, or enter 0 to exit.");
+			devNo = getChoice("Device number to update (0 to exit): ", 0, nxts.length);
+		} while (devNo < 0 || devNo > nxts.length);
+		if (devNo == 0)
+			return null;
+		updater.resetDevice(nxts[devNo - 1]);
+		return updater.openSambaDevice(30000);
 	}
 
 	/**

@@ -245,14 +245,21 @@ public class NXJFlashUpdate {
 	public void resetDevice(NXTInfo nxt) throws NXTCommException, IOException {
 		ui.message("Attempting to reboot the device.");
 		NXTComm nxtComm = NXTCommFactory.createNXTComm(nxt.protocol);
-		NXTCommand cmd = NXTCommand.getSingleton();
 		if (!nxtComm.open(nxt, NXTComm.LCP)) {
 			throw new NXTCommException("Failed to open device in command mode.");
 		}
-		cmd.setNXTComm(nxtComm);
-		// Force into firmware update mode.
-		cmd.boot();
-		cmd.close();
+		try
+		{
+			NXTCommand cmd = new NXTCommand();
+			cmd.setNXTComm(nxtComm);
+			cmd.setVerify(false);
+			// Force into firmware update mode.
+			cmd.boot();
+		}
+		finally
+		{
+			nxtComm.close();
+		}
 	}
 	
 	private static int getPageAddr(int page)
