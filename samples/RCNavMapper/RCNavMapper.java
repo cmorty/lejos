@@ -31,7 +31,7 @@ public class RCNavMapper  implements RCVehicle,   FeatureListener
   RCNavMapper (ArcRotateMoveController aPilot) 
   {
     
-    pilot = (DifferentialPilot)aPilot;
+    pilot = aPilot;
     nav = new NavPathController(pilot);
     pp = (OdometryPoseProvider) nav.getPoseProvider();
     RangeFinder rf = new UltrasonicSensor(SensorPort.S3);   
@@ -55,6 +55,7 @@ public class RCNavMapper  implements RCVehicle,   FeatureListener
     	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
     	
         DifferentialPilot pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
+        
       RCNavMapper robot = new RCNavMapper(pilot);
       robot.go();   
     }
@@ -63,7 +64,10 @@ public class RCNavMapper  implements RCVehicle,   FeatureListener
    {
       LCD.drawString("RC NAV ", 0, 5);
       pilot.setTravelSpeed(30);
-      pilot.setAcceleration(2000);
+      
+   // TODO: This instanceof test will be unnecessary if setAcceleration() is added to ArcRotateMoveController
+      if(pilot instanceof DifferentialPilot) 
+    	  ((DifferentialPilot)pilot).setAcceleration(2000);
       System.out.println("connect");
       comm.connect();
       boolean more = true;
@@ -177,7 +181,7 @@ System.out.println("Pose "+(int)pose.getX()+" "+(int)pose.getY()
 
   NxtCommunicator comm = new NxtCommunicator(this);
   NavPathController nav;
-  DifferentialPilot pilot;
+  ArcRotateMoveController pilot;
   OdometryPoseProvider pp ;
   RangeFeatureDetector detector;
   private boolean _report;

@@ -7,8 +7,7 @@ import lejos.nxt.SensorPort;
  * 
  * <p>You can use the standard <code>javax.microedition.location</code> package with this class by
  * using a <code>dGPSCriteria</code> object to request a LocationProvider as follows:</p>
- * <p><code>dGPSCriteria criteria = new gGPSCriteria();<br>
- * criteria.setPort(SensorPort.S1);<br>
+ * <p><code>dGPSCriteria criteria = new gGPSCriteria(SensorPort.S1);<br>
  * LocationProvider lp = LocationProvider.getInstance(criteria);
  * </p></code>
  

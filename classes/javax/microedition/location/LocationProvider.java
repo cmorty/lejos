@@ -70,7 +70,7 @@ public abstract class LocationProvider {
 	 */
 	public static LocationProvider getInstance(Criteria criteria) throws LocationException {
 		
-		// Check if null?
+		// No need to check if null for instanceof:
 		if(criteria instanceof dGPSCriteria) {
 			dGPSCriteria crit = (dGPSCriteria)criteria;
 			return new GPSLocationProvider(crit.getPort());
