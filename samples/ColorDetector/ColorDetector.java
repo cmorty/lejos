@@ -1,9 +1,9 @@
 import lejos.nxt.*;
-import lejos.nxt.addon.ColorSensorHT;
+import lejos.nxt.addon.ColorHTSensor;
 import lejos.robotics.Color;
 
 /**
- * For testing the HiTechnic color sensor (see lejos.nxt.addon.ColorSensorHT).
+ * For testing the HiTechnic color sensor (see lejos.nxt.addon.ColorHTSensor).
  * @author BB
  */
 public class ColorDetector {
@@ -11,7 +11,7 @@ public class ColorDetector {
 	final static int INTERVAL = 200; // milliseconds
 	
 	public static void main(String [] args) throws Exception {
-		ColorSensorHT cmps = new ColorSensorHT(SensorPort.S1);
+		ColorHTSensor cmps = new ColorHTSensor(SensorPort.S1);
 		String color = "Color";
 		String r = "R";
 		String g = "G";
