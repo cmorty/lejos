@@ -52,6 +52,5 @@ public class NXTInfo {
 	}
 
 	//TODO remove connectionState, it doesn't belong here
-	//TODO also btResourceString doesn't seem to be appropriate
 	
 }
