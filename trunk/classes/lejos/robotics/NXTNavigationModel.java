@@ -10,13 +10,24 @@ import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.*;
+import lejos.robotics.objectdetection.Feature;
+import lejos.robotics.objectdetection.FeatureDetector;
+import lejos.robotics.objectdetection.FeatureListener;
+import lejos.robotics.pathfinding.PathFinder;
 
-public class NXTNavigationModel extends NavigationModel implements MoveListener{
-	protected Pose targetPose = null, currentPose = new Pose(0,0,0);
+public class NXTNavigationModel extends NavigationModel implements MoveListener, WayPointListener, FeatureListener {
+	protected WayPoint target = new WayPoint(0,0);
+	protected Pose currentPose = new Pose(0,0,0);
 	protected MCLParticleSet particles;
 	protected PathController navigator;
 	protected MoveController pilot;
-	protected PoseProvider pp; 
+	protected PoseProvider pp;
+	protected FeatureDetector detector;
+	protected PathFinder finder;
+	protected RangeReadings readings = new RangeReadings(0);
+	protected float projection = 10;
+	protected float border = 0;
+	protected float maxDistance = 40;
 	
 	public NXTNavigationModel() {
 		Thread receiver = new Thread(new Receiver());
@@ -68,9 +79,8 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener{
 						map.loadObject(dis);
 					} else if (event == NavEvent.GOTO.ordinal()) {
 						if (navigator != null) {
-							targetPose = new Pose(0,0,0);
-							targetPose.loadObject(dis);
-							navigator.goTo(new WayPoint(targetPose));
+							target.loadObject(dis);
+							navigator.goTo(target);
 						}
 					} else if (event == NavEvent.STOP.ordinal()) {
 						if (pilot != null) {
@@ -90,6 +100,42 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener{
 					} else if (event == NavEvent.SET_POSE.ordinal() && pp != null) {
 						currentPose.loadObject(dis);
 						pp.setPose(currentPose);
+					} else if (event == NavEvent.ADD_WAYPOINT.ordinal())  {
+						if (navigator != null) {
+							WayPoint wp = new WayPoint(0,0);
+							wp.loadObject(dis);
+							navigator.addWayPoint(wp);
+						}
+					} else if (event == NavEvent.FIND_CLOSEST.ordinal()) {
+						if (particles != null) {
+							float x = dis.readFloat();
+							float y = dis.readFloat();
+							int closest = particles.findClosest(x, y);
+							dos.writeByte(NavEvent.CLOSEST_PARTICLE.ordinal());
+							dos.writeInt(closest);
+						}
+					} else if (event == NavEvent.PARTICLE_SET.ordinal()) {
+						if (particles != null) {
+							particles.loadObject(dis);
+						}
+					} else if (event == NavEvent.TAKE_READINGS.ordinal()) {
+						// TODO: How to do this?
+					} else if (event == NavEvent.RANDOM_MOVE.ordinal() && pilot != null &&
+							   pilot instanceof RotateMoveController) {
+					    float angle = (float) Math.random() * 360;
+					    float distance = (float) Math.random() * maxDistance;
+					    
+					    if (angle > 180f) angle -= 360f;
+
+					    // Get forward range
+					    float forwardRange = readings.getRange(1);
+
+					    // Don't move forward if we are near a wall
+					    if (forwardRange < 0
+					        || distance + border + projection < forwardRange)
+					      pilot.travel(distance);
+					    
+					    ((RotateMoveController) pilot).rotate(angle);
 					}
 				} catch (Exception ioe) {
 					fatal("Exception in receiver");
@@ -115,5 +161,14 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener{
 		} catch (IOException ioe) {
 			fatal("IOException in moveStarted");	
 		}	
+	}
+
+	public void nextWaypoint(WayPoint wp) {	
+	}
+
+	public void pathComplete() {
+	}
+
+	public void featureDetected(Feature feature, FeatureDetector detector) {	
 	}
 }
