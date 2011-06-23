@@ -63,20 +63,20 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener{
 					byte event = dis.readByte();
 					log("Event received:" +  event);
 					
-					if (event ==  Event.LOAD_MAP.ordinal()) {
+					if (event ==  NavEvent.LOAD_MAP.ordinal()) {
 						if (map == null) map = new LineMap();
 						map.loadObject(dis);
-					} else if (event == Event.GOTO.ordinal()) {
+					} else if (event == NavEvent.GOTO.ordinal()) {
 						if (navigator != null) {
 							targetPose = new Pose(0,0,0);
 							targetPose.loadObject(dis);
 							navigator.goTo(new WayPoint(targetPose));
 						}
-					} else if (event == Event.STOP.ordinal()) {
+					} else if (event == NavEvent.STOP.ordinal()) {
 						if (pilot != null) {
 							pilot.stop();
 						}
-					} else if (event == Event.TRAVEL.ordinal()) {
+					} else if (event == NavEvent.TRAVEL.ordinal()) {
 						if (pilot != null) {
 							float distance = dis.readFloat();
 							pilot.travel(distance);
@@ -84,10 +84,10 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener{
 					} else if (pilot != null && pilot instanceof RotateMoveController) {
 						float angle = dis.readFloat();
 						((RotateMoveController) pilot).rotate(angle);
-					} else if (event == Event.GET_POSE.ordinal() && pp != null) {
-						dos.writeByte(Event.SET_POSE.ordinal());
+					} else if (event == NavEvent.GET_POSE.ordinal() && pp != null) {
+						dos.writeByte(NavEvent.SET_POSE.ordinal());
 						pp.getPose().dumpObject(dos);
-					} else if (event == Event.SET_POSE.ordinal() && pp != null) {
+					} else if (event == NavEvent.SET_POSE.ordinal() && pp != null) {
 						currentPose.loadObject(dis);
 						pp.setPose(currentPose);
 					}
@@ -101,7 +101,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener{
 
 	public void moveStarted(Move event, MoveProvider mp) {
 		try {
-			dos.writeByte(Event.MOVE_STARTED.ordinal());
+			dos.writeByte(NavEvent.MOVE_STARTED.ordinal());
 			event.dumpObject(dos);
 		} catch (IOException ioe) {
 			fatal("IOException in moveStarted");	
@@ -110,7 +110,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener{
 
 	public void moveStopped(Move event, MoveProvider mp) {
 		try {
-			dos.writeByte(Event.MOVE_STOPPED.ordinal());
+			dos.writeByte(NavEvent.MOVE_STOPPED.ordinal());
 			event.dumpObject(dos);
 		} catch (IOException ioe) {
 			fatal("IOException in moveStarted");	
