@@ -14,22 +14,28 @@ public class NavigationPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	protected float xOffset = 10, yOffset = 10, pixelsPerUnit = 2;
 	protected PCNavigationModel model = new PCNavigationModel();
-	protected MapPanel mapPanel = new MapPanel(model, new Dimension(600,700));
+	protected MapPanel mapPanel = new MapPanel(model, new Dimension(600,700), xOffset, yOffset, pixelsPerUnit);
 	protected JPanel formPanel = new JPanel();
 	protected JPanel connectPanel = new JPanel();
+	protected JPanel statusPanel = new JPanel();
 	
 	public NavigationPanel() {
+		buildGUI();
+	}
+	
+	protected void buildGUI() {
 		formPanel.setBorder(BorderFactory.createTitledBorder("Commands"));
 		connectPanel.setBorder(BorderFactory.createTitledBorder("Connect"));
 		mapPanel.setBorder(BorderFactory.createTitledBorder("Map"));
 		add(connectPanel);
+		add(statusPanel);
 		add(formPanel);
 		add(mapPanel);
 	}
 	/**
 	 * Print the error message and exit
 	 */
-	protected void fatal(String msg) {
+	public void fatal(String msg) {
 		System.err.println(msg);
 		System.exit(1);
 	}

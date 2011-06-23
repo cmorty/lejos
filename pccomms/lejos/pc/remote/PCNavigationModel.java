@@ -5,19 +5,17 @@ import java.io.*;
 
 import lejos.geom.Rectangle;
 import lejos.pc.comm.*;
+import lejos.robotics.NavigationModel;
 import lejos.robotics.mapping.*;
 import lejos.robotics.navigation.*;
 import lejos.robotics.localization.*;
 
-public class PCNavigationModel {
-	protected LineMap map;
-	protected String nxtName;
-	protected DataInputStream dis;
-	protected DataOutputStream dos;
-	protected enum Event {LOAD_MAP, GOTO, TRAVEL, ROTATE, STOP, GET_POSE, SET_POSE, RANDOM_MOVE, TAKE_READINGS, MOVE_STARTED, MOVE_STOPPED};
-	protected Pose targetPose, currentPose;
+public class PCNavigationModel extends NavigationModel {
+	protected Pose targetPose = new Pose(0,0,0), currentPose = new Pose(0,0,0);
 	protected NavigationPanel panel;
 	protected MCLParticleSet particles;
+	protected MCLPoseProvider mcl;
+	protected Move lastMove = new Move(0,0,false);
 	
 	public PCNavigationModel() {
 		Thread receiver = new Thread(new Receiver());
@@ -33,12 +31,16 @@ public class PCNavigationModel {
 		currentPose = p;
 	}
 	
-	public boolean hasMap() {
-		return map != null;
+	public MCLParticleSet getParticles() {
+		return particles;
 	}
 	
-	public LineMap getMap() {
-		return map;
+	public void setParticleSet(MCLParticleSet particles) {
+		this.particles = particles;
+	}
+	
+	public MCLPoseProvider getMCL() {
+		return mcl;
 	}
 
 	/**
@@ -89,10 +91,8 @@ public class PCNavigationModel {
 	public void goTo(Pose p) {
 		try {
 			dos.writeByte(Event.GOTO.ordinal());
-			dos.writeFloat(p.getX());
-			dos.writeFloat(p.getY());
-			dos.writeFloat(p.getHeading());
-			dos.flush();
+			targetPose = p;
+			p.dumpObject(dos);
 		} catch (IOException ioe) {
 			panel.error("IO Exception in goTo");
 		}		
@@ -120,16 +120,40 @@ public class PCNavigationModel {
 		}
 	}
 	
+	public void getPose() {
+		try {
+			dos.writeByte(Event.GET_POSE.ordinal());
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in getPose");
+		}
+	}
+	
+	public void setPose(Pose p) {
+		currentPose = p;
+		try {
+			dos.writeByte(Event.SET_POSE.ordinal());
+			currentPose.dumpObject(dos);
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in getPose");
+		}
+	}
+	
 	class Receiver implements Runnable {
 		public void run() {
 			while(true) {
 				try {
-					Thread.sleep(1000);
-					if (dis == null) continue;
+					if (dis == null) {
+						Thread.sleep(1000);
+						continue;
+					}
 					byte event = dis.readByte();
 					panel.log("Event received:" +  event);
+					if (event == Event.MOVE_STARTED.ordinal() || event == Event.MOVE_STOPPED.ordinal()) {
+						panel.log("Reading Move object");
+						lastMove.loadObject(dis);
+					}
 				} catch (Exception ioe) {
-					panel.error("Exception in receiver");
+					panel.fatal("Exception in receiver: " + ioe);
 				}
 			}
 			
