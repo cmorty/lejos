@@ -37,12 +37,10 @@ public interface NXTComm extends NXTCommRequest {
 	 * Search for NXTs over USB, Bluetooth or both
      * 
 	 * @param name name of the NXT or <code>null</code>
-	 * @param protocol {@link NXTCommFactory#BLUETOOTH}, {@link NXTCommFactory#USB} or {@link NXTCommFactory#ALL_PROTOCOLS}
-     *   (the bitwise combination of both)
 	 * @return a NXTInfo object describing the NXt found and the connection to it
 	 * @throws NXTCommException
 	 */
-	public NXTInfo[] search(String name, int protocol) throws NXTCommException;
+	public NXTInfo[] search(String name) throws NXTCommException;
 
 	/**
 	 * Connect to a NXT found by a search or created from name and address.

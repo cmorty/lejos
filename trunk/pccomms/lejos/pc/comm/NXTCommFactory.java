@@ -5,12 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 import lejos.util.jni.JNIClass;
-import lejos.util.jni.JNIException;
 import lejos.util.jni.JNILoader;
 import lejos.util.jni.OSInfo;
 
@@ -55,50 +52,49 @@ public class NXTCommFactory {
 	 */
 	public static NXTComm createNXTComm(int protocol) throws NXTCommException {
 		Properties props = getNXJProperties();
-
-		// Look for USB comms driver first
-		if ((protocol & NXTCommFactory.USB) != 0) {
-			boolean fantom = osinfo.isOS(OSInfo.OS_WINDOWS) || osinfo.isOS(OSInfo.OS_MACOSX);
-			String defaultName = fantom ? "lejos.pc.comm.NXTCommFantom"
-					: "lejos.pc.comm.NXTCommLibnxt";
-			String nxtCommName = props.getProperty("NXTCommUSB",
-					defaultName);
-			
-			try {
-				return newNXTCommInstance(nxtCommName);
-			} catch (Exception t) {
-				throw new NXTCommException("Cannot load USB driver",t);
-			}
-		}
-
-		if ((protocol & NXTCommFactory.BLUETOOTH) != 0) {
-			// Look for a Bluetooth one
-			String defaultName = isAndroid() ? "lejos.pc.comm.NXTCommAndroid"
-					: "lejos.pc.comm.NXTCommBluecove";
-			String nxtCommName = props.getProperty("NXTCommBluetooth",
-					defaultName);
-			
-			try {
-				return newNXTCommInstance(nxtCommName);
-			} catch (Exception t) {
-				throw new NXTCommException("Cannot load Bluetooth driver", t);
-			}
-		}
 		
-		return null;
+		String nxtCommName;
+		switch (protocol)
+		{
+			case NXTCommFactory.USB:
+			{
+				boolean fantom = osinfo.isOS(OSInfo.OS_WINDOWS) || osinfo.isOS(OSInfo.OS_MACOSX);
+				String defaultName = fantom ? "lejos.pc.comm.NXTCommFantom" : "lejos.pc.comm.NXTCommLibnxt";
+				nxtCommName = props.getProperty("NXTCommUSB", defaultName);				
+				break;
+			}
+			case NXTCommFactory.BLUETOOTH:
+			{
+				// Look for a Bluetooth one
+				String defaultName = isAndroid() ? "lejos.pc.comm.NXTCommAndroid" : "lejos.pc.comm.NXTCommBluecove";
+				nxtCommName = props.getProperty("NXTCommBluetooth", defaultName);
+				break;
+			}
+			default:
+				throw new NXTCommException("unknown protocol");
+		}
+
+		return newNXTCommInstance(nxtCommName);
 	}
 	
-	private static NXTComm newNXTCommInstance(String classname) throws JNIException, ClassNotFoundException, InstantiationException, IllegalAccessException
+	private static NXTComm newNXTCommInstance(String classname) throws NXTCommException
 	{
-		Class<?> c = Class.forName(classname);
-		Object o = c.newInstance();
-		
-		if (o instanceof JNIClass)
+		try
 		{
-			((JNIClass) o).initialize(jniloader);
+			Class<?> c = Class.forName(classname);
+			Object o = c.newInstance();
+			
+			if (o instanceof JNIClass)
+			{
+				((JNIClass) o).initialize(jniloader);
+			}
+			
+			return (NXTComm) o;
 		}
-		
-		return (NXTComm) o;
+		catch (Exception e)
+		{
+			throw new NXTCommException("Cannot load NXTComm driver", e);
+		}
 	}
 
 	/**

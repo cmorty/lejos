@@ -34,13 +34,10 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 	private InputStream is;
 	private NXTInfo nxtInfo;
 
-	public NXTInfo[] search(String name, int protocol) throws NXTCommException {
+	public NXTInfo[] search(String name) throws NXTCommException {
 
 		devices = new Vector<RemoteDevice>();
 		nxtInfos = new Vector<NXTInfo>();
-
-		if ((protocol & NXTCommFactory.BLUETOOTH) == 0)
-			return new NXTInfo[0];
 
 		synchronized (this) {
 			try {

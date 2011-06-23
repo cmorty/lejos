@@ -23,11 +23,11 @@ public class NXTCommBluez implements NXTComm, JNIClass {
 	private int lenRemaining = 0;
 	byte[] savedData = null;
 
-	public NXTInfo[] search(String name, int protocol) {
+	public NXTInfo[] search(String name) {
 		String[] btString = null;
 		
 		try {
-			btString = search(name);
+			btString = rcSearch(name);
 		} catch (BlueZException e) {
 			System.err.println(e.getMessage());	
 		}
@@ -247,7 +247,7 @@ public class NXTCommBluez implements NXTComm, JNIClass {
 		return new NXTCommInputStream(this);		
 	}
 	
-	native private String[] search(String name) throws BlueZException;
+	native private String[] rcSearch(String name) throws BlueZException;
 	
 	native private int rcSocketCreate() throws BlueZException;
 
@@ -255,9 +255,9 @@ public class NXTCommBluez implements NXTComm, JNIClass {
 
 	native private void rcSocketConnect(int sk, String bdaddr, int channel) throws BlueZException;
 
-	native public void rcSocketSend(int sk, byte[] data) throws IOException;
+	native private void rcSocketSend(int sk, byte[] data) throws IOException;
 
-	native public byte[] rcSocketRecv(int sk) throws IOException;
+	native private byte[] rcSocketRecv(int sk) throws IOException;
 
 	native private void rcSocketShutdown(int sk) throws IOException;
 
