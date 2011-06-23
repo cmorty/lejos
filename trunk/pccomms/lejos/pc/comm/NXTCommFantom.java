@@ -29,11 +29,11 @@ public class NXTCommFantom extends NXTCommUSB implements JNIClass {
     private static final int MIN_TIMEOUT = 5000;
     private static final int MAX_ERRORS = 10;
 	
-	public native String[] jfantom_find();
-	public native long jfantom_open(String nxt);
-	public native void jfantom_close(long nxt);
-	public native int jfantom_send_data(long nxt, byte [] message, int offset, int len);
-	public native int jfantom_read_data(long nxt, byte[] data, int offset, int len);
+	private native String[] jfantom_find();
+	private native long jfantom_open(String nxt);
+	private native void jfantom_close(long nxt);
+	private native int jfantom_send_data(long nxt, byte [] message, int offset, int len);
+	private native int jfantom_read_data(long nxt, byte[] data, int offset, int len);
 
 	Vector<NXTInfo> devFind()
     {
