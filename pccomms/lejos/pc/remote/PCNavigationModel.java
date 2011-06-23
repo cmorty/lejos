@@ -80,23 +80,17 @@ public class PCNavigationModel extends NavigationModel {
 			Rectangle boundingRect = map.getBoundingRect();
 			panel.setMapSize(new Dimension((int) (boundingRect.width * 2), (int) (boundingRect.height * 2)));
 			panel.repaint();
-			sendEvent(NavEvent.LOAD_MAP);
-			if (dos != null) map.dumpObject(dos);
+			if (dos != null) {
+				dos.writeByte(NavEvent.LOAD_MAP.ordinal());
+				map.dumpObject(dos);
+			}
 		} catch (Exception ioe) {
 			panel.error("Exception in loadMap:" + ioe);
 		} 
 	}
 	
-	protected void sendEvent(NavEvent e) {
-		if (dos == null) return;
-		try {
-			dos.writeByte(e.ordinal());
-		} catch (IOException ioe) {
-			panel.error("IO Exception in sendByte");
-		}
-	}
-	
 	public void goTo(WayPoint wp) {
+		if (dos == null) return;
 		try {
 			dos.writeByte(NavEvent.GOTO.ordinal());
 			target = wp;
@@ -107,7 +101,7 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	public void travel(float distance) {
-		System.out.println("Sending travel " + distance);
+		if (dos == null) return;
 		try {
 			dos.writeByte(NavEvent.TRAVEL.ordinal());
 			dos.writeFloat(distance);
@@ -118,7 +112,7 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	public void rotate(float angle) {
-		System.out.println("Sending rotate " + angle);
+		if (dos == null) return;
 		try {
 			dos.writeByte(NavEvent.ROTATE.ordinal());
 			dos.writeFloat(angle);
@@ -129,14 +123,17 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	public void getPose() {
+		if (dos == null) return;
 		try {
 			dos.writeByte(NavEvent.GET_POSE.ordinal());
+			dos.flush();
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in getPose");
 		}
 	}
 	
 	public void setPose(Pose p) {
+		if (dos == null) return;
 		currentPose = p;
 		try {
 			dos.writeByte(NavEvent.SET_POSE.ordinal());
@@ -147,6 +144,7 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	public void randomMove() {
+		if (dos == null) return;
 		try {
 			dos.writeByte(NavEvent.RANDOM_MOVE.ordinal());
 			dos.flush();
@@ -156,6 +154,7 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	public void takeReadings() {
+		if (dos == null) return;
 		try {
 			dos.writeByte(NavEvent.TAKE_READINGS.ordinal());
 			dos.flush();
