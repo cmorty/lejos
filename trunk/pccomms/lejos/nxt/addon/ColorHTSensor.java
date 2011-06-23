@@ -16,7 +16,7 @@ import lejos.robotics.*;
  *@author BB extended by A.T.Brask
  * 
  */
-public class ColorSensorHT extends I2CSensor implements ColorDetector {
+public class ColorHTSensor extends I2CSensor implements ColorDetector {
     byte[] buf = new byte[2];
 
     // TODO: Problem: The following table ignores pastels and other subtle colors HiTechnic can detect.
@@ -26,7 +26,7 @@ public class ColorSensorHT extends I2CSensor implements ColorDetector {
     		Color.ORANGE, Color.RED, Color.RED, Color.MAGENTA, Color.MAGENTA, Color.YELLOW, Color.PINK,
     		Color.PINK, Color.PINK, Color.MAGENTA, Color.WHITE};
     
-    public ColorSensorHT(I2CPort port)
+    public ColorHTSensor(I2CPort port)
     {
         super(port);
     }
