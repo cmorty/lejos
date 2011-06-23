@@ -47,12 +47,15 @@ public class Upload extends NXTCommLoggable {
 	
 			log(fNXTCommand.uploadFile(f, nxtFileName));
 			
-			if (run) {
+			if (run)
+			{
 				fNXTCommand.setVerify(false);
 				fNXTCommand.startProgram(nxtFileName);
 			}
-			
-			fNXTCommand.disconnect();
+			else
+			{
+				fNXTCommand.disconnect();
+			}			
 		}
 		finally
 		{
