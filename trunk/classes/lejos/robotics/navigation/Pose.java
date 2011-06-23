@@ -214,6 +214,7 @@ public void dumpObject(DataOutputStream dos) throws IOException {
 	dos.writeFloat(_location.x);
 	dos.writeFloat(_location.y);
 	dos.writeFloat(_heading);
+	dos.flush();
 }
 
 public void loadObject(DataInputStream dis) throws IOException {
