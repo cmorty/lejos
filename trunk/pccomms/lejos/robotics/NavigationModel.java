@@ -9,7 +9,9 @@ public abstract class NavigationModel {
 	protected String nxtName;
 	protected DataInputStream dis;
 	protected DataOutputStream dos;
-	protected enum Event {LOAD_MAP, GOTO, TRAVEL, ROTATE, STOP, GET_POSE, SET_POSE, RANDOM_MOVE, TAKE_READINGS, MOVE_STARTED, MOVE_STOPPED}
+	public enum NavEvent {LOAD_MAP, GOTO, TRAVEL, ROTATE, STOP, GET_POSE, 
+		SET_POSE, RANDOM_MOVE, TAKE_READINGS, FIND_CLOSEST, ADD_WAYPOINT,
+		MOVE_STARTED, MOVE_STOPPED}
 	
 	public boolean hasMap() {
 		return map != null;

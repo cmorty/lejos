@@ -31,6 +31,10 @@ public class PCNavigationModel extends NavigationModel {
 		currentPose = p;
 	}
 	
+	public Pose getRobotPose() {
+		return currentPose;
+	}
+	
 	public MCLParticleSet getParticles() {
 		return particles;
 	}
@@ -72,14 +76,14 @@ public class PCNavigationModel extends NavigationModel {
 			Rectangle boundingRect = map.getBoundingRect();
 			panel.setMapSize(new Dimension((int) (boundingRect.width * 2), (int) (boundingRect.height * 2)));
 			panel.repaint();
-			sendEvent(Event.LOAD_MAP);
+			sendEvent(NavEvent.LOAD_MAP);
 			if (dos != null) map.dumpObject(dos);
 		} catch (Exception ioe) {
 			panel.error("Exception in loadMap:" + ioe);
 		} 
 	}
 	
-	protected void sendEvent(Event e) {
+	protected void sendEvent(NavEvent e) {
 		if (dos == null) return;
 		try {
 			dos.writeByte(e.ordinal());
@@ -90,7 +94,7 @@ public class PCNavigationModel extends NavigationModel {
 	
 	public void goTo(Pose p) {
 		try {
-			dos.writeByte(Event.GOTO.ordinal());
+			dos.writeByte(NavEvent.GOTO.ordinal());
 			targetPose = p;
 			p.dumpObject(dos);
 		} catch (IOException ioe) {
@@ -101,7 +105,7 @@ public class PCNavigationModel extends NavigationModel {
 	public void travel(float distance) {
 		System.out.println("Sending travel " + distance);
 		try {
-			dos.writeByte(Event.TRAVEL.ordinal());
+			dos.writeByte(NavEvent.TRAVEL.ordinal());
 			dos.writeFloat(distance);
 			dos.flush();
 		} catch (IOException ioe) {
@@ -112,7 +116,7 @@ public class PCNavigationModel extends NavigationModel {
 	public void rotate(float angle) {
 		System.out.println("Sending rotate " + angle);
 		try {
-			dos.writeByte(Event.ROTATE.ordinal());
+			dos.writeByte(NavEvent.ROTATE.ordinal());
 			dos.writeFloat(angle);
 			dos.flush();
 		} catch (IOException ioe) {
@@ -122,7 +126,7 @@ public class PCNavigationModel extends NavigationModel {
 	
 	public void getPose() {
 		try {
-			dos.writeByte(Event.GET_POSE.ordinal());
+			dos.writeByte(NavEvent.GET_POSE.ordinal());
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in getPose");
 		}
@@ -131,7 +135,7 @@ public class PCNavigationModel extends NavigationModel {
 	public void setPose(Pose p) {
 		currentPose = p;
 		try {
-			dos.writeByte(Event.SET_POSE.ordinal());
+			dos.writeByte(NavEvent.SET_POSE.ordinal());
 			currentPose.dumpObject(dos);
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in getPose");
@@ -148,7 +152,7 @@ public class PCNavigationModel extends NavigationModel {
 					}
 					byte event = dis.readByte();
 					panel.log("Event received:" +  event);
-					if (event == Event.MOVE_STARTED.ordinal() || event == Event.MOVE_STOPPED.ordinal()) {
+					if (event == NavEvent.MOVE_STARTED.ordinal() || event == NavEvent.MOVE_STOPPED.ordinal()) {
 						panel.log("Reading Move object");
 						lastMove.loadObject(dis);
 					}
