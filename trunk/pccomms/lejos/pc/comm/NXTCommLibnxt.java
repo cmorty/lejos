@@ -15,11 +15,11 @@ import lejos.util.jni.JNILoader;
  *
  */
 public class NXTCommLibnxt extends NXTCommUSB implements JNIClass {	
-	public native String[] jlibnxt_find();
-	public native long jlibnxt_open(String nxt);
-	public native void jlibnxt_close(long nxt);
-	public native int jlibnxt_send_data(long nxt, byte [] message, int offset, int len);
-	public native int jlibnxt_read_data(long nxt, byte [] data, int offset, int len);
+	private native String[] jlibnxt_find();
+	private native long jlibnxt_open(String nxt);
+	private native void jlibnxt_close(long nxt);
+	private native int jlibnxt_send_data(long nxt, byte [] message, int offset, int len);
+	private native int jlibnxt_read_data(long nxt, byte [] data, int offset, int len);
 
     Vector<NXTInfo> devFind()
     {
