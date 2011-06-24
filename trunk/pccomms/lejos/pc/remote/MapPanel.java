@@ -17,7 +17,7 @@ import lejos.robotics.navigation.Pose;
 public class MapPanel extends JPanel {
 	private static final long serialVersionUID = 1L;;
 	protected static final float ARROW_LENGTH = 10f;
-	protected static final int ROBOT_SIZE = 5;
+	protected static final int ROBOT_SIZE = 1;
 	protected PCNavigationModel model;
 	NavigationPanel parent;
 	protected Dimension size;;
@@ -108,9 +108,9 @@ public class MapPanel extends JPanel {
 	public void paintPose(Graphics2D g2d, Pose pose) {
 		g2d.setColor(Color.RED);
 		Ellipse2D c = new Ellipse2D.Float(parent.xOffset + pose.getX() * parent.pixelsPerUnit - 1, parent.yOffset + pose.getY() * parent.pixelsPerUnit - 1, ROBOT_SIZE * parent.pixelsPerUnit, ROBOT_SIZE * parent.pixelsPerUnit);
-		//Line rl = getArrowLine(pose);
-		//Line2D l2d = new Line2D.Float(rl.x1, rl.y1, rl.x2, rl.y2);
-		//g2d.draw(l2d);
+		Line rl = getArrowLine(pose);
+		Line2D l2d = new Line2D.Float(rl.x1, rl.y1, rl.x2, rl.y2);
+		g2d.draw(l2d);
 		g2d.fill(c);
 	}
 	
