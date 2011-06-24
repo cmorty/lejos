@@ -6,7 +6,7 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.navigation.ArcRotateMoveController;
 import lejos.robotics.navigation.DifferentialPilot;
-import lejos.robotics.navigation.NavPathController;
+import lejos.robotics.navigation.Navigator;
 import lejos.robotics.navigation.WayPoint;
 import lejos.robotics.navigation.Pose;
 import lejos.geom.Point;
@@ -32,7 +32,7 @@ public class RCNavMapper  implements RCVehicle,   FeatureListener
   {
     
     pilot = aPilot;
-    nav = new NavPathController(pilot);
+    nav = new Navigator(pilot);
     pp = (OdometryPoseProvider) nav.getPoseProvider();
     RangeFinder rf = new UltrasonicSensor(SensorPort.S3);   
     detector = new RangeFeatureDetector(rf, 30, 100);
@@ -180,7 +180,7 @@ System.out.println("Pose "+(int)pose.getX()+" "+(int)pose.getY()
   
 
   NxtCommunicator comm = new NxtCommunicator(this);
-  NavPathController nav;
+  Navigator nav;
   ArcRotateMoveController pilot;
   OdometryPoseProvider pp ;
   RangeFeatureDetector detector;

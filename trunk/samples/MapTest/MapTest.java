@@ -1,7 +1,7 @@
 import lejos.robotics.NXTNavigationModel;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.DifferentialPilot;
-import lejos.robotics.navigation.NavPathController;
+import lejos.robotics.navigation.Navigator;
 import lejos.robotics.navigation.PathController;
 import lejos.util.PilotProps;
 
@@ -16,7 +16,7 @@ public class MapTest {
     	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
     	
     	DifferentialPilot robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
-    	PathController navigator = new NavPathController(robot); 	
+    	PathController navigator = new Navigator(robot); 	
     	NXTNavigationModel model = new NXTNavigationModel();
     	model.addPilot(robot);
     	model.addNavigator(navigator);
