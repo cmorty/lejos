@@ -24,9 +24,6 @@ public class MapTest extends NavigationPanel {
   private JLabel headingLabel = new JLabel("Heading:");
   private JTextField headingField = new JTextField(6);
   private JButton gotoButton = new JButton("Go to");
-  private JLabel nxtLabel = new JLabel("NXT name:");
-  private JTextField nxtName = new JTextField(10);
-  private JButton connectButton = new JButton("Connect");
   private JLabel distanceLabel = new JLabel("Distance:");
   private JTextField distanceField = new JTextField(10);
   private JButton travelButton = new JButton("Travel");
@@ -43,22 +40,19 @@ public class MapTest extends NavigationPanel {
   }
   
   public MapTest() {
-		connectPanel.add(nxtLabel);
-		connectPanel.add(nxtName);
-		connectPanel.add(connectButton);
-		formPanel.add(xLabel);
-		formPanel.add(xField);
-		formPanel.add(yLabel);
-		formPanel.add(yField);
-		formPanel.add(headingLabel);
-		formPanel.add(headingField);
-		formPanel.add(gotoButton);
-		formPanel.add(distanceLabel);
-		formPanel.add(distanceField);
-		formPanel.add(travelButton);
-		formPanel.add(angleLabel);
-		formPanel.add(angleField);
-		formPanel.add(rotateButton);
+		commandPanel.add(xLabel);
+		commandPanel.add(xField);
+		commandPanel.add(yLabel);
+		commandPanel.add(yField);
+		commandPanel.add(headingLabel);
+		commandPanel.add(headingField);
+		commandPanel.add(gotoButton);
+		commandPanel.add(distanceLabel);
+		commandPanel.add(distanceField);
+		commandPanel.add(travelButton);
+		commandPanel.add(angleLabel);
+		commandPanel.add(angleField);
+		commandPanel.add(rotateButton);
 		
 		gotoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -66,13 +60,6 @@ public class MapTest extends NavigationPanel {
 					model.goTo(new WayPoint( new Pose(Float.parseFloat(xField.getText()), 
 						Float.parseFloat(yField.getText()), Float.parseFloat(headingField.getText()))));
 				} catch (NumberFormatException e) {}
-			}
-		});
-		
-		connectButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent event) {
-				model.connect(nxtName.getText());
 			}
 		});
 		

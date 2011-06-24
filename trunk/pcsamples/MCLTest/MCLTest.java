@@ -20,25 +20,11 @@ public class MCLTest extends NavigationPanel {
   private static final int FRAME_HEIGHT = 800;
   
   private static final int NUM_PARTICLES = 300;
-  private static final int NUM_READINGS = 3;
   private static MCLPoseProvider mcl;
   
-  private JLabel xLabel = new JLabel("X:");
-  private JTextField xField = new JTextField(6);
-  private JLabel yLabel = new JLabel("Y:");
-  private JTextField yField = new JTextField(6);
-  private JLabel headingLabel = new JLabel("Heading:");
-  private JTextField headingField = new JTextField(6);
-  private JButton gotoButton = new JButton("Go to");
-  private JLabel nxtLabel = new JLabel("NXT name:");
-  private JTextField nxtName = new JTextField(10);
-  private JButton connectButton = new JButton("Connect");
-  private JLabel distanceLabel = new JLabel("Distance:");
-  private JTextField distanceField = new JTextField(10);
-  private JButton travelButton = new JButton("Travel");
-  private JLabel angleLabel = new JLabel("Angle:");
-  private JTextField angleField = new JTextField(10);
-  private JButton rotateButton = new JButton("Rotate");
+  private JButton randomButton = new JButton("Random move");
+  private JButton getPoseButton = new JButton("Get Pose");
+  
   
   /**
    * Create a MapTest object and display it in a GUI frame.
@@ -49,52 +35,18 @@ public class MCLTest extends NavigationPanel {
   }
   
   public MCLTest() {
-		connectPanel.add(nxtLabel);
-		connectPanel.add(nxtName);
-		connectPanel.add(connectButton);
-		formPanel.add(xLabel);
-		formPanel.add(xField);
-		formPanel.add(yLabel);
-		formPanel.add(yField);
-		formPanel.add(headingLabel);
-		formPanel.add(headingField);
-		formPanel.add(gotoButton);
-		formPanel.add(distanceLabel);
-		formPanel.add(distanceField);
-		formPanel.add(travelButton);
-		formPanel.add(angleLabel);
-		formPanel.add(angleField);
-		formPanel.add(rotateButton);
+		commandPanel.add(randomButton);
+		commandPanel.add(getPoseButton);
 		
-		gotoButton.addActionListener(new ActionListener() {
+		randomButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				try {
-					model.goTo(new WayPoint(new Pose(Float.parseFloat(xField.getText()), 
-						Float.parseFloat(yField.getText()), Float.parseFloat(headingField.getText()))));
-				} catch (NumberFormatException e) {}
+				model.randomMove();
 			}
 		});
 		
-		connectButton.addActionListener(new ActionListener() {
-
+		randomButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				model.connect(nxtName.getText());
-			}
-		});
-		
-		travelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				try {
-					model.travel(Float.parseFloat(distanceField.getText()));
-				} catch (NumberFormatException e) {}
-			}
-		});
-		
-		rotateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				try {
-					model.rotate(Float.parseFloat(angleField.getText()));
-				} catch (NumberFormatException e) {}
+				model.getPose();
 			}
 		});
   }
