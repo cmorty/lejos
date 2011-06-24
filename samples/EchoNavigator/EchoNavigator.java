@@ -16,7 +16,7 @@ import java.util.Random;
  * <p>The robot requires an ultrasonic sensor in  port 4. It does not
  * map the obstacles, but instead uses a randomized avoiding strategy.</p>
  * 
- * <p>Classes used:   DifferentialPilot, NavPathController, FeatureDetector</p>
+ * <p>Classes used:   DifferentialPilot, Navigator, FeatureDetector</p>
  * 
  * <p>You can run the PilotParams sample to create a property file which 
  * sets the parameters of the Pilot to the dimensions
@@ -41,7 +41,7 @@ public class EchoNavigator implements FeatureListener {
      * @param sonicPort -  an ultrasonic sensor
      */
     // 
-    public EchoNavigator(final NavPathController aNavigator, final SensorPort sonicPort) {
+    public EchoNavigator(final Navigator aNavigator, final SensorPort sonicPort) {
         RangeFinder us = new UltrasonicSensor(sonicPort);
         
         // Create object detector and add EchoNavigator as a listener:
@@ -73,13 +73,13 @@ public class EchoNavigator implements FeatureListener {
     	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
     	
         DifferentialPilot p = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
-        NavPathController nav = new NavPathController(p);
+        Navigator nav = new Navigator(p);
         
         EchoNavigator robot = new EchoNavigator(nav, SensorPort.S4);
         robot.pilot = p;
         
         // TODO: For version 1.0. 
-        // This is overly complex to make NavPathController and a FeatureListener do something simple like
+        // This is overly complex to make Navigator and a FeatureListener do something simple like
         // a bumper car. Might want to look at ways to change API so we can simplify this type of sample. Coding
         // this type of example is not very intuitive with the current API.
         
@@ -111,7 +111,7 @@ public class EchoNavigator implements FeatureListener {
 	        System.out.println("Arrived: " + (int)curPose.getX() + ", " + (int)curPose.getY());
         }
     }
-    private NavPathController nav;
+    private Navigator nav;
     private DifferentialPilot pilot;
     Random rand = new Random();
         

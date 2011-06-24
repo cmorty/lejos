@@ -5,7 +5,7 @@ import lejos.nxt.*;
 import java.io.IOException;
 
 /**
- * The WaypointNav class uses the NavPathController to execute the
+ * The WaypointNav class uses the Navigator to execute the
  * individual segments
  *
  * You can run the PilotParams sample to create a property file which 
@@ -14,11 +14,11 @@ import java.io.IOException;
  * 
  * @author Dirk Sturzebecher - 20090131 - initial version
  * revised 20090701 to use instead of extend  a SimpleNavigator.
- * revised 20110428 to use NavPathController by BB. 
+ * revised 20110428 to use Navigator by BB. 
  */
 public class WaypointNav
 {
-	NavPathController nav;
+	Navigator nav;
 
 	/**
 	 * test of WaypointNav
@@ -39,7 +39,7 @@ public class WaypointNav
 		Button.waitForPress();
 		
 		DifferentialPilot p = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
-		NavPathController nav = new NavPathController(p);
+		Navigator nav = new Navigator(p);
 
 		nav.addWayPoint(new WayPoint(20, 20));
 		nav.addWayPoint(new WayPoint(20,0));

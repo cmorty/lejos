@@ -26,7 +26,7 @@ public class SteerNavDemo {
 		//ArcMoveController p = new DifferentialPilot(4.32F, 4.32F, 16F, Motor.B, Motor.C, true);
 		//p.setMinRadius(40);
 		
-		NavPathController c = new NavPathController(p);
+		Navigator c = new Navigator(p);
 		
 		// To retrieve the coordinates and heading, access the PoseProvider: 
 		Pose pose = c.getPoseProvider().getPose();

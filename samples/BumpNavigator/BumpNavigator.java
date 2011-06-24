@@ -17,7 +17,7 @@ import java.util.Random;
  * pose,  the accuracy of navigation degrades with each obstacle. It does not
  * map the obstacles, but instead uses a randomized avoiding strategy.</p>
  * 
- * <p>Classes used:   DifferentialPilot, NavPathController, FeatureDetector</p>
+ * <p>Classes used:   DifferentialPilot, Navigator, FeatureDetector</p>
  * 
  * <p>You can run the PilotParams sample to create a property file which 
  * sets the parameters of the Pilot to the dimensions
@@ -42,7 +42,7 @@ public class BumpNavigator implements FeatureListener {
      * @param rightTouch - touch sensor on right side
      */
     // 
-    public BumpNavigator(final NavPathController aNavigator, final SensorPort leftTouch, final SensorPort rightTouch) {
+    public BumpNavigator(final Navigator aNavigator, final SensorPort leftTouch, final SensorPort rightTouch) {
         TouchSensor leftBump = new TouchSensor(leftTouch);
         TouchSensor rightBump = new TouchSensor(rightTouch);
         
@@ -76,13 +76,13 @@ public class BumpNavigator implements FeatureListener {
     	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
     	
         DifferentialPilot p = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
-        NavPathController nav = new NavPathController(p);
+        Navigator nav = new Navigator(p);
         
         BumpNavigator robot = new BumpNavigator(nav, SensorPort.S2, SensorPort.S3);
         robot.pilot = p;
         
         // TODO: For version 1.0. 
-        // This is overly complex to make NavPathController and a FeatureListener do something simple like
+        // This is overly complex to make Navigator and a FeatureListener do something simple like
         // a bumper car. Might want to look at ways to change API so we can simplify this type of sample. Coding
         // this type of example is not very intuitive with the current API.
         
@@ -110,7 +110,7 @@ public class BumpNavigator implements FeatureListener {
 	        Sound.beepSequenceUp();
         }
     }
-    private NavPathController nav;
+    private Navigator nav;
     private DifferentialPilot pilot;
     Random rand = new Random();
         

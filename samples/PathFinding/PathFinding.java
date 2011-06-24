@@ -48,7 +48,7 @@ public class PathFinding {
 		
 		PoseProvider posep = new OdometryPoseProvider(robot);
 		
-		NavPathController nav = new NavPathController(robot, posep, pf) ;
+		Navigator nav = new Navigator(robot, posep, pf) ;
 		System.out.println("Planning path...");
 		nav.goTo(90, 140);
 	}		
