@@ -12,7 +12,7 @@ import java.util.*;
  */
 
 /**
- * This class can cause the robot to follow a route - a sequence of  {@link  lejos.robotics.navigation.WayPoint }
+ * This class can cause the robot to follow a route - a sequence of  {@link  lejos.robotics.navigation.Waypoint }
  * ;
  * The way points are stored in a queue (actually, a Collection).
  * This  class uses  an inner class running its own thread to issue movement commands to its
@@ -20,7 +20,7 @@ import java.util.*;
  * which can be either a  {@link lejos.robotics.navigation.DifferentialPilot}
  * or {@link lejos.robotics.navigation.SteeringPilot}.
  * It also uses a {@link lejos.robotics.localization.PoseProvider}
- * to keep its pose updated, and calls its {@link lejos.robotics.navigation.WayPointListener}
+ * to keep its pose updated, and calls its {@link lejos.robotics.navigation.WaypointListener}
  * when a way point is reached.
  * 
  * @author Roger Glassey
@@ -73,9 +73,9 @@ public class Navigator implements PathController
   public void setPathFinder(PathFinder pathFinder) {
 	  this.pathFinder = pathFinder; 
 	  final PathController pc = this; // Grab reference to Navigator object for inner class
-	  pathFinder.addListener(new WayPointListener() {
+	  pathFinder.addListener(new WaypointListener() {
 
-		  public void nextWaypoint(WayPoint wp) {
+		  public void nextWaypoint(Waypoint wp) {
 			  pc.addWayPoint(wp);
 		  }
 
@@ -93,9 +93,9 @@ public class Navigator implements PathController
   /**
    * @param aRoute 
    */
-  public void setRoute(Collection<WayPoint>aRoute)
+  public void setRoute(Collection<Waypoint>aRoute)
     {
-      _route = (ArrayList<WayPoint>) aRoute;
+      _route = (ArrayList<Waypoint>) aRoute;
   }
   /** returns <code> false </code> if the the final waypoint has been reached or interrupt() has been called
    */
@@ -104,16 +104,16 @@ public class Navigator implements PathController
 	  return _keepGoing;
   }
   
-  public void followRoute(Collection<WayPoint>aRoute, boolean immediateReturn )
+  public void followRoute(Collection<Waypoint>aRoute, boolean immediateReturn )
   {
-    _route = (ArrayList<WayPoint>) aRoute;
+    _route = (ArrayList<Waypoint>) aRoute;
     _keepGoing = true;
     _singleStep = false;
     if(immediateReturn)return;
     while(_keepGoing) Thread.yield();
   }
  
-  public void goTo(WayPoint destination, boolean immediateReturn)
+  public void goTo(Waypoint destination, boolean immediateReturn)
   {
     // Check if using PathFinder:
       _singleStep = false;
@@ -127,18 +127,18 @@ public class Navigator implements PathController
     }
   }
 
-  public void goTo(WayPoint destination) {
+  public void goTo(Waypoint destination) {
    
 	  goTo(destination, false);
 	// TODO: It would be helpful to return boolean if it got to destination successfully.
   }
 
   public void goTo(double x, double y) {
-	  goTo(new WayPoint(x, y));
+	  goTo(new Waypoint(x, y));
   }
 
   public void goTo(double x, double y, double heading) {
-	  goTo(new WayPoint(x, y, heading));
+	  goTo(new Waypoint(x, y, heading));
   }
   
   /**
@@ -152,21 +152,21 @@ public class Navigator implements PathController
       else _singleStep = true;
       if(_route.size() > 0 ) _keepGoing = true;
   }
-  public void addListener(WayPointListener aListener)
+  public void addListener(WaypointListener aListener)
   {
-    if(listeners == null )listeners = new ArrayList<WayPointListener>();
+    if(listeners == null )listeners = new ArrayList<WaypointListener>();
     listeners.add(aListener);
   }
   
-  public void addTargetListener(WayPointListener targetListener)
+  public void addTargetListener(WaypointListener targetListener)
   {
-    if(targetListeners == null )targetListeners = new ArrayList<WayPointListener>();
+    if(targetListeners == null )targetListeners = new ArrayList<WaypointListener>();
     targetListeners.add(targetListener);
   }
 
   public MoveController getMoveController(){ return _pilot;}
 
-  public void addWayPoint(WayPoint aWayPoint)
+  public void addWayPoint(Waypoint aWayPoint)
   {
     _route.add(aWayPoint);
     _keepGoing = true;
@@ -195,7 +195,7 @@ public class Navigator implements PathController
    * Returns the waypoint to which the robot is presently moving.
    * @return the waypoint
    */
-  public WayPoint getWayPoint() // TODO: Delete this method? Or add to PathController interface? Might be used by some other sample?
+  public Waypoint getWayPoint() // TODO: Delete this method? Or add to PathController interface? Might be used by some other sample?
   {
     if(_route.size() <= 0 ) return null;
     return _route.get(0);
@@ -288,13 +288,13 @@ public class Navigator implements PathController
           
           if(listeners != null)
           { 
-            for(WayPointListener l : listeners)
-              l.nextWaypoint(new WayPoint(poseProvider.getPose()));
+            for(WaypointListener l : listeners)
+              l.nextWaypoint(new Waypoint(poseProvider.getPose()));
           }
           
           if(targetListeners != null)
           { 
-            for(WayPointListener l : targetListeners)
+            for(WaypointListener l : targetListeners)
               l.nextWaypoint(_destination);
           }
           
@@ -309,15 +309,15 @@ public class Navigator implements PathController
   } // end Nav class
 
   private Nav _nav ;
-  private ArrayList<WayPoint> _route  = new ArrayList<WayPoint>() ;
-  private ArrayList<WayPointListener> listeners;
-  private ArrayList<WayPointListener> targetListeners;
+  private ArrayList<Waypoint> _route  = new ArrayList<Waypoint>() ;
+  private ArrayList<WaypointListener> listeners;
+  private ArrayList<WaypointListener> targetListeners;
   private boolean _keepGoing = false;
   private boolean _singleStep = false;
   private MoveController _pilot;
   private PoseProvider poseProvider;
   private PathFinder pathFinder = null;
   private Pose _pose = new Pose();
-  private WayPoint _destination;
+  private Waypoint _destination;
   private double _radius;
 }

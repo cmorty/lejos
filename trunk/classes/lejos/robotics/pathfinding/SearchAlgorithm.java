@@ -1,7 +1,7 @@
 package lejos.robotics.pathfinding;
 
 import java.util.Collection;
-import lejos.robotics.navigation.WayPoint;
+import lejos.robotics.navigation.Waypoint;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -25,5 +25,5 @@ public interface SearchAlgorithm {
 	 * @param goalNode
 	 * @return A collection of waypoints. Returns null if it fails to find a path.
 	 */
-	public Collection <WayPoint> findPath(Node startNode, Node goalNode);
+	public Collection <Waypoint> findPath(Node startNode, Node goalNode);
 }

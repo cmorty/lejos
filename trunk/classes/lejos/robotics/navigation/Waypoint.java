@@ -23,29 +23,29 @@ import lejos.robotics.Transmittable;
  * have reached it.
  * 
  */
-public class WayPoint extends Point implements Transmittable {
+public class Waypoint extends Point implements Transmittable {
 	protected float heading = 0;
 	protected boolean headingRequired;
 	protected float maxPositionError = -1;
 	protected float maxHeadingError = -1;
 	
-	public WayPoint(double x, double y) {
+	public Waypoint(double x, double y) {
 		super((float)x,(float)y);
 		headingRequired = false; 
 	}
 	
-	public WayPoint(double x, double y, double heading) {
+	public Waypoint(double x, double y, double heading) {
 		super((float)x,(float)y);
 		headingRequired = true;
 		this.heading = (float)heading;
 	}
 	
-	public WayPoint(Point p) {
+	public Waypoint(Point p) {
 		super((float) p.getX(),(float) p.getY());
 		headingRequired = false;
 	}
 	
-	public WayPoint(Pose p) {
+	public Waypoint(Pose p) {
 		super(p.getX(),p.getY());
 		headingRequired = true;
 		this.heading = p.getHeading();

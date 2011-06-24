@@ -9,14 +9,14 @@ package lejos.robotics.navigation;
  * Interface for informing listeners that a way point has been reached.
  * 
  */
-public interface WayPointListener
+public interface WaypointListener
 {
   /**
    * Called when the class providing waypoints has another waypoint to report.
    * @param wp the actual estimated pose of the robot when the waypoint has
    * been approximately reached.
    */
-  public void nextWaypoint(WayPoint wp);
+  public void nextWaypoint(Waypoint wp);
   
   /**
    * Called if/when the last Waypoint in the path has been sent.

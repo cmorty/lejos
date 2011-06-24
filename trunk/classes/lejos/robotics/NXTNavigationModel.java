@@ -16,8 +16,8 @@ import lejos.robotics.objectdetection.FeatureDetector;
 import lejos.robotics.objectdetection.FeatureListener;
 import lejos.robotics.pathfinding.PathFinder;
 
-public class NXTNavigationModel extends NavigationModel implements MoveListener, WayPointListener, FeatureListener {
-	protected WayPoint target = new WayPoint(0,0);
+public class NXTNavigationModel extends NavigationModel implements MoveListener, WaypointListener, FeatureListener {
+	protected Waypoint target = new Waypoint(0,0);
 	protected Pose currentPose = new Pose(0,0,0);
 	protected MCLParticleSet particles;
 	protected PathController navigator;
@@ -119,7 +119,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 						pp.setPose(currentPose);
 					} else if (event == NavEvent.ADD_WAYPOINT.ordinal())  {
 						if (navigator != null) {
-							WayPoint wp = new WayPoint(0,0);
+							Waypoint wp = new Waypoint(0,0);
 							wp.loadObject(dis);
 							navigator.addWayPoint(wp);
 						}
@@ -196,7 +196,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		}	
 	}
 
-	public void nextWaypoint(WayPoint wp) {	
+	public void nextWaypoint(Waypoint wp) {	
 		try {
 			dos.writeByte(NavEvent.WAYPOINT_REACHED.ordinal());
 			wp.dumpObject(dos);
