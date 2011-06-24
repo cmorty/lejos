@@ -7,6 +7,7 @@ import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTCommConnector;
 import lejos.nxt.comm.NXTConnection;
 import lejos.robotics.localization.MCLParticleSet;
+import lejos.robotics.localization.MCLPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.*;
@@ -29,6 +30,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	protected float border = 0;
 	protected float maxDistance = 40;
 	protected boolean autoSendPose = true;
+	protected RangeScanner scanner;
 	
 	public NXTNavigationModel() {
 		Thread receiver = new Thread(new Receiver());
@@ -49,17 +51,31 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		System.exit(1);
 	}
 	
+	@SuppressWarnings("hiding")
 	public void addNavigator(PathController navigator) {
 		this.navigator = navigator;
 	}
 	
+	@SuppressWarnings("hiding")
 	public void addPilot(MoveController pilot) {
 		this.pilot = pilot;
 		pilot.addMoveListener(this);
 	}
 	
+	@SuppressWarnings("hiding")
 	public void addPoseProvider(PoseProvider pp) {
 		this.pp = pp;
+	}
+	
+	@SuppressWarnings("hiding")
+	public void addRangeScanner(RangeScanner scanner) {
+		this.scanner = scanner;
+	}
+	
+	public void setRandomMoveParameters(float maxDistance, float projection, float border) {
+		this.maxDistance = maxDistance;
+		this.projection = projection;
+		this.border = border;
 	}
 
 	class Receiver implements Runnable {
@@ -95,9 +111,9 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 						float angle = dis.readFloat();
 						((RotateMoveController) pilot).rotate(angle);
 					} else if (event == NavEvent.GET_POSE.ordinal() && pp != null) {
-						System.out.println("setting pose");
 						dos.writeByte(NavEvent.SET_POSE.ordinal());
-						pp.getPose().dumpObject(dos);
+						currentPose = pp.getPose();
+						currentPose.dumpObject(dos);
 					} else if (event == NavEvent.SET_POSE.ordinal() && pp != null) {
 						currentPose.loadObject(dis);
 						pp.setPose(currentPose);
@@ -119,8 +135,16 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 						if (particles != null) {
 							particles.loadObject(dis);
 						}
-					} else if (event == NavEvent.TAKE_READINGS.ordinal()) {
-						// TODO: How to do this?
+					} else if (event == NavEvent.TAKE_READINGS.ordinal() && scanner != null) {
+						readings = scanner.getRangeValues();
+						dos.writeByte(NavEvent.RANGE_READINGS.ordinal());
+						readings.dumpObject(dos);						
+					} else if (event == NavEvent.GET_READINGS.ordinal()) {
+						dos.writeByte(NavEvent.RANGE_READINGS.ordinal());
+						readings.dumpObject(dos);						
+					} else if (event == NavEvent.GET_ESTIMATED_POSE.ordinal() && pp != null && pp instanceof MCLPoseProvider) {
+						dos.writeByte(NavEvent.ESTIMATED_POSE.ordinal());
+						((MCLPoseProvider) pp).dumpObject(dos);						
 					} else if (event == NavEvent.RANDOM_MOVE.ordinal() && pilot != null &&
 							   pilot instanceof RotateMoveController) {
 					    float angle = (float) Math.random() * 360;
@@ -128,9 +152,13 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 					    
 					    if (angle > 180f) angle -= 360f;
 
+					    float forwardRange;
 					    // Get forward range
-					    float forwardRange = readings.getRange(1);
-
+					    try {
+					    	forwardRange = readings.getRange(1);
+					    } catch (Exception e) {
+					    	forwardRange = 0;
+					    }
 					    // Don't move forward if we are near a wall
 					    if (forwardRange < 0
 					        || distance + border + projection < forwardRange)
@@ -169,11 +197,28 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	}
 
 	public void nextWaypoint(WayPoint wp) {	
+		try {
+			dos.writeByte(NavEvent.WAYPOINT_REACHED.ordinal());
+			wp.dumpObject(dos);
+		} catch (IOException ioe) {
+			fatal("IOException in nextWaypoint");	
+		}
 	}
 
 	public void pathComplete() {
+		try {
+			dos.writeByte(NavEvent.PATH_COMPLETE.ordinal());
+		} catch (IOException ioe) {
+			fatal("IOException in pathComplete");	
+		}
 	}
 
-	public void featureDetected(Feature feature, FeatureDetector detector) {	
+	@SuppressWarnings("hiding")
+	public void featureDetected(Feature feature, FeatureDetector detector) {
+		try {
+			dos.writeByte(NavEvent.FEATURE_DETECTED.ordinal());
+		} catch (IOException ioe) {
+			fatal("IOException in featureDetected");	
+		}
 	}
 }
