@@ -11,7 +11,7 @@ import lejos.nxt.comm.*;
  *
  */
 public class RemoteNXT {
-	private NXTCommand nxtCommand = new NXTCommand();
+	private NXTCommand nxtCommand;
 	private NXTComm nxtComm;
 	
 	public RemoteMotor A, B, C; 
@@ -22,7 +22,7 @@ public class RemoteNXT {
         nxtComm = new NXTComm(connector);
 		boolean open = nxtComm.open(name, NXTConnection.LCP);
 		if (!open) throw new IOException("Failed to connect to " + name);
-		nxtCommand.setNXTComm(nxtComm);
+		nxtCommand = new NXTCommand(nxtComm);
 		A =  new RemoteMotor(nxtCommand, 0);
 		B = new RemoteMotor(nxtCommand, 1);
 		C = new RemoteMotor(nxtCommand, 2);

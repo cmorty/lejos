@@ -18,27 +18,17 @@ public class NXTCommand implements NXTProtocol {
 	public static final int MAX_FILENAMELENGTH = 20;
 
 	private NXTCommRequest nxtComm = null;
-	private static NXTCommand singleton = null;
 	private boolean verifyCommand = false;
-	private boolean open = false;
+	private boolean open;
 	private static final String hexChars = "01234567890abcdef";
 	private static final int MAX_BUFFER_SIZE = 58;
 
 	/**
 	 * Create a NXTCommand object. 
 	 */
-	public NXTCommand() {
-		super();
-	}
-	
-	/**
-	 * Set the NXTComm used to communicate with the NXT.
-	 * 
-	 * @param nxtComm a nxtComm instance which must be connected to a NXT
-	 */
-	public void setNXTComm(NXTCommRequest nxtComm) {
-		open = true;
+	public NXTCommand(NXTCommRequest nxtComm) {
 		this.nxtComm = nxtComm;
+		open = true;
 	}
 
 	/**
@@ -1037,20 +1027,6 @@ public class NXTCommand implements NXTProtocol {
 		byte[] request = {SYSTEM_COMMAND_REPLY, NXJ_SET_SLEEP_TIME, seconds};
 		byte [] reply = nxtComm.sendRequest(request, 3);
 		return reply[2];		
-	}
-	
-	/**
-	 * Get the singleton NXTCommand object. Use of this is optional.
-	 * 
-	 * @return the singleton NXTCommand instance
-	 */
-	public static NXTCommand getSingleton() {
-		//TODO this method should be deprecated, management of the singleton can be moved to NXTCommandConnector
-		// NXTCommand works on a specific set of streams or with a specific connection
-		// Providing a singleton is confusing at this level, and leads to all kinds of problems
-		// (use of singleton from different threads, etc. - Sven)
-		if (singleton == null) singleton = new NXTCommand();
-		return singleton;
 	}
 	
 	/**
