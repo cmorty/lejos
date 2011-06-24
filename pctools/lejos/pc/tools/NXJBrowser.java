@@ -79,8 +79,6 @@ public class NXJBrowser
 		fParser.printHelp(System.out);
 		return 0;
 	}
-
-    nxtCommand = NXTCommand.getSingleton();
     
     String name = AbstractCommandLineParser.getLastOptVal(commandLine, "n");
 	boolean blueTooth = commandLine.hasOption("b");
@@ -138,7 +136,7 @@ public class NXJBrowser
         	  try {
         		  NXTComm nxtComm = NXTCommFactory.createNXTComm(nxts[row].protocol);
         		  open = nxtComm.open(nxts[row], NXTComm.LCP);
-        		  nxtCommand.setNXTComm(nxtComm);
+        		  nxtCommand = new NXTCommand(nxtComm);
         	  } catch(NXTCommException n) {
         		  open = false;
         	  }

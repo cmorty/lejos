@@ -1500,13 +1500,12 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 			boolean open = false;
 			try {
 				clearFiles();
-				nxtCommand = new NXTCommand();
-				nxtCommands[row] = nxtCommand;
 				// currentRow = row;
 				NXTComm nxtComm = NXTCommFactory.createNXTComm(nxts[row].protocol);
 				nxtComms[row] = nxtComm;
 				open = nxtComm.open(nxts[row], NXTComm.LCP);
-				nxtCommand.setNXTComm(nxtComm);
+				nxtCommand = new NXTCommand(nxtComm);
+				nxtCommands[row] = nxtCommand;
 				//System.out.println("NXTInfo status " + nxts[row].connectionState);
 			} catch (NXTCommException e) {
 				open = false;
