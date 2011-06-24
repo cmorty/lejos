@@ -8,7 +8,7 @@ import javax.swing.JTextField;
 
 import lejos.pc.remote.*;
 import lejos.robotics.navigation.Pose;
-import lejos.robotics.navigation.WayPoint;
+import lejos.robotics.navigation.Waypoint;
 
 public class MapTest extends NavigationPanel {
   private static final long serialVersionUID = 1L;
@@ -57,7 +57,7 @@ public class MapTest extends NavigationPanel {
 		gotoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				try {
-					model.goTo(new WayPoint( new Pose(Float.parseFloat(xField.getText()), 
+					model.goTo(new Waypoint( new Pose(Float.parseFloat(xField.getText()), 
 						Float.parseFloat(yField.getText()), Float.parseFloat(headingField.getText()))));
 				} catch (NumberFormatException e) {}
 			}
