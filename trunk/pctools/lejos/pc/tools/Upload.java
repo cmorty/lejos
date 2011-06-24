@@ -41,8 +41,7 @@ public class Upload extends NXTCommLoggable {
 		
 		try
 		{
-			NXTCommand nxtCommand = new NXTCommand();
-			nxtCommand.setNXTComm(fConnector.getNXTComm());
+			NXTCommand nxtCommand = new NXTCommand(fConnector.getNXTComm());
 	
 			log(nxtCommand.uploadFile(f, nxtFileName));
 			

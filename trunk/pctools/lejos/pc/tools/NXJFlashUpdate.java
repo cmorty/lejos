@@ -250,8 +250,7 @@ public class NXJFlashUpdate {
 		}
 		try
 		{
-			NXTCommand cmd = new NXTCommand();
-			cmd.setNXTComm(nxtComm);
+			NXTCommand cmd = new NXTCommand(nxtComm);
 			cmd.setVerify(false);
 			// Force into firmware update mode.
 			cmd.boot();

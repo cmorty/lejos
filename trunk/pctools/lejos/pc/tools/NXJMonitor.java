@@ -54,7 +54,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
 			"I2C 9V"};
 	
 	private String title = "NXJ Monitor";
-	private NXTCommand nxtCommand = new NXTCommand();
+	private NXTCommand nxtCommand;
 	private Timer timer;
 	private SensorPanel [] sensorPanels = {
 			new SensorPanel("Sensor 1"),
@@ -126,7 +126,7 @@ public class NXJMonitor extends JFrame implements ActionListener {
 	        	  try {
 	        		  NXTComm nxtComm = NXTCommFactory.createNXTComm(nxts[row].protocol);
 	        		  open = nxtComm.open(nxts[row], NXTComm.LCP);
-	        		  nxtCommand.setNXTComm(nxtComm);
+	        		  nxtCommand = new NXTCommand(nxtComm);
 	        	  } catch(NXTCommException n) {
 	        		  open = false;
 	        	  }
