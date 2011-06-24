@@ -1045,10 +1045,10 @@ public class NXTCommand implements NXTProtocol {
 	 * @return the singleton NXTCommand instance
 	 */
 	public static NXTCommand getSingleton() {
-		//TODO this should be deprecated
-		// NXTComment works on a specific set of streams or with a specific connection
-		// Providing a singleton doesn't make any sense, and leads to all kinds of problems
-		// (use of singleton from different threads, etc. (Sven)
+		//TODO this method should be deprecated, management of the singleton can be moved to NXTCommandConnector
+		// NXTCommand works on a specific set of streams or with a specific connection
+		// Providing a singleton is confusing at this level, and leads to all kinds of problems
+		// (use of singleton from different threads, etc. - Sven)
 		if (singleton == null) singleton = new NXTCommand();
 		return singleton;
 	}
