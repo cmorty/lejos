@@ -12,6 +12,7 @@ import lejos.nxt.remote.*;
  */
 public class NXTCommandConnector {
 	private static NXTConnector conn = new NXTConnector();
+	private static NXTCommand currentNXTCommand = null;
 	
 	/**
 	 * Open any available NXT.
@@ -35,17 +36,24 @@ public class NXTCommandConnector {
 	 * @return the singleton NXTCommand instance
 	 */
 	public static NXTCommand getSingletonOpen() {
-		NXTCommand singleton = NXTCommand.getSingleton();
-		if (!singleton.isOpen()) {
+		if (currentNXTCommand != null) {
 			try {
 				NXTComm nxtComm = open();
 				if (nxtComm == null) throw new IOException();
-				singleton.setNXTComm(nxtComm);
+				currentNXTCommand = new NXTCommand(nxtComm);
 			} catch (IOException ioe) {
 				System.err.println("Failed to open connection to the NXT");
 				System.exit(1);
 			}
 		}
-		return singleton;
+		return currentNXTCommand;
+	}
+	
+	public static void close() throws IOException {
+		if (currentNXTCommand != null) currentNXTCommand.close();
+	}
+
+	public static void setNXTCommand(NXTCommand nxtCommand) {
+		currentNXTCommand = nxtCommand;		
 	}
 }

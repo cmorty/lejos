@@ -123,7 +123,7 @@ public class NXT {
 	 */
 	public static void exit(int code) {
 		try {
-			NXTCommand.getSingleton().close();
+			NXTCommandConnector.close();
 		} catch (IOException ioe) {}
 		
 		System.exit(code);
