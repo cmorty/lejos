@@ -3,8 +3,8 @@ package lejos.robotics.pathfinding;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.DestinationUnreachableException;
 import lejos.robotics.navigation.Pose;
-import lejos.robotics.navigation.WayPoint;
-import lejos.robotics.navigation.WayPointListener;
+import lejos.robotics.navigation.Waypoint;
+import lejos.robotics.navigation.WaypointListener;
 
 import java.util.*;
 import lejos.geom.*;
@@ -43,7 +43,7 @@ public DijkstraPathFinder(LineMap map)
  * @return the shortest route
  * @throws DestinationUnreachableException  if, for example, you nave not called setMap();
  */
-  public Collection<WayPoint> findRoute(Pose start, WayPoint finish) throws DestinationUnreachableException
+  public Collection<Waypoint> findRoute(Pose start, Waypoint finish) throws DestinationUnreachableException
   {
     return findPath(start.getLocation(), finish, _map);
   }
@@ -57,7 +57,7 @@ public DijkstraPathFinder(LineMap map)
  * @return the shortest route
  * @throws DestinationUnreachableException  if, for example, you nave not called setMap();
  */
-  public Collection<WayPoint> findRoute(Pose start, WayPoint finish, LineMap theMap) throws DestinationUnreachableException
+  public Collection<Waypoint> findRoute(Pose start, Waypoint finish, LineMap theMap) throws DestinationUnreachableException
   {
     setMap(theMap);
     return findPath(start.getLocation(), finish, _map);
@@ -71,7 +71,7 @@ public DijkstraPathFinder(LineMap map)
    * @return an array list of waypoints.  If no path exists, returns null
    */
   
-  private ArrayList<WayPoint> findPath(Point start, Point finish, ArrayList<Line> theMap)throws DestinationUnreachableException
+  private ArrayList<Waypoint> findPath(Point start, Point finish, ArrayList<Line> theMap)throws DestinationUnreachableException
   {
     _map = theMap;
     initialize(); // in case this method has already been called before
@@ -268,13 +268,13 @@ public DijkstraPathFinder(LineMap map)
    * @param destination
    * @return the route of the shortest path
    */
-protected  ArrayList<WayPoint> getRoute(Node destination)
+protected  ArrayList<Waypoint> getRoute(Node destination)
 {
-    ArrayList<WayPoint> route = new ArrayList <WayPoint>();
+    ArrayList<Waypoint> route = new ArrayList <Waypoint>();
     Node n = destination;
-    WayPoint  w ;
+    Waypoint  w ;
     do {  // add waypoints to route as push down stack
-      w = new WayPoint(n.getLocation());
+      w = new Waypoint(n.getLocation());
       route.add(0, w);
       n = n.getPredecessor();
     } while (n != null);
@@ -288,13 +288,13 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
 
   public int getNodeCount(){return _reached.size();}
 
-  public void addListener(WayPointListener wpl) {
-    if(listeners == null )listeners = new ArrayList<WayPointListener>();
+  public void addListener(WaypointListener wpl) {
+    if(listeners == null )listeners = new ArrayList<WaypointListener>();
     listeners.add(wpl);
   }
   
-  public void startPathFinding(Pose start, WayPoint end) {
-	  Collection<WayPoint> solution = null;
+  public void startPathFinding(Pose start, Waypoint end) {
+	  Collection<Waypoint> solution = null;
 	  try {
 		  solution = findPath(start.getLocation(), end, _map);
 	  } catch (DestinationUnreachableException e) {
@@ -302,8 +302,8 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
 		  e.printStackTrace();
 	  }
 	  if(listeners != null) { 
-		  for(WayPointListener l : listeners) {
-			  Iterator<WayPoint> iterator = solution.iterator(); 
+		  for(WaypointListener l : listeners) {
+			  Iterator<Waypoint> iterator = solution.iterator(); 
 			  while(iterator.hasNext()) {
 				  l.nextWaypoint(iterator.next());
 			  }
@@ -313,7 +313,7 @@ protected  ArrayList<WayPoint> getRoute(Node destination)
   }
 
   //***********  instance variables in ShortestPathFinder *******************
-  private ArrayList<WayPointListener> listeners ;
+  private ArrayList<WaypointListener> listeners ;
   
   protected    int _count =  0;
   /**
