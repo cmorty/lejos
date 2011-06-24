@@ -20,7 +20,7 @@ import lejos.robotics.navigation.*;
  */
 public class NodePathFinder implements PathFinder{
 
-	private ArrayList<WayPointListener> listeners;
+	private ArrayList<WaypointListener> listeners;
 	private SearchAlgorithm alg;
 	private NavigationMesh mesh = null;
 	
@@ -62,12 +62,12 @@ public class NodePathFinder implements PathFinder{
 		this.alg = alg;
 	}
 	
-	public void addListener(WayPointListener wpl) {
-		if(listeners == null )listeners = new ArrayList<WayPointListener>();
+	public void addListener(WaypointListener wpl) {
+		if(listeners == null )listeners = new ArrayList<WaypointListener>();
 		listeners.add(wpl);
 	}
 
-	public Collection<WayPoint> findRoute(Pose start, WayPoint goal)
+	public Collection<Waypoint> findRoute(Pose start, Waypoint goal)
 			throws DestinationUnreachableException {
 		// Step 1: Make nodes out of start and destination
 		// TODO: Big problem: These nodes will not be linked to anything if no mesh was given!
@@ -80,7 +80,7 @@ public class NodePathFinder implements PathFinder{
 			mesh.addNode(goalNode, 4);
 		}
 		// Step 3: Use alg to find path.
-		Collection <WayPoint> path = alg.findPath(startNode, goalNode);
+		Collection <Waypoint> path = alg.findPath(startNode, goalNode);
 		if(path == null) throw new DestinationUnreachableException();
 		
 		// Step 4: If mesh is not null, remove them from set?
@@ -92,8 +92,8 @@ public class NodePathFinder implements PathFinder{
 		return path;
 	}
 
-	public void startPathFinding(Pose start, WayPoint end) {
-		Collection<WayPoint> solution = null;
+	public void startPathFinding(Pose start, Waypoint end) {
+		Collection<Waypoint> solution = null;
 		try {
 			solution = findRoute(start, end);
 		} catch (DestinationUnreachableException e) {
@@ -101,8 +101,8 @@ public class NodePathFinder implements PathFinder{
 			// l.pathComplete(false); // Code should be below. Mark boolean success as false here.
 		}
 		if(listeners != null) { 
-			for(WayPointListener l : listeners) {
-				Iterator<WayPoint> iterator = solution.iterator(); // TODO: If solution null, this can crash here.
+			for(WaypointListener l : listeners) {
+				Iterator<Waypoint> iterator = solution.iterator(); // TODO: If solution null, this can crash here.
 				while(iterator.hasNext()) {
 					l.nextWaypoint(iterator.next());
 				}

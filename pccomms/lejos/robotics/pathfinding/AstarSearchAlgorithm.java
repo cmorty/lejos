@@ -1,7 +1,7 @@
 package lejos.robotics.pathfinding;
 
 import java.util.*;
-import lejos.robotics.navigation.WayPoint;
+import lejos.robotics.navigation.Waypoint;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -30,7 +30,7 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 	int main_loop = 0; // TODO: DELETE ME
 	int neighbor_loop = 0;
 	
-	public Collection <WayPoint> findPath(Node start, Node goal) {
+	public Collection <Waypoint> findPath(Node start, Node goal) {
 		
 		//long startNanoT = System.nanoTime();
 				
@@ -48,7 +48,7 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 			main_loop++; // TODO: DELETE ME
 			
 			if(x == goal) {
-				ArrayList <WayPoint> final_path = new ArrayList<WayPoint>();
+				ArrayList <Waypoint> final_path = new ArrayList<Waypoint>();
 				
 				//long totalNanoT = System.nanoTime() - startNanoT;
 				//long reconNanoT = System.nanoTime();
@@ -127,10 +127,10 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 	 * @param start
 	 * @param path The path output by this algorithm.
 	 */
-	private static final void reconstructPath(Node current_node, Node start, Collection <WayPoint> path){
+	private static final void reconstructPath(Node current_node, Node start, Collection <Waypoint> path){
 		if(current_node != start)
 			reconstructPath(current_node.getPredecessor(), start, path);
-		path.add(new WayPoint(current_node.x, current_node.y));
+		path.add(new Waypoint(current_node.x, current_node.y));
 		return;
 	}
 	
