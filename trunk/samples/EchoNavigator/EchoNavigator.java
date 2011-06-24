@@ -32,7 +32,7 @@ public class EchoNavigator implements FeatureListener {
 	public static int LEFT_SIDE = 1;
 	public static int RIGHT_SIDE = -1;
 	
-	private WayPoint target;
+	private Waypoint target;
 	private FeatureDetector fd = null;
 	
     /**
@@ -53,7 +53,7 @@ public class EchoNavigator implements FeatureListener {
     }
     
     public void goTo(double x, double y) {
-    	target = new WayPoint(x, y);
+    	target = new Waypoint(x, y);
     	nav.goTo(target);
     }
     

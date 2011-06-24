@@ -7,7 +7,7 @@ import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.navigation.ArcRotateMoveController;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.Navigator;
-import lejos.robotics.navigation.WayPoint;
+import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.navigation.Pose;
 import lejos.geom.Point;
 import lejos.robotics.objectdetection.FeatureDetector;
@@ -112,7 +112,7 @@ public class RCNavMapper  implements RCVehicle,   FeatureListener
          }
          else if(command == NavCommand.GOTO ) 
          {
-            nav.addWayPoint(new WayPoint(v0, v1));
+            nav.addWayPoint(new Waypoint(v0, v1));
             _report = true;
             detector.enableDetection(true);
          }
