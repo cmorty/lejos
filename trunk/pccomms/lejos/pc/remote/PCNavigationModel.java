@@ -13,7 +13,7 @@ import lejos.robotics.localization.*;
 
 public class PCNavigationModel extends NavigationModel {
 	protected Pose currentPose = new Pose(0,0,0);
-	protected WayPoint target = new WayPoint(0,0);
+	protected Waypoint target = new Waypoint(0,0);
 	protected NavigationPanel panel;
 	protected MCLParticleSet particles;
 	protected MCLPoseProvider mcl;
@@ -89,7 +89,7 @@ public class PCNavigationModel extends NavigationModel {
 		} 
 	}
 	
-	public void goTo(WayPoint wp) {
+	public void goTo(Waypoint wp) {
 		if (dos == null) return;
 		try {
 			dos.writeByte(NavEvent.GOTO.ordinal());

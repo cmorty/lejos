@@ -25,11 +25,11 @@ public interface PathController
    * This method causes the robot to travel to a new location.
    * If the robot is moving, it stops,  the route is emptied and the destination
    * is added to it. The robot then starts  moving to the coordinates of the
-   * destination {@link lejos.robotics.navigation.WayPoint}
+   * destination {@link lejos.robotics.navigation.Waypoint}
    * @param destination the destination {@link lejos.robotics.navigation.MoveController}
    * @param immediateReturn true for non-blocking, false for blocking
    */
-  public void goTo(WayPoint destination, boolean immediateReturn);
+  public void goTo(Waypoint destination, boolean immediateReturn);
 
   /**
    * This method causes the robot to travel to a new location.
@@ -38,7 +38,7 @@ public interface PathController
    * destination WayPoint.
    * @param destination the destination waypoint
    */
-  public void goTo(WayPoint destination);
+  public void goTo(Waypoint destination);
   
   /**
    * This method causes the robot to travel to a new location.
@@ -67,7 +67,7 @@ public interface PathController
    * @param theRoute
    * @param immediateReturn ;  if <b>false</b> the method returns when the route is empty
    */
-  public void followRoute(Collection<WayPoint> theRoute, boolean immediateReturn);
+  public void followRoute(Collection<Waypoint> theRoute, boolean immediateReturn);
 
   /**
    * Stops the robot and empties the queue of waypoints (the route)
@@ -89,20 +89,20 @@ public interface PathController
    * starts moving toward the Waypoint
    * @param aWayPoint
    */
-  public void addWayPoint(WayPoint aWayPoint); // adds a WayPoint to the route.
+  public void addWayPoint(Waypoint aWayPoint); // adds a WayPoint to the route.
 
   /**
-   * Adds a {@link lejos.robotics.navigation.WayPointListener}
+   * Adds a {@link lejos.robotics.navigation.WaypointListener}
    * that will be notified with the actual waypoint it reached.
    * @param aListener
    */
-  public void addListener(WayPointListener aListener);
+  public void addListener(WaypointListener aListener);
 
   /**
    * Adds a waypoint listener that will be notified with the theoretical target waypoint it reached.
    * @param targetListener
    */
-  public void addTargetListener(WayPointListener targetListener);
+  public void addTargetListener(WaypointListener targetListener);
   
   /**
    * <p>Returns a reference to the MoveController. The Navigator pose will be automatically updated 
