@@ -27,7 +27,7 @@ public class TachoCount {
 			System.err.println("Failed to connect");
 			System.exit(1);
 		}
-		NXTCommand.getSingleton().setNXTComm(conn.getNXTComm());
+		NXTCommandConnector.setNXTCommand(new NXTCommand(conn.getNXTComm()));
 		
 		System.out.println("Tachometer A: " + Motor.A.getTachoCount());
 		System.out.println("Tachometer C: " + Motor.C.getTachoCount());
