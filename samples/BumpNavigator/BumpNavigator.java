@@ -33,7 +33,7 @@ public class BumpNavigator implements FeatureListener {
 	public static int LEFT_SIDE = 1;
 	public static int RIGHT_SIDE = -1;
 	
-	private WayPoint target;
+	private Waypoint target;
 	
     /**
      * allocates a BumpNavigator
@@ -56,7 +56,7 @@ public class BumpNavigator implements FeatureListener {
     }
     
     public void goTo(double x, double y) {
-    	target = new WayPoint(x, y);
+    	target = new Waypoint(x, y);
     	nav.goTo(target);
     }
     

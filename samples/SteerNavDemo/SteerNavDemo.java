@@ -32,21 +32,21 @@ public class SteerNavDemo {
 		Pose pose = c.getPoseProvider().getPose();
 		System.out.println("x=" + pose.getX() + " y=" + pose.getY() + " H=" + pose.getHeading());
 		
-		c.goTo(new WayPoint(0, 50, 0));
+		c.goTo(new Waypoint(0, 50, 0));
 		Sound.beep();
 		Thread.sleep(1000);
 		
 		pose = c.getPoseProvider().getPose();
 		System.out.println("x=" + pose.getX() + " y=" + pose.getY() + " H=" + pose.getHeading());
 		
-		c.goTo(new WayPoint(50, 50, 90));
+		c.goTo(new Waypoint(50, 50, 90));
 		Sound.beep();
 		Thread.sleep(1000);
 				
 		pose = c.getPoseProvider().getPose();
 		System.out.println("x=" + pose.getX() + " y=" + pose.getY() + " H=" + pose.getHeading());
 		
-		WayPoint dest = new WayPoint(-50, 50, 270);
+		Waypoint dest = new Waypoint(-50, 50, 270);
 		c.goTo(dest);
 		Sound.beep();
 		Thread.sleep(1000);
@@ -54,7 +54,7 @@ public class SteerNavDemo {
 		pose = c.getPoseProvider().getPose();
 		System.out.println("x=" + pose.getX() + " y=" + pose.getY() + " H=" + pose.getHeading());
 		
-		dest = new WayPoint(0, 0, 0);
+		dest = new Waypoint(0, 0, 0);
 		c.goTo(dest);
 		Sound.beep();
 		Thread.sleep(1000);

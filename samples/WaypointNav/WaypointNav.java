@@ -41,10 +41,10 @@ public class WaypointNav
 		DifferentialPilot p = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
 		Navigator nav = new Navigator(p);
 
-		nav.addWayPoint(new WayPoint(20, 20));
-		nav.addWayPoint(new WayPoint(20,0));
-		nav.addWayPoint(new WayPoint(0,20));
-		nav.addWayPoint(new WayPoint(0,0));
+		nav.addWayPoint(new Waypoint(20, 20));
+		nav.addWayPoint(new Waypoint(20,0));
+		nav.addWayPoint(new Waypoint(0,20));
+		nav.addWayPoint(new Waypoint(0,0));
 		System.out.println("Any button to halt");
 		Button.waitForPress();
 	}

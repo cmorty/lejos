@@ -17,7 +17,7 @@ import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.pathfinding.ShortestPathFinder;
 import lejos.util.PilotProps;
 import java.io.IOException;
-import lejos.robotics.navigation.WayPoint;
+import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.localization.*;//MCLPoseProvider;
 import lejos.nxt.comm.RConsole;
 /**
@@ -122,19 +122,19 @@ public class Homer {
             + " Heading "+start.getHeading());
 
     // Go home
-    Collection<WayPoint> route = null;
+    Collection<Waypoint> route = null;
       try {
-          route = pf.findRoute(start, new WayPoint(home));
+          route = pf.findRoute(start, new Waypoint(home));
           if(debug) System.out.println(" route built ");
       } catch (DestinationUnreachableException e) {
           System.out.println("Unreachable");
       }
-      ArrayList<WayPoint> rt = (ArrayList<WayPoint>) route;
+      ArrayList<Waypoint> rt = (ArrayList<Waypoint>) route;
       for (int i = 0; i < rt.size(); i++) {
           if(debug) System.out.println(rt.get(i).getPose());
       }
       int count = 0;
-      for (WayPoint wp : route) {
+      for (Waypoint wp : route) {
           if(debug) System.out.print("Waypoint " + (int) wp.x + "," + (int) wp.y + ")");
           if (count != 0) {
               if(debug) System.out.print("Go to (" + (int) wp.x + "," + (int) wp.y + ")");
