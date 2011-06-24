@@ -22,6 +22,8 @@ public class NXTCommand implements NXTProtocol {
 	private boolean open;
 	private static final String hexChars = "01234567890abcdef";
 	private static final int MAX_BUFFER_SIZE = 58;
+	
+	//TODO checks whether open==true are missing all over the place
 
 	/**
 	 * Create a NXTCommand object. 
@@ -48,6 +50,9 @@ public class NXTCommand implements NXTProtocol {
 	 * @return
 	 */
 	private byte sendRequest(byte[] request, int replyLen) throws IOException {
+		if (!open)
+			throw new IOException("NXTCommand is closed");
+		
 		byte verify = 0; // default of 0 means success
 		if (verifyCommand)
 			request[0] = DIRECT_COMMAND_REPLY;
@@ -67,8 +72,10 @@ public class NXTCommand implements NXTProtocol {
 	 * @param request the request
 	 * @return the status
 	 */
-	private byte sendSystemRequest(byte[] request, int replyLen)
-			throws IOException {
+	private byte sendSystemRequest(byte[] request, int replyLen) throws IOException {
+		if (!open)
+			throw new IOException("NXTCommand is closed");
+		
 		byte verify = 0; // default of 0 means success
 		if (verifyCommand)
 			request[0] = SYSTEM_COMMAND_REPLY;
@@ -388,19 +395,26 @@ public class NXTCommand implements NXTProtocol {
 	public void disconnect() throws IOException {
 		byte[] request = { SYSTEM_COMMAND_REPLY, NXJ_DISCONNECT };
 		nxtComm.sendRequest(request, 3); // Tell NXT to disconnect
+		
+		// like boot(), this should probably mark this NXTCommand as closed
+		this.open = false;
 	}
 
 	/**
-	 * Put the NXT into SAMBA mode, ready to update the firmware
+	 * Put the NXT into SAMBA mode, ready to update the firmware.
+	 * Marks this NXTCommand object as closed.
+	 * Does never never wait for a reply from the NXT.
 	 *
 	 * @throws IOException
 	 */
     public void boot() throws IOException {
+		if (!open)
+			throw new IOException("NXTCommand is closed");
+		
         byte[] request = {SYSTEM_COMMAND_NOREPLY, BOOT};
         request = appendString(request, "Let's dance: SAMBA");
         nxtComm.sendRequest(request, 0);
         // Connection cannot be used after this command so we close it
-        nxtComm.close();
         open = false;
     }
     
