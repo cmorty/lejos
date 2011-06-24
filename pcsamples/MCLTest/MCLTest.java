@@ -1,16 +1,9 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-
 import lejos.pc.remote.*;
 import lejos.robotics.localization.MCLPoseProvider;
-import lejos.robotics.mapping.LineMap;
-import lejos.robotics.navigation.Pose;
-import lejos.robotics.navigation.WayPoint;
 
 public class MCLTest extends NavigationPanel {
   private static final long serialVersionUID = 1L;

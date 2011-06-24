@@ -26,7 +26,7 @@ public class MapApp extends JPanel implements WindowListener, ActionListener, Mo
 	private PathFinder pf = null;
 	
 	private Collection <Node> nodeSet = null;
-	private Collection <WayPoint> path = null;
+	private Collection <Waypoint> path = null;
 	private TextField txtInterval = null;
 	private TextField txtClearance = null;
 	
@@ -94,7 +94,7 @@ public class MapApp extends JPanel implements WindowListener, ActionListener, Mo
 		this.nodeSet = nodeSet;
 	}
 	
-	public void setPath(Collection <WayPoint> path) {
+	public void setPath(Collection <Waypoint> path) {
 		this.path = path;
 	}
 	
@@ -152,11 +152,11 @@ public class MapApp extends JPanel implements WindowListener, ActionListener, Mo
 		
 		// Draw path
 		if(this.path != null) {
-			Iterator <WayPoint> path_iter = path.iterator();
-			WayPoint curWP = path_iter.next();
+			Iterator <Waypoint> path_iter = path.iterator();
+			Waypoint curWP = path_iter.next();
 			g2d.setColor(Color.BLUE);
 			while(path_iter.hasNext()) {
-				WayPoint nextWP = path_iter.next();
+				Waypoint nextWP = path_iter.next();
 				Line line = new Line(curWP.x, curWP.y, nextWP.x, nextWP.y);
 				g2d.draw(line);
 				curWP = nextWP;
@@ -212,12 +212,12 @@ public class MapApp extends JPanel implements WindowListener, ActionListener, Mo
 		if(action.getActionCommand().equals(CALC_TEXT)) {
 			mesh.regenerate(); // TODO: Without this here it crashes with null pointer for some reason. Don't want this here!
 			Pose startPose = new Pose(startNode.x, startNode.y, 0); // Todo: Start is always a Pose?
-			WayPoint goalWP = new WayPoint(goalNode.x, goalNode.y);
+			Waypoint goalWP = new Waypoint(goalNode.x, goalNode.y);
 			
 			try {
-				Collection <WayPoint> coll = pf.findRoute(startPose, goalWP);
+				Collection <Waypoint> coll = pf.findRoute(startPose, goalWP);
 				System.out.println("PATH OUTPUT: ");
-				Iterator <WayPoint> iter = coll.iterator();
+				Iterator <Waypoint> iter = coll.iterator();
 				while(iter.hasNext()) {
 					System.out.println(iter.next().toString());
 				}
