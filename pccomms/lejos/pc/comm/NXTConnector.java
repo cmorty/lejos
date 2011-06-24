@@ -234,10 +234,9 @@ public class NXTConnector extends NXTCommLoggable
      */
 	public boolean connectTo(String nxt, String addr, int protocols, int mode)
 	{
-       	// reset all the instance variables associated with the connection
-		nxtInfo = null;
-		dataIn = null;
-		dataOut = null;
+		if (this.nxtComm != null)
+			//TODO throw NXTCommException instead
+			throw new IllegalStateException("already connected");
 		
 		// Search for matching NXTs
 		NXTInfo[] nxtInfos = search(nxt, addr, protocols);
@@ -260,6 +259,10 @@ public class NXTConnector extends NXTCommLoggable
 	 * @return <code>true</code> if the connection succeeded
 	 */
 	public boolean connectTo(NXTInfo nxtInfo, int mode) {
+		if (this.nxtComm != null)
+			//TODO throw NXTCommException instead
+			throw new IllegalStateException("already connected");
+		
 		NXTComm nxtComm;
 		if (nxtInfo.protocol == NXTCommFactory.USB ) {
 			try {
@@ -298,7 +301,13 @@ public class NXTConnector extends NXTCommLoggable
 			finally
 			{
 				if (!success)
+				{
 					nxtComm.close();
+					this.nxtComm = null;
+					this.nxtInfo = null;
+					this.dataOut = null;
+					this.dataIn = null;
+				}
 			}
 		} catch (NXTCommException e) {
 			logException("Error: Exception connecting to NXT.", e);
@@ -400,8 +409,14 @@ public class NXTConnector extends NXTCommLoggable
 	 * @throws IOException
 	 */
 	public void close() throws IOException {
-		if (nxtComm != null)
-			nxtComm.close();
+		if (this.nxtComm != null)
+		{
+			this.nxtComm.close();
+			this.nxtComm = null;
+			this.nxtInfo = null;
+			this.dataOut = null;
+			this.dataIn = null;
+		}
 	}
 	
 	private void debug(String msg) {
