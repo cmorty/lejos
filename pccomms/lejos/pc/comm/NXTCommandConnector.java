@@ -36,7 +36,7 @@ public class NXTCommandConnector {
 	 * @return the singleton NXTCommand instance
 	 */
 	public static NXTCommand getSingletonOpen() {
-		if (currentNXTCommand != null) {
+		if (currentNXTCommand == null) {
 			try {
 				NXTComm nxtComm = open();
 				if (nxtComm == null) throw new IOException();
