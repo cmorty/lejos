@@ -22,7 +22,7 @@ public class NXTConnector extends NXTCommLoggable
 	private DataInputStream dataIn;
 	private DataOutputStream dataOut;
 	private NXTInfo nxtInfo;
-	private NXTComm nxtCommUSB = null, nxtCommBluetooth = null, nxtComm = null;
+	private NXTComm nxtComm;
 	private boolean debugOn = false;
     
 	/**
@@ -75,7 +75,6 @@ public class NXTConnector extends NXTCommLoggable
        	Properties props = null;
        	
        	// reset the relevant instance variables
-		nxtComm = null;
 		NXTInfo[] nxtInfos = new NXTInfo[0];
 
 		debug("Protocols = " + protocols);
@@ -83,9 +82,11 @@ public class NXTConnector extends NXTCommLoggable
 		
 		// Try USB first
 		if ((protocols & NXTCommFactory.USB) != 0) {
+			NXTComm nxtComm;
 			try {
-				nxtComm = nxtCommUSB = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
+				nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
 			} catch (NXTCommException e) {
+				nxtComm = null;
 				logException("Error: Failed to load USB comms driver.", e);
 			}
 			if (addr != null && addr.length() > 0) {
@@ -108,10 +109,12 @@ public class NXTConnector extends NXTCommLoggable
 		
 		// If nothing found on USB, try Bluetooth		
 		if ((protocols & NXTCommFactory.BLUETOOTH) != 0) {
+			NXTComm nxtComm;
 			// Load Bluetooth driver
 			try {
-				nxtComm = nxtCommBluetooth = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+				nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
 			} catch (NXTCommException e) {
+				nxtComm = null;
 				logException("Error: Failed to load Bluetooth comms driver.", e);
 				return nxtInfos;
 			}
@@ -231,8 +234,6 @@ public class NXTConnector extends NXTCommLoggable
      */
 	public boolean connectTo(String nxt, String addr, int protocols, int mode)
 	{
-		boolean opened = false;
-       	
        	// reset all the instance variables associated with the connection
 		nxtInfo = null;
 		dataIn = null;
@@ -243,28 +244,13 @@ public class NXTConnector extends NXTCommLoggable
 		
 		// Try each available NXT in turn
 		for(int i=0;i<nxtInfos.length;i++) {
-			try {
-				debug("Connecting to " + nxtInfos[i].name + " " + nxtInfos[i].deviceAddress + " in mode " + mode);
-				opened = nxtComm.open(nxtInfos[i], mode);
-				if (opened) {
-					nxtInfo = nxtInfos[i];
-					log("Connected to " + nxtInfo.name);
-					break;
-				} else {
-					log("Failed to open " + nxtInfos[i].name + " " + nxtInfos[i].deviceAddress);
-				}
-			} catch (NXTCommException ex) { 
-				logException("Error: Exception in open.", ex);
+			if (this.connectTo(nxtInfos[i], mode)) {
+				return true;
 			}
 		}
 
-		if (!opened) {
-			log("Failed to connect to any NXT");
-			return false;
-		}
-
-		setStreams();
-		return true;
+		log("Failed to connect to any NXT");
+		return false;
 	}
 	
 	/**
@@ -274,39 +260,50 @@ public class NXTConnector extends NXTCommLoggable
 	 * @return <code>true</code> if the connection succeeded
 	 */
 	public boolean connectTo(NXTInfo nxtInfo, int mode) {
-		this.nxtInfo = nxtInfo;
+		NXTComm nxtComm;
 		if (nxtInfo.protocol == NXTCommFactory.USB ) {
-			if (nxtCommUSB == null) {
-				try {
-					nxtComm = nxtCommUSB = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
-				} catch (NXTCommException e) {
-					logException("Error: Failed to load USB comms driver.", e);
-					return false;
-				}
+			try {
+				nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
+			} catch (NXTCommException e) {
+				logException("Error: Failed to load USB comms driver.", e);
+				return false;
 			}
-			nxtComm = nxtCommUSB;
-		}
-		if (nxtInfo.protocol == NXTCommFactory.BLUETOOTH ) {
-			if (nxtCommBluetooth == null) {
-				try {
-					nxtComm = nxtCommBluetooth = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
-				} catch (NXTCommException e) {
-					logException("Error: Failed to load Bluetooth comms driver.", e);
-					return false;
-				}
+		} else if (nxtInfo.protocol == NXTCommFactory.BLUETOOTH ) {
+			try {
+				nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+			} catch (NXTCommException e) {
+				logException("Error: Failed to load Bluetooth comms driver.", e);
+				return false;
 			}
-			nxtComm = nxtCommBluetooth;
+		} else {
+			throw new IllegalArgumentException("unknown protocol");
 		}
 		
 		try {
-			boolean opened =  nxtComm.open(nxtInfo, mode);
+			boolean success = false;
+			boolean opened = nxtComm.open(nxtInfo, mode);
 			if (!opened) {
 				log("Failed to connect to the specified NXT");
 				return false;
 			}
-			setStreams();
-			return true;
+			try
+			{
+				this.dataIn = new DataInputStream(nxtComm.getInputStream());
+				this.dataOut = new DataOutputStream(nxtComm.getOutputStream());
+				this.nxtInfo = nxtInfo;
+				this.nxtComm = nxtComm;
+				success = true;
+				return true;
+			}
+			finally
+			{
+				if (!success)
+					nxtComm.close();
+			}
 		} catch (NXTCommException e) {
+			logException("Error: Exception connecting to NXT.", e);
+			return false;
+		} catch (IOException e) {
 			logException("Error: Exception connecting to NXT.", e);
 			return false;
 		}
@@ -363,11 +360,6 @@ public class NXTConnector extends NXTCommLoggable
 		return connectTo(deviceURL, NXTComm.PACKET);
 	}
 	
-	private void setStreams() {
-		dataIn = new DataInputStream(nxtComm.getInputStream());
-		dataOut = new DataOutputStream(nxtComm.getOutputStream());
-	}
-
 	/**
 	 * @return the <code>InputStream</code> for this connection;
 	 */
@@ -408,7 +400,8 @@ public class NXTConnector extends NXTCommLoggable
 	 * @throws IOException
 	 */
 	public void close() throws IOException {
-		if (nxtComm != null) nxtComm.close();
+		if (nxtComm != null)
+			nxtComm.close();
 	}
 	
 	private void debug(String msg) {
