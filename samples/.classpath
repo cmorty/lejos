@@ -34,6 +34,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="LnrActuatorTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MapTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MatrixTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="MCLTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MemoryTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MonitorTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MotorTester"/>
