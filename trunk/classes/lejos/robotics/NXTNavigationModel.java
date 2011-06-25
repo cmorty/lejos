@@ -17,15 +17,11 @@ import lejos.robotics.objectdetection.FeatureListener;
 import lejos.robotics.pathfinding.PathFinder;
 
 public class NXTNavigationModel extends NavigationModel implements MoveListener, WaypointListener, FeatureListener {
-	protected Waypoint target = new Waypoint(0,0);
-	protected Pose currentPose = new Pose(0,0,0);
-	protected MCLParticleSet particles;
 	protected PathController navigator;
 	protected MoveController pilot;
 	protected PoseProvider pp;
 	protected FeatureDetector detector;
 	protected PathFinder finder;
-	protected RangeReadings readings = new RangeReadings(0);
 	protected float projection = 10;
 	protected float border = 0;
 	protected float maxDistance = 40;
