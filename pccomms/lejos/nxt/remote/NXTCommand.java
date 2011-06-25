@@ -97,8 +97,9 @@ public class NXTCommand implements NXTProtocol {
 	public byte startProgram(String fileName) throws IOException {
 		byte[] request = { DIRECT_COMMAND_NOREPLY, START_PROGRAM };
 		request = appendString(request, fileName);
+		byte status = sendRequest(request, 22);
         open = false;
-		return sendRequest(request, 22);
+		return status;
 	}
 	
 	/**

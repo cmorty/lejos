@@ -174,7 +174,8 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	}
 
 	public void mouseExited(MouseEvent e) {
-		//System.out.println("Mouse exited at " + e);
+		xField.setText("");
+		yField.setText("");
 	}
 
 	public void mousePressed(MouseEvent e) {
