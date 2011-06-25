@@ -14,6 +14,7 @@ public class PCNavigationModel extends NavigationModel {
 	protected MCLPoseProvider mcl;
 	protected Move lastMove = new Move(0,0,false);
 	protected int closest = -1;
+	protected boolean connected = false;
 	
 	public PCNavigationModel() {
 		Thread receiver = new Thread(new Receiver());
@@ -36,6 +37,7 @@ public class PCNavigationModel extends NavigationModel {
 	public void generateParticles() {
 		mcl.generateParticles();
 		particles = mcl.getParticles();
+		panel.repaint();
 		if (dos == null) return;
 		try {
 			dos.writeByte(NavEvent.PARTICLE_SET.ordinal());
@@ -52,21 +54,27 @@ public class PCNavigationModel extends NavigationModel {
 		NXTConnector conn = new NXTConnector();
 
 		if (!conn.connectTo(nxtName, null, NXTCommFactory.BLUETOOTH)) {
-			panel.error("NO NXT found");;
+			panel.error("NO NXT found");
+			return;
 		}
   
 		panel.log("Connected to " + nxtName);
   
 		dis = new DataInputStream(conn.getInputStream());
 		dos = new DataOutputStream(conn.getOutputStream());
+		connected = true;
 	}
 	
-	public void loadMap(String mapFileName) {
+	public boolean isConnected() {
+		return connected;
+	}
+	
+	public LineMap loadMap(String mapFileName) {
 		try {
 			File mapFile = new File(mapFileName);
 			if (!mapFile.exists()) {
 				panel.log(mapFile.getAbsolutePath() + " does not exist");
-				return;
+				return null;
 			}
 			FileInputStream is = new FileInputStream(mapFile);
 			SVGMapLoader mapLoader = new SVGMapLoader(is);
@@ -74,13 +82,17 @@ public class PCNavigationModel extends NavigationModel {
 			Rectangle boundingRect = map.getBoundingRect();
 			panel.setMapSize(new Dimension((int) (boundingRect.width * 2), (int) (boundingRect.height * 2)));
 			panel.repaint();
+			if (mcl != null) mcl.setMap(map);
 			if (dos != null) {
 				dos.writeByte(NavEvent.LOAD_MAP.ordinal());
 				map.dumpObject(dos);
 			}
+			return map;
 		} catch (Exception ioe) {
 			panel.error("Exception in loadMap:" + ioe);
-		} 
+			return null;
+		}
+		
 	}
 	
 	public void goTo(Waypoint wp) {

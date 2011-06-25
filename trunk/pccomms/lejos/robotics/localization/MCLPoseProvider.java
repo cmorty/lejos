@@ -75,7 +75,24 @@ public class MCLPoseProvider implements PoseProvider, MoveListener, Transmittabl
     updated = false;
     updater.start();
   }
-
+  
+  /**
+   * Constructor for use on PC 
+   * @param map the RangeMap
+   * @param numParticles the numbers of particles
+   * @param border of the map
+   */
+  public MCLPoseProvider(RangeMap map, int numParticles, int border) {
+	    this.numParticles = numParticles;
+	    this.border = border;
+	    this.map = map;
+	    updated = false;
+  }
+  
+  public void setMap(RangeMap map) {
+	  this.map = map;
+  }
+  
   /**
    * Generates an  initial particle set in a circular normal distribution, centered
    * on aPose.
@@ -130,6 +147,11 @@ public class MCLPoseProvider implements PoseProvider, MoveListener, Transmittabl
   {
     return particles;
   }
+  
+  public void setParticles(MCLParticleSet particles) {
+	  this.particles = particles;
+	  numParticles = particles.numParticles();
+  }
 
   /**
    * Generate a new particle set, uniformly distributed within the map, and
@@ -153,6 +175,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener, Transmittabl
    */
   public void moveStopped(Move event, MoveProvider mp)
   {
+	  System.out.println("MCL move stopped");
       updated = false;
       updater.moveStopped(event);
   }
