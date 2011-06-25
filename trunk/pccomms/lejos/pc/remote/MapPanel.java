@@ -65,9 +65,8 @@ public class MapPanel extends JPanel {
 		super.paintComponent(g);
 		paintGrid((Graphics2D) g);
 		paintMap((Graphics2D) g);
-		MCLParticleSet particles = model.getParticles();
-		if (particles != null) paintParticles((Graphics2D) g);
-		paintRobot((Graphics2D) g);
+		if (model.getParticles() != null) paintParticles((Graphics2D) g);
+		else if (model.getMCL() == null) paintRobot((Graphics2D) g);
 	}
 	
 	/**

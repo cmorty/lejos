@@ -28,7 +28,23 @@ public class PCNavigationModel extends NavigationModel {
 	public MCLPoseProvider getMCL() {
 		return mcl;
 	}
-
+	
+	public void setMCL(MCLPoseProvider mcl) {
+		this.mcl = mcl;
+	}
+	
+	public void generateParticles() {
+		mcl.generateParticles();
+		particles = mcl.getParticles();
+		if (dos == null) return;
+		try {
+			dos.writeByte(NavEvent.PARTICLE_SET.ordinal());
+			particles.dumpObject(dos);
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in generateParticles");
+		}
+	}
+	
 	/**
 	 * Connect to the NXT
 	 */
@@ -41,8 +57,8 @@ public class PCNavigationModel extends NavigationModel {
   
 		panel.log("Connected to " + nxtName);
   
-		dis = conn.getDataIn();
-		dos = conn.getDataOut();
+		dis = new DataInputStream(conn.getInputStream());
+		dos = new DataOutputStream(conn.getOutputStream());
 	}
 	
 	public void loadMap(String mapFileName) {

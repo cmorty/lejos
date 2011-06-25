@@ -43,16 +43,15 @@ public class MCLPoseProvider implements PoseProvider, MoveListener, Transmittabl
   private float _x, _y, _heading;
   private float minX, maxX, minY, maxY;
   private double varX, varY, varH;
-  private boolean autoUpdate = true;
   private boolean updated;
   private Updater updater = new Updater();
   private int border;
   private boolean debug = false;
-  boolean busy = false;
+  private boolean busy = false;
   private float BIG_FLOAT = 1000000f;
   private RangeReadings readings;
-  boolean lost = false;
-  boolean incomplete = true;
+  private boolean lost = false;
+  private boolean incomplete = true;
 
   /**
    * Allocates a new MCLPoseProvider.
@@ -67,7 +66,9 @@ public class MCLPoseProvider implements PoseProvider, MoveListener, Transmittabl
   {
     this.numParticles = numParticles;
     this.border = border;
-    particles = new MCLParticleSet(map, numParticles, border);
+    if (numParticles > 0 && map != null) {
+    	particles = new MCLParticleSet(map, numParticles, border);
+    }
     this.scanner = scanner;
     this.map = map;
     if (mp != null) mp.addMoveListener(this);
@@ -181,9 +182,9 @@ public boolean  update()
     if (incomplete  )
     {
        busy = false;
-              return false;
+       return false;
     }
-    else return update(readings);
+    return update(readings);
 
 
   }
@@ -192,12 +193,12 @@ public boolean  update()
  * @param readings
  * @return true if update was successful.
  */
+@SuppressWarnings("hiding")
 public boolean update(RangeReadings readings)
     {
     if(debug)System.out.println("MCLPP update readings called ");
         updated = false;
         busy = true;
-        int count = 0;
         incomplete = readings.incomplete();
         if (incomplete) {
            busy = false;
@@ -477,16 +478,6 @@ public RangeScanner getScanner()
   }
 
   /**
-   * If yes: after a Travel move,  the range scanner is requested to get
-   * range readings,  which are then used to update the particle weights.
-   * @param yes
-   */
-  public void autoUpdate(boolean yes)
-  {
-    autoUpdate = yes;
-  }
-
-  /**
    * returns true if particle weights are being updated. The  robot should not move
    * while this is happening otherwise the prediction from odometry data may
    * introduce errors into the updating.
@@ -510,9 +501,8 @@ public RangeScanner getScanner()
       moveStopped = true;
     }
 
-
-
-    public void run()
+    @Override
+	public void run()
     {
       while (keepGoing)
       {
