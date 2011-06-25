@@ -80,7 +80,7 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1find
 {
    jstring names[MAX_DEVS];
    int cnt = 0;
-   ViStatus status=0;;
+   ViStatus status=0;
    nFANTOM100_iNXTIterator nxtIteratorPtr;
    ViChar name[65];
    int i = 0;
@@ -88,7 +88,7 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1find
    // Create an NXT iterator to find all available NXTs
 
    nxtIteratorPtr = nFANTOM100_createNXTIterator(
-         false /* search Bluetooth and USB */,
+         false /* do not search Bluetooth, only USB */,
          0 /* Infinite timeout */, &status );
    if (status >= VI_SUCCESS)
    {
