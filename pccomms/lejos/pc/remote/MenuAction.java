@@ -25,7 +25,7 @@ public class MenuAction extends AbstractAction {
 	}
 	public void actionPerformed(ActionEvent e) {
 		if (navEvent == NavigationModel.NavEvent.SET_POSE) {
-			model.currentPose = new Pose(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit,0);
+			model.setRobotPose(new Pose(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit,0));
 			panel.repaint();
 		} else if (navEvent == NavigationModel.NavEvent.GOTO) {
 			model.goTo(new Waypoint(p.x,p.y));

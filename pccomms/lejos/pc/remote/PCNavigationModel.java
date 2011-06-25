@@ -2,23 +2,17 @@ package lejos.pc.remote;
 
 import java.awt.Dimension;
 import java.io.*;
-
 import lejos.geom.Rectangle;
 import lejos.pc.comm.*;
 import lejos.robotics.NavigationModel;
-import lejos.robotics.RangeReadings;
 import lejos.robotics.mapping.*;
 import lejos.robotics.navigation.*;
 import lejos.robotics.localization.*;
 
 public class PCNavigationModel extends NavigationModel {
-	protected Pose currentPose = new Pose(0,0,0);
-	protected Waypoint target = new Waypoint(0,0);
 	protected NavigationPanel panel;
-	protected MCLParticleSet particles;
 	protected MCLPoseProvider mcl;
 	protected Move lastMove = new Move(0,0,false);
-	protected RangeReadings readings = new RangeReadings(0);
 	protected int closest = -1;
 	
 	public PCNavigationModel() {
@@ -29,22 +23,6 @@ public class PCNavigationModel extends NavigationModel {
 	
 	public void setPanel(NavigationPanel panel) {
 		this.panel = panel;
-	}
-	
-	public void setRobotPose(Pose p) {
-		currentPose = p;
-	}
-	
-	public Pose getRobotPose() {
-		return currentPose;
-	}
-	
-	public MCLParticleSet getParticles() {
-		return particles;
-	}
-	
-	public void setParticleSet(MCLParticleSet particles) {
-		this.particles = particles;
 	}
 	
 	public MCLPoseProvider getMCL() {
