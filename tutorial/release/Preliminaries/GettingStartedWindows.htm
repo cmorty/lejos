@@ -53,11 +53,16 @@
       <h4>Prerequisites</h4>
       <a id="2" name="2"></a>
       <h5>USB Driver</h5>     
-      <p> To run leJOS NXJ on Microsoft Windows you will need a suitable USB driver on your PC. 
-      If you have installed the standard LEGO Mindstorms software, a suitable driver will already be installed. 
-      If you do not wish to install the LEGO software on your PC you can get a Fantom driver 
-      from <a href="http://mindstorms.lego.com/en-us/support/files/Driver.aspx" target="_blank">The LEGO Mindstorms site</a>.
+      <p>To run leJOS NXJ on Microsoft Windows you will need a suitable USB driver on your PC. 
+      If you have installed the standard LEGO Mindstorms NXT-G software, a suitable driver (the so-called Fantom driver) is already installed. 
+      If you do not wish to install the LEGO software on your PC or if you want to update the Fantom driver to the latest version,
+      you can get an installer from <a href="http://mindstorms.lego.com/en-us/support/files/Driver.aspx" target="_blank">The LEGO Mindstorms site</a>.
       </p>
+      <p>It has come to our attention, that NXT-G as well as the Fantom driver don't install under Windows 7 Starter Edition.
+      This can be worked around by adding a line to the setup.ini file.
+      <a href="http://digital.ni.com/public.nsf/allkb/1817F501D7BA67F28625768F0000B260">Here</a> you find the official instructions
+      by National Instruments, the authors of NXT-G and the Fantom driver. In short, you have to add <code>AllowWindowsStarter=1</code>
+      to the [OS]-section of the setup.ini file.</p>
       <a id="3" name="3"></a>
       <h5>Java Development Kit</h5>     
       <p>You will also need a Java Development Kit (JDK) on your PC. 
