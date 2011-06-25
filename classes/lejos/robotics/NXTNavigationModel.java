@@ -27,6 +27,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	protected float maxDistance = 40;
 	protected boolean autoSendPose = true;
 	protected RangeScanner scanner;
+	protected MCLPoseProvider mcl;
 	
 	public NXTNavigationModel() {
 		Thread receiver = new Thread(new Receiver());
@@ -68,6 +69,11 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		this.scanner = scanner;
 	}
 	
+	public void addMCL(MCLPoseProvider mcl) {
+		this.mcl = mcl;
+		mcl.setDebug(true);
+	}
+	
 	public void setRandomMoveParameters(float maxDistance, float projection, float border) {
 		this.maxDistance = maxDistance;
 		this.projection = projection;
@@ -86,6 +92,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 				try {
 					byte event = dis.readByte();
 					log("Event:" +  NavEvent.values()[event].name());
+					log("Free memory = " + System.getRuntime().freeMemory());
 					if (event ==  NavEvent.LOAD_MAP.ordinal()) {
 						if (map == null) map = new LineMap();
 						map.loadObject(dis);
@@ -128,9 +135,11 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							dos.writeInt(closest);
 						}
 					} else if (event == NavEvent.PARTICLE_SET.ordinal()) {
-						if (particles != null) {
-							particles.loadObject(dis);
-						}
+						if (particles == null) particles = new MCLParticleSet(map,0,0);
+						log("Created MCL");
+					    particles.loadObject(dis);
+					    log("Loaded particles");
+					    mcl.setParticles(particles);
 					} else if (event == NavEvent.TAKE_READINGS.ordinal() && scanner != null) {
 						readings = scanner.getRangeValues();
 						dos.writeByte(NavEvent.RANGE_READINGS.ordinal());
@@ -163,7 +172,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 					    ((RotateMoveController) pilot).rotate(angle);
 					}
 				} catch (Exception ioe) {
-					fatal("Exception in receiver");
+					fatal("Exception in receiver:" + ioe);
 				}
 			}
 			
@@ -171,19 +180,23 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	}
 
 	public void moveStarted(Move event, MoveProvider mp) {
-		try {
+		/*try {
+			log("Sending move started");
 			dos.writeByte(NavEvent.MOVE_STARTED.ordinal());
 			event.dumpObject(dos);
+			log("Finished move started");
 		} catch (IOException ioe) {
 			fatal("IOException in moveStarted");	
-		}	
+		}*/
 	}
 
 	public void moveStopped(Move event, MoveProvider mp) {
 		try {
+			log("Sending move stopped");
 			dos.writeByte(NavEvent.MOVE_STOPPED.ordinal());
 			event.dumpObject(dos);
 			if (pp != null && autoSendPose) {
+				log("Sending set pose");
 				dos.writeByte(NavEvent.SET_POSE.ordinal());
 				pp.getPose().dumpObject(dos);
 			}
