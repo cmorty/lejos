@@ -54,10 +54,11 @@ public class Upload extends NXTCommLoggable {
 			{
 				nxtCommand.disconnect();
 				
-				//TODO remove this and all flushing of buffers on NXT and PC-side. 
-				// give the NXT some time to recover to avoid a race
-				// presumably, this is needed since the NXT flushes some buffer
-				// this accidently can flush the next "what's your name?"-command.				
+				//TODO remove this and remove all code that causes data loss on NXT and PC-side. 
+				// Give the NXT some time to recover to avoid a race.
+				// Presumably, this is needed since the NXT flushes some buffers or disables and
+				// re-enables USB after a disconnect. This causes the next
+				// "what's your name?"-command to be ignored.
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
