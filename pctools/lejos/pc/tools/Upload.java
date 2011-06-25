@@ -60,7 +60,7 @@ public class Upload extends NXTCommLoggable {
 				// re-enables USB after a disconnect. This causes the next
 				// "what's your name?"-command to be ignored.
 				try {
-					Thread.sleep(100);
+					Thread.sleep(150);
 				} catch (InterruptedException e) {
 					// ignore
 				}
