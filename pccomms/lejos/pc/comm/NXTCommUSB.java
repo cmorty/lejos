@@ -364,7 +364,7 @@ public abstract class NXTCommUSB implements NXTComm {
         }
         // Print out the list
 		for (int i = 0; i < nxts.length; i++)
-            System.out.println("Found NXT: " + nxts[i].name + " " + nxts[i].deviceAddress);
+            SystemContext.out.println("Found NXT: " + nxts[i].name + " " + nxts[i].deviceAddress);
 		return nxts;
 	}
 
