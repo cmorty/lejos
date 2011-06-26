@@ -63,6 +63,11 @@ public class Button {
 		return buttons;
 	}
 	
+	public static int waitForPress(int timeout) {
+		//TODO implement
+		throw new UnsupportedOperationException();
+	}
+	
 	public static int readButtons() {
 		int buttons = NXTFrame.getButtons();
 		// Call isPressed to clear all buttons
