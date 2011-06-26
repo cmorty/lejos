@@ -60,9 +60,10 @@ void nxt_motor_reset_all()
 {
   int i;
 	
+  // Put motors into zero speed float mode
   for(i=0;i<NXT_N_MOTORS;i++)
   {
-    nxt_motor_set_speed(i,0,1);
+    nxt_motor_set_speed(i,0,0);
     nxt_motor_set_count(i,0);   
   }	
 }

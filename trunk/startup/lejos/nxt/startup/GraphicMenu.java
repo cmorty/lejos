@@ -25,6 +25,7 @@ public class GraphicMenu extends TextMenu{
 	
 	private static final int interval = 16; // Time between animation frames in milliseconds (1000ms per 1s)
 	private static final int tickCount = 10; // Number of animation frames used
+	private static final int buttonTimeout = 10; // Time to wait for button press
 	
 	protected byte[] _parent = null;
 	
@@ -114,8 +115,7 @@ public class GraphicMenu extends TextMenu{
 				if (timeout > 0 && System.currentTimeMillis() - _startTime >= timeout) 
 					return -3; // timeout
 				
-				Thread.yield();
-				int buttons2 = Button.readButtons();
+                int buttons2 = Button.waitForPress(buttonTimeout);
 				button = (buttons2 & ~buttons);				
 				buttons = buttons2;
 			} while (button == 0);

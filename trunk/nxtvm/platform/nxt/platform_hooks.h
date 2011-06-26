@@ -11,6 +11,7 @@
 
 #  include "poll.h"
 #  include "display.h"
+#include "AT91SAM7.h"
 
 static inline void
 instruction_hook(void)
@@ -32,6 +33,8 @@ tick_hook(void)
 static inline void
 idle_hook()
 {
+  // Turn off the Arm clock when idle (interrupts etc. will re-enable)
+  *AT91C_PMC_SCDR = AT91C_PMC_PCK;
 }
 
 extern void switch_thread_hook();
