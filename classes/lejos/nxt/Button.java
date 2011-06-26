@@ -23,7 +23,8 @@ public class Button implements ListenerCaller
   private static int [] clickFreq = new int[16];
   private static int clickVol;
   private static int clickLen;
-  private static int curButtons = 0;
+  // initialize with state of buttons at program start to avoid false press events
+  private static int curButtons = getButtons();
   
   public static final String VOL_SETTING = "lejos.keyclick_volume";
   
@@ -113,39 +114,51 @@ public class Button implements ListenerCaller
     }
   }
 
-  /**
-   * Waits for some button to be pressed (and released).
-   * If any buttons are down when called, this must be released before the press
-   * will be sensed.
-   * @param timeout The maximum number of milliseconds to wait.
-   * @return the ID of that button, the same as readButtons(); 0 if timeout expires
-   */ 
-  public static int waitForPress(int timeout)
-  {
-    NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
-    int button = 0;
-    long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
-    waitAllReleased(event, end);
-    int down = event.waitEvent(ID_ALL << PRESS_EVENT_SHIFT, end - System.currentTimeMillis());
-    if (down > 0)
-    {
-      button = down >> PRESS_EVENT_SHIFT;
-      readButtons();
-      waitAllReleased(event, NXTEvent.WAIT_FOREVER);
-    }
-    event.free();
-    return button;             
-  }
+	/**
+	 * Waits for some button to be pressed. If a button is already pressed, it
+	 * must be released and pressed again.
+	 * 
+	 * @param timeout The maximum number of milliseconds to wait
+	 * @return the ID of the button that has been pressed or in rare cases a bitmask of button IDs,
+	 *         0 if the given timeout is reached 
+	 */
+	public static int waitForPress(int timeout) {
+		long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
+		NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
+		try
+		{
+			int oldDown = curButtons;
+			while (true)
+			{
+				long curTime = System.currentTimeMillis();
+				if (curTime >= end)
+					return 0;
+				
+				event.waitEvent((oldDown << RELEASE_EVENT_SHIFT) | ((ID_ALL ^ oldDown) << PRESS_EVENT_SHIFT),
+						end - curTime);
+				int newDown = readButtons();
+				int pressed = newDown & (~oldDown);
+				if (pressed != 0)
+					return pressed;
+				
+				oldDown = newDown;
+			}
+		}
+		finally
+		{
+			event.free();
+		}
+	}
 
-  /**
-   * waits for some button to be pressed (and released).
-   * If a button is down when called, waits for a new press;
-   * @return the ID of that button, the same as readButtons(); 
-   */ 
-  public static int waitForPress()
-  {
-      return waitForPress(0);
-  }
+	/**
+	 * Waits for some button to be pressed. If a button is already pressed, it
+	 * must be released and pressed again.
+	 * 
+	 * @return the ID of the button that has been pressed or in rare cases a bitmask of button IDs
+	 */
+	public static int waitForPress() {
+		return waitForPress(0);
+	}
   
   /**
    * Adds a listener of button events. Each button can serve at most
@@ -180,15 +193,13 @@ public class Button implements ListenerCaller
 	public static synchronized int readButtons()
 	{
 		int newButtons = getButtons();
-		if (newButtons != curButtons)
+		int pressed = newButtons & (~curButtons);
+		curButtons = newButtons;
+		if (pressed != 0 && clickVol != 0)
 		{
-			curButtons = newButtons;
-			if (clickVol != 0)
-			{
-				int tone = clickFreq[newButtons];
-				if (tone != 0)
-					Sound.playTone(tone, clickLen, -clickVol);
-			}
+			int tone = clickFreq[pressed];
+			if (tone != 0)
+				Sound.playTone(tone, clickLen, -clickVol);
 		}
 		return newButtons;
 	}
@@ -277,13 +288,13 @@ public class Button implements ListenerCaller
       clickVol = SystemSettings.getIntSetting(VOL_SETTING, 20);
       clickLen = 50;
       // setup default tones for the keys and enter+key chords
-      clickFreq[1] = 209 + 697;
-      clickFreq[2] = 209 + 770;
-      clickFreq[4] = 209 + 852;
-      clickFreq[8] = 209 + 941;
-      clickFreq[1+2] = 633 + 770;
-      clickFreq[1+4] = 633 + 852;
-      clickFreq[1+8] = 633 + 941;
+      clickFreq[ID_ENTER] = 209 + 697;
+      clickFreq[ID_LEFT] = 209 + 770;
+      clickFreq[ID_RIGHT] = 209 + 852;
+      clickFreq[ID_ESCAPE] = 209 + 941;
+      clickFreq[ID_ENTER | ID_LEFT] = 633 + 770;
+      clickFreq[ID_ENTER | ID_RIGHT] = 633 + 852;
+      clickFreq[ID_ENTER | ID_ESCAPE] = 633 + 941;
   }
   
 }

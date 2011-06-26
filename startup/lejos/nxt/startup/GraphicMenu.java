@@ -3,6 +3,7 @@ package lejos.nxt.startup;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.util.TextMenu;
+
 /**
  * Displays a list of items using icons (16x16).  The select() method allows the user to scroll the list using the right and left keys to scroll forward and backward 
  * through the list. The location of the list , and an optional title can be specified to an extent.
@@ -25,7 +26,6 @@ public class GraphicMenu extends TextMenu{
 	
 	private static final int interval = 16; // Time between animation frames in milliseconds (1000ms per 1s)
 	private static final int tickCount = 10; // Number of animation frames used
-	private static final int buttonTimeout = 10; // Time to wait for button press
 	
 	protected byte[] _parent = null;
 	
@@ -103,22 +103,9 @@ public class GraphicMenu extends TextMenu{
 		if (_topIndex > _length - _height)
 			_topIndex = _length - _height;			
 		display(selectedIndex, 0,0);
-		int buttons = Button.readButtons();
 		while(true)
 		{
-			int button;
-			do
-			{				
-				if (_quit)
-					return -2; // quit by another thread
-				
-				if (timeout > 0 && System.currentTimeMillis() - _startTime >= timeout) 
-					return -3; // timeout
-				
-                int buttons2 = Button.waitForPress(buttonTimeout);
-				button = (buttons2 & ~buttons);				
-				buttons = buttons2;
-			} while (button == 0);
+            int button = Button.waitForPress(timeout);
 			
 			if(button == Button.ID_ENTER && selectedIndex >= 0 && selectedIndex < _length){
 				clearArea();
