@@ -15,16 +15,28 @@ import java.io.*;
  *
  */
 public class LCDOutputStream extends OutputStream {
-	private int pos = 0;
+	private int col = 0;
+	private int line = 0;
 	
 	@Override
 	public void write(int c) {	
 		if (c == '\n') {
-			pos = 0;
+			col = 0;
+			incLine();
 			return;
-		}	
-		if (pos >= LCD.DISPLAY_CHAR_WIDTH) pos = 0;
-		if (pos == 0) LCD.scroll();
-		LCD.drawChar((char) c, pos++, LCD.DISPLAY_CHAR_DEPTH - 1);
+		}
+		if (col >= LCD.DISPLAY_CHAR_WIDTH)
+		{
+			col = 0;
+			incLine();
+		}
+		LCD.drawChar((char)(c & 0xFF), col++, line);
+	}
+
+	private void incLine() {
+		if (line < LCD.DISPLAY_CHAR_DEPTH - 1)
+			line++;
+		else
+			LCD.scroll();
 	}
 }
