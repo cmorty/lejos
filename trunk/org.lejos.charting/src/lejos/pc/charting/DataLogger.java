@@ -22,11 +22,15 @@ public class DataLogger {
     private final byte ATTENTION2 = (byte)(0xab&0xff);
     private final byte COMMAND_ITEMSPERLINE = 0;
     private final byte COMMAND_DATATYPE     = 1;    
-    private final byte    DT_INTEGER = 0;        // sub-commands of COMMAND_DATATYPE
-    private final byte    DT_LONG    = 1;
-    private final byte    DT_FLOAT   = 2;
-    private final byte    DT_DOUBLE  = 3;
-    private final byte    DT_STRING  = 4;
+    // sub-commands of COMMAND_DATATYPE
+    private final byte    DT_BOOLEAN = 0;
+    private final byte    DT_BYTE    = 1;
+    private final byte    DT_SHORT   = 2;
+    private final byte    DT_INTEGER = 3;        
+    private final byte    DT_LONG    = 4;
+    private final byte    DT_FLOAT   = 5;
+    private final byte    DT_DOUBLE  = 6;
+    private final byte    DT_STRING  = 7;
     private final byte COMMAND_SETHEADERS   = 2;  
     private final byte COMMAND_FLUSH        = 3; 
     
@@ -271,7 +275,7 @@ public class DataLogger {
         
         mainloop:
         while (true) {
-            // get 4 bytes from the PCBTManager
+            // get 4 bytes from the connectionManager
             try {
                 getBytes(readBytes,4);
             } catch (EOFException e) {
@@ -337,6 +341,9 @@ public class DataLogger {
             // If not a command, output the data
             if (!isCommand) {
                 switch(streamedDataType) {
+                    case DT_BOOLEAN:
+                    case DT_BYTE:
+                    case DT_SHORT:
                     case DT_INTEGER:
                         // Parse an int from the 4 bytes
                         readVals[endOfLineCycler] = new ReadValsStruct();
