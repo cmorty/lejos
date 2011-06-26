@@ -61,6 +61,12 @@ public class TextMenu
 	protected int _startTime;
 	
 	/**
+	 * Timout used for {@link Button#waitForPress(int)} in {@link #select(int, int)}.
+	 */
+	protected static final int BUTTON_POLL_INTERVAL = 10; // Time to wait for button press
+
+	
+	/**
 	 * This constructor sets location of the top row of the item list to row 0 of the display.
 	 */
 	public TextMenu( String[] items)
@@ -175,7 +181,6 @@ public class TextMenu
 		if (_topIndex > _length - _height)
 			_topIndex = _length - _height;			
 		display(selectedIndex, _topIndex);
-		int buttons = Button.readButtons();
 		while(true)
 		{
 			int button;
@@ -187,10 +192,7 @@ public class TextMenu
 				if (timeout > 0 && System.currentTimeMillis() - _startTime >= timeout) 
 					return -3; // timeout
 				
-				Thread.yield();
-				int buttons2 = Button.readButtons();
-				button = (buttons2 & ~buttons);				
-				buttons = buttons2;
+				button = Button.waitForPress(BUTTON_POLL_INTERVAL);
 			} while (button == 0);
 			
 			if(button == Button.ID_ENTER && selectedIndex >= 0 && selectedIndex < _length)
