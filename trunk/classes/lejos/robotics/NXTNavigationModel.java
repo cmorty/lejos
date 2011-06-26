@@ -147,7 +147,10 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 					} else if (event == NavEvent.GET_READINGS.ordinal()) {
 						dos.writeByte(NavEvent.RANGE_READINGS.ordinal());
 						readings.dumpObject(dos);						
-					} else if (event == NavEvent.GET_ESTIMATED_POSE.ordinal() && pp != null && pp instanceof MCLPoseProvider) {
+					} else if (event == NavEvent.GET_PARTICLES.ordinal()) {
+						dos.writeByte(NavEvent.PARTICLE_SET.ordinal());
+						particles.dumpObject(dos);						
+					}else if (event == NavEvent.GET_ESTIMATED_POSE.ordinal() && pp != null && pp instanceof MCLPoseProvider) {
 						dos.writeByte(NavEvent.ESTIMATED_POSE.ordinal());
 						((MCLPoseProvider) pp).dumpObject(dos);						
 					} else if (event == NavEvent.RANDOM_MOVE.ordinal() && pilot != null &&
