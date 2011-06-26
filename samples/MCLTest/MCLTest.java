@@ -32,15 +32,15 @@ public class MCLTest {
 	private static final RegulatedMotor HEAD_MOTOR = Motor.A;
 	
 	public static void main(String[] args) throws Exception {
-    	//PilotProps pp = new PilotProps();
-    	//pp.loadPersistentValues();
-    	//float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "4.3"));
-    	//float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "11.8"));
-    	//RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
-    	//RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
-    	//boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"true"));
+    	PilotProps pp = new PilotProps();
+    	pp.loadPersistentValues();
+    	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "4.3"));
+    	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "11.8"));
+    	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
+    	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
+    	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"true"));
     	
-    	DifferentialPilot robot = new DifferentialPilot(5.6f,11.8f,Motor.B,Motor.C,true);
+    	DifferentialPilot robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
     	RangeFinder sonic = new UltrasonicSensor(SensorPort.S1);
     	RangeScanner scanner;
     	if (rotatingScanner)scanner = new RotatingRangeScanner(HEAD_MOTOR, sonic, GEAR_RATIO);
