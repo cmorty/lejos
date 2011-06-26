@@ -17,15 +17,15 @@ import lejos.util.TextMenu;
  *
  */
 public class GraphicMenu extends TextMenu{
-	private static final byte xArea = 0; // x of Menu Area
+	private static final byte X_AREA = 0; // x of Menu Area
 	//private static final byte yArea = 40; // y of Menu Area
-	private static final byte xWidth = 20; // Distance between icon IDs on x axis
-	private static final byte yWidth = 4; // " on y axis
-	private static final byte xOffset = 2;
-	private static final byte yOffset = 0;
+	private static final byte X_WIDTH = 20; // Distance between icon IDs on x axis
+	private static final byte Y_WIDTH = 4; // " on y axis
+	private static final byte X_OFFSET = 2;
+	private static final byte Y_OFFSET = 0;
 	
-	private static final int interval = 16; // Time between animation frames in milliseconds (1000ms per 1s)
-	private static final int tickCount = 10; // Number of animation frames used
+	private static final int INTERVAL = 16; // Time between animation frames in milliseconds (1000ms per 1s)
+	private static final int TICKCOUNT = 10; // Number of animation frames used
 	
 	protected byte[] _parent = null;
 	
@@ -105,7 +105,17 @@ public class GraphicMenu extends TextMenu{
 		display(selectedIndex, 0,0);
 		while(true)
 		{
-            int button = Button.waitForPress(timeout);
+			int button;
+			do
+			{				
+				if (_quit)
+					return -2; // quit by another thread
+				
+				if (timeout > 0 && System.currentTimeMillis() - _startTime >= timeout) 
+					return -3; // timeout
+				
+                button = Button.waitForPress(BUTTON_POLL_INTERVAL);
+			} while (button == 0);
 			
 			if(button == Button.ID_ENTER && selectedIndex >= 0 && selectedIndex < _length){
 				clearArea();
@@ -163,10 +173,10 @@ public class GraphicMenu extends TextMenu{
 	 */
 	protected void animate(int selectedIndex, int finalIndex,int animateDirection){
 		int count = 1;
-		while (count < tickCount){
-			display(selectedIndex,animateDirection,(int) ((10.0/tickCount)*count));
+		while (count < TICKCOUNT){
+			display(selectedIndex,animateDirection,(int) ((10.0/TICKCOUNT)*count));
 			try {
-				Thread.sleep(interval);
+				Thread.sleep(INTERVAL);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -187,7 +197,7 @@ public class GraphicMenu extends TextMenu{
 			LCD.drawString(_title, 0, _titleLine);
 		clearArea();
 		if(_parent != null)
-			LCD.bitBlt(_parent, 16, 16, 0, 0, xArea+xOffset+(2*xWidth),yArea+yOffset+18, 16, 16, LCD.ROP_COPY);
+			LCD.bitBlt(_parent, 16, 16, 0, 0, X_AREA+X_OFFSET+(2*X_WIDTH),yArea+Y_OFFSET+18, 16, 16, LCD.ROP_COPY);
 		//Prepare Index Locations
 		int length = _length;
 		int[] index = new int[5];
@@ -237,11 +247,11 @@ public class GraphicMenu extends TextMenu{
 	 */
 	protected void drawIconAtTick(byte[] icon,int sID, int eID,int tick){
 		// Determine sID Coordinates
-		int fx = xArea + xOffset+sID*xWidth;
-		int fy = yArea + yOffset+(Math.abs(sID-2)*yWidth);
+		int fx = X_AREA + X_OFFSET+sID*X_WIDTH;
+		int fy = yArea + Y_OFFSET+(Math.abs(sID-2)*Y_WIDTH);
 		// Determine eID Coordinates
-		int sx = xArea + xOffset+eID*xWidth;
-		int sy = yArea + yOffset+(Math.abs(eID-2)*yWidth);
+		int sx = X_AREA + X_OFFSET+eID*X_WIDTH;
+		int sy = yArea + Y_OFFSET+(Math.abs(eID-2)*Y_WIDTH);
 		// Determine Icon Offset from sID
 		int ix = (int) (((sx-fx)/10.0)*tick);
 		int iy = (int) (((sy-fy)/10.0)*tick);
