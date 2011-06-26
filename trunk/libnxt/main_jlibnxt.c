@@ -145,13 +145,23 @@ nxt_open(long hdev)
   if (!hdl) return 0;
   
   // If we are in SAMBA mode we need interface 1, otherwise 0
-  interf = (dev->descriptor.idVendor == VENDOR_ATMEL &&
-            dev->descriptor.idProduct == PRODUCT_SAMBA) ? 1 : 0;
+  if (dev->descriptor.idVendor == VENDOR_ATMEL &&
+      dev->descriptor.idProduct == PRODUCT_SAMBA) {
+	  interf = 1;
 
-  // TODO check that driver is actually active, error checking
-  // detach cdc_acm driver (issue in linux >=2.6.35.5
-  // if detach unsuccessfull, other calls will fail
-  usb_detach_kernel_driver_np(hdl, interf);
+	  // detach cdc_acm or sam-ba kernel driver (issue in linux >=2.6.35.5)
+	  // if detach unsuccessfull, other calls will fail
+	  usb_detach_kernel_driver_np(hdl, interf);
+
+	  // TODO this actually also detaches other libusb clients if kernel driver name == "usbfs"
+	  // Problem: libusb-compat supplies dummy kernel driver name
+	  // and libusb-1.0 doesn't even allow for querying the kernel driver name.
+	  // Also querying driver name and detaching depending on the result
+	  // results in a race condition.
+  } else {
+	  interf = 0;
+  }
+
   
   ret = usb_set_configuration(hdl, 1);
   if (ret < 0)
