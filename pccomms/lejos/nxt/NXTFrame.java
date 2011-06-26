@@ -22,6 +22,8 @@ public class NXTFrame extends JFrame  {
 	// Monitor for button presses
 	private static Object monitor = new Object();
 	private static NXTFrame singleton = null;
+	
+	//FIXME buttonsPressed is often access outside monitor
 
 	/**
 	 * Create the frame
@@ -136,7 +138,8 @@ public class NXTFrame extends JFrame  {
 		}
 	}
 	
-	public static int waitForButtons() {
+	public static int waitForButtons(int timeout) {
+		//TODO respect timeout
 		synchronized(monitor) {
 			try {
 				NXTFrame.monitor.wait();
@@ -144,6 +147,8 @@ public class NXTFrame extends JFrame  {
 				// Ignore
 			}
 		}
+		//TODO only return the buttons that were pressed since last time
+		// not all that are pressed at the moment
 		return buttonsPressed;
 	}
 }
