@@ -53,7 +53,7 @@ public class MCLTest extends NavigationPanel {
 		getParticlesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if (!model.isConnected()) error("Not Connected");
-				else model.getParticles();
+				else model.getRemoteParticles();
 			}
 		});
 		
