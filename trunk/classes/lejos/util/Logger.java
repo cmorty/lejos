@@ -19,21 +19,30 @@ public interface Logger {
     // or Enum..? A column/series definition struct
     class ColumnDefinition{
         String name="series";
-        int datatype=DT_DOUBLE; //default is double
+        int datatype=DT_FLOAT; //default is float
         boolean chartSeries=true; // true = display on chart
-        int rangeAxisID = 0; // ID of range axis for multi-axis charting
+        int rangeAxisID = 0; // zero-based ID of range axis for multi-axis charting. limit to 4 axes
     }
     
-    // will ensure setCacheMode set to false
+    // Starts realtime logging. Must be called before any writeLog() methods. Resets startCachingLog() state
     void startRealtimeLog(DataOutputStream out, DataInputStream in) throws IOException; // streams must be valid (not null)
-    void startRealtimeLog(NXTConnection connection) throws IOException; // streams must be valid (not null)
+    void startRealtimeLog(NXTConnection connection) throws IOException; // isConnected()=true and streams must be valid (not null)
+    // once closed, dos/dis cannot be reused. startRealtimeLog() must be called again.
+    void stopRealtimeLog(); 
     
-    // when called, init baseline for whatever mode
-    void setCacheMode(boolean cacheMode); // false=realtime, true=cached (default)
+    // Sets caching (deferred) logging. Default mode at instantiation and will be called on first writeLog() method if not 
+    // explicitly called. Resets startRealtimeLog() state.
+    // Init for logging to cache for deferred transmit using sendCache()
+    // Resets startRealtimeLog() state
+    void startCachingLog(); // default
+    // Sends log cache. Valid only for caching (deferred) logging using startCachingLog().
+    void sendCache(DataOutputStream out, DataInputStream in) throws IOException; // only if loggingMode=cached
+    void sendCache(NXTConnection connection) throws IOException; // only if loggingMode=cached
     
     // sets the header names, datatypes, count, chartable attribute, range axis ID (for multiple axis charting)
-    // This is mandatory and implies a new log when called
-    void setColumns(ColumnDefinition[] columns) throws IllegalArgumentException; // throws IllegalArgumentException if bad datatype val
+    // This is mandatory and implies a new log structure when called
+    // throws IllegalArgumentException if bad datatype val
+    void setColumns(ColumnDefinition[] columnDefs) throws IllegalArgumentException; 
   
     // All of these throw unchecked IllegalStateException if datatypes don't match what was set in setColumns() or 
     // column counts don't match what was set in setColumns()
@@ -45,10 +54,10 @@ public interface Logger {
     void writeLog(float datapoint);
     void writeLog(double datapoint);
     
-    // called to start each new line of log data. Logged values count per row must match rowcount/datatype set in setColumns() or
-    // IllegalStateException is thrown. Does [implicit] timestamp column. finishLine() is implied at next startLine() call
-    void startLine() throws IllegalStateException; 
-    void sendCache(DataOutputStream out, DataInputStream in) throws IOException; // only if loggingMode=cached
-    void sendCache(NXTConnection connection) throws IOException; // only if loggingMode=cached
-    void closeLog(); // once closed, dos/dis cannot be reused. startRealtimeLog() must be called again.
+    // called to end each new line of log data. Logged values count per row must match rowcount/datatype set in setColumns() or
+    // IllegalStateException is thrown. 
+    void finishLine() throws IllegalStateException; 
+    
+    
+    
 }
