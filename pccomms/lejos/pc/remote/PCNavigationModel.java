@@ -34,6 +34,16 @@ public class PCNavigationModel extends NavigationModel {
 		this.mcl = mcl;
 	}
 	
+	public void getRemoteParticles() {
+		if (dos == null) return;
+		try {
+			panel.log("Getting particles");
+			dos.writeByte(NavEvent.GET_PARTICLES.ordinal());
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in getRemoteParticles");
+	    }		
+	}
+	
 	public void generateParticles() {
 		mcl.generateParticles();
 		particles = mcl.getParticles();
@@ -185,9 +195,7 @@ public class PCNavigationModel extends NavigationModel {
 					} else if (event == NavEvent.SET_POSE.ordinal()) {
 						currentPose.loadObject(dis);
 					} else if (event == NavEvent.PARTICLE_SET.ordinal()) {
-						if (particles != null) {
-							particles.loadObject(dis);
-						}
+						particles.loadObject(dis);
 					} else if (event == NavEvent.RANGE_READINGS.ordinal()) {
 						readings.loadObject(dis);
 					} else if (event == NavEvent.WAYPOINT_REACHED.ordinal()) {
