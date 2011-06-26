@@ -45,7 +45,7 @@ public class Button {
 	
 	public void waitForPressAndRelease() {
 		for(;;) { // Loop until a press of this button is detected
-			int buttons = NXTFrame.waitForButtons();
+			int buttons = NXTFrame.waitForButtons(0);
 			//System.out.println("Waitfor:" + buttons);
 			if ((buttons & iCode) != 0) {
 				// Call isPressed to claim the button press
@@ -56,16 +56,15 @@ public class Button {
 	}
 	
 	public static int waitForPress() {
-		int buttons = NXTFrame.waitForButtons();
+		return waitForPress(0);
+	}
+	
+	public static int waitForPress(int timeout) {
+		int buttons = NXTFrame.waitForButtons(timeout);
 		// Call isPressed to clear all buttons
 		NXTFrame.isPressed(buttons);
 		//System.out.println("Buttons: " + NXTFrame.getButtons());
 		return buttons;
-	}
-	
-	public static int waitForPress(int timeout) {
-		//TODO implement
-		throw new UnsupportedOperationException();
 	}
 	
 	public static int readButtons() {
