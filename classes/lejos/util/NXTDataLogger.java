@@ -6,8 +6,11 @@ import java.io.IOException;
 
 import java.io.InputStream;
 
+import java.io.OutputStream;
+
 import java.util.ArrayList;
 
+import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.Sound;
 import lejos.nxt.comm.Bluetooth;
@@ -36,34 +39,39 @@ public class NXTDataLogger {
     private final byte ATTENTION2 = (byte)(0xab&0xff);
     private final byte COMMAND_ITEMSPERLINE = 0;
     private final byte COMMAND_DATATYPE     = 1;    
-    private final byte    DT_INTEGER = 0;        // sub-commands of COMMAND_DATATYPE
-    private final byte    DT_LONG    = 1;
-    private final byte    DT_FLOAT   = 2;
-    private final byte    DT_DOUBLE  = 3;
-    private final byte    DT_STRING  = 4;
+    // sub-commands of COMMAND_DATATYPE
+    private final byte    DT_BOOLEAN = 0;
+    private final byte    DT_BYTE    = 1;
+    private final byte    DT_SHORT   = 2;
+    private final byte    DT_INTEGER = 3;        
+    private final byte    DT_LONG    = 4;
+    private final byte    DT_FLOAT   = 5;
+    private final byte    DT_DOUBLE  = 6;
+    private final byte    DT_STRING  = 7;
     private final byte COMMAND_SETHEADERS   = 2;  
     private final byte COMMAND_FLUSH        = 3;    
     
-    /** Use USB for the connection
-     * @see #waitForConnection
-     */
-    public static final int CONN_USB = 1;
-    /** Use Bluetooth for the connection
-     * @see #waitForConnection
-     */
-    public static final int CONN_BLUETOOTH = 2;
-    
-    
     private DataOutputStream dos = null;
+    private DataOutputStream dosReal = null;
     private DataInputStream dis = null;
-    private boolean isConnected = false;
-    private static NXTConnection theConnection=null; // polymorphism example with abstract class as type
+//    private boolean isConnected = false;
+//    private static NXTConnection theConnection=null; // polymorphism example with abstract class as type
     private byte currentDataType = DT_INTEGER;
     private byte itemsPerLine=1;
-    private int timeStampCycler=1;
+    private int currColumnPosition=1;
     private int flushBytes=0;
-    private String[] headerLabels=null;
+//    private String[] headerLabels=null;
+    private LogColumn[] columnDefs=null;
     private ArrayList<Float> logCache = new ArrayList<Float>();
+    private ArrayList<Byte> byteCache = new ArrayList<Byte>(512);
+    
+    // logging mode state management
+    private final int LMSTATE_UNINIT=0;
+    private final int LMSTATE_CACHE=1;
+    private final int LMSTATE_REAL=2;
+    private int logmodeState = LMSTATE_UNINIT; // 0=uninititalized, 1=startCachingLog, 2=startRealtimeLog, 
+    private boolean headersSet = false;
+    private boolean disableWriteState=false;
     
     /**
      * Establish a data logger instance
@@ -72,6 +80,29 @@ public class NXTDataLogger {
 
     }
 
+    /** caching dos. uses write(int) override to grab all encoded bytes from DataOutputStream which we cache to "play"
+     * to receiver. Signaling protocol bytes are not saved here as they don't need to be since we know the row structure
+     * (i.e. datatypes and their position in the row) from setColumns()
+     */
+    class CacheOutputStream extends OutputStream {
+        private long byteCount=0;
+        @Override
+        public void write(int b) throws IOException {
+//            System.out.println("b=" + b);
+//            Byte bval = new Byte((byte)(b&0xff));
+//            byteCache.add(bval);
+//            LCD.drawString(""+byteCount,0,2);
+            try {
+                dosReal.write(b);
+            } catch (IOException e) {
+                closeConnection(dosReal);
+            }
+        }
+    }
+
+
+
+    
     private void checkFlush(int byteCount) throws IOException {
         // this may seem useless but when using BT, if I don't do an initial flush, there is a block using the write() on BT doing it's
         // initial flush. This prevents that for some reason. I could have used a boolean but I was thinking I may need a flush every
@@ -82,57 +113,20 @@ public class NXTDataLogger {
         }
     }
     
-    /**Wait for a connection from the PC to begin a real time logging session.  If a connection is already open, it is closed and a new
-     * connection is created.
-     * <p>
-     * This class will use LCD rows 1 and 2 to output status.
-     * 
-     * @param timeout time in milliseconds to wait for the connection to establish. 0 means wait forever. 
-     * @param connectionType Use <code>{@link #CONN_USB}</code> or <code>{@link #CONN_BLUETOOTH}</code>
-     * @return <code>true</code> for successful connection
-     * @see NXTConnection
-     * @see #closeConnection()
-     */
-    public boolean waitForConnection(int timeout, int connectionType) {
-        return waitForConnection(timeout, connectionType, false);
+    // Starts realtime logging. Must be called before any writeLog() methods. Resets startCachingLog() state
+    // streams must be valid (not null)
+    public void startRealtimeLog(DataOutputStream out, DataInputStream in) throws IOException{
+        logmodeState=LMSTATE_REAL;
+        if (out==null) throw new IOException("DataOutputStream is null");
+        if (in==null) throw new IOException("DataInputStream is null");
+        this.dos=out;
+        this.dis=in;
+    } 
+    // isConnected()=true and streams must be valid (not null)
+    public void startRealtimeLog(NXTConnection connection) throws IOException{
+        startRealtimeLog(connection.openDataOutputStream(), connection.openDataInputStream());
     }
-    private  boolean waitForConnection(int timeout, int connectionType, boolean burstMode) {
-        final int INIT_TIME=2000;
-        if (connectionType!=this.CONN_BLUETOOTH && connectionType!=this.CONN_USB) return false;
-        timeout=Math.abs(timeout)+(burstMode?0:INIT_TIME);
-        if (this.isConnected) {
-            closeConnection(this.dos);
-        }
-        if (!burstMode) {
-            LCD.drawString("Initializing.. ",0,2);
-            LCD.drawString("Using " + (connectionType==CONN_BLUETOOTH?"Bluetooth":"USB"),0,1);
-            // wait just a bit to display the WAITING prompt to give the conn some time. I found that if immediately
-            // try to connect from PC, the conn fails 
-            new Thread(new Runnable(){
-                public void run(){
-                    Delay.msDelay(INIT_TIME);
-                    LCD.drawString("WAITING FOR CONN",0,2);
-                }
-            }).start();
-        }
-        
-        // polymorphism example with abstract class as type
-        if (connectionType==CONN_USB) {
-            theConnection = USB.waitForConnection(timeout, NXTConnection.PACKET); 
-        } else {
-            theConnection = Bluetooth.waitForConnection(timeout, NXTConnection.PACKET); 
-        }
-        if (theConnection == null) {
-            if (!burstMode) LCD.drawString("  CONN FAILED!  ",0,2, true);
-            return false;
-        }
-        if (!burstMode) LCD.drawString("   CONNECTED    ",0,2);
-        
-        this.dis = theConnection.openDataInputStream();
-        this.dos = theConnection.openDataOutputStream();
-        this.isConnected = (this.dis!=null&&this.dos!=null);
-        return this.isConnected;
-    }
+    
 
     /** Close the current open connection. The data stream is flushed and closed. After calling this method, 
      * <code>waitForConnection()</code> must be called to establish another connection.
@@ -145,13 +139,13 @@ public class NXTDataLogger {
         cleanConnection(passedDOS, false);
     }
     private void cleanConnection(DataOutputStream passedDOS, boolean burstMode) {
-        if (theConnection==null) return;
+       // if (theConnection==null) return;
         if (!burstMode) {
             // Send ATTENTION request and remote FLUSH command
             sendATTN();
             byte[] command = {COMMAND_FLUSH,-1};
             sendCommand(command);
-            this.isConnected = false;
+//            this.isConnected = false;
         }
         try {
             passedDOS.flush();
@@ -165,10 +159,10 @@ public class NXTDataLogger {
         } catch (Exception e) {
             // TODO What to do?
         }
-        if (theConnection!=null&&!burstMode) {
-            theConnection.close();
-            theConnection=null;
-        }
+//        if (theConnection!=null&&!burstMode) {
+//            theConnection.close();
+//            theConnection=null;
+//        }
         this.dis = null;
         passedDOS = null;
     }
@@ -186,6 +180,49 @@ public class NXTDataLogger {
         }
     }
 
+    /** ensures that the System.currentTimeMillis() value is the first in every row. rows are based on header count. cyclic
+     */
+    private void checkTimeStamp(){
+        if (this.currColumnPosition==1) {
+            writeLog(System.currentTimeMillis());
+        }
+        this.currColumnPosition++;
+        if (this.currColumnPosition>=(((int)this.itemsPerLine)&0xff)) this.currColumnPosition=1;
+    }
+   
+    private void checkWriteState(int datatype){
+        // TODO add LMSTATE_CACHE handling
+        if (this.disableWriteState) return;
+        if (logmodeState==LMSTATE_UNINIT) throw new IllegalStateException("mode not set ");
+        if(!headersSet) throw new IllegalStateException("columnns not set ");
+        if (datatype!=columnDefs[currColumnPosition].getDatatype()) throw new IllegalStateException("datatype mismatch ");
+        this.disableWriteState=true; //avoid infinite recursion
+        // ensure 1st item is timestamp
+        checkTimeStamp();
+        // if DT needs to be changed, signal receiver
+        if (currentDataType != datatype) setDataType((byte)(datatype&0xff));
+        this.disableWriteState=false;
+    }
+
+    /** send the command to set the active datatype
+     * @param datatype
+     */
+    private void setDataType(byte datatype) {
+        byte[] command = {COMMAND_DATATYPE,-1};        
+        sendATTN();
+        this.currentDataType = datatype;
+        command[1] = datatype;        
+        sendCommand(command);
+    }
+    
+    private void setItemsPerLine(int itemsPerLine){
+       sendATTN();
+       this.itemsPerLine= (byte)(itemsPerLine&0xff);
+       byte[] command = {COMMAND_ITEMSPERLINE,-1};
+       command[1] = this.itemsPerLine;
+       sendCommand(command);
+    }
+    
     /** Send an ATTENTION request. Commands usually follow. There is no response/handshake mechanism.
      */
     private void sendATTN(){
@@ -202,40 +239,23 @@ public class NXTDataLogger {
         sendCommand(command);
     }
 
-    /** ensures that the System.currentTimeMillis() value is the first in every row. rows are based on header count. cyclic
-     */
-    private void checkTimeStamp(){
-        if (this.timeStampCycler==1) writeLong(System.currentTimeMillis(),false);
-        this.timeStampCycler++;
-        if (this.timeStampCycler>=(((int)itemsPerLine)&0xff)) this.timeStampCycler=1;
-    }
-
-
-    /** send the command to set the datatype
-     * @param datatype
-     */
-    private void setDataType(byte datatype) {
-        byte[] command = {COMMAND_DATATYPE,-1};        
-        sendATTN();
-        this.currentDataType = datatype;
-        command[1] = datatype;        
-        sendCommand(command);
-    }
     
-     /**
-      * Write an <code>int</code> to the log. Use this for <code>byte</code> and
-      * <code>short</code> as well. If there is no active connection, the method returns immediately
-      * without throwing any exception.
+    // TODO firm up comments
+    /** 
+      * Write an <code>int</code> to the log. Position in the log row is important.
       * 
-      * @param value The <code>int</code>, <code>short</code>, or <code>byte</code> value to <code>logInt()</code>.
-      * @see java.io.DataOutputStream#writeInt 
+      * @param datapoint The <code>int</code> value to log.
+      * @throws IllegalStateException if the column datatype for the column position this method was called for does not match
+      * the datatype that was set in <code>setColumns()</code>, the column position exceeds the column number, or the column
+      * definitions have not been set.
+      * 
+      * @see #setColumns
+      * @see #finishLine
       */
-    public synchronized void logInt(int value) {
-        if (this.dos == null) return;        
-        checkTimeStamp();
-        if (currentDataType != DT_INTEGER) setDataType(DT_INTEGER);        
+    public void writeLog(int datapoint) {
+        checkWriteState(DT_INTEGER);
         try {
-            this.dos.writeInt(value);
+            this.dos.writeInt(datapoint);
             checkFlush(4);
         } catch (IOException e) {
             closeConnection(this.dos);
@@ -248,17 +268,14 @@ public class NXTDataLogger {
      * 
      * @param value The <code>long</code> value to <code>logLong()</code>.
      * @see java.io.DataOutputStream#writeLong
+     * 
      */
-    public synchronized void logLong(long value) {
-        writeLong(value, true);
-    }
+ 
     
-    private synchronized void writeLong(long value, boolean doTimeStampCheck) {
-        if (!this.isConnected) return;    
-        if (doTimeStampCheck) checkTimeStamp();
-        if (currentDataType != DT_LONG) setDataType(DT_LONG);        
+    public void writeLog(long datapoint) {
+        checkWriteState(DT_LONG);  
         try {
-            this.dos.writeLong(value);
+            this.dos.writeLong(datapoint);
             checkFlush(8);
         } catch (IOException e) {
             closeConnection(this.dos);
@@ -269,16 +286,14 @@ public class NXTDataLogger {
       * Write an <code>float</code> to the log. If there is no active connection, the method returns immediately
       * without throwing any exception.
       * 
-      * @param value The <code>float</code> value to <code>logFloat()</code>.
-      * @see java.io.DataOutputStream#writeFloat
+      * @param datapoint The <code>float</code> value to log
+      * 
       */
-    public synchronized void logFloat(float value) {
-        if (!this.isConnected) return;
-        checkTimeStamp();
-        if (currentDataType != DT_FLOAT) setDataType(DT_FLOAT);        
+    public void writeLog(float datapoint) {
+        checkWriteState(DT_FLOAT);
         try {
 //            LCD.drawString("this.dos " + value + " ",0,1);
-            this.dos.writeFloat(value);
+            this.dos.writeFloat(datapoint);
             checkFlush(4);
         } catch (IOException e) {
             closeConnection(this.dos);
@@ -292,13 +307,11 @@ public class NXTDataLogger {
      * @param value The <code>double</code> value to <code>logDouble()</code>.
      * @see java.io.DataOutputStream#writeDouble
      */
-    public synchronized void logDouble(double value) {
-        if (!this.isConnected) return;
-        checkTimeStamp();
-        if (currentDataType != DT_DOUBLE) setDataType(DT_DOUBLE);        
+    public void writeLog(double datapoint) {
+        checkWriteState(DT_DOUBLE);
         try {
     //            LCD.drawString("this.dos " + value + " ",0,1);
-            this.dos.writeDouble(value);
+            this.dos.writeDouble(datapoint);
             checkFlush(8);
         } catch (IOException e) {
             closeConnection(this.dos);
@@ -314,8 +327,9 @@ public class NXTDataLogger {
         byte oldIPL = itemsPerLine;
         if (itemsPerLine!=1) setItemsPerLine((byte)1);
         // skip the [potential] timestamp
+        // TODO maybe checkWriteState(DT_STRING);?
         if (currentDataType != DT_STRING) setDataType(DT_STRING); 
-        writeString(strData, false);
+        writeStringData(strData);
         if (itemsPerLine!=1) setItemsPerLine(oldIPL);
     }
     
@@ -327,14 +341,11 @@ public class NXTDataLogger {
     */
     // TODO set to private until I figure out/decide if I want to publish this method
     private final synchronized void logString(String strData) {
-        writeString(strData,true);
+        checkWriteState(DT_STRING);
+        writeStringData(strData);
     }
     
-    private void writeString(String strData, boolean executeNormal) {
-        if (!this.isConnected) return;
-        if(executeNormal) checkTimeStamp();
-        if (currentDataType != DT_STRING && executeNormal) setDataType(DT_STRING);       
-        
+    private void writeStringData(String strData) {
         byte[] strBytes;
         int residual ;
         int arrayLength;
@@ -353,15 +364,6 @@ public class NXTDataLogger {
             closeConnection(this.dos);
         }
     }
-    
-    
-     private void setItemsPerLine(int itemsPerLine){
-        sendATTN();
-        this.itemsPerLine= (byte)(itemsPerLine&0xff);
-        byte[] command = {COMMAND_ITEMSPERLINE,-1};
-        command[1] = this.itemsPerLine;
-        sendCommand(command);
-    }
 
     // TODO make mandatory, make client change headers and graph without wasting log file
      /** Set the data set header labels. Element 0 is column 1, element 1 is column2, so on and so forth. The items per row
@@ -379,136 +381,34 @@ public class NXTDataLogger {
       * without throwing any exception.
       * 
       * @param headerLabels The array of header labels to use for the data log
+      * @see ColumnDefinition
       */
-    public void setHeaders(String[] headerLabels) {
-        if (headerLabels.length==0) return;
-        if (headerLabels.length>255) return;
-        this.headerLabels = headerLabels;
-        if (!this.isConnected) return;
-        this.timeStampCycler=1;
-        byte[] command = {COMMAND_SETHEADERS,0};        
-        sendATTN();
-        command[1] = (byte)(this.headerLabels.length+1&0xff); 
-        this.itemsPerLine = command[1];
-        sendCommand(command);
-        writeString("System_ms", false);
-        for (String item: headerLabels){
-            writeString(item, false);
-        }
+    // sets the header names, datatypes, count, chartable attribute, range axis ID (for multiple axis charting)
+    // This is mandatory and implies a new log structure when called
+    
+    public void setColumns(LogColumn[] columnDefs){
+        if (columnDefs.length==0) return;
+        if (columnDefs.length>255) return;
+        LogColumn[] tempColumnDefs = new LogColumn[columnDefs.length+1];
+        tempColumnDefs[0] = new LogColumn("System_ms", LogColumn.DT_LONG, true, 1);
+        System.arraycopy(columnDefs, 0, tempColumnDefs, 1, columnDefs.length);
+        this.columnDefs = tempColumnDefs;
+        headersSet=true;
+        sendHeaders(); 
     }
     
-    /**
-     * write a float  value to the log cache for deferred transmit
-     * @param v
-     */
-    public void writeLog(float v)
-    {
-      Float f = new Float(v);
-       this.logCache.add(f);
-    }
-
-    /**
-    * write 2 float values to the log cache for deferred transmit
-    * @param v0
-    * @param v1
-    */
-    public void writeLog(float v0, float v1)
-    {
-      writeLog(v0);
-      writeLog(v1);
-    }
-    /**
-    * write 3 float values to the log cache for deferred transmit
-    * @param v0
-    * @param v1
-    * @param v2
-    */
-    public void writeLog(float v0, float v1, float v2)
-    {
-      writeLog(v0,v1);
-      writeLog(v2);
-    }
-    /**
-     * write 4 float values to the log cache for deferred transmit
-     * @param v0
-     * @param v1
-     * @param v2
-     * @param v3
-     */
-    public void writeLog(float v0, float v1, float v2, float v3)
-    {
-      writeLog(v0, v1);
-      writeLog(v2,v3);
-    }
-
-    /**
-     * Transmit the deferred log values to the PC via USB or bluetooth.<p>
-     * Displays menu of choices for transmission mode. Scroll to select, press ENTER <br>
-     * Then displays "wait for BT" or "wait for USB".  In DataViewer, click on "StartDownload"
-     * When finished, displays the number values sent, and asks "Resend?".
-     * Press ESC to exit the program, any other key to resend.  Then start the download in DataViewer.
-     */
-    public void transmit() {
-//        NXTConnection connection = null;
-//        DataOutputStream dataOut = null;
-//        InputStream is = null;
-        String[] items = { " USB", " Bluetooth" };
-        TextMenu tm = new TextMenu(items, 2, "Transmit using");
-        int s = tm.select();
-        LCD.clear();
-        if (s == 0) {
-            LCD.drawString("wait for USB", 0, 0);
-        } else {
-            LCD.drawString("wait for BT", 0, 0);
+    private void sendHeaders(){
+        // TODO implement cache mode and check pos?
+        this.currColumnPosition=1;
+        byte[] command = {COMMAND_SETHEADERS,0};        
+        sendATTN();
+        command[1] = (byte)(this.columnDefs.length&0xff); 
+        this.itemsPerLine = command[1];
+        sendCommand(command);        
+        for (LogColumn item: columnDefs){
+            writeStringData(item.getName());
+            System.out.println(item.getName());
         }
-        if (!waitForConnection(0, s==0?this.CONN_USB:this.CONN_BLUETOOTH, true)) {
-            LCD.drawString("Connect Failed", 0, 1);
-            Delay.msDelay(2000);
-            return;
-        }
-        
-        LCD.drawString("connected", 0, 1);
-        boolean more = true;
-        while (more) {
-            try {
-                LCD.clear();
-                LCD.drawString("Wait for Viewer", 0, 0);
-                int b = 0;
-                b = dis.read();
-                LCD.drawInt(b, 8, 1);
-            } catch (IOException ie) {
-                LCD.drawString("no connection", 0, 0);
-                Delay.msDelay(2000);
-            }
-
-            LCD.clear();
-            LCD.drawString("sending ", 0, 0);
-            LCD.drawInt(logCache.size(), 4, 8, 0);
-            try {
-                // send the content length    
-                dos.writeInt(logCache.size());
-                dos.flush();
-                // burst the data
-                for (int i = 0; i < logCache.size(); i++) {
-                    Float v = logCache.get(i);
-                    dos.writeFloat(v.floatValue());
-                }
-                this.dos.flush();
-                Delay.msDelay(100);
-            } catch (IOException e) {
-                LCD.drawString("write error", 0, 0);
-                LCD.refresh();
-                Delay.msDelay(2000);
-                break;
-            }
-            LCD.clear();
-            Sound.beepSequence();
-            LCD.drawString("Sent " + logCache.size(), 0, 0);
-            tm.setTitle("Resend?         ");
-            String[] itms = { "Yes", "No" };
-            tm.setItems(itms);
-            more = 0 == tm.select();
-        }
-        cleanConnection(this.dos, true);
+        Button.waitForPress();
     }
 }
