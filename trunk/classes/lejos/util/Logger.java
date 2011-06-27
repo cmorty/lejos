@@ -6,24 +6,9 @@ import java.io.IOException;
 
 import lejos.nxt.comm.NXTConnection;
 
-// instantiation implies the start of a log
+/** TODO need docs
+ */
 public interface Logger {
-    static final int    DT_BOOLEAN = 0;
-    static final int    DT_BYTE    = 1;
-    static final int    DT_SHORT   = 2;
-    static final int    DT_INTEGER = 3;        
-    static final int    DT_LONG    = 4;
-    static final int    DT_FLOAT   = 5;
-    static final int    DT_DOUBLE  = 6;
-    
-    // or Enum..? A column/series definition struct
-    class ColumnDefinition{
-        String name="series";
-        int datatype=DT_FLOAT; //default is float
-        boolean chartSeries=true; // true = display on chart
-        int rangeAxisID = 0; // zero-based ID of range axis for multi-axis charting. limit to 4 axes
-    }
-    
     // Starts realtime logging. Must be called before any writeLog() methods. Resets startCachingLog() state
     void startRealtimeLog(DataOutputStream out, DataInputStream in) throws IOException; // streams must be valid (not null)
     void startRealtimeLog(NXTConnection connection) throws IOException; // isConnected()=true and streams must be valid (not null)
@@ -42,7 +27,7 @@ public interface Logger {
     // sets the header names, datatypes, count, chartable attribute, range axis ID (for multiple axis charting)
     // This is mandatory and implies a new log structure when called
     // throws IllegalArgumentException if bad datatype val
-    void setColumns(ColumnDefinition[] columnDefs) throws IllegalArgumentException; 
+    void setColumns(LogColumn[] columnDefs) throws IllegalArgumentException; 
   
     // All of these throw unchecked IllegalStateException if datatypes don't match what was set in setColumns() or 
     // column counts don't match what was set in setColumns()
