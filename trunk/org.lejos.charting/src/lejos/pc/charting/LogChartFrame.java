@@ -133,7 +133,7 @@ public class LogChartFrame extends JFrame {
     private class SelfLogger implements DataLogger.LoggerListener{
         public void logLineAvailable(String logLine) {
             // tell the chart it has some data
-            loggingChartPanel.addDataPoints(logLine);
+            loggingChartPanel.addDataPoints(logLine); // TODO weed out no-chartable columns based on headers in logFieldNamesChanged
             // send to redirected STDOUT (status text area)
             toLogArea(logLine);
         }
@@ -349,13 +349,17 @@ public class LogChartFrame extends JFrame {
                     // if the log file field is empty, the PC logger will handle it. we need to make sure the title is appropo
                     dataLogger = new DataLogger(connectionManager, theLogFile,fileAction==1);
                     dataLogger.addLoggerListener(loggerHook);
-//                    dataLogger.addLoggerListener(parent);
-                            try {
-                                dataLogger.startLogging();
-                            } catch (IOException e) {
-                                System.out.println(THISCLASS+" IOException in makeConnection():" + e);
-                            }
-                        }
+                    // start the logger
+                    try {
+                        dataLogger.startLogging();
+                    } catch (IOException e) {
+                        System.out.println(THISCLASS+" IOException in makeConnection():" + e);
+                    }
+                    // remove the ref so we can gc()
+                    dataLogger.removeLoggerListener(loggerHook);
+                    dataLogger=null;
+                    System.gc();
+                }
             }).start();
         } 
         return isNXTConnected;
