@@ -92,8 +92,8 @@ public class LoggerComms {
         threadInputReader = new InputReader();
         threadInputReader.start();
         
-        Self_Notifier self_Notifier = new Self_Notifier();
-        addIOStateListener(self_Notifier);
+//        Self_Notifier self_Notifier = new Self_Notifier();
+//        addIOStateListener(self_Notifier);
     }
 
     /**Create a LoggerComms instance
@@ -106,19 +106,19 @@ public class LoggerComms {
      * @param listener The IO listener instance to register
      * @see IOStateListener
      */
-    public void addIOStateListener(IOStateListener listener) {
-//        dbg("Listenr: " + listener.toString());
-        notifListeners.add(listener);
-    }
+//    public void addIOStateListener(IOStateListener listener) {
+////        dbg("Listenr: " + listener.toString());
+//        notifListeners.add(listener);
+//    }
 
     /** De-register a IO state listener.
      * @param listener The IO listener instance to de-register
      * @return <code>true</code> if listener was de-registered. <code>false</code> if passed <code>listener</code> is
      * not registered
      */
-    public boolean removeIOStateListener(IOStateListener listener) {
-        return notifListeners.remove(listener);
-    }
+//    public boolean removeIOStateListener(IOStateListener listener) {
+//        return notifListeners.remove(listener);
+//    }
     
     
     private void dbg(String msg){
@@ -166,9 +166,10 @@ public class LoggerComms {
                     }
                 } catch (IOException e) {
                     // notify listeners of EOFException
-                    for (IOStateListener listener:notifListeners){
-                        listener.EOFEvent(readBuffer.size());
-                    }
+//                    for (IOStateListener listener:notifListeners){
+//                        listener.EOFEvent(readBuffer.size());
+//                    }
+                    closeConnection();
                 } 
             }
         }
@@ -362,6 +363,13 @@ public class LoggerComms {
         System.gc();
         dbg("Connection teardown complete. maxQueueSize was " + maxQueueSize);
         dbg("Average data throughput was " + getByteThroughput() + " bytes/msec");
+        int avail;
+        try {
+            avail = available();
+            dbg(avail+ " bytes left in buffer");
+        } catch (EOFException e) {
+            // TODO
+        }
     }
 
     /** Get the average byte throughput

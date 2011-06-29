@@ -57,8 +57,12 @@ public class DataLogger {
          */
         void dataInputStreamEOF();
 
-        /** Invoked when the log field headers are initially set or changed. This is important because teh number of headers
-         *  determines the column count (which affects cycling)
+        /** Invoked when the log field headers are initially set or changed. This is important because the number of headers
+         *  determines the column count (which affects cycling).
+         *  <p>
+         *  The structure of each string field passed by NXTDataLogger is:<br>
+         *  <code>name:y or n to indicate if charted:axis ID 1-4</code>
+         *  <br>i.e. <pre>MySeries:y:1</pre>
          * @param logFields The array of header values
          */
         void logFieldNamesChanged(String[] logFields);
@@ -91,6 +95,7 @@ public class DataLogger {
                 System.out.print("!** dataInputStreamEOF IOException in fw.close()");
                 e.printStackTrace();
             }
+            
         }
 
         public void logFieldNamesChanged(String[] logFields) {
@@ -114,7 +119,7 @@ public class DataLogger {
         }
     }
 
-    private boolean connectionManagerEOF = false;
+    //private boolean connectionManagerEOF = false;
     private LoggerComms connectionManager = null;
     private File logFile = null;
     private FileWriter fw;
@@ -124,7 +129,7 @@ public class DataLogger {
     private boolean validLogFile=false;;
     private int elementsPerLine = 1;
     private ReadValsStruct[] readVals = new ReadValsStruct[elementsPerLine];
-    private boolean fileAppend;;
+    private boolean fileAppend;
     
     /**Create an instance. logging output goes to STDOUT and specified logfile. <code>LoggerComms</code>
      * connection must already be established.
@@ -147,14 +152,14 @@ public class DataLogger {
         this.dataLogger = new Self_Logger();
         addLoggerListener(dataLogger);
         
-        // AIC for detecting EOF from PCBTManager
-        LoggerComms.IOStateListener EOFListener = new LoggerComms.IOStateListener(){
-            public void EOFEvent(int BufferedBytes) {
-                dbg("!** EOFEvent from PCConnectionManager");
-                connectionManagerEOF=true;
-            }
-        };
-        this.connectionManager.addIOStateListener(EOFListener);
+        // AIC for detecting EOF from LoggerComms
+//        LoggerComms.IOStateListener EOFListener = new LoggerComms.IOStateListener(){
+//            public void EOFEvent(int BufferedBytes) {
+//                dbg("!** EOFEvent from LoggerComms");
+//                connectionManagerEOF=true;
+//            }
+//        };
+//        this.connectionManager.addIOStateListener(EOFListener);
     }
 
     /** Create an instance. logging output goes to STDOUT only since no file specified.
@@ -198,6 +203,7 @@ public class DataLogger {
             System.out.println("IOException in startLogging(): " + e);
             e.printStackTrace();
         }
+        
     }
     
     /**Register a Logger listener.
@@ -252,7 +258,7 @@ public class DataLogger {
         int endOfLineCycler=0;
         byte[] readBytes = new byte[4];
         boolean isCommand;
-        byte streamedDataType = DT_INTEGER;
+        byte streamedDataType = DT_INTEGER;  // also set as default in lejo.util.NXTDataLogger
         byte[] tempBytes;
         String FQPfileName=null;
         
@@ -280,6 +286,9 @@ public class DataLogger {
                 getBytes(readBytes,4);
             } catch (EOFException e) {
                 dbg("startLogging(): EOFException in getBytes(4): " + e);
+                break;
+            } catch (IOException e){
+                dbg("startLogging(): IOException in getBytes(4): " + e);
                 break;
             }
             // do we need to pay attention?
@@ -413,6 +422,8 @@ public class DataLogger {
         for (LoggerListener listener: listeners) {
             listener.dataInputStreamEOF();
         }
+        dbg("clearing all listeners");
+        listeners.clear();
     }
 
     /** send readvals[] to output and reset endOfLineCycler, readVals[]
@@ -450,7 +461,10 @@ public class DataLogger {
     {
         // wait until byteCount bytes are avail or we have a EOF
         while (connectionManager.available() < byteCount) {
-            if (connectionManagerEOF) throw new EOFException("getBytes(): EOF in btmanager and partial data avail. byteCount=" + byteCount);
+//            if (connectionManagerEOF) {
+//                dbg("connectionManagerEOF");
+//                throw new EOFException("getBytes(): EOF in btmanager and partial data avail. byteCount=" + byteCount);
+//            }
             doWait(50);
         }
        
