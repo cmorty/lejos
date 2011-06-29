@@ -1,9 +1,7 @@
 package lejos.util;
 
 /**
- * Use to set the header names, datatypes, count, chartable attribute, range axis ID (for multiple axis charting).
- * This is mandatory and implies a new log structure when called
- * throws IllegalArgumentException if bad datatype val
+ * Use to define the header names, datatypes, count, chartable attribute, and range axis ID (for multiple axis charting).
  * 
  * @see Logger#setColumns
  * @see NXTDataLogger
@@ -63,8 +61,8 @@ public class LogColumn {
     }
     // 
 
-    /** throws unchecked IllegalArgumentException if bad datatype val
-     * @param datatype
+    /** Set the datatype for this column/series. Throws unchecked IllegalArgumentException if bad datatype val
+     * @param datatype The datatype. Use one of the constant values list below in "See also".
      * @see Logger
      * @see #DT_BOOLEAN
      * @see #DT_BYTE
@@ -73,6 +71,7 @@ public class LogColumn {
      * @see #DT_LONG
      * @see #DT_FLOAT
      * @see #DT_DOUBLE
+     * @throws IllegalArgumentException if bad datatype value
      */
     public void setDatatype(int datatype) {
         // validate datatypes
@@ -113,9 +112,10 @@ public class LogColumn {
         return this.chartSeries;
     }
 
-    /** throws unchecked IllegalArgumentException if rangeAxisID<1 or rangeAxisID>4.
-     * 4 range axes for multiple axis charting. default is 1
-     * @param rangeAxisID The one-based range axis ID 1-4
+    /** Throws unchecked IllegalArgumentException if rangeAxisID &lt;1 or rangeAxisID &gt;4.
+     * 4 range axes are available for multiple axis charting. Default is 1
+     * @param rangeAxisID The range axis ID 1-4
+     * @throws IllegalArgumentException
      */
     public void setRangeAxisID(int rangeAxisID) {
         if (rangeAxisID<1 || rangeAxisID>4) throw new IllegalArgumentException("Invalid axis ID " + rangeAxisID);
