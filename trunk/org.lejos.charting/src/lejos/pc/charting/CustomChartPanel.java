@@ -216,22 +216,25 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         loggingChartPanel.setDomainScale(domainWidth);
     }
     
-    /**Add series data to the dataset. Pass a string representing a line of tab-delimited numeric values. The number of
-     * values must match the header count in setSeries().
-     * 
-     * @param logLine the logger line from the NXT. This is a sting of tab-delimited numeric values.
-     */
-    public void addDataPoints(String logLine){
-        loggingChartPanel.addDataPoints(logLine);
+    /**Add series data to the dataset. Pass an array of <code>double</code> series values that all share the same domain value 
+     * defined in element 0. 
+    * The number of values must match the header count in setSeries().
+    * <p>
+    * Element 0 is the domain (X) series and should be a timestamp.
+    * @param seriesData the series data as <code>double</code>s
+    * @see #setSeries
+    */
+    public void addDataPoints(double[] seriesData){
+        loggingChartPanel.addDataPoints(seriesData);
     }
     
-    /** Set the passed series/header names as new XYseries in the dataset. Existing series are wiped. Must be at least two items
-     * in the array or any existing series is left intact and method exits with 0. First item is set as domain label and should
-     * be: system time in millseconds.
-     * 
+    /** Set the passed series/header names as a new <code>XYseries</code> in the dataset. Existing series are wiped. Must be at least two items
+     * in the array or any existing series is left intact and method exits with 0. First item is set as domain (X axis) label and should
+     * be representative as system time in milliseconds.
      * 
      * @param seriesNames Array of series names
      * @return The number of series created
+     * @see #addDataPoints
      */
     int setSeries(String[] seriesNames){
     // TODO change to not specify timestamp and do timestamp automatically

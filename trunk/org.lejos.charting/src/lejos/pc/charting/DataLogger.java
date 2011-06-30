@@ -60,10 +60,11 @@ public class DataLogger {
         /** Invoked when the log field headers are initially set or changed. This is important because the number of headers
          *  determines the column count (which affects cycling).
          *  <p>
-         *  The structure of each string field passed by NXTDataLogger is:<br>
-         *  <code>name:y or n to indicate if charted:axis ID 1-4</code>
-         *  <br>i.e. <pre>MySeries:y:1</pre>
+         *  The string format/structure of each string field passed by NXTDataLogger is:<br>
+         *  <code>[name]![y or n to indicate if charted]![axis ID 1-4]</code>
+         *  <br>i.e. <pre>"MySeries!y!1"</pre>
          * @param logFields The array of header values
+         * @see lejos.util.LogColumn
          */
         void logFieldNamesChanged(String[] logFields);
     }
