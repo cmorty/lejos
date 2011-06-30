@@ -17,19 +17,20 @@ public class LogColumn {
     
     private String name;
     private int datatype=DT_FLOAT; //default is float
-    private boolean chartSeries=true; // true = display on chart
-    private int rangeAxisID = 0; // zero-based ID of range axis for multi-axis charting. limit to 4 axes
+    private boolean chartable=true; // true = display on chart
+    private int rangeAxisID = 1; // one-based ID of range axis for multi-axis charting. limit to 4 axes
     private int byteCount=4;
 
     /**
-     * @param name name the label/name of the column/series
+     * @param name name the label/name of the column/series. <code>RangeAxisID</code> defaults to 1,
+     * <code>chartable</code> defaults to true, and datatype defaults to <code>DT_FLOAT</code>.
      */
     public LogColumn(String name) {
         this.name = name;
     }
 
-    /** throws unchecked IllegalArgumentException if bad datatype val.
-     * Axis ID default to 1. ChartSeries default to true.
+    /** throws unchecked IllegalArgumentException if bad datatype val. <code>RangeAxisID</code> defaults to 1 and
+     * <code>chartable</code> defaults to true.
      * @param name The label/name of the column/series
      * @param datatype The datatype of of the column/series
      * @see #setDatatype
@@ -38,17 +39,26 @@ public class LogColumn {
         this(name);
         setDatatype(datatype);
     }
-
+    /** throws unchecked IllegalArgumentException if bad datatype val. <code>RangeAxisID</code> defaults to 1.
+     * @param name The label/name of the column/series
+     * @param datatype The datatype of of the column/series
+     * @param chartable <code>true</code> to chart the data, <code>false</code> to only log it.
+     * @see #setDatatype
+     */
+    public LogColumn(String name, int datatype, boolean chartable) {
+        this(name, datatype);
+        this.chartable=chartable;
+    }
+    
     /** throws unchecked IllegalArgumentException if bad datatype val
      * @param name The label/name of the column/series
      * @param datatype The datatype of of the column/series
-     * @param chartSeries <code>true</code> to chart the data, <code>false</code> to only log it.
+     * @param chartable <code>true</code> to chart the data, <code>false</code> to only log it.
      * @param rangeAxisID Range axis ID 1-4. 1 is default. NOT IMPLEMENTED YET AS OF 6/27/11
      * @see #setDatatype
      */
-    public LogColumn(String name, int datatype, boolean chartSeries, int rangeAxisID) {
-        this(name, datatype);
-        this.chartSeries=chartSeries;
+    public LogColumn(String name, int datatype, boolean chartable, int rangeAxisID) {
+        this(name, datatype, chartable);
         this.rangeAxisID=rangeAxisID;
     }
     
@@ -104,12 +114,12 @@ public class LogColumn {
         return this.datatype;
     }
 
-    public void setChartSeries(boolean chartSeries) {
-        this.chartSeries = chartSeries;
+    public void setChartable(boolean chartable) {
+        this.chartable = chartable;
     }
 
-    public boolean isChartSeries() {
-        return this.chartSeries;
+    public boolean isChartable() {
+        return this.chartable;
     }
 
     /** Throws unchecked IllegalArgumentException if rangeAxisID &lt;1 or rangeAxisID &gt;4.

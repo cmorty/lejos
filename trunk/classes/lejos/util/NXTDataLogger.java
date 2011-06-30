@@ -625,7 +625,7 @@ public class NXTDataLogger implements Logger{
         sendATTN();
         sendCommand(command);        
         for (LogColumn item: columnDefs){
-            writeStringData(item.getName());
+            writeStringData(item.getName() + "!" + (item.isChartable()?"y":"n") + "!" + item.getRangeAxisID());
         }
     }
 }
