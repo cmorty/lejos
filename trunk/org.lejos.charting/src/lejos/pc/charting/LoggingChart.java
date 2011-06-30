@@ -193,7 +193,7 @@ public class LoggingChart extends ChartPanel{
 
     /** Set the passed series/header definitions as new XYseries in the dataset. Existing series are wiped. Must be at least two items
      * in the array or any existing series is left intact and method exits with 0. First item is set as domain label and should
-     * be system time in millseconds.
+     * be system time in milliseconds.
      * <p>
      *  The string format/structure of each string field is:<br>
      *  <code>[name]![y or n to indicate if charted]![axis ID 1-4]</code>
