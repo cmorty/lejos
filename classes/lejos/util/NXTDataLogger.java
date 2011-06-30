@@ -94,7 +94,7 @@ public class NXTDataLogger implements Logger{
 //                System.out.println("b=" + (b&0xff));
 //                Button.waitForPress();
 //                byteCache.push(new Byte((byte)(b&0xff)));
-                byteCache.push((byte)(b&0xff));
+                byteCache.add((byte)(b&0xff));
             } catch (OutOfMemoryError e) {
 //                System.out.println("bc=" + byteCount + " ");
 //                System.out.println("lc=" + lineCount + " ");
@@ -114,13 +114,13 @@ public class NXTDataLogger implements Logger{
             barr=new byte[2048];
         }
         
-        int push(byte b){
+        int add(byte b){
             barr[pushIndex]=b;
             ensureCapacity(256);
             return pushIndex++;
         }
         
-        byte pop() throws EmptyQueueException {
+        byte remove() throws EmptyQueueException {
             if (popIndex>=pushIndex) throw new EmptyQueueException();
             return barr[popIndex++];
         }
@@ -284,7 +284,7 @@ public class NXTDataLogger implements Logger{
         byte[] temp = new byte[count];
         for (int i=0;i<count;i++) {
 //            temp[i]=((Byte)byteCache.pop()).byteValue();
-            temp[i]=byteCache.pop();
+            temp[i]=byteCache.remove();
         }
         return temp;
     }
