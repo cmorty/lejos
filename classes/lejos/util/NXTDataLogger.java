@@ -51,7 +51,7 @@ public class NXTDataLogger implements Logger{
     private DataInputStream dis = null;
     private byte currentDataType = DT_INTEGER;  // also set as default in lejos.pc.charting.DataLogger.startLogging()
     private byte itemsPerLine=-1;
-    private int lineCount=0;
+//    private int lineCount=0;
     private int currColumnPosition=1;
     private int flushBytes=0;
     private LogColumn[] columnDefs=null;
@@ -73,7 +73,7 @@ public class NXTDataLogger implements Logger{
      * @see #startRealtimeLog(NXTConnection)
      */
     public NXTDataLogger() {
-        // seed attention checkvals
+        // seed some attention checkvals
         for (int i=0;i<attentionRandoms.length;i++){
             attentionRandoms[i]=(byte)((int)(Math.random()*255)&0xff);   
         }
@@ -87,7 +87,7 @@ public class NXTDataLogger implements Logger{
      * (i.e. datatypes and their position in the row) from setColumns()
      */
     class CacheOutputStream extends OutputStream {
-        private long byteCount=0;
+//        private long byteCount=0;
         @Override
         public void write(int b) throws IOException {
             try {
@@ -101,13 +101,13 @@ public class NXTDataLogger implements Logger{
 //                Button.waitForPress();
                 throw new IOException("OutOfMemoryError");
             }
-            byteCount++;
+//            byteCount++;
         }
     }
     
     private class byteQueue{
-        private int pushIndex=0;
-        private int popIndex=0;
+        private int addIndex=0;
+        private int removeIndex=0;
         private byte[] barr;
         
         byteQueue() {
@@ -115,25 +115,24 @@ public class NXTDataLogger implements Logger{
         }
         
         int add(byte b){
-            barr[pushIndex]=b;
+            barr[addIndex]=b;
             ensureCapacity(256);
-            return pushIndex++;
+            return addIndex++;
         }
         
         byte remove() throws EmptyQueueException {
-            if (popIndex>=pushIndex) throw new EmptyQueueException();
-            return barr[popIndex++];
+            if (removeIndex>=addIndex) throw new EmptyQueueException();
+            return barr[removeIndex++];
         }
         
         void ensureCapacity(int capacity) {
-            if(pushIndex > barr.length-capacity) {
+            if(addIndex > barr.length-2) {
                 byte[] tb = new byte[barr.length+capacity];
-                pushIndex-=popIndex;
-                System.arraycopy(barr,popIndex,tb,0,pushIndex);
-                popIndex=0;
+                addIndex-=removeIndex;
+                System.arraycopy(barr,removeIndex,tb,0,addIndex);
+                removeIndex=0;
                 barr=tb;
                 tb=null;
-                System.gc();
             }
         }
     }
@@ -378,7 +377,7 @@ public class NXTDataLogger implements Logger{
 //        Button.waitForPress();
         if (this.currColumnPosition!=(((int)this.itemsPerLine)&0xff)) throw new IllegalStateException("too few cols ");
         currColumnPosition=1;
-        this.lineCount++;
+//        this.lineCount++;
     }
     
     /** send the command to set the active datatype
