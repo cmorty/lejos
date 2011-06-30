@@ -191,10 +191,13 @@ public class LoggingChart extends ChartPanel{
     }
 
 
-    /** Set the passed series/header names as new XYseries in the dataset. Existing series are wiped. Must be at least two items
+    /** Set the passed series/header definitions as new XYseries in the dataset. Existing series are wiped. Must be at least two items
      * in the array or any existing series is left intact and method exits with 0. First item is set as domain label and should
-     * be: system time in millseconds.
-     * 
+     * be system time in millseconds.
+     * <p>
+     *  The string format/structure of each string field is:<br>
+     *  <code>[name]![y or n to indicate if charted]![axis ID 1-4]</code>
+     *  <br>i.e. <pre>"MySeries!y!1"</pre>
      * @param seriesNames Array of series names
      * @return The number of series created
      */
@@ -240,16 +243,15 @@ public class LoggingChart extends ChartPanel{
         this.addMouseListener(new ml());
     }
     
-    /**Add series data to the dataset. Pass a string representing a line of tab-delimited numeric values. The number of
-     * values must match the header count in setSeries().
-     * 
-     * @param logLine the logger line from the NXT. This is a sting of tab-delimited numeric values.
+    /**Add series data to the dataset. Pass a double array of series values that all share the same domain value (element 0). 
+     * The number of values must match the header count in setSeries().
+     * <p>
+     * Element 0 is the domain (X) series and should be a timestamp.
+     * @param seriesData the series data as <code>double</code>s
      */
-    void addDataPoints(String logLine) {
-        
-        String[] values = logLine.split("\t");
-        if (values.length<2) {
-            dbg("!** addDataPoints: No series values defined with setHeaders(). logLine=" + logLine);
+    void addDataPoints(double[] seriesData) {
+        if (seriesData.length<2) {
+            dbg("!** addDataPoints: Not enough data. length=" + seriesData.length);
             return;
         }
         
@@ -258,46 +260,20 @@ public class LoggingChart extends ChartPanel{
         
         // create generic series if not exist
         if (seriesCount==0) {
-            for(String item: values){
-                try {
-                    Double.parseDouble(item);
-                    seriesCount++;
-                } catch (NumberFormatException e){
-                    ; // don't add to series count
-                }
-            }
+            seriesCount = seriesData.length;
             String[] seriesNames = new String[seriesCount];
             for (int i=0;i<seriesCount;i++) seriesNames[i]="Series" + i;
             setSeries(seriesNames);
         }
         
         //get the timestamp
-        long timeStamp;
-        try {
-            timeStamp = Long.parseLong(values[0]); // first column should always be timestamp from NXT
-//            dbg("timeStamp=" + timeStamp);
-        } catch (NumberFormatException e){
-            dbg("!** addDataPoints: invalid timestamp");
-//            e.printStackTrace();
-            return;
-        }
-        
+        double timeStamp = seriesData[0]; // first element should always be timestamp from NXT
         Double seriesTempvalue;
         int index=0;
         XYSeriesCollection tempDs=(XYSeriesCollection)getChart().getXYPlot().getDataset();
-        for (int i=1;i<values.length;i++) {            
-//            dbg("values[" + i +  "]: " + values[i]);
-            if (values[i].trim().length()==0) continue; // we can get an empty value if NXT doesn't log all vars before it closes a connection
-            // this will weed out non-numeric data
-            try {
-                seriesTempvalue = new Double(values[i]);
-//                dbg("seriesTempvalue=" + seriesTempvalue + ":" + tempDs.getSeries(index).getDescription());
-                tempDs.getSeries(index).add(timeStamp,seriesTempvalue);
-                index++;
-            } catch (NumberFormatException e){
-                System.err.format("%1$s.addDataPoints: iterator [%2$d] invalid value: %3$s", this.getClass().getName(), i, values[i]);
-//                e.printStackTrace();
-            }
+        for (int i=1;i<seriesData.length;i++) {            
+            tempDs.getSeries(index).add(timeStamp, seriesData[i]);
+            index++;
         }
         
         // slide the the domain range to show animation of data coming in

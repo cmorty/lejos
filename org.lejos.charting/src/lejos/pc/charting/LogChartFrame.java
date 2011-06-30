@@ -34,6 +34,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 
 import org.jfree.chart.ChartPanel;
+import org.jfree.data.Range;
+import org.jfree.data.xy.XYSeriesCollection;
 
 
 //import javax.swing.SwingWorker;
@@ -72,7 +74,7 @@ public class LogChartFrame extends JFrame {
     private JTextArea FQPathTextArea = new JTextArea();
     private JButton selectFolderButton = new JButton();
     private JSeparator jSeparator1 = new JSeparator();
-
+    
 
     /** Default constructor
      */
@@ -125,15 +127,72 @@ public class LogChartFrame extends JFrame {
         });
     }
 
-    private void jTextFieldXval_actionPerformed(ActionEvent e) {
-    }
 
+    
+    
     /**This class is used to provide listener callbacks from DataLogger.
      */
     private class SelfLogger implements DataLogger.LoggerListener{
+        /** used to track series defs
+         */
+        private class SeriesDef{
+            String name;
+            boolean chartable;
+            int axisID;
+        }
+        private SeriesDef[] seriesDefs;
+        
+        private SeriesDef[] parseSeriesDef(String[] logFields) {
+            SeriesDef[] sd = new SeriesDef[logFields.length];
+            String[] seriesDef;
+            // parse the column defs into a struct
+            for (int i = 0; i < logFields.length; i++) {
+                seriesDef = logFields[i].split("!");
+                sd[i] = new SeriesDef();
+                sd[i].name = seriesDef[0];
+                if (seriesDef.length>1) {
+                    sd[i].chartable=seriesDef[1].equalsIgnoreCase("y");
+                    sd[i].axisID=Integer.valueOf(seriesDef[2]);
+                } else {
+                    // coldef structure not correct, use defaults
+                    sd[i].chartable=true;
+                    sd[i].axisID=1;
+                }
+                // ensure domain val is always chartable
+                if (i==0) sd[i].chartable=true;
+            }
+            return sd;
+        }
+
+        // TODO where to do multiaxis flag?
+        /** Parse chartable datapoints into a double array. Uses previos parsed seriesDefs[] to determine chartable
+         * 
+         * @param logLine
+         * @return
+         */
+        private double[] parseDataPoints(String logLine) {
+            String[] values = logLine.split("\t");
+            double[] seriesTempvalues = new double[values.length];
+            int chartableCount=0;
+           
+            for (int i=0;i<values.length;i++) { 
+                if (seriesDefs[i].chartable) {
+                    try {
+                        seriesTempvalues[chartableCount]=Double.valueOf(values[i]);
+                    } catch (NumberFormatException e){
+                        System.err.format("%1$s.parseDataPoints: iterator [%2$d] invalid value: %3$s", this.getClass().getName(), i, values[i]);
+                    }
+                    chartableCount++;
+                }
+            }
+            double[] seriesTempvalues2 = new double[chartableCount];
+            System.arraycopy(seriesTempvalues, 0, seriesTempvalues2, 0, chartableCount);
+            return seriesTempvalues2;
+        }
+        
         public void logLineAvailable(String logLine) {
             // tell the chart it has some data
-            loggingChartPanel.addDataPoints(logLine); // TODO weed out no-chartable columns based on headers in logFieldNamesChanged
+            loggingChartPanel.addDataPoints(parseDataPoints(logLine)); 
             // send to redirected STDOUT (status text area)
             toLogArea(logLine);
         }
@@ -146,16 +205,29 @@ public class LogChartFrame extends JFrame {
             loggingChartPanel.getChart().setNotify(true);
         }
 
+//        *  The string format/structure of each string field passed by NXTDataLogger is:<br>
+//        *  <code>[name]![y or n to indicate if charted]![axis ID 1-4]</code>
+//        *  <br>i.e. <pre>"MySeries!y!1"</pre>
         public void logFieldNamesChanged(String[] logFields) {
             System.out.println("client:logFieldNamesChanged");
-            loggingChartPanel.setSeries(logFields);
+            StringBuilder chartLabels = new StringBuilder();
             StringBuilder sb = new StringBuilder();
-            for (int i=0;i<logFields.length;i++){
-                sb.append(logFields[i]);
-                if (i<logFields.length-1) sb.append("\t");
+            
+            // parse the array into a struct 
+            this.seriesDefs=parseSeriesDef(logFields); 
+            
+            // Build headers/labels/series names for txt log and chartable for chart
+            for (int i=0;i<this.seriesDefs.length;i++){
+                sb.append(this.seriesDefs[i].name); 
+                if (i<this.seriesDefs.length-1) sb.append("\t");
+                if (this.seriesDefs[i].chartable) {
+                    chartLabels.append(this.seriesDefs[i].name);
+                    chartLabels.append("!");
+                }
             }
             sb.append("\n");
             try {
+                // clear the data log text area
                 jTextAreaDataLog.getDocument().remove(0, jTextAreaDataLog.getDocument().getLength());
             } catch (BadLocationException e) {
                 // TODO what to do here? I'm pretty sure the try(...) code should never throw this...
@@ -168,6 +240,9 @@ public class LogChartFrame extends JFrame {
                     loggingChartPanel.getChart().setTitle("");
                 }
             }
+            
+            // set the chartable series headers/labels
+            loggingChartPanel.setSeries(chartLabels.toString().split("!"));  
         }
     }
 
@@ -377,7 +452,7 @@ public class LogChartFrame extends JFrame {
         float value=0, value2=0;
         int x=0;
         
-        loggerHook.logFieldNamesChanged(new String[]{"System_ms","Sine","Random"}); //,"c4","c5","c6","c7","c8","c9","c10"});
+        loggerHook.logFieldNamesChanged(new String[]{"System_ms!n!1","Sine!Y!1","Random!y!1"}); //,"c4","c5","c6","c7","c8","c9","c10"});
         for (int i = 0; i < 10000; i++) {
             if (i%40==0) value2=(float)(Math.random()*5-2.5);
             if (i % 10 == 0) {
