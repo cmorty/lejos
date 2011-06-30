@@ -84,14 +84,16 @@ public class TestLogger {
         
         dlog.setColumns(new LogColumn[] {
             new LogColumn("sine(v)", LogColumn.DT_FLOAT),
-            new LogColumn("upper", LogColumn.DT_FLOAT),
-            new LogColumn("lower", LogColumn.DT_FLOAT)
+            new LogColumn("upper", LogColumn.DT_FLOAT), 
+            new LogColumn("lower", LogColumn.DT_FLOAT),
+            new LogColumn("Random", LogColumn.DT_FLOAT, false) // do not chart this series
         });
 
         for (int i=0;i<975;i++){ // 975
             dlog.writeLog((float)Math.sin(value));
             dlog.writeLog(1f);
             dlog.writeLog(-1f);
+            dlog.writeLog((float)(Math.random()*5-2.5));
             dlog.finishLine();
             value+=.1f;
         }
