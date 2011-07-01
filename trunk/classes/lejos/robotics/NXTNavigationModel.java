@@ -28,6 +28,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	protected boolean autoSendPose = true;
 	protected RangeScanner scanner;
 	protected MCLPoseProvider mcl;
+	protected boolean sendMove = true;
 	
 	public NXTNavigationModel() {
 		Thread receiver = new Thread(new Receiver());
@@ -69,6 +70,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		this.scanner = scanner;
 	}
 	
+	@SuppressWarnings("hiding")
 	public void addMCL(MCLPoseProvider mcl) {
 		this.mcl = mcl;
 		mcl.setDebug(true);
@@ -92,10 +94,11 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 				try {
 					byte event = dis.readByte();
 					log("Event:" +  NavEvent.values()[event].name());
-					log("Free memory = " + System.getRuntime().freeMemory());
+					//log("Free memory = " + System.getRuntime().freeMemory());
 					if (event ==  NavEvent.LOAD_MAP.ordinal()) {
 						if (map == null) map = new LineMap();
 						map.loadObject(dis);
+						if (mcl != null) mcl.setMap(map);
 					} else if (event == NavEvent.GOTO.ordinal()) {
 						if (navigator != null) {
 							target.loadObject(dis);
@@ -113,9 +116,13 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 					} else if (event == NavEvent.ROTATE.ordinal() && pilot != null && pilot instanceof RotateMoveController) {
 						float angle = dis.readFloat();
 						((RotateMoveController) pilot).rotate(angle);
-					} else if (event == NavEvent.GET_POSE.ordinal() && pp != null) {
+					} else if (event == NavEvent.GET_POSE.ordinal()) {
+						PoseProvider poseProvider = (mcl != null ? mcl : pp);
+						boolean saveSendMove = sendMove;
+						sendMove = false;
+						currentPose = poseProvider.getPose();
+						sendMove = saveSendMove;
 						dos.writeByte(NavEvent.SET_POSE.ordinal());
-						currentPose = pp.getPose();
 						currentPose.dumpObject(dos);
 					} else if (event == NavEvent.SET_POSE.ordinal() && pp != null) {
 						currentPose.loadObject(dis);
@@ -136,9 +143,9 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 						}
 					} else if (event == NavEvent.PARTICLE_SET.ordinal()) {
 						if (particles == null) particles = new MCLParticleSet(map,0,0);
-						log("Created MCL");
+						//log("Created MCL");
 					    particles.loadObject(dis);
-					    log("Loaded particles");
+					    //log("Loaded particles");
 					    mcl.setParticles(particles);
 					} else if (event == NavEvent.TAKE_READINGS.ordinal() && scanner != null) {
 						readings = scanner.getRangeValues();
@@ -146,13 +153,14 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 						readings.dumpObject(dos);						
 					} else if (event == NavEvent.GET_READINGS.ordinal()) {
 						dos.writeByte(NavEvent.RANGE_READINGS.ordinal());
+						if (mcl != null) readings = mcl.getRangeReadings();
 						readings.dumpObject(dos);						
 					} else if (event == NavEvent.GET_PARTICLES.ordinal()) {
 						dos.writeByte(NavEvent.PARTICLE_SET.ordinal());
 						particles.dumpObject(dos);						
-					}else if (event == NavEvent.GET_ESTIMATED_POSE.ordinal() && pp != null && pp instanceof MCLPoseProvider) {
+					} else if (event == NavEvent.GET_ESTIMATED_POSE.ordinal()) {
 						dos.writeByte(NavEvent.ESTIMATED_POSE.ordinal());
-						((MCLPoseProvider) pp).dumpObject(dos);						
+						mcl.dumpObject(dos);						
 					} else if (event == NavEvent.RANDOM_MOVE.ordinal() && pilot != null &&
 							   pilot instanceof RotateMoveController) {
 					    float angle = (float) Math.random() * 360;
@@ -174,8 +182,8 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 					    
 					    ((RotateMoveController) pilot).rotate(angle);
 					}
-				} catch (Exception ioe) {
-					fatal("Exception in receiver:" + ioe);
+				} catch (IOException ioe) {
+					fatal("IOException in receiver:");
 				}
 			}
 			
@@ -194,6 +202,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	}
 
 	public void moveStopped(Move event, MoveProvider mp) {
+		if (!sendMove) return;
 		try {
 			log("Sending move stopped");
 			dos.writeByte(NavEvent.MOVE_STOPPED.ordinal());
