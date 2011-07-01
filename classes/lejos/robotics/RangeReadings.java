@@ -91,6 +91,7 @@ public class RangeReadings extends ArrayList<RangeReading> implements Transmitta
    * @throws IOException
    */
   public void dumpObject(DataOutputStream dos) throws IOException {
+	dos.writeInt(numReadings);
     for (RangeReading r: this) {
       dos.writeFloat(r.getAngle());
       dos.writeFloat(r.getRange());
@@ -104,8 +105,10 @@ public class RangeReadings extends ArrayList<RangeReading> implements Transmitta
    * @throws IOException
    */
   public void loadObject(DataInputStream dis) throws IOException {
+	numReadings = dis.readInt();
+	this.clear();
     for (int i = 0; i < getNumReadings(); i++) {
-      setRange(i, dis.readFloat(),dis.readFloat());
+      add(new RangeReading(dis.readFloat(),dis.readFloat()));
     }        
   }
   
