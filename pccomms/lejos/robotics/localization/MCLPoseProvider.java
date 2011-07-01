@@ -148,6 +148,10 @@ public class MCLPoseProvider implements PoseProvider, MoveListener, Transmittabl
     return particles;
   }
   
+  public RangeReadings getReadings() {
+	  return readings;
+  }
+  
   public void setParticles(MCLParticleSet particles) {
 	  this.particles = particles;
 	  numParticles = particles.numParticles();
@@ -175,7 +179,7 @@ public class MCLPoseProvider implements PoseProvider, MoveListener, Transmittabl
    */
   public void moveStopped(Move event, MoveProvider mp)
   {
-	  System.out.println("MCL move stopped");
+	  if (debug) System.out.println("MCL move stopped");
       updated = false;
       updater.moveStopped(event);
   }

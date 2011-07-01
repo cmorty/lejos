@@ -39,6 +39,7 @@ public class PCNavigationModel extends NavigationModel {
 		try {
 			panel.log("Getting particles");
 			dos.writeByte(NavEvent.GET_PARTICLES.ordinal());
+			dos.flush();
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in getRemoteParticles");
 	    }		
@@ -82,6 +83,7 @@ public class PCNavigationModel extends NavigationModel {
 	public LineMap loadMap(String mapFileName) {
 		try {
 			File mapFile = new File(mapFileName);
+			System.out.println("Map file is " + mapFile.getAbsolutePath());
 			if (!mapFile.exists()) {
 				panel.log(mapFile.getAbsolutePath() + " does not exist");
 				return null;
@@ -145,6 +147,26 @@ public class PCNavigationModel extends NavigationModel {
 			dos.flush();
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in getPose");
+		}
+	}
+	
+	public void getEstimatedPose() {
+		if (dos == null) return;
+		try {
+			dos.writeByte(NavEvent.GET_ESTIMATED_POSE.ordinal());
+			dos.flush();
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in getPose");
+		}
+	}
+	
+	public void getRemoteReadings() {
+		if (dos == null) return;
+		try {
+			dos.writeByte(NavEvent.GET_READINGS.ordinal());
+			dos.flush();
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in getReadings");
 		}
 	}
 	

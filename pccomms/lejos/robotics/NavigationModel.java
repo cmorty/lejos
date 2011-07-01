@@ -51,4 +51,8 @@ public abstract class NavigationModel {
 	public void setParticleSet(MCLParticleSet particles) {
 		this.particles = particles;
 	}
+	
+	public RangeReadings getReadings() {
+		return readings;
+	}
 }
