@@ -33,12 +33,14 @@ import lejos.util.PilotProps;
  */
 public class MCLTest {
 	private static final int GEAR_RATIO = -12;
-	private static final boolean ROTATING_RANGE_SCANNER = true;
+	private static final boolean ROTATING_RANGE_SCANNER = false;
 	private static final RegulatedMotor HEAD_MOTOR = Motor.A;
 	private static final float[] ANGLES = {-45f,0f,45f};
 	private static final int BORDER = 0;
 	private static final double ROTATE_SPEED = 100f;
 	private static final double TRAVEL_SPEED = 100f;
+	private static final float MAX_DISTANCE = 40f;
+	private static final float PROJECTION = 20f;
 	
 	public static void main(String[] args) throws Exception {
     	PilotProps pp = new PilotProps();
@@ -61,6 +63,7 @@ public class MCLTest {
     	MCLPoseProvider mcl = new MCLPoseProvider(robot, scanner, null, 0, BORDER);
     	PathController navigator = new Navigator(robot, mcl); 	
     	NXTNavigationModel model = new NXTNavigationModel();
+    	model.setRandomMoveParameters(MAX_DISTANCE, PROJECTION, BORDER);
     	model.addPilot(robot);
     	model.addNavigator(navigator);
     	model.addMCL(mcl);
