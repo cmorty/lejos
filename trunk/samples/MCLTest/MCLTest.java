@@ -20,22 +20,29 @@ import lejos.util.PilotProps;
  * 
  * Run this sample on the NXT, then run MCLTest on the PC and connect to the NXT.
  * 
- * You can then put your robot down in a mapped room, and what the Monte Carlo Localization
- * algorithm in action.
+ * This sample tests global localization. You can then put your robot down anywhere in a mapped room,
+ * and watch the Monte Carlo Localization algorithm in action as it determines the location of the robot.
+ * 
+ * The robot must use differential steering (unless you change the pilot used) and have an ultrasonic sensor
+ * for taking range readings to walls and other features. a fixed or rotating range scanner can be used. In the fixed case,
+ * the pilot rotates the robot to take range readings at different angles. In the rotating case, the ultrasonic
+ * sensor must be mounted on a rotating platform.
  * 
  * @author Lawrie Griffiths
  *
  */
 public class MCLTest {
-	private static final int GEAR_RATIO = 3;
-	private static boolean rotatingScanner = false;
+	private static final int GEAR_RATIO = -12;
+	private static final boolean ROTATING_RANGE_SCANNER = true;
 	private static final RegulatedMotor HEAD_MOTOR = Motor.A;
+	private static final float[] ANGLES = {-45f,0f,45f};
+	private static final int BORDER = 0;
 	
 	public static void main(String[] args) throws Exception {
     	PilotProps pp = new PilotProps();
     	pp.loadPersistentValues();
-    	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "4.3"));
-    	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "11.8"));
+    	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "5.6"));
+    	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "16.0"));
     	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
     	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
     	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"true"));
@@ -43,12 +50,12 @@ public class MCLTest {
     	DifferentialPilot robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
     	RangeFinder sonic = new UltrasonicSensor(SensorPort.S1);
     	RangeScanner scanner;
-    	if (rotatingScanner)scanner = new RotatingRangeScanner(HEAD_MOTOR, sonic, GEAR_RATIO);
+    	if (ROTATING_RANGE_SCANNER)scanner = new RotatingRangeScanner(HEAD_MOTOR, sonic, GEAR_RATIO);
     	else scanner = new FixedRangeScanner(robot, sonic);
-    	float[] angles = {-45f, 0f, 45f};
-    	scanner.setAngles(angles);
-    	MCLPoseProvider mcl = new MCLPoseProvider(robot,scanner,null,0,0);
-    	PathController navigator = new Navigator(robot,mcl); 	
+    	scanner.setAngles(ANGLES);
+    	// Map and particles will be sent from the PC
+    	MCLPoseProvider mcl = new MCLPoseProvider(robot, scanner, null, 0, BORDER);
+    	PathController navigator = new Navigator(robot, mcl); 	
     	NXTNavigationModel model = new NXTNavigationModel();
     	model.addPilot(robot);
     	model.addNavigator(navigator);
