@@ -1,10 +1,15 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 import lejos.pc.remote.*;
+import lejos.robotics.NavigationModel;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.localization.MCLPoseProvider;
 
@@ -107,12 +112,21 @@ public class MCLTest extends NavigationPanel {
 		statusPanel.add(readingsLabel);
   }
   
-  public void run() throws Exception {   
-	model.setPanel(this);
+	protected void popupMenu(MouseEvent me) {
+	    Point pt = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), this);
+	    JPopupMenu menu = new JPopupMenu(); 
+	    menu.add(new MenuAction(NavigationModel.NavEvent.FIND_CLOSEST, "Find Closest", me.getPoint(), model, this));
+	    menu.show(this, pt.x, pt.y);
+	}
+	
+  
+  public void run() throws Exception {
+	// Create a stub version of the MCLPoseProvider
 	mcl = new MCLPoseProvider(null,NUM_PARTICLES,0);
-	model.setParticleSet(mcl.getParticles());
+	// Associate the MCLPoseProvider with the model
 	model.setMCL(mcl);
 	
+	// Open the MCLTest navigation panel in a JFrame window
     openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, "Map Test", Color.white);;
   }
 

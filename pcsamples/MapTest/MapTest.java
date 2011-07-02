@@ -1,14 +1,9 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-
+import java.awt.event.*;
+import javax.swing.*;
 import lejos.pc.remote.*;
-import lejos.robotics.navigation.Pose;
-import lejos.robotics.navigation.Waypoint;
+import lejos.robotics.navigation.*;
+import lejos.robotics.NavigationModel;
 
 public class MapTest extends NavigationPanel {
   private static final long serialVersionUID = 1L;
@@ -80,11 +75,21 @@ public class MapTest extends NavigationPanel {
 		});
   }
   
-  public void run() throws Exception {   
-	model.setPanel(this);
+	protected void popupMenu(MouseEvent me) {
+	    Point pt = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), this);
+	    
+	    JPopupMenu menu = new JPopupMenu(); 
+	    menu.add(new MenuAction(NavigationModel.NavEvent.ADD_WAYPOINT, "Add Way Point",me.getPoint(), model, this));
+	    menu.add(new MenuAction(NavigationModel.NavEvent.GOTO, "Go To",me.getPoint(),model, this));
+	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_POSE, "Set pose",me.getPoint(),model, this));
+	
+	    menu.show(this, pt.x, pt.y);
+	}
+  
+  public void run() throws Exception {
 	model.loadMap("Room.svg");
 	
-    openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, "Map Test", Color.white);;
+    openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, "Map Test", Color.white);
   }
  
 }
