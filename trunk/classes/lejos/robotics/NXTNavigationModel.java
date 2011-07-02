@@ -124,22 +124,21 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 						sendMove = saveSendMove;
 						dos.writeByte(NavEvent.SET_POSE.ordinal());
 						currentPose.dumpObject(dos);
-					} else if (event == NavEvent.SET_POSE.ordinal() && pp != null) {
+					} else if (event == NavEvent.SET_POSE.ordinal()) {
 						currentPose.loadObject(dis);
-						pp.setPose(currentPose);
+						if (pp != null) pp.setPose(currentPose);
 					} else if (event == NavEvent.ADD_WAYPOINT.ordinal())  {
-						if (navigator != null) {
-							Waypoint wp = new Waypoint(0,0);
-							wp.loadObject(dis);
-							navigator.addWayPoint(wp);
-						}
+						Waypoint wp = new Waypoint(0,0);
+						wp.loadObject(dis);
+						if (navigator != null) navigator.addWayPoint(wp);
 					} else if (event == NavEvent.FIND_CLOSEST.ordinal()) {
+						float x = dis.readFloat();
+						float y = dis.readFloat();
 						if (particles != null) {
-							float x = dis.readFloat();
-							float y = dis.readFloat();
 							int closest = particles.findClosest(x, y);
 							dos.writeByte(NavEvent.CLOSEST_PARTICLE.ordinal());
 							dos.writeInt(closest);
+							dos.flush();
 						}
 					} else if (event == NavEvent.PARTICLE_SET.ordinal()) {
 						if (particles == null) particles = new MCLParticleSet(map,0,0);
@@ -171,10 +170,11 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 					    float forwardRange;
 					    // Get forward range
 					    try {
-					    	forwardRange = readings.getRange(1);
+					    	forwardRange = readings.getRange(0f); // Range for angle 0 (forward)
 					    } catch (Exception e) {
 					    	forwardRange = 0;
 					    }
+					    
 					    // Don't move forward if we are near a wall
 					    if (forwardRange < 0
 					        || distance + border + projection < forwardRange)
