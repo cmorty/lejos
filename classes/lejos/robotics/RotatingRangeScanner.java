@@ -27,7 +27,8 @@ public class RotatingRangeScanner implements RangeScanner
   public RotatingRangeScanner(RegulatedMotor head, RangeFinder rangeFinder, int gearRatio) {
 	  this.head = head;
 	  this.rangeFinder = rangeFinder;
-	  this.gearRatio = gearRatio;  
+	  this.gearRatio = gearRatio;
+	  head.resetTachoCount();
   }
   
   /**
@@ -44,7 +45,7 @@ public class RotatingRangeScanner implements RangeScanner
 
     for (int i = 0; i < angles.length; i++)
     {
-      head.rotateTo((int) angles[i] * gearRatio);
+      head.rotateTo(((int) angles[i]) * gearRatio);
       Delay.msDelay(50);
       float range = rangeFinder.getRange() + ZERO;
       if (range > MAX_RELIABLE_RANGE_READING)
