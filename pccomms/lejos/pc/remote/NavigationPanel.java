@@ -30,7 +30,7 @@ import lejos.robotics.NavigationModel;
 public class NavigationPanel extends JPanel implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 	protected float xOffset = 0f, yOffset = 0f, pixelsPerUnit = 2f;
-	protected PCNavigationModel model = new PCNavigationModel();
+	protected PCNavigationModel model = new PCNavigationModel(this);
 	protected MapPanel mapPanel = new MapPanel(model, new Dimension(600,700), this);
 	protected JPanel commandPanel = new JPanel();
 	protected JPanel connectPanel = new JPanel();
@@ -187,14 +187,5 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	}
 	
 	protected void popupMenu(MouseEvent me) {
-	    Point pt = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), this);
-	    
-	    JPopupMenu menu = new JPopupMenu(); 
-	    menu.add(new MenuAction(NavigationModel.NavEvent.FIND_CLOSEST, "Find Closest", me.getPoint(), model, this)); 
-	    menu.add(new MenuAction(NavigationModel.NavEvent.ADD_WAYPOINT, "Add Way Point",me.getPoint(), model, this));
-	    menu.add(new MenuAction(NavigationModel.NavEvent.GOTO, "Go To",me.getPoint(),model, this));
-	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_POSE, "Set pose",me.getPoint(),model, this));
-	
-	    menu.show(this, pt.x, pt.y);
 	}
 }

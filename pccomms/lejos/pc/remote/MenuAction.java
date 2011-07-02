@@ -29,6 +29,8 @@ public class MenuAction extends AbstractAction {
 			panel.repaint();
 		} else if (navEvent == NavigationModel.NavEvent.GOTO) {
 			model.goTo(new Waypoint(p.x,p.y));
+		} else if (navEvent == NavigationModel.NavEvent.FIND_CLOSEST) {
+			model.findClosest(p.x,p.y);
 		}
 	}
 }
