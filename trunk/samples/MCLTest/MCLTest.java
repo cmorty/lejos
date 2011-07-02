@@ -37,6 +37,8 @@ public class MCLTest {
 	private static final RegulatedMotor HEAD_MOTOR = Motor.A;
 	private static final float[] ANGLES = {-45f,0f,45f};
 	private static final int BORDER = 0;
+	private static final double ROTATE_SPEED = 100f;
+	private static final double TRAVEL_SPEED = 100f;
 	
 	public static void main(String[] args) throws Exception {
     	PilotProps pp = new PilotProps();
@@ -48,6 +50,8 @@ public class MCLTest {
     	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"true"));
     	
     	DifferentialPilot robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
+    	robot.setRotateSpeed(ROTATE_SPEED);
+    	robot.setTravelSpeed(TRAVEL_SPEED);
     	RangeFinder sonic = new UltrasonicSensor(SensorPort.S1);
     	RangeScanner scanner;
     	if (ROTATING_RANGE_SCANNER)scanner = new RotatingRangeScanner(HEAD_MOTOR, sonic, GEAR_RATIO);
