@@ -8,6 +8,33 @@ import lejos.pc.remote.*;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.localization.MCLPoseProvider;
 
+/**
+ * Test of the Monte Carlo Localization algorithm for global localization.
+ * 
+ * You should run MCLTest from the samples project on the NXT. See the comments in that sample for how 
+ * to set your robot up.
+ * 
+ * You will need to set up a line map of your room (or other environment). This should be in the SVG file, Roon.svg.
+ * 
+ * You can use a tool like svg-edit to set up this map. Make sure you only use <line> tags.
+ * 
+ * To control your localization robot from the PC, run this sample and connect to your robot, by typing in 
+ * the name of the brick and pressing Connect.
+ * 
+ * Then press Load Map, and your map will be loaded and displayed with a randomly generated particle set.
+ * 
+ * You then control the robot by pressing Get Pose and Random Move. Get Pose will cause the robot to take
+ * range readings and update its pose estimate. This will update the particle set.
+ * 
+ * Random Move will cause the robot to make a random travel, followed by rotate move. Again the particle set will 
+ * be updated.
+ * 
+ * Keep clicking Get Pose and Random Move until the robot has a good estimate of its pose. You should see the
+ * particle set cluster ariunds a few possible poses, and eventually find the correct pose.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class MCLTest extends NavigationPanel {
   private static final long serialVersionUID = 1L;
 
