@@ -114,6 +114,15 @@ public class MCLParticle {
     tempPose.setHeading(pose.getHeading() + rr.getAngle(i));
     return map.range(tempPose);    
   }
+  
+  public RangeReadings getReadings(RangeReadings rr, RangeMap map) {
+	  RangeReadings pr = new RangeReadings(rr.getNumReadings());
+	  
+      for(int i=0;i<rr.getNumReadings();i++) {
+     	 pr.setRange(i,rr.getAngle(i), getReading(i, rr, map));
+       }
+	  return pr;
+  }
 
   /**
    * Apply the robot's move to the particle with a bit of random noise.

@@ -1,32 +1,22 @@
 package lejos.pc.remote;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.event.*;
 
-import lejos.robotics.NavigationModel;
+import lejos.robotics.RangeReading;
+import lejos.robotics.RangeReadings;
+import lejos.robotics.navigation.Move;
+import lejos.robotics.navigation.Move.MoveType;
 
+/**
+ * NavigationPanel is a JPanel that displays navigation data from PCNavigationModel,
+ * and allows the user to interact with it.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class NavigationPanel extends JPanel implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 	protected float xOffset = 0f, yOffset = 0f, pixelsPerUnit = 2f;
@@ -35,7 +25,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected JPanel commandPanel = new JPanel();
 	protected JPanel connectPanel = new JPanel();
 	protected JPanel statusPanel = new JPanel();
-	protected JLabel xLabel = new JLabel("Mouse X:");
+	protected JLabel xLabel = new JLabel("X:");
 	protected JTextField xField = new JTextField(5);
 	protected JLabel yLabel = new JLabel("Y:");
 	protected JTextField yField = new JTextField(5);
@@ -48,12 +38,16 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected JTextField nxtName = new JTextField(10);
 	protected JButton connectButton = new JButton("Connect");
 	protected boolean showConnectPanel = true, showStatusPanel = true, 
-	                  showControlPanel = true, showCommandPanel = true;
-	
-	public NavigationPanel() {
-		buildGUI();
-	}
-	
+	                  showControlPanel = true, showCommandPanel = true,
+	                  showReadingsPanel = true, showLastMovePanel = true;
+	protected JPanel readingsPanel = new JPanel();
+	protected JTextField readingsField = new JTextField(12);
+	protected JPanel lastMovePanel = new JPanel();
+	protected JTextField lastMoveField = new JTextField(20);
+
+	/**
+	 * Build the various panels if they are required.
+	 */
 	protected void buildGUI() {
 		if (showConnectPanel) {
 			connectPanel.add(nxtLabel);
@@ -108,7 +102,18 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 			commandPanel.setBorder(BorderFactory.createTitledBorder("Commands"));
 			add(commandPanel);
 		}
+		
+		if (showReadingsPanel) {
+			readingsPanel.setBorder(BorderFactory.createTitledBorder("Readings"));
+			readingsPanel.add(readingsField);
+			add(readingsPanel);
+		}
 
+		if (showLastMovePanel) {
+			lastMovePanel.setBorder(BorderFactory.createTitledBorder("Last Move"));
+			lastMovePanel.add(lastMoveField);
+			add(lastMovePanel);
+		}
 		mapPanel.addMouseMotionListener(this);
 		mapPanel.addMouseListener(this);
 		add(mapPanel);		
@@ -129,8 +134,34 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		JOptionPane.showMessageDialog(this, msg);
 	}
 	
+	/**
+	 * Set the size of the map panel
+	 * 
+	 * @param size the preferred panel dimensions
+	 */
 	public void setMapSize(Dimension size) {
 		mapPanel.setSize(size);
+	}
+	
+	@Override
+	/**
+	 * Update active subpanels with latest data from the navigation model
+	 */
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		if (showReadingsPanel) {
+			RangeReadings readings = model.getReadings();
+			
+			String s = "";
+			for(RangeReading r:readings) {
+				s += r.getRange() + " ";
+			}
+			readingsField.setText(s);
+		}
+		
+		if (showLastMovePanel) {
+			lastMoveField.setText(model.getLastMove().toString());
+		}
 	}
 	
 	/**
@@ -153,39 +184,69 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
     	return (frame);
 	}
   
+	/**
+	 * Log a message
+	 * @param message
+	 */
 	public void log(String message) {
 		System.out.println(message);
 	}
 
+	/**
+	 * Optionally overridden by subclasses
+	 */
 	public void mouseDragged(MouseEvent e) {
 	}
 
+	/**
+	 * Optionally overridden by subclasses
+	 */
 	public void mouseMoved(MouseEvent e) {
+		// Display the mouse co-ordinates when they change
 		xField.setText("" + e.getX());
 		yField.setText("" + e.getY());
 	}
 	
+	/**
+	 * Optionally overridden by subclasses
+	 */
 	public void mouseClicked(MouseEvent e) {
 		popupMenu(e);
 	}
 
-	public void mouseEntered(MouseEvent e) {
-		//System.out.println("Mouse entered at " + e);		
+	/**
+	 * Optionally overridden by subclasses
+	 */
+	public void mouseEntered(MouseEvent e) {		
 	}
 
+	/**
+	 * Called when the mouse exits the map panel. 
+	 */
 	public void mouseExited(MouseEvent e) {
+		// Set the x,y co-ordinates blank when not in the map panel
 		xField.setText("");
 		yField.setText("");
 	}
 
-	public void mousePressed(MouseEvent e) {
-		//System.out.println("Mouse pressed at " + e);		
+	/**
+	 * Optionally overridden by subclasses
+	 */
+	public void mousePressed(MouseEvent e) {		
 	}
 
-	public void mouseReleased(MouseEvent e) {
-		//System.out.println("Mouse released at " + e);	
+	/**
+	 * Optionally overridden by subclasses
+	 */
+	public void mouseReleased(MouseEvent e) {	
 	}
 	
+	/**
+	 * Display a context menu at the specified point in the map panel.
+	 * Overridden by subclasses.
+	 * 
+	 * @param me the mouse event
+	 */
 	protected void popupMenu(MouseEvent me) {
 	}
 }

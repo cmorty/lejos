@@ -28,9 +28,11 @@ public class MenuAction extends AbstractAction {
 			model.setRobotPose(new Pose(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit,0));
 			panel.repaint();
 		} else if (navEvent == NavigationModel.NavEvent.GOTO) {
-			model.goTo(new Waypoint(p.x,p.y));
+			model.goTo(new Waypoint(p.x /panel.pixelsPerUnit,p.y / panel.pixelsPerUnit));
 		} else if (navEvent == NavigationModel.NavEvent.FIND_CLOSEST) {
-			model.findClosest(p.x,p.y);
+			model.findClosest(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit);
+		} else if (navEvent == NavigationModel.NavEvent.ADD_WAYPOINT) {
+			model.addWaypoint(new Waypoint(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit));
 		}
 	}
 }
