@@ -35,6 +35,13 @@ public class MapTest extends NavigationPanel {
   }
   
   public MapTest() {
+	  buildGUI();
+  }
+  
+  protected void buildGUI() {
+	    showReadingsPanel = false;
+	    showLastMovePanel = false;
+	    super.buildGUI();
 		commandPanel.add(xLabel);
 		commandPanel.add(xField);
 		commandPanel.add(yLabel);

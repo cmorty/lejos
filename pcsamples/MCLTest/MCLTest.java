@@ -35,7 +35,7 @@ import lejos.robotics.localization.MCLPoseProvider;
  * be updated.
  * 
  * Keep clicking Get Pose and Random Move until the robot has a good estimate of its pose. You should see the
- * particle set cluster ariunds a few possible poses, and eventually find the correct pose.
+ * particle set cluster around a few possible poses, and eventually find the correct pose.
  * 
  * @author Lawrie Griffiths
  *
@@ -53,7 +53,6 @@ public class MCLTest extends NavigationPanel {
   private JButton getPoseButton = new JButton("Get Pose");
   private JButton loadMapButton = new JButton("Load Map");
   private String mapFileName = "Room.svg";
-  private JLabel readingsLabel = new JLabel("readings");
   
   /**
    * Create a MapTest object and display it in a GUI frame.
@@ -64,9 +63,14 @@ public class MCLTest extends NavigationPanel {
   }
   
   public MCLTest() {
+	  buildGUI();
+  }
+  
+  protected void buildGUI() {
+	    super.buildGUI();
 		commandPanel.add(loadMapButton);
-		commandPanel.add(randomButton);
 		commandPanel.add(getPoseButton);
+		commandPanel.add(randomButton);
 	
 		randomButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -84,17 +88,9 @@ public class MCLTest extends NavigationPanel {
 				else {
 					model.getPose();
 					model.getRemoteParticles();
-					model.getRemoteReadings();
 					model.getEstimatedPose();
 					System.out.println("Max weight:" + model.getParticles().getMaxWeight());
-					RangeReadings readings = model.getReadings();
-				
-					String s = "";
-					for(int i=0;i<readings.getNumReadings();i++) {
-						s += readings.getRange(i) + " ";
-						System.out.println(readings.getAngle(i)+ ":" + readings.getRange(i));
-					}
-					readingsLabel.setText(s);
+					model.getRemoteReadings();
 				}
 			}
 		});
@@ -108,8 +104,6 @@ public class MCLTest extends NavigationPanel {
 				}
 			}
 		});
-		
-		statusPanel.add(readingsLabel);
   }
   
 	protected void popupMenu(MouseEvent me) {
@@ -127,7 +121,7 @@ public class MCLTest extends NavigationPanel {
 	model.setMCL(mcl);
 	
 	// Open the MCLTest navigation panel in a JFrame window
-    openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, "Map Test", Color.white);;
+    openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, "MCL Test", Color.white);;
   }
 
 }
