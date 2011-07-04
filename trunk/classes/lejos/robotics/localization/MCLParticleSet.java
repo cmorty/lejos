@@ -417,18 +417,18 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
    * Find the closest particle to specified coordinates and dump its
    * details to a data output stream.
    *
+   * @param rr a dummy set of range readings used to determine the angles
    * @param dos the data output stream
    * @param x the x-coordinate
    * @param y the y-coordinate
    * @throws IOException
    */
-  public void dumpClosest(RangeReadings rr, RangeMap map, DataOutputStream dos, float x, float y) throws IOException {
+  public void dumpClosest(RangeReadings rr, DataOutputStream dos, float x, float y) throws IOException {
       int closest = findClosest(x, y);
       MCLParticle p = getParticle(closest);
       dos.writeInt(closest);
-      dos.writeFloat(p.getReading(0, rr, map));
-      dos.writeFloat(p.getReading(1, rr, map));
-      dos.writeFloat(p.getReading(2, rr, map));
+      RangeReadings particleReadings = p.getReadings(rr, map);
+      particleReadings.dumpObject(dos);
       dos.writeFloat(p.getWeight());
       dos.flush();
   }

@@ -258,4 +258,20 @@ public class Move implements Transmittable {
 		angleTurned = dis.readFloat();
 	}
 	
+	@Override
+	public String toString() {
+		String s = moveType.name() + " ";
+		switch(moveType) {
+		case ROTATE: 
+			s += angleTurned + " at " + rotateSpeed;
+			break;
+		case TRAVEL:
+			s += distanceTraveled + " at " + travelSpeed;
+			break;
+		case ARC:
+			s += " of " + arcRadius + " for " + distanceTraveled + " at " + travelSpeed;
+			break;
+		}
+		return s;
+	}
 }
