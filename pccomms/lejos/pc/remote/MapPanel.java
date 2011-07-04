@@ -28,7 +28,8 @@ public class MapPanel extends JPanel {
 	protected static final Color ESTIMATE_COLOR = Color.BLUE;
 	protected static final Color CLOSEST_COLOR = Color.YELLOW;
 	protected static final Color MESH_COLOR = Color.ORANGE;
-	protected static final int ROBOT_SIZE = 1;
+	protected static final Color NEIGHBOR_COLOR = Color.ORANGE;
+	protected static final int ROBOT_SIZE = 2;
 	protected final int NODE_CIRC = 6; // Size of node circle to draw (diameter in pixels)
 	protected PCNavigationModel model;
 	protected NavigationPanel parent;
@@ -87,7 +88,7 @@ public class MapPanel extends JPanel {
 				Iterator <Node> iter = coll.iterator();
 				while(iter.hasNext()) {
 					Node neighbor = iter.next();
-					g2d.setColor(Color.YELLOW);
+					g2d.setColor(NEIGHBOR_COLOR);
 					Line line = new Line(cur.x * parent.pixelsPerUnit, cur.y * parent.pixelsPerUnit, neighbor.x * parent.pixelsPerUnit, neighbor.y * parent.pixelsPerUnit);
 					g2d.draw(line);
 				}
@@ -141,7 +142,7 @@ public class MapPanel extends JPanel {
 	 */
 	public void paintPose(Graphics2D g2d, Pose pose) {
 		g2d.setColor(PARTICLE_COLOR);
-		Ellipse2D c = new Ellipse2D.Float(parent.xOffset + pose.getX() * parent.pixelsPerUnit - 1, parent.yOffset + pose.getY() * parent.pixelsPerUnit - 1, ROBOT_SIZE * parent.pixelsPerUnit, ROBOT_SIZE * parent.pixelsPerUnit);
+		Ellipse2D c = new Ellipse2D.Float((parent.xOffset + pose.getX() - ROBOT_SIZE/2)  * parent.pixelsPerUnit, (parent.yOffset + pose.getY() - ROBOT_SIZE/2) * parent.pixelsPerUnit, ROBOT_SIZE * parent.pixelsPerUnit, ROBOT_SIZE * parent.pixelsPerUnit);
 		Line rl = getArrowLine(pose);
 		Line2D l2d = new Line2D.Float(rl.x1, rl.y1, rl.x2, rl.y2);
 		g2d.draw(l2d);
@@ -187,7 +188,7 @@ public class MapPanel extends JPanel {
 	protected Line getArrowLine(Pose pose) {
 		return new Line(parent.xOffset + pose.getX() * parent.pixelsPerUnit,
     		        parent.yOffset + pose.getY() * parent.pixelsPerUnit, 
-    		        parent.xOffset + pose.getX() * parent.pixelsPerUnit + ARROW_LENGTH * (float) Math.cos(Math.toRadians(pose.getHeading())), 
-    		        parent.yOffset + pose.getY() * parent.pixelsPerUnit + ARROW_LENGTH * (float) Math.sin(Math.toRadians(pose.getHeading())));
+    		        parent.xOffset + pose.getX() * parent.pixelsPerUnit + ARROW_LENGTH * parent.pixelsPerUnit * (float) Math.cos(Math.toRadians(pose.getHeading())), 
+    		        parent.yOffset + pose.getY() * parent.pixelsPerUnit + ARROW_LENGTH * parent.pixelsPerUnit * (float) Math.sin(Math.toRadians(pose.getHeading())));
 	}
 }

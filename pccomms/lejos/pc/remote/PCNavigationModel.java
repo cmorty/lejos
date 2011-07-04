@@ -14,6 +14,7 @@ import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.AstarSearchAlgorithm;
 import lejos.robotics.pathfinding.FourWayGridMesh;
 import lejos.robotics.pathfinding.Node;
+import lejos.robotics.pathfinding.NodePathFinder;
 import lejos.robotics.localization.*;
 
 /**
@@ -42,6 +43,7 @@ public class PCNavigationModel extends NavigationModel {
 	protected AstarSearchAlgorithm alg = new AstarSearchAlgorithm();
 	protected Collection<Node> nodes;
 	protected Node start, destination;
+	protected NodePathFinder pf; 
 	
 	/**
 	 * Create the model and associate the navigation panel with it
@@ -191,6 +193,7 @@ public class PCNavigationModel extends NavigationModel {
 			map = mapLoader.readLineMap();
 			mesh = new FourWayGridMesh(map, gridSpace,clearance);
 			nodes = mesh.getMesh();
+			pf = new NodePathFinder(alg, mesh);
 			Rectangle boundingRect = map.getBoundingRect();
 			panel.setMapSize(new Dimension((int) (boundingRect.width * 2), (int) (boundingRect.height * 2)));
 			panel.repaint();
