@@ -6,6 +6,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.util.Collection;
+import java.util.Iterator;
+
 import javax.swing.JPanel;
 import lejos.geom.Line;
 import lejos.robotics.localization.MCLParticle;
@@ -13,6 +16,7 @@ import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.localization.MCLPoseProvider;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.Pose;
+import lejos.robotics.pathfinding.Node;
 
 public class MapPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -23,9 +27,11 @@ public class MapPanel extends JPanel {
 	protected static final Color GRID_COLOR = Color.GREEN;
 	protected static final Color ESTIMATE_COLOR = Color.BLUE;
 	protected static final Color CLOSEST_COLOR = Color.YELLOW;
+	protected static final Color MESH_COLOR = Color.ORANGE;
 	protected static final int ROBOT_SIZE = 1;
+	protected final int NODE_CIRC = 6; // Size of node circle to draw (diameter in pixels)
 	protected PCNavigationModel model;
-	NavigationPanel parent;
+	protected NavigationPanel parent;
 	protected Dimension size;;
 	protected float arrowLength;
 	protected int gridSize = 10;
@@ -66,10 +72,34 @@ public class MapPanel extends JPanel {
 		}
 	}
 	
+	protected void paintMesh(Graphics2D g2d) {
+		Collection<Node> nodeSet = model.getNodes();
+		if(nodeSet != null) {
+			Iterator <Node> nodeIterator = nodeSet.iterator();
+			while(nodeIterator.hasNext()) {
+				Node cur = nodeIterator.next();
+				g2d.setColor(MESH_COLOR);
+				Ellipse2D.Double circle = new Ellipse2D.Double((cur.x-NODE_CIRC/2) * parent.pixelsPerUnit, (cur.y-NODE_CIRC/2) * parent.pixelsPerUnit, NODE_CIRC * parent.pixelsPerUnit, NODE_CIRC * parent.pixelsPerUnit);
+				g2d.fill(circle);
+				
+				// TODO: This code will draw lines to every node neighbor and *repeat* connections but I don't care.
+				Collection <Node> coll = cur.getNeighbors();
+				Iterator <Node> iter = coll.iterator();
+				while(iter.hasNext()) {
+					Node neighbor = iter.next();
+					g2d.setColor(Color.YELLOW);
+					Line line = new Line(cur.x * parent.pixelsPerUnit, cur.y * parent.pixelsPerUnit, neighbor.x * parent.pixelsPerUnit, neighbor.y * parent.pixelsPerUnit);
+					g2d.draw(line);
+				}
+			}
+		}
+	}
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		paintGrid((Graphics2D) g);
 		paintMap((Graphics2D) g);
+		if (parent.meshCheck.isSelected()) paintMesh((Graphics2D) g);
 		if (model.getParticles() != null) paintParticles((Graphics2D) g);
 		else if (model.getMCL() == null) paintRobot((Graphics2D) g);
 	}

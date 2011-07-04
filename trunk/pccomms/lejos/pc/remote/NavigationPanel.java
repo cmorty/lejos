@@ -4,11 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
-
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
-import lejos.robotics.navigation.Move;
-import lejos.robotics.navigation.Move.MoveType;
 
 /**
  * NavigationPanel is a JPanel that displays navigation data from PCNavigationModel,
@@ -34,6 +31,8 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected JSlider slider = new JSlider(100,500,200);
 	protected JLabel gridLabel = new JLabel("Grid:");
 	protected JCheckBox gridCheck = new JCheckBox();
+	protected JLabel meshLabel = new JLabel("Mesh:");
+	protected JCheckBox meshCheck = new JCheckBox();
 	protected JLabel nxtLabel = new JLabel("NXT name:");
 	protected JTextField nxtName = new JTextField(10);
 	protected JButton connectButton = new JButton("Connect");
@@ -69,10 +68,13 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 			controlPanel.add(slider);
 			controlPanel.add(gridLabel);
 			controlPanel.add(gridCheck);
+			controlPanel.add(meshLabel);
+			controlPanel.add(meshCheck);
 			controlPanel.setBorder(BorderFactory.createTitledBorder("Controls"));
 			add(controlPanel);
 					
 			gridCheck.setSelected(true);
+			meshCheck.setSelected(false);
 			
 			slider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
@@ -86,7 +88,13 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 				public void stateChanged(ChangeEvent e) {;
 					mapPanel.repaint();
 				}
-			});	
+			});
+			
+			meshCheck.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {;
+					mapPanel.repaint();
+				}
+			});
 		}
 		
 		if (showStatusPanel) {
@@ -203,8 +211,8 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	 */
 	public void mouseMoved(MouseEvent e) {
 		// Display the mouse co-ordinates when they change
-		xField.setText("" + e.getX());
-		yField.setText("" + e.getY());
+		xField.setText("" + Math.round(e.getX() / pixelsPerUnit));
+		yField.setText("" + Math.round(e.getY() / pixelsPerUnit));
 	}
 	
 	/**

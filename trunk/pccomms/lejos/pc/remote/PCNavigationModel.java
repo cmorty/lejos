@@ -2,6 +2,8 @@ package lejos.pc.remote;
 
 import java.awt.Dimension;
 import java.io.*;
+import java.util.Collection;
+
 import lejos.geom.Rectangle;
 import lejos.pc.comm.*;
 import lejos.robotics.NavigationModel;
@@ -9,6 +11,9 @@ import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.mapping.*;
 import lejos.robotics.navigation.*;
+import lejos.robotics.pathfinding.AstarSearchAlgorithm;
+import lejos.robotics.pathfinding.FourWayGridMesh;
+import lejos.robotics.pathfinding.Node;
 import lejos.robotics.localization.*;
 
 /**
@@ -31,6 +36,12 @@ public class PCNavigationModel extends NavigationModel {
 	protected boolean connected = false;
 	protected RangeReadings particleReadings = new RangeReadings(0);
 	protected float weight;
+	protected FourWayGridMesh mesh;
+	protected int gridSpace = 39;
+	protected int clearance = 20;
+	protected AstarSearchAlgorithm alg = new AstarSearchAlgorithm();
+	protected Collection<Node> nodes;
+	protected Node start, destination;
 	
 	/**
 	 * Create the model and associate the navigation panel with it
@@ -148,6 +159,10 @@ public class PCNavigationModel extends NavigationModel {
 		receiver.start();
 	}
 	
+	public Collection<Node> getNodes() {
+		return nodes;
+	}
+	
 	/**
 	 * Test if a NXT brick is currently connected
 	 * 
@@ -174,6 +189,8 @@ public class PCNavigationModel extends NavigationModel {
 			FileInputStream is = new FileInputStream(mapFile);
 			SVGMapLoader mapLoader = new SVGMapLoader(is);
 			map = mapLoader.readLineMap();
+			mesh = new FourWayGridMesh(map, gridSpace,clearance);
+			nodes = mesh.getMesh();
 			Rectangle boundingRect = map.getBoundingRect();
 			panel.setMapSize(new Dimension((int) (boundingRect.width * 2), (int) (boundingRect.height * 2)));
 			panel.repaint();
@@ -283,8 +300,12 @@ public class PCNavigationModel extends NavigationModel {
 	 * @param p the robot pose
 	 */
 	public void setPose(Pose p) {
-		if (!connected) return;
 		currentPose = p;
+		if (start != null) mesh.removeNode(this.start);
+		start = new Node(p.getX(), p.getY());
+		mesh.addNode(start, 4);
+		panel.repaint();
+		if (!connected) return;
 		try {
 			dos.writeByte(NavEvent.SET_POSE.ordinal());
 			currentPose.dumpObject(dos);
