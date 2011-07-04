@@ -54,6 +54,11 @@ public class PCNavigationModel extends NavigationModel {
 		this.panel = panel;
 	}
 	
+	public void setMeshParams(int gridSpace, int clearance) {
+		this.gridSpace = gridSpace;
+		this.clearance = clearance;
+	}
+	
 	/**
 	 * Get the MCLPoseProvider associated with this model
 	 * 
