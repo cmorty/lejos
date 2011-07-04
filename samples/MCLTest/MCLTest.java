@@ -66,6 +66,7 @@ public class MCLTest {
     	model.setRandomMoveParameters(MAX_DISTANCE, PROJECTION, BORDER);
     	model.addPilot(robot);
     	model.addNavigator(navigator);
-    	model.addMCL(mcl);
+    	model.addPoseProvider(mcl);
+    	model.setAutoSendPose(false);
 	}
 }
