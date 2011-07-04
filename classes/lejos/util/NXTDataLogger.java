@@ -313,9 +313,9 @@ public class NXTDataLogger implements Logger{
             if (this.dis!=null) this.dis.close();
             if (this.dos!=null) this.dos.close();
         } catch (IOException e) {
-            ; // ignore
+            // ignore
         } catch (Exception e) {
-            ; // ignore
+            // ignore
         }
         this.dis = null;
         this.dos = null;
@@ -337,7 +337,7 @@ public class NXTDataLogger implements Logger{
         if (this.disableWriteState) return;
          
         if(setColumnsCount==0) throw new IllegalStateException("cols not set ");
-        if (this.currColumnPosition>=(((int)this.itemsPerLine)&0xff)) throw new IllegalStateException("too many cols ");
+        if (this.currColumnPosition>=((this.itemsPerLine)&0xff)) throw new IllegalStateException("too many cols ");
 
         // disable this state management to avoid infinite (well, until the heap blows) recursion
         this.disableWriteState=true; 
@@ -375,7 +375,7 @@ public class NXTDataLogger implements Logger{
 //        System.out.println("colpos="+ this.currColumnPosition);
 //        System.out.println(("ipl="+(((int)this.itemsPerLine)&0xff)));
 //        Button.waitForPress();
-        if (this.currColumnPosition!=(((int)this.itemsPerLine)&0xff)) throw new IllegalStateException("too few cols ");
+        if (this.currColumnPosition!=((this.itemsPerLine)&0xff)) throw new IllegalStateException("too few cols ");
         currColumnPosition=1;
 //        this.lineCount++;
     }
@@ -438,7 +438,7 @@ public class NXTDataLogger implements Logger{
     * @see #finishLine
     */
     public void writeLog(boolean datapoint) {
-        writeLog((int)(datapoint ? 1 : 0));
+        writeLog(datapoint ? 1 : 0);
     }
 
     /** 

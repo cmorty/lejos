@@ -1,20 +1,14 @@
 package lejos.robotics;
 
 import java.io.IOException;
-
-import lejos.nxt.Button;
-import lejos.nxt.comm.Bluetooth;
-import lejos.nxt.comm.NXTCommConnector;
-import lejos.nxt.comm.NXTConnection;
-import lejos.robotics.localization.MCLParticleSet;
-import lejos.robotics.localization.MCLPoseProvider;
-import lejos.robotics.localization.PoseProvider;
+import lejos.nxt.comm.*;
+import lejos.robotics.localization.*;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.*;
-import lejos.robotics.objectdetection.Feature;
-import lejos.robotics.objectdetection.FeatureDetector;
-import lejos.robotics.objectdetection.FeatureListener;
+import lejos.robotics.objectdetection.*;
 import lejos.robotics.pathfinding.PathFinder;
+import lejos.util.Delay;
+import java.util.Collection;
 
 public class NXTNavigationModel extends NavigationModel implements MoveListener, WaypointListener, FeatureListener {
 	protected PathController navigator;
@@ -28,10 +22,11 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	protected boolean autoSendPose = true;
 	protected RangeScanner scanner;
 	protected MCLPoseProvider mcl;
-	protected boolean sendMove = true;
+	protected boolean sendMoveStart = false, sendMoveStop = true;
+	private Thread receiver;
 	
 	public NXTNavigationModel() {
-		Thread receiver = new Thread(new Receiver());
+		receiver = new Thread(new Receiver());
 		receiver.start();
 	}
 	
@@ -45,7 +40,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	
 	public void fatal(String message) {
 		System.out.println(message);
-		Button.waitForPress();
+		Delay.msDelay(5000);
 		System.exit(1);
 	}
 	
@@ -63,6 +58,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	@SuppressWarnings("hiding")
 	public void addPoseProvider(PoseProvider pp) {
 		this.pp = pp;
+		if (pp instanceof MCLPoseProvider) mcl = (MCLPoseProvider) pp;
 	}
 	
 	@SuppressWarnings("hiding")
@@ -70,17 +66,24 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		this.scanner = scanner;
 	}
 	
-	@SuppressWarnings("hiding")
-	public void addMCL(MCLPoseProvider mcl) {
-		this.mcl = mcl;
-		mcl.setDebug(true);
-	}
-	
 	public void setRandomMoveParameters(float maxDistance, float projection, float border) {
 		this.maxDistance = maxDistance;
 		this.projection = projection;
 		this.border = border;
 	}
+	
+	public void setAutoSendPose(boolean on) {
+		this.autoSendPose = on;
+	}
+	
+	public void setSendMoveStart(boolean on) {
+		sendMoveStart = on;
+	}
+	
+	public void setSendMoveStop(boolean on) {
+		sendMoveStop = on;
+	}
+	
 
 	class Receiver implements Runnable {
 		public void run() {
@@ -92,95 +95,123 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 			
 			while(true) {
 				try {
-					byte event = dis.readByte();
-					log("Event:" +  NavEvent.values()[event].name());
-					//log("Free memory = " + System.getRuntime().freeMemory());
-					if (event ==  NavEvent.LOAD_MAP.ordinal()) {
-						if (map == null) map = new LineMap();
-						map.loadObject(dis);
-						if (mcl != null) mcl.setMap(map);
-					} else if (event == NavEvent.GOTO.ordinal()) {
-						if (navigator != null) {
+					synchronized(this) {
+						byte event = dis.readByte();
+						NavEvent navEvent = NavEvent.values()[event];
+						log("Event:" +  navEvent.name());
+						switch (navEvent) {
+						case LOAD_MAP: // Map sent from POC
+							if (map == null) map = new LineMap();
+							map.loadObject(dis);
+							if (mcl != null) mcl.setMap(map);
+							break;
+						case GOTO: // Update of target and request to go to the new target
 							target.loadObject(dis);
-							navigator.goTo(target);
-						}
-					} else if (event == NavEvent.STOP.ordinal()) {
-						if (pilot != null) {
-							pilot.stop();
-						}
-					} else if (event == NavEvent.TRAVEL.ordinal()) {
-						if (pilot != null) {
+							if (navigator != null)navigator.goTo(target);
+							break;
+						case STOP: // Request to stop the robot
+							if (pilot != null) pilot.stop();
+							break;
+						case TRAVEL: // Request to travel a given distance
 							float distance = dis.readFloat();
-							pilot.travel(distance);
+							if (pilot != null) pilot.travel(distance);
+							break;
+						case ROTATE: // Request to rotate a given angle
+							float angle = dis.readFloat();
+							if (pilot != null && pilot instanceof RotateMoveController) ((RotateMoveController) pilot).rotate(angle);
+							break;
+						case GET_POSE: // Request to get the pose and return it to the PC
+							PoseProvider poseProvider = (mcl != null ? mcl : pp);
+							// Suppress sending moves to PC while taking readings
+							boolean saveSendMoveStart = sendMoveStart;
+							boolean saveSendMoveStop = sendMoveStop;
+							sendMoveStart = false;
+							sendMoveStop = false;
+							currentPose = poseProvider.getPose();
+							sendMoveStart = saveSendMoveStart;
+							sendMoveStop = saveSendMoveStop;
+							dos.writeByte(NavEvent.SET_POSE.ordinal());
+							currentPose.dumpObject(dos);
+							break;
+						case SET_POSE: // Request to set the current pose of the robot
+							currentPose.loadObject(dis);
+							if (pp != null) pp.setPose(currentPose);
+							break;
+						case ADD_WAYPOINT: // Request to add a waypoint
+							Waypoint wp = new Waypoint(0,0);
+							wp.loadObject(dis);
+							if (navigator != null) navigator.addWayPoint(wp);
+							break;
+						case FIND_CLOSEST: // Request to find particle by co-ordinates and
+							               // send its details to the PC
+							float x = dis.readFloat();
+							float y = dis.readFloat();
+							if (particles != null) {
+								dos.writeByte(NavEvent.CLOSEST_PARTICLE.ordinal());
+								particles.dumpClosest(readings, dos, x, y);
+							}
+							break;
+						case PARTICLE_SET: // Particle set send from PC
+							if (particles == null) particles = new MCLParticleSet(map,0,0);
+						    particles.loadObject(dis);
+						    mcl.setParticles(particles);
+						    break;
+						case TAKE_READINGS: // Request to take range readings and send them to the PC
+							if (scanner != null) {
+								readings = scanner.getRangeValues();
+								dos.writeByte(NavEvent.RANGE_READINGS.ordinal());
+								readings.dumpObject(dos);
+							}
+							break;
+						case GET_READINGS: // Request to send current readings to the PC
+							dos.writeByte(NavEvent.RANGE_READINGS.ordinal());
+							if (mcl != null) readings = mcl.getRangeReadings();
+							readings.dumpObject(dos);
+							break;
+						case GET_PARTICLES: // Request to send particles to the Pc
+							dos.writeByte(NavEvent.PARTICLE_SET.ordinal());
+							particles.dumpObject(dos);
+							break;
+						case GET_ESTIMATED_POSE: // Request to send estimated pose to the PC
+							dos.writeByte(NavEvent.ESTIMATED_POSE.ordinal());
+							mcl.dumpObject(dos);
+							break;
+						case FIND_PATH:
+							target.loadObject(dis);
+							if (finder != null) {
+								dos.writeByte(NavEvent.PATH.ordinal());
+								try {
+									Collection<Waypoint> path = finder.findRoute(currentPose, target);
+									// TODO: send the path
+								} catch (DestinationUnreachableException e) {
+									// nothing
+								}
+							}
+							break;
+						case RANDOM_MOVE: // Request to make a random move
+							if (pilot != null && pilot instanceof RotateMoveController) {
+							    angle = (float) Math.random() * 360;
+							    distance = (float) Math.random() * maxDistance;
+							    
+							    if (angle > 180f) angle -= 360f;
+		
+							    float forwardRange;
+							    // Get forward range
+							    try {
+							    	forwardRange = readings.getRange(0f); // Range for angle 0 (forward)
+							    } catch (Exception e) {
+							    	forwardRange = 0;
+							    }
+							    
+							    // Don't move forward if we are near a wall
+							    if (forwardRange < 0
+							        || distance + border + projection < forwardRange)
+							      pilot.travel(distance);
+							    
+							    ((RotateMoveController) pilot).rotate(angle);
+							}
+							break;
 						}
-					} else if (event == NavEvent.ROTATE.ordinal() && pilot != null && pilot instanceof RotateMoveController) {
-						float angle = dis.readFloat();
-						((RotateMoveController) pilot).rotate(angle);
-					} else if (event == NavEvent.GET_POSE.ordinal()) {
-						PoseProvider poseProvider = (mcl != null ? mcl : pp);
-						boolean saveSendMove = sendMove;
-						sendMove = false;
-						currentPose = poseProvider.getPose();
-						sendMove = saveSendMove;
-						dos.writeByte(NavEvent.SET_POSE.ordinal());
-						currentPose.dumpObject(dos);
-					} else if (event == NavEvent.SET_POSE.ordinal()) {
-						currentPose.loadObject(dis);
-						if (pp != null) pp.setPose(currentPose);
-					} else if (event == NavEvent.ADD_WAYPOINT.ordinal())  {
-						Waypoint wp = new Waypoint(0,0);
-						wp.loadObject(dis);
-						if (navigator != null) navigator.addWayPoint(wp);
-					} else if (event == NavEvent.FIND_CLOSEST.ordinal()) {
-						float x = dis.readFloat();
-						float y = dis.readFloat();
-						if (particles != null) {
-							int closest = particles.findClosest(x, y);
-							dos.writeByte(NavEvent.CLOSEST_PARTICLE.ordinal());
-							dos.writeInt(closest);
-							dos.flush();
-						}
-					} else if (event == NavEvent.PARTICLE_SET.ordinal()) {
-						if (particles == null) particles = new MCLParticleSet(map,0,0);
-						//log("Created MCL");
-					    particles.loadObject(dis);
-					    //log("Loaded particles");
-					    mcl.setParticles(particles);
-					} else if (event == NavEvent.TAKE_READINGS.ordinal() && scanner != null) {
-						readings = scanner.getRangeValues();
-						dos.writeByte(NavEvent.RANGE_READINGS.ordinal());
-						readings.dumpObject(dos);						
-					} else if (event == NavEvent.GET_READINGS.ordinal()) {
-						dos.writeByte(NavEvent.RANGE_READINGS.ordinal());
-						if (mcl != null) readings = mcl.getRangeReadings();
-						readings.dumpObject(dos);						
-					} else if (event == NavEvent.GET_PARTICLES.ordinal()) {
-						dos.writeByte(NavEvent.PARTICLE_SET.ordinal());
-						particles.dumpObject(dos);						
-					} else if (event == NavEvent.GET_ESTIMATED_POSE.ordinal()) {
-						dos.writeByte(NavEvent.ESTIMATED_POSE.ordinal());
-						mcl.dumpObject(dos);						
-					} else if (event == NavEvent.RANDOM_MOVE.ordinal() && pilot != null &&
-							   pilot instanceof RotateMoveController) {
-					    float angle = (float) Math.random() * 360;
-					    float distance = (float) Math.random() * maxDistance;
-					    
-					    if (angle > 180f) angle -= 360f;
-
-					    float forwardRange;
-					    // Get forward range
-					    try {
-					    	forwardRange = readings.getRange(0f); // Range for angle 0 (forward)
-					    } catch (Exception e) {
-					    	forwardRange = 0;
-					    }
-					    
-					    // Don't move forward if we are near a wall
-					    if (forwardRange < 0
-					        || distance + border + projection < forwardRange)
-					      pilot.travel(distance);
-					    
-					    ((RotateMoveController) pilot).rotate(angle);
 					}
 				} catch (IOException ioe) {
 					fatal("IOException in receiver:");
@@ -191,26 +222,31 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	}
 
 	public void moveStarted(Move event, MoveProvider mp) {
-		/*try {
-			log("Sending move started");
-			dos.writeByte(NavEvent.MOVE_STARTED.ordinal());
-			event.dumpObject(dos);
-			log("Finished move started");
+		if (!sendMoveStart) return;
+		try {
+			synchronized(receiver) {
+				log("Sending move started");
+				dos.writeByte(NavEvent.MOVE_STARTED.ordinal());
+				event.dumpObject(dos);
+				log("Finished move started");
+			}
 		} catch (IOException ioe) {
 			fatal("IOException in moveStarted");	
-		}*/
+		}
 	}
 
 	public void moveStopped(Move event, MoveProvider mp) {
-		if (!sendMove) return;
+		if (!sendMoveStop) return;
 		try {
-			log("Sending move stopped");
-			dos.writeByte(NavEvent.MOVE_STOPPED.ordinal());
-			event.dumpObject(dos);
-			if (pp != null && autoSendPose) {
-				log("Sending set pose");
-				dos.writeByte(NavEvent.SET_POSE.ordinal());
-				pp.getPose().dumpObject(dos);
+			synchronized(receiver) {
+				log("Sending move stopped");
+				dos.writeByte(NavEvent.MOVE_STOPPED.ordinal());
+				event.dumpObject(dos);
+				if (pp != null && autoSendPose) {
+					log("Sending set pose");
+					dos.writeByte(NavEvent.SET_POSE.ordinal());
+					pp.getPose().dumpObject(dos);
+				}
 			}
 		} catch (IOException ioe) {
 			fatal("IOException in moveStarted");	
@@ -219,8 +255,10 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 
 	public void nextWaypoint(Waypoint wp) {	
 		try {
-			dos.writeByte(NavEvent.WAYPOINT_REACHED.ordinal());
-			wp.dumpObject(dos);
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.WAYPOINT_REACHED.ordinal());
+				wp.dumpObject(dos);
+			}
 		} catch (IOException ioe) {
 			fatal("IOException in nextWaypoint");	
 		}
@@ -228,7 +266,10 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 
 	public void pathComplete() {
 		try {
-			dos.writeByte(NavEvent.PATH_COMPLETE.ordinal());
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.PATH_COMPLETE.ordinal());
+				dos.flush();
+			}
 		} catch (IOException ioe) {
 			fatal("IOException in pathComplete");	
 		}
@@ -237,7 +278,10 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	@SuppressWarnings("hiding")
 	public void featureDetected(Feature feature, FeatureDetector detector) {
 		try {
-			dos.writeByte(NavEvent.FEATURE_DETECTED.ordinal());
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.FEATURE_DETECTED.ordinal());
+				dos.flush();
+			}
 		} catch (IOException ioe) {
 			fatal("IOException in featureDetected");	
 		}

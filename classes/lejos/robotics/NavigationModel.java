@@ -8,6 +8,25 @@ import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
 
+/**
+ * NavigationModel is an abstract class that has two implementations: NXTNavigationModel and PCNavigationModel.
+ * 
+ * It is used to hold all navigation data and transmit updates to the date and other events between a NXT
+ * brick and the PC.
+ * 
+ * The abstract NAvigationModel class defines all the events and all data and methods that are common to the 
+ * NXT and PC implementations.
+ * 
+ * The purpose of NavigationModel and the NXT and PC implementations is to to allow navigation tasks to be 
+ * split between the NXT and the PC, to allow the PC to show a graphical display of the navigational data
+ * and allow the user to interact with it.
+ * 
+ * This allows many different navigation applications to be developed which split processing between the PC
+ * and the NXT.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public abstract class NavigationModel {
 	protected LineMap map;
 	protected String nxtName;
