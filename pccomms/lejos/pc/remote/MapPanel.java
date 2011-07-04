@@ -15,13 +15,18 @@ import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.Pose;
 
 public class MapPanel extends JPanel {
-	private static final long serialVersionUID = 1L;;
+	private static final long serialVersionUID = 1L;
 	protected static final float ARROW_LENGTH = 10f;
+	protected static final Color MAP_COLOR = Color.BLACK;
+	protected static final Color PARTICLE_COLOR = Color.RED;
+	protected static final Color BACKGROUND_COLOR = Color.WHITE;
+	protected static final Color GRID_COLOR = Color.GREEN;
+	protected static final Color ESTIMATE_COLOR = Color.BLUE;
+	protected static final Color CLOSEST_COLOR = Color.YELLOW;
 	protected static final int ROBOT_SIZE = 1;
 	protected PCNavigationModel model;
 	NavigationPanel parent;
 	protected Dimension size;;
-	protected int closest = -1;
 	protected float arrowLength;
 	protected int gridSize = 10;
 	
@@ -33,7 +38,7 @@ public class MapPanel extends JPanel {
 		this.model = model;
 		setPreferredSize(size);
 		this.parent = parent;
-		setBackground(Color.WHITE);
+		setBackground(BACKGROUND_COLOR);
 	}
 	
 	public void setSize(Dimension size) {
@@ -50,7 +55,7 @@ public class MapPanel extends JPanel {
 		LineMap map = model.getMap();
 		if (map == null) return;
 		Line[] lines = map.getLines();
-		g2d.setColor(Color.black);
+		g2d.setColor(MAP_COLOR);
 		for (int i = 0; i < lines.length; i++) {
 			Line2D line = new Line2D.Float(
     		  parent.xOffset + lines[i].x1 * parent.pixelsPerUnit, 
@@ -92,7 +97,7 @@ public class MapPanel extends JPanel {
 	        					parent.xOffset + minX * parent.pixelsPerUnit, 
 	        					parent.yOffset + minY * parent.pixelsPerUnit, (maxX - minX)  * parent.pixelsPerUnit, 
 	        					(maxY - minY)  * parent.pixelsPerUnit);
-				g2d.setColor(Color.blue);
+				g2d.setColor(ESTIMATE_COLOR);
 				g2d.draw(c);
 				paintPose(g2d,estimatedPose);
 			}
@@ -105,7 +110,7 @@ public class MapPanel extends JPanel {
 	 * @param g2d the Graphics2D object
 	 */
 	public void paintPose(Graphics2D g2d, Pose pose) {
-		g2d.setColor(Color.RED);
+		g2d.setColor(PARTICLE_COLOR);
 		Ellipse2D c = new Ellipse2D.Float(parent.xOffset + pose.getX() * parent.pixelsPerUnit - 1, parent.yOffset + pose.getY() * parent.pixelsPerUnit - 1, ROBOT_SIZE * parent.pixelsPerUnit, ROBOT_SIZE * parent.pixelsPerUnit);
 		Line rl = getArrowLine(pose);
 		Line2D l2d = new Line2D.Float(rl.x1, rl.y1, rl.x2, rl.y2);
@@ -116,7 +121,7 @@ public class MapPanel extends JPanel {
 	public void paintGrid(Graphics2D g2d) {
 		if (gridSize <= 0) return;
 		if (!parent.gridCheck.isSelected()) return;
-		g2d.setColor(Color.GREEN);
+		g2d.setColor(GRID_COLOR);
 		for(int i=0; i<this.getHeight(); i+=gridSize*parent.pixelsPerUnit) {
 			g2d.drawLine(0,i, this.getWidth()-1,i);		
 		}
@@ -132,13 +137,13 @@ public class MapPanel extends JPanel {
 	public void paintParticles(Graphics2D g2d) {
 		MCLParticleSet particles = model.getParticles();
 		int numParticles = particles.numParticles();
-		g2d.setColor(Color.red);
+		g2d.setColor(PARTICLE_COLOR);
 		for (int i = 0; i < numParticles; i++) {
 			MCLParticle part = particles.getParticle(i);
 			if (part != null) {
-				if (i == closest) g2d.setColor(Color.green);
+				if (i == model.closest) g2d.setColor(CLOSEST_COLOR);
 				paintPose(g2d, new Pose(part.getPose().getX(), part.getPose().getY(), part.getPose().getHeading()));
-				g2d.setColor(Color.red);
+				g2d.setColor(PARTICLE_COLOR);
 			}
 		}	  
 	}
@@ -154,9 +159,5 @@ public class MapPanel extends JPanel {
     		        parent.yOffset + pose.getY() * parent.pixelsPerUnit, 
     		        parent.xOffset + pose.getX() * parent.pixelsPerUnit + ARROW_LENGTH * (float) Math.cos(Math.toRadians(pose.getHeading())), 
     		        parent.yOffset + pose.getY() * parent.pixelsPerUnit + ARROW_LENGTH * (float) Math.sin(Math.toRadians(pose.getHeading())));
-	}
-	
-	public void setClosest(int closest) {
-		this.closest = closest;
 	}
 }

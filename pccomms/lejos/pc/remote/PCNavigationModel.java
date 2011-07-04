@@ -5,6 +5,8 @@ import java.io.*;
 import lejos.geom.Rectangle;
 import lejos.pc.comm.*;
 import lejos.robotics.NavigationModel;
+import lejos.robotics.RangeReading;
+import lejos.robotics.RangeReadings;
 import lejos.robotics.mapping.*;
 import lejos.robotics.navigation.*;
 import lejos.robotics.localization.*;
@@ -13,7 +15,7 @@ import lejos.robotics.localization.*;
  * The PCNavigationModel holds all the navigation data that is transmitted as events,
  * to and from a NXT brick.
  * 
- * It has methods to generate events, and a Receiver thread to reeive events from the NXT.
+ * It has methods to generate events, and a Receiver thread to receive events from the NXT.
  * 
  * There is a NavigationPanel associated with the model. Whenever data in the model is updated,
  * the NavigationPanel is repainted with the new data.
@@ -27,6 +29,8 @@ public class PCNavigationModel extends NavigationModel {
 	protected Move lastMove = new Move(0,0,false);
 	protected int closest = -1;
 	protected boolean connected = false;
+	protected RangeReadings particleReadings = new RangeReadings(0);
+	protected float weight;
 	
 	/**
 	 * Create the model and associate the navigation panel with it
@@ -56,6 +60,15 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	/**
+	 * Get the last move made by the robot
+	 * 
+	 * @return the Move object
+	 */
+	public Move getLastMove() {
+		return lastMove;
+	}
+	
+	/**
 	 * Send a GET_PARTICLES event to the NXT
 	 */
 	public void getRemoteParticles() {
@@ -79,6 +92,16 @@ public class PCNavigationModel extends NavigationModel {
 			dos.writeFloat(x);
 			dos.writeFloat(y);
 			dos.flush();
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in findClosest");
+	    }		
+	}
+	
+	public void addWaypoint(Waypoint wp) {
+		if (!connected) return;
+		try {
+			dos.writeByte(NavEvent.ADD_WAYPOINT.ordinal());
+			wp.dumpObject(dos);
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in findClosest");
 	    }		
@@ -119,7 +142,7 @@ public class PCNavigationModel extends NavigationModel {
 		dos = new DataOutputStream(conn.getOutputStream());
 		connected = true;
 		
-		// Startr the receiver thread
+		// Start the receiver thread
 		Thread receiver = new Thread(new Receiver());
 		receiver.setDaemon(true);
 		receiver.start();
@@ -271,6 +294,19 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	/**
+	 * Send a STOP event to the NXT
+	 */
+	public void stop() {
+		if (!connected) return;
+		try {
+			dos.writeByte(NavEvent.STOP.ordinal());
+			dos.flush();
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in stop");
+		}
+	}
+	
+	/**
 	 * Send a RANDOM_MOVE event to the NXT
 	 */
 	public void randomMove() {
@@ -297,6 +333,19 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	/**
+	 * Send a FIND_PATH event to the NXT
+	 */
+	public void findPath(Waypoint wp) {
+		if (!connected) return;
+		try {
+			dos.writeByte(NavEvent.FIND_PATH.ordinal());
+			wp.dumpObject(dos);
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in findPath");
+		}
+	}
+	
+	/**
 	 * Runnable class to receive events from the NXT
 	 * 
 	 * @author Lawrie Griffiths
@@ -307,26 +356,44 @@ public class PCNavigationModel extends NavigationModel {
 			while(true) {
 				try {
 					byte event = dis.readByte();
-					panel.log("Event received:" +  NavEvent.values()[event].name());
-					if (event == NavEvent.MOVE_STARTED.ordinal() || event == NavEvent.MOVE_STOPPED.ordinal()) {
-						panel.log("Reading Move object");
+					NavEvent navEvent = NavEvent.values()[event];
+					panel.log("Event received:" +  navEvent.name());
+					switch (navEvent) {
+					case MOVE_STARTED:
+					case MOVE_STOPPED:
 						lastMove.loadObject(dis);
-					} else if (event == NavEvent.SET_POSE.ordinal()) {
+						break;
+					case SET_POSE:
 						currentPose.loadObject(dis);
-					} else if (event == NavEvent.PARTICLE_SET.ordinal()) {
+						break;
+					case PARTICLE_SET:
 						particles.loadObject(dis);
-					} else if (event == NavEvent.RANGE_READINGS.ordinal()) {
+						break;
+					case RANGE_READINGS:
 						readings.loadObject(dis);
-					} else if (event == NavEvent.WAYPOINT_REACHED.ordinal()) {
+						break;
+					case WAYPOINT_REACHED:
 						target.loadObject(dis);
-					} else if (event == NavEvent.CLOSEST_PARTICLE.ordinal()) {
+						break;
+					case CLOSEST_PARTICLE:
 						closest = dis.readInt();
-					} else if (event == NavEvent.ESTIMATED_POSE.ordinal()) {
+						System.out.println("Closest: " + closest);
+						particleReadings.loadObject(dis);
+						weight = dis.readFloat();
+						
+						for(RangeReading r:particleReadings) {
+							System.out.println(r.getAngle() + ":" + r.getRange());
+						}
+						
+						System.out.println("weight = " + weight);
+						break;
+					case ESTIMATED_POSE:
 						mcl.loadObject(dis);
+						break;
 					}
 					panel.repaint();
-				} catch (Exception ioe) {
-					panel.fatal("Exception in receiver: " + ioe);
+				} catch (IOException ioe) {
+					panel.fatal("IOException in receiver: " + ioe);
 				}
 			}		
 		}	
