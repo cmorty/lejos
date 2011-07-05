@@ -19,7 +19,8 @@ import lejos.util.Delay;
  * This class communicates with 
  * <code>lejos.pc.charting.DataLogger</code> via Bluetooth or USB which is used by the NXT Charting Logger tool or can be used 
  * stand-alone at a command prompt.
- * <p>When instantiated, the <code>NXTDataLogger</code> starts out in cached mode (<code>{@link #startCachingLog}</code>) as default
+ * <p>When instantiated, the <code>NXTDataLogger</code> starts out in cached mode (<code>{@link #startCachingLog}</code>) as default.
+ * Cache mode uses a growable ring buffer that consumes all available memory during a logging run.
  * <p>Hints for real-time logging efficiency:
  * <ul>
  * <li>Try to keep your datatypes the same across <code>writeLog()</code> method calls to avoid the protocol
@@ -51,11 +52,11 @@ public class NXTDataLogger implements Logger{
     private DataInputStream dis = null;
     private byte currentDataType = DT_INTEGER;  // also set as default in lejos.pc.charting.DataLogger.startLogging()
     private byte itemsPerLine=-1;
-//    private int lineCount=0;
     private int currColumnPosition=1;
-    private int flushBytes=0;
+    private boolean initialFlush=false;
+    
     private LogColumn[] columnDefs=null;
-    private byteQueue byteCache = new byteQueue();
+    private ByteRingQueue byteQueue = new ByteRingQueue();
     private byte[] attentionRandoms = new byte[5];
     private int chksumSeedIndex=-1;
     
@@ -65,8 +66,12 @@ public class NXTDataLogger implements Logger{
     private final int LMSTATE_REAL=2;
     private int logmodeState = LMSTATE_UNINIT; // 0=uninititalized, 1=startCachingLog, 2=startRealtimeLog, 
     private boolean disableWriteState=false;
+    
     private int sessionBeginTime;
     private int setColumnsCount=0;
+    private int lineBytes;
+//    private int lineCount=0;
+    
     /**
      * Default constructor establishes a data logger instance in cache mode.
      * @see #startCachingLog
@@ -90,68 +95,99 @@ public class NXTDataLogger implements Logger{
 //        private long byteCount=0;
         @Override
         public void write(int b) throws IOException {
-            try {
-//                System.out.println("b=" + (b&0xff));
-//                Button.waitForPress();
-//                byteCache.push(new Byte((byte)(b&0xff)));
-                byteCache.add((byte)(b&0xff));
-            } catch (OutOfMemoryError e) {
-//                System.out.println("bc=" + byteCount + " ");
-//                System.out.println("lc=" + lineCount + " ");
-//                Button.waitForPress();
-                throw new IOException("OutOfMemoryError");
-            }
 //            byteCount++;
+            byteQueue.add((byte)(b&0xff));
         }
     }
     
-    private class byteQueue{
+    private class ByteRingQueue{
         private int addIndex=0;
         private int removeIndex=0;
         private byte[] barr;
+        private boolean reachedQueueEnd=false;
+        private int lineByteCounter=0;
+//        private int lineCount=0;
+        private boolean ringMode=false;
         
-        byteQueue() {
+        ByteRingQueue() {
             barr=new byte[2048];
         }
         
-        int add(byte b){
-            barr[addIndex]=b;
-            ensureCapacity(256);
-            return addIndex++;
-        }
-        
+        /** Get the next FIFO value from the queue. If it is the last element in the ring buffer, the next call to this method
+         * will throw an EmptyQueueException to signal we have reached the end (beginning?). Rinse, repeat.
+         * @return the next FIFO value
+         * @throws EmptyQueueException when end of ringbuffer is reached. 
+         */
         byte remove() throws EmptyQueueException {
-            if (removeIndex>=addIndex) throw new EmptyQueueException();
-            return barr[removeIndex++];
+            if (reachedQueueEnd) {
+                reachedQueueEnd=false;
+                throw new EmptyQueueException();
+            }
+            byte retval=barr[removeIndex++];
+            if (removeIndex>=barr.length) removeIndex=0;
+            if (removeIndex==addIndex) reachedQueueEnd=true;
+            return retval;
         }
         
-        void ensureCapacity(int capacity) {
-            if(addIndex > barr.length-2) {
-                byte[] tb = new byte[barr.length+capacity];
-                addIndex-=removeIndex;
-                System.arraycopy(barr,removeIndex,tb,0,addIndex);
-                removeIndex=0;
-                barr=tb;
-                tb=null;
+        void add(byte b){
+            barr[addIndex++]=b;
+            this.lineByteCounter++; 
+            if (!ringMode && !ensureCapacity(256)){ 
+                // out of memory
+                ringMode=true;
+//                System.out.println("outofmem");
+//                System.out.println("lineCount=" + lineCount);
+                // since this is the first "use" of ringbuffer, move the pointer to next line (lose first row of data). 
+                // assumes that read pos = 0 and no reads have happened (until all data is written to the buffer)
+                wrapReadpointerToBONL();
             }
+            // if full line has been written out, move read pointer to next "line" because we will have a collision
+            // and we need the byte buffer read position to point to start of a row
+             if (this.lineByteCounter>NXTDataLogger.this.lineBytes-1) {
+                this.lineByteCounter=0; // zero-based 
+//                this.lineCount++;
+                if (ringMode) wrapReadpointerToBONL();
+             }
+            
+            // advance pointers. If applicable, the read pointer (removeIndex) was moved a full row ahead
+            if (addIndex>=barr.length) addIndex=0;
+            return;
+        }
+        
+        boolean ensureCapacity(int capacity) throws OutOfMemoryError{
+            // premptive expand array if not in ring buffer mode
+            if(this.addIndex >= this.barr.length-1) {
+                try {
+                    byte[] tb = new byte[this.barr.length+capacity];
+                    System.arraycopy(this.barr,this.removeIndex,tb,0,this.addIndex-this.removeIndex);
+                    this.addIndex-=this.removeIndex;
+                    this.removeIndex=0;
+                    this.barr=tb;
+                    tb=null;
+                } catch(OutOfMemoryError e) {
+//                    System.out.println("rmidx="+removeIndex);
+                    return false;   
+                }
+            }
+            return true;
+        }
+       
+        void wrapReadpointerToBONL(){
+            // ensure we move the ringbuffer read index (removeIndex) forward to a line start so we don't FUBAR line parsing
+            // which is based on byte count of column defs (lineBytes)
+            // move the read pointer forward to start of next "line". assumes [ring]buffer size > line size
+            this.removeIndex+=NXTDataLogger.this.lineBytes;
+            if (this.removeIndex>=this.barr.length) this.removeIndex=0;
         }
     }
     
+    // return one of our seeded random check vals
     private byte getChksumRandVal(){
         if (chksumSeedIndex>=attentionRandoms.length-1) chksumSeedIndex=-1;
         chksumSeedIndex++;
         return attentionRandoms[chksumSeedIndex];           
     }
     
-    private void checkFlush(int byteCount) throws IOException {
-        // this may seem useless but when using BT, if I don't do an initial flush, there is a block using the write() on BT doing it's
-        // initial flush. This prevents that for some reason. I could have used a boolean but I was thinking I may need a flush every
-        // so many x bytes. This is set up to do that.
-        if (this.flushBytes==0) {
-            this.dos.flush();
-            this.flushBytes+=byteCount;
-        }
-    }
     
     // Starts realtime logging. Must be called before any writeLog() methods. Resets startCachingLog() state
     // streams must be valid (not null)
@@ -230,10 +266,11 @@ public class NXTDataLogger implements Logger{
         // set up the cacher
 //        byteCache = new Queue<Byte>();
 //        byteCache.ensureCapacity(2048);
-        byteCache = new byteQueue();
+        byteQueue = new ByteRingQueue();
         this.dos = new DataOutputStream(new CacheOutputStream());
         sessionBeginTime=(int)System.currentTimeMillis();
         setColumnsCount=0;
+//        this.lineCount=0;
     }
 
     /** Sends the log cache. Valid only for caching (deferred) logging using startCachingLog(). 
@@ -255,16 +292,20 @@ public class NXTDataLogger implements Logger{
         // send the headers TODO ensure that these are set but not for DataViewer GUI
         sendHeaders();  // guaranteed to be set by checkWriteState()
         setDataType(columnDefs[0].getDatatype());
-        boolean doExit = false;
-        while (!doExit) {
+        byte[] tempBytes;
+        boolean doExit=false; 
+        outer: while (!doExit) {
             for (int i=0;i<columnDefs.length;i++) {
                 setDataType(columnDefs[i].getDatatype());
                 try {
-                    dos.write(getBytesFromCache(columnDefs[i].getSize()));
+                    tempBytes=getBytesFromCache(columnDefs[i].getSize());
                 } catch (EmptyQueueException e) {
-//                    System.out.println("EmptyQueueException");
+                    // Send ATTENTION request and remote FLUSH command
+                    signalFlush();
                     doExit=true;
+                    break outer;
                 }
+                dos.write(tempBytes);
             }
         }
         logmodeState=LMSTATE_CACHE;
@@ -279,11 +320,11 @@ public class NXTDataLogger implements Logger{
     public void sendCache(NXTConnection connection) throws IOException{
         sendCache(connection.openDataOutputStream(), connection.openDataInputStream());
     }
+    
     private byte[] getBytesFromCache(int count) throws EmptyQueueException{
         byte[] temp = new byte[count];
         for (int i=0;i<count;i++) {
-//            temp[i]=((Byte)byteCache.pop()).byteValue();
-            temp[i]=byteCache.remove();
+            temp[i]=byteQueue.remove();
         }
         return temp;
     }
@@ -297,14 +338,20 @@ public class NXTDataLogger implements Logger{
         }
         cleanConnection();
     }
+    
+    private void signalFlush(){
+        // Send ATTENTION request and remote FLUSH command
+        sendATTN();
+        byte[] command = {COMMAND_FLUSH,-1};
+        sendCommand(command);
+    }
+    
     /** Close the current open connection. The data stream is flushed and closed. After calling this method, 
      *   another connection must be established or data streams re-created.
      */
     private void cleanConnection() {
         // Send ATTENTION request and remote FLUSH command
-        sendATTN();
-        byte[] command = {COMMAND_FLUSH,-1};
-        sendCommand(command);
+        signalFlush();
         try {
             this.dos.flush();
             // wait for the hardware to finish any "flushing". I found that without this, the last data may be lost if the program ends
@@ -346,6 +393,17 @@ public class NXTDataLogger implements Logger{
         if (this.currColumnPosition==1) {
             setDataType(DT_INTEGER);
             writeLog((int)System.currentTimeMillis()-sessionBeginTime);
+            
+            // do an initial flush after the first sent data because I found that without this, BT will block a little 
+            // on the first autoflush it does
+            if (!initialFlush) {
+                initialFlush=true;
+                try {
+                    this.dos.flush();
+                } catch (IOException e) {
+                    cleanConnection();
+                }
+            }
         }
         if (datatype!=columnDefs[currColumnPosition].getDatatype()) throw new IllegalStateException("datatyp mismatch ");
         // if DT needs to be changed, signal receiver
@@ -494,7 +552,6 @@ public class NXTDataLogger implements Logger{
         checkWriteState(DT_INTEGER);
         try {
             this.dos.writeInt(datapoint);
-            checkFlush(4);
         } catch (IOException e) {
             manageClose();
         }
@@ -517,7 +574,6 @@ public class NXTDataLogger implements Logger{
         checkWriteState(DT_LONG);  
         try {
             this.dos.writeLong(datapoint);
-            checkFlush(8);
         } catch (IOException e) {
             manageClose();
         }
@@ -541,7 +597,6 @@ public class NXTDataLogger implements Logger{
         try {
 //            LCD.drawString("this.dos " + value + " ",0,1);
             this.dos.writeFloat(datapoint);
-            checkFlush(4);
         } catch (IOException e) {
             manageClose();
         }
@@ -565,7 +620,6 @@ public class NXTDataLogger implements Logger{
         try {
     //            LCD.drawString("this.dos " + value + " ",0,1);
             this.dos.writeDouble(datapoint);
-            checkFlush(8);
         } catch (IOException e) {
             manageClose();
         }
@@ -612,7 +666,6 @@ public class NXTDataLogger implements Logger{
         
         try {
             this.dos.write(tempBytes);
-            checkFlush(tempBytes.length);
         } catch (IOException e) {
             manageClose();
         }
@@ -661,6 +714,12 @@ public class NXTDataLogger implements Logger{
         this.setColumnsCount++;
         this.itemsPerLine = (byte)(this.columnDefs.length&0xff);
         if (logmodeState==LMSTATE_REAL) sendHeaders(); 
+        // keep track of bytes per line so we move ringbuffer pointer on even line boundary
+        lineBytes=0;
+        for (int i=0;i<this.columnDefs.length;i++) {
+            lineBytes+=this.columnDefs[i].getSize();
+        }
+//        System.out.println("lineBytes=" + lineBytes);
     }
     
     private void sendHeaders(){
@@ -675,3 +734,4 @@ public class NXTDataLogger implements Logger{
         }
     }
 }
+
