@@ -19,9 +19,6 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -32,10 +29,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
-
-import org.jfree.chart.ChartPanel;
-import org.jfree.data.Range;
-import org.jfree.data.xy.XYSeriesCollection;
 
 
 //import javax.swing.SwingWorker;
@@ -84,7 +77,7 @@ public class LogChartFrame extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Redirecting System.out..");
+        System.out.println("Hooking into System.out..");
         System.setOut(new redirector(System.out));
 //        try {
 //            jTextPaneOutPut.read(System.in,"system.in");
