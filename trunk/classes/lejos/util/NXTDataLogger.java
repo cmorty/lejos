@@ -193,7 +193,7 @@ public class NXTDataLogger implements Logger{
     // streams must be valid (not null)
     /** Start a realtime logging session using passed data streams.
      * The <code>setColumns()</code>
-     * method must be called after this method is called before the first
+     * method must be called after this method is called and before the first
      * <code>writeLog()</code> method is called. 
      * <p>
      * The use of this method is mutually exclusive with <code>startCachingLog()</code> and will reset internal state 
@@ -220,7 +220,7 @@ public class NXTDataLogger implements Logger{
     /** Start a realtime logging session using passed <code>NXTConnection</code> to retrieve the data streams. The
      * connection must already be established.
      * The <code>setColumns()</code>
-     * method must be called after this method is called before the first
+     * method must be called after this method is called and before the first
      * <code>writeLog()</code> method is called. 
      * <p>
      * The use of this method is mutually exclusive with <code>startCachingLog()</code> and will reset internal state 
@@ -235,7 +235,8 @@ public class NXTDataLogger implements Logger{
         startRealtimeLog(connection.openDataOutputStream(), connection.openDataInputStream());
     }
 
-    /** Stop the logging session and close down the connection and data streams. 
+    /** Stop the logging session and close down the connection and data streams. After this method is called, you must call
+     * one of the logging mode start methods to begin a new logging session.
      * @see #startRealtimeLog(NXTConnection)
      * @see #startCachingLog
      */
@@ -251,7 +252,7 @@ public class NXTDataLogger implements Logger{
 
     /** Sets caching (deferred) logging. This is the default mode at instantiation. 
      * The <code>setColumns()</code>
-     * method must be called after this method is called before the first
+     * method must be called after this method is called and before the first
      * <code>writeLog()</code> method is called. 
      * <p>
      * The use of this method is mutually exclusive with the <code>startRealtimeLog()</code> methods and will reset internal state 
@@ -274,8 +275,8 @@ public class NXTDataLogger implements Logger{
     }
 
     /** Sends the log cache. Valid only for caching (deferred) logging using startCachingLog(). 
-     * @param out
-     * @param in
+     * @param out A valid <code>DataOutputStream</code>
+     * @param in A valid <code>DataInputStream</code>
      * @throws IOException if the data streams are not valid
      * @throws IllegalStateException if <code>startCachingLog()</code> has not been called
      */
