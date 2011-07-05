@@ -1,7 +1,6 @@
 package lejos.robotics.pathfinding;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 
 import lejos.robotics.navigation.*;
@@ -67,7 +66,7 @@ public class NodePathFinder implements PathFinder{
 		listeners.add(wpl);
 	}
 
-	public Collection<Waypoint> findRoute(Pose start, Waypoint goal)
+	public Path findRoute(Pose start, Waypoint goal)
 			throws DestinationUnreachableException {
 		// Step 1: Make nodes out of start and destination
 		// TODO: Big problem: These nodes will not be linked to anything if no mesh was given!
@@ -80,7 +79,7 @@ public class NodePathFinder implements PathFinder{
 			mesh.addNode(goalNode, 4);
 		}
 		// Step 3: Use alg to find path.
-		Collection <Waypoint> path = alg.findPath(startNode, goalNode);
+		Path path = alg.findPath(startNode, goalNode);
 		if(path == null) throw new DestinationUnreachableException();
 		
 		// Step 4: If mesh is not null, remove them from set?
@@ -93,7 +92,7 @@ public class NodePathFinder implements PathFinder{
 	}
 
 	public void startPathFinding(Pose start, Waypoint end) {
-		Collection<Waypoint> solution = null;
+		Path solution = null;
 		try {
 			solution = findRoute(start, end);
 		} catch (DestinationUnreachableException e) {

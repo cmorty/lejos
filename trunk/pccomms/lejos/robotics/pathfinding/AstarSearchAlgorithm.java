@@ -30,7 +30,7 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 	int main_loop = 0; // TODO: DELETE ME
 	int neighbor_loop = 0;
 	
-	public Collection <Waypoint> findPath(Node start, Node goal) {
+	public Path findPath(Node start, Node goal) {
 		
 		//long startNanoT = System.nanoTime();
 				
@@ -48,7 +48,7 @@ public class AstarSearchAlgorithm implements SearchAlgorithm{
 			main_loop++; // TODO: DELETE ME
 			
 			if(x == goal) {
-				ArrayList <Waypoint> final_path = new ArrayList<Waypoint>();
+				Path final_path = new Path();
 				
 				//long totalNanoT = System.nanoTime() - startNanoT;
 				//long reconNanoT = System.nanoTime();

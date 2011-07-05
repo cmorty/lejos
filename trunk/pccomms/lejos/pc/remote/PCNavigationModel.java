@@ -31,8 +31,6 @@ import lejos.robotics.localization.*;
  */
 public class PCNavigationModel extends NavigationModel {
 	protected NavigationPanel panel;
-	protected MCLPoseProvider mcl;
-	protected Move lastMove = new Move(0,0,false);
 	protected int closest = -1;
 	protected boolean connected = false;
 	protected RangeReadings particleReadings = new RangeReadings(0);
@@ -43,7 +41,9 @@ public class PCNavigationModel extends NavigationModel {
 	protected AstarSearchAlgorithm alg = new AstarSearchAlgorithm();
 	protected Collection<Node> nodes;
 	protected Node start, destination;
-	protected NodePathFinder pf; 
+	protected NodePathFinder pf;
+	
+	private Thread receiver = new Thread(new Receiver());
 	
 	/**
 	 * Create the model and associate the navigation panel with it
@@ -92,9 +92,11 @@ public class PCNavigationModel extends NavigationModel {
 	public void getRemoteParticles() {
 		if (!connected) return;
 		try {
-			panel.log("Getting particles");
-			dos.writeByte(NavEvent.GET_PARTICLES.ordinal());
-			dos.flush();
+			synchronized(receiver) {
+				panel.log("Getting particles");
+				dos.writeByte(NavEvent.GET_PARTICLES.ordinal());
+				dos.flush();
+			}
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in getRemoteParticles");
 	    }		
@@ -106,10 +108,12 @@ public class PCNavigationModel extends NavigationModel {
 	public void findClosest(float x, float y) {
 		if (!connected) return;
 		try {
-			dos.writeByte(NavEvent.FIND_CLOSEST.ordinal());
-			dos.writeFloat(x);
-			dos.writeFloat(y);
-			dos.flush();
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.FIND_CLOSEST.ordinal());
+				dos.writeFloat(x);
+				dos.writeFloat(y);
+				dos.flush();
+			}
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in findClosest");
 	    }		
@@ -118,8 +122,10 @@ public class PCNavigationModel extends NavigationModel {
 	public void addWaypoint(Waypoint wp) {
 		if (!connected) return;
 		try {
-			dos.writeByte(NavEvent.ADD_WAYPOINT.ordinal());
-			wp.dumpObject(dos);
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.ADD_WAYPOINT.ordinal());
+				wp.dumpObject(dos);
+			}
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in findClosest");
 	    }		
@@ -134,8 +140,10 @@ public class PCNavigationModel extends NavigationModel {
 		panel.repaint();
 		if (!connected) return;
 		try {
-			dos.writeByte(NavEvent.PARTICLE_SET.ordinal());
-			particles.dumpObject(dos);
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.PARTICLE_SET.ordinal());
+				particles.dumpObject(dos);
+			}
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in generateParticles");
 		}
@@ -161,9 +169,11 @@ public class PCNavigationModel extends NavigationModel {
 		connected = true;
 		
 		// Start the receiver thread
-		Thread receiver = new Thread(new Receiver());
 		receiver.setDaemon(true);
 		receiver.start();
+		
+		// Hook for actions required after connection
+		panel.whenConnected();
 	}
 	
 	public Collection<Node> getNodes() {
@@ -204,8 +214,10 @@ public class PCNavigationModel extends NavigationModel {
 			panel.repaint();
 			if (mcl != null) mcl.setMap(map);
 			if (connected) {
-				dos.writeByte(NavEvent.LOAD_MAP.ordinal());
-				map.dumpObject(dos);
+				synchronized(receiver) {
+					dos.writeByte(NavEvent.LOAD_MAP.ordinal());
+					map.dumpObject(dos);
+				}
 			}
 			return map;
 		} catch (Exception ioe) {
@@ -223,9 +235,11 @@ public class PCNavigationModel extends NavigationModel {
 	public void goTo(Waypoint wp) {
 		if (!connected) return;
 		try {
-			dos.writeByte(NavEvent.GOTO.ordinal());
-			target = wp;
-			wp.dumpObject(dos);
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.GOTO.ordinal());
+				target = wp;
+				wp.dumpObject(dos);
+			}
 		} catch (IOException ioe) {
 			panel.error("IO Exception in goTo");
 		}		
@@ -239,9 +253,11 @@ public class PCNavigationModel extends NavigationModel {
 	public void travel(float distance) {
 		if (!connected) return;
 		try {
-			dos.writeByte(NavEvent.TRAVEL.ordinal());
-			dos.writeFloat(distance);
-			dos.flush();
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.TRAVEL.ordinal());
+				dos.writeFloat(distance);
+				dos.flush();
+			}
 		} catch (IOException ioe) {
 			panel.error("IO Exception in travel");
 		}
@@ -255,9 +271,11 @@ public class PCNavigationModel extends NavigationModel {
 	public void rotate(float angle) {
 		if (!connected) return;
 		try {
-			dos.writeByte(NavEvent.ROTATE.ordinal());
-			dos.writeFloat(angle);
-			dos.flush();
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.ROTATE.ordinal());
+				dos.writeFloat(angle);
+				dos.flush();
+			}
 		} catch (IOException ioe) {
 			panel.error("IO Exception in rotate");
 		}
@@ -269,8 +287,10 @@ public class PCNavigationModel extends NavigationModel {
 	public void getPose() {
 		if (dos == null) return;
 		try {
-			dos.writeByte(NavEvent.GET_POSE.ordinal());
-			dos.flush();
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.GET_POSE.ordinal());
+				dos.flush();
+			}
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in getPose");
 		}
@@ -282,8 +302,10 @@ public class PCNavigationModel extends NavigationModel {
 	public void getEstimatedPose() {
 		if (!connected) return;
 		try {
-			dos.writeByte(NavEvent.GET_ESTIMATED_POSE.ordinal());
-			dos.flush();
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.GET_ESTIMATED_POSE.ordinal());
+				dos.flush();
+			}
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in getPose");
 		}
@@ -295,8 +317,10 @@ public class PCNavigationModel extends NavigationModel {
 	public void getRemoteReadings() {
 		if (!connected) return;
 		try {
-			dos.writeByte(NavEvent.GET_READINGS.ordinal());
-			dos.flush();
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.GET_READINGS.ordinal());
+				dos.flush();
+			}
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in getReadings");
 		}
@@ -315,8 +339,10 @@ public class PCNavigationModel extends NavigationModel {
 		panel.repaint();
 		if (!connected) return;
 		try {
-			dos.writeByte(NavEvent.SET_POSE.ordinal());
-			currentPose.dumpObject(dos);
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.SET_POSE.ordinal());
+				currentPose.dumpObject(dos);
+			}
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in getPose");
 		}
@@ -328,8 +354,10 @@ public class PCNavigationModel extends NavigationModel {
 	public void stop() {
 		if (!connected) return;
 		try {
-			dos.writeByte(NavEvent.STOP.ordinal());
-			dos.flush();
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.STOP.ordinal());
+				dos.flush();
+			}
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in stop");
 		}
@@ -341,8 +369,10 @@ public class PCNavigationModel extends NavigationModel {
 	public void randomMove() {
 		if (!connected) return;
 		try {
-			dos.writeByte(NavEvent.RANDOM_MOVE.ordinal());
-			dos.flush();
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.RANDOM_MOVE.ordinal());
+				dos.flush();
+			}
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in randomMove");
 		}
@@ -354,8 +384,10 @@ public class PCNavigationModel extends NavigationModel {
 	public void takeReadings() {
 		if (!connected) return;
 		try {
-			dos.writeByte(NavEvent.TAKE_READINGS.ordinal());
-			dos.flush();
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.TAKE_READINGS.ordinal());
+				dos.flush();
+			}
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in takeReadings");
 		}
@@ -367,8 +399,10 @@ public class PCNavigationModel extends NavigationModel {
 	public void findPath(Waypoint wp) {
 		if (!connected) return;
 		try {
-			dos.writeByte(NavEvent.FIND_PATH.ordinal());
-			wp.dumpObject(dos);
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.FIND_PATH.ordinal());
+				wp.dumpObject(dos);
+			}
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in findPath");
 		}
@@ -384,43 +418,53 @@ public class PCNavigationModel extends NavigationModel {
 		public void run() {
 			while(true) {
 				try {
-					byte event = dis.readByte();
-					NavEvent navEvent = NavEvent.values()[event];
-					panel.log("Event received:" +  navEvent.name());
-					switch (navEvent) {
-					case MOVE_STARTED:
-					case MOVE_STOPPED:
-						lastMove.loadObject(dis);
-						break;
-					case SET_POSE:
-						currentPose.loadObject(dis);
-						break;
-					case PARTICLE_SET:
-						particles.loadObject(dis);
-						break;
-					case RANGE_READINGS:
-						readings.loadObject(dis);
-						break;
-					case WAYPOINT_REACHED:
-						target.loadObject(dis);
-						break;
-					case CLOSEST_PARTICLE:
-						closest = dis.readInt();
-						System.out.println("Closest: " + closest);
-						particleReadings.loadObject(dis);
-						weight = dis.readFloat();
-						
-						for(RangeReading r:particleReadings) {
-							System.out.println(r.getAngle() + ":" + r.getRange());
+					synchronized(this) {
+						byte event = dis.readByte();
+						NavEvent navEvent = NavEvent.values()[event];
+						panel.log("Event received:" +  navEvent.name());
+						switch (navEvent) {
+						case MOVE_STARTED:
+							lastPlannedMove.loadObject(dis);
+							break;
+						case MOVE_STOPPED:
+							lastMove.loadObject(dis);
+							break;
+						case SET_POSE:
+							currentPose.loadObject(dis);
+							break;
+						case PARTICLE_SET:
+							particles.loadObject(dis);
+							break;
+						case RANGE_READINGS:
+							readings.loadObject(dis);
+							break;
+						case WAYPOINT_REACHED:
+							target.loadObject(dis);
+							break;
+						case CLOSEST_PARTICLE:
+							closest = dis.readInt();
+							System.out.println("Closest: " + closest);
+							particleReadings.loadObject(dis);
+							weight = dis.readFloat();
+							
+							for(RangeReading r:particleReadings) {
+								System.out.println(r.getAngle() + ":" + r.getRange());
+							}
+							
+							System.out.println("weight = " + weight);
+							break;
+						case ESTIMATED_POSE:
+							mcl.loadObject(dis);
+							break;
+						case FEATURE_DETECTED:
+							featureReadings.loadObject(dis);
+							break;
+						case PATH:
+							path.loadObject(dis);
+							break;
 						}
-						
-						System.out.println("weight = " + weight);
-						break;
-					case ESTIMATED_POSE:
-						mcl.loadObject(dis);
-						break;
+						panel.repaint();
 					}
-					panel.repaint();
 				} catch (IOException ioe) {
 					panel.fatal("IOException in receiver: " + ioe);
 				}

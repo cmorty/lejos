@@ -21,11 +21,11 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected MapPanel mapPanel = new MapPanel(model, new Dimension(600,700), this);
 	protected JPanel commandPanel = new JPanel();
 	protected JPanel connectPanel = new JPanel();
-	protected JPanel statusPanel = new JPanel();
+	protected JPanel mousePanel = new JPanel();
 	protected JLabel xLabel = new JLabel("X:");
-	protected JTextField xField = new JTextField(5);
+	protected JTextField xField = new JTextField(4);
 	protected JLabel yLabel = new JLabel("Y:");
-	protected JTextField yField = new JTextField(5);
+	protected JTextField yField = new JTextField(4);
 	protected JPanel controlPanel = new JPanel();
 	protected JLabel zoomLabel = new JLabel("Zoom:");
 	protected JSlider slider = new JSlider(100,500,200);
@@ -36,14 +36,17 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected JLabel nxtLabel = new JLabel("NXT name:");
 	protected JTextField nxtName = new JTextField(10);
 	protected JButton connectButton = new JButton("Connect");
-	protected boolean showConnectPanel = true, showStatusPanel = true, 
+	protected boolean showConnectPanel = true, showMousePanel = true, 
 	                  showControlPanel = true, showCommandPanel = true,
-	                  showReadingsPanel = true, showLastMovePanel = true;
+	                  showReadingsPanel = true, showLastMovePanel = true,
+	                  showParticlePanel = true;
 	protected JPanel readingsPanel = new JPanel();
 	protected JTextField readingsField = new JTextField(12);
 	protected JPanel lastMovePanel = new JPanel();
 	protected JTextField lastMoveField = new JTextField(20);
-
+	protected JPanel particlePanel = new JPanel();
+	protected JTextField particleField = new JTextField(20);
+	
 	/**
 	 * Build the various panels if they are required.
 	 */
@@ -97,13 +100,13 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 			});
 		}
 		
-		if (showStatusPanel) {
-			statusPanel.add(xLabel);
-			statusPanel.add(xField);
-			statusPanel.add(yLabel);
-			statusPanel.add(yField);
-			statusPanel.setBorder(BorderFactory.createTitledBorder("Status"));
-			add(statusPanel);
+		if (showMousePanel) {
+			mousePanel.add(xLabel);
+			mousePanel.add(xField);
+			mousePanel.add(yLabel);
+			mousePanel.add(yField);
+			mousePanel.setBorder(BorderFactory.createTitledBorder("Mouse"));
+			add(mousePanel);
 		}
 		
 		if (showCommandPanel) {
@@ -112,7 +115,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		}
 		
 		if (showReadingsPanel) {
-			readingsPanel.setBorder(BorderFactory.createTitledBorder("Readings"));
+			readingsPanel.setBorder(BorderFactory.createTitledBorder("Last Readings"));
 			readingsPanel.add(readingsField);
 			add(readingsPanel);
 		}
@@ -121,6 +124,12 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 			lastMovePanel.setBorder(BorderFactory.createTitledBorder("Last Move"));
 			lastMovePanel.add(lastMoveField);
 			add(lastMovePanel);
+		}
+		
+		if (showParticlePanel) {
+			particlePanel.setBorder(BorderFactory.createTitledBorder("Selected Particle"));
+			particlePanel.add(particleField);
+			add(particlePanel);
 		}
 		mapPanel.addMouseMotionListener(this);
 		mapPanel.addMouseListener(this);
@@ -157,18 +166,29 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	 */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		
 		if (showReadingsPanel) {
 			RangeReadings readings = model.getReadings();
 			
 			String s = "";
 			for(RangeReading r:readings) {
-				s += r.getRange() + " ";
+				s += Math.round(r.getRange()) + " ";
 			}
 			readingsField.setText(s);
 		}
 		
 		if (showLastMovePanel) {
 			lastMoveField.setText(model.getLastMove().toString());
+		}
+		
+		if (showParticlePanel) {
+			String s = "";
+			for(RangeReading r:model.particleReadings) {
+				s += Math.round(r.getRange()) + " ";
+			}
+			if (s.length() > 0) s += " weight = " + model.weight;
+			
+			particleField.setText(s);
 		}
 	}
 	
@@ -256,5 +276,11 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	 * @param me the mouse event
 	 */
 	protected void popupMenu(MouseEvent me) {
+	}
+	
+	/**
+	 * Override this method to specify actions to do after connection to the NXT
+	 */
+	protected void whenConnected() {	
 	}
 }

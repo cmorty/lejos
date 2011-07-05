@@ -48,10 +48,10 @@ public class RandomPathFinder implements PathFinder {
 		this.readings = readings;
 	}
 	
-	public Collection<Waypoint> findRoute(Pose start, Waypoint destination)
+	public Path findRoute(Pose start, Waypoint destination)
 			throws DestinationUnreachableException {
 		Pose pose = start;
-		ArrayList<Waypoint> route = new ArrayList<Waypoint>();
+		Path route = new Path();
 		
 		// Continue until we return a route or throw DestinationUnReachableException
 		for(;;) {
