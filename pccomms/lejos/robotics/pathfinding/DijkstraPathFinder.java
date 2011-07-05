@@ -43,7 +43,7 @@ public DijkstraPathFinder(LineMap map)
  * @return the shortest route
  * @throws DestinationUnreachableException  if, for example, you nave not called setMap();
  */
-  public Collection<Waypoint> findRoute(Pose start, Waypoint finish) throws DestinationUnreachableException
+  public Path findRoute(Pose start, Waypoint finish) throws DestinationUnreachableException
   {
     return findPath(start.getLocation(), finish, _map);
   }
@@ -57,7 +57,7 @@ public DijkstraPathFinder(LineMap map)
  * @return the shortest route
  * @throws DestinationUnreachableException  if, for example, you nave not called setMap();
  */
-  public Collection<Waypoint> findRoute(Pose start, Waypoint finish, LineMap theMap) throws DestinationUnreachableException
+  public Path findRoute(Pose start, Waypoint finish, LineMap theMap) throws DestinationUnreachableException
   {
     setMap(theMap);
     return findPath(start.getLocation(), finish, _map);
@@ -71,7 +71,7 @@ public DijkstraPathFinder(LineMap map)
    * @return an array list of waypoints.  If no path exists, returns null
    */
   
-  private ArrayList<Waypoint> findPath(Point start, Point finish, ArrayList<Line> theMap)throws DestinationUnreachableException
+  private Path findPath(Point start, Point finish, ArrayList<Line> theMap)throws DestinationUnreachableException
   {
     _map = theMap;
     initialize(); // in case this method has already been called before
@@ -268,9 +268,9 @@ public DijkstraPathFinder(LineMap map)
    * @param destination
    * @return the route of the shortest path
    */
-protected  ArrayList<Waypoint> getRoute(Node destination)
+protected  Path getRoute(Node destination)
 {
-    ArrayList<Waypoint> route = new ArrayList <Waypoint>();
+    Path route = new Path();
     Node n = destination;
     Waypoint  w ;
     do {  // add waypoints to route as push down stack

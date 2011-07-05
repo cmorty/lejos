@@ -25,5 +25,5 @@ public interface SearchAlgorithm {
 	 * @param goalNode
 	 * @return A collection of waypoints. Returns null if it fails to find a path.
 	 */
-	public Collection <Waypoint> findPath(Node startNode, Node goalNode);
+	public Path findPath(Node startNode, Node goalNode);
 }
