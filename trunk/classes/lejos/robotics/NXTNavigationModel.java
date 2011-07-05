@@ -8,23 +8,8 @@ import lejos.robotics.navigation.*;
 import lejos.robotics.objectdetection.*;
 import lejos.robotics.pathfinding.PathFinder;
 import lejos.util.Delay;
+import java.util.Collection;
 
-/**
- * The NXT-specific implementation of NavigationModel.
- * 
- * NXTNavigationModel holds references to all local navigation data and sends events
- * to the PC when this data changed.
- * 
- * One technique used to send these events, is to register as an event listener for
- * local navigation events (such as move started or stopped, waypoint reached, path complete etc.) 
- * and then to send the event and associated data to the PC.
- * 
- * A receiver thread receives events from the PC which causes the local navigation data to be
- * updated and appropriate navigation object methods to be invoked.
- * 
- * @author Lawrie Griffiths
- *
- */
 public class NXTNavigationModel extends NavigationModel implements MoveListener, WaypointListener, FeatureListener {
 	protected PathController navigator;
 	protected MoveController pilot;
@@ -36,8 +21,8 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	protected float maxDistance = 40;
 	protected boolean autoSendPose = true;
 	protected RangeScanner scanner;
+	protected MCLPoseProvider mcl;
 	protected boolean sendMoveStart = false, sendMoveStop = true;
-	
 	private Thread receiver;
 	
 	public NXTNavigationModel() {
@@ -155,7 +140,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 						case ADD_WAYPOINT: // Request to add a waypoint
 							Waypoint wp = new Waypoint(0,0);
 							wp.loadObject(dis);
-							if (navigator != null) navigator.addWayPoint(wp);
+							if (navigator != null) navigator.addWaypoint(wp);
 							break;
 						case FIND_CLOSEST: // Request to find particle by co-ordinates and
 							               // send its details to the PC
@@ -196,15 +181,12 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							if (finder != null) {
 								dos.writeByte(NavEvent.PATH.ordinal());
 								try {
-									path = finder.findRoute(currentPose, target);
-									path.dumpObject(dos);
+									Collection<Waypoint> path = finder.findRoute(currentPose, target);
+									// TODO: send the path
 								} catch (DestinationUnreachableException e) {
-									dos.writeInt(0);
+									// nothing
 								}
 							}
-							break;
-						case PATH:
-							path.loadObject(dis);
 							break;
 						case RANDOM_MOVE: // Request to make a random move
 							if (pilot != null && pilot instanceof RotateMoveController) {
@@ -298,8 +280,6 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		try {
 			synchronized(receiver) {
 				dos.writeByte(NavEvent.FEATURE_DETECTED.ordinal());
-				featureReadings = feature.getRangeReadings();
-				featureReadings.dumpObject(dos);
 				dos.flush();
 			}
 		} catch (IOException ioe) {
