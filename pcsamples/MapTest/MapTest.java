@@ -41,6 +41,7 @@ public class MapTest extends NavigationPanel {
   protected void buildGUI() {
 	    showReadingsPanel = false;
 	    showLastMovePanel = false;
+	    showParticlePanel = false;
 	    super.buildGUI();
 		commandPanel.add(xLabel);
 		commandPanel.add(xField);
