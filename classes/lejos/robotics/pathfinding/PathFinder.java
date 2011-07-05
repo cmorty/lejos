@@ -1,6 +1,5 @@
 package lejos.robotics.pathfinding;
 
-import java.util.Collection;
 import lejos.robotics.navigation.DestinationUnreachableException;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
@@ -18,7 +17,7 @@ import lejos.robotics.navigation.WaypointListener;
  *
  */
 public interface PathFinder {
-	Collection <Waypoint> findRoute(Pose start, Waypoint destination) throws DestinationUnreachableException;
+	Path findRoute(Pose start, Waypoint destination) throws DestinationUnreachableException;
 	
 	public void addListener(WaypointListener wpl);
 	

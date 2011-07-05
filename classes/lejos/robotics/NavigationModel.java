@@ -4,9 +4,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
 import lejos.robotics.localization.MCLParticleSet;
+import lejos.robotics.localization.MCLPoseProvider;
 import lejos.robotics.mapping.LineMap;
+import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
+import lejos.robotics.pathfinding.Path;
 
 /**
  * NavigationModel is an abstract class that has two implementations: NXTNavigationModel and PCNavigationModel.
@@ -36,7 +39,12 @@ public abstract class NavigationModel {
 	protected Pose currentPose = new Pose(0,0,0);
 	protected Waypoint target = new Waypoint(0,0);
 	protected MCLParticleSet particles;
+	protected MCLPoseProvider mcl;
 	protected RangeReadings readings = new RangeReadings(0);
+	protected RangeReadings featureReadings;
+	protected Path path;
+	protected Move lastMove = new Move(0,0,false);
+	protected Move lastPlannedMove = new Move(0,0,false);
 	
 	public enum NavEvent {LOAD_MAP, GOTO, TRAVEL, ROTATE, STOP, GET_POSE, 
 		SET_POSE, RANDOM_MOVE, TAKE_READINGS, GET_READINGS, FIND_CLOSEST, ADD_WAYPOINT, GET_PARTICLES, PARTICLE_SET,
