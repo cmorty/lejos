@@ -12,7 +12,7 @@ import lejos.robotics.localization.PoseProvider;
  * 
  * The PathController guides a MoveController  to a destination. It can not plan a route,
  * but will navigate to a set of coordinates and possibly avoid obstacles along the way.
- * It uses a collection of waypoints as a queue.
+ * It uses a collection of Waypoints as a queue.
  * The PathController constructor very likely accepts a MoveController and PoseProvider.
  * 
  * @author NXJ Team
@@ -35,8 +35,8 @@ public interface PathController
    * This method causes the robot to travel to a new location.
    * If the robot is moving, it stops,  the route is emptied and the destination
    * is added to it. The robot then starts  moving to the coordinates of the
-   * destination WayPoint.
-   * @param destination the destination waypoint
+   * destination Waypoint.
+   * @param destination the destination Waypoint
    */
   public void goTo(Waypoint destination);
   
@@ -44,7 +44,7 @@ public interface PathController
    * This method causes the robot to travel to a new location.
    * If the robot is moving, it stops,  the route is emptied and the destination
    * is added to it. The robot then starts  moving to the coordinates of the
-   * destination WayPoint.
+   * destination Waypoint.
    * @param x The x coordinate
    * @param y The y coordinate
    */
@@ -52,7 +52,7 @@ public interface PathController
   
   /**
    * This method will navigate to a point. If a PathFinder was used in the constructor, it will rely
-   * on it to calculate a series of waypoints to get to the destination.
+   * on it to calculate a series of Waypoints to get to the destination.
    * @param x The x coordinate
    * @param y The y coordinate
    * @param heading The target angle to arrive at (in degrees)
@@ -60,9 +60,9 @@ public interface PathController
   public void goTo(double x, double y, double heading);
   
   /**
-   * Moves the robot through the sequence of waypoints
+   * Moves the robot through the sequence of Waypoints
    * contained in the route.
-   * Informs its listeners of each waypoint reached. The waypoint is removed
+   * Informs its listeners of each Waypoint reached. The Waypoint is removed
    * from the route when it is reached.
    * @param theRoute
    * @param immediateReturn ;  if <b>false</b> the method returns when the route is empty
@@ -70,7 +70,7 @@ public interface PathController
   public void followRoute(Collection<Waypoint> theRoute, boolean immediateReturn);
 
   /**
-   * Stops the robot and empties the queue of waypoints (the route)
+   * Stops the robot and empties the queue of Waypoints (the route)
    */
   public void flushQueue();
 
@@ -85,21 +85,21 @@ public interface PathController
   public void resume();  //following the route after an interruption;
 
   /**
-   * Adds a WayPoint to the route.  If the route was empty, the robot immediately
+   * Adds a Waypoint to the route.  If the route was empty, the robot immediately
    * starts moving toward the Waypoint
-   * @param aWayPoint
+   * @param aWaypoint
    */
-  public void addWayPoint(Waypoint aWayPoint); // adds a WayPoint to the route.
+  public void addWaypoint(Waypoint aWaypoint); // adds a Waypoint to the route.
 
   /**
    * Adds a {@link lejos.robotics.navigation.WaypointListener}
-   * that will be notified with the actual waypoint it reached.
+   * that will be notified with the actual Waypoint it reached.
    * @param aListener
    */
   public void addListener(WaypointListener aListener);
 
   /**
-   * Adds a waypoint listener that will be notified with the theoretical target waypoint it reached.
+   * Adds a Waypoint listener that will be notified with the theoretical target Waypoint it reached.
    * @param targetListener
    */
   public void addTargetListener(WaypointListener targetListener);
