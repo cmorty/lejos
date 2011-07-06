@@ -6,6 +6,7 @@ import lejos.robotics.localization.*;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.*;
 import lejos.robotics.objectdetection.*;
+import lejos.robotics.pathfinding.Path;
 import lejos.robotics.pathfinding.PathFinder;
 import lejos.util.Delay;
 import java.util.Collection;
@@ -188,6 +189,10 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 								}
 							}
 							break;
+						case FOLLOW_ROUTE:
+							if (path == null) path = new Path();
+							path.loadObject(dis);
+							if (navigator != null) navigator.followRoute(path, false);
 						case RANDOM_MOVE: // Request to make a random move
 							if (pilot != null && pilot instanceof RotateMoveController) {
 							    angle = (float) Math.random() * 360;
