@@ -76,7 +76,7 @@ public class Navigator implements PathController
 	  pathFinder.addListener(new WaypointListener() {
 
 		  public void nextWaypoint(Waypoint wp) {
-			  pc.addWayPoint(wp);
+			  pc.addWaypoint(wp);
 		  }
 
 		  public void pathComplete() {
@@ -118,7 +118,7 @@ public class Navigator implements PathController
     // Check if using PathFinder:
       _singleStep = false;
 	if(pathFinder == null) 
-		addWayPoint(destination);
+		addWaypoint(destination);
 	else
 		pathFinder.startPathFinding(poseProvider.getPose(), destination);
     
@@ -142,7 +142,7 @@ public class Navigator implements PathController
   }
   
   /**
-   * If the queue is not empty, the robot will go the first  WayPoint in the
+   * If the queue is not empty, the robot will go the first  Waypoint in the
    * queue and then stop. Meanwhile, isGoing() returns true.
    * This method returns immediately.  
    */
@@ -166,9 +166,9 @@ public class Navigator implements PathController
 
   public MoveController getMoveController(){ return _pilot;}
 
-  public void addWayPoint(Waypoint aWayPoint)
+  public void addWaypoint(Waypoint aWaypoint)
   {
-    _route.add(aWayPoint);
+    _route.add(aWaypoint);
     _keepGoing = true;
   } 
 
@@ -195,7 +195,7 @@ public class Navigator implements PathController
    * Returns the waypoint to which the robot is presently moving.
    * @return the waypoint
    */
-  public Waypoint getWayPoint() // TODO: Delete this method? Or add to PathController interface? Might be used by some other sample?
+  public Waypoint getWaypoint() // TODO: Delete this method? Or add to PathController interface? Might be used by some other sample?
   {
     if(_route.size() <= 0 ) return null;
     return _route.get(0);

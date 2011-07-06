@@ -15,9 +15,9 @@ import lejos.robotics.Transmittable;
 /**
  * A sequence of way points make up a route that a robot can navigate.
  * 
- * WayPoint extends Point, as a way point can just be a point.
+ * Waypoint extends Point, as a way point can just be a point.
  * 
- * However, a WayPoint can optionally specify a heading that the robot must achieve when it reaches the  way points.
+ * However, a Waypoint can optionally specify a heading that the robot must achieve when it reaches the  way points.
  * 
  * It can also optionally specify how close the robot must get to the way point in order for it to be deemed to
  * have reached it.
