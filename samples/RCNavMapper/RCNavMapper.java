@@ -112,7 +112,7 @@ public class RCNavMapper  implements RCVehicle,   FeatureListener
          }
          else if(command == NavCommand.GOTO ) 
          {
-            nav.addWayPoint(new Waypoint(v0, v1));
+            nav.addWaypoint(new Waypoint(v0, v1));
             _report = true;
             detector.enableDetection(true);
          }
