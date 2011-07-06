@@ -12,6 +12,9 @@ public class MapTest extends NavigationPanel {
   private static final int FRAME_WIDTH = 1000;
   private static final int FRAME_HEIGHT = 800;
   
+  private static int GRID_SPACE = 39;
+  private static int CLEARANCE = 10;
+  
   private JLabel xLabel = new JLabel("X:");
   private JTextField xField = new JTextField(6);
   private JLabel yLabel = new JLabel("Y:");
@@ -25,6 +28,9 @@ public class MapTest extends NavigationPanel {
   private JLabel angleLabel = new JLabel("Angle:");
   private JTextField angleField = new JTextField(10);
   private JButton rotateButton = new JButton("Rotate");
+  private JButton calculateButton = new JButton("Calculate path");
+  private JButton followButton = new JButton("Follow Route");
+  private JPanel pathPanel = new JPanel();
   
   /**
    * Create a MapTest object and display it in a GUI frame.
@@ -56,6 +62,11 @@ public class MapTest extends NavigationPanel {
 		commandPanel.add(angleLabel);
 		commandPanel.add(angleField);
 		commandPanel.add(rotateButton);
+		pathPanel.add(calculateButton);
+		add(pathPanel);
+		pathPanel.add(followButton);
+		
+		meshCheck.setSelected(true);
 		
 		gotoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -81,6 +92,18 @@ public class MapTest extends NavigationPanel {
 				} catch (NumberFormatException e) {}
 			}
 		});
+		
+		calculateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				model.calculatePath();
+			}
+		});
+		
+		followButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				model.followRoute();
+			}
+		});
   }
   
 	protected void popupMenu(MouseEvent me) {
@@ -90,12 +113,14 @@ public class MapTest extends NavigationPanel {
 	    menu.add(new MenuAction(NavigationModel.NavEvent.ADD_WAYPOINT, "Add Way Point",me.getPoint(), model, this));
 	    menu.add(new MenuAction(NavigationModel.NavEvent.GOTO, "Go To",me.getPoint(),model, this));
 	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_POSE, "Set pose",me.getPoint(),model, this));
+	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_TARGET, "Set target",me.getPoint(),model, this));
 	
 	    menu.show(this, pt.x, pt.y);
 	}
   
   public void run() throws Exception {
 	model.loadMap("Room.svg");
+	model.setMeshParams(GRID_SPACE, CLEARANCE);
 	
     openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, "Map Test", Color.white);
   }
