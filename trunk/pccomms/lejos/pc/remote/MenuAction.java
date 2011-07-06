@@ -2,9 +2,7 @@ package lejos.pc.remote;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-
 import javax.swing.*;
-
 import lejos.robotics.NavigationModel;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
@@ -24,15 +22,23 @@ public class MenuAction extends AbstractAction {
 		this.panel = panel;
 	}
 	public void actionPerformed(ActionEvent e) {
-		if (navEvent == NavigationModel.NavEvent.SET_POSE) {
+		switch (navEvent) {
+		case SET_POSE:
 			model.setPose(new Pose(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit,0));
 			panel.repaint();
-		} else if (navEvent == NavigationModel.NavEvent.GOTO) {
+			break;
+		case GOTO:
 			model.goTo(new Waypoint(p.x /panel.pixelsPerUnit,p.y / panel.pixelsPerUnit));
-		} else if (navEvent == NavigationModel.NavEvent.FIND_CLOSEST) {
+			break;
+		case FIND_CLOSEST:
 			model.findClosest(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit);
-		} else if (navEvent == NavigationModel.NavEvent.ADD_WAYPOINT) {
+			break;
+		case ADD_WAYPOINT:
 			model.addWaypoint(new Waypoint(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit));
+			break;
+		case SET_TARGET:
+			model.setTarget(new Waypoint(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit));
+			break;
 		}
 	}
 }

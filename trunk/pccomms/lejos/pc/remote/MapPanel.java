@@ -16,10 +16,13 @@ import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.localization.MCLPoseProvider;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.Pose;
+import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.pathfinding.Node;
+import lejos.robotics.pathfinding.Path;
 
 public class MapPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
+	
 	protected static final float ARROW_LENGTH = 10f;
 	protected static final Color MAP_COLOR = Color.BLACK;
 	protected static final Color PARTICLE_COLOR = Color.RED;
@@ -29,7 +32,10 @@ public class MapPanel extends JPanel {
 	protected static final Color CLOSEST_COLOR = Color.YELLOW;
 	protected static final Color MESH_COLOR = Color.ORANGE;
 	protected static final Color NEIGHBOR_COLOR = Color.ORANGE;
+	protected static final Color TARGET_COLOR = Color.MAGENTA;
+	protected static final Color PATH_COLOR = Color.BLUE;
 	protected static final int ROBOT_SIZE = 2;
+	protected static final int TARGET_SIZE = 5;
 	protected final int NODE_CIRC = 6; // Size of node circle to draw (diameter in pixels)
 	protected PCNavigationModel model;
 	protected NavigationPanel parent;
@@ -103,6 +109,8 @@ public class MapPanel extends JPanel {
 		if (parent.meshCheck.isSelected()) paintMesh((Graphics2D) g);
 		if (model.getParticles() != null) paintParticles((Graphics2D) g);
 		else if (model.getMCL() == null) paintRobot((Graphics2D) g);
+		paintTarget((Graphics2D) g);
+		paintPath((Graphics2D) g);
 	}
 	
 	/**
@@ -114,6 +122,7 @@ public class MapPanel extends JPanel {
 	protected void paintRobot(Graphics2D g2d) {
 		MCLPoseProvider mcl = model.getMCL();
 		if (mcl == null) {
+			g2d.setColor(PARTICLE_COLOR);
 			paintPose(g2d, model.getRobotPose());
 		} else {
 			float minX = mcl.getMinX();
@@ -141,7 +150,6 @@ public class MapPanel extends JPanel {
 	 * @param g2d the Graphics2D object
 	 */
 	public void paintPose(Graphics2D g2d, Pose pose) {
-		g2d.setColor(PARTICLE_COLOR);
 		Ellipse2D c = new Ellipse2D.Float((parent.xOffset + pose.getX() - ROBOT_SIZE/2)  * parent.pixelsPerUnit, (parent.yOffset + pose.getY() - ROBOT_SIZE/2) * parent.pixelsPerUnit, ROBOT_SIZE * parent.pixelsPerUnit, ROBOT_SIZE * parent.pixelsPerUnit);
 		Line rl = getArrowLine(pose);
 		Line2D l2d = new Line2D.Float(rl.x1, rl.y1, rl.x2, rl.y2);
@@ -173,10 +181,19 @@ public class MapPanel extends JPanel {
 			MCLParticle part = particles.getParticle(i);
 			if (part != null) {
 				if (i == model.closest) g2d.setColor(CLOSEST_COLOR);
+				else g2d.setColor(PARTICLE_COLOR);
 				paintPose(g2d, new Pose(part.getPose().getX(), part.getPose().getY(), part.getPose().getHeading()));
 				g2d.setColor(PARTICLE_COLOR);
 			}
 		}	  
+	}
+	
+	protected void paintTarget(Graphics2D g2d) {
+		Waypoint target = model.getTarget();
+		if (target == null) return;
+		g2d.setColor(TARGET_COLOR);
+		Ellipse2D c = new Ellipse2D.Float((float) ((parent.xOffset + target.getX() - TARGET_SIZE/2)  * parent.pixelsPerUnit), (float) ((parent.yOffset + target.getY() - TARGET_SIZE/2) * parent.pixelsPerUnit), TARGET_SIZE * parent.pixelsPerUnit, TARGET_SIZE * parent.pixelsPerUnit);
+		g2d.fill(c);		
 	}
   
 	/**
@@ -190,5 +207,20 @@ public class MapPanel extends JPanel {
     		        parent.yOffset + pose.getY() * parent.pixelsPerUnit, 
     		        parent.xOffset + pose.getX() * parent.pixelsPerUnit + ARROW_LENGTH * parent.pixelsPerUnit * (float) Math.cos(Math.toRadians(pose.getHeading())), 
     		        parent.yOffset + pose.getY() * parent.pixelsPerUnit + ARROW_LENGTH * parent.pixelsPerUnit * (float) Math.sin(Math.toRadians(pose.getHeading())));
+	}
+	
+	protected void paintPath(Graphics2D g2d) {
+		Path path = model.getPath();
+		if(path != null) {
+			Iterator <Waypoint> path_iter = path.iterator();
+			Waypoint curWP = path_iter.next();
+			g2d.setColor(PATH_COLOR);
+			while(path_iter.hasNext()) {
+				Waypoint nextWP = path_iter.next();
+				Line line = new Line(curWP.x * parent.pixelsPerUnit, curWP.y * parent.pixelsPerUnit, nextWP.x * parent.pixelsPerUnit, nextWP.y * parent.pixelsPerUnit);
+				g2d.draw(line);
+				curWP = nextWP;
+			}	
+		}
 	}
 }

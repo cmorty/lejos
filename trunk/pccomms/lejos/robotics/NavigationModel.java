@@ -37,7 +37,7 @@ public abstract class NavigationModel {
 	protected DataOutputStream dos;
 	protected int numReadings = 0;
 	protected Pose currentPose = new Pose(0,0,0);
-	protected Waypoint target = new Waypoint(0,0);
+	protected Waypoint target = null;
 	protected MCLParticleSet particles;
 	protected MCLPoseProvider mcl;
 	protected RangeReadings readings = new RangeReadings(0);
@@ -49,7 +49,7 @@ public abstract class NavigationModel {
 	public enum NavEvent {LOAD_MAP, GOTO, TRAVEL, ROTATE, STOP, GET_POSE, 
 		SET_POSE, RANDOM_MOVE, TAKE_READINGS, GET_READINGS, FIND_CLOSEST, ADD_WAYPOINT, GET_PARTICLES, PARTICLE_SET,
 		RANGE_READINGS, MOVE_STARTED, MOVE_STOPPED, WAYPOINT_REACHED, CLOSEST_PARTICLE, GET_ESTIMATED_POSE,
-		ESTIMATED_POSE, PATH_COMPLETE, FEATURE_DETECTED, FIND_PATH, PATH}
+		ESTIMATED_POSE, PATH_COMPLETE, FEATURE_DETECTED, FIND_PATH, PATH, SET_TARGET, FOLLOW_ROUTE}
 	
 	public boolean hasMap() {
 		return map != null;
@@ -81,5 +81,17 @@ public abstract class NavigationModel {
 	
 	public RangeReadings getReadings() {
 		return readings;
+	}
+	
+	public void setTarget(Waypoint target) {
+		this.target = target;
+	}
+	
+	public Waypoint getTarget() {
+		return target;
+	}
+	
+	public Path getPath() {
+		return path;
 	}
 }

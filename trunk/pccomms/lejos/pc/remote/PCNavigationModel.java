@@ -3,6 +3,7 @@ package lejos.pc.remote;
 import java.awt.Dimension;
 import java.io.*;
 import java.util.Collection;
+import java.util.Iterator;
 
 import lejos.geom.Rectangle;
 import lejos.pc.comm.*;
@@ -348,6 +349,14 @@ public class PCNavigationModel extends NavigationModel {
 		}
 	}
 	
+	public void setTarget(Waypoint target) {
+		this.target = target;
+		if(destination != null) mesh.removeNode(destination);
+		destination = new Node((float) target.getX(), (float) target.getY());
+		mesh.addNode(destination, 4);
+		panel.repaint();
+	}
+	
 	/**
 	 * Send a STOP event to the NXT
 	 */
@@ -393,6 +402,19 @@ public class PCNavigationModel extends NavigationModel {
 		}
 	}
 	
+	public void followRoute() {
+		if (path == null) return;
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.FOLLOW_ROUTE.ordinal());
+				path.dumpObject(dos);
+			}
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in followRoute");
+		}
+	}
+	
 	/**
 	 * Send a FIND_PATH event to the NXT
 	 */
@@ -405,6 +427,19 @@ public class PCNavigationModel extends NavigationModel {
 			}
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in findPath");
+		}
+	}
+	
+	public void calculatePath() {
+		if (currentPose == null || target == null) return;
+		mesh.regenerate(); // TODO: Without this here it crashes with null pointer for some reason. Don't want this here!
+		
+		try {
+			path = pf.findRoute(currentPose, target);
+			panel.repaint();
+		} catch (DestinationUnreachableException e) {
+			path = null;
+			panel.error("Destination unreachable");
 		}
 	}
 	
