@@ -1,4 +1,4 @@
-package lejos.pc.remote;
+package lejos.robotics.mapping;
 
 import java.awt.Dimension;
 import java.io.*;
