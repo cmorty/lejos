@@ -29,8 +29,6 @@ public class MapTest extends NavigationPanel {
   private JTextField angleField = new JTextField(10);
   private JButton rotateButton = new JButton("Rotate");
   private JButton calculateButton = new JButton("Calculate path");
-  private JButton followButton = new JButton("Follow Route");
-  private JPanel pathPanel = new JPanel();
   
   /**
    * Create a MapTest object and display it in a GUI frame.
@@ -48,6 +46,7 @@ public class MapTest extends NavigationPanel {
 	    showReadingsPanel = false;
 	    showLastMovePanel = false;
 	    showParticlePanel = false;
+	    showMoves = true;
 	    super.buildGUI();
 		commandPanel.add(xLabel);
 		commandPanel.add(xField);
@@ -62,11 +61,6 @@ public class MapTest extends NavigationPanel {
 		commandPanel.add(angleLabel);
 		commandPanel.add(angleField);
 		commandPanel.add(rotateButton);
-		pathPanel.add(calculateButton);
-		add(pathPanel);
-		pathPanel.add(followButton);
-		
-		meshCheck.setSelected(true);
 		
 		gotoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -90,18 +84,6 @@ public class MapTest extends NavigationPanel {
 				try {
 					model.rotate(Float.parseFloat(angleField.getText()));
 				} catch (NumberFormatException e) {}
-			}
-		});
-		
-		calculateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				model.calculatePath();
-			}
-		});
-		
-		followButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				model.followRoute();
 			}
 		});
   }
