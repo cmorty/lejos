@@ -206,19 +206,20 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							if (pilot != null && pilot instanceof RotateMoveController) ((RotateMoveController) pilot).rotate(angle);
 							break;
 						case GET_POSE: // Request to get the pose and return it to the PC
-							PoseProvider poseProvider = (mcl != null ? mcl : pp);
+							if (pp == null) break;
 							// Suppress sending moves to PC while taking readings
 							boolean saveSendMoveStart = sendMoveStart;
 							boolean saveSendMoveStop = sendMoveStop;
 							sendMoveStart = false;
 							sendMoveStop = false;
-							currentPose = poseProvider.getPose();
+							currentPose = pp.getPose();
 							sendMoveStart = saveSendMoveStart;
 							sendMoveStop = saveSendMoveStop;
 							dos.writeByte(NavEvent.SET_POSE.ordinal());
 							currentPose.dumpObject(dos);
 							break;
 						case SET_POSE: // Request to set the current pose of the robot
+							if (currentPose == null) currentPose = new Pose(0,0,0);
 							currentPose.loadObject(dis);
 							if (pp != null) pp.setPose(currentPose);
 							break;
@@ -254,14 +255,17 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							readings.dumpObject(dos);
 							break;
 						case GET_PARTICLES: // Request to send particles to the Pc
+							if (particles == null) break;
 							dos.writeByte(NavEvent.PARTICLE_SET.ordinal());
 							particles.dumpObject(dos);
 							break;
 						case GET_ESTIMATED_POSE: // Request to send estimated pose to the PC
+							if (mcl == null) break;
 							dos.writeByte(NavEvent.ESTIMATED_POSE.ordinal());
 							mcl.dumpObject(dos);
 							break;
 						case FIND_PATH:
+							if (target == null) target = new Waypoint(0,0);
 							target.loadObject(dis);
 							if (finder != null) {
 								dos.writeByte(NavEvent.PATH.ordinal());

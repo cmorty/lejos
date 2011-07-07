@@ -1,10 +1,12 @@
 package lejos.robotics.navigation;
 
+import java.util.ArrayList;
+
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
+import lejos.robotics.pathfinding.Path;
 import lejos.robotics.pathfinding.PathFinder;
 
-import java.util.*;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -85,7 +87,7 @@ public class Navigator implements PathController
 	  });	  
   }
   
-//TODO: Should this method be part of PathController interface too?
+  //TODO: Should this method be part of PathController interface too?
   public PathFinder getPathFinder() {
 	  return pathFinder;
   }
@@ -93,10 +95,11 @@ public class Navigator implements PathController
   /**
    * @param aRoute 
    */
-  public void setRoute(Collection<Waypoint>aRoute)
+  public void setRoute(Path aRoute)
     {
-      _route = (ArrayList<Waypoint>) aRoute;
+      _route = aRoute;
   }
+  
   /** returns <code> false </code> if the the final waypoint has been reached or interrupt() has been called
    */
   public  boolean isGoing()
@@ -104,9 +107,9 @@ public class Navigator implements PathController
 	  return _keepGoing;
   }
   
-  public void followRoute(Collection<Waypoint>aRoute, boolean immediateReturn )
+  public void followRoute( Path aRoute, boolean immediateReturn )
   {
-    _route = (ArrayList<Waypoint>) aRoute;
+    _route = aRoute;
     _keepGoing = true;
     _singleStep = false;
     if(immediateReturn)return;
@@ -149,9 +152,11 @@ public class Navigator implements PathController
   public void goToNext()
     {
       if(_route.size()== 0 ) return;
-      else _singleStep = true;
+      
+      _singleStep = true;
       if(_route.size() > 0 ) _keepGoing = true;
   }
+  
   public void addListener(WaypointListener aListener)
   {
     if(listeners == null )listeners = new ArrayList<WaypointListener>();
@@ -193,6 +198,7 @@ public class Navigator implements PathController
 
   /**
    * Returns the waypoint to which the robot is presently moving.
+   * 
    * @return the waypoint
    */
   public Waypoint getWaypoint() // TODO: Delete this method? Or add to PathController interface? Might be used by some other sample?
@@ -211,6 +217,9 @@ public class Navigator implements PathController
     return poseProvider;
   }
   
+  /**
+   * Wait for the navigator to reach its destimation
+   */
   public void waitForDestinationReached() { // TODO: Delete this method? Might be used by some other sample?
 	  while (_keepGoing) Thread.yield();
   }
@@ -309,7 +318,7 @@ public class Navigator implements PathController
   } // end Nav class
 
   private Nav _nav ;
-  private ArrayList<Waypoint> _route  = new ArrayList<Waypoint>() ;
+  private Path _route  = new Path() ;
   private ArrayList<WaypointListener> listeners;
   private ArrayList<WaypointListener> targetListeners;
   private boolean _keepGoing = false;
