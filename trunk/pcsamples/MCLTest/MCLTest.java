@@ -4,7 +4,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import lejos.pc.remote.*;
 import lejos.robotics.*;
-import lejos.robotics.NavigationModel.NavEvent;
+import lejos.robotics.mapping.NavigationModel.NavEvent;
 import lejos.robotics.localization.*;
 
 /**
@@ -111,7 +111,7 @@ public class MCLTest extends NavigationPanel {
 	    JPopupMenu menu = new JPopupMenu(); 
 	    
 	    // Get details of the particle closest to the mouse click
-	    menu.add(new MenuAction(NavigationModel.NavEvent.FIND_CLOSEST, "Find Closest", me.getPoint(), model, this));
+	    menu.add(new MenuAction(NavEvent.FIND_CLOSEST, "Find Closest", me.getPoint(), model, this));
 	    
 	    // Show the context menu 
 	    menu.show(this, pt.x, pt.y);
