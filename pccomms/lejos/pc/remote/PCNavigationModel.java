@@ -2,20 +2,14 @@ package lejos.pc.remote;
 
 import java.awt.Dimension;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-
 import lejos.geom.Rectangle;
 import lejos.pc.comm.*;
-import lejos.robotics.NavigationModel;
-import lejos.robotics.RangeReading;
-import lejos.robotics.RangeReadings;
+import lejos.robotics.*;
 import lejos.robotics.mapping.*;
 import lejos.robotics.navigation.*;
-import lejos.robotics.pathfinding.AstarSearchAlgorithm;
-import lejos.robotics.pathfinding.FourWayGridMesh;
-import lejos.robotics.pathfinding.Node;
-import lejos.robotics.pathfinding.NodePathFinder;
+import lejos.robotics.pathfinding.*;
 import lejos.robotics.localization.*;
 
 /**
@@ -43,6 +37,8 @@ public class PCNavigationModel extends NavigationModel {
 	protected Collection<Node> nodes;
 	protected Node start, destination;
 	protected NodePathFinder pf;
+	ArrayList<Move> moves = new ArrayList<Move>();
+	ArrayList<Pose> poses = new ArrayList<Pose>();
 	
 	private Thread receiver = new Thread(new Receiver());
 	
@@ -85,6 +81,14 @@ public class PCNavigationModel extends NavigationModel {
 	 */
 	public Move getLastMove() {
 		return lastMove;
+	}
+	
+	public ArrayList<Move> getMoves() {
+		return moves;
+	}
+	
+	public ArrayList<Pose> getPoses() {
+		return poses;
 	}
 	
 	/**
@@ -333,7 +337,10 @@ public class PCNavigationModel extends NavigationModel {
 	 * @param p the robot pose
 	 */
 	public void setPose(Pose p) {
+		path = null;
 		currentPose = p;
+		poses.clear();
+		poses.add(new Pose(currentPose.getX(), currentPose.getY(), currentPose.getHeading()));
 		if (start != null) mesh.removeNode(this.start);
 		start = new Node(p.getX(), p.getY());
 		mesh.addNode(start, 4);
@@ -350,6 +357,7 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	public void setTarget(Waypoint target) {
+		path = null;
 		this.target = target;
 		if(destination != null) mesh.removeNode(destination);
 		destination = new Node((float) target.getX(), (float) target.getY());
@@ -432,7 +440,7 @@ public class PCNavigationModel extends NavigationModel {
 	
 	public void calculatePath() {
 		if (currentPose == null || target == null) return;
-		mesh.regenerate(); // TODO: Without this here it crashes with null pointer for some reason. Don't want this here!
+		//mesh.regenerate(); // TODO: Without this here it crashes with null pointer for some reason. Don't want this here!
 		
 		try {
 			path = pf.findRoute(currentPose, target);
@@ -463,9 +471,11 @@ public class PCNavigationModel extends NavigationModel {
 							break;
 						case MOVE_STOPPED:
 							lastMove.loadObject(dis);
+							moves.add(lastMove);
 							break;
 						case SET_POSE:
 							currentPose.loadObject(dis);
+							poses.add(new Pose(currentPose.getX(), currentPose.getY(), currentPose.getHeading()));
 							break;
 						case PARTICLE_SET:
 							particles.loadObject(dis);
@@ -498,6 +508,7 @@ public class PCNavigationModel extends NavigationModel {
 							path.loadObject(dis);
 							break;
 						}
+						panel.eventReceived(navEvent);
 						panel.repaint();
 					}
 				} catch (IOException ioe) {

@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
+
+import lejos.robotics.NavigationModel.NavEvent;
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
 
@@ -39,7 +41,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected boolean showConnectPanel = true, showMousePanel = true, 
 	                  showControlPanel = true, showCommandPanel = true,
 	                  showReadingsPanel = true, showLastMovePanel = true,
-	                  showParticlePanel = true;
+	                  showParticlePanel = true, showMoves = false;
 	protected JPanel readingsPanel = new JPanel();
 	protected JTextField readingsField = new JTextField(12);
 	protected JPanel lastMovePanel = new JPanel();
@@ -282,5 +284,13 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	 * Override this method to specify actions to do after connection to the NXT
 	 */
 	protected void whenConnected() {	
+	}
+	
+	/**
+	 * Override this method to perform some action (other than repaining) when an event is received
+	 * 
+	 * @param navEvent the event
+	 */
+	protected void eventReceived(NavEvent navEvent) {	
 	}
 }
