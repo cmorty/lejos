@@ -1,13 +1,13 @@
-package lejos.pc.remote;
+package lejos.robotics.mapping;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import lejos.robotics.mapping.NavigationModel.NavEvent;
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
+import lejos.robotics.mapping.NavigationModel.NavEvent;
 
 /**
  * NavigationPanel is a JPanel that displays navigation data from PCNavigationModel,

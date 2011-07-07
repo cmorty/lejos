@@ -1,4 +1,4 @@
-package lejos.pc.remote;
+package lejos.robotics.mapping;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,7 +15,6 @@ import lejos.geom.Line;
 import lejos.robotics.localization.MCLParticle;
 import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.localization.MCLPoseProvider;
-import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Move.MoveType;
 import lejos.robotics.navigation.Pose;
