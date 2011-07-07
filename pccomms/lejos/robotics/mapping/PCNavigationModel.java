@@ -224,8 +224,8 @@ public class PCNavigationModel extends NavigationModel {
 			mesh = new FourWayGridMesh(map, gridSpace,clearance);
 			nodes = mesh.getMesh();
 			pf = new NodePathFinder(alg, mesh);
-			Rectangle boundingRect = map.getBoundingRect();
-			panel.setMapSize(new Dimension((int) (boundingRect.width * 2), (int) (boundingRect.height * 2)));
+			//Rectangle boundingRect = map.getBoundingRect();
+			//panel.setMapSize(new Dimension((int) (boundingRect.width * 2), (int) (boundingRect.height * 2)));
 			panel.repaint();
 			if (mcl != null) mcl.setMap(map);
 			if (connected) {
