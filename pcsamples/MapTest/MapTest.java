@@ -3,7 +3,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import lejos.pc.remote.*;
 import lejos.robotics.navigation.*;
-import lejos.robotics.NavigationModel;
+import lejos.robotics.mapping.NavigationModel;
 
 public class MapTest extends NavigationPanel {
   private static final long serialVersionUID = 1L;
