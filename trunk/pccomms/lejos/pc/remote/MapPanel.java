@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -15,6 +16,8 @@ import lejos.robotics.localization.MCLParticle;
 import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.localization.MCLPoseProvider;
 import lejos.robotics.mapping.LineMap;
+import lejos.robotics.navigation.Move;
+import lejos.robotics.navigation.Move.MoveType;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.pathfinding.Node;
@@ -34,6 +37,7 @@ public class MapPanel extends JPanel {
 	protected static final Color NEIGHBOR_COLOR = Color.ORANGE;
 	protected static final Color TARGET_COLOR = Color.MAGENTA;
 	protected static final Color PATH_COLOR = Color.BLUE;
+	protected static final Color MOVE_COLOR = Color.PINK;
 	protected static final int ROBOT_SIZE = 2;
 	protected static final int TARGET_SIZE = 5;
 	protected final int NODE_CIRC = 6; // Size of node circle to draw (diameter in pixels)
@@ -44,19 +48,22 @@ public class MapPanel extends JPanel {
 	protected int gridSize = 10;
 	
 	// The maximum size of a cluster of particles for a located robot (in cm)
-	protected static final int MAX_CLUSTER_SIZE = 25;
+	protected static final int MAX_CLUSTER_SIZE = 50;
 	
+	/**
+	 * Create the panel, set its size, and associated it with the navigation model
+	 * and navigation panel.
+	 * 
+	 * @param model the navigation model
+	 * @param size the map panel size
+	 * @param parent the navigation panel
+	 */
 	public MapPanel(PCNavigationModel model, Dimension size, NavigationPanel parent) {
 		this.size = size;
 		this.model = model;
 		setPreferredSize(size);
 		this.parent = parent;
 		setBackground(BACKGROUND_COLOR);
-	}
-	
-	public void setSize(Dimension size) {
-		this.size = size;
-		repaint();
 	}
 	
 	/**
@@ -79,6 +86,11 @@ public class MapPanel extends JPanel {
 		}
 	}
 	
+	/**
+	 * Paint the navigation mesh
+	 * 
+	 * @param g2d the Graphics2D object
+	 */
 	protected void paintMesh(Graphics2D g2d) {
 		Collection<Node> nodeSet = model.getNodes();
 		if(nodeSet != null) {
@@ -102,15 +114,20 @@ public class MapPanel extends JPanel {
 		}
 	}
 	
+	/**
+	 * Overrides JPanel paintComponent to paint all the navigation data
+	 */
+	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		paintGrid((Graphics2D) g);
 		paintMap((Graphics2D) g);
 		if (parent.meshCheck.isSelected()) paintMesh((Graphics2D) g);
-		if (model.getParticles() != null) paintParticles((Graphics2D) g);
-		else if (model.getMCL() == null) paintRobot((Graphics2D) g);
+		paintParticles((Graphics2D) g);
+		paintRobot((Graphics2D) g);
 		paintTarget((Graphics2D) g);
 		paintPath((Graphics2D) g);
+		paintMoves((Graphics2D) g);
 	}
 	
 	/**
@@ -125,17 +142,23 @@ public class MapPanel extends JPanel {
 			g2d.setColor(PARTICLE_COLOR);
 			paintPose(g2d, model.getRobotPose());
 		} else {
+			//parent.log("Checking estimate");
 			float minX = mcl.getMinX();
 			float maxX = mcl.getMaxX();
 			float minY = mcl.getMinY();
 			float maxY = mcl.getMaxY();
-			Pose estimatedPose = mcl.getPose();
-			//System.out.println("Estimate = " + minX + " , " + maxX + " , " + minY + " , " + maxY);
-			if (maxX - minX > 0 && maxX - minX <= MAX_CLUSTER_SIZE && 
-					maxY - minY > 0 && maxY - minY <= MAX_CLUSTER_SIZE) {
+			Pose estimatedPose = mcl.getEstimatedPose();
+			//parent.log("Estimate = " + minX + " , " + maxX + " , " + minY + " , " + maxY);
+			float diffX = maxX - minX;
+			float diffY = maxY - minY;
+			
+			//parent.log("DiffX = " + diffX +  ", Diff Y = " + diffY);
+			if (diffX > 0 && diffX <= MAX_CLUSTER_SIZE && 
+					diffY > 0 && diffY <= MAX_CLUSTER_SIZE) {
+				//parent.log("Robot Located");
 				Ellipse2D c = new Ellipse2D.Float(
-	        					parent.xOffset + minX * parent.pixelsPerUnit, 
-	        					parent.yOffset + minY * parent.pixelsPerUnit, (maxX - minX)  * parent.pixelsPerUnit, 
+	        					(parent.xOffset + minX) * parent.pixelsPerUnit, 
+	        					(parent.yOffset + minY) * parent.pixelsPerUnit, (maxX - minX)  * parent.pixelsPerUnit, 
 	        					(maxY - minY)  * parent.pixelsPerUnit);
 				g2d.setColor(ESTIMATE_COLOR);
 				g2d.draw(c);
@@ -157,6 +180,11 @@ public class MapPanel extends JPanel {
 		g2d.fill(c);
 	}
 	
+	/**
+	 * Paint the grid
+	 * 
+	 * @param g2d the Graphics2D object
+	 */
 	public void paintGrid(Graphics2D g2d) {
 		if (gridSize <= 0) return;
 		if (!parent.gridCheck.isSelected()) return;
@@ -175,6 +203,7 @@ public class MapPanel extends JPanel {
 	 */
 	public void paintParticles(Graphics2D g2d) {
 		MCLParticleSet particles = model.getParticles();
+		if (particles == null) return;
 		int numParticles = particles.numParticles();
 		g2d.setColor(PARTICLE_COLOR);
 		for (int i = 0; i < numParticles; i++) {
@@ -188,12 +217,39 @@ public class MapPanel extends JPanel {
 		}	  
 	}
 	
+	/**
+	 * Paint the target
+	 * 
+	 * @param g2d the Graphics2D object
+	 */
 	protected void paintTarget(Graphics2D g2d) {
 		Waypoint target = model.getTarget();
 		if (target == null) return;
 		g2d.setColor(TARGET_COLOR);
 		Ellipse2D c = new Ellipse2D.Float((float) ((parent.xOffset + target.getX() - TARGET_SIZE/2)  * parent.pixelsPerUnit), (float) ((parent.yOffset + target.getY() - TARGET_SIZE/2) * parent.pixelsPerUnit), TARGET_SIZE * parent.pixelsPerUnit, TARGET_SIZE * parent.pixelsPerUnit);
 		g2d.fill(c);		
+	}
+	
+	/**
+	 * Paint the moves made
+	 * 
+	 * @param g2d the Graphics2D object
+	 */
+	protected void paintMoves(Graphics2D g2d) {
+		if (!parent.showMoves) return;
+		ArrayList<Pose> poses = model.getPoses();
+		if (poses == null || poses.size() < 2) return;
+		Pose previousPose = null;
+		
+		g2d.setColor(MOVE_COLOR);
+		for(Pose pose: poses) {
+			if (previousPose == null) previousPose = pose;
+			else {
+				//parent.log("Drawing line from " + previousPose.getX() + ","  + previousPose.getY() + " to " + pose.getX() + "," + pose.getY());
+				g2d.drawLine((int) (previousPose.getX() * parent.pixelsPerUnit), (int) (previousPose.getY() * parent.pixelsPerUnit), (int) (pose.getX()  * parent.pixelsPerUnit), (int) (pose.getY() * parent.pixelsPerUnit));
+				previousPose = pose;
+			}
+		}	
 	}
   
 	/**
@@ -209,6 +265,11 @@ public class MapPanel extends JPanel {
     		        parent.yOffset + pose.getY() * parent.pixelsPerUnit + ARROW_LENGTH * parent.pixelsPerUnit * (float) Math.sin(Math.toRadians(pose.getHeading())));
 	}
 	
+	/**
+	 * Paint the path
+	 * 
+	 * @param g2d the Graphics2d object
+	 */
 	protected void paintPath(Graphics2D g2d) {
 		Path path = model.getPath();
 		if(path != null) {
