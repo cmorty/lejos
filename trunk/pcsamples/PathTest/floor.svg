@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="640"
+   height="480"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.0 r9654"
+   sodipodi:docname="floor.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1280"
+     inkscape:window-height="780"
+     id="namedview34"
+     showgrid="false"
+     inkscape:zoom="0.54375"
+     inkscape:cx="320"
+     inkscape:cy="240"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+  <g>
+    <line
+       id="svg_1"
+       y2="20"
+       x2="620"
+       y1="20"
+       x1="10"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_2"
+       y2="213"
+       x2="620"
+       y1="20"
+       x1="620"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_3"
+       y2="213"
+       x2="10"
+       y1="20"
+       x1="10"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_4"
+       y2="213"
+       x2="138"
+       y1="213"
+       x1="10"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_5"
+       y2="223"
+       x2="138"
+       y1="223"
+       x1="10"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_7"
+       y2="213"
+       x2="138"
+       y1="223"
+       x1="138"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+
+    <line
+       id="svg_10"
+       y2="330"
+       x2="10"
+       y1="223"
+       x1="10"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_11"
+       y2="213"
+       x2="210"
+       y1="213"
+       x1="620"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_12"
+       y2="223"
+       x2="210"
+       y1="213"
+       x1="210"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_15"
+       y2="223"
+       x2="560"
+       y1="223"
+       x1="210"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_17"
+       y2="330"
+       x2="310"
+       y1="330"
+       x1="10"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_18"
+       y2="400"
+       x2="310"
+       y1="330"
+       x1="310"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_19"
+       y2="400"
+       x2="620"
+       y1="400"
+       x1="310"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_21"
+       y2="250"
+       x2="620"
+       y1="400"
+       x1="620"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+
+    <line
+       id="svg_23"
+       y2="250"
+       x2="560"
+       y1="250"
+       x1="620"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_24"
+       y2="250"
+       x2="560"
+       y1="223"
+       x1="560"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_25"
+       y2="90"
+       x2="540"
+       y1="200"
+       x1="540"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_26"
+       y2="90"
+       x2="490"
+       y1="90"
+       x1="540"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_27"
+       y2="150"
+       x2="490"
+       y1="90"
+       x1="490"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_29"
+       y2="150"
+       x2="305"
+       y1="150"
+       x1="490"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_30"
+       y2="200"
+       x2="305"
+       y1="150"
+       x1="305"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+    <line
+       id="svg_31"
+       y2="200"
+       x2="540"
+       y1="200"
+       x1="305"
+       style="fill:none;stroke:#000000;stroke-width:5" />
+  </g>
+</svg>
