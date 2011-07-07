@@ -1,11 +1,11 @@
-package lejos.robotics;
+package lejos.robotics.mapping;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+import lejos.robotics.RangeReadings;
 import lejos.robotics.localization.MCLParticleSet;
 import lejos.robotics.localization.MCLPoseProvider;
-import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
