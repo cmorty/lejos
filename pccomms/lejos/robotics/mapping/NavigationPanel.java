@@ -20,7 +20,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	private static final long serialVersionUID = 1L;
 	protected float xOffset = 0f, yOffset = 0f, pixelsPerUnit = 2f;
 	protected PCNavigationModel model = new PCNavigationModel(this);
-	protected MapPanel mapPanel = new MapPanel(model, new Dimension(600,700), this);
+	protected MapPanel mapPanel; 
 	protected JPanel commandPanel = new JPanel();
 	protected JPanel connectPanel = new JPanel();
 	protected JPanel mousePanel = new JPanel();
@@ -48,11 +48,14 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected JTextField lastMoveField = new JTextField(20);
 	protected JPanel particlePanel = new JPanel();
 	protected JTextField particleField = new JTextField(20);
+	protected Dimension mapSize = new Dimension(600,700);
 	
 	/**
 	 * Build the various panels if they are required.
 	 */
 	protected void buildGUI() {
+		mapPanel = new MapPanel(model, mapSize, this);
+		
 		if (showConnectPanel) {
 			connectPanel.add(nxtLabel);
 			connectPanel.add(nxtName);

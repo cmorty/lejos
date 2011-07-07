@@ -32,6 +32,22 @@ public class MapPanel extends JPanel {
 	protected Dimension size;;
 	protected float arrowLength;
 	protected int gridSize = 10;
+	public Color[] colors = {MAP_COLOR, PARTICLE_COLOR, BACKGROUND_COLOR,
+			                    GRID_COLOR, ESTIMATE_COLOR, CLOSEST_COLOR,
+			                    MESH_COLOR, NEIGHBOR_COLOR, TARGET_COLOR,
+			                    PATH_COLOR, MOVE_COLOR};
+	
+	public static final int MAP_COLOR_INDEX = 0;
+	public static final int PARTICLE_COLOR_INDEX = 1;
+	public static final int BACKGROUND_COLOR_INDEX = 2;
+	public static final int GRID_COLOR_INDEX = 3;
+	public static final int ESTIMATE_COLOR_INDEX = 4;
+	public static final int CLOSEST_COLOR_INDEX = 5;
+	public static final int MESH_COLOR_INDEX = 6;
+	public static final int NEIGHBOR_COLOR_INDEX = 7;
+	public static final int TARGET_COLOR_INDEX = 8;
+	public static final int PATH_COLOR_INDEX = 9;
+	public static final int MOVE_COLOR_INDEX = 10;
 	
 	// The maximum size of a cluster of particles for a located robot (in cm)
 	protected static final int MAX_CLUSTER_SIZE = 50;
@@ -49,7 +65,7 @@ public class MapPanel extends JPanel {
 		this.model = model;
 		setPreferredSize(size);
 		this.parent = parent;
-		setBackground(BACKGROUND_COLOR);
+		setBackground(colors[BACKGROUND_COLOR_INDEX]);
 	}
 	
 	/**
@@ -61,7 +77,8 @@ public class MapPanel extends JPanel {
 		LineMap map = model.getMap();
 		if (map == null) return;
 		Line[] lines = map.getLines();
-		g2d.setColor(MAP_COLOR);
+		g2d.setColor(colors[MAP_COLOR_INDEX]);
+		g2d.setStroke(new BasicStroke(2));
 		for (int i = 0; i < lines.length; i++) {
 			Line2D line = new Line2D.Float(
     		  parent.xOffset + lines[i].x1 * parent.pixelsPerUnit, 
@@ -70,6 +87,7 @@ public class MapPanel extends JPanel {
     		  parent.yOffset + lines[i].y2 * parent.pixelsPerUnit);
 			g2d.draw(line);
 		}
+		g2d.setStroke(new BasicStroke(1));
 	}
 	
 	/**
@@ -83,7 +101,7 @@ public class MapPanel extends JPanel {
 			Iterator <Node> nodeIterator = nodeSet.iterator();
 			while(nodeIterator.hasNext()) {
 				Node cur = nodeIterator.next();
-				g2d.setColor(MESH_COLOR);
+				g2d.setColor(colors[MESH_COLOR_INDEX]);
 				Ellipse2D.Double circle = new Ellipse2D.Double((cur.x-NODE_CIRC/2) * parent.pixelsPerUnit, (cur.y-NODE_CIRC/2) * parent.pixelsPerUnit, NODE_CIRC * parent.pixelsPerUnit, NODE_CIRC * parent.pixelsPerUnit);
 				g2d.fill(circle);
 				
@@ -92,7 +110,7 @@ public class MapPanel extends JPanel {
 				Iterator <Node> iter = coll.iterator();
 				while(iter.hasNext()) {
 					Node neighbor = iter.next();
-					g2d.setColor(NEIGHBOR_COLOR);
+					g2d.setColor(colors[NEIGHBOR_COLOR_INDEX]);
 					Line line = new Line(cur.x * parent.pixelsPerUnit, cur.y * parent.pixelsPerUnit, neighbor.x * parent.pixelsPerUnit, neighbor.y * parent.pixelsPerUnit);
 					g2d.draw(line);
 				}
@@ -125,7 +143,7 @@ public class MapPanel extends JPanel {
 	protected void paintRobot(Graphics2D g2d) {
 		MCLPoseProvider mcl = model.getMCL();
 		if (mcl == null) {
-			g2d.setColor(PARTICLE_COLOR);
+			g2d.setColor(colors[PARTICLE_COLOR_INDEX]);
 			paintPose(g2d, model.getRobotPose());
 		} else {
 			//parent.log("Checking estimate");
@@ -146,7 +164,7 @@ public class MapPanel extends JPanel {
 	        					(parent.xOffset + minX) * parent.pixelsPerUnit, 
 	        					(parent.yOffset + minY) * parent.pixelsPerUnit, (maxX - minX)  * parent.pixelsPerUnit, 
 	        					(maxY - minY)  * parent.pixelsPerUnit);
-				g2d.setColor(ESTIMATE_COLOR);
+				g2d.setColor(colors[ESTIMATE_COLOR_INDEX]);
 				g2d.draw(c);
 				paintPose(g2d,estimatedPose);
 			}
@@ -174,7 +192,7 @@ public class MapPanel extends JPanel {
 	public void paintGrid(Graphics2D g2d) {
 		if (gridSize <= 0) return;
 		if (!parent.gridCheck.isSelected()) return;
-		g2d.setColor(GRID_COLOR);
+		g2d.setColor(colors[GRID_COLOR_INDEX]);
 		for(int i=0; i<this.getHeight(); i+=gridSize*parent.pixelsPerUnit) {
 			g2d.drawLine(0,i, this.getWidth()-1,i);		
 		}
@@ -191,14 +209,13 @@ public class MapPanel extends JPanel {
 		MCLParticleSet particles = model.getParticles();
 		if (particles == null) return;
 		int numParticles = particles.numParticles();
-		g2d.setColor(PARTICLE_COLOR);
+		g2d.setColor(colors[PARTICLE_COLOR_INDEX]);
 		for (int i = 0; i < numParticles; i++) {
 			MCLParticle part = particles.getParticle(i);
 			if (part != null) {
-				if (i == model.closest) g2d.setColor(CLOSEST_COLOR);
-				else g2d.setColor(PARTICLE_COLOR);
+				if (i == model.closest) g2d.setColor(colors[CLOSEST_COLOR_INDEX]);
+				else g2d.setColor(colors[PARTICLE_COLOR_INDEX]);
 				paintPose(g2d, new Pose(part.getPose().getX(), part.getPose().getY(), part.getPose().getHeading()));
-				g2d.setColor(PARTICLE_COLOR);
 			}
 		}	  
 	}
@@ -211,7 +228,7 @@ public class MapPanel extends JPanel {
 	protected void paintTarget(Graphics2D g2d) {
 		Waypoint target = model.getTarget();
 		if (target == null) return;
-		g2d.setColor(TARGET_COLOR);
+		g2d.setColor(colors[TARGET_COLOR_INDEX]);
 		Ellipse2D c = new Ellipse2D.Float((float) ((parent.xOffset + target.getX() - TARGET_SIZE/2)  * parent.pixelsPerUnit), (float) ((parent.yOffset + target.getY() - TARGET_SIZE/2) * parent.pixelsPerUnit), TARGET_SIZE * parent.pixelsPerUnit, TARGET_SIZE * parent.pixelsPerUnit);
 		g2d.fill(c);		
 	}
@@ -227,7 +244,7 @@ public class MapPanel extends JPanel {
 		if (poses == null || poses.size() < 2) return;
 		Pose previousPose = null;
 		
-		g2d.setColor(MOVE_COLOR);
+		g2d.setColor(colors[MOVE_COLOR_INDEX]);
 		for(Pose pose: poses) {
 			if (previousPose == null) previousPose = pose;
 			else {
@@ -261,7 +278,7 @@ public class MapPanel extends JPanel {
 		if(path != null) {
 			Iterator <Waypoint> path_iter = path.iterator();
 			Waypoint curWP = path_iter.next();
-			g2d.setColor(PATH_COLOR);
+			g2d.setColor(colors[PATH_COLOR_INDEX]);
 			while(path_iter.hasNext()) {
 				Waypoint nextWP = path_iter.next();
 				Line line = new Line(curWP.x * parent.pixelsPerUnit, curWP.y * parent.pixelsPerUnit, nextWP.x * parent.pixelsPerUnit, nextWP.y * parent.pixelsPerUnit);
