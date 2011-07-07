@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import lejos.robotics.NavigationModel.NavEvent;
+import lejos.robotics.mapping.NavigationModel.NavEvent;
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
 
