@@ -46,51 +46,112 @@ public abstract class NavigationModel {
 	protected Move lastMove = new Move(0,0,false);
 	protected Move lastPlannedMove = new Move(0,0,false);
 	
+	/**
+	 * Navigation events that are transmitted between the PC and the NXT (and vice versa).
+	 * 
+	 * @author Lawrie Griffiths
+	 *
+	 */
 	public enum NavEvent {LOAD_MAP, GOTO, TRAVEL, ROTATE, STOP, GET_POSE, 
 		SET_POSE, RANDOM_MOVE, TAKE_READINGS, GET_READINGS, FIND_CLOSEST, ADD_WAYPOINT, GET_PARTICLES, PARTICLE_SET,
 		RANGE_READINGS, MOVE_STARTED, MOVE_STOPPED, WAYPOINT_REACHED, CLOSEST_PARTICLE, GET_ESTIMATED_POSE,
 		ESTIMATED_POSE, PATH_COMPLETE, FEATURE_DETECTED, FIND_PATH, PATH, SET_TARGET, FOLLOW_ROUTE}
 	
+	/**
+	 * Test is the model has a map registered
+	 * 
+	 * @return true iff a map is registered
+	 */
 	public boolean hasMap() {
 		return map != null;
 	}
 	
+	/**
+	 * Get the registered map
+	 * 
+	 * @return the LineMap
+	 */
 	public LineMap getMap() {
 		return map;
 	}
 	
+	/**
+	 * Set the number of readings for MCL
+	 * 
+	 * @param number the number of readings
+	 */
 	public void setNumReadings(int number) {
 		numReadings = number;
 	}
 	
+	/**
+	 * Get the current pose of the robot
+	 * 
+	 * @return the robot pose
+	 */
 	public Pose getRobotPose() {
 		return currentPose;
 	}
 	
+	/**
+	 * Get the registered particle set
+	 * 
+	 * @return the MCLParticleSet or null
+	 */
 	public MCLParticleSet getParticles() {
 		return particles;
 	}
 	
+	/**
+	 * Set the current robot pose
+	 * 
+	 * @param p the pose
+	 */
 	public void setRobotPose(Pose p) {
 		currentPose = p;
 	}
 	
+	/**
+	 * Set the MCL Particle set
+	 * 
+	 * @param particles an MCLParticleSet
+	 */
 	public void setParticleSet(MCLParticleSet particles) {
 		this.particles = particles;
 	}
 	
+	/**
+	 * Get the current range readings
+	 * 
+	 * @return the RangeReadings object
+	 */
 	public RangeReadings getReadings() {
 		return readings;
 	}
 	
+	/**
+	 * Set the target waypoint that the robot is to go to
+	 * 
+	 * @param target the target waypoint
+	 */
 	public void setTarget(Waypoint target) {
 		this.target = target;
 	}
 	
+	/**
+	 * Get the target waypoint
+	 * 
+	 * @return the target waypoint
+	 */
 	public Waypoint getTarget() {
 		return target;
 	}
 	
+	/**
+	 * Get the registered path
+	 * 
+	 * @return the Path object
+	 */
 	public Path getPath() {
 		return path;
 	}
