@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import lejos.robotics.mapping.MapPanel;
 import lejos.robotics.mapping.MenuAction;
 import lejos.robotics.mapping.NavigationModel;
 import lejos.robotics.mapping.NavigationPanel;
@@ -17,38 +19,52 @@ import lejos.robotics.mapping.NavigationPanel;
  *
  */
 public class PathTest extends NavigationPanel {
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  // GUI Window size
-  private static final int FRAME_WIDTH = 1000;
-  private static final int FRAME_HEIGHT = 800;
+  	// GUI Window size
+  	private static final int FRAME_WIDTH = 1000;
+  	private static final int FRAME_HEIGHT = 800;
   
-  private static int GRID_SPACE = 39;
-  private static int CLEARANCE = 10;
+  	private static final Dimension MAP_SIZE = new Dimension(900,600);
   
-  private JButton calculateButton = new JButton("Calculate path");
-  private JButton followButton = new JButton("Follow Route");;
+  	private static int GRID_SPACE = 39;
+  	private static int CLEARANCE = 10;
   
-  /**
-   * Create a PathTest object and display it in a GUI frame.
-   * Then connect to the NXT.
-   */
-  public static void main(String[] args) throws Exception {
-	  (new PathTest()).run();
-  }
+  	private JButton calculateButton = new JButton("Calculate path");
+  	private JButton followButton = new JButton("Follow Route");;
   
-  public PathTest() {
-	  buildGUI();
-  }
+  	/**
+  	 * Create a PathTest object and display it in a GUI frame.
+  	 * Then connect to the NXT.
+  	 */
+  	public static void main(String[] args) throws Exception {
+  		(new PathTest()).run();
+  	}
   
-  protected void buildGUI() {
-	    showReadingsPanel = false;
+  	public PathTest() {
+  		buildGUI();
+  	}
+  
+  	/**
+  	 * Build the GUI
+  	 */
+  	@Override
+  	protected void buildGUI() {
+  		// Set the map size and suppress unwanted panels
+  		mapSize = MAP_SIZE;
+  		showReadingsPanel = false;
 	    showLastMovePanel = false;
 	    showParticlePanel = false;
 	    super.buildGUI();
+	    
+  		// Set the map color
+  		mapPanel.colors[MapPanel.MAP_COLOR_INDEX] = Color.BLUE;
+	    
+	    // Add calciulate abd follow buttons
 		commandPanel.add(calculateButton);;
 		commandPanel.add(followButton);
 		
+		// Display mesh
 		meshCheck.setSelected(true);
 		
 		calculateButton.addActionListener(new ActionListener() {
@@ -62,23 +78,32 @@ public class PathTest extends NavigationPanel {
 				model.followRoute();
 			}
 		});
-  }
+  	}
   
+  	/**
+  	 * Pop-up context ment
+  	 */
+  	@Override
 	protected void popupMenu(MouseEvent me) {
 	    Point pt = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), this);
-	    
 	    JPopupMenu menu = new JPopupMenu(); 
+	    
+	    // Include set pose and set target menu items
 	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_POSE, "Set pose",me.getPoint(),model, this));
 	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_TARGET, "Set target",me.getPoint(),model, this));
 	
 	    menu.show(this, pt.x, pt.y);
 	}
   
-  public void run() throws Exception {
-	model.loadMap("Room.svg");
-	model.setMeshParams(GRID_SPACE, CLEARANCE);
+	/**
+	 * Run the sample
+	 * 
+	 * @throws Exception
+	 */
+	public void run() throws Exception {
+		model.loadMap("Floor.svg");
+		model.setMeshParams(GRID_SPACE, CLEARANCE);
 	
-    openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, "Path Test", Color.white);
-  }
- 
+		openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, "Path Test", Color.white);
+	}
 }
