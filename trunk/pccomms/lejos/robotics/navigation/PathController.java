@@ -2,6 +2,7 @@ package lejos.robotics.navigation;
 
 import java.util.Collection;
 import lejos.robotics.localization.PoseProvider;
+import lejos.robotics.pathfinding.Path;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -67,7 +68,7 @@ public interface PathController
    * @param theRoute
    * @param immediateReturn ;  if <b>false</b> the method returns when the route is empty
    */
-  public void followRoute(Collection<Waypoint> theRoute, boolean immediateReturn);
+  public void followRoute(Path theRoute, boolean immediateReturn);
 
   /**
    * Stops the robot and empties the queue of Waypoints (the route)
