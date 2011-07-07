@@ -1,5 +1,5 @@
-import lejos.robotics.NXTNavigationModel;
 import lejos.robotics.RegulatedMotor;
+import lejos.robotics.mapping.NXTNavigationModel;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.Navigator;
 import lejos.robotics.navigation.PathController;
