@@ -101,8 +101,8 @@
   				<exclude name="lejos/robotics/navigation/SegowayPilot.java"/>
   			</fileset>
   		</copy>
+  		<!-- NOTE do not add delete for lejos/robotics/mapping, it has files in it from the pccomms tree -->
   		<mkdir dir="lejos/robotics/mapping"/>
-  		<delete dir="lejos/robotics/mapping" includes="*.java, package.html"/>
   		<copy overwrite="true" todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/robotics/mapping/*.java"/>
