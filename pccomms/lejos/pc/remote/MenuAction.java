@@ -3,7 +3,7 @@ package lejos.pc.remote;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
-import lejos.robotics.NavigationModel;
+import lejos.robotics.mapping.NavigationModel;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
 

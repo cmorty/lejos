@@ -80,7 +80,6 @@
   		<copy overwrite="true" todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/robotics/*.java"/>
-  				<exclude name="lejos/robotics/NXTNavigationModel.java"/>
   				<include name="lejos/robotics/package.html"/>
   			</fileset>
   		</copy>
@@ -107,6 +106,7 @@
   		<copy overwrite="true" todir=".">
   			<fileset dir="../classes">
   				<include name="lejos/robotics/mapping/*.java"/>
+  				<exclude name="lejos/robotics/mapping/NXTNavigationModel.java"/>
   				<include name="lejos/robotics/mapping/package.html"/>
   			</fileset>
   		</copy>
