@@ -190,6 +190,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							if (mcl != null) mcl.setMap(map);
 							break;
 						case GOTO: // Update of target and request to go to the new target
+							if (target == null) target = new Waypoint(0,0);
 							target.loadObject(dis);
 							if (navigator != null)navigator.goTo(target);
 							break;
