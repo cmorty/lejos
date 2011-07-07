@@ -9,8 +9,26 @@ import lejos.robotics.objectdetection.*;
 import lejos.robotics.pathfinding.Path;
 import lejos.robotics.pathfinding.PathFinder;
 import lejos.util.Delay;
-import java.util.Collection;
 
+/**
+ * NXT version of the navigation model.
+ * 
+ * All local navigation objects, including pilots, navigators, path finders,
+ * feature detectors, and range scanners.
+ * 
+ * Where possible, the model registers itself as an event listener and when the event occurs,
+ * updates the model and sends the event and the updates to the PC.
+ * 
+ * A receiver thread receives events from the PC, updates the local model, and uses the navigation
+ * objects to implement the event if it involves robot behaviour.
+ * 
+ * There are set methods to set various navigation parameters.
+ * 
+ * 
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
 public class NXTNavigationModel extends NavigationModel implements MoveListener, WaypointListener, FeatureListener {
 	protected PathController navigator;
 	protected MoveController pilot;
@@ -22,70 +40,135 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	protected float maxDistance = 40;
 	protected boolean autoSendPose = true;
 	protected RangeScanner scanner;
-	protected MCLPoseProvider mcl;
 	protected boolean sendMoveStart = false, sendMoveStop = true;
 	private Thread receiver;
 	
+	/**
+	 * Create the model and start the receiver thread
+	 */
 	public NXTNavigationModel() {
 		receiver = new Thread(new Receiver());
 		receiver.start();
 	}
 	
+	/**
+	 * Log a message
+	 * 
+	 * @param message the message
+	 */
 	public void log(String message) {
 		System.out.println(message);
 	}
 
+	/**
+	 * Display an error message to the user
+	 * 
+	 * @param message the error message
+	 */
 	public void error(String message) {
 		System.out.println(message);
 	}
 	
+	/**
+	 * Display a fatal error and shut down the program
+	 * 
+	 * @param message the error message
+	 */
 	public void fatal(String message) {
 		System.out.println(message);
 		Delay.msDelay(5000);
 		System.exit(1);
 	}
 	
+	/**
+	 * Add a navigator to the model
+	 * 
+	 * @param navigator the path controller
+	 */
 	@SuppressWarnings("hiding")
 	public void addNavigator(PathController navigator) {
 		this.navigator = navigator;
 	}
 	
+	/**
+	 * Add a pilot to the model
+	 * 
+	 * @param pilot the move controller
+	 */
 	@SuppressWarnings("hiding")
 	public void addPilot(MoveController pilot) {
 		this.pilot = pilot;
 		pilot.addMoveListener(this);
 	}
 	
+	/**
+	 * Add a pose provider (which might be MCL) to the model
+	 * 
+	 * @param pp the pose provider
+	 */
 	@SuppressWarnings("hiding")
 	public void addPoseProvider(PoseProvider pp) {
 		this.pp = pp;
 		if (pp instanceof MCLPoseProvider) mcl = (MCLPoseProvider) pp;
 	}
 	
+	/**
+	 * Add a range scanner to the model
+	 * 
+	 * @param scanner the range scanner
+	 */
 	@SuppressWarnings("hiding")
 	public void addRangeScanner(RangeScanner scanner) {
 		this.scanner = scanner;
 	}
 	
+	/**
+	 * Set parameters for a random move
+	 * 
+	 * @param maxDistance the maximum distance of the move
+	 * @param projection the projection of the robot forward from its mid point
+	 * @param border the border around the wall that the robot should not move into
+	 */
 	public void setRandomMoveParameters(float maxDistance, float projection, float border) {
 		this.maxDistance = maxDistance;
 		this.projection = projection;
 		this.border = border;
 	}
 	
+	/**
+	 * Set or unset automatic sending of the robot pose to the PC when a move stops
+	 * 
+	 * @param on true if the pose is to be sent, else false
+	 */
 	public void setAutoSendPose(boolean on) {
 		this.autoSendPose = on;
 	}
 	
+	/**
+	 * Sets whether events are sent to the PC when a move stops
+	 * 
+	 * @param on true iff an event should be sent
+	 */
 	public void setSendMoveStart(boolean on) {
 		sendMoveStart = on;
 	}
 	
+	/**
+	 * Sets whether events are sent to the PC when a move starts
+	 * 
+	 * @param on true iff an event should be sent
+	 */
 	public void setSendMoveStop(boolean on) {
 		sendMoveStop = on;
 	}
 	
 
+	/**
+	 * The Receiver thread receives events from the PC
+	 * 
+	 * @author Lawrie Griffiths
+	 *
+	 */
 	class Receiver implements Runnable {
 		public void run() {
 			NXTCommConnector connector = Bluetooth.getConnector();
@@ -99,7 +182,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 					synchronized(this) {
 						byte event = dis.readByte();
 						NavEvent navEvent = NavEvent.values()[event];
-						log("Event:" +  navEvent.name());
+						log(navEvent.name());
 						switch (navEvent) {
 						case LOAD_MAP: // Map sent from POC
 							if (map == null) map = new LineMap();
@@ -182,10 +265,10 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							if (finder != null) {
 								dos.writeByte(NavEvent.PATH.ordinal());
 								try {
-									Collection<Waypoint> path = finder.findRoute(currentPose, target);
-									// TODO: send the path
+									path = finder.findRoute(currentPose, target);
+									path.dumpObject(dos);
 								} catch (DestinationUnreachableException e) {
-									// nothing
+									dos.writeInt(0);
 								}
 							}
 							break;
@@ -226,6 +309,9 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		}	
 	}
 
+	/**
+	 * Called when the pilot starts a move
+	 */
 	public void moveStarted(Move event, MoveProvider mp) {
 		if (!sendMoveStart) return;
 		try {
@@ -240,6 +326,9 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		}
 	}
 
+	/**
+	 * Calls when a move stops
+	 */
 	public void moveStopped(Move event, MoveProvider mp) {
 		if (!sendMoveStop) return;
 		try {
@@ -258,6 +347,9 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		}	
 	}
 
+	/**
+	 * Called when a waypoint is reached
+	 */
 	public void nextWaypoint(Waypoint wp) {	
 		try {
 			synchronized(receiver) {
@@ -269,6 +361,9 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		}
 	}
 
+	/**
+	 * Call when a path a completed
+	 */
 	public void pathComplete() {
 		try {
 			synchronized(receiver) {
@@ -280,6 +375,9 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		}
 	}
 
+	/**
+	 * Called when a feature is detected
+	 */
 	@SuppressWarnings("hiding")
 	public void featureDetected(Feature feature, FeatureDetector detector) {
 		try {

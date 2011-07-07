@@ -309,6 +309,10 @@ public boolean incompleteRanges() { return incomplete;}
     return new Pose(_x, _y, _heading);
 
   }
+  
+  public Pose getEstimatedPose() {
+	  return new Pose(_x, _y, _heading);
+  }
 
   /**
    * Estimate pose from weighted average of the particles
