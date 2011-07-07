@@ -2,8 +2,8 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.*;
 import javax.swing.*;
-import lejos.pc.remote.*;
-import lejos.robotics.*;
+import lejos.robotics.mapping.MenuAction;
+import lejos.robotics.mapping.NavigationPanel;
 import lejos.robotics.mapping.NavigationModel.NavEvent;
 import lejos.robotics.localization.*;
 

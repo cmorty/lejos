@@ -1,8 +1,9 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import lejos.pc.remote.*;
+import lejos.robotics.mapping.MenuAction;
 import lejos.robotics.mapping.NavigationModel;
+import lejos.robotics.mapping.NavigationPanel;
 
 /**
  * Used with the MapTest sample running on the PC.
