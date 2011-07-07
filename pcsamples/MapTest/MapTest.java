@@ -1,9 +1,10 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import lejos.pc.remote.*;
 import lejos.robotics.navigation.*;
+import lejos.robotics.mapping.MenuAction;
 import lejos.robotics.mapping.NavigationModel;
+import lejos.robotics.mapping.NavigationPanel;
 
 public class MapTest extends NavigationPanel {
   private static final long serialVersionUID = 1L;
