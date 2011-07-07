@@ -14,7 +14,7 @@ import lejos.util.Delay;
  * NXT version of the navigation model.
  * 
  * All local navigation objects, including pilots, navigators, path finders,
- * feature detectors, and range scanners.
+ * feature detectors, and range scanners can be added to the model.
  * 
  * Where possible, the model registers itself as an event listener and when the event occurs,
  * updates the model and sends the event and the updates to the PC.
@@ -23,8 +23,6 @@ import lejos.util.Delay;
  * objects to implement the event if it involves robot behaviour.
  * 
  * There are set methods to set various navigation parameters.
- * 
- * 
  * 
  * @author Lawrie Griffiths
  *
@@ -35,12 +33,14 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	protected PoseProvider pp;
 	protected FeatureDetector detector;
 	protected PathFinder finder;
+	protected RangeScanner scanner;
+	
 	protected float projection = 10;
 	protected float border = 0;
 	protected float maxDistance = 40;
 	protected boolean autoSendPose = true;
-	protected RangeScanner scanner;
 	protected boolean sendMoveStart = false, sendMoveStop = true;
+	
 	private Thread receiver;
 	
 	/**
@@ -264,7 +264,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							dos.writeByte(NavEvent.ESTIMATED_POSE.ordinal());
 							mcl.dumpObject(dos);
 							break;
-						case FIND_PATH:
+						case FIND_PATH: // Find a path to the target
 							if (target == null) target = new Waypoint(0,0);
 							target.loadObject(dis);
 							if (finder != null) {
@@ -277,7 +277,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 								}
 							}
 							break;
-						case FOLLOW_ROUTE:
+						case FOLLOW_ROUTE: // Follow a route sent from the PC
 							if (path == null) path = new Path();
 							path.loadObject(dis);
 							if (navigator != null) navigator.followRoute(path, false);
