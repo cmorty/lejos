@@ -1,26 +1,13 @@
 package lejos.robotics.mapping;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-
+import java.awt.*;
+import java.awt.geom.*;
+import java.util.*;
 import javax.swing.JPanel;
 import lejos.geom.Line;
-import lejos.robotics.localization.MCLParticle;
-import lejos.robotics.localization.MCLParticleSet;
-import lejos.robotics.localization.MCLPoseProvider;
-import lejos.robotics.navigation.Move;
-import lejos.robotics.navigation.Move.MoveType;
-import lejos.robotics.navigation.Pose;
-import lejos.robotics.navigation.Waypoint;
-import lejos.robotics.pathfinding.Node;
-import lejos.robotics.pathfinding.Path;
+import lejos.robotics.localization.*;
+import lejos.robotics.navigation.*;
+import lejos.robotics.pathfinding.*;
 
 public class MapPanel extends JPanel {
 	private static final long serialVersionUID = 1L;

@@ -7,7 +7,6 @@ import java.util.Collection;
 import lejos.geom.Rectangle;
 import lejos.pc.comm.*;
 import lejos.robotics.*;
-import lejos.robotics.mapping.*;
 import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.*;
 import lejos.robotics.localization.*;
@@ -83,10 +82,21 @@ public class PCNavigationModel extends NavigationModel {
 		return lastMove;
 	}
 	
+	/**
+	 * Get the moves made since the last setPose
+	 * 
+	 * @return an ArrayList of Move objects
+	 */
 	public ArrayList<Move> getMoves() {
 		return moves;
 	}
 	
+	/**
+	 * Get the sequence of poses of the robot from moves sent from the NXT,
+	 * since the last call of setPose
+	 * 
+	 * @return an ArrayList of Pose objects
+	 */
 	public ArrayList<Pose> getPoses() {
 		return poses;
 	}
@@ -410,6 +420,9 @@ public class PCNavigationModel extends NavigationModel {
 		}
 	}
 	
+	/**
+	 * Send a route to the NXT and follow it
+	 */
 	public void followRoute() {
 		if (path == null) return;
 		if (!connected) return;
@@ -438,6 +451,9 @@ public class PCNavigationModel extends NavigationModel {
 		}
 	}
 	
+	/**
+	 * Calculate the path with the Node path finder
+	 */
 	public void calculatePath() {
 		if (currentPose == null || target == null) return;
 		//mesh.regenerate(); // TODO: Without this here it crashes with null pointer for some reason. Don't want this here!
@@ -466,29 +482,29 @@ public class PCNavigationModel extends NavigationModel {
 						NavEvent navEvent = NavEvent.values()[event];
 						panel.log("Event received:" +  navEvent.name());
 						switch (navEvent) {
-						case MOVE_STARTED:
+						case MOVE_STARTED: // Get planned move
 							lastPlannedMove.loadObject(dis);
 							break;
-						case MOVE_STOPPED:
+						case MOVE_STOPPED: // Get executed move
 							lastMove.loadObject(dis);
 							moves.add(lastMove);
 							break;
-						case SET_POSE:
+						case SET_POSE: // Get a new pose from the NXT
 							currentPose.loadObject(dis);
 							poses.add(new Pose(currentPose.getX(), currentPose.getY(), currentPose.getHeading()));
 							break;
-						case PARTICLE_SET:
+						case PARTICLE_SET: // Get a particle set from the NXT
 							particles.loadObject(dis);
 							break;
-						case RANGE_READINGS:
+						case RANGE_READINGS: // Get the range readings from the NXT
 							readings.loadObject(dis);
 							break;
-						case WAYPOINT_REACHED:
+						case WAYPOINT_REACHED: // Get the waypoint reached
 							target.loadObject(dis);
 							break;
-						case CLOSEST_PARTICLE:
+						case CLOSEST_PARTICLE: // Get details of a specific particle
 							closest = dis.readInt();
-							System.out.println("Closest: " + closest);
+							//System.out.println("Closest: " + closest);
 							particleReadings.loadObject(dis);
 							weight = dis.readFloat();
 							
@@ -498,17 +514,19 @@ public class PCNavigationModel extends NavigationModel {
 							
 							System.out.println("weight = " + weight);
 							break;
-						case ESTIMATED_POSE:
+						case ESTIMATED_POSE: // Get the MCL estimated pose data
 							mcl.loadObject(dis);
 							break;
-						case FEATURE_DETECTED:
+						case FEATURE_DETECTED: // TODO: Get feature detected
 							featureReadings.loadObject(dis);
 							break;
-						case PATH:
+						case PATH: // Get a path generated on the NXT
 							path.loadObject(dis);
 							break;
 						}
+						// Signal that an event has been received
 						panel.eventReceived(navEvent);
+						// Refresh the navigation panel with the updated model data
 						panel.repaint();
 					}
 				} catch (IOException ioe) {
