@@ -1,9 +1,9 @@
-package lejos.robotics;
+package lejos.robotics.mapping;
 
 import java.io.IOException;
 import lejos.nxt.comm.*;
+import lejos.robotics.RangeScanner;
 import lejos.robotics.localization.*;
-import lejos.robotics.mapping.LineMap;
 import lejos.robotics.navigation.*;
 import lejos.robotics.objectdetection.*;
 import lejos.robotics.pathfinding.Path;
