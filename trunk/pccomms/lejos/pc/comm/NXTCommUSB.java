@@ -376,6 +376,7 @@ public abstract class NXTCommUSB implements NXTComm {
      */
 	public boolean open(NXTInfo nxtInfo, int mode) {
 		if (nxtPtr != 0)
+			//TODO throw IOExceptions/NXTCommExceptions
 			throw new IllegalStateException("NXTComm is already open.");
 		
         if (nxtInfo == null)
