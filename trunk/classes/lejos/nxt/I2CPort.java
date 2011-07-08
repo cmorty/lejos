@@ -58,7 +58,9 @@ public interface I2CPort extends BasicSensorPort {
     /**
      * High level i2c interface. Perform a complete i2c transaction and return
      * the results. Writes the specified data to the device and then reads the
-     * requested bytes from it.
+     * requested bytes from it. The address is given as an 8 bit value. Bit 0
+     * must be always be zero. Bit 1 to 7 specify the 7 bit i2c address.
+     * 
      * @param deviceAddress The I2C device address.
      * @param writeBuf The buffer containing data to be written to the device.
      * @param writeOffset The offset of the data within the write buffer
