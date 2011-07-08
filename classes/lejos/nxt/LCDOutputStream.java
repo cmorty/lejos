@@ -1,6 +1,6 @@
 package lejos.nxt;
 
-import java.io.*;
+import java.io.OutputStream;
 
 /**
  * A simple output stream that implements console output.
@@ -19,18 +19,24 @@ public class LCDOutputStream extends OutputStream {
 	private int line = 0;
 	
 	@Override
-	public void write(int c) {	
-		if (c == '\n') {
-			col = 0;
-			incLine();
-			return;
-		}
-		if (col >= LCD.DISPLAY_CHAR_WIDTH)
+	public void write(int c) {
+		char x = (char)(c & 0xFF);
+		switch (x)
 		{
-			col = 0;
-			incLine();
+			case '\n': 
+				incLine();
+			case '\r':
+				col = 0;
+				break;
+			default:
+				if (col >= LCD.DISPLAY_CHAR_WIDTH)
+				{
+					col = 0;
+					incLine();
+				}
+				LCD.drawChar(x, col++, line);
 		}
-		LCD.drawChar((char)(c & 0xFF), col++, line);
+		
 	}
 
 	private void incLine() {
