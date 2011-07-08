@@ -87,7 +87,7 @@ counters are reset when this method is called.
 		show();
 		while(counting)
 		{
-            int b = Button.waitForPress();
+            int b = Button.waitForAnyPress();
             Delay.msDelay(200);
             b = Button.readButtons();
 		    if( b == ESC )counting = false;

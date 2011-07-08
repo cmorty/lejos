@@ -114,7 +114,7 @@ public class GraphicMenu extends TextMenu{
 				if (timeout > 0 && System.currentTimeMillis() - _startTime >= timeout) 
 					return -3; // timeout
 				
-                button = Button.waitForPress(BUTTON_POLL_INTERVAL);
+                button = Button.waitForAnyPress(BUTTON_POLL_INTERVAL);
 			} while (button == 0);
 			
 			if(button == Button.ID_ENTER && selectedIndex >= 0 && selectedIndex < _length){

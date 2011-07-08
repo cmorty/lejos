@@ -40,7 +40,7 @@ public class TimeTest {
 		ins.close();
 		outs.close();
 		sock.close();
-		Button.waitForPress();
+		Button.waitForAnyPress();
 	}
 
 	public void connect()throws IOException{

@@ -195,7 +195,7 @@ public class GraphicsSample
             Delay.msDelay(20);
         }
         g.setFont(Font.getDefaultFont());
-        Button.waitForPress(TITLE_DELAY);
+        Button.waitForAnyPress(TITLE_DELAY);
         for(int i = 0x60; i > 0; i--)
         {
             LCD.setContrast(i);
@@ -210,7 +210,7 @@ public class GraphicsSample
     {
         g.setFont(Font.getLargeFont());
         g.drawString("FIN", SW/2, SH/2, Graphics.BASELINE|Graphics.HCENTER);
-        Button.waitForPress(TITLE_DELAY);
+        Button.waitForAnyPress(TITLE_DELAY);
         for(int i = 0x60; i > 0; i--)
         {
             LCD.setContrast(i);
@@ -223,7 +223,7 @@ public class GraphicsSample
     {
         g.clear();
         g.drawString(text, SW / 2, SH / 2, Graphics.HCENTER | Graphics.BASELINE);
-        Button.waitForPress(TITLE_DELAY);
+        Button.waitForAnyPress(TITLE_DELAY);
         g.clear();
     }
 
@@ -235,7 +235,7 @@ public class GraphicsSample
         for(int l = 0; l < 8; l++)
             for(int c = 0; c < 16; c++)
                 g.drawChar((char)(l*16 + c), c*chWidth, l*chHeight, 0);
-        Button.waitForPress(DELAY);
+        Button.waitForAnyPress(DELAY);
     }
 
     void textAnchors()
@@ -248,7 +248,7 @@ public class GraphicsSample
         g.drawString("Left", SW / 2, chHeight * 4, Graphics.LEFT, true);
         g.drawString("Center", SW / 2, chHeight * 5, Graphics.HCENTER, true);
         g.drawString("Right", SW / 2, chHeight * 6, Graphics.RIGHT, true);
-        Button.waitForPress(DELAY);
+        Button.waitForAnyPress(DELAY);
     }
 
     void fonts()
@@ -261,7 +261,7 @@ public class GraphicsSample
         g.setFont(Font.getFont(0, 0, Font.SIZE_LARGE));
         g.drawString("Large", SW / 2, 54, Graphics.HCENTER | Graphics.BASELINE);
         g.setFont(Font.getDefaultFont());
-        Button.waitForPress(DELAY);
+        Button.waitForAnyPress(DELAY);
     }
 
     void rotatedText()
@@ -285,7 +285,7 @@ public class GraphicsSample
         bg.drawString("Right", SH / 2, 0, Graphics.HCENTER);
         rotImage = Image.createImage(base, 0, 0, SH, base.getHeight(), Sprite.TRANS_ROT90);
         g.drawImage(rotImage, SW - 1, 0, Graphics.RIGHT);
-        Button.waitForPress(DELAY);
+        Button.waitForAnyPress(DELAY);
     }
 
     void fileImage() throws Exception
@@ -293,7 +293,7 @@ public class GraphicsSample
         displayTitle("File image");
         Image img = Image.createImage(new FileInputStream(new File("arm.lni")));
         g.drawRegion(img, 0, 0, SW, SH, Sprite.TRANS_NONE, SW / 2, SH / 2, Graphics.HCENTER | Graphics.VCENTER);
-        Button.waitForPress(DELAY);
+        Button.waitForAnyPress(DELAY);
     }
 
     void lines()
@@ -308,7 +308,7 @@ public class GraphicsSample
         }
         g.drawLine(0, 0, SW, SH);
         g.drawLine(SW, 0, 0, SH);
-        Button.waitForPress(DELAY);
+        Button.waitForAnyPress(DELAY);
     }
 
     void rectangles()
@@ -318,7 +318,7 @@ public class GraphicsSample
             g.drawRect(i * 20 - 5, 10 - 2 * i, i * 4, i * 4);
         for (int i = 1; i < 5; i++)
             g.fillRect(i * 20 - 5, 40 - 2 * i, i * 4, i * 4);
-        Button.waitForPress(DELAY);
+        Button.waitForAnyPress(DELAY);
     }
 
     void circles()
@@ -328,7 +328,7 @@ public class GraphicsSample
             g.drawArc(i * 20 - 5, 10 - 2 * i, i * 4, i * 4, 0, 360);
         for (int i = 1; i < 5; i++)
             g.fillArc(i * 20 - 5, 40 - 2 * i, i * 4, i * 4, 0, 360);
-        Button.waitForPress(DELAY);
+        Button.waitForAnyPress(DELAY);
     }
 
     void scroll()
@@ -349,7 +349,7 @@ public class GraphicsSample
             g.copyArea(0, SH - (i + 2) * line, SW, line, 0, SH - (i + 1) * line, 0);
             g.fillRect(0, SH - (i + 2) * line, SW, line);
         }
-        Button.waitForPress(DELAY);
+        Button.waitForAnyPress(DELAY);
         LCD.setAutoRefresh(false);
         for (int i = 0; i < 7*line; i++)
         {
@@ -367,7 +367,7 @@ public class GraphicsSample
         }
         LCD.setAutoRefresh(true);
         LCD.refresh();
-        Button.waitForPress(DELAY);
+        Button.waitForAnyPress(DELAY);
         g.setColor(Graphics.BLACK);
     }
 
@@ -375,7 +375,7 @@ public class GraphicsSample
     {
         displayTitle(title);
         g.drawRegion(duke, 0, 0, duke.getWidth(), duke.getHeight(), transform, SW / 2, SH / 2, Graphics.HCENTER | Graphics.VCENTER);
-        Button.waitForPress(DELAY);
+        Button.waitForAnyPress(DELAY);
     }
 
     void images()
@@ -708,7 +708,7 @@ public class GraphicsSample
         }
         LCD.setAutoRefresh(true);
         LCD.refresh();
-        Button.waitForPress(DELAY);
+        Button.waitForAnyPress(DELAY);
     }
 
     public static void main(String[] options) throws Exception

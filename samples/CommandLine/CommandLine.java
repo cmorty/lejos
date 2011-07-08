@@ -62,7 +62,7 @@ public class CommandLine implements KeyListener {
 			System.err.println(bt.getMessage());
 		}
 		
-		Button.waitForPress();
+		Button.waitForAnyPress();
 	}
 	
 	public void keyPressed(KeyEvent e) {

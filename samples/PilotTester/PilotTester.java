@@ -43,7 +43,7 @@ public class PilotTester
     	DifferentialPilot robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
     	 
         // Wait for user to press ENTER
-		Button.waitForPress();
+		Button.waitForAnyPress();
         robot.setAcceleration(4000);
 		robot.setTravelSpeed(20); // cm/sec
 		robot.setRotateSpeed(180); // deg/sec
@@ -85,7 +85,7 @@ public class PilotTester
 		robot.rotate(720);
 		
 		// Exit after any button is pressed
-		Button.waitForPress();
+		Button.waitForAnyPress();
 	}
    
 	public static void showCount(DifferentialPilot robot, int i)

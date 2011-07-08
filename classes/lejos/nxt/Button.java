@@ -122,7 +122,7 @@ public class Button implements ListenerCaller
 	 * @return the ID of the button that has been pressed or in rare cases a bitmask of button IDs,
 	 *         0 if the given timeout is reached 
 	 */
-	public static int waitForPress(int timeout) {
+	public static int waitForAnyPress(int timeout) {
 		long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
 		NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
 		try
@@ -156,8 +156,8 @@ public class Button implements ListenerCaller
 	 * 
 	 * @return the ID of the button that has been pressed or in rare cases a bitmask of button IDs
 	 */
-	public static int waitForPress() {
-		return waitForPress(0);
+	public static int waitForAnyPress() {
+		return waitForAnyPress(0);
 	}
   
   /**

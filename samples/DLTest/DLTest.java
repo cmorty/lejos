@@ -36,7 +36,7 @@ public class DLTest
          LCD.clear();
          LCD.drawString("more?",0,2);
          LCD.refresh();
-         more = 1 == Button.waitForPress();
+         more = 1 == Button.waitForAnyPress();
       }
    }
 }

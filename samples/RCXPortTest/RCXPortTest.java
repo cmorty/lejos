@@ -45,12 +45,12 @@ public class RCXPortTest {
 	      LCD.drawString("Time: ", 0, 2);
 	      LCD.drawInt((int)System.currentTimeMillis() - sendTime,6,6,2);
 	      LCD.refresh();
-	      Button.waitForPress();
+	      Button.waitForAnyPress();
 	    }
 	    catch (Exception e) {
 	      LCD.drawString("Exception",0,7);
 	      LCD.refresh();
-	      Button.waitForPress();
+	      Button.waitForAnyPress();
 	    }
 	}
 }

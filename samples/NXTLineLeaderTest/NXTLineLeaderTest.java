@@ -29,16 +29,16 @@ public class NXTLineLeaderTest {
 		ll.wakeUp();
 		
 		LCD.drawString("Calibrate white", 0, 5);
-		Button.waitForPress();
+		Button.waitForAnyPress();
 		ll.calibrate(NXTLineLeader.LineColor.WHITE) ;
 
 		LCD.drawString("Calibrate black", 0, 5);
-		Button.waitForPress();
+		Button.waitForAnyPress();
 		ll.calibrate(NXTLineLeader.LineColor.BLACK) ;
 
 		LCD.clear();
 		LCD.drawString("Ready", 0, 0);
-		Button.waitForPress();
+		Button.waitForAnyPress();
 
 		LCD.clear();
 		LCD.drawString("Running...", 0, 0);

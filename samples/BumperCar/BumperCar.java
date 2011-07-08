@@ -28,7 +28,7 @@ public class BumperCar
     };
     Arbitrator arbitrator = new Arbitrator(behaviorList);
     LCD.drawString("Bumper Car",0,1);
-    Button.waitForPress();
+    Button.waitForAnyPress();
     arbitrator.start();
   }
 }

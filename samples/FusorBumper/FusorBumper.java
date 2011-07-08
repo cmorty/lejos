@@ -49,7 +49,7 @@ public class FusorBumper implements FeatureListener {
 
 		fusion.addListener(new FusorBumper());
 
-		Button.waitForPress();
+		Button.waitForAnyPress();
 	}
 
 	public void featureDetected(Feature feature, FeatureDetector detector) {

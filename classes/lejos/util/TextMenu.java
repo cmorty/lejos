@@ -61,7 +61,7 @@ public class TextMenu
 	protected int _startTime;
 	
 	/**
-	 * Timout used for {@link Button#waitForPress(int)} in {@link #select(int, int)}.
+	 * Timout used for {@link Button#waitForAnyPress(int)} in {@link #select(int, int)}.
 	 */
 	protected static final int BUTTON_POLL_INTERVAL = 10; // Time to wait for button press
 
@@ -192,7 +192,7 @@ public class TextMenu
 				if (timeout > 0 && System.currentTimeMillis() - _startTime >= timeout) 
 					return -3; // timeout
 				
-				button = Button.waitForPress(BUTTON_POLL_INTERVAL);
+				button = Button.waitForAnyPress(BUTTON_POLL_INTERVAL);
 			} while (button == 0);
 			
 			if(button == Button.ID_ENTER && selectedIndex >= 0 && selectedIndex < _length)

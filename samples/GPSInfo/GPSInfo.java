@@ -79,12 +79,12 @@ public class GPSInfo implements GPSListener {
 			System.out.println("Connected");
 		} catch (LocationException e) {
 			System.out.println(e.getMessage());
-			Button.waitForPress();
+			Button.waitForAnyPress();
 			System.exit(0);
 		}
 		
 		while(true) {
-			int press = Button.waitForPress();
+			int press = Button.waitForAnyPress();
 			switch(press) {
 			case Button.ID_ESCAPE:
 				System.exit(0);

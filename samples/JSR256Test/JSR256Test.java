@@ -42,7 +42,7 @@ public class JSR256Test implements ConditionListener {
 			sonic =(SensorConnection)Connector.open("sensor:proximity");
 		} catch (IOException e) {
 			System.err.println("No such sensor");
-			Button.waitForPress();
+			Button.waitForAnyPress();
 			System.exit(1);
 		}
 
@@ -69,7 +69,7 @@ public class JSR256Test implements ConditionListener {
 				System.err.println("Failed to read sensor");
 			}
 		}
-		Button.waitForPress();
+		Button.waitForAnyPress();
 	}
 
 	public static void main(String[] args) throws Exception {

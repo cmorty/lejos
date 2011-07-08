@@ -363,7 +363,7 @@ public class GraphicStartup {
      */
     private int getButtonPress()
     {
-        int value = Button.waitForPress(timeout*60000);
+        int value = Button.waitForAnyPress(timeout*60000);
         if (value == 0)
             NXT.shutDown();
         return value;

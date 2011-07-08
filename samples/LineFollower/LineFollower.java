@@ -82,7 +82,7 @@ public class LineFollower {
 
 		Behavior[] bArray = {OffLine, DriveForward};
         LCD.drawString("Line ", 0, 1);
-        Button.waitForPress();
+        Button.waitForAnyPress();
 	    (new Arbitrator(bArray)).start();
 	}
 }
