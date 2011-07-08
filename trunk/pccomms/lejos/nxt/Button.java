@@ -55,11 +55,11 @@ public class Button {
 		}
 	}
 	
-	public static int waitForPress() {
-		return waitForPress(0);
+	public static int waitForAnyPress() {
+		return waitForAnyPress(0);
 	}
 	
-	public static int waitForPress(int timeout) {
+	public static int waitForAnyPress(int timeout) {
 		int buttons = NXTFrame.waitForButtons(timeout);
 		// Call isPressed to clear all buttons
 		NXTFrame.isPressed(buttons);
