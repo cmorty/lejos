@@ -89,5 +89,5 @@
 	<classpathentry excluding="build.xml" kind="src" path="View"/>
 	<classpathentry excluding="build.xml" kind="src" path="WaypointNav"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/classes"/>
-	<classpathentry kind="output" path="build"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
