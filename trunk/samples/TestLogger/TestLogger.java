@@ -40,7 +40,7 @@ public class TestLogger {
         if (theConnection==null) {
             LCD.drawString("IO error 1! ",0,3);
             LCD.drawString("Press ENT ",0,4, true);
-            Button.ENTER.waitForPress();
+            Button.ENTER.waitForAnyPress();
             return null;
         }
         return theConnection;
@@ -49,25 +49,25 @@ public class TestLogger {
     private void doTests(){
         System.out.println("Realtime mode");
         System.out.println("Press key");
-        Button.waitForPress();
+        Button.waitForAnyPress();
         LCD.clear();
         NXTConnection theConnection = getConnection(CONN_BLUETOOTH);
         LCD.clear();
         System.out.println("sending data");
         doRealtimeTest(theConnection);
         System.out.println("Press key");
-        Button.waitForPress();
+        Button.waitForAnyPress();
         LCD.clear();
         System.out.println("Cache mode");
         System.out.println("Press key");
-        Button.waitForPress();
+        Button.waitForAnyPress();
         doCachedTest(theConnection);
         dlog.stopLogging();
         closeConnection(theConnection);
         LCD.clear();
         System.out.println("Complete!");
         System.out.println("Press key");
-        Button.waitForPress();
+        Button.waitForAnyPress();
     }
     
     private void doRealtimeTest(NXTConnection conn){
@@ -78,7 +78,7 @@ public class TestLogger {
         } catch (IOException e) {
             LCD.drawString("IO error 2! ", 0, 3);
             LCD.drawString("Press ENT ", 0, 4, true);
-            Button.ENTER.waitForPress();
+            Button.ENTER.waitForAnyPress();
             return;
         }
         
@@ -120,14 +120,14 @@ public class TestLogger {
 //            Delay.msDelay(10);
         }
         System.out.println("hit key to send");
-        Button.ENTER.waitForPress();
+        Button.ENTER.waitForAnyPress();
         System.out.println("Sending..");
         try {
              dlog.sendCache(conn);
         } catch (IOException e) {
             LCD.drawString("IO error 3! ", 0, 3);
             LCD.drawString("Press ENT ", 0, 4, true);
-            Button.ENTER.waitForPress();
+            Button.ENTER.waitForAnyPress();
             return;
         }
     }

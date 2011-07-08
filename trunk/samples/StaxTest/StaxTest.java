@@ -46,6 +46,6 @@ public class StaxTest {
 		    	System.out.println("/" + parser.getLocalName());
 		    }
 		}
-		Button.waitForPress();
+		Button.waitForAnyPress();
 	}
 }

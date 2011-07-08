@@ -121,7 +121,7 @@ public class MonitorTest
 		LCP.messageWrite(0, "Finished");
 		
 		// Exit after any button is pressed
-		Button.waitForPress();
+		Button.waitForAnyPress();
 	}
 		
 	public static void pause(int time)

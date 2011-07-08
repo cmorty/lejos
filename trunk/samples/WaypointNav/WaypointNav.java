@@ -36,7 +36,7 @@ public class WaypointNav
 		boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"true"));
 
 		System.out.println("Any button to start");
-		Button.waitForPress();
+		Button.waitForAnyPress();
 		
 		DifferentialPilot p = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
 		Navigator nav = new Navigator(p);
@@ -46,6 +46,6 @@ public class WaypointNav
 		nav.addWaypoint(new Waypoint(0,20));
 		nav.addWaypoint(new Waypoint(0,0));
 		System.out.println("Any button to halt");
-		Button.waitForPress();
+		Button.waitForAnyPress();
 	}
 }

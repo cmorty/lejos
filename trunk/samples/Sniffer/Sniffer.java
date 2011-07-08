@@ -40,24 +40,24 @@ public class Sniffer implements SensorListener, ConditionListener, DataListener 
 		}
 		
 		// wait around for sensors to be connected and disconnected
-		Button.waitForPress();
+		Button.waitForAnyPress();
 		
 		if (sensor == null) return;
 		
 		// Add conditions
 		addConditions();
 		System.out.println("Added conditions");		
-		Button.waitForPress();
+		Button.waitForAnyPress();
 		
 		// Set a Data Listener
 		sensor.setDataListener(this, 1);		
 		System.out.println("Set data listener");		
-		Button.waitForPress();
+		Button.waitForAnyPress();
 		
 		// Remove the data listener
 		sensor.removeDataListener();		
 		System.out.println("Removed data listener");	
-		Button.waitForPress();
+		Button.waitForAnyPress();
 	}
 	
 	public static void main(String[] args) {

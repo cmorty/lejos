@@ -33,7 +33,7 @@ public class RCXRemoteMotor {
 		
 		while (true) {
 			
-			int key = Button.waitForPress();
+			int key = Button.waitForAnyPress();
 			
 			if (key == 1) { // ENTER
 				power += 20;

@@ -110,7 +110,7 @@ public class DebugMonitor
         // Enable user interrupts again
         monitor.setEventOptions(DebugInterface.DBG_USER_INTERRUPT, DebugInterface.DBG_EVENT_ENABLE);
         // and wait to see what the user wants to do
-        int pressed = Button.waitForPress();
+        int pressed = Button.waitForAnyPress();
         // If escape do soft-reboot
         if ((Button.ESCAPE.getId() & pressed) != 0)
             exit();
