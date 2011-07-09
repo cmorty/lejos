@@ -25,7 +25,7 @@ public class MapTest {
     	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
     	
     	final DifferentialPilot robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
-    	PathController navigator = new Navigator(robot);
+    	final Navigator navigator = new Navigator(robot);
     	UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S1);
     	RangeFeatureDetector detector = new RangeFeatureDetector(sonic, MAX_DISTANCE, DETECTOR_DELAY); 
     	NXTNavigationModel model = new NXTNavigationModel();
@@ -41,6 +41,10 @@ public class MapTest {
     	detector.addListener(new FeatureListener() {
 			public void featureDetected(Feature feature, FeatureDetector detector) {
 				if (robot.isMoving()) robot.stop();
+				if (navigator.isGoing()) {
+					navigator.interrupt();
+					navigator.flushQueue();
+				}			
 			}		
     	});
 	}
