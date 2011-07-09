@@ -14,46 +14,42 @@ public class TemperatureSensor extends I2CSensor
 	 * Some details from LEGOTMP-driver.h, http://rdpartyrobotcdr.sourceforge.net/
 	 */	
 
-	protected final static int I2C_ADDRESS 		= 0x98;
-	protected final static int REG_TEMPERATURE 	= 0x00;
-	protected final static int REG_CONFIG 	= 0x01;
+	protected static final int I2C_ADDRESS     = 0x98;
+	protected static final int REG_TEMPERATURE = 0x00;
+	protected static final int REG_CONFIG      = 0x01;
+	protected static final int REG_TLOW        = 0x02;
+	protected static final int REG_THIGH       = 0x03;
 	
-	public enum Accuracy {
-		/** 0.5 C° accuracy */
-		C0_5(0x00, 28),
-		/** 0.25 C° accuracy */
-		C0_25(0x20, 55),
-		/** 0.125 C° accuracy */
-		C0_125(0x40, 110),
-		/** 0.0625 C° accuracy */
-		C0_0625(0x60, 220);
-		
-		final int bitmask;
-		final int delay;
-
-		private Accuracy(int index, int wait) {
-			this.bitmask = index;
-			this.delay = wait;
-		}
-		
-		/**
-		 * How many milli seconds each measurement takes.
-		 * @return the delay in ms
-		 */
-		public int getDelay()
+	/** 0.5 °C accuracy */
+	public static final int RESOLUTION_9BIT = 0;
+	/** 0.25 °C accuracy */
+	public static final int RESOLUTION_10BIT = 1;
+	/** 0.125 °C accuracy */
+	public static final int RESOLUTION_11BIT = 2;
+	/** 0.0625 C° accuracy */
+	public static final int RESOLUTION_12BIT = 3;
+	
+	/**
+	 * Returns, how long it takes the sensor to measure the temperature at the given resolution.
+	 * 
+	 * @param resolution {@link #RESOLUTION_9BIT}, {@link #RESOLUTION_10BIT}, {@link #RESOLUTION_11BIT}, or {@link #RESOLUTION_12BIT}
+	 * @return number of milliseconds
+	 */
+	public static int getSamplingDelay(int resolution)
+	{
+		switch (resolution)
 		{
-			return this.delay;
+			case RESOLUTION_9BIT:
+				return 28;
+			case RESOLUTION_10BIT:
+				return 55;
+			case RESOLUTION_11BIT:
+				return 110;
+			case RESOLUTION_12BIT:
+				return 220;
+			default:
+				throw new IllegalArgumentException();
 		}
-		
-		static Accuracy toAccuracy(int index) {
-			for (Accuracy tempAccuracy : values()) {
-				if(tempAccuracy.bitmask==index) {
-					return tempAccuracy;
-				}
-			}
-			throw new IllegalArgumentException("index(='"+index+"') cannot be associated with a TempAccuracy!");
-		}		 
-		
 	}
 
 	private final byte[] buf = new byte[2];
@@ -66,15 +62,28 @@ public class TemperatureSensor extends I2CSensor
 		getData(REG_TEMPERATURE, buf, 2);
 		return EndianTools.decodeShortBE(buf, 0)  * 0x1p-8f;
 	}
-	
-	public Accuracy getAccuracy() {
+
+	/**
+	 * Returns current resolution.
+	 * 
+	 * @return {@link #RESOLUTION_9BIT}, {@link #RESOLUTION_10BIT}, {@link #RESOLUTION_11BIT}, or {@link #RESOLUTION_12BIT}
+	 */
+	public int getResolution() {
 		getData(REG_CONFIG, buf, 1);
-		return Accuracy.toAccuracy(buf[0] & 0x60);
+		return (buf[0] >>> 5) & 0x03;
 	}
 	
-	public void setAccuracy(Accuracy ta) {
+	/**
+	 * Sets current resolution.
+	 * 
+	 * @param a {@link #RESOLUTION_9BIT}, {@link #RESOLUTION_10BIT}, {@link #RESOLUTION_11BIT}, or {@link #RESOLUTION_12BIT}
+	 */
+	public void setResolution(int a) {
+		if (a < 0 || a > 3)
+			throw new IllegalArgumentException();
+		
 		//TODO preserve other bits
-		sendData(REG_CONFIG, (byte) ta.bitmask);
+		sendData(REG_CONFIG, (byte)(a << 5));
 	}
 	
 	/**
