@@ -551,6 +551,9 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case changeEvent_4II_5I:
     push_word(change_event((NXTEvent *) ref2obj(p0), paramBase[1], paramBase[2]));
     break;
+  case firmwareExceptionHandler_4Ljava_3lang_3Throwable_2II_5V:
+    firmware_exception_handler((Throwable *)p0, paramBase[1], paramBase[2]);
+    break;
   default:
     return throw_new_exception(JAVA_LANG_NOSUCHMETHODERROR);
   }

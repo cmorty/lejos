@@ -44,6 +44,8 @@ public class NXTEvent {
     public final static int I2C_PORTS = 5;
     /** Event type for the NXT Buttons */
     public final static int BUTTONS = 6;
+    /** Event type for system events */
+    public final static int SYSTEM = 7;
 
     // Internal state flags
     private final static int WAITING = 1;
@@ -161,19 +163,22 @@ public class NXTEvent {
      * Wait for an event to occur using the specified filter
      * or for the specified timeout.
      * @param filter The type specific filter for this wait.
-     * @param timeout the timeout in ms. Note a value of <= 0 will return immeadiately.
+     * @param timeout the timeout in ms. Note a value of <= 0 will return immediately.
      * @return the event flags or 0 if the event timed out
      */
     public synchronized int waitEvent(int filter, long timeout)
     {
+        int old = this.filter;
         this.filter = filter;
-        return waitEvent(timeout);
+        int ret = waitEvent(timeout);
+        this.filter = old;
+        return ret;
     }
 
     /**
      * Wait for multiple events.
      * @param events an array of events to wait on.
-     * @param timeout the wait timeout. Note a value of <= 0 will return immeadiately.
+     * @param timeout the wait timeout. Note a value of <= 0 will return immediately.
      * @return true if an event occurred, false otherwise.
      */
     public static boolean waitEvent(NXTEvent[] events, long timeout)

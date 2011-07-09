@@ -26,20 +26,10 @@
 Thread* currentThread;
 
 /**
- * Initial thread created at system boot time.
- */
-Thread* bootThread;
-
-/**
  * Priority queue of threads. Entry points at the last thread in the queue.
  */
 REFERENCE threads;
 Thread **threadQ;
-
-/**
- * Current program number, i.e. number of 'main()'s hanging around
- */
-byte gProgramNumber;
 
 void update_stack_frame (StackFrame *stackFrame)
 {
@@ -92,6 +82,7 @@ inline void set_monitor_count (Object *obj, byte count)
 void init_threads()
 {
   int i;
+  Thread *bootThread;
   // Allocate temporary thread structure for use during system startup
   Thread initThread;
   initThread.threadId = 255;
@@ -102,7 +93,6 @@ void init_threads()
   threads = ptr2ref(new_single_array(ALJAVA_LANG_OBJECT, 10));
   threadQ = (Thread **)ref_array(threads);
   Thread **pQ = threadQ;
-  currentThread = JNULL;
   for (i = 0; i<10; i++)
   {
     *pQ++ = null;
@@ -113,9 +103,15 @@ void init_threads()
 
   // Create the system boot thread
   bootThread = (Thread *)new_object_for_class(JAVA_LANG_THREAD);
+  bootThread->priority = NORM_PRIORITY;
   init_thread(bootThread);
   // Now we have a valid thread use it.
   currentThread = bootThread;
+  // set things up ready to run the first program
+  empty_stacks();
+  execute_program(0);
+  currentThread->state = RUNNING;
+
 }
 
 /**
@@ -419,17 +415,10 @@ done_pi:
         printf ("Starting thread %d: %d\n", (int) candidate, candidate->threadId);
         #endif
             currentThread = candidate;	// Its just easier this way.
-            init_sp_pv();
+            empty_stacks();
             candidate->state = RUNNING;
-            if (candidate == bootThread)
-            {
-              execute_program(gProgramNumber);
-            }
-            else
-            {
-              set_top_ref_cur (ptr2ref (candidate));
-              dispatch_virtual ((Object *) candidate, run_4_5V, null);
-            }
+            set_top_ref_cur (ptr2ref (candidate));
+            dispatch_virtual ((Object *) candidate, run_4_5V, null);
             // The following is needed because the current stack frame
             // was just created
             stackFrame = current_stackframe();
@@ -483,39 +472,35 @@ printf ("currentThread=%d, ndr=%d\n", (int) currentThread, (int)nonDaemonRunnabl
 #if DEBUG_THREADS
   printf ("Leaving switch_thread()\n");
 #endif
-  if (nonDaemonRunnable)
+  if (currentThread != null)
   {
-    // There is at least one non-daemon thread left alive
-    if (currentThread != null)
-    {
-      // If we found a running thread and there is at least one
-      // non-daemon thread left somewhere in the queue...
-      #if DEBUG_THREADS
-      printf ("Current thread is %d: %d(%d)\n", (int) currentThread, (int)currentThread->threadId, (int) currentThread->state);
-      printf ("getting current stack frame...\n");
-      #endif
+    // If we found a running thread and there is at least one
+    // non-daemon thread left somewhere in the queue...
+    #if DEBUG_THREADS
+    printf ("Current thread is %d: %d(%d)\n", (int) currentThread, (int)currentThread->threadId, (int) currentThread->state);
+    printf ("getting current stack frame...\n");
+    #endif
     
-      stackFrame = current_stackframe();
+    stackFrame = current_stackframe();
     
-      #if DEBUG_THREADS
-      printf ("updating registers...\n");
-      #endif
+    #if DEBUG_THREADS
+    printf ("updating registers...\n");
+    #endif
     
-      update_registers (stackFrame);
-      #if DEBUG_THREADS
-      printf ("done updating registers\n");
-      #endif
-    
-      if (currentThread->interruptState == INTERRUPT_GRANTED)
-        throw_new_exception(JAVA_LANG_INTERRUPTEDEXCEPTION);
-    }
-      
-    return true;
-  }
-  schedule_request(REQUEST_EXIT);
-  currentThread = null;
+    update_registers (stackFrame);
+    #if DEBUG_THREADS
+    printf ("done updating registers\n");
+    #endif
   
-  return false;
+    if (currentThread->interruptState == INTERRUPT_GRANTED)
+      throw_new_exception(JAVA_LANG_INTERRUPTEDEXCEPTION);
+  }
+  if (!nonDaemonRunnable)
+  {
+    shutdown_program();
+    return false;
+  }
+  return true;
 }
 
 /*

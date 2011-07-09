@@ -1189,4 +1189,13 @@ public final class VM
      * @return An array of stack frame details.
      */
     public static native int[] createStackTrace(Thread thread, Object ignore);
+
+    /**
+     * Native method to call the firmware exception handler. This will display
+     * the exception details and exit the program.
+     * @param exception exception class with details of the current exception
+     * @param method Method number of the method in which the exception occurred 
+     * @param pc PC at which the exception occurred
+     */
+    public static native void firmwareExceptionHandler(Throwable exception, int method, int pc);
 }

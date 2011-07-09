@@ -78,7 +78,7 @@ typedef struct S_Thread
   REFERENCE nextThread;      // Intrinsic circular list of threads
   REFERENCE waitingOn;       // Object who's monitor we want
   objSync *sync;             // Pointer to the sync data for the object
-  JINT sleepUntil;           // Time to wake up
+  JINT sleepUntil;           // Time to wake up / also used as code buffer
   REFERENCE stackFrameArray; // Array of stack frames
   REFERENCE stackArray;      // The stack itself
   byte stackFrameIndex;      // Index of the current stack frame.

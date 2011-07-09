@@ -18,6 +18,7 @@
 #include "platform_hooks.h"
 #include "rconsole.h"
 #include "magic.h"
+#include "opcodes.h"
 
 #if 0
 #define get_stack_object(MREC_)  ((Object *) get_ref_at ((MREC_)->numParameters - 1))
@@ -61,7 +62,7 @@ boolean is_valid_executable(byte *start, int len)
 
 void install_binary(const byte* ptr)
 {
-  installedBinary = ptr;
+  installedBinary = (byte *)ptr;
 
   constantTableBase = __get_constant_base();
   staticFieldsBase = __get_static_fields_base();
@@ -432,7 +433,15 @@ void do_return (int numWords)
   printf ("do_return: stack frame array size: %d\n", currentThread->stackFrameIndex);
   #endif
 
-  if (currentThread->stackFrameIndex == 1)
+  // Place source ptr below data to be copied up the stack
+  fromStackPtr = get_stack_ptr_at_cur(numWords);
+  // Pop stack frame
+  currentThread->stackFrameIndex--;
+  stackFrame--;
+  // Assign registers
+  update_registers (stackFrame);
+
+  if (currentThread->stackFrameIndex == 0)
   {
     #if DEBUG_METHODS
     printf ("do_return: thread is done: %d\n", (int) currentThread);
@@ -442,13 +451,6 @@ void do_return (int numWords)
     return;
   }
 
-  // Place source ptr below data to be copied up the stack
-  fromStackPtr = get_stack_ptr_at_cur(numWords);
-  // Pop stack frame
-  currentThread->stackFrameIndex--;
-  stackFrame--;
-  // Assign registers
-  update_registers (stackFrame);
   #if DEBUG_METHODS
   printf ("do_return: stack reset to:\n");
   printf ("-- stack ptr = %d\n", (int) get_stack_ptr());
@@ -509,6 +511,41 @@ create_stack_trace(Thread *thread, Object *ignore)
 }
 
 /**
+ * Empty the call and value stacks, ready to call java from the firmware
+ */
+void empty_stacks()
+{
+  // smash the stacks back to the initial state
+  currentThread->stackFrameIndex = 0;
+  init_sp_pv();
+  update_stack_frame(current_stackframe());
+}
+
+/**
+ * Setup the vm to call an entry point in Java. We do this by dynamically
+ * generating a short (one instruction) code sequence to call the static
+ * method. By doing things this way we ensure that the sequence is 
+ * restartable which is required to enable the correct handling of memory
+ * allocation and the calling of static initializers...
+ * NOTE: We make use of the sleepUntil member of the thread structure to
+ * hold the generated code. This ensure that we can call different
+ * methods on different threads at the same time. We re-use the var space
+ * to avoid making the thread structure any larger.
+ */
+void call_entry_point(int class, int sig)
+{
+  byte *code = &(currentThread->sleepUntil);
+  ClassRecord *classRecord = get_class_record (class);
+  MethodRecord *mRec = find_method (classRecord, sig);
+  // generate the call instruction
+  code[0] = OP_INVOKESTATIC;
+  code[1] = class;
+  code[2] = mRec - get_method_table(classRecord);
+  // and setup the pc to execute it...
+  curPc = code;
+}
+
+/**
  * Exceute a "program" on the current thread.
  * NOTE: This call, resets both stacks and so the called method
  * will never return. The thread will exit.
@@ -516,19 +553,28 @@ create_stack_trace(Thread *thread, Object *ignore)
  */
 int execute_program(int prog)
 {
-  // Now find the class
-  ClassRecord *classRecord = get_class_record (get_entry_class (prog));
-  MethodRecord *mRec = find_method (classRecord, main_4_1Ljava_3lang_3String_2_5V);
   // smash the stacks back to the initial state
-  currentThread->stackFrameIndex = 0;
-  init_sp_pv();
-  update_stack_frame(current_stackframe());
-  // Push the param
+  empty_stacks();
+  // Push the param (we save a word by setting the top param)
   set_top_ref_cur(JNULL);
   // Push stack frame for main method:
-  dispatch_special (mRec, null);
-  // and for static initializer
-  dispatch_static_initializer (classRecord, curPc);
+  call_entry_point(get_entry_class (prog), main_4_1Ljava_3lang_3String_2_5V);
+  return EXEC_RUN;
+}
+
+/**
+ * Set things up so that we call out to the exception handler in Java.
+ * When this function is called we will empty the stack, so the thread
+ * will exit if the method ever returns.
+ */
+int call_exception_handler(Throwable *exception, int method, int pc)
+{
+  empty_stacks();
+  // Push the params
+  set_top_ref_cur((STACKWORD)exception);
+  push_word_cur(method);
+  push_word_cur(pc);
+  call_entry_point(JAVA_LANG_THREAD, systemUncaughtExceptionHandler_4Ljava_3lang_3Throwable_2II_5V);
   return EXEC_RUN;
 }
 

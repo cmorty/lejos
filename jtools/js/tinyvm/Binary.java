@@ -477,15 +477,10 @@ public class Binary
       String[] specialClasses = SpecialConstants.CLASSES;
       for (int i = 0; i < specialClasses.length; i++)
       {
-         String className = specialClasses[i];
-         ClassRecord classRecord = getClassRecord(className);
+         ClassRecord classRecord = getClassRecord(specialClasses[i]);
          classRecord.markUsed();
          classRecord.markInstanceUsed();
       }
-      // Add the run method that is called directly from the vm
-      Signature staticInit = new Signature(Constants.STATIC_INITIALIZER_NAME, "()V");
-      Signature runMethod = new Signature("run", "()V");
-      Signature mainMethod = new Signature("main", "([Ljava/lang/String;)V");
       // Now add entry classes      
       for (int i = 0; i < entryClassNames.length; i++)
       {
@@ -493,7 +488,14 @@ public class Binary
          classRecord.markUsed();
          classRecord.markInstanceUsed();
       }
-
+      // The following are the methods that can be called by the VM. They form
+      // the roots of the static call tree.
+      Signature staticInit = new Signature(Constants.STATIC_INITIALIZER_NAME, "()V");
+      Signature runMethod = new Signature("run", "()V");
+      Signature mainMethod = new Signature("main", "([Ljava/lang/String;)V");
+      Signature uncaughtExceptionMethod = new Signature("systemUncaughtExceptionHandler", "(Ljava/lang/Throwable;II)V");
+      boolean mainFound = false;
+      boolean exceptionHandlerFound = false;
       // We now add in the static initializers of all marked classes. 
       // We also add in the special entry points that may be called
       // directly from the VM.
@@ -524,13 +526,11 @@ public class Binary
             ClassRecord classRecord = iClassTable.get(pIndex);
             if (classRecord.used())
             {
-
                if (classRecord.hasMethod(runMethod, false))
                {
                    MethodRecord pRec = classRecord.getMethodRecord(runMethod);
                    classRecord.markMethod(pRec, true);             
                }
-
                if (classRecord.hasStaticInitializer())
                {
                    MethodRecord pRec = classRecord.getMethodRecord(staticInit);
@@ -539,18 +539,35 @@ public class Binary
                if (useAll) classRecord.markMethods();
             }
          }
+         // now mark any special entry points in the special classes
+         for (int i = 0; i < specialClasses.length; i++)
+         {
+            ClassRecord classRecord = getClassRecord(specialClasses[i]);
+System.out.println("SP Class: " + classRecord.getName());
+            if (classRecord.hasMethod(uncaughtExceptionMethod, true))
+            {
+                MethodRecord pRec = classRecord.getMethodRecord(uncaughtExceptionMethod);
+                classRecord.markMethod(pRec, true);
+                exceptionHandlerFound = true;
+            }
+         }
          // Finally mark starting from all of the entry classes
          for (int i = 0; i < entryClassNames.length; i++)
          {
             ClassRecord classRecord = getClassRecord(entryClassNames[i]);
+System.out.println("Entry Class: " + classRecord.getName());
             if (classRecord.hasMethod(mainMethod, true))
             {
                 MethodRecord pRec = classRecord.getMethodRecord(mainMethod);
                 classRecord.markMethod(pRec, true);
+                mainFound = true;
             }
          }
-
       } while (classCount != usedClassCount);
+      if (!mainFound)
+         throw new TinyVMException("main method not found, program has no entry point");
+      if (!exceptionHandlerFound)
+         throw new TinyVMException("System exception handler not found. Are you using the correct classes.jar");
    }
 
    public void processSpecialSignatures ()
@@ -621,7 +638,7 @@ public class Binary
       {
          ClassRecord classRecord = iClassTable.get(pIndex);
          classRecord.storeMethods(iMethodTables, iExceptionTables, iSignatures,
-            useAll());
+              true);
       }
    }
    
