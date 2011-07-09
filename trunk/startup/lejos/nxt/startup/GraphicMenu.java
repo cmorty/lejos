@@ -2,6 +2,7 @@ package lejos.nxt.startup;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
+import lejos.util.Delay;
 import lejos.util.TextMenu;
 
 /**
@@ -175,11 +176,7 @@ public class GraphicMenu extends TextMenu{
 		int count = 1;
 		while (count < TICKCOUNT){
 			display(selectedIndex,animateDirection,(int) ((10.0/TICKCOUNT)*count));
-			try {
-				Thread.sleep(INTERVAL);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			Delay.msDelay(INTERVAL);
 			count++;
 		}
 		display(finalIndex,0,0);
