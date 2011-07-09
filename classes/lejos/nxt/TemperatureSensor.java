@@ -76,14 +76,14 @@ public class TemperatureSensor extends I2CSensor
 	/**
 	 * Sets current resolution.
 	 * 
-	 * @param a {@link #RESOLUTION_9BIT}, {@link #RESOLUTION_10BIT}, {@link #RESOLUTION_11BIT}, or {@link #RESOLUTION_12BIT}
+	 * @param resolution {@link #RESOLUTION_9BIT}, {@link #RESOLUTION_10BIT}, {@link #RESOLUTION_11BIT}, or {@link #RESOLUTION_12BIT}
 	 */
-	public void setResolution(int a) {
-		if (a < 0 || a > 3)
+	public void setResolution(int resolution) {
+		if (resolution < 0 || resolution > 3)
 			throw new IllegalArgumentException();
 		
 		//TODO preserve other bits
-		sendData(REG_CONFIG, (byte)(a << 5));
+		sendData(REG_CONFIG, (byte)(resolution << 5));
 	}
 	
 	/**
