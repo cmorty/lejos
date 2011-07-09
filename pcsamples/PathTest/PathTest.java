@@ -22,16 +22,24 @@ public class PathTest extends NavigationPanel {
 	private static final long serialVersionUID = 1L;
 
   	// GUI Window size
-  	private static final int FRAME_WIDTH = 1000;
+  	private static final int FRAME_WIDTH = 1250;
   	private static final int FRAME_HEIGHT = 800;
   
   	private static final Dimension MAP_SIZE = new Dimension(900,600);
+  	private static final int INITIAL_ZOOM = 140;
+  	private static final String MAP_FILE = "floor.svg";
+  	private static final String FRAME_TITLE = "Path Test";
   
   	private static int GRID_SPACE = 39;
   	private static int CLEARANCE = 10;
   
   	private JButton calculateButton = new JButton("Calculate path");
-  	private JButton followButton = new JButton("Follow Route");;
+  	private JButton followButton = new JButton("Follow Route");
+  	
+  	private JPanel logPanel = new JPanel();
+  	private JTextArea logArea = new JTextArea(35,23);
+  	private JScrollPane log = new JScrollPane(logArea); 
+  	private JButton clearButton = new JButton("Clear log");
   
   	/**
   	 * Create a PathTest object and display it in a GUI frame.
@@ -55,12 +63,17 @@ public class PathTest extends NavigationPanel {
   		showReadingsPanel = false;
 	    showLastMovePanel = false;
 	    showParticlePanel = false;
+	    
+	    showMoves = true;
+	    
 	    super.buildGUI();
 	    
-  		// Set the map color
-  		mapPanel.colors[MapPanel.MAP_COLOR_INDEX] = Color.BLUE;
+	    slider.setValue(INITIAL_ZOOM);
 	    
-	    // Add calciulate abd follow buttons
+  		// Set the map color
+  		mapPanel.colors[MapPanel.MAP_COLOR_INDEX] = Color.DARK_GRAY;
+	    
+	    // Add calculate and follow buttons
 		commandPanel.add(calculateButton);;
 		commandPanel.add(followButton);
 		
@@ -70,6 +83,7 @@ public class PathTest extends NavigationPanel {
 		calculateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				model.calculatePath();
+				followButton.setEnabled(true);
 			}
 		});
 		
@@ -78,10 +92,24 @@ public class PathTest extends NavigationPanel {
 				model.followRoute();
 			}
 		});
+		
+		clearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				logArea.setText("");
+			}
+		});
+		
+		followButton.setEnabled(false);
+		
+		log.setBorder(BorderFactory.createTitledBorder("Log"));
+		logPanel.add(log);
+		logPanel.add(clearButton);
+		logPanel.setPreferredSize(new Dimension(280,700));
+		add(logPanel);
   	}
   
   	/**
-  	 * Pop-up context ment
+  	 * Pop-up context menu
   	 */
   	@Override
 	protected void popupMenu(MouseEvent me) {
@@ -94,16 +122,25 @@ public class PathTest extends NavigationPanel {
 	
 	    menu.show(this, pt.x, pt.y);
 	}
+
+  	@Override
+  	protected void whenConnected() {
+  		connectButton.setEnabled(false);
+  		connectPanel.setBorder(BorderFactory.createTitledBorder("Connected"));
+  	}
+  	
+  	@Override
+  	public void log(String message) {
+  		logArea.append(message + "\n");
+  	}
   
 	/**
 	 * Run the sample
-	 * 
-	 * @throws Exception
 	 */
 	public void run() throws Exception {
-		model.loadMap("Floor.svg");
+		model.loadMap(MAP_FILE);
 		model.setMeshParams(GRID_SPACE, CLEARANCE);
 	
-		openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, "Path Test", Color.white);
+		openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, FRAME_TITLE, Color.white);
 	}
 }
