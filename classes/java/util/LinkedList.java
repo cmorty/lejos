@@ -183,8 +183,8 @@ public class LinkedList<E> extends AbstractList<E> {
 	}
 
 	public ListIterator<E> listIterator(int index) {
-		Entry<E> e = entry(index);
-		return new MyIterator(e.previousEntry, index);
+		Entry<E> e = (index == this.size) ? headerEntry : entry(index);
+		return new MyIterator(e, index);
 	}
 
 	public List<E> subList(int start, int end) {
@@ -220,14 +220,14 @@ public class LinkedList<E> extends AbstractList<E> {
     
     private class MyIterator implements ListIterator<E>
 	{
-		private Entry<E> curEntry;
-		private int curPos;
+		private Entry<E> nextEntry;
+		private int nextPos;
 		private int modcount;
 
 		public MyIterator(Entry<E> curEntry, int curPos)
 		{
-			this.curEntry = curEntry;
-			this.curPos = curPos;
+			this.nextEntry = curEntry;
+			this.nextPos = curPos;
 			this.modcount = LinkedList.this.modCount;
 		}
 		
@@ -239,76 +239,77 @@ public class LinkedList<E> extends AbstractList<E> {
 
 		public boolean hasNext()
 		{
-			return curEntry.nextEntry != LinkedList.this.headerEntry;
+			return this.nextEntry != LinkedList.this.headerEntry;
 		}
 
 		public boolean hasPrevious()
 		{
-			return curEntry.previousEntry != LinkedList.this.headerEntry;
+			return this.nextEntry.previousEntry != LinkedList.this.headerEntry;
 		}
 
 		public E next()
 		{
 			this.checkModCount();
-			Entry<E> newEntry = curEntry.nextEntry;
-			if (newEntry == LinkedList.this.headerEntry)
+			Entry<E> r = this.nextEntry;
+			if (r == LinkedList.this.headerEntry)
 				throw new NoSuchElementException();
 			
-			this.curPos++;
-			this.curEntry = newEntry;
-			return newEntry.element;
+			this.nextPos++;
+			this.nextEntry = r.nextEntry;
+			return r.element;
 		}
 
 		public E previous()
 		{
 			this.checkModCount();
-			Entry<E> newEntry = curEntry.previousEntry;
+			Entry<E> newEntry = nextEntry.previousEntry;
 			if (newEntry == LinkedList.this.headerEntry)
 				throw new NoSuchElementException();
 			
-			this.curPos--;
-			this.curEntry = newEntry;
+			this.nextPos--;
+			this.nextEntry = newEntry;
 			return newEntry.element;
 		}
 
 		public void remove()
 		{
 			this.checkModCount();
-			if (curEntry == LinkedList.this.headerEntry)
+			Entry<E> e = this.nextEntry.previousEntry;
+			if (e == LinkedList.this.headerEntry)
 				// TODO check with JDK implementation, documentation is much more strict when to throw this 
 				throw new IllegalStateException();
 			
-			Entry<E> oldEntry = this.curEntry;
-			this.curEntry = oldEntry.previousEntry;
-			LinkedList.this.remove(oldEntry);
-			this.modcount = LinkedList.this.modCount;
+			LinkedList.this.remove(e);
+			this.nextPos--;
 		}
 		
-		public void set(E e)
+		public void set(E v)
 		{
 			this.checkModCount();
-			if (curEntry == LinkedList.this.headerEntry)
+			Entry<E> e = this.nextEntry.previousEntry;
+			if (e == LinkedList.this.headerEntry)
 				// TODO check with JDK implementation, documentation is much more strict when to throw this 
 				throw new IllegalStateException();
 	
-			this.curEntry.element = e;
+			e.element = v;
 		}
 
 		public void add(E e)
 		{
 			this.checkModCount();
-			LinkedList.this.addBefore(e, this.curEntry.nextEntry);
+			LinkedList.this.addBefore(e, this.nextEntry);
 			this.modcount = LinkedList.this.modCount;
+			this.nextPos++;
 		}
 
 		public int nextIndex()
 		{
-			return this.curPos;
+			return this.nextPos;
 		}
 
 		public int previousIndex()
 		{
-			return this.curPos - 1;
+			return this.nextPos - 1;
 		}
 
 	}
