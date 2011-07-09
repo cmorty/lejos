@@ -24,9 +24,9 @@ public class Path extends ArrayList<Waypoint> implements Transmittable {
 
 	public void loadObject(DataInputStream dis) throws IOException {
 		int n = dis.readInt();
-		Waypoint wp = new Waypoint(0,0);
 		this.clear();
 		for(int i=0;i<n;i++) {
+			Waypoint wp = new Waypoint(0,0);
 			wp.loadObject(dis);
 			add(wp);
 		}		
