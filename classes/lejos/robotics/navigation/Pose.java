@@ -207,7 +207,7 @@ public void setHeading(float heading )
 @Override
 public String toString()
 {
-  return("X"+_location.x+" Y"+_location.y+" H"+_heading);
+  return("X:"+_location.x+" Y:"+_location.y+" H:"+_heading);
 }
 
 public void dumpObject(DataOutputStream dos) throws IOException {
