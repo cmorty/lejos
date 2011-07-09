@@ -41,7 +41,8 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected boolean showConnectPanel = true, showMousePanel = true, 
 	                  showControlPanel = true, showCommandPanel = true,
 	                  showReadingsPanel = true, showLastMovePanel = true,
-	                  showParticlePanel = true, showMoves = false;
+	                  showParticlePanel = true, showMoves = false,
+	                  showMesh = true;
 	protected JPanel readingsPanel = new JPanel();
 	protected JTextField readingsField = new JTextField(12);
 	protected JPanel lastMovePanel = new JPanel();
@@ -76,13 +77,14 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 			controlPanel.add(slider);
 			controlPanel.add(gridLabel);
 			controlPanel.add(gridCheck);
-			controlPanel.add(meshLabel);
-			controlPanel.add(meshCheck);
-			controlPanel.setBorder(BorderFactory.createTitledBorder("Controls"));
+			
+			controlPanel.setBorder(BorderFactory.createTitledBorder("GUI Controls"));
 			add(controlPanel);
 					
 			gridCheck.setSelected(true);
-			meshCheck.setSelected(false);
+
+			slider.setMajorTickSpacing(100);
+			slider.setPaintTicks(true);
 			
 			slider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
@@ -98,11 +100,18 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 				}
 			});
 			
-			meshCheck.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {;
-					mapPanel.repaint();
-				}
-			});
+			if (showMesh) {		
+				controlPanel.add(meshLabel);
+				controlPanel.add(meshCheck);
+				
+				meshCheck.setSelected(false);
+			
+				meshCheck.addChangeListener(new ChangeListener() {
+					public void stateChanged(ChangeEvent e) {;
+						mapPanel.repaint();
+					}
+				});
+			}
 		}
 		
 		if (showMousePanel) {

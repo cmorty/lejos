@@ -1,10 +1,9 @@
 package lejos.robotics.mapping;
 
-import java.awt.Dimension;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import lejos.geom.Rectangle;
+import lejos.geom.Point;
 import lejos.pc.comm.*;
 import lejos.robotics.*;
 import lejos.robotics.navigation.*;
@@ -36,8 +35,9 @@ public class PCNavigationModel extends NavigationModel {
 	protected Collection<Node> nodes;
 	protected Node start, destination;
 	protected NodePathFinder pf;
-	ArrayList<Move> moves = new ArrayList<Move>();
-	ArrayList<Pose> poses = new ArrayList<Pose>();
+	protected ArrayList<Move> moves = new ArrayList<Move>();
+	protected ArrayList<Pose> poses = new ArrayList<Pose>();
+	protected ArrayList<Point> features = new ArrayList<Point>();
 	
 	private Thread receiver = new Thread(new Receiver());
 	
@@ -89,6 +89,10 @@ public class PCNavigationModel extends NavigationModel {
 	 */
 	public ArrayList<Move> getMoves() {
 		return moves;
+	}
+	
+	public ArrayList<Point> getFeatures() {
+		return features;
 	}
 	
 	/**
@@ -297,6 +301,24 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	/**
+	 * Send a ROTATE_TO event to the NXT
+	 * 
+	 * @param angle the angle to rotate
+	 */
+	public void rotateTo(float angle) {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.ROTATE_TO.ordinal());
+				dos.writeFloat(angle);
+				dos.flush();
+			}
+		} catch (IOException ioe) {
+			panel.error("IO Exception in rotateTo");
+		}
+	}
+	
+	/**
 	 * Send a GET_POSE event to the NXT
 	 */
 	public void getPose() {
@@ -427,6 +449,10 @@ public class PCNavigationModel extends NavigationModel {
 		if (path == null) return;
 		if (!connected) return;
 		try {
+			panel.log("Sending path");
+			for(Waypoint wp: path) {
+				panel.log("Waypoint:" + wp.x + "," + wp.y + "," + wp.getHeading() + "," + wp.isHeadingRequired());
+			}
 			synchronized(receiver) {
 				dos.writeByte(NavEvent.FOLLOW_ROUTE.ordinal());
 				path.dumpObject(dos);
@@ -517,8 +543,13 @@ public class PCNavigationModel extends NavigationModel {
 						case ESTIMATED_POSE: // Get the MCL estimated pose data
 							mcl.loadObject(dis);
 							break;
-						case FEATURE_DETECTED: // TODO: Get feature detected
-							featureReadings.loadObject(dis);
+						case FEATURE_DETECTED: // Get feature detected
+							feature.loadObject(dis);
+							float range = feature.getRangeReading().getRange();	
+							Pose pose = feature.getPose();
+							Point p = new Point((float) (pose.getX() + (range  * Math.cos(pose.getHeading()))),
+												(float) (pose.getY() + (range  * Math.sin(pose.getHeading()))));
+							features.add(p);
 							break;
 						case PATH: // Get a path generated on the NXT
 							path.loadObject(dis);

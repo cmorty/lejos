@@ -28,6 +28,7 @@ public class MenuAction extends AbstractAction {
 			panel.repaint();
 			break;
 		case GOTO:
+			model.setTarget(new Waypoint(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit));
 			model.goTo(new Waypoint(p.x /panel.pixelsPerUnit,p.y / panel.pixelsPerUnit));
 			break;
 		case FIND_CLOSEST:
