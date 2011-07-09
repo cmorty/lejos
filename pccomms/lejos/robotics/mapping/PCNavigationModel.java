@@ -112,7 +112,7 @@ public class PCNavigationModel extends NavigationModel {
 		if (!connected) return;
 		try {
 			synchronized(receiver) {
-				panel.log("Getting particles");
+				//panel.log("Getting particles");
 				dos.writeByte(NavEvent.GET_PARTICLES.ordinal());
 				dos.flush();
 			}
@@ -450,6 +450,7 @@ public class PCNavigationModel extends NavigationModel {
 		if (!connected) return;
 		try {
 			panel.log("Sending path");
+			panel.log("Pose:" + currentPose);
 			for(Waypoint wp: path) {
 				panel.log("Waypoint:" + wp.x + "," + wp.y + "," + wp.getHeading() + "," + wp.isHeadingRequired());
 			}
@@ -517,6 +518,7 @@ public class PCNavigationModel extends NavigationModel {
 							break;
 						case SET_POSE: // Get a new pose from the NXT
 							currentPose.loadObject(dis);
+							panel.log(currentPose.toString());
 							poses.add(new Pose(currentPose.getX(), currentPose.getY(), currentPose.getHeading()));
 							break;
 						case PARTICLE_SET: // Get a particle set from the NXT
