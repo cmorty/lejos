@@ -55,6 +55,10 @@ public class Waypoint extends Point implements Transmittable {
 		return heading;
 	}
 	
+	public boolean isHeadingRequired() {
+		return headingRequired;
+	}
+	
 	public double getMaxPositionError() {
 		return maxPositionError;
 	}

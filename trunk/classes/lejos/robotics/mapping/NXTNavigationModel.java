@@ -41,6 +41,8 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	protected boolean autoSendPose = true;
 	protected boolean sendMoveStart = false, sendMoveStop = true;
 	
+	private float oldRange = -1;
+	
 	private Thread receiver;
 	
 	/**
@@ -120,6 +122,11 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	@SuppressWarnings("hiding")
 	public void addRangeScanner(RangeScanner scanner) {
 		this.scanner = scanner;
+	}
+	
+	@SuppressWarnings("hiding")
+	public void addFeatureDetector(FeatureDetector detector) {
+		this.detector = detector;
 	}
 	
 	/**
@@ -204,6 +211,10 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 						case ROTATE: // Request to rotate a given angle
 							float angle = dis.readFloat();
 							if (pilot != null && pilot instanceof RotateMoveController) ((RotateMoveController) pilot).rotate(angle);
+							break;
+						case ROTATE_TO: // Request to rotate to a given angle
+							angle = dis.readFloat();
+							if (pp != null && pilot != null && pilot instanceof RotateMoveController) ((RotateMoveController) pilot).rotate(angle - pp.getPose().getHeading());
 							break;
 						case GET_POSE: // Request to get the pose and return it to the PC
 							if (pp == null) break;
@@ -385,10 +396,18 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	 */
 	@SuppressWarnings("hiding")
 	public void featureDetected(Feature feature, FeatureDetector detector) {
+		if (dos == null) return;
+		if (!(feature instanceof RangeFeature)) return;
+		float range = ((RangeFeature) feature).getRangeReading().getRange();
+		if (range < 0) return;
+		if  (pilot == null || !pilot.isMoving()) {
+			if (range == oldRange) return;
+		}
+		oldRange = range;
 		try {
 			synchronized(receiver) {
 				dos.writeByte(NavEvent.FEATURE_DETECTED.ordinal());
-				dos.flush();
+				((RangeFeature) feature).dumpObject(dos);
 			}
 		} catch (IOException ioe) {
 			fatal("IOException in featureDetected");	
