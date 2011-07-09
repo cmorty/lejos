@@ -93,8 +93,7 @@ void disp_varstat( VarStat* vs)
 #endif
 
 void
-handle_uncaught_exception(Throwable * exception,
-			  const Thread * thread,
+firmware_exception_handler(Throwable * exception,
 			  const int methodRecord,
 			  int pc)
 {
@@ -128,10 +127,10 @@ handle_uncaught_exception(Throwable * exception,
   {
     display_goto_xy(0, line++);
     display_string(" at: ");
-    display_int(*frame >> 16, 0);
-    display_string("(");
+    display_int(*frame >> 16, 4);
+    display_string(":");
     display_int(*frame & 0xffff, 0);
-    display_string(")");
+    display_string("");
     frame++;
   }
   display_update();
@@ -142,13 +141,21 @@ void
 switch_thread_hook()
 {
   int b = buttons_get();
+  static boolean buttonsDown = false;
 
   // Check for ENTER and ESCAPE pressed
   if (b == (BUTTON_ENTER|BUTTON_ESCAPE)) {
-    if (debug_user_interrupt()) return;
-    // exit the program
-    schedule_request(REQUEST_EXIT);
+    // only generate the event once per press...
+    if (!buttonsDown)
+    {
+      buttonsDown = true;
+      if (debug_user_interrupt()) return;
+      // exit the program
+      shutdown_program();
+    }
   }
+  else
+    buttonsDown = false;
 }
 
 #ifdef VERIFY
@@ -242,8 +249,6 @@ run(int jsize)
   init_exceptions();
 
   // Execute the bytecode interpreter
-  set_program_number(0);
-
   engine();
   // Engine returns when all non-daemon threads are dead
 }

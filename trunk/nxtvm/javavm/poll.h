@@ -29,5 +29,6 @@ extern int register_event(NXTEvent *event);
 extern int unregister_event(NXTEvent *event);
 extern int change_event(NXTEvent *event, JINT set, JINT clear);
 extern void init_events();
+extern void shutdown_program();
 
 #endif // _POLL_H

@@ -20,7 +20,10 @@ public final class System
   /**
    * Terminate the application.
    */
-  public static native void exit(int code);
+  public static void exit(int code)
+  {
+      Runtime.getRuntime().exit(code);
+  }
     
   /**
    * Current time expressed in milliseconds. In the RCX, this is the number

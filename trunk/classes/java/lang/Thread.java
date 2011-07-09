@@ -1,20 +1,9 @@
 package java.lang;
+import lejos.nxt.VM;
 
 /**
- * A thread of execution (or task).<p>
- * 
- * Thread objects represent the unit of execution within leJOS. Each thread
- * object when started will execute concurrently with other threads. The system
- * automatically creates the initial thread and calls the programs entry point.
- * <p>
- * In leJOS thread scheduling is purely priority based. Lower priority threads will
- * not run at all if there is a higher priority thread that is runnable. Threads of
- * equal priority will be time sliced on a round robin basis, the current time slice
- * used by leJOS is 2ms. <br>
- * <b>Note:</b> This means that if a thread calls yield and there are no threads of 
- * equal priority available to run then the original thread will continue to
- * execute (but with a new time slice). yield can not be used to allow lower
- * priority threads to execute. 
+ * A thread of execution (or task). Now handles priorities, daemon threads
+ * and interruptions.
  */
 public class Thread implements Runnable
 {
@@ -57,21 +46,19 @@ public class Thread implements Runnable
   // Extra instance state follows:
   
   private String name;
+  private UncaughtExceptionHandler uncaughtExceptionHandler;
+  private static UncaughtExceptionHandler defaultUncaughtExceptionHandler;
 
-  /**
-   * Returns true if the thread has been started and has not yet terminated.
-   * @return true if the thread is alive, false if not
-   */
+  public static interface UncaughtExceptionHandler
+  {
+      void uncaughtException(Thread t, Throwable e);
+  }
+  
   public final boolean isAlive()
   {
     return _TVM_state > 1;
   }    
 
-  /**
-   * Initialise a new thread object
-   * @param name string name of the thread
-   * @param target the method to be called when the thread starts
-   */
   private void init(String name, Runnable target)
   {
   	Thread t = currentThread();
@@ -91,92 +78,38 @@ public class Thread implements Runnable
     // type.
     this._TVM_waitingOn = target;
   }
-
-  /**
-   * Create a new Thread. The thread will inherit the priority and daemon state 
-   * of the creating thread.
-   * Execution is started by calling the start method.
-   */
+  
   public Thread()
   {
     init("", null);
   }
 
-  /**
-   * Create a new Thread. The thread will inherit the priority and daemon state 
-   * of the creating thread.
-   * Execution is started by calling the start method. The thread will have the specified
-   * name.
-   * @param name The name to attach to this thread object
-   */
   public Thread (String name)
   {
     init(name, null);
   }
 
-  /**
-   * Create a new Thread. The thread will inherit the priority and daemon state of the creating thread.
-   * Execution is started by calling the start method. If target is not null then the run method
-   * of target will be called, when the thread starts. If target is null then the run method of
-   * the thread object will be called.
-   * @param target The object whose run method is called
-   */
   public Thread(Runnable target)
   {
       init("", target);
   }
- 
-  /**
-   * Create a new Thread. The thread will inherit the priority and daemon state of the creating thread.
-   * Execution is started by calling the start method. If target is not null then the run method
-   * of target will be called, when the thread starts. If target is null then the run method of
-   * the thread object will be called.
-   * @param target The object whose run method is called
-   * @param name The name to be used for the thread
-   */
+  
   public Thread(Runnable target, String name)
   {
       init(name, target);
   }
-
-  /* (non-Javadoc)
-   * @see java.lang.Runnable#run()
-   */
   public void run()
   {
-    // If the thead was created with a runnable it will be stored in waitingOn
+    // If the thread was created with a runnable it will be stored in waitingOn
     // Note it is not safe to use this field again after this point.
     if (_TVM_waitingOn != null)
       ((Runnable)_TVM_waitingOn).run();
   }
   
-  /**
-   * Called to start the execution of the new thread. A thread can only be started once.
-   */
   public final native void start();
-  
-  /**
-   * Temporally suspends execution of this thread to allow other threads to run.
-   */
   public static native void yield();
-  
-  /**
-   * Suspends execution of the thread for the specified amount of time.
-   * @param aMilliseconds Number of milliseconds to sleep for
-   * @throws InterruptedException
-   */
   public static native void sleep (long aMilliseconds) throws InterruptedException;
-  
-  /**
-   * Return a reference to the currently executing thread.
-   * @return The current thread
-   */
   public static native Thread currentThread();
-  
-  /**
-   * Returns the priority of this thread.
-   * @return the thread priority
-   */
   public final native int getPriority();
 
   /**
@@ -196,12 +129,11 @@ public class Thread implements Runnable
   {
       this.name = name;
   }
-  
   /**
    * Set the priority of this thread. Higher number have higher priority.
    * The scheduler will always run the highest priority thread in preference
    * to any others. If more than one thread of that priority exists the
-   * scheduler will time-slice them. In order for lower priority threads
+   * scheduler will time-slice them. In order for lower priority threas
    * to run a higher priority thread must cease to be runnable. i.e. it
    * must exit, sleep or wait on a monitor. It is not sufficient to just
    * yield.
@@ -220,46 +152,116 @@ public class Thread implements Runnable
   public native void interrupt();
   
   /**
-   * Test to see if the current thread is in an interrupted state, if so return true,
-   * otherwise return false. After this call the thread will no longer be in an interrupted state.
-   * 
-   * @return true if the thread is in an interrupted state, false otherwise
+   * Tests the interrupted state of the current thread. If it is interrupted it
+   * will true and clear the interrupted state. Otherwise it will return false.
+   * @return true if the current thread has been interrupted otherwise false
    */
   public static native boolean interrupted();
   
   /**
-   * Tests to see if the thread is in an interrupted state, but does not clear this state.
-   * @return true if the thread is in an interrupted state, false otherwise
+   * Tests to see if the current thread has been interrupted but leaves the
+   * interrupted state unchanged.
+   * @return true if the current thread has been interrupted otherwise false
    */
   public final native boolean isInterrupted();
   
   /**
    * Set the daemon flag. If a thread is a daemon thread its existence will
    * not prevent a JVM from exiting.
+   * @return true if this thread has the daemon flag set otherwise false
    */
   public final native boolean isDaemon();
   
   /**
-   * Sets the daemon state of the thread. If a thread is a daemon thread its existence will
-   * not prevent a JVM from exiting.
-   * @param on set to true to mark the thread as daemon, false otherwise
+   * Sets the state of the threads daemon flag. If this flag is set then the
+   * system will not wait for it to exit when all other none daemon threads
+   * have exited. 
+   * @param on the new state of the daemon flag
    */
   public final native void setDaemon(boolean on);
   
-
   /**
-   * Waits for the thread to terminate, or for the operation to be interrupted.
-   * @throws InterruptedException
+   * Waits for this thread to die.
+   * @throws InterruptedException 
    */
   public final native void join() throws InterruptedException;
-  
+
   /**
-   * Waits for the thread to terminate, or for the specified amount of time, or for the current thread to
-   * be interrupted.
-   * @param timeout The maximum time to wait in milliseconds
-   * @throws InterruptedException
-   */
+   * Waits for up to timeout mS for this thread to die.
+   * @param timeout The period in ms to wait for this thread to die
+   * @throws InterruptedException 
+   */  
   public final native void join(long timeout) throws InterruptedException;
+
+  /**
+   * Set the default exception handler. This will be called for any uncaught
+   * exceptions thrown by threads which do not have an uncaught exception
+   * handler set.
+   * @param handler The new exception handler
+   */
+  public static void setDefaultUncaughtExceptionHandler(Thread.UncaughtExceptionHandler handler)
+  {
+      defaultUncaughtExceptionHandler = handler;
+  }
+
+  /**
+   * returns the current default exception handler if set, or null if none is set.
+   * @return the current exception handler
+   */
+  public static Thread.UncaughtExceptionHandler getDefaultUncaughtExceptionHandler()
+  {
+      return defaultUncaughtExceptionHandler;
+  }
+
+  /**
+   * Sets the uncaught exception handler for this thread. This handler will be
+   * called for any uncaught exceptions thrown bu this thread.
+   * @param handler The new handler
+   */
+  public void setUncaughtExceptionHandler(Thread.UncaughtExceptionHandler handler)
+  {
+      uncaughtExceptionHandler = handler;
+  }
+
+  /**
+   * returns the current uncaught exception handler for this thread, if one has
+   * has been set or null if none is set.
+   * @return the current handler
+   */
+  public Thread.UncaughtExceptionHandler getUncaughtExceptionHandler()
+  {
+      return uncaughtExceptionHandler;
+  }
+
+  /**
+   * This is a special entry point called by the firmware to allow Java code
+   * to handle uncaught exceptions. Note great care is needed here to avoid
+   * loops due to exceptions being thrown while trying to handle the exception.
+   * In particular if the system has run out of memory it is likely that the
+   * Java code will end up throwing an out of memory exception. If this happens
+   * we catch the exception and call the VM to display the original exception
+   * information.
+   * @param exception
+   * @param method
+   * @param pc 
+   */  
+  private static void systemUncaughtExceptionHandler(Throwable exception, int method, int pc)
+  {
+      try {
+          // try the various possible handlers in turn
+          Thread curThread = Thread.currentThread();
+          if (curThread.getUncaughtExceptionHandler() != null)
+              curThread.getUncaughtExceptionHandler().uncaughtException(curThread, exception);
+          else if (defaultUncaughtExceptionHandler != null)
+              defaultUncaughtExceptionHandler.uncaughtException(curThread, exception);
+          else
+              exception.uncaughtException(method, pc);
+      } catch (Throwable e)
+      {
+          // If we get any exceptions let the system deal with it...
+          VM.firmwareExceptionHandler(exception, method, pc);
+      }
+  }
 }
 
 

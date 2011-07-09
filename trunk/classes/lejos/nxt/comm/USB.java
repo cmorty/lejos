@@ -155,6 +155,11 @@ public class USB extends NXTCommDevice {
                 usbEvent = NXTEvent.allocate(NXTEvent.USB, 0, 1);
                 USBThread usbThread = new USBThread();
                 usbThread.start();
+                // Add shutdown hook to clean up connections
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override
+                    public void run() {if (connection != null) connection.close();}
+                });
             }
             usbEvent.clearEvent(USB_DISCONNECT);
             listening = true;

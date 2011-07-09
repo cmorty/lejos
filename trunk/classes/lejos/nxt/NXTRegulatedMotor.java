@@ -66,6 +66,11 @@ public class NXTRegulatedMotor implements RegulatedMotor
         cont.setPriority(Thread.MAX_PRIORITY);
         cont.setDaemon(true);
         cont.start();
+        // Add shutdown handler to stop the motors
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {cont.shutdown();}
+        });
     }
 
     /**
@@ -730,6 +735,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
     {
         static final int UPDATE_PERIOD = 4;
         NXTRegulatedMotor [] activeMotors = new NXTRegulatedMotor[0];
+        boolean running = false;
 
         /**
          * Add a motor to the set of active motors.
@@ -757,13 +763,23 @@ public class NXTRegulatedMotor implements RegulatedMotor
                     newMotors[j++] = activeMotors[i];
             activeMotors = newMotors;
         }
+        
+        synchronized void shutdown()
+        {
+            // Shutdown all of the motors and prevent them from running
+            running = false;
+            for(NXTRegulatedMotor m : activeMotors)
+                m.tachoPort.controlMotor(0, TachoMotorPort.FLOAT);
+            activeMotors = new NXTRegulatedMotor[0];            
+        }
 
 
         @Override
         public void run()
         {
+            running = true;
             long now = System.currentTimeMillis();
-            for(;;)
+            while(running)
             {
                 long delta;
                 synchronized (this)
@@ -779,7 +795,7 @@ public class NXTRegulatedMotor implements RegulatedMotor
                         m.tachoPort.controlMotor(m.reg.power, m.reg.mode);
                 }
                 Delay.msDelay(now + UPDATE_PERIOD - System.currentTimeMillis());
-           }	// end keep going loop
+            }	// end keep going loop
         }
     }
 

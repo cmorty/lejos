@@ -7,10 +7,12 @@
 #define MAX_EVENTS 16
 #define WAITING 1
 #define SET 2
+#define SYSTEM_EVENT 7
+#define SHUTDOWN 1
 NXTEvent *events[MAX_EVENTS];
 int eventCnt;
 JINT no_event(JINT filter) { return 0; }
-static JINT (* const eventCheckers[])(JINT) = {no_event, bt_event_check, udp_event_check, null, sp_check_event, i2c_event_check, buttons_check_event};
+static JINT (* const eventCheckers[])(JINT) = {no_event, bt_event_check, udp_event_check, null, sp_check_event, i2c_event_check, buttons_check_event, no_event};
 
 /**
  * Initialize the event system. At startup we are not monitoring for any events.
@@ -100,4 +102,24 @@ void check_events()
       event->updateCnt = event->updatePeriod;
     }
   }
+}
+
+// Called to shutdown the current program. If the program has
+// shutdown hooks then these will be initiated, if not the
+// program will be terminated.
+void shutdown_program()
+{
+  // Search for a thread waiting for a shutdown event.
+  int i;
+  for(i = 0; i < eventCnt; i++)
+  {
+    NXTEvent *event = events[i];
+    if (event->typ == SYSTEM_EVENT && event->filter == SHUTDOWN)
+    {
+      change_event(event, SHUTDOWN, 0);
+      return;
+    }
+  }
+  // no thread waiting so just shut things down...
+  schedule_request(REQUEST_EXIT);
 }

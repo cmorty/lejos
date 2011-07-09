@@ -285,6 +285,11 @@ public class Bluetooth extends NXTCommDevice
 			closePort();
 			cachedName = getFriendlyName();
 			cachedAddress = getLocalAddress();
+			// Create cleanup handler
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {for(int i = 0; i < CHANCNT; i++) Chans[i].close();}
+            });
 		}
 
 		private void sendCommand()

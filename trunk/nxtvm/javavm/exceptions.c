@@ -61,7 +61,6 @@ int throw_new_exception(int class)
  */
 int throw_exception (Throwable *exception)
 {
-  Thread *auxThread;
   int exceptionFrame = currentThread->stackFrameIndex;
   TWOBYTES tempCurrentOffset;
   MethodRecord *tempMethodRecord = null;
@@ -87,7 +86,6 @@ int throw_exception (Throwable *exception)
     // Throwing an interrupted exception clears the flag
     currentThread->interruptState = INTERRUPT_CLEARED;
   }
-  
   #ifdef VERIFY
   assert (currentThread->state > DEAD, EXCEPTIONS1);
   #endif // VERIFY
@@ -98,7 +96,6 @@ int throw_exception (Throwable *exception)
   tempStackFrame = current_stackframe();
   update_stack_frame(tempStackFrame);
   excepMethodRec = tempStackFrame->methodRecord;;
-  auxThread = currentThread;
 
   #if 0
   trace (-1, get_class_index(exception), 3);
@@ -140,7 +137,7 @@ int throw_exception (Throwable *exception)
   // No good handlers in current stack frame - go up.
   do_return (0);
   // Note: return takes care of synchronized methods.
-  if (auxThread->state == DEAD)
+  if (currentThread->state == DEAD)
   {
 #if DEBUG_EXCEPTIONS
   printf("Thread is dead\n");
@@ -153,16 +150,19 @@ int throw_exception (Throwable *exception)
       int methodNo = excepMethodRec - get_method_table(get_class_record(0));
       // Restore the stack and pc of the exception thread. This prevents
       // corruption of lower frames if we save the current state. The
-      // thread is now dead so this should be safe.
+      // thread is now dead so this should be safe. This also allows any debug
+      // code to access the intact stack frames.
       curPc = exceptionPc;
       currentThread->stackFrameIndex = exceptionFrame;
-      tempCurrentOffset = ptr2word(curPc) - ptr2word(get_binary_base() + excepMethodRec->codeOffset);
-      if (!debug_uncaught_exception (exception, auxThread,
+      tempCurrentOffset = ptr2word(exceptionPc) - ptr2word(get_binary_base() + excepMethodRec->codeOffset);
+      if (!debug_uncaught_exception (exception, currentThread,
   			         methodNo,
 			         tempCurrentOffset))
-        handle_uncaught_exception (exception, auxThread,
-  			         methodNo,
-			         tempCurrentOffset);
+      {
+        // bring the thread back from the dead!
+        currentThread->state = RUNNING;
+        call_exception_handler(exception, methodNo, tempCurrentOffset);
+      }
     }
     return EXEC_CONTINUE;
   }

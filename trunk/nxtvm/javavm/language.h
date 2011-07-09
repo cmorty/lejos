@@ -168,12 +168,13 @@ extern boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr);
 void dispatch_special_checked (byte classIndex, byte methodIndex, byte *retAddr, byte *btAddr);
 Object *create_stack_trace(Thread *thread, Object *ignore);
 int execute_program(int prog);
+int call_exception_handler(Throwable *exception, int method, int pc);
 extern boolean is_assignable(const byte srcSig, const byte dstSig);
 extern byte get_base_type(ClassRecord *classRec);
 
 void install_binary(const byte *ptr);
 extern boolean is_valid_executable(byte * start, int len);
-//#define install_binary(PTR_)        (installedBinary=(PTR_))
+void empty_stacks();
 
 #define get_master_record()         ((MasterRecord *) installedBinary)
 #define get_magic_number()          get_master_record()->magicNumber

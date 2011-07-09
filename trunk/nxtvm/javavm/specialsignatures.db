@@ -14,6 +14,7 @@ main([Ljava/lang/String;)V
 run()V
 <init>()V
 <clinit>()V
+systemUncaughtExceptionHandler(Ljava/lang/Throwable;II)V
 
 #--------------------------------------
 # Native methods
@@ -212,3 +213,6 @@ getRefreshCompleteTime()I
 registerEvent()I
 unregisterEvent()I
 changeEvent(II)I
+
+#VM
+firmwareExceptionHandler(Ljava/lang/Throwable;II)V
