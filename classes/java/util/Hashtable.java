@@ -6,24 +6,23 @@ package java.util;
  */
 public class Hashtable<K, V>
 {
-  private static final int TABLE_SIZE = 32;
-  private Object[] iTable;
-  
-  public Hashtable()
-  {  
-    this.iTable = new Object[TABLE_SIZE];
-  }
+	private static final int TABLE_SIZE = 32;
+	private Object[] iTable;
 
-	@SuppressWarnings("unchecked")
+	public Hashtable()
+	{
+		this.iTable = new Object[TABLE_SIZE];
+	}
+
 	public synchronized V get (K aKey)
 	{
 		Object pElement = iTable[getTableIndex(aKey)];
 		if (pElement != null)
 		{
-			KeyValuePair pKeyValuePair = getKeyValuePair(pElement, aKey);
+			KeyValuePair<K,V> pKeyValuePair = getKeyValuePair(pElement, aKey);
 			if (pKeyValuePair != null)
 			{
-				return (V)pKeyValuePair.iValue;
+				return pKeyValuePair.iValue;
 			}
 		}
 		return null;
@@ -32,17 +31,17 @@ public class Hashtable<K, V>
 	@SuppressWarnings("unchecked")
 	public synchronized V put (K aKey, V aValue)
 	{
-		Object r;
+		V r;
 		int pIndex = getTableIndex(aKey);    
 		Object pElement = iTable[pIndex];
 		if (pElement == null)
 		{
 			r = null;
-			iTable[pIndex] = new KeyValuePair(aKey, aValue);
+			iTable[pIndex] = new KeyValuePair<K,V>(aKey, aValue);
 		}
 		else
 		{
-			KeyValuePair pKeyValuePair = getKeyValuePair (pElement, aKey);
+			KeyValuePair<K,V> pKeyValuePair = getKeyValuePair (pElement, aKey);
 			if (pKeyValuePair != null)
 			{
 				r = pKeyValuePair.iValue;
@@ -51,19 +50,19 @@ public class Hashtable<K, V>
 			else
 			{
 				r = null;
-				pKeyValuePair = new KeyValuePair(aKey, aValue);
+				pKeyValuePair = new KeyValuePair<K,V>(aKey, aValue);
 				if (pElement instanceof Vector)
-					((Vector)pElement).addElement(pKeyValuePair);
+					((Vector<KeyValuePair<K,V>>)pElement).addElement(pKeyValuePair);
 				else
 				{
-					Vector pVector = new Vector();
-					pVector.addElement(pElement);
+					Vector<KeyValuePair<K,V>> pVector = new Vector<KeyValuePair<K,V>>();
+					pVector.addElement((KeyValuePair<K,V>)pElement);
 					pVector.addElement(pKeyValuePair);
 					iTable[pIndex] = pVector;
 				}
 			}
 		}
-		return (V)r;
+		return r;
 	}
 
 	/**
@@ -127,10 +126,10 @@ public class Hashtable<K, V>
 					{
 						if (element instanceof Vector)
 						{
-							Vector v = (Vector) element;
+							Vector<KeyValuePair<K,V>> v = (Vector<KeyValuePair<K,V>>) element;
 							if (curVector < v.size())
 							{
-								KeyValuePair kvp = (KeyValuePair) v.elementAt(curVector);
+								KeyValuePair<K,V> kvp = v.elementAt(curVector);
 								r = kvp.iKey;
 								curVector++;
 								break;
@@ -140,7 +139,7 @@ public class Hashtable<K, V>
 						}
 						else
 						{
-							KeyValuePair kvp = (KeyValuePair) element;
+							KeyValuePair<K,V> kvp = (KeyValuePair<K,V>) element;
 							r = kvp.iKey;
 							cur++;
 							break;
@@ -153,15 +152,16 @@ public class Hashtable<K, V>
 		};
 	}
   
-	private KeyValuePair getKeyValuePair(Object aPivot, Object aKey)
+	@SuppressWarnings("unchecked")
+	private KeyValuePair<K,V> getKeyValuePair(Object aPivot, Object aKey)
 	{
 		if (aPivot instanceof Vector<?>)
 		{
-			Vector<?> pVec = (Vector<?>) aPivot;
+			Vector<KeyValuePair<K,V>> pVec = (Vector<KeyValuePair<K,V>>) aPivot;
 			int pSize = pVec.size();
 			for (int i = 0; i < pSize; i++)
 			{
-				KeyValuePair pPair = (KeyValuePair) pVec.elementAt(i);
+				KeyValuePair<K,V> pPair = pVec.elementAt(i);
 				if (aKey.equals(pPair.iKey))
 				{
 					return pPair;
@@ -171,7 +171,7 @@ public class Hashtable<K, V>
 		else
 		{
 			// Not a Vector, must be a lone KeyValuePair
-			KeyValuePair pPair = (KeyValuePair)aPivot;
+			KeyValuePair<K,V> pPair = (KeyValuePair<K,V>)aPivot;
 			if (aKey.equals(pPair.iKey))
 			{
 				return pPair;
@@ -188,12 +188,12 @@ public class Hashtable<K, V>
 		return pHash;
 	}
 
-	private static class KeyValuePair
+	private static class KeyValuePair<K, V>
 	{ 
-		Object iKey;
-		Object iValue;
+		K iKey;
+		V iValue;
 		
-		public KeyValuePair(Object key, Object value)
+		public KeyValuePair(K key, V value)
 		{
 			this.iKey = key;
 			this.iValue = value;
