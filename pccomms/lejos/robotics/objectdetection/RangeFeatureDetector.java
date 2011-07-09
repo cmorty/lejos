@@ -3,6 +3,7 @@ package lejos.robotics.objectdetection;
 import lejos.robotics.RangeFinder;
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
+import lejos.robotics.localization.PoseProvider;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -40,6 +41,7 @@ public class RangeFeatureDetector extends FeatureDetectorAdapter {
 	private RangeFinder range_finder = null;
 	private float max_dist = 100;
 	private float angle = 0;
+	private PoseProvider pp = null;
 	
 	// TODO: Accept optional RangeScanner?
 	
@@ -74,6 +76,11 @@ public class RangeFeatureDetector extends FeatureDetectorAdapter {
 		this.range_finder = rf;
 		setMaxDistance(maxDistance);
 	}
+	
+	
+	public void setPoseProvider(PoseProvider pp) {
+		this.pp = pp;
+	}
 
 	/**
 	 * Sets the maximum distance to register detected objects from the range finder.
@@ -102,7 +109,8 @@ public class RangeFeatureDetector extends FeatureDetectorAdapter {
 			for(int i=0;i<ranges.length;i++) {
 				rrs.add(new RangeReading(this.angle, ranges[i]));
 			}
-			feature = new RangeFeature(rrs);
+			if (pp != null) feature = new RangeFeature(rrs, pp.getPose());
+			else feature = new RangeFeature(rrs);
 		}
 		return feature;
 	}	

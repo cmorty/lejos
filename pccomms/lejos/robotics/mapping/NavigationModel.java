@@ -9,6 +9,7 @@ import lejos.robotics.localization.MCLPoseProvider;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
+import lejos.robotics.objectdetection.RangeFeature;
 import lejos.robotics.pathfinding.Path;
 
 /**
@@ -40,11 +41,11 @@ public abstract class NavigationModel {
 	protected Waypoint target = null;
 	protected MCLParticleSet particles;
 	protected MCLPoseProvider mcl;
-	protected RangeReadings readings = new RangeReadings(0);
-	protected RangeReadings featureReadings;
+	protected RangeReadings readings = new RangeReadings(1);
 	protected Path path;
 	protected Move lastMove = new Move(0,0,false);
 	protected Move lastPlannedMove = new Move(0,0,false);
+	protected RangeFeature feature = new RangeFeature(readings);
 	
 	/**
 	 * Navigation events that are transmitted between the PC and the NXT (and vice versa).
@@ -55,7 +56,7 @@ public abstract class NavigationModel {
 	public enum NavEvent {LOAD_MAP, GOTO, TRAVEL, ROTATE, STOP, GET_POSE, 
 		SET_POSE, RANDOM_MOVE, TAKE_READINGS, GET_READINGS, FIND_CLOSEST, ADD_WAYPOINT, GET_PARTICLES, PARTICLE_SET,
 		RANGE_READINGS, MOVE_STARTED, MOVE_STOPPED, WAYPOINT_REACHED, CLOSEST_PARTICLE, GET_ESTIMATED_POSE,
-		ESTIMATED_POSE, PATH_COMPLETE, FEATURE_DETECTED, FIND_PATH, PATH, SET_TARGET, FOLLOW_ROUTE}
+		ESTIMATED_POSE, PATH_COMPLETE, FEATURE_DETECTED, FIND_PATH, PATH, SET_TARGET, FOLLOW_ROUTE, ROTATE_TO}
 	
 	/**
 	 * Test is the model has a map registered
