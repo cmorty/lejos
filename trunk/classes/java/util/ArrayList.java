@@ -109,8 +109,6 @@ public class ArrayList<E> extends AbstractList<E> implements RandomAccess
 	private int elementCount;
 	private Object[] elementData;
 	
-	protected transient int modCount;
-
 	/**
 	 * Create an array list.
 	 */
