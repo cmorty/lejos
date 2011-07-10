@@ -22,11 +22,11 @@ public class PathTest extends NavigationPanel {
 	private static final long serialVersionUID = 1L;
 
   	// GUI Window size
-  	private static final int FRAME_WIDTH = 1250;
+  	private static final int FRAME_WIDTH = 1150;
   	private static final int FRAME_HEIGHT = 800;
   
-  	private static final Dimension MAP_SIZE = new Dimension(900,600);
-  	private static final int INITIAL_ZOOM = 140;
+  	private static final Dimension MAP_SIZE = new Dimension(700,600);
+  	private static final int INITIAL_ZOOM = 110;
   	private static final String MAP_FILE = "floor.svg";
   	private static final String FRAME_TITLE = "Path Test";
   
@@ -59,7 +59,7 @@ public class PathTest extends NavigationPanel {
   	@Override
   	protected void buildGUI() {
   		// Set the map size and suppress unwanted panels
-  		mapSize = MAP_SIZE;
+  		mapPaneSize = MAP_SIZE;
   		showReadingsPanel = false;
 	    showLastMovePanel = false;
 	    showParticlePanel = false;
@@ -104,7 +104,7 @@ public class PathTest extends NavigationPanel {
 		log.setBorder(BorderFactory.createTitledBorder("Log"));
 		logPanel.add(log);
 		logPanel.add(clearButton);
-		logPanel.setPreferredSize(new Dimension(280,700));
+		logPanel.setPreferredSize(new Dimension(280,650));
 		add(logPanel);
   	}
   

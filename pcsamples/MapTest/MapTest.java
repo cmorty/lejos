@@ -71,7 +71,7 @@ public class MapTest extends NavigationPanel {
 	    showMoves = true;    
 	    showMesh = false;
 	    
-	    mapSize = MAP_AREA_SIZE;
+	    mapPaneSize = MAP_AREA_SIZE;
 	    super.buildGUI();
 	    
 	    slider.setValue(INITIAL_ZOOM);
