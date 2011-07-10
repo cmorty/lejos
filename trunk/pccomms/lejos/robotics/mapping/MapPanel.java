@@ -85,10 +85,10 @@ public class MapPanel extends JPanel {
 		g2d.setStroke(new BasicStroke(2));
 		for (int i = 0; i < lines.length; i++) {
 			Line2D line = new Line2D.Float(
-    		  parent.xOffset + lines[i].x1 * parent.pixelsPerUnit, 
-    		  parent.yOffset + lines[i].y1 * parent.pixelsPerUnit, 
-    		  parent.xOffset + lines[i].x2 * parent.pixelsPerUnit, 
-    		  parent.yOffset + lines[i].y2 * parent.pixelsPerUnit);
+    		  lines[i].x1 * parent.pixelsPerUnit, 
+    		  lines[i].y1 * parent.pixelsPerUnit, 
+    		  lines[i].x2 * parent.pixelsPerUnit, 
+    		  lines[i].y2 * parent.pixelsPerUnit);
 			g2d.draw(line);
 		}
 		g2d.setStroke(new BasicStroke(1));
@@ -166,8 +166,8 @@ public class MapPanel extends JPanel {
 					diffY > 0 && diffY <= MAX_CLUSTER_SIZE) {
 				//parent.log("Robot Located");
 				Ellipse2D c = new Ellipse2D.Float(
-	        					(parent.xOffset + minX) * parent.pixelsPerUnit, 
-	        					(parent.yOffset + minY) * parent.pixelsPerUnit, (maxX - minX)  * parent.pixelsPerUnit, 
+	        					(minX) * parent.pixelsPerUnit, 
+	        					(minY) * parent.pixelsPerUnit, (maxX - minX)  * parent.pixelsPerUnit, 
 	        					(maxY - minY)  * parent.pixelsPerUnit);
 				g2d.setColor(colors[ESTIMATE_COLOR_INDEX]);
 				g2d.draw(c);
@@ -182,7 +182,7 @@ public class MapPanel extends JPanel {
 	 * @param g2d the Graphics2D object
 	 */
 	public void paintPose(Graphics2D g2d, Pose pose) {
-		Ellipse2D c = new Ellipse2D.Float((parent.xOffset + pose.getX() - ROBOT_SIZE/2)  * parent.pixelsPerUnit, (parent.yOffset + pose.getY() - ROBOT_SIZE/2) * parent.pixelsPerUnit, ROBOT_SIZE * parent.pixelsPerUnit, ROBOT_SIZE * parent.pixelsPerUnit);
+		Ellipse2D c = new Ellipse2D.Float((pose.getX() - ROBOT_SIZE/2)  * parent.pixelsPerUnit, (pose.getY() - ROBOT_SIZE/2) * parent.pixelsPerUnit, ROBOT_SIZE * parent.pixelsPerUnit, ROBOT_SIZE * parent.pixelsPerUnit);
 		Line rl = getArrowLine(pose);
 		Line2D l2d = new Line2D.Float(rl.x1, rl.y1, rl.x2, rl.y2);
 		g2d.draw(l2d);
@@ -234,7 +234,7 @@ public class MapPanel extends JPanel {
 		Waypoint target = model.getTarget();
 		if (target == null) return;
 		g2d.setColor(colors[TARGET_COLOR_INDEX]);
-		Ellipse2D c = new Ellipse2D.Float((float) ((parent.xOffset + target.getX() - TARGET_SIZE/2)  * parent.pixelsPerUnit), (float) ((parent.yOffset + target.getY() - TARGET_SIZE/2) * parent.pixelsPerUnit), TARGET_SIZE * parent.pixelsPerUnit, TARGET_SIZE * parent.pixelsPerUnit);
+		Ellipse2D c = new Ellipse2D.Float((float) ((target.getX() - TARGET_SIZE/2)  * parent.pixelsPerUnit), (float) ((target.getY() - TARGET_SIZE/2) * parent.pixelsPerUnit), TARGET_SIZE * parent.pixelsPerUnit, TARGET_SIZE * parent.pixelsPerUnit);
 		g2d.fill(c);		
 	}
 	
@@ -246,7 +246,7 @@ public class MapPanel extends JPanel {
 	protected void paintFeatures(Graphics2D g2d) {
 		g2d.setColor(colors[FEATURE_COLOR_INDEX]);
 		for(lejos.geom.Point pt:model.getFeatures()) {
-			Ellipse2D c = new Ellipse2D.Float((float) ((parent.xOffset + pt.x - TARGET_SIZE/2)  * parent.pixelsPerUnit), (float) ((parent.yOffset + pt.y - TARGET_SIZE/2) * parent.pixelsPerUnit), TARGET_SIZE * parent.pixelsPerUnit, TARGET_SIZE * parent.pixelsPerUnit);
+			Ellipse2D c = new Ellipse2D.Float((float) ((pt.x - TARGET_SIZE/2)  * parent.pixelsPerUnit), (float) ((pt.y - TARGET_SIZE/2) * parent.pixelsPerUnit), TARGET_SIZE * parent.pixelsPerUnit, TARGET_SIZE * parent.pixelsPerUnit);
 			g2d.fill(c);
 		}
 	}
@@ -280,10 +280,11 @@ public class MapPanel extends JPanel {
 	 * @return the arrow line
 	 */
 	protected Line getArrowLine(Pose pose) {
-		return new Line(parent.xOffset + pose.getX() * parent.pixelsPerUnit,
-    		        parent.yOffset + pose.getY() * parent.pixelsPerUnit, 
-    		        parent.xOffset + pose.getX() * parent.pixelsPerUnit + ARROW_LENGTH * parent.pixelsPerUnit * (float) Math.cos(Math.toRadians(pose.getHeading())), 
-    		        parent.yOffset + pose.getY() * parent.pixelsPerUnit + ARROW_LENGTH * parent.pixelsPerUnit * (float) Math.sin(Math.toRadians(pose.getHeading())));
+		return new Line(
+				    pose.getX() * parent.pixelsPerUnit,
+    		        pose.getY() * parent.pixelsPerUnit, 
+    		        pose.getX() * parent.pixelsPerUnit + ARROW_LENGTH * parent.pixelsPerUnit * (float) Math.cos(Math.toRadians(pose.getHeading())), 
+    		        pose.getY() * parent.pixelsPerUnit + ARROW_LENGTH * parent.pixelsPerUnit * (float) Math.sin(Math.toRadians(pose.getHeading())));
 	}
 	
 	/**
