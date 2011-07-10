@@ -178,6 +178,7 @@ public class LinkedList<E> extends AbstractList<E> {
 	}
 
 	public List<E> subList(int start, int end) {
+		//TODO implement
 		throw new UnsupportedOperationException();
 	}
 	
