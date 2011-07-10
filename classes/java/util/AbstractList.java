@@ -8,6 +8,8 @@ package java.util;
  */
 abstract class AbstractList<E> extends AbstractCollection<E> implements List<E>
 {
+	protected transient int modCount = 0;
+	
 	public boolean contains(Object o)
 	{
 		return this.indexOf(o) >= 0;

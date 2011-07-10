@@ -9,11 +9,8 @@ public class LinkedList<E> extends AbstractList<E> {
 	
 	//TODO review
 
-	protected transient final Entry<E> headerEntry = new Entry<E>(null, null, null);
-	
-	protected transient int size = 0;
-	
-	protected transient int modCount = 0;
+	private transient final Entry<E> headerEntry = new Entry<E>(null, null, null);
+	private transient int size = 0;
 	
 	static class Entry<E> {
 		E element;
@@ -80,37 +77,30 @@ public class LinkedList<E> extends AbstractList<E> {
 	}
 
 	public void add(int index, E e) {
-		addBefore(e, (index==size ? headerEntry : entry(index)));	
+		Entry<E> entry = (index == this.size) ? headerEntry : entry(index);
+		addBefore(e, entry);	
 	}
 
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
-		return addAll(size, c);
+		if (c.isEmpty())
+			return false;
+		
+		for (E e : c)
+			addBefore(e, this.headerEntry);
+				
+		return true;
 	}
 	
 	public boolean addAll(int index, Collection<? extends E> c) {
-        if (index < 0 || index > size)
-            throw new IndexOutOfBoundsException("Index: "+index+
-                                                ", Size: "+size);
-        Object[] a = c.toArray();
-        int numNew = a.length;
-        if (numNew==0)
-            return false;
-        
-        modCount++;
-
-        Entry<E> successor = (index==size ? headerEntry : entry(index));
-        Entry<E> predecessor = successor.previousEntry;
-        for (int i=0; i<numNew; i++) {
-            @SuppressWarnings("unchecked")
-			Entry<E> e = new Entry<E>((E)a[i], successor, predecessor);
-            predecessor.nextEntry = e;
-            predecessor = e;
-        }
-        successor.previousEntry = predecessor;
-
-        size += numNew;
-        return true;
+		Entry<E> entry = (index == this.size) ? headerEntry : entry(index);
+		if (c.isEmpty())
+			return false;
+		
+		for (E e : c)
+			addBefore(e, entry);
+				
+		return true;
 	}
 
 	public E get(int index) {
@@ -191,19 +181,19 @@ public class LinkedList<E> extends AbstractList<E> {
 		throw new UnsupportedOperationException();
 	}
 	
-    protected Entry<E> addBefore(E e, Entry<E> entry) {
+    private Entry<E> addBefore(E e, Entry<E> entry) {
     	Entry<E> newEntry = new Entry<E>(e, entry, entry.previousEntry);
     	newEntry.previousEntry.nextEntry = newEntry;
     	newEntry.nextEntry.previousEntry = newEntry;
     	size++;
     	modCount++;
     	return newEntry;
-   }
+	}
     
     /**
      * Returns the indexed entry.
      */
-    protected Entry<E> entry(int index) {
+    private Entry<E> entry(int index) {
         if (index < 0 || index >= size)
             throw new IndexOutOfBoundsException("Index: "+index+
                                                 ", Size: "+size);
@@ -283,15 +273,15 @@ public class LinkedList<E> extends AbstractList<E> {
 			this.nextPos--;
 		}
 		
-		public void set(E v)
+		public void set(E e)
 		{
 			this.checkModCount();
-			Entry<E> e = this.nextEntry.previousEntry;
-			if (e == LinkedList.this.headerEntry)
+			Entry<E> entry = this.nextEntry.previousEntry;
+			if (entry == LinkedList.this.headerEntry)
 				// TODO check with JDK implementation, documentation is much more strict when to throw this 
 				throw new IllegalStateException();
 	
-			e.element = v;
+			entry.element = e;
 		}
 
 		public void add(E e)
