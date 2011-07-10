@@ -18,7 +18,7 @@ import lejos.robotics.mapping.NavigationModel.NavEvent;
  */
 public class NavigationPanel extends JPanel implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
-	protected float xOffset = 0f, yOffset = 0f, pixelsPerUnit = 2f;
+	protected float pixelsPerUnit = 2f;
 	protected PCNavigationModel model = new PCNavigationModel(this);
 	protected MapPanel mapPanel; 
 	protected JPanel commandPanel = new JPanel();
@@ -30,7 +30,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected JTextField yField = new JTextField(4);
 	protected JPanel controlPanel = new JPanel();
 	protected JLabel zoomLabel = new JLabel("Zoom:");
-	protected JSlider slider = new JSlider(100,500,200);
+	protected JSlider slider = new JSlider(50,200,100);
 	protected JLabel gridLabel = new JLabel("Grid:");
 	protected JCheckBox gridCheck = new JCheckBox();
 	protected JLabel meshLabel = new JLabel("Mesh:");
@@ -49,13 +49,16 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected JTextField lastMoveField = new JTextField(20);
 	protected JPanel particlePanel = new JPanel();
 	protected JTextField particleField = new JTextField(20);
-	protected Dimension mapSize = new Dimension(600,700);
+	protected int mapPanelWidth = 300;
+	protected int mapPanelHeight = 300;
+	protected Dimension mapPaneSize = new Dimension(600,600);
+	protected JScrollPane mapPane;
 	
 	/**
 	 * Build the various panels if they are required.
 	 */
 	protected void buildGUI() {
-		mapPanel = new MapPanel(model, mapSize, this);
+		mapPanel = new MapPanel(model, mapPaneSize, this);
 		
 		if (showConnectPanel) {
 			connectPanel.add(nxtLabel);
@@ -83,14 +86,18 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 					
 			gridCheck.setSelected(true);
 
-			slider.setMajorTickSpacing(100);
+			slider.setMajorTickSpacing(25);
 			slider.setPaintTicks(true);
 			
 			slider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					JSlider source = (JSlider)e.getSource();
 					pixelsPerUnit = source.getValue() / 100f;
-					mapPanel.repaint();
+					Dimension newSize = new Dimension((int) ((10 + mapPanelWidth) * pixelsPerUnit), (int) ((30 + mapPanelHeight) * pixelsPerUnit));
+					System.out.println("Setting size to " + newSize);
+					mapPanel.setPreferredSize(newSize);
+					mapPanel.revalidate();
+					repaint();
 				}
 			});
 			
@@ -147,7 +154,9 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		}
 		mapPanel.addMouseMotionListener(this);
 		mapPanel.addMouseListener(this);
-		add(mapPanel);		
+		mapPane = new JScrollPane(mapPanel);
+		add(mapPane);
+		mapPane.setPreferredSize(mapPaneSize);
 	}
 	
 	/**

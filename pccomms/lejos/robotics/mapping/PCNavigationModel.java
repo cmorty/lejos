@@ -1,9 +1,11 @@
 package lejos.robotics.mapping;
 
+import java.awt.Dimension;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import lejos.geom.Point;
+import lejos.geom.Rectangle;
 import lejos.pc.comm.*;
 import lejos.robotics.*;
 import lejos.robotics.navigation.*;
@@ -225,11 +227,17 @@ public class PCNavigationModel extends NavigationModel {
 			FileInputStream is = new FileInputStream(mapFile);
 			SVGMapLoader mapLoader = new SVGMapLoader(is);
 			map = mapLoader.readLineMap();
+			Rectangle r = map.getBoundingRect();
+			panel.mapPanelWidth = (int) Math.ceil(r.x + r.width); 
+			panel.mapPanelHeight = (int) Math.ceil(r.y + r.height); 
+			System.out.println("Setting panel size to " + panel.mapPanelWidth + "," + panel.mapPanelHeight);
+			panel.mapPanel.setPreferredSize(new Dimension((int) (panel.mapPanelWidth * panel.pixelsPerUnit), (int) (panel.mapPanelHeight  * panel.pixelsPerUnit)));
+			
+			panel.mapPanelHeight = (int) r.height;
+			panel.mapPanel.revalidate();
 			mesh = new FourWayGridMesh(map, gridSpace,clearance);
 			nodes = mesh.getMesh();
 			pf = new NodePathFinder(alg, mesh);
-			//Rectangle boundingRect = map.getBoundingRect();
-			//panel.setMapSize(new Dimension((int) (boundingRect.width * 2), (int) (boundingRect.height * 2)));
 			panel.repaint();
 			if (mcl != null) mcl.setMap(map);
 			if (connected) {
