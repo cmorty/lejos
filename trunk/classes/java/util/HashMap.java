@@ -3,7 +3,8 @@ package java.util;
 /**
  * 
  * @author Michael Mirwaldt
- * @deprecated inefficient implementation, don't use it if your care about performance 
+ * @deprecated Current implementation is inefficient. Don't use it if your care about performance.
+ *  Will be replaced with efficient implementation.
  */
 @Deprecated
 public class HashMap<K,V> implements Map<K, V> {
