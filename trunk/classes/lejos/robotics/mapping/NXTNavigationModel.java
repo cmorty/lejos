@@ -91,6 +91,8 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	public void addNavigator(Navigator navigator) {
 		this.navigator = navigator;
 		navigator.addWaypointListener(this);
+		addPoseProvider(navigator.getPoseProvider());
+		addPilot(navigator.getMoveController());
 	}
 	
 	/**
@@ -112,7 +114,10 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	@SuppressWarnings("hiding")
 	public void addPoseProvider(PoseProvider pp) {
 		this.pp = pp;
-		if (pp instanceof MCLPoseProvider) mcl = (MCLPoseProvider) pp;
+		if (pp instanceof MCLPoseProvider) {
+			mcl = (MCLPoseProvider) pp;
+			scanner = mcl.getScanner();
+		}
 	}
 	
 	/**
@@ -128,6 +133,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	@SuppressWarnings("hiding")
 	public void addFeatureDetector(FeatureDetector detector) {
 		this.detector = detector;
+		detector.addListener(this);
 	}
 	
 	/**
