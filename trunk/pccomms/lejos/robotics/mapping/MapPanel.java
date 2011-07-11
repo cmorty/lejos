@@ -24,6 +24,7 @@ public class MapPanel extends JPanel {
 	protected static final Color PATH_COLOR = Color.BLUE;
 	protected static final Color MOVE_COLOR = Color.PINK;
 	protected static final Color FEATURE_COLOR = Color.CYAN;
+	protected static final Color WAYPOINT_COLOR = Color.BLUE;
 	
 	protected static final float ARROW_LENGTH = 10f;
 	protected static final int ROBOT_SIZE = 4;
@@ -38,7 +39,8 @@ public class MapPanel extends JPanel {
 	public Color[] colors = {MAP_COLOR, PARTICLE_COLOR, BACKGROUND_COLOR,
 			                    GRID_COLOR, ESTIMATE_COLOR, CLOSEST_COLOR,
 			                    MESH_COLOR, NEIGHBOR_COLOR, TARGET_COLOR,
-			                    PATH_COLOR, MOVE_COLOR, FEATURE_COLOR};
+			                    PATH_COLOR, MOVE_COLOR, FEATURE_COLOR,
+			                    WAYPOINT_COLOR};
 	
 	public static final int MAP_COLOR_INDEX = 0;
 	public static final int PARTICLE_COLOR_INDEX = 1;
@@ -52,6 +54,7 @@ public class MapPanel extends JPanel {
 	public static final int PATH_COLOR_INDEX = 9;
 	public static final int MOVE_COLOR_INDEX = 10;
 	public static final int FEATURE_COLOR_INDEX = 11;
+	public static final int WAYPOINT_COLOR_INDEX = 12;
 	
 	// The maximum size of a cluster of particles for a located robot (in cm)
 	protected static final int MAX_CLUSTER_SIZE = 50;
@@ -137,6 +140,7 @@ public class MapPanel extends JPanel {
 		paintPath((Graphics2D) g);
 		paintMoves((Graphics2D) g);
 		paintFeatures((Graphics2D) g);
+		paintWaypoints((Graphics2D) g);
 	}
 	
 	/**
@@ -246,6 +250,14 @@ public class MapPanel extends JPanel {
 	protected void paintFeatures(Graphics2D g2d) {
 		g2d.setColor(colors[FEATURE_COLOR_INDEX]);
 		for(lejos.geom.Point pt:model.getFeatures()) {
+			Ellipse2D c = new Ellipse2D.Float((float) ((pt.x - TARGET_SIZE/2)  * parent.pixelsPerUnit), (float) ((pt.y - TARGET_SIZE/2) * parent.pixelsPerUnit), TARGET_SIZE * parent.pixelsPerUnit, TARGET_SIZE * parent.pixelsPerUnit);
+			g2d.fill(c);
+		}
+	}
+	
+	protected void paintWaypoints(Graphics2D g2d) {
+		g2d.setColor(colors[WAYPOINT_COLOR_INDEX]);
+		for(lejos.geom.Point pt:model.getWaypoints()) {
 			Ellipse2D c = new Ellipse2D.Float((float) ((pt.x - TARGET_SIZE/2)  * parent.pixelsPerUnit), (float) ((pt.y - TARGET_SIZE/2) * parent.pixelsPerUnit), TARGET_SIZE * parent.pixelsPerUnit, TARGET_SIZE * parent.pixelsPerUnit);
 			g2d.fill(c);
 		}

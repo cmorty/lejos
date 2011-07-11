@@ -378,7 +378,7 @@ public class Navigator implements WaypointListener
   } // end Nav classR
 
   private Nav _nav ;
-  private Path _path;
+  private Path _path = new Path();
   /**
    * frequently tested by Nav.run() to break out of primary control loop
    * reset by stop(), and in Nav if _singleStep is set. or end of path is reached
