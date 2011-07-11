@@ -48,8 +48,9 @@ public class PathFinding {
 		
 		PoseProvider posep = new OdometryPoseProvider(robot);
 		
-		Navigator nav = new Navigator(robot, posep, pf) ;
+		Navigator nav = new Navigator(robot, posep) ;
 		System.out.println("Planning path...");
-		nav.goTo(90, 140);
+		nav.followPath(pf.findRoute(posep.getPose(), new Waypoint(90, 140)));
+		nav.waitForStop();
 	}		
 }
