@@ -91,11 +91,23 @@ public class Button implements ListenerCaller
   public final void waitForPressAndRelease()
   {
     NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
-    event.waitEvent(iCode << PRESS_EVENT_SHIFT, NXTEvent.WAIT_FOREVER);
-    readButtons();
-    event.waitEvent(iCode << RELEASE_EVENT_SHIFT, NXTEvent.WAIT_FOREVER);
-    readButtons();
-    event.free();
+    try{
+        event.waitEvent(iCode << PRESS_EVENT_SHIFT, NXTEvent.WAIT_FOREVER);
+        readButtons();
+        event.waitEvent(iCode << RELEASE_EVENT_SHIFT, NXTEvent.WAIT_FOREVER);
+        readButtons();
+    }
+    catch(InterruptedException e)
+    {
+        // TODO: need to work out how to do this properly
+        // preserve state of interrupt flag
+        Thread.currentThread().interrupt();
+        return;
+    }
+    finally
+    {
+        event.free();
+    }
   }
 
   /**
@@ -104,7 +116,7 @@ public class Button implements ListenerCaller
    * @param event event to use for waiting
    * @param end end time used for timeout
    */
-  private static void waitAllReleased(NXTEvent event, long end)
+  private static void waitAllReleased(NXTEvent event, long end) throws InterruptedException
   {
     for(;;)
     {
@@ -143,6 +155,13 @@ public class Button implements ListenerCaller
 				
 				oldDown = newDown;
 			}
+		}
+		catch(InterruptedException e)
+		{
+		    // TODO: Need to decide how to handle this properly
+            // preserve state of interrupt flag
+            Thread.currentThread().interrupt();
+            return 0;
 		}
 		finally
 		{

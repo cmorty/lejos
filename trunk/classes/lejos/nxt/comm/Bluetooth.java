@@ -251,6 +251,7 @@ public class Bluetooth extends NXTCommDevice
 	 * interface. It controls and performs all low level access to the device.
 	 * Switches it between data channels and command streams as required.
 	 */
+
 	static class BTThread extends Thread
 	{
 		static final int MO_STREAM = 0;
@@ -274,12 +275,13 @@ public class Bluetooth extends NXTCommDevice
             btEvent = NXTEvent.allocate(NXTEvent.BLUETOOTH, 0, 1);
             // Load the pin etc.
             loadSettings();
-            reset();
+            //reset();
 			setDaemon(true);
             setPriority(Thread.MAX_PRIORITY);
             start();
 			// Setup initial state
 			powerOn = false;
+			Bluetooth.reset();
 			setPower(true);
 			setOperatingMode((byte)1);
 			closePort();
@@ -309,7 +311,7 @@ public class Bluetooth extends NXTCommDevice
 			btWrite(cmdBuf,0, len+3);
 		}
 
-		private int recvReply()
+		private int recvReply() throws InterruptedException
 		{
 			// Read a reply and place it in replyBuf
 			if (checkTimeout()) return -1;
@@ -356,7 +358,7 @@ public class Bluetooth extends NXTCommDevice
 		 * Perform a hardware reset of the BlueCore chip.
 		 * 
 		 */	
-		private void reset() 
+		private void reset() throws InterruptedException
 		{
 			synchronized(Bluetooth.sync)
 			{
@@ -416,7 +418,7 @@ public class Bluetooth extends NXTCommDevice
 			}
 		}
 		
-		private void processReply()
+		private void processReply() throws InterruptedException
 		{
 			// Read and process and command replies from the bc4
 			// If the reply buffer is free, look to see if we have a new reply
@@ -486,7 +488,7 @@ public class Bluetooth extends NXTCommDevice
 			//RConsole.print("process reply end\n");
 		}
 		
-		private void processCommands()
+		private void processCommands() throws InterruptedException
 		{
 			// Process commands. Return when we should consider switching to
 			// stream mode.
@@ -531,7 +533,7 @@ public class Bluetooth extends NXTCommDevice
             return curChan;
         }
 		
-		private void processStreams()
+		private void processStreams() throws InterruptedException
 		{
 			// Process the streams. Return when we should switch to command mode
 			// RConsole.print("PS cur " + curChan + " state " + reqState + "\n");
@@ -564,7 +566,7 @@ public class Bluetooth extends NXTCommDevice
 			}
 		}
 		
-		private int waitSwitch(int target, boolean flush)
+		private int waitSwitch(int target, boolean flush) throws InterruptedException
 		{
 			// Wait for the BC4 to switch to mode, or timeout...
             int targetEvent = target == MO_CMD ? BT_CMDMODE : BT_STREAMMODE;
@@ -586,7 +588,7 @@ public class Bluetooth extends NXTCommDevice
 			return bc4Mode();
 		}
 		
-		private boolean switchToStream(int chan)
+		private boolean switchToStream(int chan) throws InterruptedException
 		{
 			// Decide which (if any) stream to switch to
 			if (mode == MO_STREAM && chan == curChan) return true;
@@ -606,7 +608,7 @@ public class Bluetooth extends NXTCommDevice
 			return true;
 		}
 		
-		private void switchToCmd()
+		private void switchToCmd() throws InterruptedException
 		{
 			// Need to switch back into command mode
 			// First step send any pending data
@@ -652,7 +654,7 @@ public class Bluetooth extends NXTCommDevice
         /**
          * Wait for the system to become ready.
          */
-		private void waitInit()
+		private void waitInit() throws InterruptedException
 		{
 			synchronized (Bluetooth.sync)
 			{
@@ -670,14 +672,22 @@ public class Bluetooth extends NXTCommDevice
         @Override
 		public void run()
 		{
-			//1 RConsole.print("Thread running\n");
-			waitInit();
-			//1 RConsole.print("Init complete\n");
-			while(true)
-			{
-				processCommands();
-				processStreams();
-			}
+            try {
+    			//1 RConsole.print("Thread running\n");
+    			waitInit();
+    			//1 RConsole.print("Init complete\n");
+    			while(true)
+    			{
+    				processCommands();
+    				processStreams();
+    			}
+            }
+            catch(InterruptedException e)
+            {
+                reqState = RS_OFF;
+                // forced stop, exit
+                return;
+            }
 		}
 	}
 

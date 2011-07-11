@@ -30,6 +30,8 @@ public interface I2CPort extends BasicSensorPort {
     public static final int ERR_INVALID_LENGTH = -4;
     /** Bus is busy */
     public static final int ERR_BUS_BUSY = -5;
+    /** Operation aborted */
+    public static final int ERR_ABORT = -6;
 
 
 

@@ -1,5 +1,6 @@
 package lejos.nxt.comm;
 import lejos.nxt.NXTEvent;
+
 /**
  * Low-level USB access.
  * 
@@ -56,28 +57,41 @@ public class USB extends NXTCommDevice {
         @Override
         public void run()
         {
-            while (true)
+            try {
+                while (true)
+                {
+                    // Wait for a connection to be established
+                    synchronized(usbSync)
+                    {
+                        while (connection == null)
+                            usbSync.wait();
+                    }
+                    // Perform I/O on the connection
+                    while(connection != null)
+                    {
+                        int event = connection.send();
+                        event |= connection.recv();
+                        int ret = usbEvent.waitEvent(event|USB_DISCONNECT|USB_UNCONFIGURED, NXTEvent.WAIT_FOREVER);
+                        if (ret < 0 || (ret & (USB_DISCONNECT|USB_UNCONFIGURED)) != 0) connection.disconnected();
+                    }
+                }
+            }
+            catch (InterruptedException e)
             {
-                // Wait for a connection to be established
-                synchronized(usbSync)
-                {
-                    while (connection == null)
-                        try{usbSync.wait();} catch (InterruptedException e){}
-                }
-                // Perform I/O on the connection
-                while(connection != null)
-                {
-                    int event = connection.send();
-                    event |= connection.recv();
-                    int ret = usbEvent.waitEvent(event|USB_DISCONNECT|USB_UNCONFIGURED, NXTEvent.WAIT_FOREVER);
-                    if (ret < 0 || (ret & (USB_DISCONNECT|USB_UNCONFIGURED)) != 0) connection.disconnected();
-                }
+                // time to give up
+                return;
+            }
+            finally
+            {
+                if (connection != null)
+                    connection.disconnected();
             }
         }
     }
     
 	private USB()
-	{		
+	{
+	    // empty
 	}
    
     private static boolean isConnected(byte [] cmd)
@@ -174,13 +188,23 @@ public class USB extends NXTCommDevice {
         long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
         while(listening)
         {
-            // Wait for the USB interface to become ready for use.
-            int status = usbEvent.waitEvent(USB_CONFIGURED|USB_DISCONNECT, end - System.currentTimeMillis());
-            // check for timeout or cancel
-            if ((status & (USB_DISCONNECT|NXTEvent.TIMEOUT)) != 0) break;
-            // Interface is ready, for LCP and packet mode we wait for data to arrive
-            if (mode == NXTConnection.LCP || mode == NXTConnection.PACKET)
-                status = usbEvent.waitEvent(USB_READABLE|USB_UNCONFIGURED|USB_DISCONNECT, end - System.currentTimeMillis());
+            int status;
+            try {
+                // Wait for the USB interface to become ready for use.
+                status = usbEvent.waitEvent(USB_CONFIGURED|USB_DISCONNECT, end - System.currentTimeMillis());
+                // check for timeout or cancel
+                if ((status & (USB_DISCONNECT|NXTEvent.TIMEOUT)) != 0) break;
+                // Interface is ready, for LCP and packet mode we wait for data to arrive
+                if (mode == NXTConnection.LCP || mode == NXTConnection.PACKET)
+                    status = usbEvent.waitEvent(USB_READABLE|USB_UNCONFIGURED|USB_DISCONNECT, end - System.currentTimeMillis());
+            }
+            catch(InterruptedException e)
+            {
+                // preserve state of interrupt flag
+                Thread.currentThread().interrupt();
+                // and give up
+                break;
+            }
             if ((status & (USB_DISCONNECT|NXTEvent.TIMEOUT)) != 0) break;
             if ((status & USB_UNCONFIGURED) != 0) continue;
             if (mode == NXTConnection.RAW ||
@@ -211,11 +235,20 @@ public class USB extends NXTCommDevice {
         {
             listening = false;
             connection = null;
-            // Wait for any output to drain
-            usbEvent.waitEvent(USB_WRITEABLE|USB_UNCONFIGURED, FLUSH_TIMEOUT);
-            // And give things chance to settle
-            usbEvent.waitEvent(USB_UNCONFIGURED, FLUSH_TIMEOUT);
+            try {
+                // Wait for any output to drain
+                usbEvent.waitEvent(USB_WRITEABLE|USB_UNCONFIGURED, FLUSH_TIMEOUT);
+                // And give things chance to settle
+                usbEvent.waitEvent(USB_UNCONFIGURED, FLUSH_TIMEOUT);
+            }
+            catch(InterruptedException e)
+            {
+                // preserve state of interrupt flag
+                Thread.currentThread().interrupt();
+                // and continue
+            }
             usbDisable();
+            usbSync.notifyAll();
         }
     }
     /**
@@ -241,6 +274,7 @@ public class USB extends NXTCommDevice {
             {
                 listening = false;
                 usbEvent.notifyEvent(USB_DISCONNECT);
+                try{usbSync.wait();}catch(InterruptedException e){/*empty*/}
                 return true;
             }
         }

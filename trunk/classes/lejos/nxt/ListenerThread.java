@@ -55,25 +55,32 @@ class ListenerThread extends Thread
     @Override
     public void run()
     {
-        for (;;)
-        {
-            setPriority(Thread.MAX_PRIORITY);
-            if (NXTEvent.waitEvent(events, NXTEvent.WAIT_FOREVER))
+        try {
+            for (;;)
             {
-                // Run events at normal priority so they can use Thread.yield()
-                setPriority(Thread.NORM_PRIORITY);
-                for(int i = 0; i < callers.length; i++)
+                setPriority(Thread.MAX_PRIORITY);
+                if (NXTEvent.waitEvent(events, NXTEvent.WAIT_FOREVER))
                 {
-                    // Check to see if this event was triggered, if so call the
-                    // associated listener
-                    if (events[i].getEventData() > 0)
+                    // Run events at normal priority so they can use Thread.yield()
+                    setPriority(Thread.NORM_PRIORITY);
+                    for(int i = 0; i < callers.length; i++)
                     {
-                        int ret = callers[i].callListeners();
-                        // Set the new filter data
-                        events[i].setFilter(ret|NXTEvent.TIMEOUT);
+                        // Check to see if this event was triggered, if so call the
+                        // associated listener
+                        if (events[i].getEventData() > 0)
+                        {
+                            int ret = callers[i].callListeners();
+                            // Set the new filter data
+                            events[i].setFilter(ret|NXTEvent.TIMEOUT);
+                        }
                     }
                 }
             }
+        }
+        catch(InterruptedException e)
+        {
+            // Must have been told to abort. So exit
+            return;
         }
     }
 }
