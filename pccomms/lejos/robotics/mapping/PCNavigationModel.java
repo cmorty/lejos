@@ -40,6 +40,7 @@ public class PCNavigationModel extends NavigationModel {
 	protected ArrayList<Move> moves = new ArrayList<Move>();
 	protected ArrayList<Pose> poses = new ArrayList<Pose>();
 	protected ArrayList<Point> features = new ArrayList<Point>();
+	protected ArrayList<Waypoint> waypoints = new ArrayList<Waypoint>();
 	
 	private Thread receiver = new Thread(new Receiver());
 	
@@ -52,6 +53,12 @@ public class PCNavigationModel extends NavigationModel {
 		this.panel = panel;
 	}
 	
+	/**
+	 * Set the parameter for the 4-way mesh
+	 * 
+	 * @param gridSpace the spacing of the mesh
+	 * @param clearance the clearance from the walls
+	 */
 	public void setMeshParams(int gridSpace, int clearance) {
 		this.gridSpace = gridSpace;
 		this.clearance = clearance;
@@ -93,8 +100,22 @@ public class PCNavigationModel extends NavigationModel {
 		return moves;
 	}
 	
+	/**
+	 * Get the list of features
+	 * 
+	 * @return the features as an array of points
+	 */
 	public ArrayList<Point> getFeatures() {
 		return features;
+	}
+	
+	/**
+	 * Get the list of waypoints
+	 * 
+	 * @return the list of waypoints
+	 */
+	protected ArrayList<Waypoint> getWaypoints() {
+		return waypoints;
 	}
 	
 	/**
@@ -140,7 +161,13 @@ public class PCNavigationModel extends NavigationModel {
 	    }		
 	}
 	
+	/**
+	 * Add a waypoint and send it to the NXT
+	 * 
+	 * @param wp the waypoint
+	 */
 	public void addWaypoint(Waypoint wp) {
+		waypoints.add(wp);
 		if (!connected) return;
 		try {
 			synchronized(receiver) {
@@ -197,6 +224,11 @@ public class PCNavigationModel extends NavigationModel {
 		panel.whenConnected();
 	}
 	
+	/**
+	 * Get the generated node
+	 * 
+	 * @return the collection of nodes
+	 */
 	public Collection<Node> getNodes() {
 		return nodes;
 	}
@@ -342,7 +374,7 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	/**
-	 * SEnd a GET_ESTIMATED_POSE event to the NXT
+	 * Send a GET_ESTIMATED_POSE event to the NXT
 	 */
 	public void getEstimatedPose() {
 		if (!connected) return;
@@ -400,6 +432,9 @@ public class PCNavigationModel extends NavigationModel {
 		}
 	}
 	
+	/**
+	 * Set the target for a path finder
+	 */
 	public void setTarget(Waypoint target) {
 		path = null;
 		this.target = target;

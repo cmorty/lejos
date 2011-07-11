@@ -40,6 +40,8 @@ public class MenuAction extends AbstractAction {
 		case SET_TARGET:
 			model.setTarget(new Waypoint(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit));
 			break;
+		case FOLLOW_ROUTE:
+			break;
 		}
 	}
 }
