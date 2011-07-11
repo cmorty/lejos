@@ -155,7 +155,8 @@ public class MapTest extends NavigationPanel {
 	    JPopupMenu menu = new JPopupMenu(); 
 	    menu.add(new MenuAction(NavigationModel.NavEvent.GOTO, "Go To",me.getPoint(),model, this));
 	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_POSE, "Place robot",me.getPoint(),model, this));
-	
+	    menu.add(new MenuAction(NavigationModel.NavEvent.ADD_WAYPOINT, "Add Waypoint",me.getPoint(),model, this));
+	    
 	    menu.show(this, pt.x, pt.y);
 	}
   
