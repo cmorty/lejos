@@ -23,7 +23,7 @@
 	<!-- release leJOS NXJ --> 
 	<target
 		name="all"
-		depends ="subproject.classes.copy, subproject.jtools.copy, subproject.pccomms.copy, subproject.pctools.copy, subproject.startup.copy, subproject.scripts.copy"
+		depends ="subproject.classes.copy, subproject.jtools.copy, subproject.pccomms.copy, subproject.pctools.copy, subproject.startup.copy, subproject.scripts.copy, subproject.chartinglogger.copy"
 		description="build/copy lejos files"
 	>
 		<echo message="Done."/>
@@ -123,6 +123,25 @@
 			<fileset file="${project.startup}/${vars.startup.startup.bin}"/>
 			<fileset file="${project.startup}/${vars.startup.startup.debug}"/>
     	</copy>
+	</target>
+	
+			<target name="subproject.chartinglogger.build" depends="subproject.pctools.build">
+		<echo message="*** entering charting logger project"/>
+		<ant inheritAll="false"	dir="${project.chartinglogger}" antfile="build.xml">
+			<target name="clean"/>
+			<target name="build"/>
+		</ant>
+		<echo message="*** leaving charting logger project"/>
+	</target>
+	<target name="subproject.chartinglogger.copy" depends="subproject.chartinglogger.build">
+		<copy todir="lib/pc">
+			<fileset file="${project.chartinglogger}/lib/pccharting.jar"/>
+ 	</copy>
+ 	<copy todir="lib/pc/3rdparty">
+			<fileset file="${project.chartinglogger}/lib/pc/3rdparty/jfreechart-1.0.13.jar"/>
+			<fileset file="${project.chartinglogger}/lib/pc/3rdparty/jcommon-1.0.16.jar"/>
+			<fileset file="${project.chartinglogger}/lib/pc/3rdparty/licence-LGPL.txt"/>
+ 	</copy>
 	</target>
 	
 </project>
