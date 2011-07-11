@@ -126,7 +126,7 @@ public class MapTest extends NavigationPanel {
 		
 		rotateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				model.rotate(rotateSlider.getValue());
+				model.rotateTo(rotateSlider.getValue());
 			}
 		});
 	}
