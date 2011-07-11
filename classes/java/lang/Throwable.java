@@ -210,11 +210,11 @@ public class Throwable
                 if (curItem._stackTrace == null)
                 {
                     if (curItem == this)
-                        displayLocation(methodNo, pc, curLine - curOffset);
+                        displayLocation(methodNo, pc, curLine++ - curOffset);
                 }
                 else
                     for(int i : curItem._stackTrace)
-                        displayLocation(i >> 16, i & 0xffff, curLine - curOffset);
+                        displayLocation(i >> 16, i & 0xffff, curLine++ - curOffset);
                 curLine++;
                 curItem = curItem.getCause();
             }
