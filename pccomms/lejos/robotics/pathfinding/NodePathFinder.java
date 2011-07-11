@@ -103,9 +103,9 @@ public class NodePathFinder implements PathFinder{
 			for(WaypointListener l : listeners) {
 				Iterator<Waypoint> iterator = solution.iterator(); // TODO: If solution null, this can crash here.
 				while(iterator.hasNext()) {
-					l.nextWaypoint(iterator.next());
+					l.addWaypoint(iterator.next());
 				}
-				l.pathComplete();
+				l.pathGenerated();
 			}
 		}
 	}

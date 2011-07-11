@@ -94,7 +94,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 					JSlider source = (JSlider)e.getSource();
 					pixelsPerUnit = source.getValue() / 100f;
 					Dimension newSize = new Dimension((int) ((10 + mapPanelWidth) * pixelsPerUnit), (int) ((30 + mapPanelHeight) * pixelsPerUnit));
-					System.out.println("Setting size to " + newSize);
+					//System.out.println("Setting size to " + newSize);
 					mapPanel.setPreferredSize(newSize);
 					mapPanel.revalidate();
 					repaint();

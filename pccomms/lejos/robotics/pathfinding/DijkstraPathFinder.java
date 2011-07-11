@@ -305,9 +305,9 @@ protected  Path getRoute(Node destination)
 		  for(WaypointListener l : listeners) {
 			  Iterator<Waypoint> iterator = solution.iterator(); 
 			  while(iterator.hasNext()) {
-				  l.nextWaypoint(iterator.next());
+				  l.addWaypoint(iterator.next());
 			  }
-			  l.pathComplete();
+			  l.pathGenerated();
 		  }
 	  }
   }

@@ -230,7 +230,7 @@ public class PCNavigationModel extends NavigationModel {
 			Rectangle r = map.getBoundingRect();
 			panel.mapPanelWidth = (int) Math.ceil(r.x + r.width); 
 			panel.mapPanelHeight = (int) Math.ceil(r.y + r.height); 
-			System.out.println("Setting panel size to " + panel.mapPanelWidth + "," + panel.mapPanelHeight);
+			//System.out.println("Setting panel size to " + panel.mapPanelWidth + "," + panel.mapPanelHeight);
 			panel.mapPanel.setPreferredSize(new Dimension((int) (panel.mapPanelWidth * panel.pixelsPerUnit), (int) (panel.mapPanelHeight  * panel.pixelsPerUnit)));
 			
 			panel.mapPanelHeight = (int) r.height;
@@ -385,14 +385,18 @@ public class PCNavigationModel extends NavigationModel {
 		start = new Node(p.getX(), p.getY());
 		mesh.addNode(start, 4);
 		panel.repaint();
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.SET_POSE.ordinal());
-				currentPose.dumpObject(dos);
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in getPose");
+		if (!connected) {
+			// tell panel that pose is set as NXT will not
+			panel.eventReceived(NavEvent.SET_POSE);
+		} else {
+			try {
+				synchronized(receiver) {
+					dos.writeByte(NavEvent.SET_POSE.ordinal());
+					currentPose.dumpObject(dos);
+				}
+		    } catch (IOException ioe) {
+				panel.error("IO Exception in getPose");
+			}	
 		}
 	}
 	
