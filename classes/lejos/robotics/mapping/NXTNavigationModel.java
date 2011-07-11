@@ -27,8 +27,8 @@ import lejos.util.Delay;
  * @author Lawrie Griffiths
  *
  */
-public class NXTNavigationModel extends NavigationModel implements MoveListener, WaypointListener, FeatureListener {
-	protected PathController navigator;
+public class NXTNavigationModel extends NavigationModel implements MoveListener, NavigationListener, WaypointListener, FeatureListener {
+	protected Navigator navigator;
 	protected MoveController pilot;
 	protected PoseProvider pp;
 	protected FeatureDetector detector;
@@ -88,8 +88,9 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	 * @param navigator the path controller
 	 */
 	@SuppressWarnings("hiding")
-	public void addNavigator(PathController navigator) {
+	public void addNavigator(Navigator navigator) {
 		this.navigator = navigator;
+		navigator.addWaypointListener(this);
 	}
 	
 	/**
@@ -291,7 +292,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 						case FOLLOW_ROUTE: // Follow a route sent from the PC
 							if (path == null) path = new Path();
 							path.loadObject(dis);
-							if (navigator != null) navigator.followRoute(path, false);
+							if (navigator != null) navigator.followPath(path);
 						case RANDOM_MOVE: // Request to make a random move
 							if (pilot != null && pilot instanceof RotateMoveController) {
 							    angle = (float) Math.random() * 360;
@@ -364,34 +365,6 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	}
 
 	/**
-	 * Called when a waypoint is reached
-	 */
-	public void nextWaypoint(Waypoint wp) {	
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.WAYPOINT_REACHED.ordinal());
-				wp.dumpObject(dos);
-			}
-		} catch (IOException ioe) {
-			fatal("IOException in nextWaypoint");	
-		}
-	}
-
-	/**
-	 * Call when a path a completed
-	 */
-	public void pathComplete() {
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.PATH_COMPLETE.ordinal());
-				dos.flush();
-			}
-		} catch (IOException ioe) {
-			fatal("IOException in pathComplete");	
-		}
-	}
-
-	/**
 	 * Called when a feature is detected
 	 */
 	@SuppressWarnings("hiding")
@@ -412,5 +385,48 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		} catch (IOException ioe) {
 			fatal("IOException in featureDetected");	
 		}
+	}
+
+	public void addWaypoint(Waypoint wp) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * Called when a waypoint has been reached
+	 */
+	public void atWaypoint(Waypoint waypoint, Pose pose, int sequence) {
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.WAYPOINT_REACHED.ordinal());
+				waypoint.dumpObject(dos);
+			}
+		} catch (IOException ioe) {
+			fatal("IOException in nextWaypoint");	
+		}	
+	}
+
+	/**
+	 * Called when a path has been completed
+	 */
+	public void pathComplete(Waypoint waypoint, Pose pose, int sequence) {
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.PATH_COMPLETE.ordinal());
+				dos.flush();
+			}
+		} catch (IOException ioe) {
+			fatal("IOException in pathComplete");	
+		}
+	}
+
+	public void pathInterrupted(Waypoint waypoint, Pose pose, int sequence) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void pathGenerated() {
+		// TODO Auto-generated method stub
+		
 	}
 }
