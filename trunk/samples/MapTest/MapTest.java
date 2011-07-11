@@ -10,6 +10,16 @@ import lejos.robotics.objectdetection.FeatureListener;
 import lejos.robotics.objectdetection.RangeFeatureDetector;
 import lejos.util.PilotProps;
 
+/**
+ * Used with the MapTest or PathTest PC samples, or other PC mapping applications.
+ * 
+ * Sends moves, updated poses, features detected, waypoints reached and other navigation events
+ * to the PC.
+ * 
+ * Receives instructions as events from the PC.
+ * 
+ * @author Lawrie Griffiths
+ */
 public class MapTest {
 	public static final float MAX_DISTANCE = 50f;
 	public static final int DETECTOR_DELAY = 1000;
@@ -28,11 +38,13 @@ public class MapTest {
     	UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S1);
     	RangeFeatureDetector detector = new RangeFeatureDetector(sonic, MAX_DISTANCE, DETECTOR_DELAY); 
     	NXTNavigationModel model = new NXTNavigationModel();
-    	model.addPilot(robot);
+    	
+    	// Adding the navigator, adds the pilot and pose provider as well
     	model.addNavigator(navigator);
-    	model.addPoseProvider(navigator.getPoseProvider());
+    	
+    	// Add the feature detector and start it. 
+    	// Give it a pose provider, so that it records the pose when a feature was detected
     	model.addFeatureDetector(detector);
-    	detector.addListener(model);
     	detector.enableDetection(true);
     	detector.setPoseProvider(navigator.getPoseProvider());
     	
@@ -40,9 +52,7 @@ public class MapTest {
     	detector.addListener(new FeatureListener() {
 			public void featureDetected(Feature feature, FeatureDetector detector) {
 				if (robot.isMoving()) robot.stop();
-				if (navigator.isMoving()) {
-					navigator.stop();
-				}			
+				if (navigator.isMoving()) navigator.stop();			
 			}		
     	});
 	}
