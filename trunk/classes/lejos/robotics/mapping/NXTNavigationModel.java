@@ -221,7 +221,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							break;
 						case ROTATE_TO: // Request to rotate to a given angle
 							angle = dis.readFloat();
-							if (pp != null && pilot != null && pilot instanceof RotateMoveController) ((RotateMoveController) pilot).rotate(angle - pp.getPose().getHeading());
+							if (pp != null && pilot != null && pilot instanceof RotateMoveController) ((RotateMoveController) pilot).rotate(angleTo(angle));
 							break;
 						case GET_POSE: // Request to get the pose and return it to the PC
 							if (pp == null) break;
@@ -329,7 +329,12 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 				}
 			}
 			
-		}	
+		}
+		
+		private int angleTo(float angle) {
+			int angleTo = ((int) (angle - pp.getPose().getHeading())) % 360;
+			return (angleTo < 180 ? angleTo : angleTo - 360);
+		}
 	}
 
 	/**
