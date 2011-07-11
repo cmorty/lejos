@@ -4,7 +4,6 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.mapping.NXTNavigationModel;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.Navigator;
-import lejos.robotics.navigation.PathController;
 import lejos.robotics.objectdetection.Feature;
 import lejos.robotics.objectdetection.FeatureDetector;
 import lejos.robotics.objectdetection.FeatureListener;
@@ -41,9 +40,8 @@ public class MapTest {
     	detector.addListener(new FeatureListener() {
 			public void featureDetected(Feature feature, FeatureDetector detector) {
 				if (robot.isMoving()) robot.stop();
-				if (navigator.isGoing()) {
-					navigator.interrupt();
-					navigator.flushQueue();
+				if (navigator.isMoving()) {
+					navigator.stop();
 				}			
 			}		
     	});

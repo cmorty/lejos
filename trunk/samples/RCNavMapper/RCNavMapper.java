@@ -77,7 +77,7 @@ public class RCNavMapper  implements RCVehicle,   FeatureListener
          {  // report every 500 ms while moving
 //            System.out.println("REPORT");
             sw.reset();
-            while ((nav.isGoing() || pilot.isMoving()))
+            while ((nav.isMoving() || pilot.isMoving()))
             {
                if (sw.elapsed() >= 500)
                {
@@ -107,7 +107,7 @@ public class RCNavMapper  implements RCVehicle,   FeatureListener
          if(command == NavCommand.STOP)
          {
             pilot.stop();
-            nav.flushQueue();
+            nav.stop();
             report(pp.getPose());
          }
          else if(command == NavCommand.GOTO ) 
@@ -143,7 +143,7 @@ public class RCNavMapper  implements RCVehicle,   FeatureListener
     {
        int code = NavCommand.POSE.ordinal();
        comm.sendData( code,  pose.getX(),pose.getY(),pose.getHeading(),
-               nav.isGoing());
+               nav.isMoving());
 System.out.println("Pose "+(int)pose.getX()+" "+(int)pose.getY()
              +" "+(int)pose.getHeading());
       }
@@ -157,7 +157,7 @@ System.out.println("Pose "+(int)pose.getX()+" "+(int)pose.getY()
    public void featureDetected(Feature feature, FeatureDetector sonar )
    {
      pilot.stop();
-     nav.flushQueue();
+     nav.stop();
      reportFeature(feature);    
      detector.enableDetection(false);  
      float backup =5+ detector.getMaxDistance() - feature.getRangeReading().getRange();

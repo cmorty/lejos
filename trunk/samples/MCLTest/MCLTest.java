@@ -10,7 +10,6 @@ import lejos.robotics.localization.MCLPoseProvider;
 import lejos.robotics.mapping.NXTNavigationModel;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.Navigator;
-import lejos.robotics.navigation.PathController;
 import lejos.util.PilotProps;
 
 /**
@@ -61,7 +60,7 @@ public class MCLTest {
     	scanner.setAngles(ANGLES);
     	// Map and particles will be sent from the PC
     	MCLPoseProvider mcl = new MCLPoseProvider(robot, scanner, null, 0, BORDER);
-    	PathController navigator = new Navigator(robot, mcl); 	
+    	Navigator navigator = new Navigator(robot, mcl); 	
     	NXTNavigationModel model = new NXTNavigationModel();
     	model.setRandomMoveParameters(MAX_DISTANCE, PROJECTION, BORDER);
     	model.addPilot(robot);
