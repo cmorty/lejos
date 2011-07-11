@@ -543,7 +543,6 @@ public class Binary
          for (int i = 0; i < specialClasses.length; i++)
          {
             ClassRecord classRecord = getClassRecord(specialClasses[i]);
-System.out.println("SP Class: " + classRecord.getName());
             if (classRecord.hasMethod(uncaughtExceptionMethod, true))
             {
                 MethodRecord pRec = classRecord.getMethodRecord(uncaughtExceptionMethod);
@@ -555,7 +554,6 @@ System.out.println("SP Class: " + classRecord.getName());
          for (int i = 0; i < entryClassNames.length; i++)
          {
             ClassRecord classRecord = getClassRecord(entryClassNames[i]);
-System.out.println("Entry Class: " + classRecord.getName());
             if (classRecord.hasMethod(mainMethod, true))
             {
                 MethodRecord pRec = classRecord.getMethodRecord(mainMethod);
