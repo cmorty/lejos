@@ -1172,7 +1172,15 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     {
         // No need to wait for high speed ports
         if (!i2cHighSpeed)
-            i2cEvent.waitEvent(I2C_IO_COMPLETE << iPortId, NXTEvent.WAIT_FOREVER);
+            try {
+                i2cEvent.waitEvent(I2C_IO_COMPLETE << iPortId, NXTEvent.WAIT_FOREVER);
+            }
+            catch(InterruptedException e)
+            {
+                // TODO: Decide if this method should simply throw the exception
+                // preserve state of interrupt flag
+                Thread.currentThread().interrupt();                
+            }
     }
     
     /**
@@ -1236,21 +1244,30 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
             int readLen)
     {
 		int ret = i2cStartById(iPortId, deviceAddress, writeBuf, writeOffset, writeLen, readLen);
-        if (ret == ERR_BUS_BUSY)
-        {
-            // The bus is busy (clock and/or data lines not pulled up to 1).
-            // This could be because a sensor (Lego Ultrasonic) is holding
-            // on to the bus, or because no sensor is plugged in. So we wait
-            // for a short while for it to become free and try again.
-            i2cEvent.waitEvent(I2C_BUS_FREE << iPortId, I2C_BUS_FREE_TIMEOUT);
-            ret = i2cStartById(iPortId, deviceAddress, writeBuf, writeOffset, writeLen, readLen);
-        }
-		if (ret < 0)
-			return ret;
-		
-        // No need to wait for high speed ports
-        if (!i2cHighSpeed)
-            i2cEvent.waitEvent(I2C_IO_COMPLETE << iPortId, NXTEvent.WAIT_FOREVER);
+		try {
+            if (ret == ERR_BUS_BUSY)
+            {
+                // The bus is busy (clock and/or data lines not pulled up to 1).
+                // This could be because a sensor (Lego Ultrasonic) is holding
+                // on to the bus, or because no sensor is plugged in. So we wait
+                // for a short while for it to become free and try again.
+                i2cEvent.waitEvent(I2C_BUS_FREE << iPortId, I2C_BUS_FREE_TIMEOUT);
+                ret = i2cStartById(iPortId, deviceAddress, writeBuf, writeOffset, writeLen, readLen);
+            }
+    		if (ret < 0)
+    			return ret;
+    		
+            // No need to wait for high speed ports
+            if (!i2cHighSpeed)
+                i2cEvent.waitEvent(I2C_IO_COMPLETE << iPortId, NXTEvent.WAIT_FOREVER);
+		}
+		catch(InterruptedException e)
+		{
+		    // TODO: Need to decide if this should simply throw the exception
+            // preserve state of interrupt flag
+            Thread.currentThread().interrupt();
+            return ERR_ABORT;
+		}
         
 		return i2cCompleteById(iPortId, readBuf, readOffset, readLen);
     }

@@ -52,7 +52,6 @@ public class NXTEvent {
     private final static int SET = 2;
 
     public final static int TIMEOUT = 1 << 31;
-    public final static int INTERRUPTED = 1 << 30;
     /** These bits are reserved in the eventData field to indicate that a user
      * event has occurred. User events are created by the  notifyEvent method.
      */
@@ -96,7 +95,7 @@ public class NXTEvent {
      * @param timeout the timeout in ms. Note a value of <= 0 will return immeadiately.
      * @return the event flags
      */
-    public synchronized int waitEvent(long timeout)
+    public synchronized int waitEvent(long timeout) throws InterruptedException
     {
         if (timeout <= 0L) return TIMEOUT;
         sync = this;
@@ -110,48 +109,13 @@ public class NXTEvent {
                 state |= SET;
             else
             {
-                // This horrible code turns inetrrupted exceptions into events.
-                // If the caller is not interested in INTERRUPTED events then we
-                // ignore (and preserve) the state. Note that in the case of a
-                // wait with a timeout, if we are ignoring interrupt and the wait
-                // is interrupted (other then at the start of the wait), then we
-                // will wait longer than requested (because the wait is re-started).
-                // This could be fixed but I don't think the extra cost/complxity
-                // is worth it...
-                boolean ignoredInterrupt = false;
-                for(;;)
-                {
-                    try {
-                        wait(timeout);
-                        break;
-                    }
-                    catch (InterruptedException e)
-                    {
-                        // are we interested in interrupts?
-                        if ((filter & INTERRUPTED) != 0)
-                        {
-                            // yes so capture it and exit
-                            state |= SET;
-                            eventData |= INTERRUPTED;
-                            break;
-                        }
-                        else
-                        {
-                            // No ignore it.
-                            ignoredInterrupt = true;
-                            continue;
-                        }
-                    }
-                }
-                // Preserve interrupted state if required
-               if (ignoredInterrupt)
-                   Thread.currentThread().interrupt();
+                wait(timeout);
+                if ((state & SET) == 0)
+                    eventData |= TIMEOUT;
             }
         }
         finally
         {
-            if ((state & SET) == 0)
-                eventData |= TIMEOUT;
             changeEvent(0, eventData);
             state = 0;
         }
@@ -166,12 +130,18 @@ public class NXTEvent {
      * @param timeout the timeout in ms. Note a value of <= 0 will return immediately.
      * @return the event flags or 0 if the event timed out
      */
-    public synchronized int waitEvent(int filter, long timeout)
+    public synchronized int waitEvent(int newFilter, long timeout) throws InterruptedException
     {
         int old = this.filter;
-        this.filter = filter;
-        int ret = waitEvent(timeout);
-        this.filter = old;
+        int ret;
+        filter = newFilter;
+        try {
+            ret = waitEvent(timeout);
+        }
+        finally
+        {
+            this.filter = old;
+        }
         return ret;
     }
 
@@ -181,24 +151,30 @@ public class NXTEvent {
      * @param timeout the wait timeout. Note a value of <= 0 will return immediately.
      * @return true if an event occurred, false otherwise.
      */
-    public static boolean waitEvent(NXTEvent[] events, long timeout)
+    public static boolean waitEvent(NXTEvent[] events, long timeout) throws InterruptedException
     {
         // We always use the first event as the one to synchronize on.
         NXTEvent sync = events[0];
         synchronized(sync)
         {
-            // Make all of the events share the same notifyer
+            // Make all of the events share the same notifier
             for(int i = 1; i < events.length; i++)
             {
                 events[i].eventData = 0;
                 events[i].sync = sync;
                 events[i].updatePeriodCnt = 0;
             }
-            boolean ret = (sync.waitEvent(timeout) & TIMEOUT) == 0;
-            for(int i = 1; i < events.length; i++)
+            boolean ret;
+            try {
+                ret = (sync.waitEvent(timeout) & TIMEOUT) == 0;
+            }
+            finally
             {
-                events[i].sync = events[i];
-                events[i].changeEvent(0, events[i].eventData);
+                for(int i = 1; i < events.length; i++)
+                {
+                    events[i].sync = events[i];
+                    events[i].changeEvent(0, events[i].eventData);
+                }
             }
             return ret;
         }

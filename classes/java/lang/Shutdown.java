@@ -49,7 +49,14 @@ class Shutdown
         public void run()
         {
             // We wait to be told to shut the system down
-            event.waitEvent(NXTEvent.WAIT_FOREVER);
+            try {
+                event.waitEvent(NXTEvent.WAIT_FOREVER);
+            }
+            catch (InterruptedException e)
+            {
+                // If we get interrupted just give up...
+                return;
+            }
             running = true;
             // make sure we continue to run, even if other threads exit.
             setDaemon(false);

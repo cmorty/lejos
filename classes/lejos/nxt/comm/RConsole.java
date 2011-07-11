@@ -362,56 +362,63 @@ public class RConsole extends Thread
     @Override
     public void run()
     {
-        long nextUpdate = 0;
-        while (true)
-        {
-            long now = System.currentTimeMillis();
-            synchronized (os)
+        try {
+            long nextUpdate = 0;
+            while (true)
             {
-                if (conn == null)
-                    break;
-                try
+                long now = System.currentTimeMillis();
+                synchronized (os)
                 {
-                    // First check to see if we have any "normal" output to go.
-                    if (output != null)
+                    if (conn == null)
+                        break;
+                    try
                     {
-                        os.write(output, 0, outputLen);
-                        output = null;
-                        os.flush();
-                    }
-                    // Are we mirroring the LCD display?
-                    if (lcd)
-                    {
-                        if (now > nextUpdate)
+                        // First check to see if we have any "normal" output to go.
+                        if (output != null)
                         {
-                            os.write(MODE_SWITCH);
-                            os.write(MODE_LCD);
-                            os.write(LCD.getDisplay());
+                            os.write(output, 0, outputLen);
+                            output = null;
                             os.flush();
-                            nextUpdate = now + LCD_UPDATE_PERIOD;
                         }
+                        // Are we mirroring the LCD display?
+                        if (lcd)
+                        {
+                            if (now > nextUpdate)
+                            {
+                                os.write(MODE_SWITCH);
+                                os.write(MODE_LCD);
+                                os.write(LCD.getDisplay());
+                                os.flush();
+                                nextUpdate = now + LCD_UPDATE_PERIOD;
+                            }
+                        }
+                        else
+                            nextUpdate = now + LCD_UPDATE_PERIOD;
+                    } catch (Exception e)
+                    {
+                        // Not really sure what do if we get an I/O error. Should
+                        // probably have some way to report it to calling threads.
+                        break;
                     }
-                    else
-                        nextUpdate = now + LCD_UPDATE_PERIOD;
-                } catch (Exception e)
-                {
-                    // Not really sure what do if we get an I/O error. Should
-                    // probably have some way to report it to calling threads.
-                    break;
+                    /*
+                    try {
+                        os.wait(nextUpdate - now);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        // We may use interrupt to wake the thread from sleep early.
+                    }*/
                 }
-                /*
-                try {
-                    os.wait(nextUpdate - now);
-                }
-                catch (InterruptedException e)
-                {
-                    // We may use interrupt to wake the thread from sleep early.
-                }*/
+                ioEvent.waitEvent(nextUpdate - now);
             }
-            ioEvent.waitEvent(nextUpdate - now);
+            // dump any pending output
+            output = null;
         }
-        // dump any pending output
-        output = null;
+        catch(InterruptedException e)
+        {
+            // must have been aborted, so exit
+            return;
+        }
     }
 
     /**
