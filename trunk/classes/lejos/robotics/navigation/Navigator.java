@@ -22,7 +22,7 @@ import lejos.robotics.pathfinding.Path;
  * This class has only one blocking method.
  * @author Roger Glassey
  */
-public class Navigator
+public class Navigator implements WaypointListener
 {
 
    /**
@@ -263,6 +263,10 @@ public class Navigator
    {
       return _keepGoing;
    }
+   
+   public void pathGenerated() {
+		// TODO Auto-generated method stub	
+	}
 
    private void callListeners()
    {
@@ -397,4 +401,5 @@ public class Navigator
   private double _radius;
   private int _sequenceNr;
   private ArrayList<NavigationListener> _listeners = new ArrayList<NavigationListener>();
+  
 }
