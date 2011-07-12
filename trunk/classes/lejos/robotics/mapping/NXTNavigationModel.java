@@ -41,8 +41,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	protected boolean autoSendPose = true;
 	protected boolean sendMoveStart = false, sendMoveStop = true;
 	
-	private float oldRange = -1;
-	
+	private float oldRange = -1;	
 	private Thread receiver;
 	
 	/**
@@ -130,6 +129,11 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		this.scanner = scanner;
 	}
 	
+	/**
+	 * Add a feature detector to the model
+	 * 
+	 * @param detector the feature detector
+	 */
 	@SuppressWarnings("hiding")
 	public void addFeatureDetector(FeatureDetector detector) {
 		this.detector = detector;
@@ -176,7 +180,6 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		sendMoveStop = on;
 	}
 	
-
 	/**
 	 * The Receiver thread receives events from the PC
 	 * 
@@ -398,10 +401,19 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		}
 	}
 
+	/**
+	 * Send a waypoint generated on the NXT to the PC
+	 */
 	public void addWaypoint(Waypoint wp) {
-		// TODO Auto-generated method stub
-		
-	}
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.ADD_WAYPOINT.ordinal());
+				// TODO: send waypoint to the PC
+				dos.flush();
+			}
+		} catch (IOException ioe) {
+			fatal("IOException in addWaypoint");	
+		}	}
 
 	/**
 	 * Called when a waypoint has been reached
@@ -431,13 +443,31 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		}
 	}
 
+	/**
+	 * Called when a path has been interrupted
+	 */
 	public void pathInterrupted(Waypoint waypoint, Pose pose, int sequence) {
-		// TODO Auto-generated method stub
-		
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.PATH_INTERRUPTED.ordinal());
+				dos.flush();
+			}
+		} catch (IOException ioe) {
+			fatal("IOException in pathInterrupted");	
+		}
 	}
 
+	/**
+	 * Called when a path finder has finished generating a path
+	 */
 	public void pathGenerated() {
-		// TODO Auto-generated method stub
-		
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.PATH_GENERATED.ordinal());
+				dos.flush();
+			}
+		} catch (IOException ioe) {
+			fatal("IOException in pathGenerated");	
+		}
 	}
 }
