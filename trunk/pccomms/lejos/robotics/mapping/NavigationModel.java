@@ -46,6 +46,7 @@ public abstract class NavigationModel {
 	protected Move lastMove = new Move(0,0,false);
 	protected Move lastPlannedMove = new Move(0,0,false);
 	protected RangeFeature feature = new RangeFeature(readings);
+	protected boolean debug = false;
 	
 	/**
 	 * Navigation events that are transmitted between the PC and the NXT (and vice versa).
@@ -156,5 +157,14 @@ public abstract class NavigationModel {
 	 */
 	public Path getPath() {
 		return path;
+	}
+	
+	/**
+	 * Set debug output on of off
+	 * 
+	 * @param on true for on, false for off
+	 */
+	public void setDebug(boolean on) {
+		debug = on;
 	}
 }

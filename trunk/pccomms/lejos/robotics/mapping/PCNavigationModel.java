@@ -210,7 +210,7 @@ public class PCNavigationModel extends NavigationModel {
 			return;
 		}
   
-		panel.log("Connected to " + nxtName);
+		if (debug) panel.log("Connected to " + nxtName);
   
 		dis = new DataInputStream(conn.getInputStream());
 		dos = new DataOutputStream(conn.getOutputStream());
@@ -251,9 +251,9 @@ public class PCNavigationModel extends NavigationModel {
 	public LineMap loadMap(String mapFileName) {
 		try {
 			File mapFile = new File(mapFileName);
-			System.out.println("Map file is " + mapFile.getAbsolutePath());
+			if (debug) panel.log("Map file is " + mapFile.getAbsolutePath());
 			if (!mapFile.exists()) {
-				panel.log(mapFile.getAbsolutePath() + " does not exist");
+				panel.error(mapFile.getAbsolutePath() + " does not exist");
 				return null;
 			}
 			FileInputStream is = new FileInputStream(mapFile);
@@ -496,10 +496,12 @@ public class PCNavigationModel extends NavigationModel {
 		if (path == null) return;
 		if (!connected) return;
 		try {
-			panel.log("Sending path");
-			panel.log("Pose:" + currentPose);
-			for(Waypoint wp: path) {
-				panel.log("Waypoint:" + wp.x + "," + wp.y + "," + wp.getHeading() + "," + wp.isHeadingRequired());
+			if (debug) {
+				panel.log("Sending path");
+				panel.log("Pose:" + currentPose);
+				for(Waypoint wp: path) {
+					panel.log("Waypoint:" + wp.x + "," + wp.y + "," + wp.getHeading() + "," + wp.isHeadingRequired());
+				}
 			}
 			synchronized(receiver) {
 				dos.writeByte(NavEvent.FOLLOW_ROUTE.ordinal());
@@ -554,7 +556,7 @@ public class PCNavigationModel extends NavigationModel {
 					synchronized(this) {
 						byte event = dis.readByte();
 						NavEvent navEvent = NavEvent.values()[event];
-						panel.log("Event received:" +  navEvent.name());
+						if (debug) panel.log("Event received:" +  navEvent.name());
 						switch (navEvent) {
 						case MOVE_STARTED: // Get planned move
 							lastPlannedMove.loadObject(dis);
@@ -565,7 +567,7 @@ public class PCNavigationModel extends NavigationModel {
 							break;
 						case SET_POSE: // Get a new pose from the NXT
 							currentPose.loadObject(dis);
-							panel.log(currentPose.toString());
+							if (debug) panel.log(currentPose.toString());
 							poses.add(new Pose(currentPose.getX(), currentPose.getY(), currentPose.getHeading()));
 							break;
 						case PARTICLE_SET: // Get a particle set from the NXT
@@ -583,11 +585,13 @@ public class PCNavigationModel extends NavigationModel {
 							particleReadings.loadObject(dis);
 							weight = dis.readFloat();
 							
-							for(RangeReading r:particleReadings) {
-								System.out.println(r.getAngle() + ":" + r.getRange());
-							}
+							if (debug) {
+								for(RangeReading r:particleReadings) {
+									panel.log(r.getAngle() + ":" + r.getRange());
+								}
 							
-							System.out.println("weight = " + weight);
+								panel.log("weight = " + weight);
+							}
 							break;
 						case ESTIMATED_POSE: // Get the MCL estimated pose data
 							mcl.loadObject(dis);
