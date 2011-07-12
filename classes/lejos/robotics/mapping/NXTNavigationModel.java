@@ -192,14 +192,14 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 			NXTConnection conn = connector.waitForConnection(0, NXTConnection.PACKET);
 			dis = conn.openDataInputStream();
 			dos = conn.openDataOutputStream();
-			log("Connected");
+			if (debug) log("Connected");
 			
 			while(true) {
 				try {
 					synchronized(this) {
 						byte event = dis.readByte();
 						NavEvent navEvent = NavEvent.values()[event];
-						log(navEvent.name());
+						if (debug) log(navEvent.name());
 						switch (navEvent) {
 						case LOAD_MAP: // Map sent from POC
 							if (map == null) map = new LineMap();
@@ -347,10 +347,10 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		if (!sendMoveStart) return;
 		try {
 			synchronized(receiver) {
-				log("Sending move started");
+				if (debug) log("Sending move started");
 				dos.writeByte(NavEvent.MOVE_STARTED.ordinal());
 				event.dumpObject(dos);
-				log("Finished move started");
+				if (debug) log("Finished move started");
 			}
 		} catch (IOException ioe) {
 			fatal("IOException in moveStarted");	
@@ -364,11 +364,11 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		if (!sendMoveStop) return;
 		try {
 			synchronized(receiver) {
-				log("Sending move stopped");
+				if (debug) log("Sending move stopped");
 				dos.writeByte(NavEvent.MOVE_STOPPED.ordinal());
 				event.dumpObject(dos);
 				if (pp != null && autoSendPose) {
-					log("Sending set pose");
+					if (debug) log("Sending set pose");
 					dos.writeByte(NavEvent.SET_POSE.ordinal());
 					pp.getPose().dumpObject(dos);
 				}
