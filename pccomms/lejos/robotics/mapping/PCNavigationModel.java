@@ -561,9 +561,12 @@ public class PCNavigationModel extends NavigationModel {
 		waypoints = new ArrayList<Waypoint>();
 		target = null;
 		path = null;
+		start = null;
+		destination = null;
 		mesh = new FourWayGridMesh(map, gridSpace,clearance);
 		nodes = mesh.getMesh();
 		pf = new NodePathFinder(alg, mesh);
+		closest = -1;
 	}
 	
 	/**
