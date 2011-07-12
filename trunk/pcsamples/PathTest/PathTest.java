@@ -114,7 +114,10 @@ public class PathTest extends NavigationPanel {
   	@Override
 	protected void popupMenu(MouseEvent me) {
 	    Point pt = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), this);
-	    JPopupMenu menu = new JPopupMenu(); 
+	    JPopupMenu menu = new JPopupMenu();
+	    
+	    boolean inside = model.getMap().inside(new lejos.geom.Point(me.getX() / pixelsPerUnit, me.getY() / pixelsPerUnit));  
+	    if (!inside) return;
 	    
 	    // Include set pose and set target menu items
 	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_POSE, "Set pose",me.getPoint(),model, this));
