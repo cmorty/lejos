@@ -28,8 +28,8 @@ public class MenuAction extends AbstractAction {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		float x = (p.x - panel.mapPanel.viewStart.x) / panel.pixelsPerUnit;
-		float y = (p.y - panel.mapPanel.viewStart.y) / panel.pixelsPerUnit;
+		float x = (p.x + panel.mapPanel.viewStart.x) / panel.pixelsPerUnit;
+		float y = (p.y + panel.mapPanel.viewStart.y) / panel.pixelsPerUnit;
 		Waypoint wp = new Waypoint(x,y);
 		
 		switch (navEvent) {
