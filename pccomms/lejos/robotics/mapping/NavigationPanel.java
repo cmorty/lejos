@@ -2,6 +2,7 @@ package lejos.robotics.mapping;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -54,6 +55,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected Dimension mapPaneSize = new Dimension(600,600);
 	protected JScrollPane mapPane;
 	protected Point startDrag;
+	protected JButton clearButton = new JButton("Clear");
 	
 	/**
 	 * Build the various panels if they are required.
@@ -118,6 +120,16 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 					}
 				});
 			}
+			
+			controlPanel.add(clearButton);
+			
+			clearButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					model.clear();
+					mapPanel.viewStart = new Point(0,0);
+					repaint();
+				}				
+			});
 		}
 		
 		if (showMousePanel) {

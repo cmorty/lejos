@@ -43,6 +43,7 @@ public class PCNavigationModel extends NavigationModel {
 	protected ArrayList<Waypoint> waypoints = new ArrayList<Waypoint>();
 	
 	private Thread receiver = new Thread(new Receiver());
+	private boolean running = true;
 	
 	/**
 	 * Create the model and associate the navigation panel with it
@@ -542,6 +543,28 @@ public class PCNavigationModel extends NavigationModel {
 			panel.error("Destination unreachable");
 		}
 	}
+		
+	/**
+	 * Shut down the receiver thread
+	 */
+	public void shutDown() {
+		running = false;
+	}
+	
+	/**
+	 * Clear all variable data
+	 */
+	public void clear() {
+		moves = new ArrayList<Move>();
+		poses = new ArrayList<Pose>();
+		features = new ArrayList<Point>();
+		waypoints = new ArrayList<Waypoint>();
+		target = null;
+		path = null;
+		mesh = new FourWayGridMesh(map, gridSpace,clearance);
+		nodes = mesh.getMesh();
+		pf = new NodePathFinder(alg, mesh);
+	}
 	
 	/**
 	 * Runnable class to receive events from the NXT
@@ -551,7 +574,7 @@ public class PCNavigationModel extends NavigationModel {
 	 */
 	class Receiver implements Runnable {
 		public void run() {
-			while(true) {
+			while(running) {
 				try {
 					synchronized(this) {
 						byte event = dis.readByte();
