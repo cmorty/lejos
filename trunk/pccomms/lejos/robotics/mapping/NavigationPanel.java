@@ -30,7 +30,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected JTextField yField = new JTextField(4);
 	protected JPanel controlPanel = new JPanel();
 	protected JLabel zoomLabel = new JLabel("Zoom:");
-	protected JSlider slider = new JSlider(50,200,100);
+	protected JSlider slider = new JSlider(50,200,50);
 	protected JLabel gridLabel = new JLabel("Grid:");
 	protected JCheckBox gridCheck = new JCheckBox();
 	protected JLabel meshLabel = new JLabel("Mesh:");
@@ -58,8 +58,6 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	 * Build the various panels if they are required.
 	 */
 	protected void buildGUI() {
-		mapPanel = new MapPanel(model, mapPaneSize, this);
-		
 		if (showConnectPanel) {
 			connectPanel.add(nxtLabel);
 			connectPanel.add(nxtName);
@@ -152,11 +150,16 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 			particlePanel.add(particleField);
 			add(particlePanel);
 		}
-		mapPanel.addMouseMotionListener(this);
-		mapPanel.addMouseListener(this);
+		
+		mapPanel = new MapPanel(model, mapPaneSize, this);
 		mapPane = new JScrollPane(mapPanel);
 		add(mapPane);
 		mapPane.setPreferredSize(mapPaneSize);
+		
+		mapPanel.addMouseMotionListener(this);
+		mapPanel.addMouseListener(this);
+
+		slider.setValue(150);
 	}
 	
 	/**
@@ -254,8 +257,8 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	 */
 	public void mouseMoved(MouseEvent e) {
 		// Display the mouse co-ordinates when they change
-		xField.setText("" + Math.round(e.getX() / pixelsPerUnit));
-		yField.setText("" + Math.round(e.getY() / pixelsPerUnit));
+		xField.setText("" + (int) ((e.getX() + mapPanel.viewStart.x) / pixelsPerUnit));
+		yField.setText("" + (int) ((e.getY() + mapPanel.viewStart.y)/ pixelsPerUnit));
 	}
 	
 	/**

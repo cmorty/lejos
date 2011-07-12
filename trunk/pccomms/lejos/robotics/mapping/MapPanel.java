@@ -59,6 +59,8 @@ public class MapPanel extends JPanel {
 	// The maximum size of a cluster of particles for a located robot (in cm)
 	protected static final int MAX_CLUSTER_SIZE = 50;
 	
+	protected Point viewStart = new Point(0,0);
+	
 	/**
 	 * Create the panel, set its size, and associated it with the navigation model
 	 * and navigation panel.
@@ -88,10 +90,10 @@ public class MapPanel extends JPanel {
 		g2d.setStroke(new BasicStroke(2));
 		for (int i = 0; i < lines.length; i++) {
 			Line2D line = new Line2D.Float(
-    		  lines[i].x1 * parent.pixelsPerUnit, 
-    		  lines[i].y1 * parent.pixelsPerUnit, 
-    		  lines[i].x2 * parent.pixelsPerUnit, 
-    		  lines[i].y2 * parent.pixelsPerUnit);
+    		  getX(lines[i].x1), 
+    		  getY(lines[i].y1), 
+    		  getX(lines[i].x2), 
+    		  getY(lines[i].y2));
 			g2d.draw(line);
 		}
 		g2d.setStroke(new BasicStroke(1));
@@ -109,7 +111,7 @@ public class MapPanel extends JPanel {
 			while(nodeIterator.hasNext()) {
 				Node cur = nodeIterator.next();
 				g2d.setColor(colors[MESH_COLOR_INDEX]);
-				Ellipse2D.Double circle = new Ellipse2D.Double((cur.x-NODE_CIRC/2) * parent.pixelsPerUnit, (cur.y-NODE_CIRC/2) * parent.pixelsPerUnit, NODE_CIRC * parent.pixelsPerUnit, NODE_CIRC * parent.pixelsPerUnit);
+				Ellipse2D.Double circle = new Ellipse2D.Double(getX(cur.x-NODE_CIRC/2), getY(cur.y-NODE_CIRC/2), getDistance(NODE_CIRC), getDistance(NODE_CIRC));
 				g2d.fill(circle);
 				
 				// TODO: This code will draw lines to every node neighbor and *repeat* connections but I don't care.
@@ -118,7 +120,7 @@ public class MapPanel extends JPanel {
 				while(iter.hasNext()) {
 					Node neighbor = iter.next();
 					g2d.setColor(colors[NEIGHBOR_COLOR_INDEX]);
-					Line line = new Line(cur.x * parent.pixelsPerUnit, cur.y * parent.pixelsPerUnit, neighbor.x * parent.pixelsPerUnit, neighbor.y * parent.pixelsPerUnit);
+					Line line = new Line(getX(cur.x), getY(cur.y), getX(neighbor.x), getY(neighbor.y));
 					g2d.draw(line);
 				}
 			}
@@ -170,9 +172,10 @@ public class MapPanel extends JPanel {
 					diffY > 0 && diffY <= MAX_CLUSTER_SIZE) {
 				//parent.log("Robot Located");
 				Ellipse2D c = new Ellipse2D.Float(
-	        					(minX) * parent.pixelsPerUnit, 
-	        					(minY) * parent.pixelsPerUnit, (maxX - minX)  * parent.pixelsPerUnit, 
-	        					(maxY - minY)  * parent.pixelsPerUnit);
+	        					getX(minX), 
+	        					getY(minY), 
+	        					getDistance(maxX - minX), 
+	        					getDistance(maxY - minY));
 				g2d.setColor(colors[ESTIMATE_COLOR_INDEX]);
 				g2d.draw(c);
 				paintPose(g2d,estimatedPose);
@@ -186,7 +189,7 @@ public class MapPanel extends JPanel {
 	 * @param g2d the Graphics2D object
 	 */
 	public void paintPose(Graphics2D g2d, Pose pose) {
-		Ellipse2D c = new Ellipse2D.Float((pose.getX() - ROBOT_SIZE/2)  * parent.pixelsPerUnit, (pose.getY() - ROBOT_SIZE/2) * parent.pixelsPerUnit, ROBOT_SIZE * parent.pixelsPerUnit, ROBOT_SIZE * parent.pixelsPerUnit);
+		Ellipse2D c = new Ellipse2D.Float(getX(pose.getX() - ROBOT_SIZE/2), getY(pose.getY() - ROBOT_SIZE/2), getDistance(ROBOT_SIZE), getDistance(ROBOT_SIZE));
 		Line rl = getArrowLine(pose);
 		Line2D l2d = new Line2D.Float(rl.x1, rl.y1, rl.x2, rl.y2);
 		g2d.draw(l2d);
@@ -202,11 +205,11 @@ public class MapPanel extends JPanel {
 		if (gridSize <= 0) return;
 		if (!parent.gridCheck.isSelected()) return;
 		g2d.setColor(colors[GRID_COLOR_INDEX]);
-		for(int i=0; i<this.getHeight(); i+=gridSize*parent.pixelsPerUnit) {
-			g2d.drawLine(0,i, this.getWidth()-1,i);		
+		for(float i=viewStart.x % getDistance(gridSize); i<this.getHeight(); i+=getDistance(gridSize)) {
+			g2d.drawLine(0,(int) i, this.getWidth()-1, (int) i);		
 		}
-		for(int i=0; i<this.getWidth(); i+=gridSize*parent.pixelsPerUnit) {
-			g2d.drawLine(i,0, i,this.getHeight()-1);		
+		for(float i=viewStart.y % getDistance(gridSize); i<this.getWidth(); i+=getDistance(gridSize)) {
+			g2d.drawLine((int) i,0, (int) i,this.getHeight()-1);		
 		}
 	}
 	
@@ -238,7 +241,7 @@ public class MapPanel extends JPanel {
 		Waypoint target = model.getTarget();
 		if (target == null) return;
 		g2d.setColor(colors[TARGET_COLOR_INDEX]);
-		Ellipse2D c = new Ellipse2D.Float((float) ((target.getX() - TARGET_SIZE/2)  * parent.pixelsPerUnit), (float) ((target.getY() - TARGET_SIZE/2) * parent.pixelsPerUnit), TARGET_SIZE * parent.pixelsPerUnit, TARGET_SIZE * parent.pixelsPerUnit);
+		Ellipse2D c = new Ellipse2D.Float(getX((float) (target.getX() - TARGET_SIZE/2)), getY((float) ((target.getY() - TARGET_SIZE/2))), getDistance(TARGET_SIZE), getDistance(TARGET_SIZE));
 		g2d.fill(c);		
 	}
 	
@@ -250,7 +253,7 @@ public class MapPanel extends JPanel {
 	protected void paintFeatures(Graphics2D g2d) {
 		g2d.setColor(colors[FEATURE_COLOR_INDEX]);
 		for(lejos.geom.Point pt:model.getFeatures()) {
-			Ellipse2D c = new Ellipse2D.Float((float) ((pt.x - TARGET_SIZE/2)  * parent.pixelsPerUnit), (float) ((pt.y - TARGET_SIZE/2) * parent.pixelsPerUnit), TARGET_SIZE * parent.pixelsPerUnit, TARGET_SIZE * parent.pixelsPerUnit);
+			Ellipse2D c = new Ellipse2D.Float(getX((float) ((pt.x - TARGET_SIZE/2))), getY((float) ((pt.y - TARGET_SIZE/2))), getDistance(TARGET_SIZE), getDistance(TARGET_SIZE));
 			g2d.fill(c);
 		}
 	}
@@ -258,7 +261,7 @@ public class MapPanel extends JPanel {
 	protected void paintWaypoints(Graphics2D g2d) {
 		g2d.setColor(colors[WAYPOINT_COLOR_INDEX]);
 		for(lejos.geom.Point pt:model.getWaypoints()) {
-			Ellipse2D c = new Ellipse2D.Float((float) ((pt.x - TARGET_SIZE/2)  * parent.pixelsPerUnit), (float) ((pt.y - TARGET_SIZE/2) * parent.pixelsPerUnit), TARGET_SIZE * parent.pixelsPerUnit, TARGET_SIZE * parent.pixelsPerUnit);
+			Ellipse2D c = new Ellipse2D.Float(getX((float) ((pt.x - TARGET_SIZE/2))), getY((float) ((pt.y - TARGET_SIZE/2))), getDistance(TARGET_SIZE), getDistance(TARGET_SIZE));
 			g2d.fill(c);
 		}
 	}
@@ -279,7 +282,7 @@ public class MapPanel extends JPanel {
 			if (previousPose == null) previousPose = pose;
 			else {
 				//parent.log("Drawing line from " + previousPose.getX() + ","  + previousPose.getY() + " to " + pose.getX() + "," + pose.getY());
-				g2d.drawLine((int) (previousPose.getX() * parent.pixelsPerUnit), (int) (previousPose.getY() * parent.pixelsPerUnit), (int) (pose.getX()  * parent.pixelsPerUnit), (int) (pose.getY() * parent.pixelsPerUnit));
+				g2d.drawLine((int) getX(previousPose.getX()), (int) getY(previousPose.getY()), (int) getX(pose.getX()), (int) getY(pose.getY()));
 				previousPose = pose;
 			}
 		}	
@@ -293,10 +296,10 @@ public class MapPanel extends JPanel {
 	 */
 	protected Line getArrowLine(Pose pose) {
 		return new Line(
-				    pose.getX() * parent.pixelsPerUnit,
-    		        pose.getY() * parent.pixelsPerUnit, 
-    		        pose.getX() * parent.pixelsPerUnit + ARROW_LENGTH * parent.pixelsPerUnit * (float) Math.cos(Math.toRadians(pose.getHeading())), 
-    		        pose.getY() * parent.pixelsPerUnit + ARROW_LENGTH * parent.pixelsPerUnit * (float) Math.sin(Math.toRadians(pose.getHeading())));
+				    getX(pose.getX()),
+    		        getY(pose.getY()), 
+    		        getX(pose.getX()) + getDistance(ARROW_LENGTH * (float) Math.cos(Math.toRadians(pose.getHeading()))), 
+    		        getY(pose.getY()) + getDistance(ARROW_LENGTH * (float) Math.sin(Math.toRadians(pose.getHeading()))));
 	}
 	
 	/**
@@ -312,10 +315,31 @@ public class MapPanel extends JPanel {
 			g2d.setColor(colors[PATH_COLOR_INDEX]);
 			while(path_iter.hasNext()) {
 				Waypoint nextWP = path_iter.next();
-				Line line = new Line(curWP.x * parent.pixelsPerUnit, curWP.y * parent.pixelsPerUnit, nextWP.x * parent.pixelsPerUnit, nextWP.y * parent.pixelsPerUnit);
+				Line line = new Line(getX(curWP.x), getY(curWP.y), getX(nextWP.x), getY(nextWP.y));
 				g2d.draw(line);
 				curWP = nextWP;
 			}	
 		}
+	}
+	
+	/**
+	 * Get the screen X coordinate for a given map coordinate
+	 */
+	protected float getX(float x) {
+		return ((viewStart.x + x) * parent.pixelsPerUnit);
+	}
+	
+	/**
+	 * Get the screen Y coordinate for a given map coordinate
+	 */
+	protected float getY(float y) {
+		return ((viewStart.y + y) * parent.pixelsPerUnit);
+	}
+	
+	/**
+	 * Convert a distance in map coordinates to a screen distance
+	 */
+	protected float getDistance(float distance) {
+		return distance * parent.pixelsPerUnit;
 	}
 }
