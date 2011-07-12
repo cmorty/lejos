@@ -326,14 +326,14 @@ public class MapPanel extends JPanel {
 	 * Get the screen X coordinate for a given map coordinate
 	 */
 	protected float getX(float x) {
-		return ((viewStart.x + x) * parent.pixelsPerUnit);
+		return ((x - viewStart.x) * parent.pixelsPerUnit);
 	}
 	
 	/**
 	 * Get the screen Y coordinate for a given map coordinate
 	 */
 	protected float getY(float y) {
-		return ((viewStart.y + y) * parent.pixelsPerUnit);
+		return ((y - viewStart.y) * parent.pixelsPerUnit);
 	}
 	
 	/**

@@ -53,6 +53,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected int mapPanelHeight = 300;
 	protected Dimension mapPaneSize = new Dimension(600,600);
 	protected JScrollPane mapPane;
+	protected Point startDrag;
 	
 	/**
 	 * Build the various panels if they are required.
@@ -250,6 +251,12 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	 * Optionally overridden by subclasses
 	 */
 	public void mouseDragged(MouseEvent e) {
+	    Point p = e.getPoint();
+	    mapPanel.viewStart.x -= (p.x - startDrag.x)/pixelsPerUnit;
+	    mapPanel.viewStart.y -= (p.y - startDrag.y)/pixelsPerUnit;
+	    startDrag = p;
+	    System.out.println("viewStart = " + mapPanel.viewStart);
+	    mapPanel.repaint();
 	}
 
 	/**
@@ -286,7 +293,8 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	/**
 	 * Optionally overridden by subclasses
 	 */
-	public void mousePressed(MouseEvent e) {		
+	public void mousePressed(MouseEvent e) {
+	    startDrag = e.getPoint();
 	}
 
 	/**
