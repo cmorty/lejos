@@ -21,7 +21,7 @@ import lejos.robotics.mapping.NavigationPanel;
  * This sample lets you set the pose of a robot in a mapped area, and then goto a target position.
  * You can also rotate the robot to a desired heading.
  * 
- * If obstacles are detected the robot stops and the onstacles are displayed on the map.
+ * If obstacles are detected the robot stops and the obstacles are displayed on the map.
  * 
  * A future version will let you add waypoints so that you can define the path that the robot takes to the
  * target.
@@ -149,7 +149,7 @@ public class MapTest extends NavigationPanel {
 	@Override
 	protected void popupMenu(MouseEvent me) {
 	    Point pt = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), this);
-	    boolean inside = model.getMap().inside(new lejos.geom.Point(me.getX() / pixelsPerUnit, me.getY() / pixelsPerUnit));  
+	    boolean inside = model.getMap().inside(new lejos.geom.Point((me.getX() + mapPanel.viewStart.x) / pixelsPerUnit, (me.getY() + mapPanel.viewStart.y) / pixelsPerUnit));  
 	    if (!inside) return;
 	    
 	    JPopupMenu menu = new JPopupMenu(); 
