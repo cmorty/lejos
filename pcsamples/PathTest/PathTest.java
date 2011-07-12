@@ -22,7 +22,7 @@ public class PathTest extends NavigationPanel {
 	private static final long serialVersionUID = 1L;
 
   	// GUI Window size
-  	private static final int FRAME_WIDTH = 1150;
+  	private static final int FRAME_WIDTH = 1200;
   	private static final int FRAME_HEIGHT = 800;
   
   	private static final Dimension MAP_SIZE = new Dimension(700,600);
