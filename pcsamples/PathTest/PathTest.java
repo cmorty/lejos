@@ -143,6 +143,7 @@ public class PathTest extends NavigationPanel {
 	public void run() throws Exception {
 		model.loadMap(MAP_FILE);
 		model.setMeshParams(GRID_SPACE, CLEARANCE);
+		model.setDebug(true);
 	
 		openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, FRAME_TITLE, Color.white);
 	}
