@@ -7,6 +7,11 @@ import javax.swing.*;
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
 
+/**
+ * Implements context menu by calling method to send events to the NXT.
+ * 
+ * @author Lawrie Griffiths
+ */
 public class MenuAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	protected NavigationModel.NavEvent navEvent;
@@ -21,24 +26,29 @@ public class MenuAction extends AbstractAction {
 		this.model = model;
 		this.panel = panel;
 	}
+	
 	public void actionPerformed(ActionEvent e) {
+		float x = (p.x - panel.mapPanel.viewStart.x) / panel.pixelsPerUnit;
+		float y = (p.y - panel.mapPanel.viewStart.y) / panel.pixelsPerUnit;
+		Waypoint wp = new Waypoint(x,y);
+		
 		switch (navEvent) {
 		case SET_POSE:
-			model.setPose(new Pose(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit,0));
+			model.setPose(new Pose(x,y,0));
 			panel.repaint();
 			break;
 		case GOTO:
-			model.setTarget(new Waypoint(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit));
-			model.goTo(new Waypoint(p.x /panel.pixelsPerUnit,p.y / panel.pixelsPerUnit));
+			model.setTarget(wp);
+			model.goTo(wp);
 			break;
 		case FIND_CLOSEST:
-			model.findClosest(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit);
+			model.findClosest(x,y);
 			break;
 		case ADD_WAYPOINT:
-			model.addWaypoint(new Waypoint(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit));
+			model.addWaypoint(wp);
 			break;
 		case SET_TARGET:
-			model.setTarget(new Waypoint(p.x / panel.pixelsPerUnit,p.y / panel.pixelsPerUnit));
+			model.setTarget(wp);
 			break;
 		case FOLLOW_ROUTE:
 			break;
