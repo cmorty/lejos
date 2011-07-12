@@ -43,6 +43,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	
 	private float oldRange = -1;	
 	private Thread receiver;
+	private boolean  running = true;
 	
 	/**
 	 * Create the model and start the receiver thread
@@ -181,6 +182,13 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	}
 	
 	/**
+	 * Shut down the receiver thread
+	 */
+	public void shutDown() {
+		running = false;
+	}
+	
+	/**
 	 * The Receiver thread receives events from the PC
 	 * 
 	 * @author Lawrie Griffiths
@@ -194,7 +202,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 			dos = conn.openDataOutputStream();
 			if (debug) log("Connected");
 			
-			while(true) {
+			while(running) {
 				try {
 					synchronized(this) {
 						byte event = dis.readByte();
