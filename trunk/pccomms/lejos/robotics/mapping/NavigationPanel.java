@@ -255,7 +255,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	    mapPanel.viewStart.x -= (p.x - startDrag.x)/pixelsPerUnit;
 	    mapPanel.viewStart.y -= (p.y - startDrag.y)/pixelsPerUnit;
 	    startDrag = p;
-	    System.out.println("viewStart = " + mapPanel.viewStart);
+	    //System.out.println("viewStart = " + mapPanel.viewStart);
 	    mapPanel.repaint();
 	}
 

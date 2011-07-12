@@ -59,7 +59,7 @@ public class MapPanel extends JPanel {
 	// The maximum size of a cluster of particles for a located robot (in cm)
 	protected static final int MAX_CLUSTER_SIZE = 50;
 	
-	protected Point viewStart = new Point(0,0);
+	public Point viewStart = new Point(0,0);
 	
 	/**
 	 * Create the panel, set its size, and associated it with the navigation model
