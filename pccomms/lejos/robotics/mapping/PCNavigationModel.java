@@ -261,9 +261,10 @@ public class PCNavigationModel extends NavigationModel {
 			SVGMapLoader mapLoader = new SVGMapLoader(is);
 			map = mapLoader.readLineMap();
 			Rectangle r = map.getBoundingRect();
+			panel.log("Rect = " + r);
 			panel.mapPanelWidth = (int) Math.ceil(r.x + r.width); 
 			panel.mapPanelHeight = (int) Math.ceil(r.y + r.height); 
-			//System.out.println("Setting panel size to " + panel.mapPanelWidth + "," + panel.mapPanelHeight);
+			System.out.println("Setting panel size to " + panel.mapPanelWidth + "," + panel.mapPanelHeight);
 			panel.mapPanel.setPreferredSize(new Dimension((int) (panel.mapPanelWidth * panel.pixelsPerUnit), (int) (panel.mapPanelHeight  * panel.pixelsPerUnit)));
 			
 			panel.mapPanelHeight = (int) r.height;
@@ -626,8 +627,11 @@ public class PCNavigationModel extends NavigationModel {
 							feature.loadObject(dis);
 							float range = feature.getRangeReading().getRange();	
 							Pose pose = feature.getPose();
-							Point p = new Point((float) (pose.getX() + (range  * Math.cos(pose.getHeading()))),
-												(float) (pose.getY() + (range  * Math.sin(pose.getHeading()))));
+							if (debug) panel.log("Pose = " + pose);
+							if (debug) panel.log("Range = " + range);
+							Point p = new Point((float) (pose.getX() + (range  * Math.cos(Math.toRadians(pose.getHeading())))),
+												(float) (pose.getY() + (range  * Math.sin(Math.toRadians(pose.getHeading())))));
+							if (debug) panel.log("Point = " + p);
 							features.add(p);
 							break;
 						case PATH: // Get a path generated on the NXT

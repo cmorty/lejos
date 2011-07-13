@@ -265,7 +265,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	public void mouseDragged(MouseEvent e) {
 	    Point p = e.getPoint();
 	    mapPanel.viewStart.x -= (p.x - startDrag.x)/pixelsPerUnit;
-	    mapPanel.viewStart.y -= (p.y - startDrag.y)/pixelsPerUnit;
+	    mapPanel.viewStart.y += (p.y - startDrag.y)/pixelsPerUnit;
 	    startDrag = p;
 	    //System.out.println("viewStart = " + mapPanel.viewStart);
 	    mapPanel.repaint();
@@ -276,8 +276,8 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	 */
 	public void mouseMoved(MouseEvent e) {
 		// Display the mouse co-ordinates when they change
-		xField.setText("" + (int) ((e.getX() + mapPanel.viewStart.x) / pixelsPerUnit));
-		yField.setText("" + (int) ((e.getY() + mapPanel.viewStart.y)/ pixelsPerUnit));
+		xField.setText("" + (int) ((e.getX()/ pixelsPerUnit + mapPanel.viewStart.x)));
+		yField.setText("" +  ((int) ((mapPanel.getHeight() - e.getY())/ pixelsPerUnit + mapPanel.viewStart.y)));
 	}
 	
 	/**
