@@ -169,6 +169,7 @@ public class PCNavigationModel extends NavigationModel {
 	 */
 	public void addWaypoint(Waypoint wp) {
 		waypoints.add(wp);
+		panel.mapPanel.repaint();
 		if (!connected) return;
 		try {
 			synchronized(receiver) {

@@ -56,6 +56,6 @@ public class SVGMapLoader {
 	      }
 	    }
 	    
-	    return new LineMap(lines.toArray(new Line[lines.size()]), new Rectangle(minX, minY, maxX - minX, maxY - minY ));
+	    return new LineMap(lines.toArray(new Line[lines.size()]), new Rectangle(minX, minY, maxX - minX, maxY - minY )).flip();
 	  }
 }
