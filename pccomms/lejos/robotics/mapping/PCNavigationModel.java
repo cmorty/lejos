@@ -420,10 +420,8 @@ public class PCNavigationModel extends NavigationModel {
 		start = new Node(p.getX(), p.getY());
 		mesh.addNode(start, 4);
 		panel.repaint();
-		if (!connected) {
-			// tell panel that pose is set as NXT will not
-			panel.eventReceived(NavEvent.SET_POSE);
-		} else {
+		panel.eventReceived(NavEvent.SET_POSE);
+		if (connected) {
 			try {
 				synchronized(receiver) {
 					dos.writeByte(NavEvent.SET_POSE.ordinal());
