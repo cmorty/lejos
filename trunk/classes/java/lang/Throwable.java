@@ -193,6 +193,7 @@ public class Throwable
     void uncaughtException(int methodNo, int pc)
     {
         VM.suspendThread(null);
+        LCD.setAutoRefresh(false);
         for(int i = 0; i < MotorPort.NUMBER_OF_PORTS; i++)
             MotorPort.getInstance(i).controlMotor(0, MotorPort.FLOAT);
         int curOffset = 0;
@@ -215,9 +216,9 @@ public class Throwable
                 else
                     for(int i : curItem._stackTrace)
                         displayLocation(i >> 16, i & 0xffff, curLine++ - curOffset);
-                curLine++;
                 curItem = curItem.getCause();
             }
+            LCD.refresh();
             // Scroll the display or exit
             switch(Button.waitForAnyPress())
             {
