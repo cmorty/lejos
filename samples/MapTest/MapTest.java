@@ -1,8 +1,10 @@
+import lejos.nxt.Button;
 import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.mapping.NXTNavigationModel;
 import lejos.robotics.navigation.DifferentialPilot;
+import lejos.robotics.navigation.Move.MoveType;
 import lejos.robotics.navigation.Navigator;
 import lejos.robotics.objectdetection.Feature;
 import lejos.robotics.objectdetection.FeatureDetector;
@@ -38,6 +40,7 @@ public class MapTest {
     	UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S1);
     	RangeFeatureDetector detector = new RangeFeatureDetector(sonic, MAX_DISTANCE, DETECTOR_DELAY); 
     	NXTNavigationModel model = new NXTNavigationModel();
+    	model.setDebug(true);
     	
     	// Adding the navigator, adds the pilot and pose provider as well
     	model.addNavigator(navigator);
@@ -48,12 +51,17 @@ public class MapTest {
     	detector.enableDetection(true);
     	detector.setPoseProvider(navigator.getPoseProvider());
     	
-    	// Stop if an obstacle is detected
+    	// Stop if an obstacle is detected, unless doing a rotate
     	detector.addListener(new FeatureListener() {
 			public void featureDetected(Feature feature, FeatureDetector detector) {
-				if (robot.isMoving()) robot.stop();
-				if (navigator.isMoving()) navigator.stop();			
+				if (robot.isMoving() && robot.getMovement().getMoveType() != MoveType.ROTATE) {
+					robot.stop();
+					if (navigator.isMoving()) navigator.stop();
+				}					
 			}		
     	});
+    	
+    	Button.waitForAnyPress();
+    	model.shutDown();
 	}
 }
