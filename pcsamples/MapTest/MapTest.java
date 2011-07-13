@@ -42,7 +42,7 @@ public class MapTest extends NavigationPanel {
 	private static final int INITIAL_ZOOM = 110;
 	private static final Dimension MAP_AREA_SIZE = new Dimension(800,600);
 	private static final String MAP_FILE = "floor.svg";
-	private static final Pose INITIAL_ROBOT_POSE = new Pose(450,90,180);
+	private static final Pose INITIAL_ROBOT_POSE = new Pose(450,430,180);
 	private static final String FRAME_TITLE = "Map Test";
   
 	private static final String setHeadingText = "Set Heading:";
@@ -149,7 +149,7 @@ public class MapTest extends NavigationPanel {
 	@Override
 	protected void popupMenu(MouseEvent me) {
 	    Point pt = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), this);
-	    boolean inside = model.getMap().inside(new lejos.geom.Point((me.getX() + mapPanel.viewStart.x) / pixelsPerUnit, (me.getY() + mapPanel.viewStart.y) / pixelsPerUnit));  
+	    boolean inside = model.getMap().inside(new lejos.geom.Point((me.getX() / pixelsPerUnit + mapPanel.viewStart.x) , (mapPanel.getHeight() - me.getY())/ pixelsPerUnit + mapPanel.viewStart.y));  
 	    if (!inside) return;
 	    
 	    JPopupMenu menu = new JPopupMenu(); 
@@ -161,6 +161,7 @@ public class MapTest extends NavigationPanel {
 	}
   
 	public void run() throws Exception {
+		model.setDebug(true);
 		model.loadMap(MAP_FILE);
 		model.setMeshParams(GRID_SPACE, CLEARANCE);
 		model.setPose(INITIAL_ROBOT_POSE);
