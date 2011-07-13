@@ -177,7 +177,7 @@ public class LineMap implements RangeMap, Transmittable {
 		  ll[i] = new Line(lines[i].x1, maxY - lines[i].y1, lines[i].x2, maxY - lines[i].y2);
 	  }
 	  
-	  return new LineMap(ll, new Rectangle(boundingRect.x, maxY-boundingRect.y, boundingRect.width, boundingRect.height));
+	  return new LineMap(ll, boundingRect);
   }
 }
 
