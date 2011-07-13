@@ -111,7 +111,7 @@ public class MapPanel extends JPanel {
 			while(nodeIterator.hasNext()) {
 				Node cur = nodeIterator.next();
 				g2d.setColor(colors[MESH_COLOR_INDEX]);
-				Ellipse2D.Double circle = new Ellipse2D.Double(getX(cur.x-NODE_CIRC/2), getY(cur.y-NODE_CIRC/2), getDistance(NODE_CIRC), getDistance(NODE_CIRC));
+				Ellipse2D.Double circle = new Ellipse2D.Double(getX(cur.x-NODE_CIRC/2), getY(cur.y+NODE_CIRC/2), getDistance(NODE_CIRC), getDistance(NODE_CIRC));
 				g2d.fill(circle);
 				
 				// TODO: This code will draw lines to every node neighbor and *repeat* connections but I don't care.
@@ -133,6 +133,7 @@ public class MapPanel extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		//parent.log("Height = " + getHeight());
 		paintGrid((Graphics2D) g);
 		paintMap((Graphics2D) g);
 		if (parent.meshCheck.isSelected()) paintMesh((Graphics2D) g);
@@ -189,7 +190,7 @@ public class MapPanel extends JPanel {
 	 * @param g2d the Graphics2D object
 	 */
 	public void paintPose(Graphics2D g2d, Pose pose) {
-		Ellipse2D c = new Ellipse2D.Float(getX(pose.getX() - ROBOT_SIZE/2), getY(pose.getY() - ROBOT_SIZE/2), getDistance(ROBOT_SIZE), getDistance(ROBOT_SIZE));
+		Ellipse2D c = new Ellipse2D.Float(getX(pose.getX() - ROBOT_SIZE/2), getY(pose.getY() + ROBOT_SIZE/2), getDistance(ROBOT_SIZE), getDistance(ROBOT_SIZE));
 		Line rl = getArrowLine(pose);
 		Line2D l2d = new Line2D.Float(rl.x1, rl.y1, rl.x2, rl.y2);
 		g2d.draw(l2d);
@@ -206,7 +207,7 @@ public class MapPanel extends JPanel {
 		if (!parent.gridCheck.isSelected()) return;
 		g2d.setColor(colors[GRID_COLOR_INDEX]);
 		for(float i=viewStart.x % getDistance(gridSize); i<this.getHeight(); i+=getDistance(gridSize)) {
-			g2d.drawLine(0,(int) i, this.getWidth()-1, (int) i);		
+			g2d.drawLine(0,(int) (this.getHeight() - 1 - i), this.getWidth()-1, (int) (this.getHeight() -1 - i));		
 		}
 		for(float i=viewStart.y % getDistance(gridSize); i<this.getWidth(); i+=getDistance(gridSize)) {
 			g2d.drawLine((int) i,0, (int) i,this.getHeight()-1);		
@@ -241,7 +242,7 @@ public class MapPanel extends JPanel {
 		Waypoint target = model.getTarget();
 		if (target == null) return;
 		g2d.setColor(colors[TARGET_COLOR_INDEX]);
-		Ellipse2D c = new Ellipse2D.Float(getX((float) (target.getX() - TARGET_SIZE/2)), getY((float) ((target.getY() - TARGET_SIZE/2))), getDistance(TARGET_SIZE), getDistance(TARGET_SIZE));
+		Ellipse2D c = new Ellipse2D.Float(getX((float) (target.getX() - TARGET_SIZE/2)), getY((float) ((target.getY() + TARGET_SIZE/2))), getDistance(TARGET_SIZE), getDistance(TARGET_SIZE));
 		g2d.fill(c);		
 	}
 	
@@ -253,7 +254,7 @@ public class MapPanel extends JPanel {
 	protected void paintFeatures(Graphics2D g2d) {
 		g2d.setColor(colors[FEATURE_COLOR_INDEX]);
 		for(lejos.geom.Point pt:model.getFeatures()) {
-			Ellipse2D c = new Ellipse2D.Float(getX((float) ((pt.x - TARGET_SIZE/2))), getY((float) ((pt.y - TARGET_SIZE/2))), getDistance(TARGET_SIZE), getDistance(TARGET_SIZE));
+			Ellipse2D c = new Ellipse2D.Float(getX((float) ((pt.x - TARGET_SIZE/2))), getY((float) ((pt.y + TARGET_SIZE/2))), getDistance(TARGET_SIZE), getDistance(TARGET_SIZE));
 			g2d.fill(c);
 		}
 	}
@@ -261,7 +262,7 @@ public class MapPanel extends JPanel {
 	protected void paintWaypoints(Graphics2D g2d) {
 		g2d.setColor(colors[WAYPOINT_COLOR_INDEX]);
 		for(lejos.geom.Point pt:model.getWaypoints()) {
-			Ellipse2D c = new Ellipse2D.Float(getX((float) ((pt.x - TARGET_SIZE/2))), getY((float) ((pt.y - TARGET_SIZE/2))), getDistance(TARGET_SIZE), getDistance(TARGET_SIZE));
+			Ellipse2D c = new Ellipse2D.Float(getX((float) ((pt.x - TARGET_SIZE/2))), getY((float) ((pt.y + TARGET_SIZE/2))), getDistance(TARGET_SIZE), getDistance(TARGET_SIZE));
 			g2d.fill(c);
 		}
 	}
@@ -299,7 +300,7 @@ public class MapPanel extends JPanel {
 				    getX(pose.getX()),
     		        getY(pose.getY()), 
     		        getX(pose.getX()) + getDistance(ARROW_LENGTH * (float) Math.cos(Math.toRadians(pose.getHeading()))), 
-    		        getY(pose.getY()) + getDistance(ARROW_LENGTH * (float) Math.sin(Math.toRadians(pose.getHeading()))));
+    		        getY(pose.getY()) - getDistance(ARROW_LENGTH * (float) Math.sin(Math.toRadians(pose.getHeading()))));
 	}
 	
 	/**
@@ -333,7 +334,7 @@ public class MapPanel extends JPanel {
 	 * Get the screen Y coordinate for a given map coordinate
 	 */
 	protected float getY(float y) {
-		return ((y - viewStart.y) * parent.pixelsPerUnit);
+		return this.getHeight() - ((y - viewStart.y) * parent.pixelsPerUnit);
 	}
 	
 	/**

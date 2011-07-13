@@ -3,7 +3,6 @@ package lejos.robotics.mapping;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
-
 import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
 
@@ -28,8 +27,8 @@ public class MenuAction extends AbstractAction {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		float x = (p.x + panel.mapPanel.viewStart.x) / panel.pixelsPerUnit;
-		float y = (p.y + panel.mapPanel.viewStart.y) / panel.pixelsPerUnit;
+		float x = (p.x / panel.pixelsPerUnit + panel.mapPanel.viewStart.x) ;
+		float y = ((panel.mapPanel.getHeight() - p.y) / panel.pixelsPerUnit + panel.mapPanel.viewStart.y) ;
 		Waypoint wp = new Waypoint(x,y);
 		
 		switch (navEvent) {
