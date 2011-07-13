@@ -18,7 +18,7 @@ import lejos.robotics.Transmittable;
  * movements.
   * It also contains utility  methods for use in navigation, such as the
  * direction and distance to a point from the location of the pose, and also the
- * location of a point at a given distance and directin from the location of the pose.<br>
+ * location of a point at a given distance and direction from the location of the pose.<br>
  * All directions and angles are in degrees and use the standard convention
  * in mathematics: direction 0 is parallel to the X axis, and direction +90 is
  * parallel to the Y axis. <br>
@@ -80,10 +80,10 @@ public void translate( float dx, float dy)
     _location.translate(dx,dy);
 }
 /**
- * Sets the pose locatin and heading to the currect values resulting from travel
+ * Sets the pose location and heading to the correct values resulting from travel
  * in a circular arc.  The radius is calculated from the distance and turn angle
  * 
- * @param distance the dtistance traveled
+ * @param distance the distance traveled
  * @param turnAngle the angle turned
  */
 public void arcUpdate(float distance, float turnAngle)
@@ -201,7 +201,7 @@ public void setHeading(float heading )
   _heading = heading;
 }
 /**
- * return string contains x,y and headint
+ * return string contains x,y and heading
  * @return x,y,heading
  */
 @Override
