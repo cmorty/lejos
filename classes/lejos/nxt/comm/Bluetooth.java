@@ -275,13 +275,13 @@ public class Bluetooth extends NXTCommDevice
             btEvent = NXTEvent.allocate(NXTEvent.BLUETOOTH, 0, 1);
             // Load the pin etc.
             loadSettings();
-            //reset();
+            //try{reset();}catch(Exception e){}
 			setDaemon(true);
-            setPriority(Thread.MAX_PRIORITY);
             start();
+            powerOn = true;
+			Bluetooth.reset();
 			// Setup initial state
 			powerOn = false;
-			Bluetooth.reset();
 			setPower(true);
 			setOperatingMode((byte)1);
 			closePort();
@@ -292,6 +292,7 @@ public class Bluetooth extends NXTCommDevice
                 @Override
                 public void run() {for(int i = 0; i < CHANCNT; i++) Chans[i].close();}
             });
+            setPriority(Thread.MAX_PRIORITY);
 		}
 
 		private void sendCommand()
