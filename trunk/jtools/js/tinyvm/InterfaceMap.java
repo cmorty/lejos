@@ -40,7 +40,7 @@ public class InterfaceMap extends WritableDataWithOffset
     */
    private void findBounds()
    {
-      // Search the list of implemnting classes to determine that upper and lower
+      // Search the list of implementing classes to determine that upper and lower
       // bounds for the map
       lastClass = -1;
       firstClass = TinyVMConstants.MAX_CLASSES + 1;
@@ -87,7 +87,7 @@ public class InterfaceMap extends WritableDataWithOffset
    }
 
    /**
-    * Create the inetrface map, with one bit for each class that implements
+    * Create the interface map, with one bit for each class that implements
     * this interface.
     *
     * @return array of bytes containing the map
