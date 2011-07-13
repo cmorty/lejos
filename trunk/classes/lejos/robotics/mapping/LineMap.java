@@ -163,5 +163,21 @@ public class LineMap implements RangeMap, Transmittable {
     ps.close();
     fos.close();
   }
+  
+  /**
+   * Create a line map with the y axis flipped
+   *  
+   * @return the new LineMap
+   */
+  public LineMap flip() {
+	  float maxY = boundingRect.y + boundingRect.height;
+	  Line[] ll = new Line[lines.length];
+	  
+	  for(int i=0;i<lines.length;i++) {
+		  ll[i] = new Line(lines[i].x1, maxY - lines[i].y1, lines[i].x2, maxY - lines[i].y2);
+	  }
+	  
+	  return new LineMap(ll, new Rectangle(boundingRect.x, maxY-boundingRect.y, boundingRect.width, boundingRect.height));
+  }
 }
 
