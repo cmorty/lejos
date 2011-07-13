@@ -92,7 +92,7 @@ public class Navigator implements WaypointListener
 
    /**
     * Sets the path that the Navigator will traverse.
-    * By default, the  robot will not atop along the way.
+    * By default, the  robot will not stop along the way.
     * If the robot is moving when this method is called,  it stops and the current
     * path is replaced by the new one.
     * @param path to be followed.
@@ -146,7 +146,7 @@ public class Navigator implements WaypointListener
     */
    public void goTo(Waypoint destination)
    {
-      _path.clear();
+      //_path.clear();
       addWaypoint(destination);
       _interrupted = false;
       _keepGoing = true;
