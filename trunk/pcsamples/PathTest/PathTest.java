@@ -130,6 +130,7 @@ public class PathTest extends NavigationPanel {
   	protected void whenConnected() {
   		connectButton.setEnabled(false);
   		connectPanel.setBorder(BorderFactory.createTitledBorder("Connected"));
+  		model.setPose(model.getRobotPose());
   	}
   	
   	@Override
