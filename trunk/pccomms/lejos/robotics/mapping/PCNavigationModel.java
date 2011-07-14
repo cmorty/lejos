@@ -420,8 +420,9 @@ public class PCNavigationModel extends NavigationModel {
 		if (start != null) mesh.removeNode(this.start);
 		start = new Node(p.getX(), p.getY());
 		mesh.addNode(start, 4);
-		panel.repaint();
+		// Send a SET_POSE to the PC application
 		panel.eventReceived(NavEvent.SET_POSE);
+		panel.repaint();
 		if (connected) {
 			try {
 				synchronized(receiver) {
@@ -526,6 +527,21 @@ public class PCNavigationModel extends NavigationModel {
 			}
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in findPath");
+		}
+	}
+	
+	/**
+	 * Send a CLEAR_PATH event to the NXT
+	 */
+	public void clearPath() {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.CLEAR_PATH.ordinal());
+				dos.flush();
+			}
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in clearPath");
 		}
 	}
 	
