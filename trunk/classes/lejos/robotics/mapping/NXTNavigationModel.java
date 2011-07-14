@@ -1,6 +1,8 @@
 package lejos.robotics.mapping;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 import lejos.nxt.comm.*;
 import lejos.robotics.RangeScanner;
 import lejos.robotics.localization.*;
@@ -28,12 +30,12 @@ import lejos.util.Delay;
  *
  */
 public class NXTNavigationModel extends NavigationModel implements MoveListener, NavigationListener, WaypointListener, FeatureListener {
-	protected Navigator navigator;
-	protected MoveController pilot;
-	protected PoseProvider pp;
-	protected FeatureDetector detector;
-	protected PathFinder finder;
-	protected RangeScanner scanner;
+	protected Navigator navigator; // Only one navigator is allowed
+	protected MoveController pilot; // Only one pilot is allowed
+	protected PoseProvider pp; // Only one pose provider is allowed
+	protected ArrayList<FeatureDetector> detectors = new ArrayList<FeatureDetector>(); // Multiple feature detectors allowed
+	protected PathFinder finder; // Only one local path finder is allowed
+	protected RangeScanner scanner; // Only one scanner is allowed
 	
 	protected float projection = 10;
 	protected float border = 0;
@@ -135,9 +137,8 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	 * 
 	 * @param detector the feature detector
 	 */
-	@SuppressWarnings("hiding")
 	public void addFeatureDetector(FeatureDetector detector) {
-		this.detector = detector;
+		detectors.add(detector);
 		detector.addListener(this);
 	}
 	
@@ -220,6 +221,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							if (navigator != null)navigator.goTo(target);
 							break;
 						case STOP: // Request to stop the robot
+							if (navigator != null) navigator.stop();
 							if (pilot != null) pilot.stop();
 							break;
 						case TRAVEL: // Request to travel a given distance
@@ -310,6 +312,9 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							if (path == null) path = new Path();
 							path.loadObject(dis);
 							if (navigator != null) navigator.followPath(path);
+						case CLEAR_PATH: // Clear the current path in the navigator
+							if (navigator != null) navigator.clearPath();
+							break;
 						case RANDOM_MOVE: // Request to make a random move
 							if (pilot != null && pilot instanceof RotateMoveController) {
 							    angle = (float) Math.random() * 360;
@@ -342,6 +347,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 			
 		}
 		
+		// Calculate the angle for ROTATE_TO
 		private int angleTo(float angle) {
 			int angleTo = ((int) (angle - pp.getPose().getHeading())) % 360;
 			return (angleTo < 180 ? angleTo : angleTo - 360);
@@ -366,7 +372,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	}
 
 	/**
-	 * Calls when a move stops
+	 * Called when a move stops
 	 */
 	public void moveStopped(Move event, MoveProvider mp) {
 		if (!sendMoveStop) return;
@@ -382,12 +388,13 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 				}
 			}
 		} catch (IOException ioe) {
-			fatal("IOException in moveStarted");	
+			fatal("IOException in moveStopped");	
 		}	
 	}
 
 	/**
-	 * Called when a feature is detected
+	 * Called when a feature is detected.
+	 * Only range features currently supported
 	 */
 	@SuppressWarnings("hiding")
 	public void featureDetected(Feature feature, FeatureDetector detector) {
@@ -433,7 +440,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 				waypoint.dumpObject(dos);
 			}
 		} catch (IOException ioe) {
-			fatal("IOException in nextWaypoint");	
+			fatal("IOException in atWaypoint");	
 		}	
 	}
 
