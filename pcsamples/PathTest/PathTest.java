@@ -90,7 +90,7 @@ public class PathTest extends NavigationPanel {
 		
 		followButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				model.followRoute();
+				model.followPath();
 			}
 		});
 		
