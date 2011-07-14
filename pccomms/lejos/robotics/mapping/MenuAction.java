@@ -49,7 +49,11 @@ public class MenuAction extends AbstractAction {
 		case SET_TARGET:
 			model.setTarget(wp);
 			break;
-		case FOLLOW_ROUTE:
+		case FOLLOW_PATH:
+			model.followPath();
+			break;
+		case START_NAVIGATOR:
+			model.startNavigator();
 			break;
 		}
 	}

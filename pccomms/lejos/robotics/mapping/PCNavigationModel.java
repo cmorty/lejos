@@ -516,7 +516,7 @@ public class PCNavigationModel extends NavigationModel {
 	/**
 	 * Send a route to the NXT and follow it
 	 */
-	public void followRoute() {
+	public void followPath() {
 		if (path == null) return;
 		if (!connected) return;
 		try {
@@ -528,11 +528,26 @@ public class PCNavigationModel extends NavigationModel {
 				}
 			}
 			synchronized(receiver) {
-				dos.writeByte(NavEvent.FOLLOW_ROUTE.ordinal());
+				dos.writeByte(NavEvent.FOLLOW_PATH.ordinal());
 				path.dumpObject(dos);
 			}
 	    } catch (IOException ioe) {
-			panel.error("IO Exception in followRoute");
+			panel.error("IO Exception in followPath");
+		}
+	}
+	
+	/**
+	 * Start the navigator following a path
+	 */
+	public void startNavigator() {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.START_NAVIGATOR.ordinal());
+				dos.flush();
+			}
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in startNavigator");
 		}
 	}
 	
