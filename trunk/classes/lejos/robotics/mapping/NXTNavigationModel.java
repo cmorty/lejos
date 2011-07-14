@@ -232,6 +232,11 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							float angle = dis.readFloat();
 							if (pilot != null && pilot instanceof RotateMoveController) ((RotateMoveController) pilot).rotate(angle);
 							break;
+						case ARC: // Request to travel an arc og given radius and angle
+							float radius = dis.readFloat();
+							angle = dis.readFloat();						
+							if (pilot != null && pilot instanceof ArcMoveController) ((ArcMoveController) pilot).arc(radius,angle);
+							break;							
 						case ROTATE_TO: // Request to rotate to a given angle
 							angle = dis.readFloat();
 							if (pp != null && pilot != null && pilot instanceof RotateMoveController) ((RotateMoveController) pilot).rotate(angleTo(angle));
