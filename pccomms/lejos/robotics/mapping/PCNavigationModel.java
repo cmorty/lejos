@@ -345,6 +345,26 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	/**
+	 * Send an ARC event to the NXT
+	 * 
+	 * @param radius the radius of the arc
+	 * @param angle the angle to rotate
+	 */
+	public void arc(float radius, float angle) {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.ROTATE.ordinal());
+				dos.writeFloat(radius);
+				dos.writeFloat(angle);
+				dos.flush();
+			}
+		} catch (IOException ioe) {
+			panel.error("IO Exception in arc");
+		}
+	}
+	
+	/**
 	 * Send a ROTATE_TO event to the NXT
 	 * 
 	 * @param angle the angle to rotate
@@ -415,6 +435,7 @@ public class PCNavigationModel extends NavigationModel {
 	public void setPose(Pose p) {
 		path = null;
 		currentPose = p;
+		// Record poses to plot the moves on the map. Reset when pose is set on 
 		poses.clear();
 		poses.add(new Pose(currentPose.getX(), currentPose.getY(), currentPose.getHeading()));
 		if (start != null) mesh.removeNode(this.start);
@@ -550,8 +571,6 @@ public class PCNavigationModel extends NavigationModel {
 	 */
 	public void calculatePath() {
 		if (currentPose == null || target == null) return;
-		//mesh.regenerate(); // TODO: Without this here it crashes with null pointer for some reason. Don't want this here!
-		
 		try {
 			path = pf.findRoute(currentPose, target);
 			panel.repaint();
