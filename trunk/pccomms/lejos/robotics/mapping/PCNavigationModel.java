@@ -614,9 +614,11 @@ public class PCNavigationModel extends NavigationModel {
 		path = null;
 		start = null;
 		destination = null;
-		mesh = new FourWayGridMesh(map, gridSpace,clearance);
-		nodes = mesh.getMesh();
-		pf = new NodePathFinder(alg, mesh);
+		if (map != null){
+			mesh = new FourWayGridMesh(map, gridSpace,clearance);
+			nodes = mesh.getMesh();
+			pf = new NodePathFinder(alg, mesh);
+		}
 		closest = -1;
 	}
 	
