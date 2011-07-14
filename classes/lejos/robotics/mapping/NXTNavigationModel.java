@@ -313,10 +313,13 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 								}
 							}
 							break;
-						case FOLLOW_ROUTE: // Follow a route sent from the PC
+						case FOLLOW_PATH: // Follow a route sent from the PC
 							if (path == null) path = new Path();
 							path.loadObject(dis);
 							if (navigator != null) navigator.followPath(path);
+							break;
+						case START_NAVIGATOR:
+							if (navigator != null) navigator.followPath();
 							break;
 						case CLEAR_PATH: // Clear the current path in the navigator
 							if (navigator != null) navigator.clearPath();
