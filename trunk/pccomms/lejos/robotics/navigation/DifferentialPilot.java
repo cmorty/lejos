@@ -377,7 +377,7 @@ public class DifferentialPilot implements
    * calls rotate(angle,false)
    * @param angle
    *            The wanted angle of rotation in degrees. Positive angle rotate
-   *            left (clockwise), negative right.
+   *            left (anti-clockwise), negative right.
    */
   public void  rotate(final double angle)
   {
@@ -391,7 +391,7 @@ public class DifferentialPilot implements
    * Side effect: inform listeners
    * @param angle
    *            The wanted angle of rotation in degrees. Positive angle rotate
-   *            left (clockwise), negative right.
+   *            left (anti-clockwise), negative right.
    * @param immediateReturn
    *            If true this method returns immediately.
    */
