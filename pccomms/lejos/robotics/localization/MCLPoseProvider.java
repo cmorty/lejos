@@ -505,7 +505,7 @@ public RangeScanner getScanner()
     varX = dis.readFloat();
     varY = dis.readFloat();
     varH = dis.readFloat();
-    System.out.println("Estimate = " + minX + " , " + maxX + " , " + minY + " , " + maxY);
+    if (debug) System.out.println("Estimate = " + minX + " , " + maxX + " , " + minY + " , " + maxY);
   }
 
   /**

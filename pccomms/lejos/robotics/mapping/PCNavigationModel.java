@@ -41,6 +41,7 @@ public class PCNavigationModel extends NavigationModel {
 	protected ArrayList<Pose> poses = new ArrayList<Pose>();
 	protected ArrayList<Point> features = new ArrayList<Point>();
 	protected ArrayList<Waypoint> waypoints = new ArrayList<Waypoint>();
+	protected Waypoint reached;
 	
 	private Thread receiver = new Thread(new Receiver());
 	private boolean running = true;
@@ -262,10 +263,10 @@ public class PCNavigationModel extends NavigationModel {
 			SVGMapLoader mapLoader = new SVGMapLoader(is);
 			map = mapLoader.readLineMap();
 			Rectangle r = map.getBoundingRect();
-			panel.log("Rect = " + r);
+			//panel.log("Rect = " + r);
 			panel.mapPanelWidth = (int) Math.ceil(r.x + r.width); 
 			panel.mapPanelHeight = (int) Math.ceil(r.y + r.height); 
-			System.out.println("Setting panel size to " + panel.mapPanelWidth + "," + panel.mapPanelHeight);
+			//System.out.println("Setting panel size to " + panel.mapPanelWidth + "," + panel.mapPanelHeight);
 			panel.mapPanel.setPreferredSize(new Dimension((int) (panel.mapPanelWidth * panel.pixelsPerUnit), (int) (panel.mapPanelHeight  * panel.pixelsPerUnit)));
 			
 			panel.mapPanelHeight = (int) r.height;
@@ -603,7 +604,8 @@ public class PCNavigationModel extends NavigationModel {
 							readings.loadObject(dis);
 							break;
 						case WAYPOINT_REACHED: // Get the waypoint reached
-							target.loadObject(dis);
+							if (reached == null) reached = new Waypoint(0,0);
+							reached.loadObject(dis);
 							break;
 						case CLOSEST_PARTICLE: // Get details of a specific particle
 							closest = dis.readInt();
