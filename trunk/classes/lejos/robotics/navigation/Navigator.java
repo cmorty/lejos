@@ -105,6 +105,25 @@ public class Navigator implements WaypointListener
       _singleStep = false;
       _sequenceNr = 0;
    }
+   
+   /**
+    * Clears the current path.
+    * If the robot is moving, it will be stopped. 
+    */
+   public void clearPath() {
+	   if (_keepGoing)
+	         stop();
+	   _path.clear();
+   }
+   
+   /**
+    * Gets the current path
+    * 
+    * @return the path
+    */
+   public Path getPath() {
+	   return _path;
+   }
 
    /**
     * Starts the robot traversing  the path.
@@ -146,7 +165,6 @@ public class Navigator implements WaypointListener
     */
    public void goTo(Waypoint destination)
    {
-      //_path.clear();
       addWaypoint(destination);
       _interrupted = false;
       _keepGoing = true;
@@ -265,7 +283,7 @@ public class Navigator implements WaypointListener
    }
    
    public void pathGenerated() {
-		// TODO Auto-generated method stub	
+		// Currently does nothing	
 	}
 
    private void callListeners()
@@ -390,7 +408,7 @@ public class Navigator implements WaypointListener
    */
   private boolean _singleStep = false;
   /** 
-   * set by Stop,  reset by folloePath() , goTo()
+   * set by Stop,  reset by followPath() , goTo()
    * used by  Nav.run(), callListeners
    */
   private boolean _interrupted = false;
