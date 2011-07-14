@@ -312,6 +312,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							if (path == null) path = new Path();
 							path.loadObject(dis);
 							if (navigator != null) navigator.followPath(path);
+							break;
 						case CLEAR_PATH: // Clear the current path in the navigator
 							if (navigator != null) navigator.clearPath();
 							break;
