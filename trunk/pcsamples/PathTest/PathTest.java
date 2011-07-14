@@ -5,6 +5,7 @@ import javax.swing.*;
 import lejos.robotics.mapping.MapPanel;
 import lejos.robotics.mapping.MenuAction;
 import lejos.robotics.mapping.NavigationModel;
+import lejos.robotics.mapping.NavigationModel.NavEvent;
 import lejos.robotics.mapping.NavigationPanel;
 
 /**
@@ -125,6 +126,14 @@ public class PathTest extends NavigationPanel {
 	
 	    menu.show(this, pt.x, pt.y);
 	}
+  	
+  	@Override
+  	protected void eventReceived(NavEvent navEvent) {
+  		if (navEvent == NavEvent.PATH_COMPLETE) {
+  			// Add the path to the mesh again, when the path has been complete
+  			model.setPose(model.getRobotPose());
+  		}
+  	}
 
   	@Override
   	protected void whenConnected() {
@@ -142,9 +151,9 @@ public class PathTest extends NavigationPanel {
 	 * Run the sample
 	 */
 	public void run() throws Exception {
+		model.setDebug(true);
 		model.loadMap(MAP_FILE);
 		model.setMeshParams(GRID_SPACE, CLEARANCE);
-		model.setDebug(true);
 	
 		openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, FRAME_TITLE, Color.white);
 	}
