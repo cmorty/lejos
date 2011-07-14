@@ -62,8 +62,9 @@ public class MCLTest {
     	MCLPoseProvider mcl = new MCLPoseProvider(robot, scanner, null, 0, BORDER);
     	Navigator navigator = new Navigator(robot, mcl); 	
     	NXTNavigationModel model = new NXTNavigationModel();
+    	model.setDebug(true);
     	model.setRandomMoveParameters(MAX_DISTANCE, PROJECTION, BORDER);
-    	// Adding the Navigator also add the pilot, pose provider and scanner
+    	// Adding the Navigator also adds the pilot, pose provider and scanner
     	model.addNavigator(navigator);
     	// Don't send the pose automatically - PC requests it when required
     	model.setAutoSendPose(false);
