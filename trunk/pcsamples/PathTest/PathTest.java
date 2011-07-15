@@ -35,7 +35,7 @@ public class PathTest extends NavigationPanel {
   	private static int CLEARANCE = 10;
   
   	private JButton calculateButton = new JButton("Calculate path");
-  	private JButton followButton = new JButton("Follow Route");
+  	private JButton followButton = new JButton("Follow Path");
   	
   	private JPanel logPanel = new JPanel();
   	private JTextArea logArea = new JTextArea(35,23);
