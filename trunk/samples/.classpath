@@ -44,8 +44,8 @@
 	<classpathentry excluding="build.xml" kind="src" path="NXTLineLeaderTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="NXTMMXSample"/>
 	<classpathentry excluding="build.xml" kind="src" path="NXTReceive"/>
-	<classpathentry excluding="build.xml" kind="src" path="ObjectDetect"/>
 	<classpathentry excluding="build.xml" kind="src" path="NXTServoTest"/>
+	<classpathentry excluding="build.xml" kind="src" path="ObjectDetect"/>
 	<classpathentry excluding="build.xml" kind="src" path="PathFinding"/>
 	<classpathentry excluding="build.xml" kind="src" path="PerformanceTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="PFLinkTest"/>
