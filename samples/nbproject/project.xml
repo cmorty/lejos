@@ -240,9 +240,23 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>MapTest</label>
+                    <type>java</type>
+                    <location>MapTest</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>MatrixTest</label>
                     <type>java</type>
                     <location>MatrixTest</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>MCLTest</label>
+                    <type>java</type>
+                    <location>MCLTest</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -380,6 +394,13 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
+                    <label>RCNavMapper</label>
+                    <type>java</type>
+                    <location>RCNavMapper</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>RCPilot</label>
                     <type>java</type>
                     <location>RCPilot</location>
@@ -411,13 +432,6 @@
                     <label>RCXMuxTest</label>
                     <type>java</type>
                     <location>RCXMuxTest</location>
-                    <excludes>**.class,**.nxj</excludes>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>RCNavMapper</label>
-                    <type>java</type>
-                    <location>RCNavMapper</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -460,6 +474,13 @@
                     <label>RFIDTest</label>
                     <type>java</type>
                     <location>RFIDTest</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>RTCTest</label>
+                    <type>java</type>
+                    <location>RTCTest</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -558,6 +579,13 @@
                     <label>SVGMLTest</label>
                     <type>java</type>
                     <location>SVGMLTest</location>
+                    <excludes>**.class,**.nxj</excludes>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>TestLogger</label>
+                    <type>java</type>
+                    <location>TestLogger</location>
                     <excludes>**.class,**.nxj</excludes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
@@ -779,8 +807,18 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>MapTest</label>
+                        <location>MapTest</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>MatrixTest</label>
                         <location>MatrixTest</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>MCLTest</label>
+                        <location>MCLTest</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -879,6 +917,11 @@
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
+                        <label>RCNavMapper</label>
+                        <location>RCNavMapper</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
                         <label>RCPilot</label>
                         <location>RCPilot</location>
                         <excludes>**.class,**.nxj</excludes>
@@ -901,11 +944,6 @@
                     <source-folder style="packages">
                         <label>RCXMuxTest</label>
                         <location>RCXMuxTest</location>
-                        <excludes>**.class,**.nxj</excludes>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>RCNavMapper</label>
-                        <location>RCNavMapper</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -936,6 +974,11 @@
                     <source-folder style="packages">
                         <label>RFIDTest</label>
                         <location>RFIDTest</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>RTCTest</label>
+                        <location>RTCTest</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -1006,6 +1049,11 @@
                     <source-folder style="packages">
                         <label>SVGMLTest</label>
                         <location>SVGMLTest</location>
+                        <excludes>**.class,**.nxj</excludes>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>TestLogger</label>
+                        <location>TestLogger</location>
                         <excludes>**.class,**.nxj</excludes>
                     </source-folder>
                     <source-folder style="packages">
@@ -1137,6 +1185,10 @@
                 <package-root>SVGMLTest</package-root>
                 <package-root>StaxEvent</package-root>
                 <package-root>RCNavMapper</package-root>
+                <package-root>MapTest</package-root>
+                <package-root>MCLTest</package-root>
+                <package-root>RTCTest</package-root>
+                <package-root>TestLogger</package-root>
                 <classpath mode="compile">../classes/lib/classes.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
