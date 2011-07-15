@@ -174,7 +174,7 @@ public class MapPanel extends JPanel {
 				//parent.log("Robot Located");
 				Ellipse2D c = new Ellipse2D.Float(
 	        					getX(minX), 
-	        					getY(minY), 
+	        					getY(maxY), 
 	        					getDistance(maxX - minX), 
 	        					getDistance(maxY - minY));
 				g2d.setColor(colors[ESTIMATE_COLOR_INDEX]);
