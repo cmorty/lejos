@@ -133,6 +133,7 @@ public class MCLTest extends NavigationPanel {
 	 */
 	@Override
 	protected void whenConnected() {
+		model.setDebug(true);
 		// Load the map and generate the particles and sends both to the NXT
 		model.loadMap(mapFileName);
 		model.generateParticles();
