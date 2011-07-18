@@ -58,6 +58,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         _actuator = new Thread(new Actuator());
         _actuator.setDaemon(true);
         _actuator.start();
+        doWait(100); 
     }
 
     /** Convenience constructor that creates an instance of a <code>NXTMotor</code> using the specified motor port. This instance is then
@@ -143,6 +144,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * @see #setPower
      * @see #stop
      * @see #getTachoCount
+     * @see #actuateTo
      */
     public synchronized void actuate(int distance, boolean immediateReturn ){
         // set globals
@@ -150,6 +152,19 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         _distanceTicks = Math.abs(distance);
          // initiate the action
         doAction(immediateReturn);
+    }
+
+    /** Causes the actuator to move to absolute <code>position</code> in encoder ticks. The <code>position</code> of the actuator
+     * shaft on startup or when set by <code>resetTachoCount()</code> is zero.
+     * @param position The Stroke position in encoder ticks.
+     * @param immediateReturn Set to <code>true</code> to cause the method to immediately return while the action is executed in
+     * the background. 
+     * @see #actuate
+     * @see #resetTachoCount
+     */
+    public void actuateTo(int position, boolean immediateReturn ){
+        int distance = position - _tachoCount;
+        actuate(distance, immediateReturn);
     }
     // only called by actuate()
     private void doAction(boolean immediateReturn){
