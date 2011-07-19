@@ -1,6 +1,10 @@
 package lejos.robotics;
 
-
+/*
+ * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
+ * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
+ */
+ 
 /**
  * Interface that defines the minimal implementation for a Linear Actuator device. Linear Actuator classes should provide 
  * non-blocking extend/retract actions through the <code>actuate()</code> and  <code>actuateTo()</code> methods.
