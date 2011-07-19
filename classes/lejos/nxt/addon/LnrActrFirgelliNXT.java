@@ -71,7 +71,8 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         this(new NXTMotor(port));
     }
     
-    /**Sets the power for the actuator. This is called before the <code>actuate()</code> method is called to set the power.
+    /**Sets the power for the actuator. This is called before the <code>actuate()</code> or <code>actuateTo()</code> method is called 
+     * to set the power.
      * Using lower power values and pushing/pulling
      * an excessive load may cause a stall and in this case, stall detection will stop the current actuator action and 
      * set the stalled condition flag.
@@ -94,7 +95,11 @@ public class LnrActrFirgelliNXT implements LinearActuator{
          _tick_wait = (int)(500/(0.135f * _realPower - 1.5)*1.2) ;
          //dbg("_tick_wait " + _tick_wait);
     }
-
+          
+    /**
+    * Returns the current actuator motor power setting.
+    * @return current power 0-100%
+    */
     public int getPower() {
         return _userSpecifiedPower;
     }
@@ -106,9 +111,10 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         return _isMoveCommand; 
     }
 
-    /** Returns true if an <code>actuate()</code> order ended due to a motor stall. This behaves like a latch where the 
-     * reset of the stall status is done on a new <code>actuate()</code> order. 
-     * @return <code>true</code> if actuator motor stalled during an <code>actuate()</code> order. <code>false</code> otherwise.
+    /** Returns true if an <code>actuate()</code> or <code>actuateTo()</code> order ended due to a motor stall. This behaves 
+     * like a latch where the 
+     * reset of the stall status is done on a new <code>actuate()</code> or <code>actuateTo()</code> order. 
+     * @return <code>true</code> if actuator motor stalled during a movement order. <code>false</code> otherwise.
      * @see #actuate
      */
     public boolean isStalled() {
@@ -137,7 +143,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * stop as this is hard on the actuator. If you must go all the way to an end stop and rely on stall detection to stop the
      * action, use a lower power setting.
      * 
-     * @param distance The Stroke distance in encoder ticks. See <tt> {@link #getTachoCount}</tt>.
+     * @param distance The Stroke distance in encoder ticks. 
      * @param immediateReturn Set to <code>true</code> to cause the method to immediately return while the action is executed in
      * the background. 
      * <code>false</code> will block until the action is completed, whether successfully or stalled.
@@ -156,7 +162,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
 
     /** Causes the actuator to move to absolute <code>position</code> in encoder ticks. The <code>position</code> of the actuator
      * shaft on startup or when set by <code>resetTachoCount()</code> is zero.
-     * @param position The Stroke position in encoder ticks.
+     * @param position The absolute shaft position in encoder ticks.
      * @param immediateReturn Set to <code>true</code> to cause the method to immediately return while the action is executed in
      * the background. 
      * @see #actuate
@@ -344,9 +350,8 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         _encoderMotor.stop();
     }
 
-    /**Returns the tachometer (encoder) postion relative to the actuator shaft position where <code>resetTachoCount()</code> was last called. 
-     * Actuator extension increases the count, retraction decreases it. The value on instantiation is zero at the current actuator shaft 
-     * position of the linear actuator. 
+    /** Returns the absolute tachometer (encoder) position of the actuator shaft. The zero position of the actuator shaft is where 
+     * <code>resetTachoCount()</code> was last called or the position of the shaft when instantiated. 
      * <p>
      * The Firgelli L12-NXT-50 & 100 use 0.5 mm/encoder tick. eg: 200 ticks=100 mm. 
      * 
@@ -358,7 +363,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
        return _tachoCount;
     }
     
-    /**Resets the tachometer (encoder) count to zero at the current actuator position.
+    /**Resets the tachometer (encoder) count to zero at the current actuator shaft position.
      * @see #getTachoCount
      */
     public void resetTachoCount() {
