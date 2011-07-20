@@ -205,8 +205,10 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 			
 			while(running) {
 				try {
+					// Wait for any outstanding apply moves
+					if (mcl != null && mcl.isBusy()) Thread.yield();
+					byte event = dis.readByte();
 					synchronized(this) {
-						byte event = dis.readByte();
 						NavEvent navEvent = NavEvent.values()[event];
 						if (debug) log(navEvent.name());
 						switch (navEvent) {
@@ -290,7 +292,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							if (mcl != null) readings = mcl.getRangeReadings();
 							readings.dumpObject(dos);
 							break;
-						case GET_PARTICLES: // Request to send particles to the Pc
+						case GET_PARTICLES: // Request to send particles to the PC
 							if (particles == null) break;
 							dos.writeByte(NavEvent.PARTICLE_SET.ordinal());
 							particles.dumpObject(dos);
@@ -345,6 +347,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							      pilot.travel(distance);
 							    
 							    ((RotateMoveController) pilot).rotate(angle);
+							    if (debug) log("Random moved done");
 							}
 							break;
 						}
@@ -373,7 +376,6 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 				if (debug) log("Sending move started");
 				dos.writeByte(NavEvent.MOVE_STARTED.ordinal());
 				event.dumpObject(dos);
-				if (debug) log("Finished move started");
 			}
 		} catch (IOException ioe) {
 			fatal("IOException in moveStarted");	
