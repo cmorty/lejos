@@ -402,15 +402,16 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
   public void loadObject(DataInputStream dis) throws IOException {
 	maxWeight = dis.readFloat();
 	numParticles = dis.readInt();
-    particles = new MCLParticle[numParticles];
+    MCLParticle[] newParticles = new MCLParticle[numParticles];
     for (int i = 0; i < numParticles; i++) {
       float x = dis.readFloat();
       float y = dis.readFloat();
       float angle = dis.readFloat();
       Pose pose = new Pose(x, y, angle);
-      particles[i] = new MCLParticle(pose);
-      particles[i].setWeight(dis.readFloat());
+      newParticles[i] = new MCLParticle(pose);
+      newParticles[i].setWeight(dis.readFloat());
     }
+    particles = newParticles;
   }
 
   /**

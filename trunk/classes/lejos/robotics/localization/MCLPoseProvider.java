@@ -12,6 +12,7 @@ import lejos.robotics.Transmittable;
 import java.awt.Rectangle;
 import lejos.robotics.localization.PoseProvider;
 import java.io.*;
+import java.util.ArrayList;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -83,14 +84,20 @@ public class MCLPoseProvider implements PoseProvider, MoveListener, Transmittabl
    * @param border of the map
    */
   public MCLPoseProvider(RangeMap map, int numParticles, int border) {
-	    this.numParticles = numParticles;
-	    this.border = border;
-	    this.map = map;
-	    updated = false;
+	this.numParticles = numParticles;
+	this.border = border;
+	this.map = map;
+	updated = false;
   }
   
+  /**
+   * Associates a map with the MCLPoseProvider 
+   * (for example a map send from the PC).
+   * 
+   * @param map the RangeMap
+   */
   public void setMap(RangeMap map) {
-	  this.map = map;
+	this.map = map;
   }
   
   /**
@@ -127,10 +134,10 @@ public class MCLPoseProvider implements PoseProvider, MoveListener, Transmittabl
    * @param on true = on, false = off
    */
   public void setDebug(boolean on) {
-	  debug = on;
+	debug = on;
   }
 
- /*8
+ /**
   * set the initial pose cloud with radius noise 1 and heading noise 1
   */
   public void setPose(Pose aPose)
@@ -148,13 +155,24 @@ public class MCLPoseProvider implements PoseProvider, MoveListener, Transmittabl
     return particles;
   }
   
+  /**
+   * Get the current range readings
+   * 
+   * @return the RangeReadings object
+   */
   public RangeReadings getReadings() {
 	  return readings;
   }
   
+  /**
+   * Associate a particle set with the MCLPoseProvider
+   * (e.g. particles sent from the PC)
+   * 
+   * @param particles the particle set
+   */
   public void setParticles(MCLParticleSet particles) {
-	  this.particles = particles;
-	  numParticles = particles.numParticles();
+	this.particles = particles;
+	numParticles = particles.numParticles();
   }
 
   /**
@@ -162,14 +180,14 @@ public class MCLPoseProvider implements PoseProvider, MoveListener, Transmittabl
    * uniformly distributed heading.
    */
   public void generateParticles()
-    {
-      particles = new MCLParticleSet(map, numParticles, border);
+  {
+    particles = new MCLParticleSet(map, numParticles, border);
   }
+  
   /**
   Required by MoveListener interface; does nothing
    */
   public void moveStarted(Move event, MoveProvider mp) { updated = false;}
-
 
   /**
    * Required by MoveListener interface. The pose of each particle is updated
@@ -179,98 +197,93 @@ public class MCLPoseProvider implements PoseProvider, MoveListener, Transmittabl
    */
   public void moveStopped(Move event, MoveProvider mp)
   {
-	  if (debug) System.out.println("MCL move stopped");
-      updated = false;
-      updater.moveStopped(event);
+	if (debug) System.out.println("MCL move stopped");
+    updated = false;
+    updater.moveStopped(event);
   }
 
-
-/**
- * 
- * Calls range scanner to get range readings, calculates the probabilities
- * of each particle from the range  readings and the map and calls resample(()
- *
- * @return true if update was successful
- */
-public boolean  update()
-{
-// if(updated) return true;
-    busy = true;
+  /**
+   * 
+   * Calls range scanner to get range readings, calculates the probabilities
+   * of each particle from the range  readings and the map and calls resample(()
+   *
+   * @return true if update was successful
+   */
+  public boolean  update()
+  {
+	// if(updated) return true;
     if(debug)System.out.println("MCLPP update called ");
     updated = false;
     if (scanner == null)
     {
-      busy = false;
       return false;
-}
+    }
     readings = scanner.getRangeValues();
     incomplete = readings.incomplete();
-//    if(debug) System.out.println("mcl Update: range readings " + readings.getNumReadings());
+    //    if(debug) System.out.println("mcl Update: range readings " + readings.getNumReadings());
     if (incomplete  )
     {
-       busy = false;
        return false;
     }
     return update(readings);
-
-
   }
+  
   /**
- * Calculates particle weights from readings, then resamples the particle set;
- * @param readings
- * @return true if update was successful.
- */
-@SuppressWarnings("hiding")
-public boolean update(RangeReadings readings)
-    {
+   * Calculates particle weights from readings, then resamples the particle set;
+   * @param readings
+   * @return true if update was successful.
+   */
+  @SuppressWarnings("hiding")
+  public boolean update(RangeReadings readings)
+  {
     if(debug)System.out.println("MCLPP update readings called ");
-        updated = false;
-        busy = true;
-        incomplete = readings.incomplete();
-        if (incomplete) {
-           busy = false;
-            return false;
-        }
-        if(debug)System.out.println("update readings incomplete "+incomplete);
-        boolean goodPose = false;
+    updated = false;
+    incomplete = readings.incomplete();
+    
+    if (incomplete) {
+      return false;
+    }
+        
+    if(debug)System.out.println("update readings incomplete "+incomplete);
+    boolean goodPose = false;
 
-        goodPose = particles.calculateWeights(readings, map);
-        if (debug) System.out.println(" max Weight " + particles.getMaxWeight()+
-                " Good pose "+goodPose);
+    goodPose = particles.calculateWeights(readings, map);
+    if (debug) System.out.println(" max Weight " + particles.getMaxWeight()+
+            " Good pose "+goodPose);
 
-        if (!goodPose) {
-            if (debug)  System.out.println("Sensor data improbable from this pose ");
-            busy = false;
-            return false;
-        }
-        goodPose = particles.resample();
-        updated = goodPose;
-        busy = false;
-        if (debug) {
-            if (goodPose) System.out.println("Resample done");
-            else System.out.println("Resample failed");
-        }
-        return goodPose;
-}
-/**
- * Returns update success flag
- * @return true if update is successful
- */
-public boolean isUpdated() {return updated;}
+    if (!goodPose) {
+      if (debug)  System.out.println("Sensor data improbable from this pose ");
+      return false;
+    }
+    
+    goodPose = particles.resample();
+    updated = goodPose;
+    
+    if (debug) {
+      if (goodPose) System.out.println("Resample done");
+      else System.out.println("Resample failed");
+    }
+    
+    return goodPose;
+  }
+  
+  /**
+   * Returns update success flag
+   * @return true if update is successful
+  */
+  public boolean isUpdated() {return updated;}
 
-/**
- * returns lost status - all particles have very low probability weights
- * @return true if robot is lost
- */
-public boolean isLost() { return lost; }
+  /**
+   * returns lost status - all particles have very low probability weights
+   * @return true if robot is lost
+   */
+  public boolean isLost() { return lost; }
 
-
-/**
- * returns range scanner failure status
- * @return true if range readings are incomplete
- */
-
-public boolean incompleteRanges() { return incomplete;}
+  /**
+   * returns range scanner failure status
+   * @return true if range readings are incomplete
+   */
+  public boolean incompleteRanges() { return incomplete;}
 
   /**
    * Returns the difference between max X and min X
@@ -290,7 +303,6 @@ public boolean incompleteRanges() { return incomplete;}
     return getMaxY() - getMinY();
   }
 
- 
   /**
    * Returns the best best estimate of the current pose;
    * @return the estimated pose
@@ -301,29 +313,27 @@ public boolean incompleteRanges() { return incomplete;}
               +" busy "+busy);
     if (!updated)
     {
-    while(busy)Thread.yield();
+      while(busy){
+    	if(debug) System.out.println("MCL Busy");
+    	Thread.yield();
+      }
       if(debug) System.out.println("Mcl call update; updated? "+updated);
       if(!updated)update();
     }
     estimatePose();
     return new Pose(_x, _y, _heading);
-
   }
   
   public Pose getEstimatedPose() {
-	  return new Pose(_x, _y, _heading);
+	return new Pose(_x, _y, _heading);
   }
 
   /**
    * Estimate pose from weighted average of the particles
    * Calculate statistics
    */
-  private void estimatePose()
+  public void estimatePose()
   {
-//    if (scanner == null)
-//    {
-//      return;
-//    }
     float totalWeights = 0;
     float estimatedX = 0;
     float estimatedY = 0;
@@ -341,7 +351,8 @@ public boolean incompleteRanges() { return incomplete;}
       Pose p = particles.getParticle(i).getPose();
       float x = p.getX();
       float y = p.getY();
-      float weight = particles.getParticle(i).getWeight();
+      //float weight = particles.getParticle(i).getWeight();
+      float weight = 1; // weight is historic at this point, as resample has been done
       estimatedX += (x * weight);
       varX += (x * x * weight);
       estimatedY += (y * weight);
@@ -356,7 +367,7 @@ public boolean incompleteRanges() { return incomplete;}
       if (x > maxX)maxX = x;
       if (y < minY)minY = y;
       if (y > maxY)   maxY = y;
-      }
+    }
 
     estimatedX /= totalWeights;
     varX /= totalWeights;
@@ -367,18 +378,16 @@ public boolean incompleteRanges() { return incomplete;}
     estimatedAngle /= totalWeights;
     varH /= totalWeights;
     varH -= (estimatedAngle * estimatedAngle);
-    while (estimatedAngle > 180)
-    {
-      estimatedAngle -= 360;
-    }
-    while (estimatedAngle < -180)
-    {
-      estimatedAngle += 360;
-    }
+    
+    // Normalize angle
+    while (estimatedAngle > 180) estimatedAngle -= 360;
+    while (estimatedAngle < -180) estimatedAngle += 360;
+    
     _x = estimatedX;
     _y = estimatedY;
     _heading = estimatedAngle;
   }
+  
   /**
    * Returns most recent range readings
    * @return the range readings
@@ -460,14 +469,15 @@ public boolean incompleteRanges() { return incomplete;}
     return (float) Math.sqrt(varH);
   }
   
-/**
- * Returns the range scanner
- * @return the range scanner
- */
-public RangeScanner getScanner()
-{
-  return scanner;
-}
+  /**
+   * Returns the range scanner
+   * @return the range scanner
+   */
+  public RangeScanner getScanner()
+  {
+	return scanner;
+  }
+
   /**
    * Dump the serialized estimate of pose to a data output stream
    * @param dos the data output stream
@@ -517,19 +527,16 @@ public RangeScanner getScanner()
   public boolean isBusy() { return busy;}
 
   /**
-   * predicts particle pose from odometry data.
+   * Predicts particle pose from odometry data.
    */
   class Updater extends Thread
   {
-
     boolean keepGoing = true;
-    boolean moveStopped = false;
-    Move event;
+    ArrayList<Move> events = new ArrayList<Move>();
 
     public void moveStopped(Move theEvent)
     {
-      updater.event = theEvent;
-      moveStopped = true;
+      events.add(theEvent);
     }
 
     @Override
@@ -537,17 +544,18 @@ public RangeScanner getScanner()
     {
       while (keepGoing)
       {
-        if (moveStopped)
+        while(!events.isEmpty())
         {
-            if(debug) System.out.println("Updater move stop "+event.getMoveType());
-         busy = true;
+          if(debug) System.out.println("Updater move stop "+events.get(0).getMoveType());
+          busy = true;
 
-          particles.applyMove(event);      
-//          System.out.println("apply move ");
-            busy = false;
-          moveStopped = false;
-          }
+          particles.applyMove(events.get(0));      
+          if(debug) System.out.println("applied move ");
+          events.remove(0);
         }
+        busy = false;
+        Thread.yield();
+      }
     }  // end run()
   }// end class Updater
 }
