@@ -2,10 +2,13 @@ package lejos.robotics.mapping;
 
 import java.awt.*;
 import java.awt.event.*;
-
+import java.awt.image.VolatileImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Hashtable;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.*;
-
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.mapping.NavigationModel.NavEvent;
@@ -17,25 +20,30 @@ import lejos.robotics.mapping.NavigationModel.NavEvent;
  * @author Lawrie Griffiths
  *
  */
-public class NavigationPanel extends JPanel implements MouseListener, MouseMotionListener {
+public class NavigationPanel extends JPanel implements MouseListener, MouseMotionListener, ActionListener {
 	private static final long serialVersionUID = 1L;
-	protected float pixelsPerUnit = 2f;
+	
+	protected int minZoom = 50;
+	protected int maxZoom = 200;
+	protected int zoomIncrement = 50;
+	protected int zoomInitialValue = 150;
+	protected boolean showZoomLabels = false;
+	protected int zoomMajorTick = 25;
+	
+	protected float pixelsPerUnit = 1.5f;
 	protected PCNavigationModel model = new PCNavigationModel(this);
 	protected MapPanel mapPanel; 
 	protected JPanel commandPanel = new JPanel();
 	protected JPanel connectPanel = new JPanel();
 	protected JPanel mousePanel = new JPanel();
+	protected JPanel logPanel = new JPanel();
 	protected JLabel xLabel = new JLabel("X:");
 	protected JTextField xField = new JTextField(4);
 	protected JLabel yLabel = new JLabel("Y:");
 	protected JTextField yField = new JTextField(4);
 	protected JPanel controlPanel = new JPanel();
 	protected JLabel zoomLabel = new JLabel("Zoom:");
-	protected JSlider slider = new JSlider(50,200,50);
-	protected JLabel gridLabel = new JLabel("Grid:");
-	protected JCheckBox gridCheck = new JCheckBox();
-	protected JLabel meshLabel = new JLabel("Mesh:");
-	protected JCheckBox meshCheck = new JCheckBox();
+	protected JSlider zoomSlider;
 	protected JLabel nxtLabel = new JLabel("NXT name:");
 	protected JTextField nxtName = new JTextField(10);
 	protected JButton connectButton = new JButton("Connect");
@@ -43,24 +51,58 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	                  showControlPanel = true, showCommandPanel = true,
 	                  showReadingsPanel = true, showLastMovePanel = true,
 	                  showParticlePanel = true, showMoves = false,
-	                  showMesh = true;
+	                  showMesh = false, showGrid = true, showLog = false;
 	protected JPanel readingsPanel = new JPanel();
 	protected JTextField readingsField = new JTextField(12);
 	protected JPanel lastMovePanel = new JPanel();
 	protected JTextField lastMoveField = new JTextField(20);
 	protected JPanel particlePanel = new JPanel();
 	protected JTextField particleField = new JTextField(20);
-	protected int mapPanelWidth = 300;
-	protected int mapPanelHeight = 300;
-	protected Dimension mapPaneSize = new Dimension(600,600);
-	protected JScrollPane mapPane;
+	protected Dimension mapPaneSize = new Dimension(700,600);
 	protected Point startDrag;
-	protected JButton clearButton = new JButton("Clear");
+	protected Point initialViewStart = new Point(0,0);
+	protected String title;
+	protected String description = "";
+	
+	protected JMenuBar menuBar = new JMenuBar();
+	protected JMenu fileMenu, aboutMenu, mapMenu, viewMenu;
+	protected JMenuItem exit, about, clear, repaint, reset, open, save;
+	protected JCheckBoxMenuItem viewGrid, viewMousePosition, viewControls,
+	                          viewConnect, viewCommands, viewMesh, viewLog,
+	                          viewLastMove, viewParticle;
+	protected JFileChooser chooser = new JFileChooser();
 	
 	/**
 	 * Build the various panels if they are required.
 	 */
 	protected void buildGUI() {
+		createMousePanel();
+		createConnectPanel();
+		createControlPanel();
+		createCommandPanel();
+		createReadingsPanel();
+		createMovePanel();
+		createParticlePanel();
+		createMapPanel();
+	}
+	
+	/**
+	 * Create the map panel
+	 */
+	protected void createMapPanel() {
+		mapPanel = new MapPanel(model, mapPaneSize, this);
+		add(mapPanel);
+		
+		mapPanel.addMouseMotionListener(this);
+		mapPanel.addMouseListener(this);
+		mapPanel.viewStart = new Point(initialViewStart);
+		mapPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
+	}
+	
+	/**
+	 * Create the Connect panel to allow connection to a NXT brick
+	 */
+	protected void createConnectPanel() {
 		if (showConnectPanel) {
 			connectPanel.add(nxtLabel);
 			connectPanel.add(nxtName);
@@ -75,104 +117,202 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 				}
 			});
 		}
-		
+	}
+	
+	/**
+	 * Create the control panel, which controls the GUI
+	 */
+	protected void createControlPanel() {
 		if (showControlPanel) {
-			controlPanel.add(zoomLabel);
-			controlPanel.add(slider);
-			controlPanel.add(gridLabel);
-			controlPanel.add(gridCheck);
-			
 			controlPanel.setBorder(BorderFactory.createTitledBorder("GUI Controls"));
 			add(controlPanel);
-					
-			gridCheck.setSelected(true);
-
-			slider.setMajorTickSpacing(25);
-			slider.setPaintTicks(true);
 			
-			slider.addChangeListener(new ChangeListener() {
+			controlPanel.add(zoomLabel);
+			
+			zoomSlider = new JSlider(SwingConstants.HORIZONTAL,minZoom,maxZoom,minZoom);
+			zoomSlider.setValue(zoomInitialValue);
+			
+			zoomSlider.setMajorTickSpacing(zoomMajorTick);
+			zoomSlider.setPaintTicks(true);
+			
+			if (showZoomLabels) {
+				zoomSlider.setPaintLabels(true);
+			
+				//Create the label table
+				Hashtable<Integer,JLabel> labelTable = new Hashtable<Integer,JLabel>();
+				for(int i=zoomSlider.getMinimum();i<=zoomSlider.getMaximum();i+=zoomIncrement) {
+					labelTable.put( new Integer(i ), new JLabel(i + "%") );
+				}
+				zoomSlider.setLabelTable( labelTable );		
+			}
+			
+			zoomSlider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					JSlider source = (JSlider)e.getSource();
 					pixelsPerUnit = source.getValue() / 100f;
-					Dimension newSize = new Dimension((int) ((10 + mapPanelWidth) * pixelsPerUnit), (int) ((30 + mapPanelHeight) * pixelsPerUnit));
-					//System.out.println("Setting size to " + newSize);
-					mapPanel.setPreferredSize(newSize);
-					mapPanel.revalidate();
 					repaint();
 				}
 			});
 			
-			gridCheck.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {;
-					mapPanel.repaint();
-				}
-			});
-			
-			if (showMesh) {		
-				controlPanel.add(meshLabel);
-				controlPanel.add(meshCheck);
-				
-				meshCheck.setSelected(false);
-			
-				meshCheck.addChangeListener(new ChangeListener() {
-					public void stateChanged(ChangeEvent e) {;
-						mapPanel.repaint();
-					}
-				});
-			}
-			
-			controlPanel.add(clearButton);
-			
-			clearButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					model.clear();
-					mapPanel.viewStart = new Point(0,0);
-					repaint();
-				}				
-			});
+			controlPanel.add(zoomSlider);		
 		}
-		
+	}
+	
+	/**
+	 * Create the map panel which shows the mouse position in map coordinates
+	 */
+	protected void createMousePanel() {
 		if (showMousePanel) {
 			mousePanel.add(xLabel);
 			mousePanel.add(xField);
 			mousePanel.add(yLabel);
 			mousePanel.add(yField);
-			mousePanel.setBorder(BorderFactory.createTitledBorder("Mouse"));
+			//mousePanel.setBorder(BorderFactory.createTitledBorder("Mouse"));
 			add(mousePanel);
 		}
-		
+	}
+	
+	/**
+	 * Create the command panel - this is added to by overriding classes
+	 */
+	protected void createCommandPanel() {
 		if (showCommandPanel) {
 			commandPanel.setBorder(BorderFactory.createTitledBorder("Commands"));
 			add(commandPanel);
 		}
-		
+	}
+	
+	/**
+	 * Create the readings panel which shows the last range readings
+	 */
+	protected void createReadingsPanel() {
 		if (showReadingsPanel) {
 			readingsPanel.setBorder(BorderFactory.createTitledBorder("Last Readings"));
 			readingsPanel.add(readingsField);
 			add(readingsPanel);
 		}
-
+	}
+	
+	/**
+	 * Create the move panel, which shows the last move made by the robot
+	 */
+	protected void createMovePanel() {
 		if (showLastMovePanel) {
 			lastMovePanel.setBorder(BorderFactory.createTitledBorder("Last Move"));
 			lastMovePanel.add(lastMoveField);
 			add(lastMovePanel);
 		}
-		
+	}
+	
+	/**
+	 * Create the particle panel which shows range readings for a specific particle
+	 */
+	protected void createParticlePanel() {
 		if (showParticlePanel) {
 			particlePanel.setBorder(BorderFactory.createTitledBorder("Selected Particle"));
 			particlePanel.add(particleField);
 			add(particlePanel);
 		}
-		
-		mapPanel = new MapPanel(model, mapPaneSize, this);
-		mapPane = new JScrollPane(mapPanel);
-		add(mapPane);
-		mapPane.setPreferredSize(mapPaneSize);
-		
-		mapPanel.addMouseMotionListener(this);
-		mapPanel.addMouseListener(this);
-
-		slider.setValue(150);
+	}
+	
+	/**
+	 * Create the menu
+	 */
+	protected void createMenu() {
+		createFileMenu();
+		createViewMenu();
+		createMapMenu();
+		createAboutMenu();
+		//createHelpMenu();
+	}
+	
+	/**
+	 * Create a File menu
+	 */
+	protected void createFileMenu() {
+		fileMenu = new JMenu("File");
+		menuBar.add(fileMenu);
+		open = new JMenuItem("Open ...");
+		fileMenu.add(open);
+		open.addActionListener(this);
+		save = new JMenuItem("Save ...");
+		fileMenu.add(save);
+		save.addActionListener(this);
+		exit = new JMenuItem("Exit");
+		fileMenu.add(exit);
+		exit.addActionListener(this);
+	}
+	
+	/**
+	 * Create a View menu
+	 */
+	protected void createViewMenu() {
+		viewMenu = new JMenu("View");
+		menuBar.add(viewMenu);
+		viewGrid = new JCheckBoxMenuItem("Grid");
+		viewGrid.setSelected(showGrid);
+		viewGrid.addActionListener(this);
+		viewMenu.add(viewGrid);;
+		viewMesh = new JCheckBoxMenuItem("Mesh");
+		viewMesh.setSelected(showMesh);
+		viewMesh.addActionListener(this);
+		viewMenu.add(viewMesh);
+		viewLog = new JCheckBoxMenuItem("Log");
+		viewLog.setSelected(showLog);
+		viewLog.addActionListener(this);
+		viewMenu.add(viewLog);
+		viewMousePosition = new JCheckBoxMenuItem("Mouse Position");
+		viewMousePosition.setSelected(showMousePanel);
+		viewMousePosition.addActionListener(this);
+		viewMenu.add(viewMousePosition);
+		viewControls = new JCheckBoxMenuItem("GUI Controls");
+		viewControls.setSelected(showControlPanel);
+		viewControls.addActionListener(this);
+		viewMenu.add(viewControls);
+		viewConnect = new JCheckBoxMenuItem("Connect");
+		viewConnect.setSelected(showConnectPanel);
+		viewConnect.addActionListener(this);
+		viewMenu.add(viewConnect);
+		viewCommands = new JCheckBoxMenuItem("Commands");
+		viewCommands.setSelected(showCommandPanel);
+		viewCommands.addActionListener(this);
+		viewMenu.add(viewCommands);
+	}
+	
+	/**
+	 * Create a Map menu
+	 */
+	protected void createMapMenu() {
+		mapMenu = new JMenu("Map");
+		menuBar.add(mapMenu);
+		clear = new JMenuItem("Clear");
+		clear.addActionListener(this);
+		mapMenu.add(clear);
+		repaint = new JMenuItem("Repaint");
+		repaint.addActionListener(this);
+		mapMenu.add(repaint);
+		reset = new JMenuItem("Reset");
+		reset.addActionListener(this);
+		mapMenu.add(reset);
+	}
+	
+	/**
+	 * Create an About menu
+	 */
+	protected void createAboutMenu() {
+		aboutMenu = new JMenu("About");
+		menuBar.add(aboutMenu);
+		about  = new JMenuItem("About " + title + " ...");
+		aboutMenu.add(about);
+		about.addActionListener(this);
+	}
+	
+	/**
+	 * Create a help menu
+	 */
+	protected void createHelpMenu() {
+	    menuBar.add(Box.createHorizontalGlue());
+	    menuBar.add(new JMenu("Help"));
 	}
 	
 	/**
@@ -234,25 +374,28 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	/**
 	 * Create a frame to display the panel in
 	 */
-	public static JFrame openInJFrame(Container content, int width, int height,
-                                    String title, Color bgColor) {
+	public static JFrame openInJFrame(NavigationPanel content, int width, int height,
+                                    String title, Color bgColor, JMenuBar menuBar) {
 		JFrame frame = new JFrame(title);
 		frame.setBackground(bgColor);
 		content.setBackground(bgColor);
 		frame.setSize(width, height);
 		frame.setContentPane(content);
+		content.title = title;
 		
     	frame.addWindowListener(new WindowAdapter() {
     		public void windowClosing(WindowEvent event) {
     			System.exit(0);
     		}
     	});
+    	if (menuBar != null) frame.setJMenuBar(menuBar);
     	frame.setVisible(true);
     	return (frame);
 	}
   
 	/**
 	 * Log a message
+	 * 
 	 * @param message
 	 */
 	public void log(String message) {
@@ -322,6 +465,23 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	 * @param me the mouse event
 	 */
 	protected void popupMenu(MouseEvent me) {
+	    Point pt = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), this);
+	    boolean inside = model.getMap().inside(new lejos.geom.Point((me.getX() / pixelsPerUnit + mapPanel.viewStart.x) , (mapPanel.getHeight() - me.getY())/ pixelsPerUnit + mapPanel.viewStart.y));  
+	    if (!inside) return;
+	    
+	    JPopupMenu menu = new JPopupMenu(); 
+	    popupMenuItems(me.getPoint(),menu);
+	    
+	    menu.show(this, pt.x, pt.y);
+	}
+	
+	/**
+	 * Used by subclasses to add popup menu items
+	 * 
+	 * @param p the point at which the menu was popped up
+	 * @param menu the popup menu
+	 */
+	protected void popupMenuItems(Point p, JPopupMenu menu) {
 	}
 	
 	/**
@@ -336,5 +496,79 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	 * @param navEvent the event
 	 */
 	protected void eventReceived(NavEvent navEvent) {	
+	}
+	
+	/**
+	 * Provides a pop up about dialog which can be tailored or overridden
+	 */
+	protected void about() {
+		JOptionPane.showMessageDialog(this,
+			    description,
+			    "About " + title,
+			    JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	/**
+	 * Called when a menu item is selected
+	 */
+	public void actionPerformed(ActionEvent e) {	
+		if (e.getSource() == about) {
+			about();
+		} else if (e.getSource() == exit) {
+			System.exit(0);
+		} else if (e.getSource() == save) {
+			int returnVal = chooser.showSaveDialog(this);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+	            File file = chooser.getSelectedFile();
+				VolatileImage image = mapPanel.createVolatileImage(mapPanel.getWidth(), mapPanel.getHeight()); 
+				Graphics g = image.getGraphics();
+				mapPanel.paint(g);
+				g.dispose();
+				try {
+					ImageIO.write(image.getSnapshot(), "png", file);
+				} catch (IOException ioe) {
+					log("IOException in save");
+				}
+	        } else {
+	            log("Open command cancelled by user.");
+	        }
+		} else if (e.getSource() == open) {
+			int returnVal = chooser.showOpenDialog(this);
+	        if (returnVal == JFileChooser.APPROVE_OPTION) {
+	            File file = chooser.getSelectedFile();
+	            log("Opening: " + file.getName());
+	            model.loadMap(file.getPath());
+	            repaint();
+	        } else {
+	            log("Open command cancelled by user.");
+	        }
+		} else if (e.getSource() == clear) {
+			model.clear();
+			repaint();
+		} else if (e.getSource() == repaint) {
+			repaint();
+		} else if (e.getSource() == reset) {
+			mapPanel.viewStart = new Point(initialViewStart);
+			//zoomSlider.setValue(zoomInitialValue);
+			mapPanel.repaint();
+		} else if (e.getSource() == viewGrid) {
+			showGrid = viewGrid.isSelected();
+			repaint();
+		}  else if (e.getSource() == viewMesh) {
+			showMesh = viewMesh.isSelected();
+			repaint();
+		} else if (e.getSource() == viewLog) {
+			logPanel.setVisible(viewLog.isSelected());
+			repaint();
+		} else if (e.getSource() == viewMousePosition) {
+			mousePanel.setVisible(viewMousePosition.isSelected());
+			repaint();
+		} else if (e.getSource() == viewControls) {
+			controlPanel.setVisible(viewControls.isSelected());
+		} else if (e.getSource() == viewCommands) {
+			commandPanel.setVisible(viewCommands.isSelected());
+		}  else if (e.getSource() == viewConnect) {
+			connectPanel.setVisible(viewConnect.isSelected());
+		}
 	}
 }

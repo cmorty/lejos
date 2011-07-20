@@ -1,6 +1,7 @@
 package lejos.robotics.mapping;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.geom.*;
 import java.util.*;
 import javax.swing.JPanel;
@@ -136,7 +137,7 @@ public class MapPanel extends JPanel {
 		//parent.log("Height = " + getHeight());
 		paintGrid((Graphics2D) g);
 		paintMap((Graphics2D) g);
-		if (parent.meshCheck.isSelected()) paintMesh((Graphics2D) g);
+		if (parent.showMesh) paintMesh((Graphics2D) g);
 		paintParticles((Graphics2D) g);
 		paintRobot((Graphics2D) g);
 		paintTarget((Graphics2D) g);
@@ -203,13 +204,16 @@ public class MapPanel extends JPanel {
 	 * @param g2d the Graphics2D object
 	 */
 	public void paintGrid(Graphics2D g2d) {
-		if (gridSize <= 0) return;
-		if (!parent.gridCheck.isSelected()) return;
+		if (gridSize <= 0 || !parent.showGrid) return;
 		g2d.setColor(colors[GRID_COLOR_INDEX]);
-		for(float i=viewStart.x % getDistance(gridSize); i<this.getHeight(); i+=getDistance(gridSize)) {
-			g2d.drawLine(0,(int) (this.getHeight() - 1 - i), this.getWidth()-1, (int) (this.getHeight() -1 - i));		
+		// Draw Horizontal lines
+		float starty = Math.abs(viewStart.y) % gridSize;
+		for(float i=starty * parent.pixelsPerUnit; i<this.getHeight(); i+=getDistance(gridSize)) {
+			g2d.drawLine(0,(int) (this.getHeight() -1 - i), this.getWidth()-1, (int) (this.getHeight() -1 - i));		
 		}
-		for(float i=viewStart.y % getDistance(gridSize); i<this.getWidth(); i+=getDistance(gridSize)) {
+		// Draw vertical lines
+		float startx = Math.abs(viewStart.x) % gridSize;
+		for(float i=startx * parent.pixelsPerUnit; i<this.getWidth(); i+=getDistance(gridSize)) {
 			g2d.drawLine((int) i,0, (int) i,this.getHeight()-1);		
 		}
 	}
@@ -342,5 +346,23 @@ public class MapPanel extends JPanel {
 	 */
 	protected float getDistance(float distance) {
 		return distance * parent.pixelsPerUnit;
+	}
+	
+	/**
+	 * Get tooltips for individual features - currently just particles
+	 */
+	@Override
+	public String getToolTipText(MouseEvent e) {
+		MCLParticleSet particles = model.getParticles();
+		if (particles == null) return null;
+		
+		// If the mouse is on a article, show its weight
+		float x = e.getX()/ parent.pixelsPerUnit + viewStart.x;
+		float y = (getHeight() - e.getY())/ parent.pixelsPerUnit + viewStart.y;
+		int i = particles.findClosest(x,y);
+		MCLParticle part = particles.getParticle(i);
+		Pose p = part.getPose(); 
+		if (Math.abs(p.getX() - x) <= 2f && Math.abs(p.getY() - y) <= 2f) return  "Weight " + part.getWeight();
+		else return null;
 	}
 }
