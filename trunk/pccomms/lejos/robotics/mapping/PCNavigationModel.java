@@ -1,11 +1,9 @@
 package lejos.robotics.mapping;
 
-import java.awt.Dimension;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import lejos.geom.Point;
-import lejos.geom.Rectangle;
 import lejos.pc.comm.*;
 import lejos.robotics.*;
 import lejos.robotics.navigation.*;
@@ -137,7 +135,7 @@ public class PCNavigationModel extends NavigationModel {
 		if (!connected) return;
 		try {
 			synchronized(receiver) {
-				//panel.log("Getting particles");
+				if (debug) panel.log("Sending GET_PARTICLES");
 				dos.writeByte(NavEvent.GET_PARTICLES.ordinal());
 				dos.flush();
 			}
@@ -262,15 +260,15 @@ public class PCNavigationModel extends NavigationModel {
 			FileInputStream is = new FileInputStream(mapFile);
 			SVGMapLoader mapLoader = new SVGMapLoader(is);
 			map = mapLoader.readLineMap();
-			Rectangle r = map.getBoundingRect();
+			//Rectangle r = map.getBoundingRect();
 			//panel.log("Rect = " + r);
-			panel.mapPanelWidth = (int) Math.ceil(r.x + r.width); 
-			panel.mapPanelHeight = (int) Math.ceil(r.y + r.height); 
+			//panel.mapPanelWidth = (int) Math.ceil(r.x + r.width); 
+			//panel.mapPanelHeight = (int) Math.ceil(r.y + r.height); 
 			//System.out.println("Setting panel size to " + panel.mapPanelWidth + "," + panel.mapPanelHeight);
-			panel.mapPanel.setPreferredSize(new Dimension((int) (panel.mapPanelWidth * panel.pixelsPerUnit), (int) (panel.mapPanelHeight  * panel.pixelsPerUnit)));
+			//panel.mapPanel.setPreferredSize(new Dimension((int) (panel.mapPanelWidth * panel.pixelsPerUnit), (int) (panel.mapPanelHeight  * panel.pixelsPerUnit)));
 			
-			panel.mapPanelHeight = (int) r.height;
-			panel.mapPanel.revalidate();
+			//panel.mapPanelHeight = (int) r.height;
+			//panel.mapPanel.revalidate();
 			mesh = new FourWayGridMesh(map, gridSpace,clearance);
 			nodes = mesh.getMesh();
 			pf = new NodePathFinder(alg, mesh);
@@ -389,6 +387,7 @@ public class PCNavigationModel extends NavigationModel {
 		if (dos == null) return;
 		try {
 			synchronized(receiver) {
+				if (debug) panel.log("Sending GET_POSE");
 				dos.writeByte(NavEvent.GET_POSE.ordinal());
 				dos.flush();
 			}
@@ -404,6 +403,7 @@ public class PCNavigationModel extends NavigationModel {
 		if (!connected) return;
 		try {
 			synchronized(receiver) {
+				if (debug) panel.log("Sending GET_ESTIMATED_POSE");
 				dos.writeByte(NavEvent.GET_ESTIMATED_POSE.ordinal());
 				dos.flush();
 			}
@@ -419,6 +419,7 @@ public class PCNavigationModel extends NavigationModel {
 		if (!connected) return;
 		try {
 			synchronized(receiver) {
+				if (debug) panel.log("Sending GET_READINGS");
 				dos.writeByte(NavEvent.GET_READINGS.ordinal());
 				dos.flush();
 			}
@@ -447,6 +448,7 @@ public class PCNavigationModel extends NavigationModel {
 		if (connected) {
 			try {
 				synchronized(receiver) {
+					if (debug) panel.log("Sending SET_POSE");
 					dos.writeByte(NavEvent.SET_POSE.ordinal());
 					currentPose.dumpObject(dos);
 				}
@@ -632,10 +634,10 @@ public class PCNavigationModel extends NavigationModel {
 		public void run() {
 			while(running) {
 				try {
+					byte event = dis.readByte();
+					NavEvent navEvent = NavEvent.values()[event];
+					if (debug) panel.log("Event received:" +  navEvent.name());
 					synchronized(this) {
-						byte event = dis.readByte();
-						NavEvent navEvent = NavEvent.values()[event];
-						if (debug) panel.log("Event received:" +  navEvent.name());
 						switch (navEvent) {
 						case MOVE_STARTED: // Get planned move
 							lastPlannedMove.loadObject(dis);
@@ -651,6 +653,7 @@ public class PCNavigationModel extends NavigationModel {
 							break;
 						case PARTICLE_SET: // Get a particle set from the NXT
 							particles.loadObject(dis);
+							if (mcl != null) mcl.estimatePose();
 							break;
 						case RANGE_READINGS: // Get the range readings from the NXT
 							readings.loadObject(dis);
