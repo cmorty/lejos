@@ -27,18 +27,18 @@ public class PathTest extends NavigationPanel {
   	private static final int FRAME_HEIGHT = 800;
   
   	private static final Dimension MAP_SIZE = new Dimension(700,600);
+	private static final Point INITIAL_VIEW_START = new Point(0,-10);
   	private static final int INITIAL_ZOOM = 110;
   	private static final String MAP_FILE = "floor.svg";
   	private static final String FRAME_TITLE = "Path Test";
   
-  	private static int GRID_SPACE = 39;
+  	private static int MESH_SPACE = 39;
   	private static int CLEARANCE = 10;
   
   	private JButton calculateButton = new JButton("Calculate path");
   	private JButton followButton = new JButton("Follow Path");
   	
-  	private JPanel logPanel = new JPanel();
-  	private JTextArea logArea = new JTextArea(35,23);
+  	private JTextArea logArea = new JTextArea(35,35);
   	private JScrollPane log = new JScrollPane(logArea); 
   	private JButton clearButton = new JButton("Clear log");
   
@@ -59,17 +59,22 @@ public class PathTest extends NavigationPanel {
   	 */
   	@Override
   	protected void buildGUI() {
+  		title = "Path Test";
+  		description = "PathTest demonstrates using a four-way mesh to find\n" +
+  		              "a path from the robot's starting point to a target";
+  		
   		// Set the map size and suppress unwanted panels
   		mapPaneSize = MAP_SIZE;
   		showReadingsPanel = false;
 	    showLastMovePanel = false;
 	    showParticlePanel = false;
-	    
 	    showMoves = true;
+	    showZoomLabels = true;
+	    initialViewStart = INITIAL_VIEW_START;
 	    
 	    super.buildGUI();
 	    
-	    slider.setValue(INITIAL_ZOOM);
+	    zoomSlider.setValue(INITIAL_ZOOM);
 	    
   		// Set the map color
   		mapPanel.colors[MapPanel.MAP_COLOR_INDEX] = Color.DARK_GRAY;
@@ -79,7 +84,7 @@ public class PathTest extends NavigationPanel {
 		commandPanel.add(followButton);
 		
 		// Display mesh
-		meshCheck.setSelected(true);
+		showMesh = true;
 		
 		calculateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -105,26 +110,20 @@ public class PathTest extends NavigationPanel {
 		log.setBorder(BorderFactory.createTitledBorder("Log"));
 		logPanel.add(log);
 		logPanel.add(clearButton);
-		logPanel.setPreferredSize(new Dimension(280,650));
+		logPanel.setPreferredSize(new Dimension(400,650));
 		add(logPanel);
+		
+		createMenu();
   	}
   
   	/**
   	 * Pop-up context menu
   	 */
   	@Override
-	protected void popupMenu(MouseEvent me) {
-	    Point pt = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), this);
-	    JPopupMenu menu = new JPopupMenu();
-	    
-	    boolean inside = model.getMap().inside(new lejos.geom.Point((me.getX() / pixelsPerUnit + mapPanel.viewStart.x) , (mapPanel.getHeight() - me.getY())/ pixelsPerUnit + mapPanel.viewStart.y));  
-	    if (!inside) return;
-	    
+	protected void popupMenuItems(Point p, JPopupMenu menu) { 
 	    // Include set pose and set target menu items
-	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_POSE, "Set pose",me.getPoint(),model, this));
-	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_TARGET, "Set target",me.getPoint(),model, this));
-	
-	    menu.show(this, pt.x, pt.y);
+	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_POSE, "Set pose", p , model, this));
+	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_TARGET, "Set target", p, model, this));;
 	}
   	
   	@Override
@@ -153,8 +152,8 @@ public class PathTest extends NavigationPanel {
 	public void run() throws Exception {
 		model.setDebug(true);
 		model.loadMap(MAP_FILE);
-		model.setMeshParams(GRID_SPACE, CLEARANCE);
+		model.setMeshParams(MESH_SPACE, CLEARANCE);
 	
-		openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, FRAME_TITLE, Color.white);
+		openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, FRAME_TITLE, Color.white, menuBar);
 	}
 }

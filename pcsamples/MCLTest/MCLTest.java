@@ -37,10 +37,12 @@ import lejos.robotics.localization.*;
 public class MCLTest extends NavigationPanel {
 	private static final long serialVersionUID = 1L;
 
-	// GUI Window size
 	private static final int FRAME_WIDTH = 1000;
 	private static final int FRAME_HEIGHT = 800;
 	private static final int NUM_PARTICLES = 200;
+	private static final String TITLE = "MCL Test";
+	private static final int INITIAL_ZOOM = 150;
+	private static final Point INITIAL_VIEW_START = new Point(-150,-30);
 
 	private static final JButton randomButton = new JButton("Random move");
 	private static final JButton getPoseButton = new JButton("Get Pose");
@@ -65,6 +67,10 @@ public class MCLTest extends NavigationPanel {
   	 */
   	@Override
   	protected void buildGUI() {
+  		title = TITLE;
+  		description = "MCLTest shows the Monte Carlo Localization\n" +
+  		              "algorithm in action";
+  		
   		// All panels required
 	    super.buildGUI();
 	    
@@ -99,22 +105,18 @@ public class MCLTest extends NavigationPanel {
 				model.getRemoteParticles();
 			}
 		});
+		
+		mapPanel.setToolTipText("");
+		createMenu();
   	}
   
   	/**
   	 * Called when the mouse is clicked in the map area
   	 */
   	@Override
-	protected void popupMenu(MouseEvent me) {
-  		// Calculate the screen point and create the pop-up the context menu
-	    Point pt = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), this);
-	    JPopupMenu menu = new JPopupMenu(); 
-	    
+	protected void popupMenuItems(Point p, JPopupMenu menu) { 
 	    // Get details of the particle closest to the mouse click
-	    menu.add(new MenuAction(NavEvent.FIND_CLOSEST, "Find Closest", me.getPoint(), model, this));
-	    
-	    // Show the context menu 
-	    menu.show(this, pt.x, pt.y);
+	    menu.add(new MenuAction(NavEvent.FIND_CLOSEST, "Particle Readings", p, model, this));
 	}
 	
 	/**
@@ -136,6 +138,8 @@ public class MCLTest extends NavigationPanel {
 		model.setDebug(true);
 		// Load the map and generate the particles and sends both to the NXT
 		model.loadMap(mapFileName);
+		zoomSlider.setValue(INITIAL_ZOOM);
+		mapPanel.viewStart = INITIAL_VIEW_START;
 		model.generateParticles();
 		
 		// Enable buttons
@@ -154,6 +158,6 @@ public class MCLTest extends NavigationPanel {
 		model.setMCL(mcl);
 		
 		// Open the MCLTest navigation panel in a JFrame window
-	    openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, "MCL Test", Color.white);
+	    openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, TITLE, Color.white, menuBar);
 	}
 }
