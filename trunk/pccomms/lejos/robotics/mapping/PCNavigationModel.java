@@ -352,7 +352,7 @@ public class PCNavigationModel extends NavigationModel {
 		if (!connected) return;
 		try {
 			synchronized(receiver) {
-				dos.writeByte(NavEvent.ROTATE.ordinal());
+				dos.writeByte(NavEvent.ARC.ordinal());
 				dos.writeFloat(radius);
 				dos.writeFloat(angle);
 				dos.flush();

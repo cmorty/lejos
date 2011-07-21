@@ -26,6 +26,7 @@ public class MapPanel extends JPanel {
 	protected static final Color MOVE_COLOR = Color.PINK;
 	protected static final Color FEATURE_COLOR = Color.CYAN;
 	protected static final Color WAYPOINT_COLOR = Color.BLUE;
+	protected static final Color ROBOT_COLOR = Color.RED;
 	
 	protected static final float ARROW_LENGTH = 10f;
 	protected static final int ROBOT_SIZE = 4;
@@ -41,7 +42,7 @@ public class MapPanel extends JPanel {
 			                    GRID_COLOR, ESTIMATE_COLOR, CLOSEST_COLOR,
 			                    MESH_COLOR, NEIGHBOR_COLOR, TARGET_COLOR,
 			                    PATH_COLOR, MOVE_COLOR, FEATURE_COLOR,
-			                    WAYPOINT_COLOR};
+			                    WAYPOINT_COLOR, ROBOT_COLOR};
 	
 	public static final int MAP_COLOR_INDEX = 0;
 	public static final int PARTICLE_COLOR_INDEX = 1;
@@ -56,6 +57,7 @@ public class MapPanel extends JPanel {
 	public static final int MOVE_COLOR_INDEX = 10;
 	public static final int FEATURE_COLOR_INDEX = 11;
 	public static final int WAYPOINT_COLOR_INDEX = 12;
+	public static final int ROBOT_COLOR_INDEX = 13;
 	
 	// The maximum size of a cluster of particles for a located robot (in cm)
 	protected static final int MAX_CLUSTER_SIZE = 50;
@@ -156,7 +158,7 @@ public class MapPanel extends JPanel {
 	protected void paintRobot(Graphics2D g2d) {
 		MCLPoseProvider mcl = model.getMCL();
 		if (mcl == null) {
-			g2d.setColor(colors[PARTICLE_COLOR_INDEX]);
+			g2d.setColor(colors[ROBOT_COLOR_INDEX]);
 			paintPose(g2d, model.getRobotPose());
 		} else {
 			//parent.log("Checking estimate");

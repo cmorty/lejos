@@ -65,12 +65,16 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected String description = "";
 	
 	protected JMenuBar menuBar = new JMenuBar();
-	protected JMenu fileMenu, aboutMenu, mapMenu, viewMenu;
-	protected JMenuItem exit, about, clear, repaint, reset, open, save;
+	protected JMenu fileMenu, aboutMenu, mapMenu, viewMenu, colorMenu;;
+	protected JMenuItem exit, about, clear, repaint, reset, open, save, gridColor, robotColor,
+						mapColor, particleColor, meshColor, targetColor, waypointColor,
+						pathColor, moveColor, featureColor, backgroundColor, estimateColor, closestColor;
 	protected JCheckBoxMenuItem viewGrid, viewMousePosition, viewControls,
 	                          viewConnect, viewCommands, viewMesh, viewLog,
 	                          viewLastMove, viewParticle;
 	protected JFileChooser chooser = new JFileChooser();
+	protected EventPanel eventPanel = new EventPanel(model, this,  null);
+	protected JColorChooser colorChooser = new JColorChooser();
 	
 	/**
 	 * Build the various panels if they are required.
@@ -237,6 +241,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		open.addActionListener(this);
 		save = new JMenuItem("Save ...");
 		fileMenu.add(save);
+		fileMenu.addSeparator();
 		save.addActionListener(this);
 		exit = new JMenuItem("Exit");
 		fileMenu.add(exit);
@@ -294,6 +299,47 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		reset = new JMenuItem("Reset");
 		reset.addActionListener(this);
 		mapMenu.add(reset);
+		colorMenu = new JMenu("Colors");
+		mapMenu.add(colorMenu);
+		gridColor = new JMenuItem("Grid");
+		gridColor.addActionListener(this);
+		colorMenu.add(gridColor);
+		robotColor = new JMenuItem("Robot");
+		robotColor.addActionListener(this);
+		colorMenu.add(robotColor);
+		mapColor = new JMenuItem("Map");
+		mapColor.addActionListener(this);
+		colorMenu.add(mapColor);
+		particleColor = new JMenuItem("Particle");
+		particleColor.addActionListener(this);
+		colorMenu.add(particleColor);
+		meshColor = new JMenuItem("Mesh");
+		meshColor.addActionListener(this);
+		colorMenu.add(meshColor);
+		targetColor = new JMenuItem("Target");
+		targetColor.addActionListener(this);
+		colorMenu.add(targetColor);
+		waypointColor = new JMenuItem("Waypoint");
+		waypointColor.addActionListener(this);
+		colorMenu.add(waypointColor);
+		pathColor = new JMenuItem("Path");
+		pathColor.addActionListener(this);
+		colorMenu.add(pathColor);
+		moveColor = new JMenuItem("Move");
+		moveColor.addActionListener(this);
+		colorMenu.add(moveColor);
+		featureColor = new JMenuItem("Feature");
+		featureColor.addActionListener(this);
+		colorMenu.add(featureColor);
+		backgroundColor = new JMenuItem("Background");
+		backgroundColor.addActionListener(this);
+		colorMenu.add(backgroundColor);
+		closestColor = new JMenuItem("Closest");
+		closestColor.addActionListener(this);
+		colorMenu.add(closestColor);
+		estimateColor = new JMenuItem("Estimate");
+		estimateColor.addActionListener(this);
+		colorMenu.add(estimateColor);
 	}
 	
 	/**
@@ -545,6 +591,35 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		} else if (e.getSource() == clear) {
 			model.clear();
 			repaint();
+		} else if (e.getSource() == gridColor) {
+			chooseColor("Grid", MapPanel.GRID_COLOR_INDEX);
+		} else if (e.getSource() == robotColor) {
+			chooseColor("Robot", MapPanel.ROBOT_COLOR_INDEX);
+		} else if (e.getSource() == mapColor) {
+			chooseColor("Map", MapPanel.MAP_COLOR_INDEX);
+		} else if (e.getSource() == featureColor) {
+			chooseColor("Feature", MapPanel.FEATURE_COLOR_INDEX);
+		} else if (e.getSource() == pathColor) {
+			chooseColor("Path", MapPanel.PATH_COLOR_INDEX);
+		} else if (e.getSource() == moveColor) {
+			chooseColor("Move", MapPanel.MOVE_COLOR_INDEX);
+		} else if (e.getSource() == targetColor) {
+			chooseColor("Target", MapPanel.TARGET_COLOR_INDEX);
+		} else if (e.getSource() == particleColor) {
+			chooseColor("Particle", MapPanel.PARTICLE_COLOR_INDEX);
+		} else if (e.getSource() == waypointColor) {
+			chooseColor("Waypoint", MapPanel.WAYPOINT_COLOR_INDEX);
+		} else if (e.getSource() == backgroundColor) {
+			chooseColor("Background", MapPanel.BACKGROUND_COLOR_INDEX);
+			mapPanel.setBackground(mapPanel.colors[MapPanel.BACKGROUND_COLOR_INDEX]);
+		} else if (e.getSource() == closestColor) {
+			chooseColor("Closest", MapPanel.CLOSEST_COLOR_INDEX);
+		} else if (e.getSource() == estimateColor) {
+			chooseColor("Estimate", MapPanel.ESTIMATE_COLOR_INDEX);
+		} else if (e.getSource() == meshColor) {
+			chooseColor("Mesh", MapPanel.MESH_COLOR_INDEX);
+			mapPanel.colors[MapPanel.NEIGHBOR_COLOR_INDEX] = mapPanel.colors[MapPanel.MESH_COLOR_INDEX];
+			repaint();
 		} else if (e.getSource() == repaint) {
 			repaint();
 		} else if (e.getSource() == reset) {
@@ -570,5 +645,14 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		}  else if (e.getSource() == viewConnect) {
 			connectPanel.setVisible(viewConnect.isSelected());
 		}
+	}
+	
+	private void chooseColor(String name, int index) {
+		Color newColor = JColorChooser.showDialog(
+                this,
+                "Choose " + name + " Color",
+                mapPanel.colors[index]);
+		mapPanel.colors[index] = newColor;
+		repaint();
 	}
 }
