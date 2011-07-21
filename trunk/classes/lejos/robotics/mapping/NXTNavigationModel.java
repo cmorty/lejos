@@ -327,37 +327,86 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							if (navigator != null) navigator.clearPath();
 							break;
 						case RANDOM_MOVE: // Request to make a random move
-							if (pilot != null && pilot instanceof RotateMoveController) {
-							    angle = (float) Math.random() * 360;
-							    distance = (float) Math.random() * maxDistance;
-							    
-							    if (angle > 180f) angle -= 360f;
-		
-							    float forwardRange;
-							    // Get forward range
-							    try {
-							    	forwardRange = readings.getRange(0f); // Range for angle 0 (forward)
-							    } catch (Exception e) {
-							    	forwardRange = 0;
-							    }
-							    
-							    // Don't move forward if we are near a wall
-							    if (forwardRange < 0
-							        || distance + border + projection < forwardRange)
-							      pilot.travel(distance);
-							    
-							    ((RotateMoveController) pilot).rotate(angle);
-							    if (debug) log("Random moved done");
-							}
+							randomMove();
 							break;
+						case LOCALIZE:
+							localize();
+							break;
+						case EXIT:
+							System.exit(0);
 						}
 					}
 				} catch (IOException ioe) {
 					fatal("IOException in receiver:");
 				}
-			}
-			
+			}		
 		}
+		
+		private void randomMove() {
+			if (pilot != null && pilot instanceof RotateMoveController) {
+			    float angle = (float) Math.random() * 360;
+			    float distance = (float) Math.random() * maxDistance;
+			    readings = mcl.getReadings();
+			    
+			    if (angle > 180f) angle -= 360f;
+
+			    float forwardRange;
+			    // Get forward range
+			    try {
+			    	forwardRange = readings.getRange(0f); // Range for angle 0 (forward)
+			    } catch (Exception e) {
+			    	forwardRange = 0;
+			    }
+			    
+			    // Don't move forward if we are near a wall
+			    if (forwardRange < 0
+			        || distance + border + projection < forwardRange)
+			      pilot.travel(distance);
+			    
+			    ((RotateMoveController) pilot).rotate(angle);
+			    if (debug) log("Random moved done");
+			}			
+		}
+		
+		private void localize() {
+			boolean saveSendMoveStart = sendMoveStart;
+			boolean saveSendMoveStop = sendMoveStop;
+			sendMoveStart = false;
+			sendMoveStop = false;
+			while (true) {
+				try {
+					mcl.getPose();
+					dos.writeByte(NavEvent.PARTICLE_SET.ordinal());
+					particles.dumpObject(dos);
+					readings = mcl.getReadings();
+					dos.writeByte(NavEvent.RANGE_READINGS.ordinal());
+					readings.dumpObject(dos);
+					if (goodEstimate()) {
+						// Send the estimate to the PC
+						dos.writeByte(NavEvent.ESTIMATED_POSE.ordinal());
+						mcl.dumpObject(dos);
+						dos.writeByte(NavEvent.LOCATED.ordinal());
+						dos.flush();
+						break;
+					}
+					randomMove();
+					dos.writeByte(NavEvent.PARTICLE_SET.ordinal());
+					particles.dumpObject(dos);
+				} catch (IOException ioe) {
+					fatal("IOException in localize");
+				}
+			}
+			sendMoveStart = saveSendMoveStart;
+			sendMoveStop = saveSendMoveStop;
+		}
+		
+		private   boolean goodEstimate() {
+		    //float sx = mcl.getSigmaX();
+		    //float sy = mcl.getSigmaY();
+		    float xr = mcl.getXRange();
+		    float yr = mcl.getYRange();
+		    return xr < 50 && yr < 50 ;
+		  }
 		
 		// Calculate the angle for ROTATE_TO
 		private int angleTo(float angle) {
