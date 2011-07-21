@@ -45,9 +45,8 @@ public class NavTest extends NavigationPanel {
 	    mapPaneSize = MAP_AREA_SIZE;
 	    initialViewStart = INITIAL_VIEW_START;
 	    
-	    createConnectPanel();
 	    createControlPanel();
-	    createMousePanel();
+	    //createMousePanel();
 	    
 	    add(eventPanel);
 	    createMapPanel();
