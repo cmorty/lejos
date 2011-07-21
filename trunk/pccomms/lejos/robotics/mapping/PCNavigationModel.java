@@ -501,6 +501,21 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	/**
+	 * Tell the NXT to keep making random moves until the robot is localized
+	 */
+	public void localize() {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.LOCALIZE.ordinal());
+				dos.flush();
+			}
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in localize");
+		}
+	}
+	
+	/**
 	 * Send a TAKE_READINGS event to the NXT
 	 */
 	public void takeReadings() {
