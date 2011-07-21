@@ -215,6 +215,8 @@ public class LogChartFrame extends JFrame {
                 if (i<this.seriesDefs.length-1) sb.append("\t");
                 if (this.seriesDefs[i].chartable) {
                     chartLabels.append(this.seriesDefs[i].name);
+                    chartLabels.append(":");
+                    chartLabels.append(this.seriesDefs[i].axisID);
                     chartLabels.append("!");
                 }
             }
@@ -445,11 +447,11 @@ public class LogChartFrame extends JFrame {
         float value=0, value2=0;
         int x=0;
         
-        loggerHook.logFieldNamesChanged(new String[]{"System_ms!n!1","Sine!Y!1","Random!y!1"}); //,"c4","c5","c6","c7","c8","c9","c10"});
+        loggerHook.logFieldNamesChanged(new String[]{"System_ms!n!1","Sine!Y!1","Cosine!y!2"}); 
         for (int i = 0; i < 10000; i++) {
-            if (i%40==0) value2=(float)(Math.random()*5-2.5);
+            //if (i%40==0) value2=(float)(Math.random()*5-2.5);
             if (i % 10 == 0) {
-                loggerHook.logLineAvailable(String.format("%1$-1d\t%2$-13.4f\t%3$-13.4f\n", x, Math.sin(value), value2));
+                loggerHook.logLineAvailable(String.format("%1$-1d\t%2$-13.4f\t%3$-13.4f\n", x, Math.sin(value), Math.cos(value)*10000-5000));
                 x += 10;
                 value += .1f;
             }
