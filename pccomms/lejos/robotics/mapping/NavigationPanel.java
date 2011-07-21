@@ -42,7 +42,6 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected JLabel yLabel = new JLabel("Y:");
 	protected JTextField yField = new JTextField(4);
 	protected JPanel controlPanel = new JPanel();
-	protected JLabel zoomLabel = new JLabel("Zoom:");
 	protected JSlider zoomSlider;
 	protected JLabel nxtLabel = new JLabel("NXT name:");
 	protected JTextField nxtName = new JTextField(10);
@@ -51,7 +50,8 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	                  showControlPanel = true, showCommandPanel = true,
 	                  showReadingsPanel = true, showLastMovePanel = true,
 	                  showParticlePanel = true, showMoves = false,
-	                  showMesh = false, showGrid = true, showLog = false;
+	                  showMesh = false, showGrid = true, showLog = false,
+	                  showParticles = false;
 	protected JPanel readingsPanel = new JPanel();
 	protected JTextField readingsField = new JTextField(12);
 	protected JPanel lastMovePanel = new JPanel();
@@ -65,13 +65,14 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected String description = "";
 	
 	protected JMenuBar menuBar = new JMenuBar();
-	protected JMenu fileMenu, aboutMenu, mapMenu, viewMenu, colorMenu;;
-	protected JMenuItem exit, about, clear, repaint, reset, open, save, gridColor, robotColor,
+	protected JMenu fileMenu, aboutMenu, mapMenu, viewMenu, colorMenu, commandsMenu;
+	protected JMenuItem exit, about, clear, repaint, reset, open, save, connect, gridColor, robotColor,
 						mapColor, particleColor, meshColor, targetColor, waypointColor,
-						pathColor, moveColor, featureColor, backgroundColor, estimateColor, closestColor;
+						pathColor, moveColor, featureColor, backgroundColor, estimateColor, closestColor,
+						getPose, randomMove, localize, stop;
 	protected JCheckBoxMenuItem viewGrid, viewMousePosition, viewControls,
 	                          viewConnect, viewCommands, viewMesh, viewLog,
-	                          viewLastMove, viewParticle;
+	                          viewLastMove, viewParticlePanel, viewParticles;
 	protected JFileChooser chooser = new JFileChooser();
 	protected EventPanel eventPanel = new EventPanel(model, this,  null);
 	protected JColorChooser colorChooser = new JColorChooser();
@@ -128,10 +129,8 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	 */
 	protected void createControlPanel() {
 		if (showControlPanel) {
-			controlPanel.setBorder(BorderFactory.createTitledBorder("GUI Controls"));
+			controlPanel.setBorder(BorderFactory.createTitledBorder("Zoom"));
 			add(controlPanel);
-			
-			controlPanel.add(zoomLabel);
 			
 			zoomSlider = new JSlider(SwingConstants.HORIZONTAL,minZoom,maxZoom,minZoom);
 			zoomSlider.setValue(zoomInitialValue);
@@ -226,6 +225,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		createFileMenu();
 		createViewMenu();
 		createMapMenu();
+		createCommandMenu();
 		createAboutMenu();
 		//createHelpMenu();
 	}
@@ -243,6 +243,9 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		fileMenu.add(save);
 		fileMenu.addSeparator();
 		save.addActionListener(this);
+		connect = new JMenuItem("Connect ...");
+		fileMenu.add(connect);
+		connect.addActionListener(this);
 		exit = new JMenuItem("Exit");
 		fileMenu.add(exit);
 		exit.addActionListener(this);
@@ -282,6 +285,14 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		viewCommands.setSelected(showCommandPanel);
 		viewCommands.addActionListener(this);
 		viewMenu.add(viewCommands);
+		viewCommands = new JCheckBoxMenuItem("Commands");
+		viewCommands.setSelected(showCommandPanel);
+		viewCommands.addActionListener(this);
+		viewMenu.add(viewCommands);
+		viewParticles = new JCheckBoxMenuItem("Particles");
+		viewParticles.setSelected(showParticles);
+		viewParticles.addActionListener(this);
+		viewMenu.add(viewParticles);
 	}
 	
 	/**
@@ -340,6 +351,26 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		estimateColor = new JMenuItem("Estimate");
 		estimateColor.addActionListener(this);
 		colorMenu.add(estimateColor);
+	}
+	
+	/**
+	 * Create the Commands menu
+	 */
+	protected void createCommandMenu() {
+		commandsMenu = new JMenu("Commands");
+		menuBar.add(commandsMenu);
+		getPose = new JMenuItem("Get Pose");
+		commandsMenu.add(getPose);
+		getPose.addActionListener(this);
+		randomMove = new JMenuItem("Random Move");
+		commandsMenu.add(randomMove);
+		randomMove.addActionListener(this);
+		localize = new JMenuItem("Localize");
+		commandsMenu.add(localize);
+		localize.addActionListener(this);
+		stop = new JMenuItem("Stop");
+		commandsMenu.add(stop);
+		stop.addActionListener(this);
 	}
 	
 	/**
@@ -591,6 +622,16 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		} else if (e.getSource() == clear) {
 			model.clear();
 			repaint();
+		} else if (e.getSource() == connect) {
+			String nxtName = (String)JOptionPane.showInputDialog(
+                    this,
+                    "Name:",
+                    "Connect to NXT", 
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    null,
+                    "");
+			if (nxtName != null) model.connect(nxtName);
 		} else if (e.getSource() == gridColor) {
 			chooseColor("Grid", MapPanel.GRID_COLOR_INDEX);
 		} else if (e.getSource() == robotColor) {
@@ -644,6 +685,14 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 			commandPanel.setVisible(viewCommands.isSelected());
 		}  else if (e.getSource() == viewConnect) {
 			connectPanel.setVisible(viewConnect.isSelected());
+		} else if (e.getSource() == getPose) {
+			model.getRobotPose();
+		} else if (e.getSource() == randomMove) {
+			model.randomMove();
+		} else if (e.getSource() == localize) {
+			model.localize();
+		} else if (e.getSource() == stop) {
+			model.stop();
 		}
 	}
 	
