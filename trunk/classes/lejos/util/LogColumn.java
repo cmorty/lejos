@@ -50,15 +50,16 @@ public class LogColumn {
         this.chartable=chartable;
     }
     
-    /** throws unchecked IllegalArgumentException if bad datatype val
+    /** throws unchecked IllegalArgumentException if bad datatype val or <code>rangeAxisID</code> is not in within 1-4.
      * @param name The label/name of the column/series
      * @param datatype The datatype of of the column/series
      * @param chartable <code>true</code> to chart the data, <code>false</code> to only log it.
-     * @param rangeAxisID Range axis ID 1-4. 1 is default. NOT IMPLEMENTED YET AS OF 6/27/11
+     * @param rangeAxisID Range axis ID 1-4
      * @see #setDatatype
      */
     public LogColumn(String name, int datatype, boolean chartable, int rangeAxisID) {
         this(name, datatype, chartable);
+        if (rangeAxisID<1 || rangeAxisID>4) throw new IllegalArgumentException("Invalid rangeAxisID " + rangeAxisID);
         this.rangeAxisID=rangeAxisID;
     }
     

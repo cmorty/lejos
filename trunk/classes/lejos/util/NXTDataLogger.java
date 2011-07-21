@@ -709,6 +709,7 @@ public class NXTDataLogger implements Logger{
         if (columnDefs.length>255) return;
         if (this.setColumnsCount>1&&logmodeState==LMSTATE_CACHE) throw new UnsupportedOperationException("already called");
         LogColumn[] tempColumnDefs = new LogColumn[columnDefs.length+1];
+        // set default ms domain column
         tempColumnDefs[0] = new LogColumn("milliseconds", LogColumn.DT_INTEGER, true, 1);
         System.arraycopy(columnDefs, 0, tempColumnDefs, 1, columnDefs.length);
         this.columnDefs = tempColumnDefs;
