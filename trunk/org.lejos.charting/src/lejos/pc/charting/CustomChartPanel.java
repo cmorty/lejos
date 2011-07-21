@@ -228,14 +228,18 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         loggingChartPanel.addDataPoints(seriesData);
     }
     
-    /** Set the passed series/header names as a new <code>XYseries</code> in the dataset. Existing series are wiped. Must be at least two items
-     * in the array or any existing series is left intact and method exits with 0. First item is set as domain (X axis) label and should
-     * be representative as system time in milliseconds.
-     * 
-     * @param seriesNames Array of series names
-     * @return The number of series created
-     * @see #addDataPoints
-     */
+
+     /** Set the passed series/header definitions as new XYseries in the dataset. Existing series are wiped. Must be at least two items
+      * in the array or any existing series is left intact and method exits with 0. First item (series 0) is set as domain label and should
+      * be system time in milliseconds, and is always axis 0 for multi-axis charts.
+      * <p>
+      *  The string format/structure of each string field is:<br>
+      *  <code>[name]:[axis ID 1-4]</code>
+      *  <br>i.e. <pre>"MySeries:1"</pre>
+      * @param seriesNames Array of series names
+      * @return The number of series created
+      * @see #addDataPoints
+      */
     int setSeries(String[] seriesNames){
     // TODO change to not specify timestamp and do timestamp automatically
         return loggingChartPanel.setSeries(seriesNames);

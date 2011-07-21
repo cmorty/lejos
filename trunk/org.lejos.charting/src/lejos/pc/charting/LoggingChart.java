@@ -24,6 +24,8 @@ import lejos.util.Delay;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.LegendItem;
+import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
@@ -33,12 +35,16 @@ import org.jfree.chart.event.PlotChangeEvent;
 import org.jfree.chart.event.PlotChangeListener;
 import org.jfree.chart.event.RendererChangeEvent;
 import org.jfree.chart.event.RendererChangeListener;
+import org.jfree.chart.labels.StandardXYSeriesLabelGenerator;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.Range;
+import org.jfree.data.time.Minute;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
@@ -52,14 +58,20 @@ public class LoggingChart extends ChartPanel{
     private final String THISCLASS;
     private final float DOMAIN_SIZE_MULT=1.01f; // provides a small gap between series and chart right,left edges on domain axis
     
-    private JFreeChart theChart; // TODO Needed as inst var?
     private Range domainRange;
-    private XYSeriesCollection dataset;
-    private NumberAxis domainAxis;
-    private NumberAxis rangeAxis;
+    private XYSeriesCollection[] dataset = new XYSeriesCollection[4];
+//    private NumberAxis domainAxis;
+    private NumberAxis[] rangeAxis = new NumberAxis[4];
     private int refreshFrequency_ms=100; // used by update thread 
     private boolean chartDirty = false; // used by update thread to flag an event notification for repaints
     private double domainWidth=10000; // milli seconds defining how big to initially  make the domain scale (for sliding it)
+    private SeriesDef[] seriesDefs; 
+    
+    private class SeriesDef {
+        String label;
+        int axisIndex;
+        int seriesIndex;
+    }
     
     public LoggingChart() {
         super(null);
@@ -79,10 +91,9 @@ public class LoggingChart extends ChartPanel{
             public void run() {
                 while (true) {
                     doWait(refreshFrequency_ms);
-                    if (chartDirty && theChart!=null) {
-                        theChart.setNotify(true);
-                        //_JFChartPrimary.fireChartChanged();
-                        theChart.setNotify(false);
+                    if (chartDirty && LoggingChart.this.getChart()!=null) {
+                        LoggingChart.this.getChart().setNotify(true);
+                        LoggingChart.this.getChart().setNotify(false);
                         chartDirty=false;
                     }
                 }
@@ -100,7 +111,7 @@ public class LoggingChart extends ChartPanel{
         setMouseListener();
         setAxisChangeListener();
     }
-   
+    
     // z..z..z..z..z..z...z...
     private void doWait(long milliseconds) {
          try {
@@ -114,6 +125,7 @@ public class LoggingChart extends ChartPanel{
     private void jbInit() throws Exception {
         setLayout(null);
         setChart(getBaselineChart());
+        
         setVisible(true);
         getChart().setNotify(true);
     }
@@ -135,97 +147,262 @@ public class LoggingChart extends ChartPanel{
 //    private JFreeChart getBlankChart(Plot plot){
 //        return new JFreeChart(null, new Font("Arial", Font.PLAIN, 12), plot, true);
 //    }
+    private NumberAxis getRangeAxis(int index) {
+        if (this.rangeAxis[index-1]!=null) {
+            return this.rangeAxis[index-1];
+        }
+        
+        // create if doesn't exist
+        NumberAxis rangeAxis;
+        Color axisColor=getAxisColor(index);
+        String axisLabel="Range";
+        if (index>1) axisLabel+="-" + index;
+        rangeAxis=new NumberAxis(axisLabel);
+        rangeAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 9));
+        rangeAxis.setLabelFont(new Font("Arial", Font.PLAIN, 12));
+        rangeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
+        rangeAxis.setAutoRange(true);
+        rangeAxis.setAutoRangeIncludesZero(false);
+        
+        // set colors
+        rangeAxis.setLabelPaint(axisColor);
+        rangeAxis.setAxisLinePaint(axisColor);
+        rangeAxis.setLabelPaint(axisColor);
+        rangeAxis.setTickLabelPaint(axisColor);
+        rangeAxis.setTickMarkPaint(axisColor);
 
-    private JFreeChart getBaselineChart(){
-        // create dataset
-        this.dataset = new XYSeriesCollection();
+        this.rangeAxis[index-1]=rangeAxis;
         
+        return rangeAxis;
+    }
+    
+    private Color getAxisColor(int index) {
+        switch(index) {
+            case 1:
+                return Color.BLACK;
+            case 2:
+                return Color.MAGENTA.darker();
+            case 3:
+                return Color.BLUE;
+            case 4:
+                return Color.RED;
+            
+        }
+        return Color.BLACK;
+    }
+    private Color getSeriesColor(int index){
+        index++;
+        if (index>11) index=index%11;
+//        System.out.println("index="+index);
+        switch(index) {
+            case 1:
+                return Color.BLUE.brighter().brighter();
+            case 2:
+                return Color.RED.brighter();
+            case 3:
+                return Color.GREEN.darker();
+            case 4:
+                return Color.CYAN.darker();
+            case 5:
+                return Color.BLUE;
+            case 6:
+                return Color.DARK_GRAY;
+            case 7:
+                return Color.MAGENTA;
+            case 8:
+                return Color.CYAN;
+            case 9:
+                return Color.YELLOW.darker();
+            case 10:
+                return Color.GREEN;
+            case 11:
+                return Color.RED.darker();
+        }
+        return Color.LIGHT_GRAY;
+    }
+    
+    private NumberAxis getDomainAxis() {
+        NumberAxis domainAxis;
         // set the domain axis
-        this.domainAxis = new NumberAxis("Time (ms)");
-        this.domainAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 9));
-        this.domainAxis.setLabelFont(new Font("Arial", Font.PLAIN, 12));
-        this.domainAxis.setLowerMargin(0.0);
-        this.domainAxis.setUpperMargin(0.0);
-        this.domainAxis.setTickLabelsVisible(true);
-        this.domainAxis.setAutoRange(true); 
+        domainAxis = new NumberAxis("Time (ms)");
+        domainAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 9));
+        domainAxis.setLabelFont(new Font("Arial", Font.PLAIN, 12));
+        domainAxis.setLowerMargin(0.0);
+        domainAxis.setUpperMargin(0.0);
+        domainAxis.setTickLabelsVisible(true);
+        domainAxis.setAutoRange(true); 
         this.domainRange = new Range(0, domainWidth);
-        this.domainAxis.setRange(this.domainRange);
-        this.domainAxis.setAutoRangeIncludesZero(false);
+        domainAxis.setRange(this.domainRange);
+        domainAxis.setAutoRangeIncludesZero(false);
         
-        // set the value axis
-        this.rangeAxis = new NumberAxis("Range");
-        this.rangeAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 9));
-        this.rangeAxis.setLabelFont(new Font("Arial", Font.PLAIN, 12));
-        this.rangeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
-        this.rangeAxis.setAutoRange(true);
-        this.rangeAxis.setAutoRangeIncludesZero(false);
-        
-        // set the renderer
-        XYItemRenderer renderer = new XYLineAndShapeRenderer(true, false);
-        renderer.setBaseStroke(new BasicStroke(2f, BasicStroke.CAP_BUTT,  BasicStroke.JOIN_BEVEL));
-//        renderer.setSeriesStroke(0,new BasicStroke(2.0f, BasicStroke.CAP_BUTT,  BasicStroke.JOIN_BEVEL, 1f, new float[] { 10.0f, 4.0f, 1.0f, 4.0f }, 5f));
-        renderer.setSeriesStroke(0,new BasicStroke(1.0f, BasicStroke.CAP_BUTT,  BasicStroke.JOIN_BEVEL));
-        renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        
+        return domainAxis;
+    }
+    
+    private JFreeChart getBaselineChart(){
         // create the plot object to pass to the chart
-        XYPlot plot = new XYPlot(this.dataset, this.domainAxis, this.rangeAxis, renderer);
+        XYPlot plot = new XYPlot(); //this.dataset[0], domainAxis, getRangeAxis(1), renderer);
         plot.setBackgroundPaint(Color.lightGray);
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
         plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+        plot.setDomainAxis(getDomainAxis());
         plot.setDomainPannable(true);
         plot.setDomainCrosshairVisible(true);
-        plot.setRangeCrosshairVisible(true);
         plot.setRangePannable(true);
-            
+        
+        plot.setDataset(new XYSeriesCollection());
+        
         // create and return the chart        
-        JFreeChart chart = new JFreeChart("", new Font("Arial", Font.BOLD, 14), plot, true);
+        JFreeChart chart = new JFreeChart("", new Font("Arial", Font.BOLD, 14), plot, true);       
         
         chart.setBackgroundPaint(Color.white);
         chart.getLegend().setPosition(RectangleEdge.RIGHT); 
         chart.getLegend().setItemFont(new Font("Arial", Font.PLAIN, 10));
+        
         //this.setHorizontalAxisTrace(true);
         this.setMouseWheelEnabled(true);
         
         return chart;
     }
 
-
+    // axisIndex is one-based
+    private XYSeriesCollection getAxisDataset(int axisIndex){
+        if (this.dataset[axisIndex-1]!=null) {
+            //System.out.println("getAxisDataset found axisIndex " + axisIndex);
+            return this.dataset[axisIndex-1];
+        }
+        
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        
+        // set the renderer
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        renderer.setBaseStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT,  BasicStroke.JOIN_BEVEL)); 
+        renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        renderer.setBaseLegendTextPaint(getAxisColor(axisIndex));
+        renderer.setBaseShapesVisible(false);
+        renderer.clearSeriesPaints(true);
+        renderer.setAutoPopulateSeriesPaint(false);
+        
+//        System.out.println(getChart().getXYPlot());
+        getChart().getXYPlot().setDataset(axisIndex-1, dataset);
+        getChart().getXYPlot().setRenderer(axisIndex-1, renderer);
+        // get the one-based axis def
+        getChart().getXYPlot().setRangeAxis(axisIndex-1, getRangeAxis(axisIndex));
+        AxisLocation axloc;
+        if (axisIndex%2==0) {
+            // even on right
+            axloc=AxisLocation.BOTTOM_OR_RIGHT; 
+        } else {
+            axloc=AxisLocation.BOTTOM_OR_LEFT;
+        }
+        getChart().getXYPlot().setRangeAxisLocation(axisIndex-1, axloc);
+        getChart().getXYPlot().mapDatasetToRangeAxis(axisIndex-1, axisIndex-1);
+        getChart().getXYPlot().getRangeAxis(axisIndex-1).setAutoRange(true);
+        getChart().getXYPlot().setRangeCrosshairVisible(true);
+        
+        this.dataset[axisIndex-1]=dataset;
+        return dataset; 
+    }
+    
+    
     /** Set the passed series/header definitions as new XYseries in the dataset. Existing series are wiped. Must be at least two items
-     * in the array or any existing series is left intact and method exits with 0. First item is set as domain label and should
-     * be system time in milliseconds.
+     * in the array or any existing series is left intact and method exits with 0. First item (series 0) is set as domain label and should
+     * be system time in milliseconds, and is always axis 0 for multi-axis charts.
      * <p>
      *  The string format/structure of each string field is:<br>
-     *  <code>[name]![y or n to indicate if charted]![axis ID 1-4]</code>
-     *  <br>i.e. <pre>"MySeries!y!1"</pre>
+     *  <code>[name]:[axis ID 1-4]</code>
+     *  <br>i.e. <pre>"MySeries:1"</pre>
      * @param seriesNames Array of series names
      * @return The number of series created
      */
     int setSeries(String[] seriesNames){
+//        System.out.println("setSeries");
         // TODO clone existing chart and put it in a new frame and display before we whack the dataset
+        // don't allow empty range (length==1 means only domain series defined)
         if (seriesNames.length<2) return 0;
         
-        this.dataset = new XYSeriesCollection();
-        getChart().getXYPlot().setDataset(this.dataset);
-        getChart().getXYPlot().getDomainAxis().setLabel(seriesNames[0]);
-        for (int i=1;i<seriesNames.length;i++) {
-            this.dataset.addSeries(new XYSeries(seriesNames[i],true, true));
+        // clear any series
+        dataset = new XYSeriesCollection[4];
+        rangeAxis = new NumberAxis[4];
+        
+        int dsCount=getChart().getXYPlot().getDatasetCount();
+        for (int i=0;i<dsCount;i++) {
+            getChart().getXYPlot().mapDatasetToRangeAxis(i, 0);
+            getChart().getXYPlot().setRangeAxis(i,null);
+            if (getChart().getXYPlot().getDataset(i)!=null) {
+                ((XYSeriesCollection)getChart().getXYPlot().getDataset(i)).removeAllSeries();
+            }
         }
+
+        String[] fields;
+        
+        // remove domain def from series def
+        String[] theSeries = new String[seriesNames.length-1];
+        System.arraycopy(seriesNames, 1, theSeries, 0, theSeries.length);
+        fields=seriesNames[0].split(":");
+        String domainLabel=fields[0];
+        
+        seriesDefs= new SeriesDef[theSeries.length];
+        int axisSeriesIndex[] = {0,0,0,0}; // one-based. used as series counter for each axis id
+        int minAxisId = 4;
+        for (int i=0;i<theSeries.length;i++) {
+//            System.out.println(theSeries[i]);
+            seriesDefs[i]=new SeriesDef();
+            fields=theSeries[i].split(":");
+            seriesDefs[i].label=fields[0];
+            if (fields.length==1) {
+                seriesDefs[i].axisIndex=1;
+            } else {
+                try {
+                    seriesDefs[i].axisIndex=Integer.valueOf(fields[1]);
+                } catch (Exception e) {
+                    seriesDefs[i].axisIndex=1;
+                }
+            }
+            // need to ensure that dataset(0) is always created
+            // shift all series defs to ensure zero-based dataset
+            if (seriesDefs[i].axisIndex<minAxisId) minAxisId=seriesDefs[i].axisIndex;
+            
+            // bump series index per axis
+            seriesDefs[i].seriesIndex=++axisSeriesIndex[seriesDefs[i].axisIndex-1];
+        }
+        
+        // create the datasets per axisID. We need to ensure that dataset(0) is always created
+        // so a shift offset is used
+        for (int i=0;i<seriesDefs.length;i++){
+            seriesDefs[i].axisIndex-=(minAxisId-1); // shift all axisIDs down to ensure we have a axisID=1 (one-based)
+            // add series to dataset 
+            getAxisDataset(seriesDefs[i].axisIndex).addSeries(new XYSeries(seriesDefs[i].label,true, true));
+        }
+//        System.out.println("getDatasetCount=" + getChart().getXYPlot().getDatasetCount());
+        int colorIndex=0;
+        for (int i=0;i<getChart().getXYPlot().getDatasetCount();i++){
+            if (getChart().getXYPlot().getDataset(i)==null) continue;
+//            System.out.println("   DS-"+ i + ": getSeriesCount=" + getChart().getXYPlot().getDataset(i).getSeriesCount());
+            for (int ii=0;ii< getChart().getXYPlot().getDataset(i).getSeriesCount();ii++) {
+                getChart().getXYPlot().getRenderer(i).setSeriesPaint(ii,getSeriesColor(colorIndex++));
+                getChart().getXYPlot().getRenderer(i).setSeriesStroke(
+                    ii,new BasicStroke(.75f, BasicStroke.CAP_BUTT,  BasicStroke.JOIN_BEVEL));
+            }
+            
+        }
+//        System.out.println("getRendererCount=" + getChart().getXYPlot().getRendererCount());
+//        System.out.println("getSeriesCount=" + getChart().getXYPlot().getSeriesCount());
+        
+        getChart().getXYPlot().getDomainAxis().setLabel(domainLabel); 
         chartDirty=true;
         return getChart().getXYPlot().getSeriesCount();
     }
     
 
     private void setMouseListener() {
-        final JFreeChart parent = getChart();
-        
         class ml extends MouseAdapter{
             public void mouseClicked(MouseEvent e) {
                 if ((e.getButton()&MouseEvent.BUTTON1)==MouseEvent.BUTTON1) {
 //                    dbg("mouseclicked");
                     // doubleclick zooms extents of data
                     if (e.getClickCount()==2) {
-                        parent.setNotify(true);
+                        LoggingChart.this.getChart().setNotify(true);
                         restoreAutoBounds();
                     }
                 }
@@ -235,7 +412,7 @@ public class LoggingChart extends ChartPanel{
                 if ((e.getButton()&MouseEvent.BUTTON1)==MouseEvent.BUTTON1){
                     //dbg(e.toString());
                     // ensure the chart renders any changes on left-click release
-                    if (e.getClickCount()==1) parent.setNotify(true);
+                    if (e.getClickCount()==1) LoggingChart.this.getChart().setNotify(true);
                 }
             }
             
@@ -254,36 +431,24 @@ public class LoggingChart extends ChartPanel{
             dbg("!** addDataPoints: Not enough data. length=" + seriesData.length);
             return;
         }
+
+        // seriesData[0]: first element should always be timestamp from NXT
         
-        // get number of series (primary dataset)
-        int seriesCount = getChart().getXYPlot().getSeriesCount();
-        
-        // create generic series if not exist
-        if (seriesCount==0) {
-            seriesCount = seriesData.length;
-            String[] seriesNames = new String[seriesCount];
-            for (int i=0;i<seriesCount;i++) seriesNames[i]="Series" + i;
-            setSeries(seriesNames);
-        }
-        
-        //get the timestamp
-        double timeStamp = seriesData[0]; // first element should always be timestamp from NXT
-        Double seriesTempvalue;
-        int index=0;
-        XYSeriesCollection tempDs=(XYSeriesCollection)getChart().getXYPlot().getDataset();
+        // add the datapoint series by series in correct axis ID
+        XYPlot plot= getChart().getXYPlot();
         for (int i=1;i<seriesData.length;i++) {            
-            tempDs.getSeries(index).add(timeStamp, seriesData[i]);
-            index++;
+            ((XYSeriesCollection)plot.getDataset(seriesDefs[i-1].axisIndex-1)).getSeries(seriesDefs[i-1].seriesIndex-1)
+                .add(seriesData[0], seriesData[i]);;
         }
         
         // slide the the domain range to show animation of data coming in
-        double maxXVal = ((XYSeriesCollection)getChart().getXYPlot().getDataset()).getSeries(0).getMaxX();
+        double maxXVal = ((XYSeriesCollection)plot.getDataset()).getSeries(0).getMaxX();
         this.domainRange = new Range(maxXVal-this.domainWidth, maxXVal);
-        getChart().getXYPlot().getDomainAxis().setRange(this.domainRange);
+        plot.getDomainAxis().setRange(this.domainRange);
         
         // ensure value (range) axis displays extents of data as it scrolls
-        Range yRange=((XYSeriesCollection)getChart().getXYPlot().getDataset()).getRangeBounds(true);
-        getChart().getXYPlot().getRangeAxis().setRange(yRange);
+        //Range yRange=((XYSeriesCollection)getChart().getXYPlot().getDataset()).getRangeBounds(true);
+        //getChart().getXYPlot().getRangeAxis().setRange(yRange);
         
         // the updater thread picks this up every 100 ms and has the JFreeChart do it's notifcations for rendering, etc.
         chartDirty=true;
@@ -334,12 +499,10 @@ public class LoggingChart extends ChartPanel{
      * This ensures that the slider value is respected (updated elsewhere) on user mouse zooms.
      */
     private void setAxisChangeListener() {
-        final JFreeChart parent=getChart();
-        //this.domainAxis.setRange(this.domainRange);
         getChart().getXYPlot().getDomainAxis().addChangeListener(
         new AxisChangeListener() {
             public void axisChanged(AxisChangeEvent event) {
-                domainWidth = parent.getXYPlot().getDomainAxis().getRange().getLength();
+                domainWidth = LoggingChart.this.getChart().getXYPlot().getDomainAxis().getRange().getLength();
             }
         });
         
