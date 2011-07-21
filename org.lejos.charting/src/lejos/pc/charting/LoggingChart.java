@@ -64,8 +64,10 @@ public class LoggingChart extends ChartPanel{
     private NumberAxis[] rangeAxis = new NumberAxis[4];
     private int refreshFrequency_ms=100; // used by update thread 
     private boolean chartDirty = false; // used by update thread to flag an event notification for repaints
+    private boolean doDomainAdjust=false;
     private double domainWidth=10000; // milli seconds defining how big to initially  make the domain scale (for sliding it)
     private SeriesDef[] seriesDefs; 
+    private Object lockObj1 = new Object();
     
     private class SeriesDef {
         String label;
@@ -92,6 +94,18 @@ public class LoggingChart extends ChartPanel{
                 while (true) {
                     doWait(refreshFrequency_ms);
                     if (chartDirty && LoggingChart.this.getChart()!=null) {
+                        // slide the the domain range to show animation of data coming in
+                        XYPlot plot = getChart().getXYPlot();
+                        if (doDomainAdjust && plot.getDataset().getSeriesCount()>0) {
+                            double maxXVal = ((XYSeriesCollection)plot.getDataset()).getSeries(0).getMaxX();
+                            // sets this.domainRange
+                            setDomainRange( new Range(maxXVal-LoggingChart.this.domainWidth, maxXVal));
+                            
+                            // ensure value (range) axis displays extents of data as it scrolls
+                            //Range yRange=((XYSeriesCollection)getChart().getXYPlot().getDataset()).getRangeBounds(true);
+                            //getChart().getXYPlot().getRangeAxis().setRange(yRange);
+                             doDomainAdjust=false;
+                        }
                         LoggingChart.this.getChart().setNotify(true);
                         LoggingChart.this.getChart().setNotify(false);
                         chartDirty=false;
@@ -112,6 +126,14 @@ public class LoggingChart extends ChartPanel{
         setAxisChangeListener();
     }
     
+    private void setDomainRange(Range range){
+        if (range==null) return;
+        synchronized (lockObj1) {
+            this.domainRange=range;
+            getChart().getXYPlot().getDomainAxis().setRange(range);
+        }
+    }
+    
     // z..z..z..z..z..z...z...
     private void doWait(long milliseconds) {
          try {
@@ -125,9 +147,8 @@ public class LoggingChart extends ChartPanel{
     private void jbInit() throws Exception {
         setLayout(null);
         setChart(getBaselineChart());
-        
         setVisible(true);
-        getChart().setNotify(true);
+        chartDirty=true;
     }
 
     private void dbg(String msg) {
@@ -135,18 +156,6 @@ public class LoggingChart extends ChartPanel{
     }
 
 
-    /** Set the Title of the JFreeChart
-     * @param title The title
-     */
-//    protected void setTitle(String title){
-//        //TextTitle title = new TextTitle("", new Font("Arial", Font.PLAIN, 12));
-//        getChart().setTitle(title);
-//        this.chartDirty=true;
-//    }
-    
-//    private JFreeChart getBlankChart(Plot plot){
-//        return new JFreeChart(null, new Font("Arial", Font.PLAIN, 12), plot, true);
-//    }
     private NumberAxis getRangeAxis(int index) {
         if (this.rangeAxis[index-1]!=null) {
             return this.rangeAxis[index-1];
@@ -231,7 +240,7 @@ public class LoggingChart extends ChartPanel{
         domainAxis.setUpperMargin(0.0);
         domainAxis.setTickLabelsVisible(true);
         domainAxis.setAutoRange(true); 
-        this.domainRange = new Range(0, domainWidth);
+        this.domainRange= new Range(0, domainWidth);
         domainAxis.setRange(this.domainRange);
         domainAxis.setAutoRangeIncludesZero(false);
         
@@ -402,8 +411,9 @@ public class LoggingChart extends ChartPanel{
 //                    dbg("mouseclicked");
                     // doubleclick zooms extents of data
                     if (e.getClickCount()==2) {
-                        LoggingChart.this.getChart().setNotify(true);
+                        //LoggingChart.this.getChart().setNotify(true);
                         restoreAutoBounds();
+                        chartDirty=true;
                     }
                 }
             }
@@ -441,17 +451,10 @@ public class LoggingChart extends ChartPanel{
                 .add(seriesData[0], seriesData[i]);;
         }
         
-        // slide the the domain range to show animation of data coming in
-        double maxXVal = ((XYSeriesCollection)plot.getDataset()).getSeries(0).getMaxX();
-        this.domainRange = new Range(maxXVal-this.domainWidth, maxXVal);
-        plot.getDomainAxis().setRange(this.domainRange);
-        
-        // ensure value (range) axis displays extents of data as it scrolls
-        //Range yRange=((XYSeriesCollection)getChart().getXYPlot().getDataset()).getRangeBounds(true);
-        //getChart().getXYPlot().getRangeAxis().setRange(yRange);
-        
-        // the updater thread picks this up every 100 ms and has the JFreeChart do it's notifcations for rendering, etc.
+        // the updater thread picks this up every 100 ms and has the JFreeChart do it's notifications for rendering, 
+        // etc. The domain axis is also scrolled for incoming data in this thread via doDomainAdjust=true
         chartDirty=true;
+        doDomainAdjust=true;
     }
 
     /** Set the width of the x-axis (domain) scale centered around current midpoint of domain scale. Uses a scaled integer 1-1000 
@@ -465,16 +468,16 @@ public class LoggingChart extends ChartPanel{
         // set this.domainWidth
         setDomainWidth(domainWidth);
         
-        double xval = getChart().getXYPlot().getDomainCrosshairValue();
-        Range currRange = getChart().getXYPlot().getDomainAxis().getRange();
+        XYPlot plot= getChart().getXYPlot();
+        double xval = plot.getDomainCrosshairValue();
+        Range currRange = plot.getDomainAxis().getRange();
         // if x crosshair is in the range, gradually scale around it as the origin
         double scaleOrigin=currRange.getCentralValue();
         if (currRange.contains(xval)) {
             scaleOrigin=xval+(scaleOrigin-xval)/1.1f;
         }
-        
-        this.domainRange = new Range(scaleOrigin-this.domainWidth/2, scaleOrigin+this.domainWidth/2);
-        getChart().getXYPlot().getDomainAxis().setRange(this.domainRange);
+        // sets this.domainRange
+        setDomainRange(new Range(scaleOrigin-this.domainWidth/2, scaleOrigin+this.domainWidth/2));
         chartDirty=true;
     }
 
