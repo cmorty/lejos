@@ -5,6 +5,7 @@
 	<classpathentry kind="src" path="BTSend"/>
 	<classpathentry kind="src" path="MapTest"/>
 	<classpathentry kind="src" path="MCLTest"/>
+	<classpathentry kind="src" path="NavTest"/>
 	<classpathentry kind="src" path="NodeSearch"/>
 	<classpathentry kind="src" path="PathTest"/>
 	<classpathentry kind="src" path="RCNavigationControl"/>
