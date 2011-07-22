@@ -11,9 +11,9 @@ import lejos.robotics.LinearActuator;
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 
-/** A Linear Actuator class that provides non-blocking actions and stall detection. Developed for the Firgelli L12-NXT-50 and L12-NXT-100
+/** A Linear Actuator class that provides non-blocking move actions with stall detection. Developed for the Firgelli L12-NXT-50 and L12-NXT-100
  * but may work for others. These linear actuators are self contained units which include an electric motor and encoder. They will push 
- * up to 25N and move at 12mm/s unloaded. 
+ * up to 25N and move at up to 12 mm/sec unloaded. 
  * <p>
  * See <a href="http://www.firgelli.com">www.firgelli.com.</a>.
  * @author Kirk P. Thompson
@@ -40,6 +40,8 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * Use this constructor to assign an instance of <code>EncoderMotor</code> used to drive the actuater motor. This constructor
      * allows any motor class that implements the <code>EncoderMotor</code> interface to drive the actuator. You must instantiate
      * the <code>EncoderMotor</code>-type motor before passing it to this constructor.
+     * <p>
+     * The default power is 30%.
      * @param encoderMotor A motor instance of type <code>EncoderMotor</code> which will drive the actuator
      * @see lejos.nxt.NXTMotor
      * @see MMXRegulatedMotor
@@ -49,7 +51,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         _encoderMotor=encoderMotor;
         _encoderMotor.flt();
         
-        setPower(0);
+        setPower(30);
         // set up the threads
         _stallDetector = new Thread(new StallDetector());
         _stallDetector.setPriority(Thread.MAX_PRIORITY - 1);
@@ -63,6 +65,8 @@ public class LnrActrFirgelliNXT implements LinearActuator{
 
     /** Convenience constructor that creates an instance of a <code>NXTMotor</code> using the specified motor port. This instance is then
      * used to drive the actuator motor.
+     * <p>
+     * The default power is 30%.
      * @param port The motor port that the linear actuator is attached to.
      * @see lejos.nxt.MotorPort
      * @see NXTMotor
@@ -71,15 +75,15 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         this(new NXTMotor(port));
     }
     
-    /**Sets the power for the actuator. This is called before the <code>actuate()</code> or <code>actuateTo()</code> method is called 
+    /**Sets the power for the actuator. This is called before the <code>move()</code> or <code>moveTo()</code> method is called 
      * to set the power.
      * Using lower power values and pushing/pulling
      * an excessive load may cause a stall and in this case, stall detection will stop the current actuator action and 
      * set the stalled condition flag.
      * <p>
-     * Default power value on instantiation is zero.
+     * The default power value on instantiation is 30%.
      * @param power power setting: 0-100%
-     * @see #actuate
+     * @see LinearActuator#move(int,boolean)
      * @see #isStalled
      */
     public void setPower(int power){
@@ -97,7 +101,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
     }
           
     /**
-    * Returns the current actuator motor power setting.
+    * Returns the current actuator motor power setting. The default power at instantiation is 30%.
     * @return current power 0-100%
     */
     public int getPower() {
@@ -111,11 +115,11 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         return _isMoveCommand; 
     }
 
-    /** Returns true if an <code>actuate()</code> or <code>actuateTo()</code> order ended due to a motor stall. This behaves 
+    /**Returns true if a <code>move()</code> or <code>moveTo()</code> order ended due to a motor stall. This behaves 
      * like a latch where the 
-     * reset of the stall status is done on a new <code>actuate()</code> or <code>actuateTo()</code> order. 
+     * reset of the stall status is done on a new <code>move()</code> or <code>moveTo()</code> order. 
      * @return <code>true</code> if actuator motor stalled during a movement order. <code>false</code> otherwise.
-     * @see #actuate
+     * @see LinearActuator#move(int,boolean)
      */
     public boolean isStalled() {
         return _isStalled; 
@@ -133,7 +137,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * Stall detection stops the actuator in the event of a stall condition to help prevent damage to the actuator.
      * <P>
      * If <code>immediateReturn</code> is <code>true</code>, this method returns immediately (does not block) and the actuator stops when the
-     * stroke <code>distance</code> is met [or a stall is detected]. If another <code>actuate</code> action is called before the 
+     * stroke <code>distance</code> is met [or a stall is detected]. If another <code>move</code> action is called before the 
      * stroke
      * distance is reached, the current actuator action is cancelled and the new action is initiated.
      * <p>
@@ -150,9 +154,9 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * @see #setPower
      * @see #stop
      * @see #getTachoCount
-     * @see #actuateTo
+     * @see #moveTo(int,boolean)
      */
-    public synchronized void actuate(int distance, boolean immediateReturn ){
+    public synchronized void move(int distance, boolean immediateReturn ){
         // set globals
          _dirExtend=distance>=0;
         _distanceTicks = Math.abs(distance);
@@ -160,17 +164,17 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         doAction(immediateReturn);
     }
 
-    /** Causes the actuator to move to absolute <code>position</code> in encoder ticks. The <code>position</code> of the actuator
+    /**Causes the actuator to move to absolute <code>position</code> in encoder ticks. The <code>position</code> of the actuator
      * shaft on startup or when set by <code>resetTachoCount()</code> is zero.
      * @param position The absolute shaft position in encoder ticks.
      * @param immediateReturn Set to <code>true</code> to cause the method to immediately return while the action is executed in
      * the background. 
-     * @see #actuate
+     * @see #move(int,boolean)
      * @see #resetTachoCount
      */
-    public void actuateTo(int position, boolean immediateReturn ){
+    public void moveTo(int position, boolean immediateReturn ){
         int distance = position - _tachoCount;
-        actuate(distance, immediateReturn);
+        move(distance, immediateReturn);
     }
     // only called by actuate()
     private void doAction(boolean immediateReturn){
@@ -260,7 +264,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
             // stop the motor
             stop(); 
             _tachoCount=temptacho-_encoderMotor.getTachoCount();
-            // wake up the any wait in doAction()
+            // wake up any wait in doAction()
             synchronized(_lockObj){
                 _lockObj.notify();
             }
@@ -281,13 +285,15 @@ public class LnrActrFirgelliNXT implements LinearActuator{
             // want to give some time for the motor to start and actuator to begin movement hence we don't want to issue a stop.
              _enableStallStop=false; 
             // wait until the shaft is moving or we timeout
-            _isStalled=true;
-            while(_isStalled) {
+            _isStalled=false;
+            int begTacho=_encoderMotor.getTachoCount();
+            while (begTacho==_encoderMotor.getTachoCount()) {
                 doWait(5);
-                // kill the move and exit if it takes too long to start    
-                if (System.currentTimeMillis() - begTime>(_tick_wait*3)) {
+                // kill the move and exit if it takes too long to start moving  
+                if (System.currentTimeMillis() - begTime>(_tick_wait*4)) {
 //                    dbg("mgoact tmout");
                     _killCurrentAction=true; // will cause the actuate/monitor loop in toExtent() to never start
+                    _isStalled=true;
                     break;
                 }
             }
@@ -342,7 +348,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
     }
 
     /**Immediately stop any current actuator action.
-     * @see #actuate
+     * @see LinearActuator#move(int,boolean)
      */
     public void stop() {
         _killCurrentAction = true;
@@ -359,7 +365,6 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * @see #resetTachoCount
      */
     public int getTachoCount() {
-       //return _encoderMotor.getTachoCount();
        return _tachoCount;
     }
     
@@ -367,7 +372,6 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * @see #getTachoCount
      */
     public void resetTachoCount() {
-        //_encoderMotor.resetTachoCount();
          _tachoCount=0;
     }
     

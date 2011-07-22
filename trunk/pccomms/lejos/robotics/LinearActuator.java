@@ -7,12 +7,12 @@ package lejos.robotics;
  
 /**
  * Interface that defines the minimal implementation for a Linear Actuator device. Linear Actuator classes should provide 
- * non-blocking extend/retract actions through the <code>actuate()</code> and  <code>actuateTo()</code> methods.
- * Stall detection must be privided to avoid motor damage due to running against the end stops, etc.
+ * non-blocking extend/retract actions through the <code>move()</code> and <code>moveTo()</code> methods.
+ * Stall detection must be provided to avoid motor damage due to running against the end stops, etc.
  * <p>
  * Motor regulation is not specified in this interface as it may be difficult to determine the accurate length per time 
  * (ie. mm/sec) rate due to encoder tick granularity of the linear actuator. It is up to the implementor to decide if the 
- *  <code>actuate()</code> method should produce regulated movement.
+ * <code>move()</code>  and <code>moveTo()</code> methods should produce regulated movement.
  * 
  * @see lejos.nxt.addon.LnrActrFirgelliNXT
  * @author Kirk P. Thompson
@@ -42,7 +42,7 @@ public interface LinearActuator extends Encoder {
      * @param distance The distance to move the actuator shaft
      * @param immediateReturn <code>true</code> returns immediately, <code>false</code> waits for the action to complete (or a stall)
      */
-    public void actuate(int distance, boolean immediateReturn);
+    public void move(int distance, boolean immediateReturn);
     
     /** The actuator should move to absolute <code>position</code> in encoder ticks. The <code>position</code> of the actuator
      * shaft on startup should be zero. The <code>position</code> of the actuator shaft should be set to zero when 
@@ -50,25 +50,25 @@ public interface LinearActuator extends Encoder {
      * @param position The absolute shaft position in encoder ticks.
      * @param immediateReturn <code>true</code> returns immediately, <code>false</code> waits for the action to complete (or a stall)
      */
-    public void actuateTo(int position, boolean immediateReturn);
+    public void moveTo(int position, boolean immediateReturn);
     
-    /** Return <code>true</code> if the actuator is in motion due to an <code>actuate()</code> or <code>actuateTo()</code> order.
+    /**Return <code>true</code> if the actuator is in motion due to a <code>move()</code> or <code>moveTo()</code> order.
      * @return <code>true</code> if the actuator is in motion. <code>false</code> otherwise.
      */
     public boolean isMoving();
     
     /**
-     * Returns true if an <code>actuate()</code> or <code>actuateTo()</code> order ended due to a stalled motor. This should 
+     * Returns true if a <code>move()</code> or <code>moveTo()</code> order ended due to a stalled motor. This should 
      * behave like a latch where the 
-     * reset of the stall status is done on a new <code>actuate()</code> or <code>actuateTo()</code> order.
-     * @return <code>true</code> if actuator motor stalled during an <code>actuate()</code> or <code>actuateTo()</code> order. 
-     *  <code>false</code> otherwise.
+     * reset of the stall status is done on a new <code>move()</code> or <code>moveTo()</code> order.
+     * @return <code>true</code> if actuator motor stalled during an <code>move()</code> or <code>moveTo()</code> order. 
+     * <code>false</code> otherwise.
      */
     public boolean isStalled();
     
     /**
-     * Cause the actuator to stop immediately and resist any further motion. Cancel any <code>actuate()</code> or 
-     * <code>actuateTo()</code>orders in progress.
+     * Cause the actuator to stop immediately and resist any further motion. Cancel any <code>move()</code> or 
+     * <code>moveTo()</code>orders in progress.
      */
     public void stop();
     

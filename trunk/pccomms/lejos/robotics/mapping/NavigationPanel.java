@@ -20,7 +20,7 @@ import lejos.robotics.mapping.NavigationModel.NavEvent;
  * @author Lawrie Griffiths
  *
  */
-public class NavigationPanel extends JPanel implements MouseListener, MouseMotionListener, ActionListener {
+public class NavigationPanel extends JPanel implements MapApplicationUI, MouseListener, MouseMotionListener, ActionListener {
 	private static final long serialVersionUID = 1L;
 	
 	protected int minZoom = 50;
@@ -35,7 +35,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected MapPanel mapPanel; 
 	protected JPanel commandPanel = new JPanel();
 	protected JPanel connectPanel = new JPanel();
-	protected JPanel mousePanel = new JPanel();
+	protected JPanel statusPanel = new JPanel();
 	protected JPanel logPanel = new JPanel();
 	protected JLabel xLabel = new JLabel("X:");
 	protected JTextField xField = new JTextField(4);
@@ -46,7 +46,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected JLabel nxtLabel = new JLabel("NXT name:");
 	protected JTextField nxtName = new JTextField(10);
 	protected JButton connectButton = new JButton("Connect");
-	protected boolean showConnectPanel = true, showMousePanel = true, 
+	protected boolean showConnectPanel = true, showStatusPanel = true, 
 	                  showControlPanel = true, showCommandPanel = true,
 	                  showReadingsPanel = true, showLastMovePanel = true,
 	                  showParticlePanel = true, showMoves = false,
@@ -69,19 +69,20 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	protected JMenuItem exit, about, clear, repaint, reset, open, save, connect, gridColor, robotColor,
 						mapColor, particleColor, meshColor, targetColor, waypointColor,
 						pathColor, moveColor, featureColor, backgroundColor, estimateColor, closestColor,
-						getPose, randomMove, localize, stop;
+						getPose, randomMove, localize, stop, calculatePath, followPath;
 	protected JCheckBoxMenuItem viewGrid, viewMousePosition, viewControls,
 	                          viewConnect, viewCommands, viewMesh, viewLog,
 	                          viewLastMove, viewParticlePanel, viewParticles;
 	protected JFileChooser chooser = new JFileChooser();
 	protected EventPanel eventPanel = new EventPanel(model, this,  null);
 	protected JColorChooser colorChooser = new JColorChooser();
+	protected JFrame frame;
 	
 	/**
 	 * Build the various panels if they are required.
 	 */
 	protected void buildGUI() {
-		createMousePanel();
+		createStatusPanel();
 		createConnectPanel();
 		createControlPanel();
 		createCommandPanel();
@@ -164,14 +165,13 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	/**
 	 * Create the map panel which shows the mouse position in map coordinates
 	 */
-	protected void createMousePanel() {
-		if (showMousePanel) {
-			mousePanel.add(xLabel);
-			mousePanel.add(xField);
-			mousePanel.add(yLabel);
-			mousePanel.add(yField);
-			//mousePanel.setBorder(BorderFactory.createTitledBorder("Mouse"));
-			add(mousePanel);
+	protected void createStatusPanel() {
+		if (showStatusPanel) {
+			statusPanel.add(xLabel);
+			statusPanel.add(xField);
+			statusPanel.add(yLabel);
+			statusPanel.add(yField);
+			add(statusPanel);
 		}
 	}
 	
@@ -270,7 +270,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		viewLog.addActionListener(this);
 		viewMenu.add(viewLog);
 		viewMousePosition = new JCheckBoxMenuItem("Mouse Position");
-		viewMousePosition.setSelected(showMousePanel);
+		viewMousePosition.setSelected(showStatusPanel);
 		viewMousePosition.addActionListener(this);
 		viewMenu.add(viewMousePosition);
 		viewControls = new JCheckBoxMenuItem("GUI Controls");
@@ -281,10 +281,6 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		viewConnect.setSelected(showConnectPanel);
 		viewConnect.addActionListener(this);
 		viewMenu.add(viewConnect);
-		viewCommands = new JCheckBoxMenuItem("Commands");
-		viewCommands.setSelected(showCommandPanel);
-		viewCommands.addActionListener(this);
-		viewMenu.add(viewCommands);
 		viewCommands = new JCheckBoxMenuItem("Commands");
 		viewCommands.setSelected(showCommandPanel);
 		viewCommands.addActionListener(this);
@@ -371,6 +367,12 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		stop = new JMenuItem("Stop");
 		commandsMenu.add(stop);
 		stop.addActionListener(this);
+		calculatePath = new JMenuItem("Calculate Path");
+		commandsMenu.add(calculatePath);
+		calculatePath.addActionListener(this);
+		followPath = new JMenuItem("Follow Path");
+		commandsMenu.add(followPath);
+		followPath.addActionListener(this);
 	}
 	
 	/**
@@ -457,8 +459,9 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 		frame.setBackground(bgColor);
 		content.setBackground(bgColor);
 		frame.setSize(width, height);
-		frame.setContentPane(content);
+		frame.getContentPane().add(content,BorderLayout.CENTER);
 		content.title = title;
+		content.frame = frame;
 		
     	frame.addWindowListener(new WindowAdapter() {
     		public void windowClosing(WindowEvent event) {
@@ -564,7 +567,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	/**
 	 * Override this method to specify actions to do after connection to the NXT
 	 */
-	protected void whenConnected() {	
+	public void whenConnected() {	
 	}
 	
 	/**
@@ -572,7 +575,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 	 * 
 	 * @param navEvent the event
 	 */
-	protected void eventReceived(NavEvent navEvent) {	
+	public void eventReceived(NavEvent navEvent) {	
 	}
 	
 	/**
@@ -677,7 +680,7 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 			logPanel.setVisible(viewLog.isSelected());
 			repaint();
 		} else if (e.getSource() == viewMousePosition) {
-			mousePanel.setVisible(viewMousePosition.isSelected());
+			statusPanel.setVisible(viewMousePosition.isSelected());
 			repaint();
 		} else if (e.getSource() == viewControls) {
 			controlPanel.setVisible(viewControls.isSelected());
@@ -693,6 +696,11 @@ public class NavigationPanel extends JPanel implements MouseListener, MouseMotio
 			model.localize();
 		} else if (e.getSource() == stop) {
 			model.stop();
+		} else if (e.getSource() == calculatePath) {
+			model.calculatePath();
+			repaint();
+		} else if (e.getSource() == followPath) {
+			model.followPath();
 		}
 	}
 	
