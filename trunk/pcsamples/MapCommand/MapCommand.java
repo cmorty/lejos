@@ -2,16 +2,13 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.SystemColor;
-
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JSlider;
 import lejos.robotics.mapping.MenuAction;
 import lejos.robotics.mapping.NavigationModel;
 import lejos.robotics.mapping.NavigationPanel;
 import lejos.robotics.mapping.PosePanel;
 import lejos.robotics.mapping.NavigationModel.NavEvent;
-import lejos.robotics.navigation.Pose;
 
 /**
  * MapCommand shows a mapped area and allow navigation commands to be sent to the NXT.
@@ -95,6 +92,16 @@ public class MapCommand extends NavigationPanel {
 	@Override
 	public void whenConnected() {
 		model.setPose(model.getRobotPose());
+	}
+	
+	@Override
+	public void eventReceived(NavEvent navEvent) {
+		if (navEvent == NavEvent.SET_POSE) {
+			int heading = (int) model.getRobotPose().getHeading();
+			if (heading < 0) heading += 360;
+			rotate.setValue(heading);
+			setHeading.setValue(heading);
+		}
 	}
   
 	@Override
