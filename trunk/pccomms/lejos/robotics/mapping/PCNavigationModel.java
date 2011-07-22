@@ -42,6 +42,7 @@ public class PCNavigationModel extends NavigationModel {
 	protected ArrayList<Waypoint> waypoints = new ArrayList<Waypoint>();
 	protected Waypoint reached;
 	protected NXTCommand nxtCommand;
+	protected float voltage = 0;
 	
 	private Thread receiver = new Thread(new Receiver());
 	private boolean running = true;
@@ -669,12 +670,44 @@ public class PCNavigationModel extends NavigationModel {
 	 */
 	public void calculatePath() {
 		if (currentPose == null || target == null) return;
+		if (pf == null) return;
 		try {
 			path = pf.findRoute(currentPose, target);
 			panel.repaint();
 		} catch (DestinationUnreachableException e) {
 			path = null;
 			panel.error("Destination unreachable");
+		}
+	}
+	
+	/**
+	 * Send a system sound
+	 */
+	public void sendSound(int code) {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.SOUND.ordinal());
+				dos.writeInt(code);
+				dos.flush();
+			}
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in sendSound");
+		}
+	}
+	
+	/**
+	 * Get the remote battery voltage
+	 */
+	public void getRemoteBattery() {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.GET_BATTERY.ordinal());
+				dos.flush();
+			}
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in getRemoteBattery");
 		}
 	}
 		
@@ -773,6 +806,9 @@ public class PCNavigationModel extends NavigationModel {
 							break;
 						case PATH: // Get a path generated on the NXT
 							path.loadObject(dis);
+							break;
+						case BATTERY:
+							voltage = dis.readFloat();
 							break;
 						}
 						// Signal that an event has been received

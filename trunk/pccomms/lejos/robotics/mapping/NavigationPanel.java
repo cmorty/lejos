@@ -51,7 +51,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	                  showReadingsPanel = true, showLastMovePanel = true,
 	                  showParticlePanel = true, showMoves = false,
 	                  showMesh = false, showGrid = true, showLog = false,
-	                  showParticles = false;
+	                  showParticles = false, showLoadMap = true;
 	protected JPanel readingsPanel = new JPanel();
 	protected JTextField readingsField = new JTextField(12);
 	protected JPanel lastMovePanel = new JPanel();
@@ -67,11 +67,12 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected String program = "../samples/MapTest/MapTest.nxj";
 	
 	protected JMenuBar menuBar = new JMenuBar();
-	protected JMenu fileMenu, aboutMenu, mapMenu, viewMenu, colorMenu, commandsMenu;
+	protected JMenu fileMenu, aboutMenu, mapMenu, viewMenu, colorMenu, commandsMenu, configureMenu;
 	protected JMenuItem exit, about, clear, repaint, reset, open, save, connect, gridColor, robotColor,
 						mapColor, particleColor, meshColor, targetColor, waypointColor,
 						pathColor, moveColor, featureColor, backgroundColor, estimateColor, closestColor,
-						getPose, randomMove, localize, stop, calculatePath, followPath;
+						getPose, randomMove, localize, stop, calculatePath, followPath, pilot, scanner,
+						finder, detector;
 	protected JCheckBoxMenuItem viewGrid, viewMousePosition, viewControls,
 	                          viewConnect, viewCommands, viewMesh, viewLog,
 	                          viewLastMove, viewParticlePanel, viewParticles;
@@ -79,6 +80,11 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected EventPanel eventPanel = new EventPanel(model, this,  null);
 	protected JColorChooser colorChooser = new JColorChooser();
 	protected JFrame frame;
+	protected JPanel loadPanel = new JPanel();
+	protected JLabel mapFileLabel = new JLabel("Map file");
+	protected JTextField mapFileField = new JTextField(10);
+	protected JButton loadMapButton = new JButton("Load");
+	protected JCheckBox uploadBox = new JCheckBox("Upload NXT Program?");
 	
 	/**
 	 * Build the various panels if they are required.
@@ -136,18 +142,30 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	}
 	
 	/**
+	 * Create load map panel
+	 */
+	protected void createLoadPanel() {
+		loadPanel.add(mapFileLabel);
+		loadPanel.add(mapFileField);
+		loadPanel.add(loadMapButton);
+		loadPanel.setBorder(BorderFactory.createTitledBorder("Load Map"));
+		loadMapButton.addActionListener(this);
+	}
+	
+	/**
 	 * Create the Connect panel to allow connection to a NXT brick
 	 */
 	protected void createConnectPanel() {
 		connectPanel.add(nxtLabel);
 		connectPanel.add(nxtName);
 		connectPanel.add(connectButton);
+		connectPanel.add(uploadBox);
 		connectPanel.setBorder(BorderFactory.createTitledBorder("Connect"));
 		
 		connectButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				if (upload) model.connectAndUpload(nxtName.getText(), new File(program));
+				if (uploadBox.isSelected()) model.connectAndUpload(nxtName.getText(), new File(program));
 				model.connect(nxtName.getText());
 			}
 		});
@@ -236,6 +254,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		createViewMenu();
 		createMapMenu();
 		createCommandMenu();
+		createConfigureMenu();
 		createAboutMenu();
 		//createHelpMenu();
 	}
@@ -385,6 +404,23 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		followPath.addActionListener(this);
 	}
 	
+	protected void createConfigureMenu() {
+		configureMenu = new JMenu("Configure");
+		menuBar.add(configureMenu);
+		pilot = new JMenuItem("Pilot ...");
+		configureMenu.add(pilot);
+		pilot.addActionListener(this);
+		finder = new JMenuItem("Path Finder ...");
+		configureMenu.add(finder);
+		finder.addActionListener(this);
+		detector = new JMenuItem("Feature Detector ...");
+		configureMenu.add(detector);
+		detector.addActionListener(this);
+		scanner = new JMenuItem("Range Scanner ...");
+		configureMenu.add(scanner);
+		scanner.addActionListener(this);
+	}
+	
 	/**
 	 * Create an About menu
 	 */
@@ -413,10 +449,10 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	}
   
 	/**
-	 * Show a pop-up message
+	 * Show a pop-up error message
 	 */
 	public void error(String msg) {
-		JOptionPane.showMessageDialog(this, msg);
+		JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
 	/**
@@ -601,7 +637,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	}
 
 	/**
-	 * Called when a menu item is selected
+	 * Called when a menu item is selected or button clicked
 	 */
 	public void actionPerformed(ActionEvent e) {	
 		if (e.getSource() == about) {
@@ -716,9 +752,15 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 			repaint();
 		} else if (e.getSource() == followPath) {
 			model.followPath();
+		} else if (e.getSource() == loadMapButton) {
+			model.loadMap(mapFileField.getText());
+			repaint();
 		}
 	}
 	
+	/**
+	 * Choose a color and change the current value for the selected index
+	 */
 	private void chooseColor(String name, int index) {
 		Color newColor = JColorChooser.showDialog(
                 this,
