@@ -439,9 +439,11 @@ public class PCNavigationModel extends NavigationModel {
 		// Record poses to plot the moves on the map. Reset when pose is set on 
 		poses.clear();
 		poses.add(new Pose(currentPose.getX(), currentPose.getY(), currentPose.getHeading()));
-		if (start != null) mesh.removeNode(this.start);
-		start = new Node(p.getX(), p.getY());
-		mesh.addNode(start, 4);
+		if (mesh != null) {
+			if (start != null) mesh.removeNode(this.start);
+			start = new Node(p.getX(), p.getY());
+			mesh.addNode(start, 4);
+		}
 		// Send a SET_POSE to the PC application
 		panel.eventReceived(NavEvent.SET_POSE);
 		panel.repaint();
@@ -466,7 +468,7 @@ public class PCNavigationModel extends NavigationModel {
 		this.target = target;
 		if(destination != null) mesh.removeNode(destination);
 		destination = new Node((float) target.getX(), (float) target.getY());
-		mesh.addNode(destination, 4);
+		if (mesh != null) mesh.addNode(destination, 4);
 		panel.repaint();
 	}
 	
