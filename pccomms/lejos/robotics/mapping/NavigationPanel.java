@@ -82,14 +82,43 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	 * Build the various panels if they are required.
 	 */
 	protected void buildGUI() {
-		createStatusPanel();
-		createConnectPanel();
-		createControlPanel();
-		createCommandPanel();
-		createReadingsPanel();
-		createMovePanel();
-		createParticlePanel();
+		if (showStatusPanel) {
+			createStatusPanel();
+			add(statusPanel);
+		}
+		
+		if (showConnectPanel) {
+			createConnectPanel();
+			add(connectPanel);
+		}
+		
+		if (showControlPanel) {
+			createControlPanel();
+			add(controlPanel);
+		}
+		
+		if (showCommandPanel) {
+			createCommandPanel();
+			add(commandPanel);
+		}
+		
+		if (showReadingsPanel) {
+			createReadingsPanel();
+			add(readingsPanel);
+		}
+		
+		if (showLastMovePanel) {
+			createMovePanel();
+			add(lastMovePanel);
+		}
+		
+		if (showParticlePanel) {
+			createParticlePanel();
+			add(particlePanel);
+		}
+		
 		createMapPanel();
+		add(mapPanel);
 	}
 	
 	/**
@@ -97,7 +126,6 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	 */
 	protected void createMapPanel() {
 		mapPanel = new MapPanel(model, mapPaneSize, this);
-		add(mapPanel);
 		
 		mapPanel.addMouseMotionListener(this);
 		mapPanel.addMouseListener(this);
@@ -109,113 +137,92 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	 * Create the Connect panel to allow connection to a NXT brick
 	 */
 	protected void createConnectPanel() {
-		if (showConnectPanel) {
-			connectPanel.add(nxtLabel);
-			connectPanel.add(nxtName);
-			connectPanel.add(connectButton);
-			connectPanel.setBorder(BorderFactory.createTitledBorder("Connect"));
-			add(connectPanel);
-			
-			connectButton.addActionListener(new ActionListener() {
+		connectPanel.add(nxtLabel);
+		connectPanel.add(nxtName);
+		connectPanel.add(connectButton);
+		connectPanel.setBorder(BorderFactory.createTitledBorder("Connect"));
+		
+		connectButton.addActionListener(new ActionListener() {
 
-				public void actionPerformed(ActionEvent event) {
-					model.connect(nxtName.getText());
-				}
-			});
-		}
+			public void actionPerformed(ActionEvent event) {
+				model.connect(nxtName.getText());
+			}
+		});
 	}
 	
 	/**
 	 * Create the control panel, which controls the GUI
 	 */
 	protected void createControlPanel() {
-		if (showControlPanel) {
-			controlPanel.setBorder(BorderFactory.createTitledBorder("Zoom"));
-			add(controlPanel);
-			
-			zoomSlider = new JSlider(SwingConstants.HORIZONTAL,minZoom,maxZoom,minZoom);
-			zoomSlider.setValue(zoomInitialValue);
-			
-			zoomSlider.setMajorTickSpacing(zoomMajorTick);
-			zoomSlider.setPaintTicks(true);
-			
-			if (showZoomLabels) {
-				zoomSlider.setPaintLabels(true);
-			
-				//Create the label table
-				Hashtable<Integer,JLabel> labelTable = new Hashtable<Integer,JLabel>();
-				for(int i=zoomSlider.getMinimum();i<=zoomSlider.getMaximum();i+=zoomIncrement) {
-					labelTable.put( new Integer(i ), new JLabel(i + "%") );
-				}
-				zoomSlider.setLabelTable( labelTable );		
+		controlPanel.setBorder(BorderFactory.createTitledBorder("Zoom"));
+		
+		zoomSlider = new JSlider(SwingConstants.HORIZONTAL,minZoom,maxZoom,minZoom);
+		zoomSlider.setValue(zoomInitialValue);
+		
+		zoomSlider.setMajorTickSpacing(zoomMajorTick);
+		zoomSlider.setPaintTicks(true);
+		
+		if (showZoomLabels) {
+			zoomSlider.setPaintLabels(true);
+		
+			//Create the label table
+			Hashtable<Integer,JLabel> labelTable = new Hashtable<Integer,JLabel>();
+			for(int i=zoomSlider.getMinimum();i<=zoomSlider.getMaximum();i+=zoomIncrement) {
+				labelTable.put( new Integer(i ), new JLabel(i + "%") );
 			}
-			
-			zoomSlider.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					JSlider source = (JSlider)e.getSource();
-					pixelsPerUnit = source.getValue() / 100f;
-					repaint();
-				}
-			});
-			
-			controlPanel.add(zoomSlider);		
+			zoomSlider.setLabelTable( labelTable );		
 		}
+		
+		zoomSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider)e.getSource();
+				pixelsPerUnit = source.getValue() / 100f;
+				repaint();
+			}
+		});
+		
+		controlPanel.add(zoomSlider);		
 	}
 	
 	/**
 	 * Create the map panel which shows the mouse position in map coordinates
 	 */
 	protected void createStatusPanel() {
-		if (showStatusPanel) {
-			statusPanel.add(xLabel);
-			statusPanel.add(xField);
-			statusPanel.add(yLabel);
-			statusPanel.add(yField);
-			add(statusPanel);
-		}
+		statusPanel.add(xLabel);
+		statusPanel.add(xField);
+		statusPanel.add(yLabel);
+		statusPanel.add(yField);
 	}
 	
 	/**
 	 * Create the command panel - this is added to by overriding classes
 	 */
 	protected void createCommandPanel() {
-		if (showCommandPanel) {
-			commandPanel.setBorder(BorderFactory.createTitledBorder("Commands"));
-			add(commandPanel);
-		}
+		commandPanel.setBorder(BorderFactory.createTitledBorder("Commands"));
 	}
 	
 	/**
 	 * Create the readings panel which shows the last range readings
 	 */
 	protected void createReadingsPanel() {
-		if (showReadingsPanel) {
-			readingsPanel.setBorder(BorderFactory.createTitledBorder("Last Readings"));
-			readingsPanel.add(readingsField);
-			add(readingsPanel);
-		}
+		readingsPanel.setBorder(BorderFactory.createTitledBorder("Last Readings"));
+		readingsPanel.add(readingsField);
 	}
 	
 	/**
 	 * Create the move panel, which shows the last move made by the robot
 	 */
 	protected void createMovePanel() {
-		if (showLastMovePanel) {
-			lastMovePanel.setBorder(BorderFactory.createTitledBorder("Last Move"));
-			lastMovePanel.add(lastMoveField);
-			add(lastMovePanel);
-		}
+		lastMovePanel.setBorder(BorderFactory.createTitledBorder("Last Move"));
+		lastMovePanel.add(lastMoveField);
 	}
 	
 	/**
 	 * Create the particle panel which shows range readings for a specific particle
 	 */
 	protected void createParticlePanel() {
-		if (showParticlePanel) {
-			particlePanel.setBorder(BorderFactory.createTitledBorder("Selected Particle"));
-			particlePanel.add(particleField);
-			add(particlePanel);
-		}
+		particlePanel.setBorder(BorderFactory.createTitledBorder("Selected Particle"));
+		particlePanel.add(particleField);
 	}
 	
 	/**
@@ -265,15 +272,15 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		viewMesh.setSelected(showMesh);
 		viewMesh.addActionListener(this);
 		viewMenu.add(viewMesh);
-		viewLog = new JCheckBoxMenuItem("Log");
-		viewLog.setSelected(showLog);
-		viewLog.addActionListener(this);
-		viewMenu.add(viewLog);
-		viewMousePosition = new JCheckBoxMenuItem("Mouse Position");
+		//viewLog = new JCheckBoxMenuItem("Log");
+		//viewLog.setSelected(showLog);
+		//viewLog.addActionListener(this);
+		//viewMenu.add(viewLog);
+		viewMousePosition = new JCheckBoxMenuItem("Status bar");
 		viewMousePosition.setSelected(showStatusPanel);
 		viewMousePosition.addActionListener(this);
 		viewMenu.add(viewMousePosition);
-		viewControls = new JCheckBoxMenuItem("GUI Controls");
+		viewControls = new JCheckBoxMenuItem("Zoom");
 		viewControls.setSelected(showControlPanel);
 		viewControls.addActionListener(this);
 		viewMenu.add(viewControls);
@@ -285,10 +292,10 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		viewCommands.setSelected(showCommandPanel);
 		viewCommands.addActionListener(this);
 		viewMenu.add(viewCommands);
-		viewParticles = new JCheckBoxMenuItem("Particles");
-		viewParticles.setSelected(showParticles);
-		viewParticles.addActionListener(this);
-		viewMenu.add(viewParticles);
+		//viewParticles = new JCheckBoxMenuItem("Particles");
+		//viewParticles.setSelected(showParticles);
+		//viewParticles.addActionListener(this);
+		//viewMenu.add(viewParticles);
 	}
 	
 	/**
@@ -546,8 +553,10 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	 */
 	protected void popupMenu(MouseEvent me) {
 	    Point pt = SwingUtilities.convertPoint(me.getComponent(), me.getPoint(), this);
-	    boolean inside = model.getMap().inside(new lejos.geom.Point((me.getX() / pixelsPerUnit + mapPanel.viewStart.x) , (mapPanel.getHeight() - me.getY())/ pixelsPerUnit + mapPanel.viewStart.y));  
-	    if (!inside) return;
+	    if (model.getMap() != null) {
+	    	boolean inside = model.getMap().inside(new lejos.geom.Point((me.getX() / pixelsPerUnit + mapPanel.viewStart.x) , (mapPanel.getHeight() - me.getY())/ pixelsPerUnit + mapPanel.viewStart.y));  
+	    	if (!inside) return;
+	    }
 	    
 	    JPopupMenu menu = new JPopupMenu(); 
 	    popupMenuItems(me.getPoint(),menu);
