@@ -17,11 +17,6 @@ import lejos.util.Delay;
  * @author Kirk P. Thompson
  */
 public class LnrActuatorTest {
-    private LnrActrFirgelliNXT _la;
-    private MotorPort _motorPort;
-    
-    public LnrActuatorTest() {
-    }
 
     public static void main(String[] args) {
         LnrActuatorTest testActuator = new LnrActuatorTest();
@@ -29,36 +24,54 @@ public class LnrActuatorTest {
     }
     
     private void controlIt(){
+        LnrActrFirgelliNXT la = new LnrActrFirgelliNXT(MotorPort.A);
+        int power = 100;
+        la.setPower(power);
         LCD.drawString("Control It!",0,1);
         LCD.drawString("<Retract Extend>",0,2);
-        LCD.drawString("ENT=Change power",0,3);
+        LCD.drawString("ENT=Change power",0,6);
         LCD.drawString("ESC=Exit",0,7);
-        int power = 100;
-        _motorPort=MotorPort.A;
-        _la = new LnrActrFirgelliNXT(_motorPort);
-        _la.setPower(power);
-        LCD.drawString("power=" + power + "  ",0,4);
+        
+        la.setPower(power);
+        LCD.drawString("power=" + power + "  ",0,3);
         while (!Button.ESCAPE.isPressed()) {
             if (Button.ENTER.isPressed()){
                 power++;
-                if (power>100) power = 50;
-                LCD.drawString("power=" + power + "  ",0,4);
-                _la.setPower(power);
-                Delay.msDelay(200);
+                if (power>100) power = 0;
+                LCD.drawString("                ",0,3);
+                LCD.drawString("power=" + power,0,3);
+                la.setPower(power);
+                Delay.msDelay(40);
             }
             if (Button.LEFT.isPressed()){
-                _la.actuate(-200, true);
-                while (Button.LEFT.isPressed()) Thread.yield();
-                _la.stop();
-                Delay.msDelay(200);
+                LCD.drawString("       ",0,5);
+                la.move(-200, true);
+                while (Button.LEFT.isPressed()) {
+                    Delay.msDelay(80);
+                    if (la.isStalled()) {
+                        LCD.drawString("STALL!",0,5);
+                        break;
+                    }
+                    LCD.drawString("tach:" + la.getTachoCount() + "  ", 0, 4);
+                }
+                la.stop();
+                Delay.msDelay(120);
             }
             if (Button.RIGHT.isPressed()){
-                _la.actuate(200, true);
-                while (Button.RIGHT.isPressed()) Thread.yield();
-                _la.stop();
-                Delay.msDelay(200);
+                LCD.drawString("       ",0,5);
+                la.move(200, true);
+                while (Button.RIGHT.isPressed()) {
+                    Delay.msDelay(80);
+                    if (la.isStalled()) {
+                        LCD.drawString("STALL!",0,5);
+                        break;
+                    }
+                    LCD.drawString("tach:" + la.getTachoCount() + "  ", 0, 4);
+                }
+                la.stop();
+                Delay.msDelay(120);
             }
-            Delay.msDelay(100);            
+            Delay.msDelay(80);
         }
     }
 }
