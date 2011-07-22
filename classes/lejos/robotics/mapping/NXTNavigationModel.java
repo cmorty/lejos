@@ -3,6 +3,8 @@ package lejos.robotics.mapping;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import lejos.nxt.Battery;
+import lejos.nxt.Sound;
 import lejos.nxt.comm.*;
 import lejos.robotics.RangeScanner;
 import lejos.robotics.localization.*;
@@ -334,6 +336,14 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							break;
 						case EXIT:
 							System.exit(0);
+						case SOUND:
+							Sound.systemSound(false, dis.readInt());
+							break;
+						case GET_BATTERY:
+							dos.writeByte(NavEvent.BATTERY.ordinal());
+							dos.writeFloat(Battery.getVoltage());
+							dos.flush();
+							break;
 						}
 					}
 				} catch (IOException ioe) {
