@@ -127,7 +127,7 @@ public class PathTest extends NavigationPanel {
 	}
   	
   	@Override
-  	protected void eventReceived(NavEvent navEvent) {
+  	public void eventReceived(NavEvent navEvent) {
   		if (navEvent == NavEvent.PATH_COMPLETE) {
   			// Add the path to the mesh again, when the path has been complete
   			model.setPose(model.getRobotPose());
@@ -135,7 +135,7 @@ public class PathTest extends NavigationPanel {
   	}
 
   	@Override
-  	protected void whenConnected() {
+  	public void whenConnected() {
   		connectButton.setEnabled(false);
   		connectPanel.setBorder(BorderFactory.createTitledBorder("Connected"));
   		model.setPose(model.getRobotPose());

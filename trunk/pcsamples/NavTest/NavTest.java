@@ -64,10 +64,6 @@ public class NavTest extends NavigationPanel {
 		createMenu();
 	}
 	
-	@Override
-	protected void eventReceived(NavEvent navEvent) {
-	}
-	
 	/**
 	 * Send the pose when connected
 	 */

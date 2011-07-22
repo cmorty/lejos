@@ -83,7 +83,7 @@ public class MapTest extends NavigationPanel implements ActionListener {
 	}
 	
 	@Override
-	protected void eventReceived(NavEvent navEvent) {
+	public void eventReceived(NavEvent navEvent) {
 		if (navEvent == NavEvent.SET_POSE) {
 			int heading = (int) model.getRobotPose().getHeading();
 			if (heading < 0) heading += 360;

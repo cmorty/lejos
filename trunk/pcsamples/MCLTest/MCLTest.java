@@ -123,7 +123,7 @@ public class MCLTest extends NavigationPanel {
 	 * Called whenever an event is received from the NXT
 	 */
 	@Override
-	protected void eventReceived(NavEvent navEvent) {
+	public void eventReceived(NavEvent navEvent) {
 		// Enable the Get Pose button when the estimated pose has been sent
 		if (navEvent == NavEvent.ESTIMATED_POSE) {
 			getPoseButton.setEnabled(true);
@@ -134,7 +134,7 @@ public class MCLTest extends NavigationPanel {
 	 * Called when the connection is established
 	 */
 	@Override
-	protected void whenConnected() {
+	public void whenConnected() {
 		model.setDebug(true);
 		// Load the map and generate the particles and sends both to the NXT
 		model.loadMap(mapFileName);
