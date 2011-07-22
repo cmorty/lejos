@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import lejos.geom.Point;
+import lejos.nxt.remote.NXTCommand;
 import lejos.pc.comm.*;
 import lejos.robotics.*;
 import lejos.robotics.navigation.*;
@@ -40,6 +41,7 @@ public class PCNavigationModel extends NavigationModel {
 	protected ArrayList<Point> features = new ArrayList<Point>();
 	protected ArrayList<Waypoint> waypoints = new ArrayList<Waypoint>();
 	protected Waypoint reached;
+	protected NXTCommand nxtCommand;
 	
 	private Thread receiver = new Thread(new Receiver());
 	private boolean running = true;
@@ -126,6 +128,68 @@ public class PCNavigationModel extends NavigationModel {
 	 */
 	public ArrayList<Pose> getPoses() {
 		return poses;
+	}
+	
+	public boolean lcpConnect(String nxtName) {
+		try {
+			NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
+			NXTInfo[] info = nxtComm.search(nxtName);
+			if (info.length != 1) {
+				panel.log("Failed to find " + nxtName);
+				return false;
+			}
+			boolean open =  nxtComm.open(info[0], NXTComm.LCP);
+			if (open) nxtCommand = new NXTCommand(nxtComm);
+			return open;
+		} catch (NXTCommException ioe) {
+			panel.error("Failure to connect to " + nxtName);
+			return false;
+		}
+	}
+	
+	public void lcpClose() {
+		try {
+			nxtCommand.close();
+		} catch (IOException ioe) {
+			// Ignore
+		}
+	}
+	
+	/**
+	 * Upload the specified file
+	 */
+	private void uploadFile(File file) {
+		if (file.getName().length() > 20) {
+			panel.error("File name is more than 20 characters");
+		} else {
+			try {
+				nxtCommand.uploadFile(file, file.getName());
+			} catch (IOException ioe) {
+				panel.log("IOException uploading file");
+			}
+		}
+	}
+	
+	private void runFile(String fileName) {
+		try {
+			nxtCommand.startProgram(fileName);
+		} catch (IOException ioe) {
+			// Ignore as NXT disconnects
+		}
+	}
+	
+	public void connectAndUpload(String nxtName, File file) {
+		boolean open = lcpConnect(nxtName);
+		if (open) {
+			uploadFile(file);
+			if (nxtCommand != null) runFile(file.getName());
+			lcpClose();
+			try {
+				Thread.sleep(1000); // Wait 1 seconds for program to start 
+			} catch (InterruptedException ioe) {
+				// Ignore
+			}
+		}
 	}
 	
 	/**
