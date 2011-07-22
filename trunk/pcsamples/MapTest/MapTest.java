@@ -27,7 +27,7 @@ import lejos.robotics.mapping.NavigationModel.NavEvent;
 public class MapTest extends NavigationPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
-	private static final int FRAME_WIDTH = 1000;
+	private static final int FRAME_WIDTH = 950;
 	private static final int FRAME_HEIGHT = 800;	
 	private static final int INITIAL_ZOOM = 100;
 	private static final Point INITIAL_VIEW_START = new Point(-80,-10);
@@ -64,14 +64,16 @@ public class MapTest extends NavigationPanel implements ActionListener {
 	    mapPaneSize = MAP_AREA_SIZE;
 	    initialViewStart = INITIAL_VIEW_START;
 	    
-	    createConnectPanel();
-	    createControlPanel();
-	    createMousePanel();
+	    //createConnectPanel();
+
+	    createStatusPanel();
 	    createCommandPanel();
 	    createMapPanel();
+	    createControlPanel();
 	    
+	    zoomSlider.setOrientation(JSlider.VERTICAL);
 	    zoomSlider.setValue(INITIAL_ZOOM);
-	    
+
 	    setHeading = new PosePanel(model, NavEvent.SET_POSE,"Set Heading:", "Set");
 	    commandPanel.add(setHeading);
 	    rotate = new PosePanel(model, NavEvent.ROTATE_TO, "Rotate To:", "Go");
@@ -111,5 +113,6 @@ public class MapTest extends NavigationPanel implements ActionListener {
 		model.setPose(INITIAL_ROBOT_POSE);
 	
 		openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, FRAME_TITLE, SystemColor.controlShadow, menuBar);
+		frame.getContentPane().add(statusPanel, BorderLayout.SOUTH);
 	}
 }
