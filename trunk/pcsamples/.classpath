@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="AccelDemo"/>
 	<classpathentry kind="src" path="NavMapControl"/>
 	<classpathentry kind="src" path="BTSend"/>
+	<classpathentry kind="src" path="MapCommand"/>
 	<classpathentry kind="src" path="MapTest"/>
 	<classpathentry kind="src" path="MCLTest"/>
 	<classpathentry kind="src" path="NavTest"/>

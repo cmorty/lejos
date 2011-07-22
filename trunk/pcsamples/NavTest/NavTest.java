@@ -4,11 +4,9 @@ import java.awt.Point;
 import java.awt.SystemColor;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
-
 import lejos.robotics.mapping.MenuAction;
 import lejos.robotics.mapping.NavigationModel;
 import lejos.robotics.mapping.NavigationPanel;
-import lejos.robotics.mapping.NavigationModel.NavEvent;
 import lejos.robotics.navigation.Pose;
 
 /**
@@ -56,7 +54,9 @@ public class NavTest extends NavigationPanel {
 
 	    add(eventPanel);
 	    createMapPanel();
+	    add(mapPanel);
 	    createControlPanel();
+	    add(controlPanel);
 	    createStatusPanel();
 
 	    zoomSlider.setOrientation(JSlider.VERTICAL);
