@@ -62,8 +62,11 @@ public class MapCommand extends NavigationPanel {
     
 	    rightPanel.setLayout(new BorderLayout());
 	    rightPanel.add(eventPanel, BorderLayout.NORTH);
+	    createLoadPanel();
+	    loadPanel.setPreferredSize(new Dimension(300,70));
+	    leftPanel.add(loadPanel);
 	    createConnectPanel();
-	    connectPanel.setPreferredSize(new Dimension(300,70));
+	    connectPanel.setPreferredSize(new Dimension(300,90));
 	    leftPanel.add(connectPanel);
 	    createCommandPanel();
 	    setHeading = new PosePanel(model, NavEvent.SET_POSE,"Set Heading:", "Set");
