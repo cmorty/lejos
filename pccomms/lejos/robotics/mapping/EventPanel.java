@@ -24,9 +24,9 @@ public class EventPanel extends JPanel implements ActionListener {
 	protected JTextField param3 = new JTextField(8);
 	protected PCNavigationModel model;
 	protected NavEvent[] events = {NavEvent.ADD_WAYPOINT, NavEvent.ARC, NavEvent.CALCULATE_PATH, 
-			NavEvent.CLEAR_PATH, NavEvent.FOLLOW_PATH, NavEvent.GET_POSE, 
+			NavEvent.CLEAR_PATH, NavEvent.FOLLOW_PATH, NavEvent.GET_BATTERY, NavEvent.GET_POSE, 
 			NavEvent.GOTO, NavEvent.RANDOM_MOVE, NavEvent.ROTATE, NavEvent.ROTATE_TO, NavEvent.SET_POSE, NavEvent.SET_TARGET,
-			NavEvent.START_NAVIGATOR, NavEvent.STOP, NavEvent.TAKE_READINGS, NavEvent.TRAVEL};
+			NavEvent.SOUND, NavEvent.START_NAVIGATOR, NavEvent.STOP, NavEvent.TAKE_READINGS, NavEvent.TRAVEL};
 	protected JComboBox eventCombo = new JComboBox(events);
 	protected NavigationPanel panel;
 	
@@ -103,7 +103,13 @@ public class EventPanel extends JPanel implements ActionListener {
 				param2.setVisible(true);				
 				label3.setText("Heading:");
 				label3.setVisible(true);
-				param3.setVisible(true);			}
+				param3.setVisible(true);
+				break;
+			case SOUND:
+				label1.setText("Code:");
+				label1.setVisible(true);
+				param1.setVisible(true);	
+			}
 			eventCombo.revalidate();
 		} else if (e.getSource() == sendButton) {
 			NavEvent event = events[eventCombo.getSelectedIndex()];
@@ -175,8 +181,16 @@ public class EventPanel extends JPanel implements ActionListener {
 				case CALCULATE_PATH:
 					model.calculatePath();
 					panel.repaint();
+					break;
 				case FOLLOW_PATH:
 					model.followPath();
+					break;
+				case SOUND:
+					model.sendSound(Integer.parseInt(param1.getText()));
+					break;
+				case GET_BATTERY:
+					model.getRemoteBattery();
+					break;
 				}
 			} catch (NumberFormatException nfe) {
 				panel.error("Invalid parameter");
