@@ -20,10 +20,10 @@ import lejos.robotics.mapping.NavigationModel.NavEvent;
 public class MapCommand extends NavigationPanel {
 	private static final long serialVersionUID = 1L;
 
-	private static final int FRAME_WIDTH = 1200;
+	private static final int FRAME_WIDTH = 1150;
 	private static final int FRAME_HEIGHT = 700;	
 	private static final int INITIAL_ZOOM = 100;
-	private static final Point INITIAL_VIEW_START = new Point(0,0);
+	private static final Point INITIAL_VIEW_START = new Point(-10,-10);
 	private static final Dimension MAP_AREA_SIZE = new Dimension(800,550);
 	private static final String FRAME_TITLE = "Map Command";
 	
@@ -63,13 +63,16 @@ public class MapCommand extends NavigationPanel {
 	    rightPanel.setLayout(new BorderLayout());
 	    rightPanel.add(eventPanel, BorderLayout.NORTH);
 	    createConnectPanel();
+	    connectPanel.setPreferredSize(new Dimension(300,70));
 	    leftPanel.add(connectPanel);
 	    createCommandPanel();
 	    setHeading = new PosePanel(model, NavEvent.SET_POSE,"Set Heading:", "Set");
+	    setHeading.setPreferredSize(new Dimension(280,80));
 	    commandPanel.add(setHeading);
 	    rotate = new PosePanel(model, NavEvent.ROTATE_TO, "Rotate To:", "Go");
+	    rotate.setPreferredSize(new Dimension(280,80));
 	    commandPanel.add(rotate);
-	    commandPanel.setPreferredSize(new Dimension(400,150));
+	    commandPanel.setPreferredSize(new Dimension(300,200));
 	    leftPanel.add(commandPanel);
 	    createMapPanel();
 	    rightPanel.add(mapPanel, BorderLayout.CENTER);
@@ -77,11 +80,11 @@ public class MapCommand extends NavigationPanel {
 	    leftPanel.add(controlPanel);
 	    createStatusPanel();
 	    rightPanel.add(statusPanel, BorderLayout.SOUTH);
-	    leftPanel.setPreferredSize(new Dimension(400,600));
+	    leftPanel.setPreferredSize(new Dimension(320,600));
 	    add(leftPanel, BorderLayout.WEST);
 	    add(rightPanel, BorderLayout.CENTER);
 
-	    //zoomSlider.setOrientation(JSlider.VERTICAL);
+	    controlPanel.setPreferredSize(new Dimension(300,80));
 	    zoomSlider.setValue(INITIAL_ZOOM);
 		createMenu();
 	}
