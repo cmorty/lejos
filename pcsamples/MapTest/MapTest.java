@@ -68,8 +68,11 @@ public class MapTest extends NavigationPanel implements ActionListener {
 
 	    createStatusPanel();
 	    createCommandPanel();
+	    add(commandPanel);
 	    createMapPanel();
+	    add(mapPanel);
 	    createControlPanel();
+	    add(controlPanel);
 	    
 	    zoomSlider.setOrientation(JSlider.VERTICAL);
 	    zoomSlider.setValue(INITIAL_ZOOM);
