@@ -23,7 +23,7 @@ import lejos.robotics.localization.*;
  *
  */
 public class PCNavigationModel extends NavigationModel {
-	protected NavigationPanel panel;
+	protected MapApplicationUI panel;
 	protected int closest = -1;
 	protected boolean connected = false;
 	protected RangeReadings particleReadings = new RangeReadings(0);
@@ -49,7 +49,7 @@ public class PCNavigationModel extends NavigationModel {
 	 * 
 	 * @param panel the NavigationPanel
 	 */
-	public PCNavigationModel(NavigationPanel panel) {
+	public PCNavigationModel(MapApplicationUI panel) {
 		this.panel = panel;
 	}
 	
@@ -168,7 +168,7 @@ public class PCNavigationModel extends NavigationModel {
 	 */
 	public void addWaypoint(Waypoint wp) {
 		waypoints.add(wp);
-		panel.mapPanel.repaint();
+		panel.repaint();
 		if (!connected) return;
 		try {
 			synchronized(receiver) {

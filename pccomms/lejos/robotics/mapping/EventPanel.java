@@ -23,7 +23,8 @@ public class EventPanel extends JPanel implements ActionListener {
 	protected JTextField param2 = new JTextField(8);
 	protected JTextField param3 = new JTextField(8);
 	protected PCNavigationModel model;
-	protected NavEvent[] events = {NavEvent.ADD_WAYPOINT, NavEvent.ARC, NavEvent.CLEAR_PATH, NavEvent.GET_POSE,
+	protected NavEvent[] events = {NavEvent.ADD_WAYPOINT, NavEvent.ARC, NavEvent.CALCULATE_PATH, 
+			NavEvent.CLEAR_PATH, NavEvent.FOLLOW_PATH, NavEvent.GET_POSE, 
 			NavEvent.GOTO, NavEvent.RANDOM_MOVE, NavEvent.ROTATE, NavEvent.ROTATE_TO, NavEvent.SET_POSE, NavEvent.SET_TARGET,
 			NavEvent.START_NAVIGATOR, NavEvent.STOP, NavEvent.TAKE_READINGS, NavEvent.TRAVEL};
 	protected JComboBox eventCombo = new JComboBox(events);
@@ -171,6 +172,11 @@ public class EventPanel extends JPanel implements ActionListener {
 					}
 					panel.repaint();
 					break;
+				case CALCULATE_PATH:
+					model.calculatePath();
+					panel.repaint();
+				case FOLLOW_PATH:
+					model.followPath();
 				}
 			} catch (NumberFormatException nfe) {
 				panel.error("Invalid parameter");
