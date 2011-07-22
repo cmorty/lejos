@@ -123,7 +123,7 @@ public class PathTest extends NavigationPanel {
 	protected void popupMenuItems(Point p, JPopupMenu menu) { 
 	    // Include set pose and set target menu items
 	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_POSE, "Set pose", p , model, this));
-	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_TARGET, "Set target", p, model, this));;
+	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_TARGET, "Set target", p, model, this));
 	}
   	
   	@Override
