@@ -11,9 +11,9 @@ import lejos.robotics.LinearActuator;
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 
-/** A Linear Actuator class that provides non-blocking actions and stall detection. Developed for the Firgelli L12-NXT-50 and L12-NXT-100
+/** A Linear Actuator class that provides non-blocking move actions with stall detection. Developed for the Firgelli L12-NXT-50 and L12-NXT-100
  * but may work for others. These linear actuators are self contained units which include an electric motor and encoder. They will push 
- * up to 25N and move at 12mm/s unloaded. 
+ * up to 25N and move at up to 12 mm/sec unloaded. 
  * <p>
  * See <a href="http://www.firgelli.com">www.firgelli.com.</a>.
  * @author Kirk P. Thompson
@@ -264,7 +264,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
             // stop the motor
             stop(); 
             _tachoCount=temptacho-_encoderMotor.getTachoCount();
-            // wake up the any wait in doAction()
+            // wake up any wait in doAction()
             synchronized(_lockObj){
                 _lockObj.notify();
             }
@@ -285,13 +285,15 @@ public class LnrActrFirgelliNXT implements LinearActuator{
             // want to give some time for the motor to start and actuator to begin movement hence we don't want to issue a stop.
              _enableStallStop=false; 
             // wait until the shaft is moving or we timeout
-            _isStalled=true;
-            while(_isStalled) {
+            _isStalled=false;
+            int begTacho=_encoderMotor.getTachoCount();
+            while (begTacho==_encoderMotor.getTachoCount()) {
                 doWait(5);
-                // kill the move and exit if it takes too long to start    
+                // kill the move and exit if it takes too long to start moving  
                 if (System.currentTimeMillis() - begTime>(_tick_wait*4)) {
 //                    dbg("mgoact tmout");
                     _killCurrentAction=true; // will cause the actuate/monitor loop in toExtent() to never start
+                    _isStalled=true;
                     break;
                 }
             }
@@ -363,7 +365,6 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * @see #resetTachoCount
      */
     public int getTachoCount() {
-       //return _encoderMotor.getTachoCount();
        return _tachoCount;
     }
     
@@ -371,7 +372,6 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * @see #getTachoCount
      */
     public void resetTachoCount() {
-        //_encoderMotor.resetTachoCount();
          _tachoCount=0;
     }
     
