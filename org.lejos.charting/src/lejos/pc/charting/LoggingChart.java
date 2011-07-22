@@ -391,7 +391,7 @@ public class LoggingChart extends ChartPanel{
             for (int ii=0;ii< getChart().getXYPlot().getDataset(i).getSeriesCount();ii++) {
                 getChart().getXYPlot().getRenderer(i).setSeriesPaint(ii,getSeriesColor(colorIndex++));
                 getChart().getXYPlot().getRenderer(i).setSeriesStroke(
-                    ii,new BasicStroke(.75f, BasicStroke.CAP_BUTT,  BasicStroke.JOIN_BEVEL));
+                    ii,new BasicStroke(.50f, BasicStroke.CAP_BUTT,  BasicStroke.JOIN_BEVEL));
             }
             
         }
