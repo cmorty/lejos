@@ -4,15 +4,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import lejos.nxt.Battery;
+import lejos.nxt.Motor;
 import lejos.nxt.Sound;
 import lejos.nxt.comm.*;
 import lejos.robotics.RangeScanner;
+import lejos.robotics.RegulatedMotor;
+import lejos.robotics.RotatingRangeScanner;
 import lejos.robotics.localization.*;
 import lejos.robotics.navigation.*;
 import lejos.robotics.objectdetection.*;
 import lejos.robotics.pathfinding.Path;
 import lejos.robotics.pathfinding.PathFinder;
 import lejos.util.Delay;
+import lejos.util.PilotProps;
 
 /**
  * NXT version of the navigation model.
@@ -344,6 +348,50 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							dos.writeFloat(Battery.getVoltage());
 							dos.flush();
 							break;
+						case PILOT_PARAMS:
+							float wheelDiameter = dis.readFloat();
+							float trackWidth = dis.readFloat();
+							int leftMotor = dis.readInt();
+							int rightMotor = dis.readInt();
+							boolean reverse = dis.readBoolean();
+							PilotProps props = new PilotProps();
+							String[] motors = {"A","B","C"};
+							props.setProperty(PilotProps.KEY_WHEELDIAMETER,"" + wheelDiameter);
+							props.setProperty(PilotProps.KEY_TRACKWIDTH,"" + trackWidth);
+							props.setProperty(PilotProps.KEY_LEFTMOTOR,motors[leftMotor]);
+							props.setProperty(PilotProps.KEY_RIGHTMOTOR,motors[rightMotor]);
+							props.setProperty(PilotProps.KEY_REVERSE,"" + reverse);
+							props.storePersistentValues();
+							break;
+						case RANGE_FEATURE_DETECTOR_PARAMS:
+							int delay = dis.readInt();
+							float maxDist = dis.readFloat();
+							for (FeatureDetector detector : detectors) {
+								if (detector instanceof RangeFeatureDetector) {
+									((RangeFeatureDetector) detector).setDelay(delay);
+									((RangeFeatureDetector) detector).setMaxDistance(maxDist);
+								}
+							}
+							break;
+						case RANGE_SCANNER_PARAMS:
+							int gearRatio = dis.readInt();
+							int headMotor = dis.readInt();
+							RegulatedMotor[] regulatedMotors = {Motor.A, Motor.B, Motor.C};
+							if (scanner instanceof RotatingRangeScanner) {
+								((RotatingRangeScanner) scanner).setGearRatio(gearRatio);
+								((RotatingRangeScanner) scanner).setHeadMotor(regulatedMotors[headMotor]);
+							}
+							break;
+						case TRAVEL_SPEED:
+							float travelSpeed = dis.readFloat();
+							if (pilot != null) pilot.setTravelSpeed(travelSpeed);
+							break;
+						case ROTATE_SPEED:
+							float rotateSpeed = dis.readFloat();
+							if (pilot != null && pilot instanceof RotateMoveController) {
+								((RotateMoveController)pilot).setRotateSpeed(rotateSpeed);
+							}
+							break;						
 						}
 					}
 				} catch (IOException ioe) {
