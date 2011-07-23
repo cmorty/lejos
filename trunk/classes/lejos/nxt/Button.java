@@ -126,6 +126,58 @@ public class Button implements ListenerCaller
     }
   }
 
+  	
+	/**
+	 * This method discards and events.
+	 * In contrast to {@link #readButtons()}, this method doesn't beep if a button is pressed.
+	 */
+	public static synchronized void discardEvents()
+	{
+		curButtons = getButtons();
+	}
+  
+	/**
+	 * Waits for some button to be pressed or released.
+	 * Which buttons have been released or pressed is returned as a bitmask.
+	 * The lower eight bits (bits 0 to 7) indicate, which buttons have been pressed.
+	 * Bits 8 to 15 indicate which buttons have neem released.
+	 * 
+	 * @param timeout The maximum number of milliseconds to wait
+	 * @return the bitmask 
+	 * @see {@link #ID_ENTER}, {@link #ID_LEFT}, {@link #ID_RIGHT}, {@link #ID_ESCAPE}
+	 */
+	public static synchronized int waitForAnyEvent(int timeout) {
+		long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
+		NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
+		try
+		{
+			int oldDown = curButtons;
+			while (true)
+			{
+				long curTime = System.currentTimeMillis();
+				if (curTime >= end)
+					return 0;
+				
+				event.waitEvent((oldDown << RELEASE_EVENT_SHIFT) | ((ID_ALL ^ oldDown) << PRESS_EVENT_SHIFT),
+						end - curTime);
+				int newDown = readButtons();
+				if (newDown != oldDown)
+					return ((oldDown & (~newDown)) << 8) | (newDown & (~oldDown)); 
+			}
+		}
+		catch(InterruptedException e)
+		{
+		    // TODO: Need to decide how to handle this properly
+            // preserve state of interrupt flag
+            Thread.currentThread().interrupt();
+            return 0;
+		}
+		finally
+		{
+			event.free();
+		}
+	}
+
 	/**
 	 * Waits for some button to be pressed. If a button is already pressed, it
 	 * must be released and pressed again.
@@ -134,7 +186,7 @@ public class Button implements ListenerCaller
 	 * @return the ID of the button that has been pressed or in rare cases a bitmask of button IDs,
 	 *         0 if the given timeout is reached 
 	 */
-	public static int waitForAnyPress(int timeout) {
+	public static synchronized int waitForAnyPress(int timeout) {
 		long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
 		NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
 		try
@@ -204,9 +256,10 @@ public class Button implements ListenerCaller
 
 	/**
 	 * <i>Low-level API</i> that reads status of buttons.
+	 * As a side-effect, it discards all events.
 	 * 
-	 * @return An integer with possibly some bits set: 0x01 (ENTER button pressed)
-	 * 0x02 (LEFT button pressed), 0x04 (RIGHT button pressed), 0x08 (ESCAPE button pressed).
+	 * @return An integer with possibly some bits set: {@link #ID_ENTER} (ENTER button pressed)
+	 * {@link #ID_LEFT} (LEFT button pressed), {@link #ID_RIGHT} (RIGHT button pressed), {@link #ID_ESCAPE} (ESCAPE button pressed).
 	 * If all buttons are released, this method returns 0.
 	 */
 	public static synchronized int readButtons()
