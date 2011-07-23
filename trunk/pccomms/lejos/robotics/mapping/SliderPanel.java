@@ -16,16 +16,17 @@ import javax.swing.event.ChangeListener;
 import lejos.robotics.mapping.NavigationModel.NavEvent;
 import lejos.robotics.navigation.Pose;
 
-public class PosePanel extends JPanel implements ActionListener, ChangeListener {
+public class SliderPanel extends JPanel implements ActionListener, ChangeListener {
 	private static final long serialVersionUID = 1L;
 	protected PCNavigationModel model;
 	protected String sliderLabelText;
 	protected NavEvent event;
 	protected JButton button;
 	protected JLabel label;
-	protected JSlider slider = new JSlider(0,360);
+	protected JSlider slider;
 	
-	public PosePanel(PCNavigationModel model, NavEvent event, String sliderLabel, String buttonLabel) {
+	public SliderPanel(PCNavigationModel model, NavEvent event, String sliderLabel, String buttonLabel, int maxValue) {
+		slider  = new JSlider(0,maxValue);
 		this.model = model;
 		this.event = event;
 		sliderLabelText = sliderLabel;
