@@ -27,7 +27,7 @@ public class MapCommand extends NavigationPanel {
 	private static final Dimension MAP_AREA_SIZE = new Dimension(800,550);
 	private static final String FRAME_TITLE = "Map Command";
 	
-	private SliderPanel setHeading, rotate;
+	private SliderPanel setHeading, rotate, travelSpeed, rotateSpeed;
 	private JPanel leftPanel = new JPanel();
 	private JPanel rightPanel = new JPanel();
   
@@ -75,7 +75,13 @@ public class MapCommand extends NavigationPanel {
 	    rotate = new SliderPanel(model, NavEvent.ROTATE_TO, "Rotate To:", "Go", 360);
 	    rotate.setPreferredSize(new Dimension(280,80));
 	    commandPanel.add(rotate);
-	    commandPanel.setPreferredSize(new Dimension(300,200));
+	    travelSpeed = new SliderPanel(model, NavEvent.TRAVEL_SPEED, "Travel Speed", "Set", 100);
+	    travelSpeed.setPreferredSize(new Dimension(280,80));
+	    commandPanel.add(travelSpeed);
+	    rotateSpeed = new SliderPanel(model, NavEvent.ROTATE_SPEED, "Rotate Speed", "Set", 100);
+	    rotateSpeed.setPreferredSize(new Dimension(280,80));
+	    commandPanel.add(rotateSpeed);	    
+	    commandPanel.setPreferredSize(new Dimension(300,370));
 	    leftPanel.add(commandPanel);
 	    createMapPanel();
 	    rightPanel.add(mapPanel, BorderLayout.CENTER);
@@ -90,8 +96,6 @@ public class MapCommand extends NavigationPanel {
 	    controlPanel.setPreferredSize(new Dimension(300,80));
 	    zoomSlider.setValue(INITIAL_ZOOM);
 		createMenu();
-		createPilotPanel();
-		createMeshPanel();
 	}
 	
 	/**
