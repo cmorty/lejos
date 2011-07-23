@@ -51,7 +51,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	                  showReadingsPanel = true, showLastMovePanel = true,
 	                  showParticlePanel = true, showMoves = false,
 	                  showMesh = false, showGrid = true, showLog = false,
-	                  showParticles = false, showLoadMap = true;
+	                  showParticles = false, showLoadMapPanel = true;
 	protected JPanel readingsPanel = new JPanel();
 	protected JTextField readingsField = new JTextField(12);
 	protected JPanel lastMovePanel = new JPanel();
@@ -75,7 +75,8 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 						finder, detector;
 	protected JCheckBoxMenuItem viewGrid, viewMousePosition, viewControls,
 	                          viewConnect, viewCommands, viewMesh, viewLog,
-	                          viewLastMove, viewParticlePanel, viewParticles;
+	                          viewLastMove, viewParticlePanel, viewParticles,
+	                          viewLoadMap;
 	protected JFileChooser chooser = new JFileChooser();
 	protected EventPanel eventPanel = new EventPanel(model, this,  null);
 	protected JColorChooser colorChooser = new JColorChooser();
@@ -85,6 +86,51 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected JTextField mapFileField = new JTextField(10);
 	protected JButton loadMapButton = new JButton("Load");
 	protected JCheckBox uploadBox = new JCheckBox("Upload NXT Program?");
+	
+	protected JDialog configurePilot;
+	protected JPanel pilotPanel = new JPanel();
+	protected JLabel wheelDiameterLabel = new JLabel("Wheel Diameter:");
+	protected JTextField wheelDiameterField = new JTextField(6);
+	protected JLabel trackWidthLabel = new JLabel("Track Width:");
+	protected JTextField trackWidthField = new JTextField(6);
+	protected JButton pilotOKButton = new JButton("OK");
+	protected String[] motors = {"A","B","C"};
+	protected JLabel leftMotorLabel = new JLabel("Left Motor:");
+	protected JComboBox leftMotorField = new JComboBox(motors);
+	protected JLabel rightMotorLabel = new JLabel("Right Motor:");
+	protected JComboBox rightMotorField = new JComboBox(motors);
+	protected JCheckBox reverse = new JCheckBox("Reverse?");
+	protected JDialog configureMesh;
+	protected JPanel meshPanel = new JPanel();
+	protected JPanel meshForm = new JPanel();
+	protected JLabel gridSizeLabel = new JLabel("Grid Size:");
+	protected JTextField gridSizeField = new JTextField(4);
+	protected JLabel clearanceLabel = new JLabel("Clearance:");
+	protected JTextField clearanceField = new JTextField(4);
+	protected JButton meshOKButton = new JButton("OK");
+	protected JLabel delayLabel = new JLabel("Detector Delay:");
+	protected JTextField delayField = new JTextField(4);
+	protected JLabel maxDistanceLabel = new JLabel("Maximum distance:");
+	protected JTextField maxDistanceField = new JTextField(4);
+	protected JPanel detectorPanel = new JPanel();
+	protected JPanel detectorForm = new JPanel();
+	protected JDialog configureDetector;
+	protected JButton detectorOKButton = new JButton("OK");
+	protected JLabel gearRatioLabel = new JLabel("Gear ratio:");
+	protected JTextField gearRatioField = new JTextField(4);
+	protected JLabel headMotorLabel = new JLabel("Head motor");
+	protected JTextField headMotorField = new JTextField(4);
+	protected JPanel scannerPanel = new JPanel();
+	protected JPanel scannerForm = new JPanel();
+	protected JDialog configureScanner;
+	protected JButton scannerOKButton = new JButton("OK");
+	
+	public NavigationPanel() {
+		createPilotPanel();
+		createMeshPanel();
+		createDetectorPanel();
+		createScannerPanel();
+	}
 	
 	/**
 	 * Build the various panels if they are required.
@@ -150,6 +196,105 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		loadPanel.add(loadMapButton);
 		loadPanel.setBorder(BorderFactory.createTitledBorder("Load Map"));
 		loadMapButton.addActionListener(this);
+	}
+	
+	protected void createPilotPanel() {
+		pilotPanel.setLayout(new SpringLayout());
+		pilotPanel.add(wheelDiameterLabel);
+		pilotPanel.add(wheelDiameterField);
+		pilotPanel.add(trackWidthLabel);
+		pilotPanel.add(trackWidthField);
+		pilotPanel.add(leftMotorLabel);
+		pilotPanel.add(leftMotorField);
+		pilotPanel.add(rightMotorLabel);
+		pilotPanel.add(rightMotorField);
+		pilotPanel.add(reverse);
+		pilotPanel.add(pilotOKButton);
+		
+		makeCompactGrid(pilotPanel,
+                5, 2, //rows, cols
+                20, 20,        //initX, initY
+                20, 20);       //xPad, yPad
+		
+		pilotOKButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				model.setDifferentialPilotParams(Float.parseFloat(wheelDiameterField.getText()), 
+						Float.parseFloat(trackWidthField.getText()),
+						leftMotorField.getSelectedIndex(), rightMotorField.getSelectedIndex(), 
+						reverse.isSelected());
+				configurePilot.setVisible(false);
+			}
+		});
+	}
+	
+	protected void createMeshPanel() {
+		meshPanel.setLayout(new SpringLayout());
+		meshPanel.add(gridSizeLabel);
+		meshPanel.add(gridSizeField);
+		meshPanel.add(clearanceLabel);
+		meshPanel.add(clearanceField);
+		
+		makeCompactGrid(meshPanel,
+                2, 2, //rows, cols
+                20, 20,        //initX, initY
+                20, 20);       //xPad, yPad
+		
+		meshForm.add(meshPanel);
+		meshForm.add(meshOKButton);
+		
+		meshOKButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				model.setMeshParams(Integer.parseInt(gridSizeField.getText()), Integer.parseInt(clearanceField.getText()));
+				configureMesh.setVisible(false);
+			}
+		});
+		
+	}
+	
+	protected void createDetectorPanel() {
+		detectorPanel.setLayout(new SpringLayout());
+		detectorPanel.add(delayLabel);
+		detectorPanel.add(delayField);
+		detectorPanel.add(maxDistanceLabel);
+		detectorPanel.add(maxDistanceField);
+		
+		makeCompactGrid(detectorPanel,
+                2, 2, //rows, cols
+                20, 20,        //initX, initY
+                20, 20);       //xPad, yPad
+		
+		detectorForm.add(detectorPanel);
+		detectorForm.add(detectorOKButton);
+		
+		detectorOKButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				model.setRangeFeatureParams(Float.parseFloat(maxDistanceField.getText()), Integer.parseInt(delayField.getText()));
+				configureDetector.setVisible(false);
+			}
+		});	
+	}
+	
+	protected void createScannerPanel() {
+		scannerPanel.setLayout(new SpringLayout());
+		scannerPanel.add(gearRatioLabel);
+		scannerPanel.add(gearRatioField);
+		scannerPanel.add(headMotorLabel);
+		scannerPanel.add(headMotorField);
+		
+		makeCompactGrid(scannerPanel,
+                2, 2, //rows, cols
+                20, 20,        //initX, initY
+                20, 20);       //xPad, yPad
+		
+		scannerForm.add(scannerPanel);
+		scannerForm.add(scannerOKButton);
+		
+		scannerOKButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				model.setRotatingRangeScannerParams(Integer.parseInt(gearRatioField.getText()), Integer.parseInt(headMotorField.getText()));
+				configureScanner.setVisible(false);
+			}
+		});	
 	}
 	
 	/**
@@ -318,6 +463,10 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		//viewParticles.setSelected(showParticles);
 		//viewParticles.addActionListener(this);
 		//viewMenu.add(viewParticles);
+		viewLoadMap = new JCheckBoxMenuItem("Load Map");
+		viewLoadMap.setSelected(showLoadMapPanel);
+		viewLoadMap.addActionListener(this);
+		viewMenu.add(viewLoadMap);
 	}
 	
 	/**
@@ -737,8 +886,10 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 			controlPanel.setVisible(viewControls.isSelected());
 		} else if (e.getSource() == viewCommands) {
 			commandPanel.setVisible(viewCommands.isSelected());
-		}  else if (e.getSource() == viewConnect) {
+		} else if (e.getSource() == viewConnect) {
 			connectPanel.setVisible(viewConnect.isSelected());
+		} else if (e.getSource() == viewLoadMap) {
+			loadPanel.setVisible(viewLoadMap.isSelected());
 		} else if (e.getSource() == getPose) {
 			model.getRobotPose();
 		} else if (e.getSource() == randomMove) {
@@ -755,6 +906,30 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		} else if (e.getSource() == loadMapButton) {
 			model.loadMap(mapFileField.getText());
 			repaint();
+		} else if (e.getSource() == pilot) {
+			configurePilot = new JDialog(frame, "Configure Differential Pilot", true);
+			configurePilot.setContentPane(pilotPanel);
+			configurePilot.setLocation(200, 100);
+			configurePilot.pack();
+			configurePilot.setVisible(true);
+		} else if (e.getSource() == finder) {
+			configureMesh = new JDialog(frame, "Configure 4-way Mesh", true);
+			configureMesh.setContentPane(meshForm);
+			configureMesh.setLocation(200, 100);
+			configureMesh.pack();
+			configureMesh.setVisible(true);
+		} else if (e.getSource() == detector) {
+			configureDetector = new JDialog(frame, "Configure Range Feature Detector", true);
+			configureDetector.setContentPane(detectorForm);
+			configureDetector.setLocation(200, 100);
+			configureDetector.pack();
+			configureDetector.setVisible(true);
+		} else if (e.getSource() == scanner) {
+			configureScanner = new JDialog(frame, "Configure Range Scanner", true);
+			configureScanner.setContentPane(scannerForm);
+			configureScanner.setLocation(200, 100);
+			configureScanner.pack();
+			configureScanner.setVisible(true);
 		}
 	}
 	
@@ -769,4 +944,60 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		mapPanel.colors[index] = newColor;
 		repaint();
 	}
+	
+	public static void makeCompactGrid(Container parent,int rows, int cols,int initialX, int initialY, int xPad, int yPad) {
+		SpringLayout layout = (SpringLayout)parent.getLayout();
+
+		// Align all cells in each column and make them the same width.
+		Spring x = Spring.constant(initialX);
+		
+		for (int c = 0; c < cols; c++) {
+			Spring width = Spring.constant(0);
+			
+			for (int r = 0; r < rows; r++) {
+				width = Spring.max(width,
+				getConstraintsForCell(r, c, parent, cols).getWidth());
+			}
+			
+			for (int r = 0; r < rows; r++) {
+				SpringLayout.Constraints constraints =
+					getConstraintsForCell(r, c, parent, cols);
+					constraints.setX(x);
+					constraints.setWidth(width);
+			}
+			
+			x = Spring.sum(x, Spring.sum(width, Spring.constant(xPad)));
+		}
+
+		//Align all cells in each row and make them the same height.
+		Spring y = Spring.constant(initialY);
+		
+		for (int r = 0; r < rows; r++) {
+			Spring height = Spring.constant(0);
+			
+			for (int c = 0; c < cols; c++) {
+				height = Spring.max(height,
+				getConstraintsForCell(r, c, parent, cols).getHeight());
+			}
+			
+			for (int c = 0; c < cols; c++) {
+				SpringLayout.Constraints constraints =	getConstraintsForCell(r, c, parent, cols);
+				constraints.setY(y);
+				constraints.setHeight(height);
+			}
+			
+			y = Spring.sum(y, Spring.sum(height, Spring.constant(yPad)));
+		}
+
+		//Set the parent's size.
+		SpringLayout.Constraints pCons = layout.getConstraints(parent);
+		pCons.setConstraint(SpringLayout.SOUTH, y);
+		pCons.setConstraint(SpringLayout.EAST, x);
+	}
+	
+    private static SpringLayout.Constraints getConstraintsForCell(int row, int col, Container parent, int cols) {
+    	SpringLayout layout = (SpringLayout) parent.getLayout();
+    	Component c = parent.getComponent(row * cols + col);
+    	return layout.getConstraints(c);
+    }
 }

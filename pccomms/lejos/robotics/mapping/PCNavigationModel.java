@@ -20,7 +20,7 @@ import lejos.robotics.localization.*;
  * There is a NavigationPanel associated with the model. Whenever data in the model is updated,
  * the NavigationPanel is repainted with the new data.
  * 
- * @author Lawrie Grifiths
+ * @author Lawrie Griffiths
  *
  */
 public class PCNavigationModel extends NavigationModel {
@@ -191,6 +191,78 @@ public class PCNavigationModel extends NavigationModel {
 				// Ignore
 			}
 		}
+	}
+	
+	public void setDifferentialPilotParams(float wheelDiameter, float trackWidth,
+			int leftMotor, int rightMotor, boolean reverse) {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.PILOT_PARAMS.ordinal());
+				dos.writeFloat(wheelDiameter);
+				dos.writeFloat(trackWidth);
+				dos.writeInt(leftMotor);
+				dos.writeInt(rightMotor);
+				dos.writeBoolean(reverse);
+				dos.flush();
+			}
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in setDifferentialPilotParams");
+	    }		
+	}
+	
+	public void setRangeFeatureParams(float maxDistance, int delay) {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.RANGE_FEATURE_DETECTOR_PARAMS.ordinal());
+				dos.writeInt(delay);
+				dos.writeFloat(maxDistance);
+				dos.flush();
+			}
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in setRangeFeatureParams");
+	    }	
+	}
+	
+	public void setRotatingRangeScannerParams(int gearRatio, int headMotor) {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.RANGE_SCANNER_PARAMS.ordinal());
+				dos.writeInt(gearRatio);
+				dos.writeInt(headMotor);
+				dos.flush();
+			}
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in setRotatingRangeScannerParams");
+	    }	
+	}
+	
+	public void setTravelSpeed(float speed) {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.TRAVEL_SPEED.ordinal());
+				dos.writeFloat(speed);
+				dos.flush();
+			}
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in setTravelSpeed");
+	    }	
+	}
+	
+	public void setRotateSpeed(float speed) {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.ROTATE_SPEED.ordinal());
+				dos.writeFloat(speed);
+				dos.flush();
+			}
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in setRotateSpeed");
+	    }	
 	}
 	
 	/**
