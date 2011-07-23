@@ -36,7 +36,7 @@ public class MapTest extends NavigationPanel implements ActionListener {
 	private static final Pose INITIAL_ROBOT_POSE = new Pose(450,430,180);
 	private static final String FRAME_TITLE = "Map Test";
 	
-	private PosePanel setHeading, rotate;
+	private SliderPanel setHeading, rotate;
   
 	/**
 	 * Create a MapTest object and display it in a GUI frame.
@@ -77,9 +77,9 @@ public class MapTest extends NavigationPanel implements ActionListener {
 	    zoomSlider.setOrientation(JSlider.VERTICAL);
 	    zoomSlider.setValue(INITIAL_ZOOM);
 
-	    setHeading = new PosePanel(model, NavEvent.SET_POSE,"Set Heading:", "Set");
+	    setHeading = new SliderPanel(model, NavEvent.SET_POSE,"Set Heading:", "Set", 360);
 	    commandPanel.add(setHeading);
-	    rotate = new PosePanel(model, NavEvent.ROTATE_TO, "Rotate To:", "Go");
+	    rotate = new SliderPanel(model, NavEvent.ROTATE_TO, "Rotate To:", "Go", 360);
 	    commandPanel.add(rotate);
 
 		createMenu();

@@ -7,7 +7,7 @@ import javax.swing.JPopupMenu;
 import lejos.robotics.mapping.MenuAction;
 import lejos.robotics.mapping.NavigationModel;
 import lejos.robotics.mapping.NavigationPanel;
-import lejos.robotics.mapping.PosePanel;
+import lejos.robotics.mapping.SliderPanel;
 import lejos.robotics.mapping.NavigationModel.NavEvent;
 
 /**
@@ -27,7 +27,7 @@ public class MapCommand extends NavigationPanel {
 	private static final Dimension MAP_AREA_SIZE = new Dimension(800,550);
 	private static final String FRAME_TITLE = "Map Command";
 	
-	private PosePanel setHeading, rotate;
+	private SliderPanel setHeading, rotate;
 	private JPanel leftPanel = new JPanel();
 	private JPanel rightPanel = new JPanel();
   
@@ -69,10 +69,10 @@ public class MapCommand extends NavigationPanel {
 	    connectPanel.setPreferredSize(new Dimension(300,90));
 	    leftPanel.add(connectPanel);
 	    createCommandPanel();
-	    setHeading = new PosePanel(model, NavEvent.SET_POSE,"Set Heading:", "Set");
+	    setHeading = new SliderPanel(model, NavEvent.SET_POSE,"Set Heading:", "Set", 360);
 	    setHeading.setPreferredSize(new Dimension(280,80));
 	    commandPanel.add(setHeading);
-	    rotate = new PosePanel(model, NavEvent.ROTATE_TO, "Rotate To:", "Go");
+	    rotate = new SliderPanel(model, NavEvent.ROTATE_TO, "Rotate To:", "Go", 360);
 	    rotate.setPreferredSize(new Dimension(280,80));
 	    commandPanel.add(rotate);
 	    commandPanel.setPreferredSize(new Dimension(300,200));
@@ -90,6 +90,8 @@ public class MapCommand extends NavigationPanel {
 	    controlPanel.setPreferredSize(new Dimension(300,80));
 	    zoomSlider.setValue(INITIAL_ZOOM);
 		createMenu();
+		createPilotPanel();
+		createMeshPanel();
 	}
 	
 	/**
