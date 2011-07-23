@@ -39,7 +39,7 @@ public class MCLTest {
 	private static final double ROTATE_SPEED = 100f;
 	private static final double TRAVEL_SPEED = 100f;
 	private static final float MAX_DISTANCE = 40f;
-	private static final float PROJECTION = 20f;
+	private static final float CLEARANCE = 20f;
 	
 	public static void main(String[] args) throws Exception {
     	PilotProps pp = new PilotProps();
@@ -63,7 +63,7 @@ public class MCLTest {
     	Navigator navigator = new Navigator(robot, mcl); 	
     	NXTNavigationModel model = new NXTNavigationModel();
     	model.setDebug(true);
-    	model.setRandomMoveParameters(MAX_DISTANCE, PROJECTION, BORDER);
+    	model.setRandomMoveParameters(MAX_DISTANCE, CLEARANCE);
     	// Adding the Navigator also adds the pilot, pose provider and scanner
     	model.addNavigator(navigator);
     	// Don't send the pose automatically - PC requests it when required
