@@ -672,6 +672,23 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	/**
+	 * Send Random Move parameters to the NXT
+	 */
+	public void sendRandomMoveParams(float maxDistance, float clearance) {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.RANDOM_MOVE_PARAMS.ordinal());
+				dos.writeFloat(maxDistance);
+				dos.writeFloat(clearance);
+				dos.flush();
+			}
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in sendRandom");
+		}
+	}
+	
+	/**
 	 * Send a route to the NXT and follow it
 	 */
 	public void followPath() {
