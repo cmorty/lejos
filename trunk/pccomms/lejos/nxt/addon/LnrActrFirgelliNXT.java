@@ -17,7 +17,6 @@ import lejos.robotics.LinearActuator;
  * <p>
  * See <a href="http://www.firgelli.com">www.firgelli.com.</a>.
  * @author Kirk P. Thompson
- * 
  */
 public class LnrActrFirgelliNXT implements LinearActuator{
     private final int MIN_POWER = 30;
@@ -27,7 +26,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
     private int _tick_wait; // this is calculated in setPower() to fit the power setting. Variable because lower powers move it slower.
     private boolean _isMoveCommand = false;
     private boolean _isStalled=false;
-    private Thread _stallDetector;
+//    private Thread _stallDetector;
     private Thread _actuator;
     private boolean _dirExtend = true;
     private int _distanceTicks;
@@ -35,6 +34,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
     private boolean _enableStallStop;
     private Object _lockObj = new Object();
     private int _tachoCount=0;
+    private int _direction = -1;
     
     /**Create a <code>LnrActrFirgelliNXT</code> instance.
      * Use this constructor to assign an instance of <code>EncoderMotor</code> used to drive the actuater motor. This constructor
@@ -53,14 +53,14 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         
         setPower(30);
         // set up the threads
-        _stallDetector = new Thread(new StallDetector());
-        _stallDetector.setPriority(Thread.MAX_PRIORITY - 1);
-        _stallDetector.setDaemon(true);
-        _stallDetector.start();
+//        _stallDetector = new Thread(new StallDetector());
+//        _stallDetector.setPriority(Thread.MAX_PRIORITY - 1);
+//        _stallDetector.setDaemon(true);
+//        _stallDetector.start();
         _actuator = new Thread(new Actuator());
         _actuator.setDaemon(true);
         _actuator.start();
-        doWait(100); 
+        doWait(50); 
     }
 
     /** Convenience constructor that creates an instance of a <code>NXTMotor</code> using the specified motor port. This instance is then
@@ -73,6 +73,21 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      */
     public LnrActrFirgelliNXT(TachoMotorPort port) {
         this(new NXTMotor(port));
+    }
+    
+    /** Convenience constructor that creates an instance of a <code>NXTMotor</code> using the specified motor port. This instance is then
+     * used to drive the actuator motor.
+     * <p>
+     * The default power is 30%.
+     * @param port The motor port that the linear actuator is attached to.
+     * @param reversed true if the linear actuator is an electrically reversed (preproduction) version.
+     * @see lejos.nxt.MotorPort
+     * @see NXTMotor
+     */
+    public LnrActrFirgelliNXT(TachoMotorPort port, boolean reversed) {
+    	this(port);
+    	if (reversed) _direction = -1;
+    	else _direction = 1;
     }
     
     /**Sets the power for the actuator. This is called before the <code>move()</code> or <code>moveTo()</code> method is called 
@@ -158,7 +173,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      */
     public synchronized void move(int distance, boolean immediateReturn ){
         // set globals
-         _dirExtend=distance>=0;
+        _dirExtend=(_direction*distance)>=0;
         _distanceTicks = Math.abs(distance);
          // initiate the action
         doAction(immediateReturn);
@@ -176,6 +191,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         int distance = position - _tachoCount;
         move(distance, immediateReturn);
     }
+    
     // only called by actuate()
     private void doAction(boolean immediateReturn){
         if (_realPower<=MIN_POWER) return;
@@ -205,7 +221,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
                 try {
                     _lockObj.wait();
                 } catch (InterruptedException e) {
-//                    dbg("blk wait done");
+//                	dbg("blk wait done");
                 }
             }
         }
@@ -239,11 +255,16 @@ public class LnrActrFirgelliNXT implements LinearActuator{
             // set by doAction() which is called for extend or retract. The Actuator thread calls this method when _doActuate=true
             int power = _realPower;
             int tacho=0, temptacho=_tachoCount;
-            
+            final int STALL_COUNT = 2; 
+            int begTacho;
+            long begTime;
             _encoderMotor.resetTachoCount();
             _killCurrentAction = false;
             // initiate the actuator action
             motorGoDirection(); 
+
+            begTacho = _encoderMotor.getTachoCount();      
+            begTime = System.currentTimeMillis();
             // monitor and stop when stalled or action completes
             while (!_killCurrentAction) {
                 tacho = _encoderMotor.getTachoCount();
@@ -258,8 +279,29 @@ public class LnrActrFirgelliNXT implements LinearActuator{
                     power = _realPower;
                     _encoderMotor.setPower(power);
                 }
+
+                doWait(20);
+             // Stall check. if no tacho change...
+                if (begTacho==_encoderMotor.getTachoCount()) {
+                    // ...and we exceed STALL_COUNT wait periods and have been command to move, it probably means we have stalled
+                    if (System.currentTimeMillis()- begTime>_tick_wait*STALL_COUNT) {
+                        // so set this so toExtent() will exit it's tacho monitor loop and call stopActuator()
+                        _isStalled=true;
+                    }
+                } else {
+                    // The tacho is moving, get the current point and time for next comparision
+                    _isStalled=false;
+                    begTacho=_encoderMotor.getTachoCount();
+                    begTime = System.currentTimeMillis();
+                }
+                
+                // stop any motor action if stalled and flag allows it
+                if (_enableStallStop && _isStalled){
+                    _killCurrentAction=true;
+//                    dbg("stall & kill");
+                }
                 if (_killCurrentAction) break;
-                doWait(40);
+                
             }
             // stop the motor
             stop(); 
@@ -301,43 +343,6 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         }
     }
 
-    /**This thread determines if the actuator has stalled.
-     */
-    private class StallDetector implements Runnable{
-        private final int STALL_COUNT = 2; 
-        private int begTacho;
-        private long begTime;
-        
-        public void run() {
-            begTacho = _encoderMotor.getTachoCount();
-            // monitor tacho and determine if we have a stall condition during an action
-            while (true) {                
-                doWait(_tick_wait);
-                // if no current command, don't mess with flags
-                if (!_isMoveCommand) continue;
-                
-                // Stall check. if no tacho change...
-                if (begTacho==_encoderMotor.getTachoCount()) {
-                    // ...and we exceed STALL_COUNT wait periods and have been command to move, it probably means we have stalled
-                    if (System.currentTimeMillis()- begTime>_tick_wait*STALL_COUNT) {
-                        // so set this so toExtent() will exit it's tacho monitor loop and call stopActuator()
-                        _isStalled=true;
-                    }
-                } else {
-                    // The tacho is moving, get the current point and time for next comparision
-                    _isStalled=false;
-                    begTacho=_encoderMotor.getTachoCount();
-                    begTime = System.currentTimeMillis();
-                }
-                
-                // stop any motor action if stalled and flag allows it
-                if (_enableStallStop && _isStalled){
-                    _killCurrentAction=true;
-//                    dbg("stall & kill");
-                }
-            }
-        }
-    }
     
     private static void doWait(long milliseconds) {
         try {
