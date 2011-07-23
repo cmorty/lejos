@@ -603,9 +603,11 @@ public class PCNavigationModel extends NavigationModel {
 	public void setTarget(Waypoint target) {
 		path = null;
 		this.target = target;
-		if(destination != null) mesh.removeNode(destination);
-		destination = new Node((float) target.getX(), (float) target.getY());
-		if (mesh != null) mesh.addNode(destination, 4);
+		if (mesh != null) {
+			if(destination != null) mesh.removeNode(destination);
+			destination = new Node((float) target.getX(), (float) target.getY());
+			if (mesh != null) mesh.addNode(destination, 4);
+		}
 		panel.repaint();
 	}
 	

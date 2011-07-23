@@ -89,6 +89,9 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	
 	protected JDialog configurePilot;
 	protected JPanel pilotPanel = new JPanel();
+	protected JLabel pilotTypeLabel = new JLabel("Pilot type:");
+	protected String[] pilotTypes = {"Differential", "Steering", "Segway", "Omnidirectional"};
+	protected JComboBox pilotTypeBox = new JComboBox(pilotTypes);
 	protected JLabel wheelDiameterLabel = new JLabel("Wheel Diameter:");
 	protected JTextField wheelDiameterField = new JTextField(6);
 	protected JLabel trackWidthLabel = new JLabel("Track Width:");
@@ -200,6 +203,8 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	
 	protected void createPilotPanel() {
 		pilotPanel.setLayout(new SpringLayout());
+		pilotPanel.add(pilotTypeLabel);
+		pilotPanel.add(pilotTypeBox);
 		pilotPanel.add(wheelDiameterLabel);
 		pilotPanel.add(wheelDiameterField);
 		pilotPanel.add(trackWidthLabel);
@@ -212,7 +217,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		pilotPanel.add(pilotOKButton);
 		
 		makeCompactGrid(pilotPanel,
-                5, 2, //rows, cols
+                6, 2, //rows, cols
                 20, 20,        //initX, initY
                 20, 20);       //xPad, yPad
 		
@@ -364,7 +369,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	 * Create the command panel - this is added to by overriding classes
 	 */
 	protected void createCommandPanel() {
-		commandPanel.setBorder(BorderFactory.createTitledBorder("Commands"));
+		commandPanel.setBorder(BorderFactory.createTitledBorder("Controls"));
 	}
 	
 	/**
@@ -907,7 +912,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 			model.loadMap(mapFileField.getText());
 			repaint();
 		} else if (e.getSource() == pilot) {
-			configurePilot = new JDialog(frame, "Configure Differential Pilot", true);
+			configurePilot = new JDialog(frame, "Configure Pilot", true);
 			configurePilot.setContentPane(pilotPanel);
 			configurePilot.setLocation(200, 100);
 			configurePilot.pack();

@@ -32,14 +32,14 @@ public class SliderPanel extends JPanel implements ActionListener, ChangeListene
 		sliderLabelText = sliderLabel;
 		button = new JButton(buttonLabel);
 		button.addActionListener(this);
-		label = new JLabel(sliderLabel + " 180");
+		label = new JLabel(sliderLabel + " " + maxValue/2);
 		slider.addChangeListener(this);
 		
-		slider.setMajorTickSpacing(90);
+		slider.setMajorTickSpacing((maxValue == 180 ? 90 : 150));
 		slider.setPaintTicks(true);
 		slider.setPaintLabels(true);
 		
-		label.setPreferredSize(new Dimension(95,20));
+		label.setPreferredSize(new Dimension(100,20));
 		
 		add(label);
 		add(slider);
@@ -53,7 +53,11 @@ public class SliderPanel extends JPanel implements ActionListener, ChangeListene
 		} else if (event == NavEvent.SET_POSE) {
 			Pose p = model.getRobotPose();
 			model.setPose(new Pose(p.getX(),p.getY(),slider.getValue()));
-		}	
+		} else if (event == NavEvent.TRAVEL_SPEED) {
+			model.setTravelSpeed(slider.getValue());
+		} else if (event == NavEvent.ROTATE_SPEED) {
+			model.setRotateSpeed(slider.getValue());
+		}
 	}
 
 	public void stateChanged(ChangeEvent e) {

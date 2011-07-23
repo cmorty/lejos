@@ -25,8 +25,8 @@ public class EventPanel extends JPanel implements ActionListener {
 	protected PCNavigationModel model;
 	protected NavEvent[] events = {NavEvent.ADD_WAYPOINT, NavEvent.ARC, NavEvent.CALCULATE_PATH, 
 			NavEvent.CLEAR_PATH, NavEvent.FOLLOW_PATH, NavEvent.GET_BATTERY, NavEvent.GET_POSE, 
-			NavEvent.GOTO, NavEvent.RANDOM_MOVE, NavEvent.ROTATE, NavEvent.ROTATE_TO, NavEvent.SET_POSE, NavEvent.SET_TARGET,
-			NavEvent.SOUND, NavEvent.START_NAVIGATOR, NavEvent.STOP, NavEvent.TAKE_READINGS, NavEvent.TRAVEL};
+			NavEvent.GOTO, NavEvent.RANDOM_MOVE, NavEvent.ROTATE, NavEvent.ROTATE_SPEED, NavEvent.ROTATE_TO, NavEvent.SET_POSE, NavEvent.SET_TARGET,
+			NavEvent.SOUND, NavEvent.START_NAVIGATOR, NavEvent.STOP, NavEvent.TAKE_READINGS, NavEvent.TRAVEL, NavEvent.TRAVEL_SPEED};
 	protected JComboBox eventCombo = new JComboBox(events);
 	protected NavigationPanel panel;
 	
@@ -108,7 +108,14 @@ public class EventPanel extends JPanel implements ActionListener {
 			case SOUND:
 				label1.setText("Code:");
 				label1.setVisible(true);
-				param1.setVisible(true);	
+				param1.setVisible(true);
+				break;
+			case TRAVEL_SPEED:
+			case ROTATE_SPEED:
+				label1.setText("Speed:");
+				label1.setVisible(true);
+				param1.setVisible(true);
+				break;
 			}
 			eventCombo.revalidate();
 		} else if (e.getSource() == sendButton) {
@@ -191,6 +198,12 @@ public class EventPanel extends JPanel implements ActionListener {
 				case GET_BATTERY:
 					model.getRemoteBattery();
 					break;
+				case TRAVEL_SPEED:
+					model.setTravelSpeed(Float.parseFloat(param1.getText()));
+					break;
+				case ROTATE_SPEED:
+					model.setRotateSpeed(Float.parseFloat(param1.getText()));
+					break;					
 				}
 			} catch (NumberFormatException nfe) {
 				panel.error("Invalid parameter");
