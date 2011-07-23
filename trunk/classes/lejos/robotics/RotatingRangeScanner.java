@@ -32,12 +32,30 @@ public class RotatingRangeScanner implements RangeScanner
   }
   
   /**
+   * Set the gear ratio
+   * 
+   * @param gearRatio the gear ratio
+   */
+  public void setGearRatio(int gearRatio) 
+  {
+	  this.gearRatio = gearRatio;
+  }
+  
+  /**
+   * Set the head motor
+   * 
+   * @param motor the head motor
+   */
+  public void setHeadMotor(RegulatedMotor motor) {
+	  head = motor;
+  }
+  
+  /**
    * Returns a set of Range Readings taken the angles specified.
    * @return the set of range values
    */
   public RangeReadings getRangeValues()
   {
-
     if (readings == null || readings.getNumReadings() != angles.length)
     {
       readings = new RangeReadings(angles.length);
