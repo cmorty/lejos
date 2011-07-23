@@ -43,8 +43,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	protected PathFinder finder; // Only one local path finder is allowed
 	protected RangeScanner scanner; // Only one scanner is allowed
 	
-	protected float projection = 10;
-	protected float border = 0;
+	protected float clearance = 10;
 	protected float maxDistance = 40;
 	protected boolean autoSendPose = true;
 	protected boolean sendMoveStart = false, sendMoveStop = true;
@@ -155,10 +154,9 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	 * @param projection the projection of the robot forward from its mid point
 	 * @param border the border around the wall that the robot should not move into
 	 */
-	public void setRandomMoveParameters(float maxDistance, float projection, float border) {
+	public void setRandomMoveParameters(float maxDistance, float clearance) {
 		this.maxDistance = maxDistance;
-		this.projection = projection;
-		this.border = border;
+		this.clearance = clearance;
 	}
 	
 	/**
@@ -391,7 +389,11 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 							if (pilot != null && pilot instanceof RotateMoveController) {
 								((RotateMoveController)pilot).setRotateSpeed(rotateSpeed);
 							}
-							break;						
+							break;
+						case RANDOM_MOVE_PARAMS:
+							maxDistance = dis.readFloat();
+							clearance = dis.readFloat();
+							break;
 						}
 					}
 				} catch (IOException ioe) {
@@ -418,7 +420,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 			    
 			    // Don't move forward if we are near a wall
 			    if (forwardRange < 0
-			        || distance + border + projection < forwardRange)
+			        || distance + clearance < forwardRange)
 			      pilot.travel(distance);
 			    
 			    ((RotateMoveController) pilot).rotate(angle);
