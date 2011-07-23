@@ -1,4 +1,4 @@
-
+package lejos.nxt.addon;
 
 import lejos.nxt.NXTMotor;
 import lejos.nxt.TachoMotorPort;
