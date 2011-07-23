@@ -32,32 +32,51 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	
 	protected float pixelsPerUnit = 1.5f;
 	protected PCNavigationModel model = new PCNavigationModel(this);
+	
+	// Panels
 	protected MapPanel mapPanel; 
 	protected JPanel commandPanel = new JPanel();
 	protected JPanel connectPanel = new JPanel();
 	protected JPanel statusPanel = new JPanel();
 	protected JPanel logPanel = new JPanel();
+	
+	// Status panel
 	protected JLabel xLabel = new JLabel("X:");
 	protected JTextField xField = new JTextField(4);
 	protected JLabel yLabel = new JLabel("Y:");
 	protected JTextField yField = new JTextField(4);
+	
+	// Zoom Panel
 	protected JPanel controlPanel = new JPanel();
 	protected JSlider zoomSlider;
+	
+	// Connect Panel
 	protected JLabel nxtLabel = new JLabel("NXT name:");
 	protected JTextField nxtName = new JTextField(10);
 	protected JButton connectButton = new JButton("Connect");
+	
+	// Control of features displayed
 	protected boolean showConnectPanel = true, showStatusPanel = true, 
 	                  showControlPanel = true, showCommandPanel = true,
 	                  showReadingsPanel = true, showLastMovePanel = true,
 	                  showParticlePanel = true, showMoves = false,
 	                  showMesh = false, showGrid = true, showLog = false,
-	                  showParticles = false, showLoadMapPanel = true;
+	                  showParticles = false, showLoadMapPanel = true,
+	                  showEventPanel = true;
+	
+	// Last Readings panel
 	protected JPanel readingsPanel = new JPanel();
 	protected JTextField readingsField = new JTextField(12);
+	
+	// Last Move Panel
 	protected JPanel lastMovePanel = new JPanel();
 	protected JTextField lastMoveField = new JTextField(20);
+	
+	// Particle panel
 	protected JPanel particlePanel = new JPanel();
 	protected JTextField particleField = new JTextField(20);
+	
+	// Various data items
 	protected Dimension mapPaneSize = new Dimension(700,600);
 	protected Point startDrag;
 	protected Point initialViewStart = new Point(0,0);
@@ -66,17 +85,18 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected boolean upload = true;
 	protected String program = "../samples/MapTest/MapTest.nxj";
 	
+	//Menu
 	protected JMenuBar menuBar = new JMenuBar();
 	protected JMenu fileMenu, aboutMenu, mapMenu, viewMenu, colorMenu, commandsMenu, configureMenu;
 	protected JMenuItem exit, about, clear, repaint, reset, open, save, connect, gridColor, robotColor,
 						mapColor, particleColor, meshColor, targetColor, waypointColor,
 						pathColor, moveColor, featureColor, backgroundColor, estimateColor, closestColor,
 						getPose, randomMove, localize, stop, calculatePath, followPath, pilot, scanner,
-						finder, detector;
+						finder, detector, random;
 	protected JCheckBoxMenuItem viewGrid, viewMousePosition, viewControls,
 	                          viewConnect, viewCommands, viewMesh, viewLog,
 	                          viewLastMove, viewParticlePanel, viewParticles,
-	                          viewLoadMap;
+	                          viewLoadMap, viewEventForm;
 	protected JFileChooser chooser = new JFileChooser();
 	protected EventPanel eventPanel = new EventPanel(model, this,  null);
 	protected JColorChooser colorChooser = new JColorChooser();
@@ -87,6 +107,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected JButton loadMapButton = new JButton("Load");
 	protected JCheckBox uploadBox = new JCheckBox("Upload NXT Program?");
 	
+	// Configure Pilot
 	protected JDialog configurePilot;
 	protected JPanel pilotPanel = new JPanel();
 	protected JLabel pilotTypeLabel = new JLabel("Pilot type:");
@@ -103,6 +124,8 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected JLabel rightMotorLabel = new JLabel("Right Motor:");
 	protected JComboBox rightMotorField = new JComboBox(motors);
 	protected JCheckBox reverse = new JCheckBox("Reverse?");
+	
+	// Configure 4-way Mesh path finder
 	protected JDialog configureMesh;
 	protected JPanel meshPanel = new JPanel();
 	protected JPanel meshForm = new JPanel();
@@ -111,6 +134,8 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected JLabel clearanceLabel = new JLabel("Clearance:");
 	protected JTextField clearanceField = new JTextField(4);
 	protected JButton meshOKButton = new JButton("OK");
+	
+	// Configure Range Feature Detector
 	protected JLabel delayLabel = new JLabel("Detector Delay:");
 	protected JTextField delayField = new JTextField(4);
 	protected JLabel maxDistanceLabel = new JLabel("Maximum distance:");
@@ -119,6 +144,8 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected JPanel detectorForm = new JPanel();
 	protected JDialog configureDetector;
 	protected JButton detectorOKButton = new JButton("OK");
+	
+	// Configure Rotating Range Scanner
 	protected JLabel gearRatioLabel = new JLabel("Gear ratio:");
 	protected JTextField gearRatioField = new JTextField(4);
 	protected JLabel headMotorLabel = new JLabel("Head motor");
@@ -128,15 +155,26 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected JDialog configureScanner;
 	protected JButton scannerOKButton = new JButton("OK");
 	
+	// Configure Random move
+	protected JLabel maxDistLabel = new JLabel("Maximum distance:");
+	protected JTextField maxDistField = new JTextField(4);
+	protected JLabel clearLabel = new JLabel("Clearance:");
+	protected JTextField clearField = new JTextField(4);
+	protected JPanel randomPanel = new JPanel();
+	protected JPanel randomForm = new JPanel();
+	protected JButton randomOKButton = new JButton("OK");
+	protected JDialog configureRandom;
+	
 	public NavigationPanel() {
 		createPilotPanel();
 		createMeshPanel();
 		createDetectorPanel();
 		createScannerPanel();
+		createRandomPanel();
 	}
 	
 	/**
-	 * Build the various panels if they are required.
+	 * Build the paanels - used by MCLTest but deprecated
 	 */
 	protected void buildGUI() {
 		if (showStatusPanel) {
@@ -302,6 +340,29 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		});	
 	}
 	
+	protected void createRandomPanel() {
+		randomPanel.setLayout(new SpringLayout());
+		randomPanel.add(maxDistLabel);
+		randomPanel.add(maxDistField);
+		randomPanel.add(clearLabel);
+		randomPanel.add(clearField);
+		
+		makeCompactGrid(randomPanel,
+                2, 2, //rows, cols
+                20, 20,        //initX, initY
+                20, 20);       //xPad, yPad
+		
+		randomForm.add(randomPanel);
+		randomForm.add(randomOKButton);
+		
+		scannerOKButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				model.sendRandomMoveParams(Float.parseFloat(maxDistField.getText()), Float.parseFloat(clearField.getText()));
+				configureRandom.setVisible(false);
+			}
+		});	
+	}
+	
 	/**
 	 * Create the Connect panel to allow connection to a NXT brick
 	 */
@@ -460,7 +521,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		viewConnect.setSelected(showConnectPanel);
 		viewConnect.addActionListener(this);
 		viewMenu.add(viewConnect);
-		viewCommands = new JCheckBoxMenuItem("Commands");
+		viewCommands = new JCheckBoxMenuItem("Controls");
 		viewCommands.setSelected(showCommandPanel);
 		viewCommands.addActionListener(this);
 		viewMenu.add(viewCommands);
@@ -472,6 +533,10 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		viewLoadMap.setSelected(showLoadMapPanel);
 		viewLoadMap.addActionListener(this);
 		viewMenu.add(viewLoadMap);
+		viewEventForm = new JCheckBoxMenuItem("Event Form");
+		viewEventForm.setSelected(showEventPanel);
+		viewEventForm.addActionListener(this);
+		viewMenu.add(viewEventForm);
 	}
 	
 	/**
@@ -491,36 +556,6 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		mapMenu.add(reset);
 		colorMenu = new JMenu("Colors");
 		mapMenu.add(colorMenu);
-		gridColor = new JMenuItem("Grid");
-		gridColor.addActionListener(this);
-		colorMenu.add(gridColor);
-		robotColor = new JMenuItem("Robot");
-		robotColor.addActionListener(this);
-		colorMenu.add(robotColor);
-		mapColor = new JMenuItem("Map");
-		mapColor.addActionListener(this);
-		colorMenu.add(mapColor);
-		particleColor = new JMenuItem("Particle");
-		particleColor.addActionListener(this);
-		colorMenu.add(particleColor);
-		meshColor = new JMenuItem("Mesh");
-		meshColor.addActionListener(this);
-		colorMenu.add(meshColor);
-		targetColor = new JMenuItem("Target");
-		targetColor.addActionListener(this);
-		colorMenu.add(targetColor);
-		waypointColor = new JMenuItem("Waypoint");
-		waypointColor.addActionListener(this);
-		colorMenu.add(waypointColor);
-		pathColor = new JMenuItem("Path");
-		pathColor.addActionListener(this);
-		colorMenu.add(pathColor);
-		moveColor = new JMenuItem("Move");
-		moveColor.addActionListener(this);
-		colorMenu.add(moveColor);
-		featureColor = new JMenuItem("Feature");
-		featureColor.addActionListener(this);
-		colorMenu.add(featureColor);
 		backgroundColor = new JMenuItem("Background");
 		backgroundColor.addActionListener(this);
 		colorMenu.add(backgroundColor);
@@ -530,6 +565,36 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		estimateColor = new JMenuItem("Estimate");
 		estimateColor.addActionListener(this);
 		colorMenu.add(estimateColor);
+		featureColor = new JMenuItem("Feature");
+		featureColor.addActionListener(this);
+		colorMenu.add(featureColor);
+		gridColor = new JMenuItem("Grid");
+		gridColor.addActionListener(this);
+		colorMenu.add(gridColor);
+		mapColor = new JMenuItem("Map");
+		mapColor.addActionListener(this);
+		colorMenu.add(mapColor);
+		meshColor = new JMenuItem("Mesh");
+		meshColor.addActionListener(this);
+		colorMenu.add(meshColor);
+		moveColor = new JMenuItem("Move");
+		moveColor.addActionListener(this);
+		colorMenu.add(moveColor);
+		particleColor = new JMenuItem("Particle");
+		particleColor.addActionListener(this);
+		colorMenu.add(particleColor);
+		pathColor = new JMenuItem("Path");
+		pathColor.addActionListener(this);
+		colorMenu.add(pathColor);
+		robotColor = new JMenuItem("Robot");
+		robotColor.addActionListener(this);
+		colorMenu.add(robotColor);
+		targetColor = new JMenuItem("Target");
+		targetColor.addActionListener(this);
+		colorMenu.add(targetColor);
+		waypointColor = new JMenuItem("Waypoint");
+		waypointColor.addActionListener(this);
+		colorMenu.add(waypointColor);
 	}
 	
 	/**
@@ -573,6 +638,9 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		scanner = new JMenuItem("Range Scanner ...");
 		configureMenu.add(scanner);
 		scanner.addActionListener(this);
+		random = new JMenuItem("Random Move ...");
+		configureMenu.add(random);
+		random.addActionListener(this);
 	}
 	
 	/**
@@ -884,6 +952,9 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		} else if (e.getSource() == viewLog) {
 			logPanel.setVisible(viewLog.isSelected());
 			repaint();
+		} else if (e.getSource() == viewEventForm) {
+			eventPanel.setVisible(viewEventForm.isSelected());
+			repaint();
 		} else if (e.getSource() == viewMousePosition) {
 			statusPanel.setVisible(viewMousePosition.isSelected());
 			repaint();
@@ -935,6 +1006,12 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 			configureScanner.setLocation(200, 100);
 			configureScanner.pack();
 			configureScanner.setVisible(true);
+		} else if (e.getSource() == random) {
+			configureRandom = new JDialog(frame, "Configure Random Move", true);
+			configureRandom.setContentPane(randomForm);
+			configureRandom.setLocation(200, 100);
+			configureRandom.pack();
+			configureRandom.setVisible(true);
 		}
 	}
 	

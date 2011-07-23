@@ -35,7 +35,7 @@ public class SliderPanel extends JPanel implements ActionListener, ChangeListene
 		label = new JLabel(sliderLabel + " " + maxValue/2);
 		slider.addChangeListener(this);
 		
-		slider.setMajorTickSpacing((maxValue == 180 ? 90 : 150));
+		slider.setMajorTickSpacing(maxValue/4);
 		slider.setPaintTicks(true);
 		slider.setPaintLabels(true);
 		
@@ -45,6 +45,11 @@ public class SliderPanel extends JPanel implements ActionListener, ChangeListene
 		add(slider);
 		add(button);
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
+	}
+	
+	public void setMaxValue(int value) {
+		slider.setMaximum(value);
+		slider.setMajorTickSpacing(value/4);		
 	}
 
 	public void actionPerformed(ActionEvent e) {
