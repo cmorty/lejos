@@ -70,6 +70,8 @@ public class NXTDataLogger implements Logger{
     private int sessionBeginTime;
     private int setColumnsCount=0;
     private int lineBytes;
+    private NXTConnection passedNXTConnection=null;
+    
 //    private int lineCount=0;
     
     /**
@@ -232,6 +234,7 @@ public class NXTDataLogger implements Logger{
      * @see #setColumns
      */
     public void startRealtimeLog(NXTConnection connection) throws IOException{
+        this.passedNXTConnection=connection;
         startRealtimeLog(connection.openDataOutputStream(), connection.openDataInputStream());
     }
 
@@ -319,6 +322,7 @@ public class NXTDataLogger implements Logger{
      * @throws IllegalStateException if <code>startCachingLog()</code> has not been called
      */
     public void sendCache(NXTConnection connection) throws IOException{
+        this.passedNXTConnection=connection;
         sendCache(connection.openDataOutputStream(), connection.openDataInputStream());
     }
     
@@ -358,6 +362,9 @@ public class NXTDataLogger implements Logger{
             // wait for the hardware to finish any "flushing". I found that without this, the last data may be lost if the program ends
             // or dos is set to null right after the flush().
             Delay.msDelay(100); 
+            if (this.passedNXTConnection!=null) {
+                passedNXTConnection.close();
+            }
             if (this.dis!=null) this.dis.close();
             if (this.dos!=null) this.dos.close();
         } catch (IOException e) {
