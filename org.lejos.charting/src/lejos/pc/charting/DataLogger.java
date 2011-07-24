@@ -101,9 +101,11 @@ public class DataLogger {
 
         public void logFieldNamesChanged(String[] logFields) {
             StringBuilder sb = new StringBuilder();
+            String[] tempFields;
             dbg("!** New headers");
             for (int i=0;i<logFields.length;i++) {
-                sb.append(logFields[i]);
+                tempFields=logFields[i].split("!");
+                sb.append(tempFields[0]);
                 if (i<logFields.length-1) sb.append("\t");
             }
             sb.append("\n");
@@ -175,11 +177,17 @@ public class DataLogger {
         System.out.println(THISCLASS + "-" + msg);
     }
     
-    /** Execute the logger from a command line. 1st arg is NXT name, 2nd is log file name. If no file specified, STDOUT is used. Default connection is to "NXT". File is 
+    /** Execute the logger from a command line. 1st arg is NXT name, 2nd is log file name. 
+     * If no file specified, STDOUT is used. Default connection is to "NXT". File is 
      * overwritten if exists
      * @param args
      */
     public static void main(String[] args){
+        if (args.length==0) {
+            System.out.println("parameters: NXT-name [Filename]");
+            System.out.println("If [Filename] is not specifed, stdout is used.");
+            return;
+        }
         LoggerComms connManager = new LoggerComms();
         String connectTo="NXT";
         System.out.println("args:");
