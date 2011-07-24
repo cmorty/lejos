@@ -33,20 +33,14 @@ public class TestLogger {
         System.exit(-1);
     }
     
-    private NXTConnection getConnection(int ConnType){
-        NXTConnection theConnection=waitForConnection(15000,ConnType);
-        if (theConnection==null) {
-            doIOError();
-        }
-        return theConnection;
-    }
-    
     private void doTests(){
         System.out.println("Realtime mode");
         System.out.println("Press key");
         Button.waitForAnyPress();
         LCD.clear();
-        NXTConnection theConnection = getConnection(CONN_BLUETOOTH);
+        NXTConnection theConnection = waitForConnection(15000,CONN_BLUETOOTH); 
+        if (theConnection==null) return; 
+        
         LCD.clear();
         System.out.println("sending data...");
         doRealtimeTest(theConnection);
@@ -55,8 +49,6 @@ public class TestLogger {
         Button.waitForAnyPress();
         LCD.clear();
         System.out.println("Cache mode");
-        System.out.println("Press key");
-        Button.waitForAnyPress();
         doCachedTest(theConnection);
         dlog.stopLogging();
         LCD.clear();
@@ -81,12 +73,13 @@ public class TestLogger {
             new LogColumn("Random", LogColumn.DT_FLOAT, false) // do not chart this series
         });
 
-        for (int i=0;i<2500;i++){ 
+        for (int i=0;i<1000;i++){ 
             this.dlog.writeLog((float)Math.sin(value));
             this.dlog.writeLog(i);
             this.dlog.writeLog((float)(Math.random()*5-2.5));
             this.dlog.finishLine();
             value+=.1f;
+            Delay.msDelay(10);
         }
         
         try {
@@ -99,7 +92,7 @@ public class TestLogger {
     
     private void doCachedTest(NXTConnection conn){
         double value=0;
-        System.out.println("caching data");
+        System.out.println("caching data...");
         this.dlog.startCachingLog();
         this.dlog.setColumns(new LogColumn[] {
             new LogColumn("sine(v)", LogColumn.DT_FLOAT)
@@ -161,6 +154,7 @@ public class TestLogger {
         }
         if (theConnection == null) {
             LCD.drawString("  CONN FAILED!  ", 0, 2, true);
+            Delay.msDelay(4000);
             return null;
         }
         LCD.drawString("   CONNECTED    ", 0, 2);
