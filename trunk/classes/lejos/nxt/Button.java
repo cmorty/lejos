@@ -2,11 +2,22 @@ package lejos.nxt;
 
 /**
  * Abstraction for an NXT button.
- * Example:<p>
- * <code><pre>
- *    Button.ENTER.waitForPressAndRelease();
- *    Sound.playTone (1000, 1);
- * </pre></code>
+ * Example:
+ * <pre>
+ *   Button.ENTER.waitForPressAndRelease();
+ *   Sound.playTone (1000, 1);
+ * </pre>
+ * 
+ * <b>Notions:</b>
+ * The API is designed around two notions: states (up / down) and events (press / release).
+ * It is said that a button is pressed (press event), if its state changes from up to down.
+ * Similarly, it is said that a button is released (release event), if its states changed from down to up.
+ * 
+ * <b>Thread Safety</b>:
+ * This class is - in principle - thread safe, that is you can call its methods from multiple Threads simultaneously.
+ * However, each event is delivered to one thread only.
+ * It is strongly recommended, that you write your own Thread, which waits for button events
+ * and dispatches the events to anybody who's interested.
  */
 public class Button implements ListenerCaller
 {
@@ -14,28 +25,18 @@ public class Button implements ListenerCaller
   public static final int ID_LEFT = 0x2;
   public static final int ID_RIGHT = 0x4;
   public static final int ID_ESCAPE = 0x8;
-
   private static final int ID_ALL = 0xf;
-  private int iCode;
-  private ButtonListener[] iListeners;
-  private int iNumListeners;
-
-  private static int [] clickFreq = new int[16];
-  private static int clickVol;
-  private static int clickLen;
-  // initialize with state of buttons at program start to avoid false press events
-  private static int curButtons = getButtons();
+  
+  // the events method call state methods, so it may occur that both locks are obtained
+  // in the order LOCK_EVENT -> Button.class. It must never occur that a Thread tries to obtain
+  // the locks in the opposite order.
+  private static final Object LOCK_EVENT = new Object();
+  
+  private static final int PRESS_EVENT_SHIFT = 0;
+  private static final int RELEASE_EVENT_SHIFT = 8;
   
   public static final String VOL_SETTING = "lejos.keyclick_volume";
   
-  /**
-   * Static constructor to force loading of system settings.
-   */
-  static
-  {
-        loadSettings();
-  }
-
   /**
    * The Enter button.
    */
@@ -56,16 +57,39 @@ public class Button implements ListenerCaller
 	
   /**
    * Array containing ENTER, LEFT, RIGHT, ESCAPE, in that order.
+   * @deprecated this array will be removed
    */
+  @Deprecated
   public static final Button[] BUTTONS = { Button.ENTER, Button.LEFT, Button.RIGHT, Button.ESCAPE };
 
-  private static final int PRESS_EVENT_SHIFT = 0;
-  private static final int RELEASE_EVENT_SHIFT = 8;
+  // protected by Button.class monitor
+  private static int [] clickFreq;
+  private static int clickVol;
+  private static int clickLen;
+  private static int curButtonsS;
+  // protected by LOCK_EVENT monitor
+  private static int curButtonsE;
+
   
-  private Button (int aCode)
-  {
-    iCode = aCode;
-  }
+  private final int iCode;
+  private ButtonListener[] iListeners;
+  private int iNumListeners;
+
+	/**
+	 * Static constructor to force loading of system settings.
+	 */
+	static
+	{
+		loadSystemSettings();
+		// Initialize with state of buttons instead of zero. That prevents false
+		// press events at program start
+		curButtonsE = curButtonsS = getButtons();
+	}
+
+	private Button(int aCode)
+	{
+		iCode = aCode;
+	}
 
   /**
    * Return the ID of the button. One of 1, 2, 4 or 8.
@@ -76,14 +100,24 @@ public class Button implements ListenerCaller
     return iCode;
   }
     
-  /**
-   * Check if the button is pressed.
-   * @return <code>true</code> if button is pressed, <code>false</code> otherwise.
-   */
-  public final boolean isPressed()
-  {
-    return (readButtons() & iCode) != 0;
-  }
+	/**
+	 * @deprecated use {@link #isDown()} instead.
+	 */
+	@Deprecated
+	public final boolean isPressed()
+	{
+		return isDown();
+	}
+
+	/**
+	 * Check if the current state of the button is down.
+	 * 
+	 * @return <code>true</code> if button is down, <code>false</code> if up.
+	 */
+	public final boolean isDown()
+	{
+		return (readButtons() & iCode) != 0;
+	}
 
   /**
    * Wait until the button is released.
@@ -110,30 +144,16 @@ public class Button implements ListenerCaller
     }
   }
 
-  /**
-   * Wait for all of the buttons to have been released or for the end time.
-   * Do not beep if new buttons are pressed.
-   * @param event event to use for waiting
-   * @param end end time used for timeout
-   */
-  private static void waitAllReleased(NXTEvent event, long end) throws InterruptedException
-  {
-    for(;;)
-    {
-      curButtons = getButtons();
-      if (curButtons == 0) return;
-      if (event.waitEvent(curButtons << RELEASE_EVENT_SHIFT, end - System.currentTimeMillis()) < 0) return;
-    }
-  }
-
-  	
 	/**
 	 * This method discards and events.
 	 * In contrast to {@link #readButtons()}, this method doesn't beep if a button is pressed.
 	 */
-	public static synchronized void discardEvents()
+	public static void discardEvents()
 	{
-		curButtons = getButtons();
+		synchronized (LOCK_EVENT)
+		{
+			curButtonsE = getButtons();
+		}
 	}
   
 	/**
@@ -146,23 +166,26 @@ public class Button implements ListenerCaller
 	 * @return the bitmask 
 	 * @see {@link #ID_ENTER}, {@link #ID_LEFT}, {@link #ID_RIGHT}, {@link #ID_ESCAPE}
 	 */
-	public static synchronized int waitForAnyEvent(int timeout) {
+	public static int waitForAnyEvent(int timeout) {
 		long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
 		NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
 		try
 		{
-			int oldDown = curButtons;
-			while (true)
+			synchronized (LOCK_EVENT)
 			{
-				long curTime = System.currentTimeMillis();
-				if (curTime >= end)
-					return 0;
-				
-				event.waitEvent((oldDown << RELEASE_EVENT_SHIFT) | ((ID_ALL ^ oldDown) << PRESS_EVENT_SHIFT),
-						end - curTime);
-				int newDown = readButtons();
-				if (newDown != oldDown)
-					return ((oldDown & (~newDown)) << 8) | (newDown & (~oldDown)); 
+				int oldDown = curButtonsE;
+				while (true)
+				{
+					long curTime = System.currentTimeMillis();
+					if (curTime >= end)
+						return 0;
+					
+					event.waitEvent((oldDown << RELEASE_EVENT_SHIFT) | ((ID_ALL ^ oldDown) << PRESS_EVENT_SHIFT),
+							end - curTime);
+					int newDown = curButtonsE = readButtons();
+					if (newDown != oldDown)
+						return ((oldDown & (~newDown)) << 8) | (newDown & (~oldDown)); 
+				}
 			}
 		}
 		catch(InterruptedException e)
@@ -186,26 +209,29 @@ public class Button implements ListenerCaller
 	 * @return the ID of the button that has been pressed or in rare cases a bitmask of button IDs,
 	 *         0 if the given timeout is reached 
 	 */
-	public static synchronized int waitForAnyPress(int timeout) {
+	public static int waitForAnyPress(int timeout) {
 		long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
 		NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
 		try
 		{
-			int oldDown = curButtons;
-			while (true)
+			synchronized (LOCK_EVENT)
 			{
-				long curTime = System.currentTimeMillis();
-				if (curTime >= end)
-					return 0;
-				
-				event.waitEvent((oldDown << RELEASE_EVENT_SHIFT) | ((ID_ALL ^ oldDown) << PRESS_EVENT_SHIFT),
-						end - curTime);
-				int newDown = readButtons();
-				int pressed = newDown & (~oldDown);
-				if (pressed != 0)
-					return pressed;
-				
-				oldDown = newDown;
+				int oldDown = curButtonsE;
+				while (true)
+				{
+					long curTime = System.currentTimeMillis();
+					if (curTime >= end)
+						return 0;
+					
+					event.waitEvent((oldDown << RELEASE_EVENT_SHIFT) | ((ID_ALL ^ oldDown) << PRESS_EVENT_SHIFT),
+							end - curTime);
+					int newDown = curButtonsE = readButtons();
+					int pressed = newDown & (~oldDown);
+					if (pressed != 0)
+						return pressed;
+					
+					oldDown = newDown;
+				}
 			}
 		}
 		catch(InterruptedException e)
@@ -241,32 +267,37 @@ public class Button implements ListenerCaller
     if (iListeners == null)
     {
       iListeners = new ButtonListener[4];
-      ListenerThread.get().addListener(NXTEvent.BUTTONS, iCode << (isPressed() ? RELEASE_EVENT_SHIFT : PRESS_EVENT_SHIFT), 10, this);
+      ListenerThread.get().addListener(NXTEvent.BUTTONS, iCode << (isDown() ? RELEASE_EVENT_SHIFT : PRESS_EVENT_SHIFT), 10, this);
       
     }
     iListeners[iNumListeners++] = aListener;
   }
-  /**
-   * <i>Low-level API</i> that reads status of buttons.
-   * @return An integer with possibly some bits set: 0x01 (ENTER button pressed)
-   * 0x02 (LEFT button pressed), 0x04 (RIGHT button pressed), 0x08 (ESCAPE button pressed).
-   * If all buttons are released, this method returns 0.
-   */
-  static native int getButtons();
+  
+	/**
+	 * <i>Low-level API</i> that reads status of buttons.
+	 * 
+	 * @return An integer with possibly some bits set: {@link #ID_ENTER} (ENTER
+	 *         button pressed) {@link #ID_LEFT} (LEFT button pressed),
+	 *         {@link #ID_RIGHT} (RIGHT button pressed), {@link #ID_ESCAPE}
+	 *         (ESCAPE button pressed). If all buttons are released, this method
+	 *         returns 0.
+	 */
+	private static native int getButtons();
 
 	/**
 	 * <i>Low-level API</i> that reads status of buttons.
-	 * As a side-effect, it discards all events.
 	 * 
-	 * @return An integer with possibly some bits set: {@link #ID_ENTER} (ENTER button pressed)
-	 * {@link #ID_LEFT} (LEFT button pressed), {@link #ID_RIGHT} (RIGHT button pressed), {@link #ID_ESCAPE} (ESCAPE button pressed).
-	 * If all buttons are released, this method returns 0.
+	 * @return An integer with possibly some bits set: {@link #ID_ENTER} (ENTER
+	 *         button pressed) {@link #ID_LEFT} (LEFT button pressed),
+	 *         {@link #ID_RIGHT} (RIGHT button pressed), {@link #ID_ESCAPE}
+	 *         (ESCAPE button pressed). If all buttons are released, this method
+	 *         returns 0.
 	 */
-	public static synchronized int readButtons()
+	public synchronized static int readButtons()
 	{
 		int newButtons = getButtons();
-		int pressed = newButtons & (~curButtons);
-		curButtons = newButtons;
+		int pressed = newButtons & (~curButtonsS);
+		curButtonsS = newButtons;
 		if (pressed != 0 && clickVol != 0)
 		{
 			int tone = clickFreq[pressed];
@@ -282,7 +313,7 @@ public class Button implements ListenerCaller
    */
   public synchronized int callListeners()
   {
-    boolean pressed = isPressed();
+    boolean pressed = isDown();
     for( int i = 0; i < iNumListeners; i++) {
       if(pressed)
         iListeners[i].buttonPressed( this);
@@ -305,7 +336,7 @@ public class Button implements ListenerCaller
    * Return the current key click volume.
    * @return current click volume
    */
-  public static int getKeyClickVolume()
+  public static synchronized int getKeyClickVolume()
   {
       return clickVol;
   }
@@ -314,7 +345,7 @@ public class Button implements ListenerCaller
    * Set the len used for key clicks
    * @param len the click duration
    */
-  public static void setKeyClickLength(int len)
+  public static synchronized void setKeyClickLength(int len)
   {
       clickLen = len;
   }
@@ -323,7 +354,7 @@ public class Button implements ListenerCaller
    * Return the current key click length.
    * @return key click duration
    */
-  public static int getKeyClickLength()
+  public static synchronized int getKeyClickLength()
   {
       return clickLen;
   }
@@ -334,7 +365,7 @@ public class Button implements ListenerCaller
    * @param key the NXT key
    * @param freq the frequency
    */
-  public static void setKeyClickTone(int key, int freq)
+  public static synchronized void setKeyClickTone(int key, int freq)
   {
       clickFreq[key] = freq;
   }
@@ -344,22 +375,32 @@ public class Button implements ListenerCaller
    * @param key The key to obtain the tone for
    * @return key click duration
    */
-  public static int getKeyClickTone(int key)
+  public static synchronized int getKeyClickTone(int key)
   {
       return clickFreq[key];
   }
   
 
   /**
+   * @deprecated replaced by {@link #loadSystemSettings()}.
+   */
+  @Deprecated
+  public static void loadSettings()
+  {
+	  loadSystemSettings();
+  }
+  
+  /**
    * Load the current system settings associated with this class. Called
    * automatically to initialize the class. May be called if it is required
    * to reload any settings.
   */
-  public static void loadSettings()
+  public static synchronized void loadSystemSettings()
   {
       clickVol = SystemSettings.getIntSetting(VOL_SETTING, 20);
       clickLen = 50;
       // setup default tones for the keys and enter+key chords
+      clickFreq = new int[16];
       clickFreq[ID_ENTER] = 209 + 697;
       clickFreq[ID_LEFT] = 209 + 770;
       clickFreq[ID_RIGHT] = 209 + 852;
@@ -367,9 +408,5 @@ public class Button implements ListenerCaller
       clickFreq[ID_ENTER | ID_LEFT] = 633 + 770;
       clickFreq[ID_ENTER | ID_RIGHT] = 633 + 852;
       clickFreq[ID_ENTER | ID_ESCAPE] = 633 + 941;
-  }
-  
+  }  
 }
-  
-
-

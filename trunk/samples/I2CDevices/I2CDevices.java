@@ -44,7 +44,7 @@ public class I2CDevices {
 
 		LCD.drawString("P Type     Addr", 0, 0);
 		LCD.setAutoRefresh(false);
-		while (!Button.ESCAPE.isPressed()) {
+		while (!Button.ESCAPE.isDown()) {
 			for(int i=0;i<sensors.length;i++) {
                 LCD.drawInt(i+1, 1, 0, i+1);
                 String sensorType = "";

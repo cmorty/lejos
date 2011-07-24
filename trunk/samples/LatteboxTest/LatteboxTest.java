@@ -37,9 +37,9 @@ public class LatteboxTest{
 			dm.echo("Load all servos");
 			NXTeObj.getLSC(0).loadAllServos();
 			
-			while(!Button.ESCAPE.isPressed()){
+			while(!Button.ESCAPE.isDown()){
 
-				if (Button.LEFT.isPressed()){
+				if (Button.LEFT.isDown()){
 					NXTeObj.getLSC(0).getServo(0).goToMinAngle();
 					NXTeObj.getLSC(0).getServo(1).goToMinAngle();
 					while(NXTeObj.getLSC(0).getServo(0).isMoving() == true){}
@@ -49,7 +49,7 @@ public class LatteboxTest{
 					dm.echo(angle);
 				}
 
-				if (Button.ENTER.isPressed()){
+				if (Button.ENTER.isDown()){
 					NXTeObj.getLSC(0).getServo(0).goToMiddleAngle();
 					NXTeObj.getLSC(0).getServo(1).goToMiddleAngle();
 					while(NXTeObj.getLSC(0).getServo(0).isMoving() == true){}
@@ -61,7 +61,7 @@ public class LatteboxTest{
 					dm.echo(angle2);
 				}
 				
-				if (Button.RIGHT.isPressed()){
+				if (Button.RIGHT.isDown()){
 					NXTeObj.getLSC(0).getServo(0).goToMaxAngle();
 					NXTeObj.getLSC(0).getServo(1).goToMaxAngle();
 					while(NXTeObj.getLSC(0).getServo(0).isMoving() == true){}

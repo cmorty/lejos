@@ -45,7 +45,7 @@ public class NXTMMXSample {
 		dog.backward();
 
 		LCD.drawString("Enter to stop ",0,1);
-	    while(!Button.ENTER.isPressed()) {
+	    while(!Button.ENTER.isDown()) {
 	        Delay.msDelay(130);
 	        LCD.drawString("cat tach:" + cat.getTachoCount() + " ", 0,4);
 	        LCD.drawString("dog tach:" + dog.getTachoCount() + " ", 0,5);
@@ -65,7 +65,7 @@ public class NXTMMXSample {
 		dog.rotateTo(8000, true);
 		
 	    LCD.drawString("Enter to exit  ",0,1);
-	    while(!Button.ENTER.isPressed()) {
+	    while(!Button.ENTER.isDown()) {
             Delay.msDelay(130);
             LCD.drawString("cat stall:" + cat.isStalled() + " ", 0,4); 
             LCD.drawString("dog moving:" + dog.isMoving() + " ", 0,5); 

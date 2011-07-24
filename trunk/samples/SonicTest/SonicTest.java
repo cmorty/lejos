@@ -19,7 +19,7 @@ public class SonicTest {
 		LCD.drawString(sonic.getProductID(), 0, 1);
 		LCD.drawString(sonic.getSensorType(), 0, 2);
 		
-		while(!Button.ESCAPE.isPressed()) {
+		while(!Button.ESCAPE.isDown()) {
 			LCD.asyncRefreshWait();
 			LCD.drawString("     ", 0, 3);
 			LCD.drawInt(sonic.getDistance(), 0, 3);

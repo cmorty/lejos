@@ -36,7 +36,7 @@ public class ColorSensorTest
             if (mode < 0) return;
             cs.setFloodlight(colors[mode]);
             LCD.clear();
-            while (!Button.ESCAPE.isPressed())
+            while (!Button.ESCAPE.isDown())
             {
                 LCD.drawString("Mode: " + modes[mode], 0, 0);
                 LCD.drawString("Color   Raw  Cal", 0, 1);

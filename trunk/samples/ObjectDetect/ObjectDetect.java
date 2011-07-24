@@ -34,10 +34,10 @@ public class ObjectDetect implements FeatureListener {
 		Button.setKeyClickVolume(0); // Disable default button sound
 		
 		// Button inputs:
-		while(!Button.ESCAPE.isPressed()) {
+		while(!Button.ESCAPE.isDown()) {
 			
 			// Perform a single scan:
-			if(Button.ENTER.isPressed()) {
+			if(Button.ENTER.isDown()) {
 				Feature res = fd.scan();
 				if(res == null) System.out.println("Nothing detected");
 				else {
@@ -48,7 +48,7 @@ public class ObjectDetect implements FeatureListener {
 			}
 			
 			// Enable/disable detection using buttons:
-			if(Button.RIGHT.isPressed()) {
+			if(Button.RIGHT.isDown()) {
 				if(fd.isEnabled()) {
 					Sound.beepSequence();
 					System.out.println("Autodetect OFF");

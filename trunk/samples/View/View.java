@@ -100,7 +100,7 @@ public class View {
 				{
 					TouchSensor touch = new TouchSensor(sp);
 					
-					while (!Button.ESCAPE.isPressed())
+					while (!Button.ESCAPE.isDown())
 					{
 						if (touch.isPressed()) LCD.drawString(pressed,7,4);
 						else LCD.drawString(released, 7, 4);
@@ -114,7 +114,7 @@ public class View {
 				{
 					LightSensor light = new LightSensor(sp, sensor == 1);
 					
-					while (!Button.ESCAPE.isPressed())
+					while (!Button.ESCAPE.isDown())
 					{
 						LCD.drawInt(light.readValue(), 3, 7, 4);
 						
@@ -127,7 +127,7 @@ public class View {
 				{
 					SoundSensor sound = new SoundSensor(sp, sensor == 4);
 					
-					while (!Button.ESCAPE.isPressed())
+					while (!Button.ESCAPE.isDown())
 					{
 						LCD.drawInt(sound.readValue(), 3, 7, 4);
 						
@@ -140,7 +140,7 @@ public class View {
 				{
 					RCXLightSensor light = new RCXLightSensor(sp);
 					
-					while (!Button.ESCAPE.isPressed())
+					while (!Button.ESCAPE.isDown())
 					{
 						LCD.drawInt(light.readValue(), 3, 7, 4);
 						
@@ -154,7 +154,7 @@ public class View {
 					UltrasonicSensor sonar = new UltrasonicSensor(sp);
 					sonar.continuous();
 					
-					while (!Button.ESCAPE.isPressed())
+					while (!Button.ESCAPE.isDown())
 					{
 						LCD.drawInt(sonar.getDistance(), 3, 7, 4);
 						
@@ -214,7 +214,7 @@ public class View {
 				  }
 				  
 				  // Display tach reading until Escape is pressed
-				  while(!Button.ESCAPE.isPressed())
+				  while(!Button.ESCAPE.isDown())
 				  {
 					  LCD.clear();
 					  LCD.drawString(mot,0,0);

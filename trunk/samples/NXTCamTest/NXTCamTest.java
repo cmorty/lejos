@@ -19,7 +19,7 @@ public class NXTCamTest {
 		camera.sendCommand('A'); // sort objects by size
 		camera.sendCommand('E'); // start tracking
 	
-		while(!Button.ESCAPE.isPressed()) {
+		while(!Button.ESCAPE.isDown()) {
 			LCD.clear();
 			LCD.drawString(camera.getProductID(), 0, 0);
 			LCD.drawString(camera.getSensorType(), 0, 1);

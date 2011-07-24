@@ -87,7 +87,7 @@ public class BumpNavigator implements FeatureListener {
         // this type of example is not very intuitive with the current API.
         
         // Repeatedly drive to random points:
-        while(!Button.ESCAPE.isPressed()) {
+        while(!Button.ESCAPE.isDown()) {
         	System.out.println("Target: ");
         	double x_targ = Math.random() * AREA_WIDTH;
         	double y_targ = Math.random() * AREA_LENGTH;
