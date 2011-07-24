@@ -1137,7 +1137,7 @@ public class GraphicStartup {
         	if (f != null)
         	{
             	String auto = Settings.getProperty(defaultProgramAutoRunProperty, "");        	
-        		if (auto.equals("ON") && !Button.LEFT.isPressed())
+        		if (auto.equals("ON") && !Button.LEFT.isDown())
 	            {
             		f.exec();
 	            }
