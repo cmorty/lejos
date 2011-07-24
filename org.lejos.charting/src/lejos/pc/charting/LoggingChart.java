@@ -2,49 +2,23 @@ package lejos.pc.charting;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-
-import java.awt.Rectangle;
+import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
-
 import java.awt.event.MouseEvent;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-
-import javax.swing.border.BevelBorder;
-
-import lejos.util.Delay;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.LegendItem;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
-import org.jfree.chart.event.ChartProgressEvent;
-import org.jfree.chart.event.ChartProgressListener;
-import org.jfree.chart.event.PlotChangeEvent;
-import org.jfree.chart.event.PlotChangeListener;
-import org.jfree.chart.event.RendererChangeEvent;
-import org.jfree.chart.event.RendererChangeListener;
-import org.jfree.chart.labels.StandardXYSeriesLabelGenerator;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.title.TextTitle;
 import org.jfree.data.Range;
-import org.jfree.data.time.Minute;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
@@ -102,14 +76,22 @@ public class LoggingChart extends ChartPanel{
                             setDomainRange( new Range(maxXVal-LoggingChart.this.domainWidth, maxXVal));
                             
                             // ensure value (range) axis displays extents of data as it scrolls
-                            //Range yRange=((XYSeriesCollection)getChart().getXYPlot().getDataset()).getRangeBounds(true);
-                            //getChart().getXYPlot().getRangeAxis().setRange(yRange);
+                            // dataset cooresponds to axis one-one
+                            for (int i=0;i<plot.getDatasetCount();i++){
+                                if (plot.getDataset(i)==null) continue;
+                                Range yRange=((XYSeriesCollection)plot.getDataset(i)).getRangeBounds(true);
+                                if (plot.getRangeAxis(i)==null || yRange==null) continue;
+                                plot.getRangeAxis(i).setRange(yRange);
+                                //plot.getRangeAxis().setAutoRange(true);
+                             }
+ 
                              doDomainAdjust=false;
                         }
-                        LoggingChart.this.getChart().setNotify(true);
-                        LoggingChart.this.getChart().setNotify(false);
+                        //LoggingChart.this.getChart().setNotify(true);
+                        
                         chartDirty=false;
                     }
+                    LoggingChart.this.getChart().setNotify(false);
                 }
             }
         });
@@ -126,6 +108,18 @@ public class LoggingChart extends ChartPanel{
         setAxisChangeListener();
     }
     
+    public void paintComponent(Graphics g) {
+        // try two times for intermittent repaint problem (identified 7/22/2011) with jfreechart
+        for (int i=0;i<2;i++) {
+            try {
+                super.paintComponent(g);
+            } catch (NullPointerException e) {
+                ; // ignore
+//                System.out.println("!*** NullPointerException in chart paintComponent(try #" + i + ")");
+            }
+        }
+    }
+    
     private void setDomainRange(Range range){
         if (range==null) return;
         synchronized (lockObj1) {
@@ -133,6 +127,10 @@ public class LoggingChart extends ChartPanel{
             getChart().getXYPlot().getDomainAxis().setRange(range);
         }
     }
+    
+//    void setChartDirty() {
+//        this.chartDirty=true;
+//    }
     
     // z..z..z..z..z..z...z...
     private void doWait(long milliseconds) {
@@ -148,6 +146,7 @@ public class LoggingChart extends ChartPanel{
         setLayout(null);
         setChart(getBaselineChart());
         setVisible(true);
+        setDomainScale(1000);
         chartDirty=true;
     }
 
@@ -263,7 +262,7 @@ public class LoggingChart extends ChartPanel{
         
         // create and return the chart        
         JFreeChart chart = new JFreeChart("", new Font("Arial", Font.BOLD, 14), plot, true);       
-        
+        chart.setNotify(false);
         chart.setBackgroundPaint(Color.white);
         chart.getLegend().setPosition(RectangleEdge.RIGHT); 
         chart.getLegend().setItemFont(new Font("Arial", Font.PLAIN, 10));
@@ -376,7 +375,7 @@ public class LoggingChart extends ChartPanel{
             seriesDefs[i].seriesIndex=++axisSeriesIndex[seriesDefs[i].axisIndex-1];
         }
         
-        // create the datasets per axisID. We need to ensure that dataset(0) is always created
+        // create the datasets per axisID one-one. We need to ensure that dataset(0) is always created
         // so a shift offset is used
         for (int i=0;i<seriesDefs.length;i++){
             seriesDefs[i].axisIndex-=(minAxisId-1); // shift all axisIDs down to ensure we have a axisID=1 (one-based)
@@ -411,9 +410,7 @@ public class LoggingChart extends ChartPanel{
 //                    dbg("mouseclicked");
                     // doubleclick zooms extents of data
                     if (e.getClickCount()==2) {
-                        //LoggingChart.this.getChart().setNotify(true);
                         restoreAutoBounds();
-                        chartDirty=true;
                     }
                 }
             }
@@ -422,7 +419,7 @@ public class LoggingChart extends ChartPanel{
                 if ((e.getButton()&MouseEvent.BUTTON1)==MouseEvent.BUTTON1){
                     //dbg(e.toString());
                     // ensure the chart renders any changes on left-click release
-                    if (e.getClickCount()==1) LoggingChart.this.getChart().setNotify(true);
+                    //if (e.getClickCount()==1) LoggingChart.this.getChart().setNotify(true);
                 }
             }
             
@@ -443,12 +440,11 @@ public class LoggingChart extends ChartPanel{
         }
 
         // seriesData[0]: first element should always be timestamp from NXT
-        
         // add the datapoint series by series in correct axis ID
         XYPlot plot= getChart().getXYPlot();
         for (int i=1;i<seriesData.length;i++) {            
             ((XYSeriesCollection)plot.getDataset(seriesDefs[i-1].axisIndex-1)).getSeries(seriesDefs[i-1].seriesIndex-1)
-                .add(seriesData[0], seriesData[i]);;
+                .add(seriesData[0], seriesData[i], false);;
         }
         
         // the updater thread picks this up every 100 ms and has the JFreeChart do it's notifications for rendering, 
@@ -478,7 +474,8 @@ public class LoggingChart extends ChartPanel{
         }
         // sets this.domainRange
         setDomainRange(new Range(scaleOrigin-this.domainWidth/2, scaleOrigin+this.domainWidth/2));
-        chartDirty=true;
+        this.getChart().setNotify(true);
+//        chartDirty=true;
     }
 
     /** Calc and set the domainWidth based on slider value (.1-100% as 1-1000)

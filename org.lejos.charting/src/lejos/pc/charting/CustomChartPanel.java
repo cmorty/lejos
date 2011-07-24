@@ -3,6 +3,7 @@ package lejos.pc.charting;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Rectangle;
 
 import javax.swing.BorderFactory;
@@ -127,7 +128,8 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
     protected JFreeChart getChart() {
         return loggingChartPanel.getChart();
     }
-
+    
+    
 //    /** Wrapper for <code>LoggingChart.setSeries()</code>
 //     * @param seriesNames
 //     * @return
@@ -173,9 +175,17 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         domainScaleSlider.setValue((int)((float)domainRange.getLength()/(maxXVal-minXVal)*SLIDER_MAX));
         // this ensures that the mouse wheel zoom works after messing with slider and not clicking on chart
         if (!loggingChartPanel.getChart().isNotify()) loggingChartPanel.getChart().setNotify(true);
+//        loggingChartPanel.setChartDirty();
     }
     
+//    protected void setChartDirty(){
+//        loggingChartPanel.setChartDirty();
+//    }
+    
+
+ 
     public void chartProgress(ChartProgressEvent event) {
+//        System.out.println("chartProgress");
         long xval = (long)loggingChartPanel.getChart().getXYPlot().getDomainCrosshairValue();
         double yval = loggingChartPanel.getChart().getXYPlot().getRangeCrosshairValue();
         xYValueLabel.setText(String.format("%1$,6d : %2$,7.3f", xval, yval));
@@ -240,8 +250,12 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
       * @return The number of series created
       * @see #addDataPoints
       */
-    int setSeries(String[] seriesNames){
+    public int setSeries(String[] seriesNames){
     // TODO change to not specify timestamp and do timestamp automatically
         return loggingChartPanel.setSeries(seriesNames);
+    }
+    
+    public void copyChart() {
+        loggingChartPanel.doCopy();
     }
 }

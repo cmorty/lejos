@@ -8,17 +8,23 @@ import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import java.util.concurrent.ArrayBlockingQueue;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -28,6 +34,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
 
 
@@ -58,16 +65,18 @@ public class LogChartFrame extends JFrame {
     
     private boolean isNXTConnected = false;
     private File theLogFile;
-//    private JMenuBar menuBar = new JMenuBar();
-//    private JMenu menuFile = new JMenu();
-//    private JMenuItem menuFileExit = new JMenuItem();
+    
+    private JMenuBar menuBar;
+    private JMenu menu, submenu;
+    private JMenuItem menuItem;
+    
     private JTabbedPane jTabbedPane1 = new JTabbedPane();
     private JTextArea jTextAreaDataLog = new JTextArea();
     private SelfLogger loggerHook = new SelfLogger();
     private JTextArea FQPathTextArea = new JTextArea();
     private JButton selectFolderButton = new JButton();
     private JSeparator jSeparator1 = new JSeparator();
-    
+    private ArrayBlockingQueue<String> logDataQueue= new ArrayBlockingQueue<String>(2000);
 
     /** Default constructor
      */
@@ -92,19 +101,20 @@ public class LogChartFrame extends JFrame {
         String[] thisClass = this.getClass().getName().split("[\\s\\.]");
         THISCLASS=thisClass[thisClass.length-1];
         
-        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        new Thread(new Runnable(){
-            public void run(){
-                doWait(1000);
-                SwingUtilities.invokeLater(new Runnable(){
-                    public void run() {
-                        populateSampleData();
-                    }
-                });
-               
-            }
-        }
-        ).start();
+//        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//        new Thread(new Runnable(){
+//            public void run(){
+//                doWait(1000);
+//                SwingUtilities.invokeLater(new Runnable(){
+//                    public void run() {
+//                        populateSampleData();
+//                    }
+//                });
+//               
+//            }
+//        }
+//        ).start();
+        
     }
 
 
@@ -157,7 +167,6 @@ public class LogChartFrame extends JFrame {
             return sd;
         }
 
-        // TODO where to do multiaxis flag?
         /** Parse chartable datapoints into a double array. Uses previos parsed seriesDefs[] to determine chartable
          * 
          * @param logLine
@@ -186,16 +195,15 @@ public class LogChartFrame extends JFrame {
         public void logLineAvailable(String logLine) {
             // tell the chart it has some data
             loggingChartPanel.addDataPoints(parseDataPoints(logLine)); 
-            // send to redirected STDOUT (status text area)
-            toLogArea(logLine);
+            LogChartFrame.this.logDataQueue.add(logLine);
         }
 
         public void dataInputStreamEOF() {
             closeCurrentConnection();
             // allows user use interactive stuff without glitch    
-            System.out.println("Finalizing chart");
-            loggingChartPanel.getChart().fireChartChanged();
-            loggingChartPanel.getChart().setNotify(true);
+            System.out.println("Finalizing chart");  
+            loggingChartPanel.getChart().setNotify(true); // TODO verify
+//            loggingChartPanel.setChartDirty();
         }
 
 //        *  The string format/structure of each string field passed by NXTDataLogger is:<br>
@@ -227,7 +235,8 @@ public class LogChartFrame extends JFrame {
             } catch (BadLocationException e) {
                 // TODO what to do here? I'm pretty sure the try(...) code should never throw this...
             }
-            toLogArea(sb.toString());
+            LogChartFrame.this.logDataQueue.add(sb.toString());
+            
             if (theLogFile!=null) {
                 if (theLogFile.isFile()) {
                     loggingChartPanel.getChart().setTitle(getCanonicalName(theLogFile));
@@ -276,27 +285,77 @@ public class LogChartFrame extends JFrame {
             });
         }
     }
+    
+    // to handle menu events
+    private class MenuListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equalsIgnoreCase("about")) new LicenseDialog(LogChartFrame.this).setVisible(true);
+            if (e.getActionCommand().equalsIgnoreCase("generate sample data")) {
+                LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                new Thread(new Runnable(){
+                    public void run(){
+                        SwingUtilities.invokeLater(new Runnable(){
+                            public void run() {
+                                populateSampleData();
+                            }
+                        });
+                       
+                    }
+                }
+                ).start();
+            }
+            if (e.getActionCommand().equalsIgnoreCase("chart controls")) new UsageHelpDialog(LogChartFrame.this).setVisible(true);
+            if (e.getActionCommand().equalsIgnoreCase("copy chart image")) {
+                LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                loggingChartPanel.copyChart();
+                LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            }
+            if (e.getActionCommand().equalsIgnoreCase("Copy Data Log")) {
+                int curPos = jTextAreaDataLog.getCaretPosition();
+                jTextAreaDataLog.selectAll();
+                jTextAreaDataLog.copy();
+                jTextAreaDataLog.setCaretPosition(curPos);
+            }
+        }
+    }
 
-    /** All the setup of components, etc. What's scary is Swing is a lightweight GUI framework...
+    /** All the setup of components, etc. What's scary is Swing is a "lightweight" GUI framework...
      * @throws Exception
      */
     private void jbInit() throws Exception {
         this.getContentPane().setLayout(null);
-        this.setSize(new Dimension(823, 598));
+        this.setSize(new Dimension(823, 621));
         this.setTitle("NXT Charting Logger");
         this.setResizable(false);
         this.setEnabled(true);
         
-//        this.setJMenuBar(menuBar);
-//        this.menuFile.setText( "File" );
-//        menuBar.add( menuFile );
-//        menuFile.add( menuFileExit );
-//        menuFileExit.setText( "Exit" );
-//        menuFileExit.addActionListener( new ActionListener() { public void actionPerformed( ActionEvent ae ) { fileExit_ActionPerformed( ae ); } } );
-
-
+        MenuListener mlistener = new MenuListener();
+        this.menuBar=new JMenuBar();
+        this.setJMenuBar(this.menuBar);
+        menu = new JMenu("Edit");
+        menu.setMnemonic(KeyEvent.VK_E);
+        menuBar.add(menu);
+        menuItem = new JMenuItem("Copy Chart Image", KeyEvent.VK_I);
+        menuItem.addActionListener(mlistener);
+        menu.add(menuItem);
+        menuItem = new JMenuItem("Copy Data Log", KeyEvent.VK_D);
+        menuItem.addActionListener(mlistener);
+        menu.add(menuItem);
+        
+        menu = new JMenu("Help");
+        menu.setMnemonic(KeyEvent.VK_H);
+        menuBar.add(menu);
+        menuItem = new JMenuItem("About",KeyEvent.VK_A);
+        menuItem.addActionListener(mlistener);
+        menu.add(menuItem);
+        menuItem = new JMenuItem("Generate sample data", KeyEvent.VK_G);
+        menuItem.addActionListener(mlistener);
+        menu.add(menuItem);
+        menuItem = new JMenuItem("Chart controls", KeyEvent.VK_C);
+        menuItem.addActionListener(mlistener);
+        menu.add(menuItem);
+        
         jTabbedPane1.setBounds(new Rectangle(200, 370, 615, 195));
-
 
         jButtonConnect.setText("Connect");
         jButtonConnect.setBounds(new Rectangle(25, 65, 115, 25));
@@ -376,6 +435,7 @@ public class LogChartFrame extends JFrame {
         loggingChartPanel.setPreferredSize(new Dimension(805, 335));
         loggingChartPanel.setBounds(new Rectangle(5, 5, 810, 340));
         loggingChartPanel.setMinimumSize(new Dimension(400, 200));
+        loggingChartPanel.setBounds(new Rectangle(0, 0, 820, 360));
         loggingChartPanel.setBounds(new Rectangle(5, 5, 810, 360));
         
         jLabel5.setText("NXT Name/Address:");
@@ -392,8 +452,8 @@ public class LogChartFrame extends JFrame {
         jTabbedPane1.addTab("Data Log", jScrollPaneDataLog);
         jScrollPaneStatus.getViewport().add(jTextAreaStatus, null);
         jTabbedPane1.addTab("Status", jScrollPaneStatus);
+
         loggingChartPanel.add(jSeparator1, null);
-        
         this.getContentPane().add(loggingChartPanel, null);
         this.getContentPane().add(selectFolderButton, null);
         this.getContentPane().add(FQPathTextArea, null);
@@ -401,6 +461,23 @@ public class LogChartFrame extends JFrame {
         this.getContentPane().add(jPanel1, null);
         this.getContentPane().add(logFileTextField, null);
         this.getContentPane().add(jLabel1logfilename, null);
+        
+        // datalog textarea updater thread
+        ActionListener taskPerformer = new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                String theData=null;
+                for (;;) {
+                    theData=LogChartFrame.this.logDataQueue.poll();
+                    if (theData==null) break;
+                    try {
+                        jTextAreaDataLog.getDocument().insertString(jTextAreaDataLog.getDocument().getLength(),theData, null);
+                    } catch (BadLocationException e) {
+                        System.out.print("BadLocationException in datalog textarea updater thread:" +e.toString() + "\n");
+                    }
+                }
+            }
+         };
+         new Timer(250, taskPerformer).start();
     }
 
     /** Attempt to start a connection using a thread so the GUI stays responsive.
@@ -439,6 +516,7 @@ public class LogChartFrame extends JFrame {
          try {
              Thread.sleep(milliseconds);
          } catch (InterruptedException e) {
+             ; // do nothing
              //Thread.currentThread().interrupt();
          }
     }
@@ -447,38 +525,35 @@ public class LogChartFrame extends JFrame {
         float value=0, value2=0;
         int x=0;
         
-        loggerHook.logFieldNamesChanged(new String[]{"System_ms!n!1","Sine!Y!1","Cosine!y!2"}); 
+        loggerHook.logFieldNamesChanged(new String[]{"System_ms!n!1","Sine!Y!1","Random!y!2"}); 
         for (int i = 0; i < 10000; i++) {
-            //if (i%40==0) value2=(float)(Math.random()*5-2.5);
+            if (i%150==0) value2=(float)(Math.random()*5000-2500);
             if (i % 10 == 0) {
-                loggerHook.logLineAvailable(String.format("%1$-1d\t%2$-13.4f\t%3$-13.4f\n", x, Math.sin(value), Math.cos(value)*10000-5000));
+                loggerHook.logLineAvailable(String.format("%1$-1d\t%2$-13.4f\t%3$-13.4f\n", x, Math.sin(value), value2));
                 x += 10;
                 value += .1f;
             }
         }
-        loggingChartPanel.getChart().setTitle("Sample Dataset");
-//        loggingChartPanel.initZoomWorkaround();
+        loggingChartPanel.getChart().setTitle("Sample Multiple Range Axis Dataset");
         System.out.println("Sample dataset generation complete");
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
     
-    private void toLogArea(String x){
-        final String fx = x;
-        SwingUtilities.invokeLater(new Runnable(){
-            public void run() {
-                //                    jTextAreaOutput.setText(jTextAreaOutput.getText() + fx + "\n" );
-                try {
-                    jTextAreaDataLog.getDocument().insertString(jTextAreaDataLog.getDocument().getLength(),fx, null);
-                } catch (BadLocationException e) {
-                    // TODO
-                    System.out.print("BadLocationException:" +e.toString() + "\n");
-                }
-            }
-        });
-    }
+//    private void toLogArea(String x){
+//        final String fx = x;
+//        SwingUtilities.invokeLater(new Runnable(){
+//            public void run() {
+//                try {
+//                    jTextAreaDataLog.getDocument().insertString(jTextAreaDataLog.getDocument().getLength(),fx, null);
+//                } catch (BadLocationException e) {
+//                    // TODO
+//                    System.out.print("BadLocationException:" +e.toString() + "\n");
+//                }
+//            }
+//        });
+//    }
     
     
-    final JFrame mySelf = this; // needed by AIC
     /** Attempt to start a connection using a thread so the GUI stays responsive. Manage connect button state
      * @param e
      */
@@ -490,13 +565,13 @@ public class LogChartFrame extends JFrame {
                     if (!isNXTConnected) {
                         jButtonConnect.setText("Connecting..");
                         jButtonConnect.setEnabled(false);
-                        mySelf.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                         if (makeConnection()) {
                             jButtonConnect.setText("Disconnect");
                         } else {
                             jButtonConnect.setText("Connect");
                         }
-                        mySelf.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                        LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                         jButtonConnect.setEnabled(true);
                     }
 
@@ -570,9 +645,4 @@ public class LogChartFrame extends JFrame {
         if (n==JOptionPane.CLOSED_OPTION) n=2;
         return n;
     }
-    
-//    void helpAbout_ActionPerformed(ActionEvent e) {
-//        JOptionPane.showMessageDialog(this, new Frame1_AboutBoxPanel1(), "About", JOptionPane.PLAIN_MESSAGE);
-//    }
-    
 }
