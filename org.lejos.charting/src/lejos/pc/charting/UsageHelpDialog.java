@@ -36,13 +36,13 @@ public class UsageHelpDialog extends JDialog {
 
         jLabel1.setText("<html>Chart Data Examination Controls" +
         "<ul>" +
-        "<li>Zoom extents: Doubleclick or click-drag to left, and/or up" + 
-        "<li>Zoom window: Click-drag (to right and down) then release" + 
+        "<li>Zoom extents: Doubleclick or Left click-drag to left, and/or up" + 
+        "<li>Zoom window: Left click-drag (to right and down) then release" + 
         "<li>Zoom in/out dynamic: Use mouse wheel to zoom" + 
+        "<li>Panning dynamic: CTRL+Left click-drag" +
         "<li>Slider changes domain scale dynamically from 0.1 to 100% of (domain) X dataset extents/range" + 
         "<li>Tootip: Hover over data point on a series and series name, x-y val is shown" + 
-        "<li>left-click moves crosshair to nearest x-y datapoint. Displays coordinate in lower right of chart" +
-        "<li>Single-click creates crosshair pointer at nearest datapoint" +
+        "<li>Left-click moves crosshair to nearest datapoint and those coordinates are displayed in lower right of chart area" +
         "</ul></html>");
         this.getContentPane().add(jLabel1, null);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
