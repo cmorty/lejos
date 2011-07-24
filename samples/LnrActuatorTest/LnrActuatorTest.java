@@ -34,8 +34,8 @@ public class LnrActuatorTest {
         
         la.setPower(power);
         LCD.drawString("power=" + power + "  ",0,3);
-        while (!Button.ESCAPE.isPressed()) {
-            if (Button.ENTER.isPressed()){
+        while (!Button.ESCAPE.isDown()) {
+            if (Button.ENTER.isDown()){
                 power++;
                 if (power>100) power = 0;
                 LCD.drawString("                ",0,3);
@@ -43,10 +43,10 @@ public class LnrActuatorTest {
                 la.setPower(power);
                 Delay.msDelay(40);
             }
-            if (Button.LEFT.isPressed()){
+            if (Button.LEFT.isDown()){
                 LCD.drawString("       ",0,5);
                 la.move(-200, true);
-                while (Button.LEFT.isPressed()) {
+                while (Button.LEFT.isDown()) {
                     Delay.msDelay(80);
                     if (la.isStalled()) {
                         LCD.drawString("STALL!",0,5);
@@ -57,10 +57,10 @@ public class LnrActuatorTest {
                 la.stop();
                 Delay.msDelay(120);
             }
-            if (Button.RIGHT.isPressed()){
+            if (Button.RIGHT.isDown()){
                 LCD.drawString("       ",0,5);
                 la.move(200, true);
-                while (Button.RIGHT.isPressed()) {
+                while (Button.RIGHT.isDown()) {
                     Delay.msDelay(80);
                     if (la.isStalled()) {
                         LCD.drawString("STALL!",0,5);

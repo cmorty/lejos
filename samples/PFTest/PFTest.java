@@ -19,7 +19,7 @@ import lejos.nxt.addon.*;
 		LCD.drawString(link.getSensorType(), 0, 2);
 		
 		// Move Motor A forwards and B backwards on channel 4
-		while(!Button.ESCAPE.isPressed()) {
+		while(!Button.ESCAPE.isDown()) {
 			link.sendPFComboDirect(3,IRLink.PF_FORWARD, IRLink.PF_BACKWARD);
 		}
 	}

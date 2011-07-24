@@ -31,10 +31,10 @@ public class PFMateTest {
 		boolean flag = false;
 
 		
-		while(!Button.ESCAPE.isPressed()){
+		while(!Button.ESCAPE.isDown()){
 			dm.echo(i);
 			
-			while(Button.ENTER.isPressed()){
+			while(Button.ENTER.isDown()){
 				pfObj.A.stop();
 				try {Thread.sleep(PFDelayCMD);} catch (Exception e) {}
 				pfObj.B.stop();
@@ -59,7 +59,7 @@ public class PFMateTest {
 				try {Thread.sleep(500);} catch (Exception e) {}
 			}
 			
-			while(Button.LEFT.isPressed()){
+			while(Button.LEFT.isDown()){
 				if(i >1){
 					i--;
 				}else{
@@ -73,7 +73,7 @@ public class PFMateTest {
 				try {Thread.sleep(500);} catch (Exception e) {}
 			}
 			
-			while(Button.RIGHT.isPressed()){
+			while(Button.RIGHT.isDown()){
 				if(i <7){
 					i++;
 				}else{

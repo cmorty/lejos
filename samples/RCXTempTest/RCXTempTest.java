@@ -10,7 +10,7 @@ public class RCXTempTest {
     public static void main(String[] args) throws Exception {
         RCXTemperatureSensor temperature = new RCXTemperatureSensor(SensorPort.S1);
         boolean s = true;
-        while(!Button.ESCAPE.isPressed()) {
+        while(!Button.ESCAPE.isDown()) {
             LCD.clear();
             if (s) 
                 LCD.drawString( "C " + temperature.getCelcius(), 0, 0);

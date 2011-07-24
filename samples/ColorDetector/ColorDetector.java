@@ -17,7 +17,7 @@ public class ColorDetector {
 		String g = "G";
 		String b = "B";
 		
-		while(!Button.ESCAPE.isPressed()) {
+		while(!Button.ESCAPE.isDown()) {
 			LCD.clear();
 			LCD.drawString(cmps.getProductID(), 0, 0);
 			LCD.drawString(cmps.getSensorType(), 0, 1);

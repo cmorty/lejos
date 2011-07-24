@@ -18,7 +18,7 @@ import lejos.nxt.addon.*;
         LCD.drawString("PID " + rfid.getProductID(), 0, 1);
         LCD.drawString("Version " + rfid.getVersion(), 0, 2);
         Thread.sleep(5000);
-		while(!Button.ESCAPE.isPressed()) {
+		while(!Button.ESCAPE.isDown()) {
             LCD.clear();
             LCD.drawString("Reading...", 0, 1);
             long id = rfid.readTransponderAsLong(true);

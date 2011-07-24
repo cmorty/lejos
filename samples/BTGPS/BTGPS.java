@@ -196,7 +196,7 @@ public class BTGPS{
 		//FirstConnection
 		boolean firstMomentFlag = false;
 
-		while(!Button.ESCAPE.isPressed()){
+		while(!Button.ESCAPE.isDown()){
 			NSAT = gps.getSatellitesTracked();
 			GPSDataQuality = Math.round((NSAT * 100)/4);
 			
@@ -242,7 +242,7 @@ public class BTGPS{
 
 			
 			//Circular System
-			if (Button.LEFT.isPressed()){
+			if (Button.LEFT.isDown()){
 				if(GPSCurrentScreen == 1){
 					GPSCurrentScreen = GPSScreens;
 				}else{
@@ -250,7 +250,7 @@ public class BTGPS{
 				}
 			}
 
-			if (Button.RIGHT.isPressed()){
+			if (Button.RIGHT.isDown()){
 				if(GPSCurrentScreen == GPSScreens){
 					GPSCurrentScreen = 1;
 				}else{
@@ -259,7 +259,7 @@ public class BTGPS{
 			}
 
 			//Reset
-			if (Button.ENTER.isPressed()){
+			if (Button.ENTER.isDown()){
 				GPSCurrentScreen  =1;
 			}
 

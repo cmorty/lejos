@@ -16,7 +16,7 @@ public class TiltTest {
 	public static void main(String[] args) throws Exception {
 		Accelerometer tilt = SensorSelector.createAccelerometer(SensorPort.S1);
 			
-		while(!Button.ESCAPE.isPressed()) {
+		while(!Button.ESCAPE.isDown()) {
 			LCD.clear();
 			// LCD.drawString("Tilt", 0, 0);
 			// LCD.drawInt(tilt.getXTilt(), 6, 0, 1);

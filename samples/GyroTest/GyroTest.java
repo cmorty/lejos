@@ -20,7 +20,7 @@ public class GyroTest {
 		LCD.drawString("Max:", 0, 3);
 		LCD.drawString("Current:", 0, 4);
 		
-		while(!Button.ESCAPE.isPressed()) {
+		while(!Button.ESCAPE.isDown()) {
 			float value = gyro.getAngularVelocity();
 			
 			minValue = Math.min(minValue, value);

@@ -25,20 +25,20 @@ public class NXTServoTest{
 		int angle = 0;
 		int NXTServoBattery = 0;
 
-		while(!Button.ESCAPE.isPressed()){
+		while(!Button.ESCAPE.isDown()){
 			NXTServoBattery = msc.getBattery();
 
-			if (Button.LEFT.isPressed()){
+			if (Button.LEFT.isDown()){
 				angle = 0;
 				msc.servo1.setAngle(angle);
 			}
 			
-			if (Button.ENTER.isPressed()){
+			if (Button.ENTER.isDown()){
 				angle = 90;
 				msc.servo1.setAngle(angle);
 			}
 
-			if (Button.RIGHT.isPressed()){
+			if (Button.RIGHT.isDown()){
 				angle = 180;
 				msc.servo1.setAngle(angle);
 			}

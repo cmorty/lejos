@@ -13,8 +13,8 @@ package lejos.nxt;
  * event is not cleared, it will be reported again in subsequent calls to eventWait.
  *
  *
- * <br>NOTE: This is a low level system interface and should probably not be used
- * directly by user code.
+ * <p><b>NOTE:</b> This is a low level system interface and should probably not be used
+ * directly by user code.</p>
  *
  * @author andy
  */

@@ -26,7 +26,7 @@ public class SensorMuxTest {
 		int value3 = 0;
 		int value4 = 0;
 
-		while(!Button.ESCAPE.isPressed()){
+		while(!Button.ESCAPE.isDown()){
 			value1 = sm1.isPressed(1);
 			value2 = sm1.readValue(2);
 			value3 = sm1.getDistance(3);

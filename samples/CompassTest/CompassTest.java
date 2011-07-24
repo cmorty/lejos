@@ -14,7 +14,7 @@ import lejos.nxt.addon.*;
 	public static void main(String[] args) throws Exception {
 		CompassMindSensor compass = new CompassMindSensor(SensorPort.S1);
 					
-		while(!Button.ESCAPE.isPressed()) {
+		while(!Button.ESCAPE.isDown()) {
 			LCD.clear();
 			LCD.drawString("Bearing:", 0, 0);
 			LCD.drawInt((int) compass.getDegrees(), 0, 1);

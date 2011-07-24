@@ -18,7 +18,7 @@ public class BlueStats {
 		String addrString = "Adr";
 		String connsString = "Conns";
 
-        while(!Button.ESCAPE.isPressed()) {
+        while(!Button.ESCAPE.isDown()) {
 			byte[] version = Bluetooth.getVersion();
 			String fn = Bluetooth.getFriendlyName();
 			byte [] connections = Bluetooth.getConnectionStatus();

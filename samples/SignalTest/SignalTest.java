@@ -31,7 +31,7 @@ public class SignalTest {
 		LCD.drawString(connected,0,0);
 		LCD.refresh();	
 		
-		while(!Button.ESCAPE.isPressed()) {
+		while(!Button.ESCAPE.isDown()) {
 			LCD.drawString(strength, 0, 3);
 			LCD.drawInt(btc.getSignalStrength(), 3, 9 ,3);
 			LCD.refresh();

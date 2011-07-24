@@ -89,7 +89,7 @@ public class RCNavMapper  implements RCVehicle,   FeatureListener
                report(pp.getPose());
             _report = false;
          }
-         more = !Button.ESCAPE.isPressed();
+         more = !Button.ESCAPE.isDown();
          Thread.yield();
       }
       pilot.stop();

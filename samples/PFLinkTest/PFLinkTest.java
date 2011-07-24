@@ -28,7 +28,7 @@ public class PFLinkTest {
         //link.installDefaultMacros(); 
         //link.initialize(PFLink.NR_RANGE_SHORT); 
 
-        while (!Button.ESCAPE.isPressed()) { 
+        while (!Button.ESCAPE.isDown()) { 
 
             LCD.drawString("FORWARD         ", 0, 3); 
             link.runMacro(PFLink.COMBO_CH1_A_FORWARD_B_REVERSE); 

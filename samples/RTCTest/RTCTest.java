@@ -82,27 +82,27 @@ public class RTCTest {
 			}
 			
 			// Decrement the current component
-			if (Button.LEFT.isPressed()) {
+			if (Button.LEFT.isDown()) {
 				dateVals[cur].decrement();
-				while (Button.LEFT.isPressed()) Delay.msDelay(100);
+				while (Button.LEFT.isDown()) Delay.msDelay(100);
 			}
 
 			// Increment the current component
-			if (Button.RIGHT.isPressed()) {
+			if (Button.RIGHT.isDown()) {
 				dateVals[cur].increment();				
-				while (Button.RIGHT.isPressed()) Delay.msDelay(100);
+				while (Button.RIGHT.isDown()) Delay.msDelay(100);
 			}
 
 			// Move to next component
-			if (Button.ENTER.isPressed()) {
+			if (Button.ENTER.isDown()) {
 				dateVals[cur].setActive(false);
 				cur = (cur + 1) % 7;
 				dateVals[cur].setActive(true);
-				while (Button.ENTER.isPressed()) Delay.msDelay(100);
+				while (Button.ENTER.isDown()) Delay.msDelay(100);
 			}
 
 			// Set the date and time
-			if (Button.ESCAPE.isPressed()) {
+			if (Button.ESCAPE.isDown()) {
 				dateVals[cur].setActive(false);
 				cur = 0;
 				dateVals[cur].setActive(true);
