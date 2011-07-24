@@ -39,7 +39,15 @@ public class Button {
 	  iCode = aCode;
 	}
 	  
+	/**
+	 * @deprecated use {@link #isDown()} instead
+	 */
+	@Deprecated
 	public boolean isPressed() {
+		return isDown();
+	}
+	
+	public boolean isDown() {
 		return NXTFrame.isPressed(iCode);
 	}
 	
