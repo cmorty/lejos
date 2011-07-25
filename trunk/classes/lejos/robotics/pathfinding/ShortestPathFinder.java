@@ -26,44 +26,44 @@ import lejos.robotics.navigation.Pose;
  *
  * @author Roger Glassey
  */
-public class ShortestPathFinder// implements PathFinder
+public class ShortestPathFinder implements PathFinder
 {
 
-
-
-public ShortestPathFinder(LineMap map)
-{
-  setMap(map);
-}
-/**
- * Finds the shortest path from start to finish using the map (or collection of lines)
- * in the constructor.
- * @param start  the initial robot pose
- * @param finish the final robot location
- * @return the shortest route
- * @throws DestinationUnreachableException  if, for example, you nave not called setMap();
- */
-  public Collection<Waypoint> findRoute(Pose start, Waypoint finish) throws DestinationUnreachableException
+  public ShortestPathFinder(LineMap map)
+  {
+    setMap(map);
+  }
+  
+  /**
+   * Finds the shortest path from start to finish using the map (or collection of lines)
+   * in the constructor.
+   * @param start  the initial robot pose
+   * @param finish the final robot location
+   * @return the shortest route
+   * @throws DestinationUnreachableException  if, for example, you nave not called setMap();
+   */
+  public Path findRoute(Pose start, Waypoint finish) throws DestinationUnreachableException
   {
     return findPath(start.getLocation(), finish, _map);
   }
 
   /**
- * Finds the shortest path from start to finish using the map ( collection of lines)
- * in the constructor.
- * @param start  the initial robot pose
- * @param finish the final robot location
- * @param theMap  the LineMap of obstacles
- * @return the shortest route
- * @throws DestinationUnreachableException  if, for example, you nave not called setMap();
- */
-  public Collection<Waypoint> findRoute(Pose start, Waypoint finish, LineMap theMap) throws DestinationUnreachableException
+   * Finds the shortest path from start to finish using the map ( collection of lines)
+   * in the constructor.
+   * @param start  the initial robot pose
+   * @param finish the final robot location
+   * @param theMap  the LineMap of obstacles
+   * @return the shortest route
+   * @throws DestinationUnreachableException  if, for example, you nave not called setMap();
+   */
+  public Path findRoute(Pose start, Waypoint finish, LineMap theMap) throws DestinationUnreachableException
   {
     setMap(theMap);
     return findPath(start.getLocation(), finish, _map);
   }
+  
   /**
-   * finds the shortest path between start  and finish Points while
+   * Finds the shortest path between start  and finish Points while
    * avoiding the obstacles represented by lines in the map
    * @param start : the beginning of the path
    * @param finish : the destination
@@ -71,8 +71,7 @@ public ShortestPathFinder(LineMap map)
    * @return an array list of waypoints.  If no path exists, returns null and throws
    * an exception.
    */
-  
-  private ArrayList<Waypoint> findPath(Point start, Point finish, ArrayList<Line>
+  private Path findPath(Point start, Point finish, ArrayList<Line>
           theMap)throws DestinationUnreachableException
   {
     _map = theMap;
@@ -140,10 +139,8 @@ public ShortestPathFinder(LineMap map)
     return getRoute(_destination);
   }
 
-     
-
- /**
-   * helper method for findPath(). Determines if the straight line segment 
+  /**
+   * Helper method for findPath(). Determines if the straight line segment 
    * crosses a line on the map.
    * Side effect: creates nodes at the end of the blocking line and adds them to the _candidate set
    * @param from the  beginning of the line segment
@@ -196,12 +193,13 @@ public ShortestPathFinder(LineMap map)
     }
     return blocked;
   }
-/**
- * keep candidate list sorted in order on increasing distance to destination
- * return index of Node n in _candidate
- * @param n
- *
- */
+  
+  /**
+   * keep candidate list sorted in order on increasing distance to destination
+   * return index of Node n in _candidate
+   * @param n
+   *
+   */
   private int addToCandidate (Node n)
     {
       float distance = n.getDistance(_destination);
@@ -221,6 +219,7 @@ public ShortestPathFinder(LineMap map)
       return _candidate.indexOf(n);
 
   }
+  
   /**
    * Helper method for findPath() <br>
    * returns the  node in  the Reached set, whose distance from the start node plus
@@ -244,7 +243,6 @@ public ShortestPathFinder(LineMap map)
     return best;
   }
 
-
   /**
    * helper method for findPath; check if aNode is in the set of reached nodes
    * @param aNode
@@ -261,7 +259,7 @@ public ShortestPathFinder(LineMap map)
     return found;
   }
   
-/**
+  /**
    * helper method for findPath; check if aNode is in the set of candidate nodes
    * @param aNode
    * @return true if aNode has been reached already
@@ -283,9 +281,9 @@ public ShortestPathFinder(LineMap map)
    * @param destination
    * @return the route of the shortest path
    */
-private  ArrayList<Waypoint> getRoute(Node destination)
-{
-    ArrayList<Waypoint> route = new ArrayList <Waypoint>();
+  private  Path getRoute(Node destination)
+  {
+    Path route = new Path();
     Node n = destination;
     Waypoint  w ;
     do {  // add waypoints to route as push down stack
@@ -294,42 +292,46 @@ private  ArrayList<Waypoint> getRoute(Node destination)
       n = n.getPredecessor();
     } while (n != null);
     return route;
-}
- public void setMap(ArrayList<Line> theMap)
+  }
+  
+  public void setMap(ArrayList<Line> theMap)
   {
-   _map = theMap;
- }
+    _map = theMap;
+  }
 
- public void setMap(LineMap theMap)
- {
-     Line [] lines = theMap.getLines();
+  public void setMap(LineMap theMap)
+  {
+    Line [] lines = theMap.getLines();
     for(int i = 0; i < lines.length; i++)
     _map.add(lines[i]);
- }
+  }
 
- public void setDebug(boolean yes )
-    { _debug = yes; }
+  public void setDebug(boolean yes )
+  { _debug = yes; }
 
- /**
-  * lengthens all the lines in the map by delta at each end
-  * @param delta   added to each end of each  line
-  */
- public void lengthenLines( float delta)
- {
-   for (Line line : _map)
-   {
-     line.lengthen(delta);
-   }
- }
+  /**
+   * lengthens all the lines in the map by delta at each end
+   * @param delta   added to each end of each  line
+   */
+  public void lengthenLines( float delta)
+  {
+    for (Line line : _map)
+    {
+   	  line.lengthen(delta);
+    }    
+  }
+  
   private void initialize()
   {
     _reached = new ArrayList<Node>();
     _candidate = new ArrayList<Node>();
   }
+  
   public ArrayList<Line> getMap()
   {
    return _map;
   }
+  
   public int getIterationCount(){ return _count;}
 
   public int getNodeCount(){return _reached.size();}
@@ -340,12 +342,12 @@ private  ArrayList<Waypoint> getRoute(Node destination)
   }
   
   public void startPathFinding(Pose start, Waypoint end) {
-	  Collection<Waypoint> solution = null;
+	  Path solution = null;
 	  try {
 		  solution = findPath(start.getLocation(), end, _map);
 	  } catch (DestinationUnreachableException e) {
 		  // TODO Not sure how to handle this.
-		  e.printStackTrace();
+		  return;
 	  }
 	  if(listeners != null) { 
 		  for(WaypointListener l : listeners) {
@@ -359,12 +361,12 @@ private  ArrayList<Waypoint> getRoute(Node destination)
   }
 
   //***********  instance variables in ShortestPathFinder *******************
-  private ArrayList<WaypointListener> listeners ;
+  private ArrayList<WaypointListener> listeners;
   
-  private    int _count =  0;
+  private int _count =  0;
 
   /**
-   * set by segmentBlocked() used by findPath()
+   * Set by segmentBlocked() used by findPath()
    */
   private boolean _blocked = false;
 
@@ -373,6 +375,7 @@ private  ArrayList<Waypoint> getRoute(Node destination)
   private static final float BIG = 999999999;
 
   private Node _destination;
+  
   /**
    * the set of nodes that are candidates for being in the shortest path, but
    * whose distance from the start node is not yet known
@@ -384,13 +387,13 @@ private  ArrayList<Waypoint> getRoute(Node destination)
    * the set of nodes that are candidates for being in the shortest path, and
    * whose distance from the start node is known
    */
- private  ArrayList<Node> _reached = new ArrayList<Node>();
+  private  ArrayList<Node> _reached = new ArrayList<Node>();
   /**  
    * The map of the obstacles
    */
   private  ArrayList<Line> _map = new ArrayList<Line>();
 
-    private boolean _debug = false;
+  private boolean _debug = false;
 
 //************Begin definition of Node class  **********************
  private  class Node
@@ -399,69 +402,70 @@ private  ArrayList<Waypoint> getRoute(Node destination)
   {
     _p = p;
   }
+  
   private Node(float x, float y)
   {
     this(new Point(x,y));
   }
 
-
-/**
- * test if this Node is one of the ends of  theLine
- * @param theLine  endpoints to check
- * @return true if this node is an end of the line
- */
+  /**
+   * test if this Node is one of the ends of  theLine
+   * @param theLine  endpoints to check
+   * @return true if this node is an end of the line
+   */
   private  boolean atEndOfLine(Line theLine)
   {
     return _p.equals(theLine.getP1()) || _p.equals(theLine.getP2());
   }
+  
   /**
-   * set the distance of this Node from the source
+   * Set the distance of this Node from the source
    * @param theDistance
    */
   private void setSourceDistance(float theDistance)
   {
     _sourceDistance = theDistance;
   }
+  
   /**
-   * return the shortest path length to this node from the start node
+   * Return the shortest path length to this node from the start node
    * @return shortest distance
    */
  private  float getSourceDistance(){return _sourceDistance;}
 
   /**
-   * get the straight line distance from this node to aPoint
+   * Get the straight line distance from this node to aPoint
    * @param aPoint
    * @return the distance
    */
   private  float getDistance(Point aPoint)
   {
-
     return (float)_p.distance(aPoint);
   }
 
   /**
-   * return the straight line distance from this node to aNode
+   * Return the straight line distance from this node to aNode
    * or a big number if the straight line is known to be blocked
    * @param aNode
    * @return the distance
    */
-   private float getDistance(Node aNode)
+  private float getDistance(Node aNode)
   {
     if(_blocked.indexOf(aNode) > -1) return BIG;
-    else return getDistance(aNode.getLocation());
+    return getDistance(aNode.getLocation());
   }
 
   /**
    * return the location of this node
    * @return the location
    */
- private Point getLocation()
- {
-   return _p;
- }
+  private Point getLocation()
+  {
+    return _p;
+  }
 
  /**
-  * add aNode to list of nodes not a neighbou\r of this Node
+  * add aNode to list of nodes not a neighbour of this Node
   * @param aNode
   */
  private  void block(Node aNode)
@@ -473,8 +477,9 @@ private  ArrayList<Waypoint> getRoute(Node destination)
   * set the predecessor of this node in the shortest path from the start node
   * @param thePredecessor
   */
-private void setPredecessor(Node thePredecessor)
+ private void setPredecessor(Node thePredecessor)
  {_predecessor = thePredecessor;}
+ 
  /**
   * get the predecessor of this node in the shortest path from the start
   * @return the predecessor node
@@ -491,13 +496,15 @@ private void setPredecessor(Node thePredecessor)
    * @return Y coordinate
    */
   private float getY(){return (float)_p.getY();}
+  
+  @Override
   public  String toString(){return " "+getX()+" , "+getY()+" ";}
+  
   private  Point _p;
   private float _sourceDistance;
   private Node _predecessor;
+  
   public ArrayList<Node> _blocked = new ArrayList<Node>();
-
-
  }
 // ****************   end Node class ****************************
 
