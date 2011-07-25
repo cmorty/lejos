@@ -23,6 +23,7 @@ import lejos.robotics.mapping.NavigationModel.NavEvent;
 public class NavigationPanel extends JPanel implements MapApplicationUI, MouseListener, MouseMotionListener, ActionListener {
 	private static final long serialVersionUID = 1L;
 	
+	// Zoom control parameters
 	protected int minZoom = 50;
 	protected int maxZoom = 200;
 	protected int zoomIncrement = 50;
@@ -38,6 +39,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected JPanel commandPanel = new JPanel();
 	protected JPanel connectPanel = new JPanel();
 	protected JPanel statusPanel = new JPanel();
+	protected JPanel xyPanel = new JPanel();
 	protected JPanel logPanel = new JPanel();
 	
 	// Status panel
@@ -45,6 +47,8 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected JTextField xField = new JTextField(4);
 	protected JLabel yLabel = new JLabel("Y:");
 	protected JTextField yField = new JTextField(4);
+	protected JLabel connectedLabel = new JLabel("Not Connected");
+	protected JLabel mapLabel = new JLabel("No map");
 	
 	// Zoom Panel
 	protected JPanel controlPanel = new JPanel();
@@ -92,7 +96,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 						mapColor, particleColor, meshColor, targetColor, waypointColor,
 						pathColor, moveColor, featureColor, backgroundColor, estimateColor, closestColor,
 						getPose, randomMove, localize, stop, calculatePath, followPath, pilot, scanner,
-						finder, detector, random;
+						finder, detector, random, mcl;
 	protected JCheckBoxMenuItem viewGrid, viewMousePosition, viewControls,
 	                          viewConnect, viewCommands, viewMesh, viewLog,
 	                          viewLastMove, viewParticlePanel, viewParticles,
@@ -126,14 +130,18 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected JCheckBox reverse = new JCheckBox("Reverse?");
 	
 	// Configure 4-way Mesh path finder
+	protected JPanel finderPanel = new JPanel();
 	protected JDialog configureMesh;
 	protected JPanel meshPanel = new JPanel();
-	protected JPanel meshForm = new JPanel();
+	protected JPanel finderForm = new JPanel();
+	protected JLabel pfLabel = new JLabel("Path Finder:");
+	protected String[] pathFinders = {"4-way Mesh", "Random","Shortest"};
+	protected JComboBox pfBox = new JComboBox(pathFinders);
 	protected JLabel gridSizeLabel = new JLabel("Grid Size:");
 	protected JTextField gridSizeField = new JTextField(4);
 	protected JLabel clearanceLabel = new JLabel("Clearance:");
 	protected JTextField clearanceField = new JTextField(4);
-	protected JButton meshOKButton = new JButton("OK");
+	protected JButton finderOKButton = new JButton("OK");
 	
 	// Configure Range Feature Detector
 	protected JLabel delayLabel = new JLabel("Detector Delay:");
@@ -165,12 +173,24 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected JButton randomOKButton = new JButton("OK");
 	protected JDialog configureRandom;
 	
+	// Configure MCL
+	protected JLabel numParticlesLabel = new JLabel("Number of particles:");
+	protected JTextField numParticlesField = new JTextField(4);
+	protected JLabel borderLabel = new JLabel("Clearance:");
+	protected JTextField borderField = new JTextField(4);
+	protected JPanel mclPanel = new JPanel();
+	protected JPanel mclForm = new JPanel();
+	protected JButton mclOKButton = new JButton("OK");
+	protected JDialog configureMCL;
+	
 	public NavigationPanel() {
 		createPilotPanel();
+		createFinderPanel();
 		createMeshPanel();
 		createDetectorPanel();
 		createScannerPanel();
 		createRandomPanel();
+		createMCLPanel();
 	}
 	
 	/**
@@ -255,19 +275,82 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		pilotPanel.add(pilotOKButton);
 		
 		makeCompactGrid(pilotPanel,
-                6, 2, //rows, cols
-                20, 20,        //initX, initY
-                20, 20);       //xPad, yPad
+                6, 2,    //rows, cols
+                20, 20,  //initX, initY
+                20, 20); //xPad, yPad
 		
 		pilotOKButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				model.setDifferentialPilotParams(Float.parseFloat(wheelDiameterField.getText()), 
+				try {
+					model.setDifferentialPilotParams(Float.parseFloat(wheelDiameterField.getText()), 
 						Float.parseFloat(trackWidthField.getText()),
 						leftMotorField.getSelectedIndex(), rightMotorField.getSelectedIndex(), 
 						reverse.isSelected());
-				configurePilot.setVisible(false);
+					configurePilot.setVisible(false);
+				} catch (NumberFormatException nfe) {
+					error("Inalid parameter");
+				}
 			}
 		});
+	}
+	
+	protected void createFinderPanel() {
+		finderPanel.setLayout(new SpringLayout());
+		finderPanel.add(pfLabel);
+		finderPanel.add(pfBox);
+		
+		makeCompactGrid(finderPanel,
+                1, 2,    //rows, cols
+                20, 20,  //initX, initY
+                20, 20); //xPad, yPad
+		
+		finderForm.add(finderPanel);
+		
+		finderForm.add(meshPanel);
+		finderForm.add(finderOKButton);
+		
+		finderForm.setPreferredSize(new Dimension(200,250));
+		
+		pfBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switch (pfBox.getSelectedIndex()) {
+				case 0:
+					finderForm.remove(finderOKButton);
+					finderForm.add(meshPanel);
+					finderForm.add(finderOKButton);
+					finderForm.revalidate();
+					finderForm.repaint();
+					break;
+				case 1:
+					finderForm.remove(meshPanel);
+					finderForm.revalidate();
+					finderForm.repaint();
+					break;
+				case 2:
+					finderForm.remove(meshPanel);
+					finderForm.revalidate();
+					finderForm.repaint();
+					break;
+				}
+			}
+		});
+		
+		finderOKButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					model.setPathFinder(pfBox.getSelectedIndex());
+					switch (pfBox.getSelectedIndex()) {
+						case 0:
+							model.setMeshParams(Integer.parseInt(gridSizeField.getText()), Integer.parseInt(clearanceField.getText()));
+							break;		
+					}
+					configureMesh.setVisible(false);
+				} catch (NumberFormatException nfe) {
+					error("Inalid parameter");
+				}
+			}
+		});
+		
 	}
 	
 	protected void createMeshPanel() {
@@ -280,18 +363,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		makeCompactGrid(meshPanel,
                 2, 2, //rows, cols
                 20, 20,        //initX, initY
-                20, 20);       //xPad, yPad
-		
-		meshForm.add(meshPanel);
-		meshForm.add(meshOKButton);
-		
-		meshOKButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				model.setMeshParams(Integer.parseInt(gridSizeField.getText()), Integer.parseInt(clearanceField.getText()));
-				configureMesh.setVisible(false);
-			}
-		});
-		
+                20, 20);       //xPad, yPad	
 	}
 	
 	protected void createDetectorPanel() {
@@ -311,8 +383,12 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		
 		detectorOKButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				model.setRangeFeatureParams(Float.parseFloat(maxDistanceField.getText()), Integer.parseInt(delayField.getText()));
-				configureDetector.setVisible(false);
+				try {
+					model.setRangeFeatureParams(Float.parseFloat(maxDistanceField.getText()), Integer.parseInt(delayField.getText()));
+					configureDetector.setVisible(false);
+				} catch (NumberFormatException nfe) {
+					error("Inalid parameter");
+				}
 			}
 		});	
 	}
@@ -334,8 +410,12 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		
 		scannerOKButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				model.setRotatingRangeScannerParams(Integer.parseInt(gearRatioField.getText()), Integer.parseInt(headMotorField.getText()));
-				configureScanner.setVisible(false);
+				try {
+					model.setRotatingRangeScannerParams(Integer.parseInt(gearRatioField.getText()), Integer.parseInt(headMotorField.getText()));
+					configureScanner.setVisible(false);
+				} catch (NumberFormatException nfe) {
+					error("Inalid parameter");
+				}
 			}
 		});	
 	}
@@ -355,10 +435,37 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		randomForm.add(randomPanel);
 		randomForm.add(randomOKButton);
 		
-		scannerOKButton.addActionListener(new ActionListener() {
+		randomOKButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				model.sendRandomMoveParams(Float.parseFloat(maxDistField.getText()), Float.parseFloat(clearField.getText()));
-				configureRandom.setVisible(false);
+				try {
+					model.sendRandomMoveParams(Float.parseFloat(maxDistField.getText()), Float.parseFloat(clearField.getText()));
+					configureRandom.setVisible(false);
+				} catch (NumberFormatException nfe) {
+					error("Inalid parameter");
+				}
+			}
+		});	
+	}
+	
+	protected void createMCLPanel() {
+		mclPanel.setLayout(new SpringLayout());
+		mclPanel.add(numParticlesLabel);
+		mclPanel.add(numParticlesField);
+		mclPanel.add(borderLabel);
+		mclPanel.add(borderField);
+		
+		makeCompactGrid(mclPanel,
+                2, 2, //rows, cols
+                20, 20,        //initX, initY
+                20, 20);       //xPad, yPad
+		
+		mclForm.add(mclPanel);
+		mclForm.add(mclOKButton);
+		
+		mclOKButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//model.sendRandomMoveParams(Float.parseFloat(maxDistField.getText()), Float.parseFloat(clearField.getText()));
+				configureMCL.setVisible(false);
 			}
 		});	
 	}
@@ -419,11 +526,23 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	/**
 	 * Create the map panel which shows the mouse position in map coordinates
 	 */
+	protected void createXYPanel() {
+		xyPanel.add(xLabel);
+		xyPanel.add(xField);
+		xyPanel.add(yLabel);
+		xyPanel.add(yField);
+	}
+	
 	protected void createStatusPanel() {
-		statusPanel.add(xLabel);
-		statusPanel.add(xField);
-		statusPanel.add(yLabel);
-		statusPanel.add(yField);
+		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.LINE_AXIS));
+		statusPanel.add(Box.createHorizontalGlue());
+		statusPanel.add(connectedLabel);
+		statusPanel.add(Box.createHorizontalGlue());
+		createXYPanel();
+		statusPanel.add(xyPanel);
+		statusPanel.add(Box.createHorizontalGlue());
+		statusPanel.add(mapLabel);
+		statusPanel.add(Box.createHorizontalGlue());
 	}
 	
 	/**
@@ -641,6 +760,9 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		random = new JMenuItem("Random Move ...");
 		configureMenu.add(random);
 		random.addActionListener(this);
+		mcl = new JMenuItem("MCL ...");
+		configureMenu.add(mcl);
+		mcl.addActionListener(this);
 	}
 	
 	/**
@@ -740,6 +862,14 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
     	frame.setVisible(true);
     	return (frame);
 	}
+	
+	/**
+	 * Version without a menu
+	 */
+	public static JFrame openInJFrame(NavigationPanel content, int width, int height,
+            String title, Color bgColor) {
+		return NavigationPanel.openInJFrame(content, width, height, title, bgColor, null);
+	}
   
 	/**
 	 * Log a message
@@ -837,7 +967,8 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	/**
 	 * Override this method to specify actions to do after connection to the NXT
 	 */
-	public void whenConnected() {	
+	public void whenConnected() {
+		connectedLabel.setText("Connected");
 	}
 	
 	/**
@@ -887,7 +1018,8 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	        if (returnVal == JFileChooser.APPROVE_OPTION) {
 	            File file = chooser.getSelectedFile();
 	            log("Opening: " + file.getName());
-	            model.loadMap(file.getPath());
+	            model.loadMap(file.getPath(),0);
+	            if (model.getMap() != null) mapLabel.setText("Map: " + file.getPath());
 	            repaint();
 	        } else {
 	            log("Open command cancelled by user.");
@@ -980,7 +1112,8 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		} else if (e.getSource() == followPath) {
 			model.followPath();
 		} else if (e.getSource() == loadMapButton) {
-			model.loadMap(mapFileField.getText());
+			model.loadMap(mapFileField.getText(),pfBox.getSelectedIndex());
+			if (model.getMap() != null) mapLabel.setText("Map: " + mapFileField.getText());
 			repaint();
 		} else if (e.getSource() == pilot) {
 			configurePilot = new JDialog(frame, "Configure Pilot", true);
@@ -990,7 +1123,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 			configurePilot.setVisible(true);
 		} else if (e.getSource() == finder) {
 			configureMesh = new JDialog(frame, "Configure 4-way Mesh", true);
-			configureMesh.setContentPane(meshForm);
+			configureMesh.setContentPane(finderForm);
 			configureMesh.setLocation(200, 100);
 			configureMesh.pack();
 			configureMesh.setVisible(true);
@@ -1012,6 +1145,12 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 			configureRandom.setLocation(200, 100);
 			configureRandom.pack();
 			configureRandom.setVisible(true);
+		} else if (e.getSource() == mcl) {
+			configureMCL = new JDialog(frame, "Configure MCL", true);
+			configureMCL.setContentPane(mclForm);
+			configureMCL.setLocation(200, 100);
+			configureMCL.pack();
+			configureMCL.setVisible(true);
 		}
 	}
 	

@@ -318,7 +318,7 @@ public class MapPanel extends JPanel {
 		Path path = model.getPath();
 		if(path != null) {
 			Iterator <Waypoint> path_iter = path.iterator();
-			Waypoint curWP = path_iter.next();
+			Waypoint curWP = new Waypoint(model.getRobotPose());
 			g2d.setColor(colors[PATH_COLOR_INDEX]);
 			while(path_iter.hasNext()) {
 				Waypoint nextWP = path_iter.next();

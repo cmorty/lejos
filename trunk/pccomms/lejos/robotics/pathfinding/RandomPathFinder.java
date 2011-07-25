@@ -24,7 +24,7 @@ import lejos.robotics.navigation.WaypointListener;
  * It finds a path that is in short moves, has no obstacles in the
  * way and where valid range readings can be taken from each waypoint.
  * 
- * The algorithm  is not deterministic so each time it is called a new route 
+ * The algorithm is not deterministic so each time it is called a new route 
  * will be found.
  * 
  * @author Lawrie Griffiths
@@ -32,20 +32,55 @@ import lejos.robotics.navigation.WaypointListener;
  */
 public class RandomPathFinder implements PathFinder {	
 	private static final long serialVersionUID = 1L;
-	private static final int MAX_ITERATIONS = 1000;
-	private static final float MAX_DISTANCE = 40;
-	private static final float MIN_GAIN = 10;
-    private static final float MAX_RANGE = 100;	
-	private static int BORDER = 20;
 	
-	private RangeMap map;;
+	private float minGain = 1;	
+	private float clearance = 20;	
+	private RangeMap map;
 	private RangeReadings readings;
+	private float maxRange = 150;
+	private float maxDistance = 200;
+	private int maxIterations = 1000;
 	
 	private ArrayList<WaypointListener> listeners ;
 	
 	public RandomPathFinder(RangeMap map, RangeReadings readings) {
 		this.map = map;
 		this.readings = readings;
+	}
+	
+	/**
+	 * Set the maximum valid range readings
+	 * @param range the maximum range
+	 */
+	public void setMaxRange(float range) {
+		maxRange = range;
+	}
+	
+	/**
+	 * Set the maximum distance between waypoints
+	 * @param distance the maximum distance
+	 */
+	public void setMaxDistance(float distance) {
+		maxDistance = distance;
+	}
+	
+	/**
+	 * Set the maximum number of iterations before giving up when searching for a path
+	 * @param iterations the maximum number of iterations
+	 */
+	public void setMaxIterations(int iterations) {
+		maxIterations = iterations;
+	}
+	
+	/**
+	 * Set the clearance around the edge of the map.
+	 * This does not really work as clearance shiould be around all
+	 * walls and obstacles.
+	 * 
+	 * @param clearance the clearance
+	 */
+	public void setClearance(float clearance) {
+		this.clearance = clearance;
 	}
 	
 	public Path findRoute(Pose start, Waypoint destination)
@@ -55,52 +90,58 @@ public class RandomPathFinder implements PathFinder {
 		
 		// Continue until we return a route or throw DestinationUnReachableException
 		for(;;) {
-			// If the current pose if close enough to the destination, go straight there
-			if (pose.distanceTo(destination) < MAX_DISTANCE) {
+			// If the current pose if close enough to the destination, 
+			// and there are no obstacles in the way, go straight there
+			Pose testPose = pose;
+			testPose.setHeading(testPose.angleTo(destination));
+			if (testPose.distanceTo(destination) < maxDistance &&
+					map.range(testPose) >= testPose.distanceTo(destination)) {
 				route.add(new Waypoint(destination));
 				return route;
-			} else {
-				Pose testPose = null;
+			} 
+			testPose = null;
+			
+			// Generate random poses and apply tests to them
+			int i;
+			for(i=0;i<maxIterations;i++) {
+			    testPose = generatePose();
+			    
+			    // The new Pose must not be more than MAX_DISTANCE away from current pose	    
+			    if (testPose.distanceTo(pose.getLocation()) > maxDistance) continue;
+			    
+				// The new pose must be at least MIN_GAIN closer to the destination
+				if (pose.distanceTo(destination) - 
+						testPose.distanceTo(destination) < minGain)
+					continue;
 				
-				// Generate random poses and apply tests to them
-				for(int i=0;i<MAX_ITERATIONS;i++) {
-				    testPose = generatePose();
-				    
-				    // The new Pose must not be more than MAX_DISTANCE away from current pose	    
-				    if (testPose.distanceTo(pose.getLocation()) > MAX_DISTANCE) continue;
-				    
-					// The new pose must be at least MIN_GAIN closer to the destination
-					if (pose.distanceTo(destination) - 
-							testPose.distanceTo(destination) < MIN_GAIN)
-						continue;
-					
-					// We must be able to get a valid set of range readings from the new pose
-					float heading = testPose.getHeading();
-					boolean validReadings = true;
-					for(RangeReading r: readings) {
-						testPose.setHeading(heading + r.getAngle());
-						float range = map.range(testPose);
-						if (range > MAX_RANGE) {
-							validReadings = false;
-							break;
-						}
-					}					
-					if (!validReadings) continue;
-					
-					//Check there are no obstacles in the way 
-					testPose.setHeading(testPose.angleTo(pose.getLocation()));
-					if (map.range(testPose) < testPose.distanceTo(pose.getLocation()))
-						continue;					
-					
-					testPose.setHeading(heading); // Restore heading
-					break; // We have a new way point
-				}
-				if (testPose == null) throw new  DestinationUnreachableException();
-				else {
-					route.add(new Waypoint(testPose));
-					pose = testPose;
-				}
+				// We must be able to get a valid set of range readings from the new pose
+				float heading = testPose.getHeading();
+				boolean validReadings = true;
+				for(RangeReading r: readings) {
+					testPose.setHeading(heading + r.getAngle());
+					float range = map.range(testPose);
+					if (range > maxRange) {
+						validReadings = false;
+						break;
+					}
+				}					
+				if (!validReadings) continue;
+				
+				//Check there are no obstacles in the way 
+				testPose.setHeading(testPose.angleTo(pose.getLocation()));
+				if (map.range(testPose) < testPose.distanceTo(pose.getLocation()))
+					continue;
+				//System.out.println("Range = " + map.range(testPose));
+				//System.out.println("DistanceTo = " + testPose.distanceTo(pose.getLocation()));
+				//System.out.println("From = " + pose);
+				//System.out.println("To = " + testPose);
+				
+				testPose.setHeading(heading); // Restore heading
+				break; // We have a new way point
 			}
+			if (i == maxIterations) throw new  DestinationUnreachableException();
+			route.add(new Waypoint(testPose));
+			pose = testPose;
 		}
 	}
 	
@@ -110,8 +151,8 @@ public class RandomPathFinder implements PathFinder {
 	private Pose generatePose() {
 	    float x, y, heading;
 	    Rectangle boundingRect = map.getBoundingRect();
-	    Rectangle innerRect = new Rectangle(boundingRect.x + BORDER, boundingRect.y + BORDER,
-	        boundingRect.width - BORDER * 2, boundingRect.height - BORDER * 2);
+	    Rectangle innerRect = new Rectangle(boundingRect.x + clearance, boundingRect.y + clearance,
+	        boundingRect.width - clearance * 2, boundingRect.height - clearance * 2);
 
 	    // Generate x, y values in bounding rectangle
 	    for (;;) { // infinite loop that we break out of when we have
@@ -139,16 +180,16 @@ public class RandomPathFinder implements PathFinder {
 			solution = findRoute(start, end);
 		} catch (DestinationUnreachableException e) {
 			// TODO Not sure what the proper response is here. All in one.
-			
+			return;
 		}
-		  if(listeners != null) { 
-			  for(WaypointListener l : listeners) {
-				  Iterator<Waypoint> iterator = solution.iterator(); 
-				  while(iterator.hasNext()) {
-					  l.addWaypoint(iterator.next());
-				  }
-				  l.pathGenerated();
-			  }
-		  }
-	  }
+		if(listeners != null) { 
+			for(WaypointListener l : listeners) {
+				Iterator<Waypoint> iterator = solution.iterator(); 
+				while(iterator.hasNext()) {
+					l.addWaypoint(iterator.next());
+				}
+				l.pathGenerated();
+			}
+		}
+	 }
 }
