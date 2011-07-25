@@ -27,7 +27,7 @@ public class PCNavigationModel extends NavigationModel {
 	protected MapApplicationUI panel;
 	protected int closest = -1;
 	protected boolean connected = false;
-	protected RangeReadings particleReadings = new RangeReadings(0);
+	protected RangeReadings particleReadings = new RangeReadings(3);
 	protected float weight;
 	protected FourWayGridMesh mesh;
 	protected int gridSpace = 39;
@@ -35,7 +35,7 @@ public class PCNavigationModel extends NavigationModel {
 	protected AstarSearchAlgorithm alg = new AstarSearchAlgorithm();
 	protected Collection<Node> nodes;
 	protected Node start, destination;
-	protected NodePathFinder pf;
+	protected PathFinder pf;
 	protected ArrayList<Move> moves = new ArrayList<Move>();
 	protected ArrayList<Pose> poses = new ArrayList<Pose>();
 	protected ArrayList<Point> features = new ArrayList<Point>();
@@ -131,6 +131,12 @@ public class PCNavigationModel extends NavigationModel {
 		return poses;
 	}
 	
+	/**
+	 * Make an LCP connection to the NXT
+	 * 
+	 * @param nxtName the name of the NXT
+	 * @return true iff the connection was successful
+	 */
 	public boolean lcpConnect(String nxtName) {
 		try {
 			NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
@@ -148,6 +154,9 @@ public class PCNavigationModel extends NavigationModel {
 		}
 	}
 	
+	/**
+	 * Close the LCP connection to the NXT
+	 */
 	public void lcpClose() {
 		try {
 			nxtCommand.close();
@@ -171,6 +180,11 @@ public class PCNavigationModel extends NavigationModel {
 		}
 	}
 	
+	/**
+	 * Run the specified program on the NXT
+	 * 
+	 * @param fileName the program file name
+	 */
 	private void runFile(String fileName) {
 		try {
 			nxtCommand.startProgram(fileName);
@@ -179,6 +193,12 @@ public class PCNavigationModel extends NavigationModel {
 		}
 	}
 	
+	/**
+	 * Connect to the NXT, upload a program, and run it
+	 * 
+	 * @param nxtName the name of the NXT
+	 * @param file the name of the program file
+	 */
 	public void connectAndUpload(String nxtName, File file) {
 		boolean open = lcpConnect(nxtName);
 		if (open) {
@@ -193,6 +213,16 @@ public class PCNavigationModel extends NavigationModel {
 		}
 	}
 	
+	/**
+	 * Set the parameters for a DifferentialPilot, send them to the NXT, and write
+	 * them to the pilot.props file.
+	 * 
+	 * @param wheelDiameter the wheel diameter
+	 * @param trackWidth the track width 
+	 * @param leftMotor the left motor
+	 * @param rightMotor the right motor
+	 * @param reverse true iff the driving the motors in reverse drives the pilot forward
+	 */
 	public void setDifferentialPilotParams(float wheelDiameter, float trackWidth,
 			int leftMotor, int rightMotor, boolean reverse) {
 		if (!connected) return;
@@ -209,8 +239,15 @@ public class PCNavigationModel extends NavigationModel {
 	    } catch (IOException ioe) {
 			panel.error("IO Exception in setDifferentialPilotParams");
 	    }		
+	    
 	}
 	
+	/**
+	 * Set the parameter for a Range Feature Detector
+	 * 
+	 * @param maxDistance the distance from a feature that trifggers detection
+	 * @param delay the delay between readings in microseconds
+	 */
 	public void setRangeFeatureParams(float maxDistance, int delay) {
 		if (!connected) return;
 		try {
@@ -225,6 +262,12 @@ public class PCNavigationModel extends NavigationModel {
 	    }	
 	}
 	
+	/**
+	 * Set the patameters for a Rotating Range Scanner
+	 * 
+	 * @param gearRatio the ratio between motor rotation and head rotation
+	 * @param headMotor the motor that drives the read (0 = A, 1 =B, 2 = C)
+	 */
 	public void setRotatingRangeScannerParams(int gearRatio, int headMotor) {
 		if (!connected) return;
 		try {
@@ -239,6 +282,11 @@ public class PCNavigationModel extends NavigationModel {
 	    }	
 	}
 	
+	/**
+	 * Set the travel speed for the pilot.
+	 * 
+	 * @param speed the travel speed
+	 */
 	public void setTravelSpeed(float speed) {
 		if (!connected) return;
 		try {
@@ -252,6 +300,11 @@ public class PCNavigationModel extends NavigationModel {
 	    }	
 	}
 	
+	/**
+	 * Set the rotate speed for a pilot
+	 * 
+	 * @param speed the rotate speed
+	 */
 	public void setRotateSpeed(float speed) {
 		if (!connected) return;
 		try {
@@ -380,13 +433,17 @@ public class PCNavigationModel extends NavigationModel {
 		return connected;
 	}
 	
+	public LineMap loadMap(String mapFileName) {
+		return loadMap(mapFileName,0);
+	}
+	
 	/**
 	 * Load a line map and send it to the PC
 	 * 
 	 * @param mapFileName the SVG map file
 	 * @return the LineMap
 	 */
-	public LineMap loadMap(String mapFileName) {
+	public LineMap loadMap(String mapFileName, int finder) {
 		try {
 			File mapFile = new File(mapFileName);
 			if (debug) panel.log("Map file is " + mapFile.getAbsolutePath());
@@ -408,7 +465,7 @@ public class PCNavigationModel extends NavigationModel {
 			//panel.mapPanel.revalidate();
 			mesh = new FourWayGridMesh(map, gridSpace,clearance);
 			nodes = mesh.getMesh();
-			pf = new NodePathFinder(alg, mesh);
+			setPathFinder(finder);
 			panel.repaint();
 			if (mcl != null) mcl.setMap(map);
 			if (connected) {
@@ -421,8 +478,26 @@ public class PCNavigationModel extends NavigationModel {
 		} catch (Exception ioe) {
 			panel.error("Exception in loadMap:" + ioe);
 			return null;
-		}
-		
+		}	
+	}
+	
+	public void setPathFinder(int finder) {
+		if (map == null) return;
+		if (debug) panel.log("Path finder " + finder);
+		if (finder == 0) {
+			pf = new NodePathFinder(alg, mesh);
+		} else if (finder == 1) {
+			readings = new RangeReadings(3);
+			// Dummy readings to set the angles
+			readings.setRange(0,-45,0);
+			readings.setRange(1,0,0);
+			readings.setRange(2,45,0);
+			
+			pf = new RandomPathFinder(map, readings);
+			((RandomPathFinder) pf).setMaxIterations(1000000);
+		} else {
+			pf = new ShortestPathFinder(map);
+		}		
 	}
 	
 	/**
@@ -764,6 +839,7 @@ public class PCNavigationModel extends NavigationModel {
 		if (pf == null) return;
 		try {
 			path = pf.findRoute(currentPose, target);
+			//if (debug) panel.log("Path = " + path);
 			panel.repaint();
 		} catch (DestinationUnreachableException e) {
 			path = null;
