@@ -103,6 +103,7 @@ public class MapCommand extends NavigationPanel {
 	 */
 	@Override
 	public void whenConnected() {
+		super.whenConnected();
 		model.setPose(model.getRobotPose());
 	}
 	
