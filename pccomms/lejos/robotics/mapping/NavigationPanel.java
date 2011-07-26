@@ -20,7 +20,7 @@ import lejos.robotics.mapping.NavigationModel.NavEvent;
  * @author Lawrie Griffiths
  *
  */
-public class NavigationPanel extends JPanel implements MapApplicationUI, MouseListener, MouseMotionListener, ActionListener {
+public abstract class NavigationPanel extends JPanel implements MapApplicationUI, MouseListener, MouseMotionListener, ActionListener {
 	private static final long serialVersionUID = 1L;
 	
 	// Zoom control parameters
@@ -197,7 +197,10 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected JButton mclOKButton = new JButton("OK");
 	protected JDialog configureMCL;
 	
-	public NavigationPanel() {
+	/**
+	 * Build all the panels
+	 */
+	public void buildPanels() {
 		createPilotPanel();
 		createDifferentialPanel();
 		createSteeringPanel();
@@ -220,9 +223,10 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	}
 	
 	/**
-	 * Show all the panels - used by MCLTest but deprecated
+	 * Build the GUI- used by MCLTest but deprecated
 	 */
 	protected void buildGUI() {
+		buildPanels();
 		if (showStatusPanel) add(xyPanel);	
 		if (showConnectPanel) add(connectPanel);
 		if (showControlPanel) add(controlPanel);
