@@ -23,7 +23,7 @@ public class MapCommand extends NavigationPanel {
 	private static final int FRAME_WIDTH = 1150;
 	private static final int FRAME_HEIGHT = 700;	
 	private static final int INITIAL_ZOOM = 100;
-	private static final Point INITIAL_VIEW_START = new Point(-10,-10);
+	private static final Point INITIAL_MAP_ORIGIN = new Point(-10,-10);
 	private static final Dimension MAP_AREA_SIZE = new Dimension(800,550);
 	private static final String FRAME_TITLE = "Map Command";
 	
@@ -40,35 +40,38 @@ public class MapCommand extends NavigationPanel {
 	}
   
 	public MapCommand() {
+		setTitle(FRAME_TITLE);
+		setDescription("MapCommand allows remote control of robots from the PC\n" +
+		               "from a GUI application that displays a map of the area \n" +
+		               "that the robot is moving in.\n\n" +
+		               "It displays many types of navigation data such as paths \n" +
+		               "calculate, paths followed, features detected etc.");
 		buildGUI();
 	}
   
+	/**
+	 * Build the specific GUI for this application
+	 */
 	@Override
 	protected void buildGUI() {
 		setLayout(new BorderLayout());
-		title = "Map Command";
-		description = "MapCommand allows remote control of robots from the PC\n" +
-		              "from a GUI application that displays a map of the area \n" +
-		              "that the robot is moving in.\n\n" +
-		              "It displays many types of navigation data such as paths \n" +
-		              "calculate, paths followed, features detected etc.";
 		
+		// Choose which features to show
 	    showMoves = true;    
 	    showMesh = false;
 	    showZoomLabels = true;
 	    
-	    mapPaneSize = MAP_AREA_SIZE;
-	    initialViewStart = INITIAL_VIEW_START;
+	    // Set the size of the map panel, and the viewport origin 
+	    setMapPanelSize(MAP_AREA_SIZE);
+	    setMapOrigin(INITIAL_MAP_ORIGIN);
     
+	    // Add the required panels, configure them, and set their sizes
 	    rightPanel.setLayout(new BorderLayout());
-	    rightPanel.add(eventPanel, BorderLayout.NORTH);
-	    createLoadPanel();
+	    rightPanel.add(eventPanel, BorderLayout.NORTH);	    
 	    loadPanel.setPreferredSize(new Dimension(300,70));
 	    leftPanel.add(loadPanel);
-	    createConnectPanel();
 	    connectPanel.setPreferredSize(new Dimension(300,90));
 	    leftPanel.add(connectPanel);
-	    createCommandPanel();
 	    setHeading = new SliderPanel(model, NavEvent.SET_POSE,"Set Heading:", "Set", 360);
 	    setHeading.setPreferredSize(new Dimension(280,80));
 	    commandPanel.add(setHeading);
@@ -83,19 +86,14 @@ public class MapCommand extends NavigationPanel {
 	    commandPanel.add(rotateSpeed);	    
 	    commandPanel.setPreferredSize(new Dimension(300,370));
 	    leftPanel.add(commandPanel);
-	    createMapPanel();
 	    rightPanel.add(mapPanel, BorderLayout.CENTER);
-	    createControlPanel();
 	    leftPanel.add(controlPanel);
-	    createStatusPanel();
 	    rightPanel.add(statusPanel, BorderLayout.SOUTH);
 	    leftPanel.setPreferredSize(new Dimension(320,600));
 	    add(leftPanel, BorderLayout.WEST);
 	    add(rightPanel, BorderLayout.CENTER);
-
 	    controlPanel.setPreferredSize(new Dimension(300,80));
 	    zoomSlider.setValue(INITIAL_ZOOM);
-		createMenu();
 	}
 	
 	/**
@@ -107,6 +105,9 @@ public class MapCommand extends NavigationPanel {
 		model.setPose(model.getRobotPose());
 	}
 	
+	/**
+	 * Set the sliders when the pose is  changed
+	 */
 	@Override
 	public void eventReceived(NavEvent navEvent) {
 		if (navEvent == NavEvent.SET_POSE) {
@@ -117,6 +118,9 @@ public class MapCommand extends NavigationPanel {
 		}
 	}
   
+	/**
+	 * Add the required context menu items
+	 */
 	@Override
 	protected void popupMenuItems(Point p, JPopupMenu menu) {
 	    menu.add(new MenuAction(NavigationModel.NavEvent.GOTO, "Go To", p, model, this));
@@ -126,10 +130,10 @@ public class MapCommand extends NavigationPanel {
 	}
   
 	public void run(){
+		// Set debugging on to get information of events being processed
 		model.setDebug(true);
-		//model.loadMap(MAP_FILE);
-		//model.setPose(INITIAL_ROBOT_POSE);
 	
+		// Open the panel in a frame
 		openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, FRAME_TITLE, SystemColor.controlShadow, menuBar);
 	}
 }
