@@ -113,7 +113,8 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	
 	// Configure Pilot
 	protected JDialog configurePilot;
-	protected JPanel pilotPanel = new JPanel();
+	protected JPanel differentialPanel = new JPanel();
+	protected JPanel pilotForm = new JPanel();
 	protected JLabel pilotTypeLabel = new JLabel("Pilot type:");
 	protected String[] pilotTypes = {"Differential", "Steering", "Segway", "Omnidirectional"};
 	protected JComboBox pilotTypeBox = new JComboBox(pilotTypes);
@@ -127,7 +128,21 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected JComboBox leftMotorField = new JComboBox(motors);
 	protected JLabel rightMotorLabel = new JLabel("Right Motor:");
 	protected JComboBox rightMotorField = new JComboBox(motors);
-	protected JCheckBox reverse = new JCheckBox("Reverse?");
+	protected JLabel reverseLabel = new JLabel("Reverse?");
+	protected JCheckBox reverseBox = new JCheckBox();
+	protected JPanel steeringPanel = new JPanel();
+	protected JLabel steerWheelDiameterLabel = new JLabel("Wheel Diameter:");
+	protected JTextField steerWheelDiameterField = new JTextField(4);
+	protected JLabel driveMotorLabel = new JLabel("Drive Motor:");
+	protected JComboBox driveMotorBox = new JComboBox(motors);
+	protected JLabel driveReverseLabel = new JLabel("Drive reverse?");
+	protected JCheckBox driveReverseBox = new JCheckBox();
+	protected JLabel steeringMotorLabel = new JLabel("Steering Motor:");
+	protected JComboBox steeringMotorBox = new JComboBox(motors);
+	protected JLabel leftTachoLabel = new JLabel("Left Motor Tacho Count");
+	protected JTextField leftTachoField = new JTextField(4);
+	protected JLabel rightTachoLabel = new JLabel("Right Motor Tacho Count");
+	protected JTextField rightTachoField = new JTextField(4);	
 	
 	// Configure 4-way Mesh path finder
 	protected JPanel finderPanel = new JPanel();
@@ -185,6 +200,8 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	
 	public NavigationPanel() {
 		createPilotPanel();
+		createDifferentialPanel();
+		createSteeringPanel();
 		createFinderPanel();
 		createMeshPanel();
 		createDetectorPanel();
@@ -245,32 +262,54 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	 * Create the Pilot Configuration Form
 	 */
 	protected void createPilotPanel() {
-		pilotPanel.setLayout(new SpringLayout());
-		pilotPanel.add(pilotTypeLabel);
-		pilotPanel.add(pilotTypeBox);
-		pilotPanel.add(wheelDiameterLabel);
-		pilotPanel.add(wheelDiameterField);
-		pilotPanel.add(trackWidthLabel);
-		pilotPanel.add(trackWidthField);
-		pilotPanel.add(leftMotorLabel);
-		pilotPanel.add(leftMotorField);
-		pilotPanel.add(rightMotorLabel);
-		pilotPanel.add(rightMotorField);
-		pilotPanel.add(reverse);
-		pilotPanel.add(pilotOKButton);
+		pilotForm.add(pilotTypeLabel);
+		pilotForm.add(pilotTypeBox);
+		pilotForm.add(differentialPanel);
+		pilotForm.add(pilotOKButton);
+		pilotForm.setPreferredSize(new Dimension(300,400));
 		
-		makeCompactGrid(pilotPanel,
-                6, 2,    //rows, cols
-                20, 20,  //initX, initY
-                20, 20); //xPad, yPad
+		pilotTypeBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				pilotForm.remove(differentialPanel);
+				pilotForm.remove(steeringPanel);
+				switch (pilotTypeBox.getSelectedIndex()) {
+				case 0:
+					pilotForm.remove(pilotOKButton);
+					pilotForm.add(differentialPanel);
+					pilotForm.add(pilotOKButton);
+					pilotForm.revalidate();
+					pilotForm.repaint();
+					break;
+				case 1:
+					pilotForm.remove(pilotOKButton);
+					pilotForm.add(steeringPanel);
+					pilotForm.add(pilotOKButton);
+					pilotForm.revalidate();
+					pilotForm.repaint();
+					break;
+				case 2:
+					pilotForm.revalidate();
+					pilotForm.repaint();
+					break;
+				case 3:
+					pilotForm.revalidate();
+					pilotForm.repaint();
+					break;
+				}
+			}
+		});
 		
 		pilotOKButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					model.setDifferentialPilotParams(Float.parseFloat(wheelDiameterField.getText()), 
-						Float.parseFloat(trackWidthField.getText()),
-						leftMotorField.getSelectedIndex(), rightMotorField.getSelectedIndex(), 
-						reverse.isSelected());
+					switch(pilotTypeBox.getSelectedIndex()) {
+					case 0:			
+						model.setDifferentialPilotParams(Float.parseFloat(wheelDiameterField.getText()), 
+							Float.parseFloat(trackWidthField.getText()),
+							leftMotorField.getSelectedIndex(), rightMotorField.getSelectedIndex(), 
+							reverseBox.isSelected());
+						break;
+					}
 					configurePilot.setVisible(false);
 				} catch (NumberFormatException nfe) {
 					error("Inalid parameter");
@@ -278,6 +317,49 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 			}
 		});
 	}
+	
+	protected void createDifferentialPanel() {
+		differentialPanel.setLayout(new SpringLayout());
+
+		differentialPanel.add(wheelDiameterLabel);
+		differentialPanel.add(wheelDiameterField);
+		differentialPanel.add(trackWidthLabel);
+		differentialPanel.add(trackWidthField);
+		differentialPanel.add(leftMotorLabel);
+		differentialPanel.add(leftMotorField);
+		differentialPanel.add(rightMotorLabel);
+		differentialPanel.add(rightMotorField);
+		differentialPanel.add(reverseLabel);
+		differentialPanel.add(reverseBox);
+		
+		makeCompactGrid(differentialPanel,
+                5, 2,    //rows, cols
+                20, 20,  //initX, initY
+                20, 20); //xPad, yPad
+	}
+	
+	protected void createSteeringPanel() {
+		steeringPanel.setLayout(new SpringLayout());
+
+		steeringPanel.add(steerWheelDiameterLabel);
+		steeringPanel.add(steerWheelDiameterField);
+		steeringPanel.add(driveMotorLabel);
+		steeringPanel.add(driveMotorBox);
+		steeringPanel.add(driveReverseLabel);
+		steeringPanel.add(driveReverseBox);
+		steeringPanel.add(steeringMotorLabel);
+		steeringPanel.add(steeringMotorBox);
+		steeringPanel.add(leftTachoLabel);
+		steeringPanel.add(leftTachoField);
+		steeringPanel.add(rightTachoLabel);
+		steeringPanel.add(rightTachoField);
+		
+		makeCompactGrid(steeringPanel,
+                6, 2,    //rows, cols
+                20, 20,  //initX, initY
+                20, 20); //xPad, yPad
+	}
+
 	
 	/**
 	 * Create the PathFinder configuration form
@@ -1126,7 +1208,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 			repaint();
 		} else if (e.getSource() == pilot) {
 			configurePilot = new JDialog(frame, "Configure Pilot", true);
-			configurePilot.setContentPane(pilotPanel);
+			configurePilot.setContentPane(pilotForm);
 			configurePilot.setLocation(200, 100);
 			configurePilot.pack();
 			configurePilot.setVisible(true);
