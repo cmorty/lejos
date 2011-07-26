@@ -61,6 +61,8 @@ public class MapCommand extends NavigationPanel {
 	    showMesh = false;
 	    showZoomLabels = true;
 	    
+	    buildPanels();
+	    
 	    // Set the size of the map panel, and the viewport origin 
 	    setMapPanelSize(MAP_AREA_SIZE);
 	    setMapOrigin(INITIAL_MAP_ORIGIN);
