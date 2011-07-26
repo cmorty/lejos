@@ -208,6 +208,9 @@ public class PCNavigationModel extends NavigationModel {
 		}
 	}
 	
+	/**
+	 * Check that the file exists on the NXT with the right size
+	 */
 	protected boolean checkFile(File f) {
 		long size = f.length();
 		FileInfo info;
@@ -234,6 +237,9 @@ public class PCNavigationModel extends NavigationModel {
 		return true;
 	}
 	
+	/**
+	 * Get information for a file on the NXTon
+	 */
 	private FileInfo getFile(String name) throws IOException {
 		FileInfo info = nxtCommand.findFirstNXJ(name);
 		if (info == null) return null;
@@ -486,15 +492,6 @@ public class PCNavigationModel extends NavigationModel {
 			FileInputStream is = new FileInputStream(mapFile);
 			SVGMapLoader mapLoader = new SVGMapLoader(is);
 			map = mapLoader.readLineMap();
-			//Rectangle r = map.getBoundingRect();
-			//panel.log("Rect = " + r);
-			//panel.mapPanelWidth = (int) Math.ceil(r.x + r.width); 
-			//panel.mapPanelHeight = (int) Math.ceil(r.y + r.height); 
-			//System.out.println("Setting panel size to " + panel.mapPanelWidth + "," + panel.mapPanelHeight);
-			//panel.mapPanel.setPreferredSize(new Dimension((int) (panel.mapPanelWidth * panel.pixelsPerUnit), (int) (panel.mapPanelHeight  * panel.pixelsPerUnit)));
-			
-			//panel.mapPanelHeight = (int) r.height;
-			//panel.mapPanel.revalidate();
 			mesh = new FourWayGridMesh(map, gridSpace,clearance);
 			nodes = mesh.getMesh();
 			setPathFinder(finder);
@@ -628,48 +625,21 @@ public class PCNavigationModel extends NavigationModel {
 	 * Send a GET_POSE event to the NXT
 	 */
 	public void getPose() {
-		if (dos == null) return;
-		try {
-			synchronized(receiver) {
-				if (debug) panel.log("Sending GET_POSE");
-				dos.writeByte(NavEvent.GET_POSE.ordinal());
-				dos.flush();
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in getPose");
-		}
+		sendEvent(NavEvent.GET_POSE);
 	}
 	
 	/**
 	 * Send a GET_ESTIMATED_POSE event to the NXT
 	 */
 	public void getEstimatedPose() {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				if (debug) panel.log("Sending GET_ESTIMATED_POSE");
-				dos.writeByte(NavEvent.GET_ESTIMATED_POSE.ordinal());
-				dos.flush();
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in getPose");
-		}
+		sendEvent(NavEvent.GET_ESTIMATED_POSE);
 	}
 	
 	/**
 	 * Send a GET_READINGS event to the NXT
 	 */
 	public void getRemoteReadings() {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				if (debug) panel.log("Sending GET_READINGS");
-				dos.writeByte(NavEvent.GET_READINGS.ordinal());
-				dos.flush();
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in getReadings");
-		}
+		sendEvent(NavEvent.GET_READINGS);
 	}
 	
 	/**
@@ -722,60 +692,28 @@ public class PCNavigationModel extends NavigationModel {
 	 * Send a STOP event to the NXT
 	 */
 	public void stop() {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.STOP.ordinal());
-				dos.flush();
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in stop");
-		}
+		sendEvent(NavEvent.STOP);
 	}
 	
 	/**
 	 * Send a RANDOM_MOVE event to the NXT
 	 */
 	public void randomMove() {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.RANDOM_MOVE.ordinal());
-				dos.flush();
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in randomMove");
-		}
+		sendEvent(NavEvent.RANDOM_MOVE);
 	}
 	
 	/**
 	 * Tell the NXT to keep making random moves until the robot is localized
 	 */
 	public void localize() {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.LOCALIZE.ordinal());
-				dos.flush();
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in localize");
-		}
+		sendEvent(NavEvent.LOCALIZE);
 	}
 	
 	/**
 	 * Send a TAKE_READINGS event to the NXT
 	 */
 	public void takeReadings() {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.TAKE_READINGS.ordinal());
-				dos.flush();
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in takeReadings");
-		}
+		sendEvent(NavEvent.TAKE_READINGS);
 	}
 	
 	/**
@@ -822,15 +760,7 @@ public class PCNavigationModel extends NavigationModel {
 	 * Start the navigator following a path
 	 */
 	public void startNavigator() {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.START_NAVIGATOR.ordinal());
-				dos.flush();
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in startNavigator");
-		}
+		sendEvent(NavEvent.START_NAVIGATOR);
 	}
 	
 	/**
@@ -852,30 +782,14 @@ public class PCNavigationModel extends NavigationModel {
 	 * Send a CLEAR_PATH event to the NXT
 	 */
 	public void clearPath() {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.CLEAR_PATH.ordinal());
-				dos.flush();
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in clearPath");
-		}
+		sendEvent(NavEvent.CLEAR_PATH);
 	}
 	
 	/**
 	 * Send an EXITevent to the NXT
 	 */
 	public void sendExit() {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.EXIT.ordinal());
-				dos.flush();
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in sendExit");
-		}
+		sendEvent(NavEvent.EXIT);
 	}
 	
 	/**
@@ -914,15 +828,19 @@ public class PCNavigationModel extends NavigationModel {
 	 * Get the remote battery voltage
 	 */
 	public void getRemoteBattery() {
+		sendEvent(NavEvent.GET_BATTERY);
+	}
+	
+	private void sendEvent(NavEvent navEvent) {
 		if (!connected) return;
 		try {
 			synchronized(receiver) {
-				dos.writeByte(NavEvent.GET_BATTERY.ordinal());
+				dos.writeByte(navEvent.ordinal());
 				dos.flush();
 			}
 	    } catch (IOException ioe) {
-			panel.error("IO Exception in getRemoteBattery");
-		}
+			panel.error("IO Exception in " + navEvent.name());
+	    }	
 	}
 		
 	/**
