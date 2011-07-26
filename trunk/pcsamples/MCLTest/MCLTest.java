@@ -66,11 +66,7 @@ public class MCLTest extends NavigationPanel {
   	 * Build the GUI
   	 */
   	@Override
-  	protected void buildGUI() {
-  		title = TITLE;
-  		description = "MCLTest shows the Monte Carlo Localization\n" +
-  		              "algorithm in action";
-  		
+  	protected void buildGUI() {		
   		// All panels required
 	    super.buildGUI();
 	    
@@ -105,9 +101,6 @@ public class MCLTest extends NavigationPanel {
 				model.getRemoteParticles();
 			}
 		});
-		
-		mapPanel.setToolTipText("");
-		createMenu();
   	}
   
   	/**
@@ -158,6 +151,6 @@ public class MCLTest extends NavigationPanel {
 		model.setMCL(mcl);
 		
 		// Open the MCLTest navigation panel in a JFrame window
-	    openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, TITLE, Color.white, menuBar);
+	    openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, TITLE, Color.white);
 	}
 }
