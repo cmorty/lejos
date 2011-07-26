@@ -49,6 +49,8 @@ public class NavTest extends NavigationPanel {
 	    showMesh = false;
 	    showZoomLabels = true;
 	    
+	    buildPanels();
+	    
 	    mapPaneSize = MAP_AREA_SIZE;
 	    initialViewStart = INITIAL_VIEW_START;
 
