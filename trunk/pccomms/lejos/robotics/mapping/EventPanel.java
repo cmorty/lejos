@@ -205,6 +205,7 @@ public class EventPanel extends JPanel implements ActionListener {
 					model.setRotateSpeed(Float.parseFloat(param1.getText()));
 					break;
 				case EXIT:
+					model.sendExit();
 					break;
 				}
 			} catch (NumberFormatException nfe) {

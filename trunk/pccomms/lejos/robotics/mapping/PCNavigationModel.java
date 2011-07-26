@@ -832,6 +832,21 @@ public class PCNavigationModel extends NavigationModel {
 	}
 	
 	/**
+	 * Send an EXITevent to the NXT
+	 */
+	public void sendExit() {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.EXIT.ordinal());
+				dos.flush();
+			}
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in sendExit");
+		}
+	}
+	
+	/**
 	 * Calculate the path with the Node path finder
 	 */
 	public void calculatePath() {
