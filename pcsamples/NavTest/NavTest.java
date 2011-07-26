@@ -20,7 +20,7 @@ public class NavTest extends NavigationPanel {
 	private static final long serialVersionUID = 1L;
 
 	private static final int FRAME_WIDTH = 950;
-	private static final int FRAME_HEIGHT = 700;	
+	private static final int FRAME_HEIGHT = 750;	
 	private static final int INITIAL_ZOOM = 100;
 	private static final Point INITIAL_VIEW_START = new Point(-80,-10);
 	private static final Dimension MAP_AREA_SIZE = new Dimension(800,550);
@@ -42,8 +42,8 @@ public class NavTest extends NavigationPanel {
   
 	@Override
 	protected void buildGUI() {
-		title = "Nav Test";
-		description = "NavTest demonstrates sending navigation events to the PC";
+		setTitle(FRAME_TITLE);
+		setDescription("NavTest demonstrates sending navigation events to the PC");
 		
 	    showMoves = true;    
 	    showMesh = false;
@@ -51,19 +51,15 @@ public class NavTest extends NavigationPanel {
 	    
 	    buildPanels();
 	    
-	    mapPaneSize = MAP_AREA_SIZE;
-	    initialViewStart = INITIAL_VIEW_START;
+	    setMapPanelSize(MAP_AREA_SIZE);
+	    setMapOrigin(INITIAL_VIEW_START);
 
 	    add(eventPanel);
-	    createMapPanel();
 	    add(mapPanel);
-	    createControlPanel();
 	    add(controlPanel);
-	    createStatusPanel();
 
 	    zoomSlider.setOrientation(JSlider.VERTICAL);
 	    zoomSlider.setValue(INITIAL_ZOOM);
-		createMenu();
 	}
 	
 	/**
