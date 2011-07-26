@@ -43,12 +43,13 @@ public class MCLCommand extends NavigationPanel {
 	private static final String TITLE = "MCL Command";
 	private static final int INITIAL_ZOOM = 150;
 	private static final Point INITIAL_VIEW_START = new Point(-150,-30);
+	private static final String MAP_FILE_NAME = "Room.svg";
+	private static final int MCL_CLEARANCE = 20;
 
 	private static final JButton randomButton = new JButton("Random move");
 	private static final JButton getPoseButton = new JButton("Get Pose");
-	private static final String mapFileName = "Room.svg";
 	
-	private static MCLPoseProvider mcl;
+	private static MCLPoseProvider mcl = new MCLPoseProvider(null,NUM_PARTICLES,MCL_CLEARANCE);
   
   	/**
    	* Create a MapTest object and display it in a GUI frame.
@@ -59,18 +60,17 @@ public class MCLCommand extends NavigationPanel {
   	}
   
   	public MCLCommand() {
+  		setTitle(TITLE);
+  		setDescription("MCLCommand shows the Monte Carlo Localization\nalgorithm in action");
+  		
   		buildGUI();
   	}
   
   	/**
-  	 * Build the GUI
+  	 * Build the application-specific GUI
   	 */
   	@Override
   	protected void buildGUI() {
-  		title = TITLE;
-  		description = "MCLCommand shows the Monte Carlo Localization\n" +
-  		              "algorithm in action";
-  		
   		// All panels required
 	    super.buildGUI();
 	    
@@ -106,8 +106,8 @@ public class MCLCommand extends NavigationPanel {
 			}
 		});
 		
+		// Switch on tool tips for particle weights
 		mapPanel.setToolTipText("");
-		createMenu();
   	}
   
   	/**
@@ -137,7 +137,7 @@ public class MCLCommand extends NavigationPanel {
 	public void whenConnected() {
 		model.setDebug(true);
 		// Load the map and generate the particles and sends both to the NXT
-		model.loadMap(mapFileName);
+		model.loadMap(MAP_FILE_NAME);
 		zoomSlider.setValue(INITIAL_ZOOM);
 		mapPanel.viewStart = INITIAL_VIEW_START;
 		model.generateParticles();
@@ -151,9 +151,6 @@ public class MCLCommand extends NavigationPanel {
 	 * Run the sample 
 	 */
 	public void run() throws Exception {
-		// Create a stub version of the MCLPoseProvider
-		mcl = new MCLPoseProvider(null,NUM_PARTICLES,0);
-		
 		// Associate the MCLPoseProvider with the model
 		model.setMCL(mcl);
 		
