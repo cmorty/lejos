@@ -86,7 +86,6 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	protected Point initialViewStart = new Point(0,0);
 	protected String title;
 	protected String description = "";
-	protected boolean upload = true;
 	protected String program = "../samples/MapTest/MapTest.nxj";
 	
 	//Menu
@@ -563,6 +562,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		connectPanel.add(nxtName);
 		connectPanel.add(connectButton);
 		connectPanel.add(uploadBox);
+		uploadBox.setSelected(true);
 		connectPanel.setBorder(BorderFactory.createTitledBorder("Connect"));
 		
 		connectButton.addActionListener(new ActionListener() {
@@ -1128,7 +1128,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
                     null,
                     "");
 			if (nxtName != null) {
-				if (upload) model.connectAndUpload(nxtName, new File(program));
+				model.connectAndUpload(nxtName, new File(program));
 				model.connect(nxtName);
 			}
 		} else if (e.getSource() == gridColor) {

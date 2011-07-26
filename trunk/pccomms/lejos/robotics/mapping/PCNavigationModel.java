@@ -139,20 +139,14 @@ public class PCNavigationModel extends NavigationModel {
 	 * @return true iff the connection was successful
 	 */
 	public boolean lcpConnect(String nxtName) {
-		try {
-			NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
-			NXTInfo[] info = nxtComm.search(nxtName);
-			if (info.length != 1) {
-				panel.log("Failed to find " + nxtName);
-				return false;
-			}
-			boolean open =  nxtComm.open(info[0], NXTComm.LCP);
-			if (open) nxtCommand = new NXTCommand(nxtComm);
-			return open;
-		} catch (NXTCommException ioe) {
-			panel.error("Failure to connect to " + nxtName);
+		NXTConnector conn = new NXTConnector();
+
+		if (!conn.connectTo(nxtName, null, NXTCommFactory.BLUETOOTH,NXTComm.LCP)) {
+			panel.log("Cannot find " + nxtName);
 			return false;
 		}
+		nxtCommand = new NXTCommand(conn.getNXTComm());
+		return true;
 	}
 	
 	/**
