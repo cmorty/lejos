@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import lejos.geom.Point;
+import lejos.nxt.remote.FileInfo;
 import lejos.nxt.remote.NXTCommand;
 import lejos.pc.comm.*;
 import lejos.robotics.*;
@@ -202,15 +203,52 @@ public class PCNavigationModel extends NavigationModel {
 	public void connectAndUpload(String nxtName, File file) {
 		boolean open = lcpConnect(nxtName);
 		if (open) {
-			uploadFile(file);
+			if (!checkFile(file)) uploadFile(file);
 			if (nxtCommand != null) runFile(file.getName());
 			lcpClose();
 			try {
-				Thread.sleep(1000); // Wait 1 seconds for program to start 
+				Thread.sleep(2000); // Wait 2 seconds for program to start 
 			} catch (InterruptedException ioe) {
 				// Ignore
 			}
 		}
+	}
+	
+	protected boolean checkFile(File f) {
+		long size = f.length();
+		FileInfo info;
+		
+		panel.log("Size on PC is " + size);
+		if (nxtCommand == null) return false;
+		try {
+			info = getFile(f.getName());
+		} catch (IOException e) {
+			panel.error("IOException in checkFile");
+			return false;
+		}
+		if (info == null) {
+			panel.log("File not found");
+			return false;
+		}
+		
+		panel.log("Size on NXT is " + info.fileSize);
+		
+		if ((int) size != info.fileSize) {
+			panel.log("Sizes differ");
+			return false;
+		}
+		return true;
+	}
+	
+	private FileInfo getFile(String name) throws IOException {
+		FileInfo info = nxtCommand.findFirstNXJ(name);
+		if (info == null) return null;
+		if (info.fileName.equals(name)) return info;
+		do {
+			info = nxtCommand.findNextNXJ((byte) 0);
+			if (info.fileName.equals(name)) return info;
+		} while (info != null);
+		return null;
 	}
 	
 	/**
