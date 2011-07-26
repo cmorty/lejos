@@ -320,22 +320,26 @@ public class PCNavigationModel extends NavigationModel {
 	    }	
 	}
 	
+	private void sendFloat(NavEvent navEvent, float aFloat) {
+		if (!connected) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(navEvent.ordinal());
+				dos.writeFloat(aFloat);
+				dos.flush();
+			}
+	    } catch (IOException ioe) {
+			panel.error("IO Exception in " + navEvent.name());
+	    }
+	}
+	
 	/**
 	 * Set the travel speed for the pilot.
 	 * 
 	 * @param speed the travel speed
 	 */
 	public void setTravelSpeed(float speed) {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.TRAVEL_SPEED.ordinal());
-				dos.writeFloat(speed);
-				dos.flush();
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in setTravelSpeed");
-	    }	
+		sendFloat(NavEvent.TRAVEL_SPEED, speed);	
 	}
 	
 	/**
@@ -344,32 +348,14 @@ public class PCNavigationModel extends NavigationModel {
 	 * @param speed the rotate speed
 	 */
 	public void setRotateSpeed(float speed) {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.ROTATE_SPEED.ordinal());
-				dos.writeFloat(speed);
-				dos.flush();
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in setRotateSpeed");
-	    }	
+		sendFloat(NavEvent.ROTATE_SPEED, speed);	
 	}
 	
 	/**
 	 * Send a GET_PARTICLES event to the NXT
 	 */
 	public void getRemoteParticles() {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				if (debug) panel.log("Sending GET_PARTICLES");
-				dos.writeByte(NavEvent.GET_PARTICLES.ordinal());
-				dos.flush();
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in getRemoteParticles");
-	    }		
+		sendEvent(NavEvent.GET_PARTICLES);		
 	}
 	
 	/**
@@ -397,15 +383,7 @@ public class PCNavigationModel extends NavigationModel {
 	public void addWaypoint(Waypoint wp) {
 		waypoints.add(wp);
 		panel.repaint();
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.ADD_WAYPOINT.ordinal());
-				wp.dumpObject(dos);
-			}
-	    } catch (IOException ioe) {
-			panel.error("IO Exception in findClosest");
-	    }		
+		sendWaypoint(NavEvent.ADD_WAYPOINT, wp);	
 	}
 	
 	/**
@@ -535,16 +513,8 @@ public class PCNavigationModel extends NavigationModel {
 	 * @param wp the Waypoint to go to
 	 */
 	public void goTo(Waypoint wp) {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.GOTO.ordinal());
-				target = wp;
-				wp.dumpObject(dos);
-			}
-		} catch (IOException ioe) {
-			panel.error("IO Exception in goTo");
-		}		
+		target = wp;
+		sendWaypoint(NavEvent.GOTO, wp);		
 	}
 	
 	/**
@@ -553,16 +523,7 @@ public class PCNavigationModel extends NavigationModel {
 	 * @param distance the distance to travel
 	 */
 	public void travel(float distance) {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.TRAVEL.ordinal());
-				dos.writeFloat(distance);
-				dos.flush();
-			}
-		} catch (IOException ioe) {
-			panel.error("IO Exception in travel");
-		}
+		sendFloat(NavEvent.TRAVEL, distance);
 	}
 	
 	/**
@@ -571,16 +532,7 @@ public class PCNavigationModel extends NavigationModel {
 	 * @param angle the angle to rotate
 	 */
 	public void rotate(float angle) {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.ROTATE.ordinal());
-				dos.writeFloat(angle);
-				dos.flush();
-			}
-		} catch (IOException ioe) {
-			panel.error("IO Exception in rotate");
-		}
+		sendFloat(NavEvent.ROTATE, angle);
 	}
 	
 	/**
@@ -609,16 +561,7 @@ public class PCNavigationModel extends NavigationModel {
 	 * @param angle the angle to rotate
 	 */
 	public void rotateTo(float angle) {
-		if (!connected) return;
-		try {
-			synchronized(receiver) {
-				dos.writeByte(NavEvent.ROTATE_TO.ordinal());
-				dos.writeFloat(angle);
-				dos.flush();
-			}
-		} catch (IOException ioe) {
-			panel.error("IO Exception in rotateTo");
-		}
+		sendFloat(NavEvent.ROTATE_TO, angle);
 	}
 	
 	/**
@@ -767,15 +710,19 @@ public class PCNavigationModel extends NavigationModel {
 	 * Send a FIND_PATH event to the NXT
 	 */
 	public void findPath(Waypoint wp) {
+		sendWaypoint(NavEvent.FIND_PATH, wp);
+	}
+	
+	private void sendWaypoint(NavEvent navEvent, Waypoint wp) {
 		if (!connected) return;
 		try {
 			synchronized(receiver) {
-				dos.writeByte(NavEvent.FIND_PATH.ordinal());
+				dos.writeByte(navEvent.ordinal());
 				wp.dumpObject(dos);
 			}
 	    } catch (IOException ioe) {
-			panel.error("IO Exception in findPath");
-		}
+			panel.error("IO Exception in " + navEvent.name());
+	    }		
 	}
 	
 	/**
