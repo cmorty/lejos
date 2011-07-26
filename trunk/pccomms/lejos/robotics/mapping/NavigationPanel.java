@@ -191,48 +191,30 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		createScannerPanel();
 		createRandomPanel();
 		createMCLPanel();
+		createStatusPanel();
+		createConnectPanel();
+		createControlPanel();
+		createCommandPanel();
+		createMovePanel();
+		createParticlePanel();
+		createMapPanel();
+		createLoadPanel();
+		createReadingsPanel();
+		createMenu();
 	}
 	
 	/**
-	 * Build the paanels - used by MCLTest but deprecated
+	 * Show all the panels - used by MCLTest but deprecated
 	 */
 	protected void buildGUI() {
-		if (showStatusPanel) {
-			createStatusPanel();
-			add(statusPanel);
-		}
+		if (showStatusPanel) add(xyPanel);	
+		if (showConnectPanel) add(connectPanel);
+		if (showControlPanel) add(controlPanel);
+		if (showCommandPanel) add(commandPanel);
+		if (showReadingsPanel) add(readingsPanel);
+		if (showLastMovePanel) add(lastMovePanel);
+		if (showParticlePanel) add(particlePanel);
 		
-		if (showConnectPanel) {
-			createConnectPanel();
-			add(connectPanel);
-		}
-		
-		if (showControlPanel) {
-			createControlPanel();
-			add(controlPanel);
-		}
-		
-		if (showCommandPanel) {
-			createCommandPanel();
-			add(commandPanel);
-		}
-		
-		if (showReadingsPanel) {
-			createReadingsPanel();
-			add(readingsPanel);
-		}
-		
-		if (showLastMovePanel) {
-			createMovePanel();
-			add(lastMovePanel);
-		}
-		
-		if (showParticlePanel) {
-			createParticlePanel();
-			add(particlePanel);
-		}
-		
-		createMapPanel();
 		add(mapPanel);
 	}
 	
@@ -259,6 +241,9 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		loadMapButton.addActionListener(this);
 	}
 	
+	/**
+	 * Create the Pilot Configuration Form
+	 */
 	protected void createPilotPanel() {
 		pilotPanel.setLayout(new SpringLayout());
 		pilotPanel.add(pilotTypeLabel);
@@ -294,6 +279,9 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		});
 	}
 	
+	/**
+	 * Create the PathFinder configuration form
+	 */
 	protected void createFinderPanel() {
 		finderPanel.setLayout(new SpringLayout());
 		finderPanel.add(pfLabel);
@@ -353,6 +341,9 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		
 	}
 	
+	/**
+	 * Create the mesh configuration panel
+	 */
 	protected void createMeshPanel() {
 		meshPanel.setLayout(new SpringLayout());
 		meshPanel.add(gridSizeLabel);
@@ -366,6 +357,9 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
                 20, 20);       //xPad, yPad	
 	}
 	
+	/**
+	 * Create the Feature Detector configuration form
+	 */
 	protected void createDetectorPanel() {
 		detectorPanel.setLayout(new SpringLayout());
 		detectorPanel.add(delayLabel);
@@ -393,6 +387,9 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		});	
 	}
 	
+	/**
+	 * Create the range scanner configuration form
+	 */
 	protected void createScannerPanel() {
 		scannerPanel.setLayout(new SpringLayout());
 		scannerPanel.add(gearRatioLabel);
@@ -420,6 +417,9 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		});	
 	}
 	
+	/**
+	 * Create the Random Move configuration form
+	 */
 	protected void createRandomPanel() {
 		randomPanel.setLayout(new SpringLayout());
 		randomPanel.add(maxDistLabel);
@@ -447,6 +447,9 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		});	
 	}
 	
+	/**
+	 * Create the MCL configuration form
+	 */
 	protected void createMCLPanel() {
 		mclPanel.setLayout(new SpringLayout());
 		mclPanel.add(numParticlesLabel);
@@ -533,6 +536,9 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		xyPanel.add(yField);
 	}
 	
+	/** 
+	 * Create the status Panel
+	 */
 	protected void createStatusPanel() {
 		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.LINE_AXIS));
 		statusPanel.add(Box.createHorizontalGlue());
@@ -742,6 +748,9 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		followPath.addActionListener(this);
 	}
 	
+	/**
+	 * Create the Configure menu
+	 */
 	protected void createConfigureMenu() {
 		configureMenu = new JMenu("Configure");
 		menuBar.add(configureMenu);
@@ -1122,7 +1131,7 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 			configurePilot.pack();
 			configurePilot.setVisible(true);
 		} else if (e.getSource() == finder) {
-			configureMesh = new JDialog(frame, "Configure 4-way Mesh", true);
+			configureMesh = new JDialog(frame, "Configure Path Finder", true);
 			configureMesh.setContentPane(finderForm);
 			configureMesh.setLocation(200, 100);
 			configureMesh.pack();
@@ -1155,6 +1164,38 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 	}
 	
 	/**
+	 * Set the title use for the frame and the About popup
+	 * 
+	 * @param title the title
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+	
+	/**
+	 * Set the description used in the About popup
+	 * 
+	 * @param description the description
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	/**
+	 * Set the size of the map panel
+	 * 
+	 * @param size the size as a Dimension
+	 */
+	public void setMapPanelSize(Dimension size) {
+		mapPaneSize = size;
+	}
+	
+	public void setMapOrigin(Point origin) {
+		initialViewStart = origin;
+	}
+	
+	/**
 	 * Choose a color and change the current value for the selected index
 	 */
 	private void chooseColor(String name, int index) {
@@ -1166,7 +1207,10 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		repaint();
 	}
 	
-	public static void makeCompactGrid(Container parent,int rows, int cols,int initialX, int initialY, int xPad, int yPad) {
+	/**
+	 * Helper method to lay out forms that use SpringLayout
+	 */	
+	private static void makeCompactGrid(Container parent,int rows, int cols,int initialX, int initialY, int xPad, int yPad) {
 		SpringLayout layout = (SpringLayout)parent.getLayout();
 
 		// Align all cells in each column and make them the same width.
@@ -1216,6 +1260,9 @@ public class NavigationPanel extends JPanel implements MapApplicationUI, MouseLi
 		pCons.setConstraint(SpringLayout.EAST, x);
 	}
 	
+	/**
+	 * Helper method to layout forms that use SpringLayout
+	 */
     private static SpringLayout.Constraints getConstraintsForCell(int row, int col, Container parent, int cols) {
     	SpringLayout layout = (SpringLayout) parent.getLayout();
     	Component c = parent.getComponent(row * cols + col);
