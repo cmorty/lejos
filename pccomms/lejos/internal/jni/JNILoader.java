@@ -1,4 +1,4 @@
-package lejos.util.jni;
+package lejos.internal.jni;
 
 import java.io.File;
 import java.io.IOException;

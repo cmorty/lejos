@@ -7,9 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import lejos.util.jni.JNIClass;
-import lejos.util.jni.JNILoader;
-import lejos.util.jni.OSInfo;
+import lejos.internal.jni.JNIClass;
+import lejos.internal.jni.JNILoader;
+import lejos.internal.jni.OSInfo;
 
 /**
  * 

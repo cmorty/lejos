@@ -1,7 +1,7 @@
 /* $Id: OSInfo.java,v 1.2 2006/04/08 18:03:12 sven Exp $
  * Created on 02.10.2004
  */
-package lejos.util.jni;
+package lejos.internal.jni;
 
 import java.io.IOException;
 import java.io.InputStream;
