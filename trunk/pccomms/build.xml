@@ -21,7 +21,7 @@
     	<jar destfile="lib/pccomm.jar" update="false">
 			<fileset dir="build"/>
 			<fileset dir=".">
-				<include name="lejos/util/jni/*.properties"/>
+				<include name="lejos/internal/jni/*.properties"/>
 				<include name="lejos/pc/comm/*.bin"/>
 			</fileset>
     	</jar>
