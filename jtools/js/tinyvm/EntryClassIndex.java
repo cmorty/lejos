@@ -15,6 +15,11 @@ public class EntryClassIndex implements WritableData
       iClassName = aClassName;
    }
 
+   public String getName()
+   {
+       return iClassName;
+   }
+   
    public int getLength ()
    {
       return 1;

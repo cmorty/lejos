@@ -67,7 +67,6 @@ int getRevision() {
  * should be left intact, the PC has been set appropriately.
  *
  */
-
 int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
 {
   STACKWORD p0 = paramBase[0];
@@ -133,14 +132,12 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case join_4J_5V:
     join_thread((Thread *) word2obj(p0), paramBase[2]);
     break;
-  case exit_4I_5V:
+  case halt_4I_5V:
     schedule_request(REQUEST_EXIT);
     break;
   case currentTimeMillis_4_5J:
     push_word(0);
     push_word(systick_get_ms());
-    break;
-  case setPoller_4_5V:
     break;
   case readSensorValue_4I_5I:
     push_word(sp_read(p0, SP_ANA));
@@ -190,19 +187,6 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case clear_4_5V:
     display_clear(0);
     break;
-  case setDisplay_4_1I_5V:
-    {
-      Object *p = word2ptr(p0);
-      int len, i;
-
-      len = get_array_length(p);
-      unsigned *intArray = (unsigned *) jint_array(p);
-      unsigned *display_buffer = (unsigned *) display_get_buffer();
-
-      for (i = 0; i < 200; i++)
-	display_buffer[i] = intArray[i];
-    }
-    break;
   case getDisplay_4_5_1B:
     push_word(display_get_array());
     break;
@@ -216,7 +200,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     {
       Object *src = word2ptr(p0);
       Object *dst = word2ptr(paramBase[5]);
-      display_bitblt((byte *)jbyte_array(src), paramBase[1], paramBase[2], paramBase[3], paramBase[4], (byte *)jbyte_array(dst), paramBase[6], paramBase[7], paramBase[8], paramBase[9], paramBase[10], paramBase[11], paramBase[12]);
+      display_bitblt((byte *)(src != NULL ?jbyte_array(src):NULL), paramBase[1], paramBase[2], paramBase[3], paramBase[4], (byte *)(dst!=NULL?jbyte_array(dst):NULL), paramBase[6], paramBase[7], paramBase[8], paramBase[9], paramBase[10], paramBase[11], paramBase[12]);
       break;
     }
   case getSystemFont_4_5_1B:
@@ -553,6 +537,10 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     break;
   case firmwareExceptionHandler_4Ljava_3lang_3Throwable_2II_5V:
     firmware_exception_handler((Throwable *)p0, paramBase[1], paramBase[2]);
+    break;
+  case exitThread_4_5V:
+    currentThread->state = DEAD;
+    schedule_request(REQUEST_SWITCH_THREAD);
     break;
   default:
     return throw_new_exception(JAVA_LANG_NOSUCHMETHODERROR);

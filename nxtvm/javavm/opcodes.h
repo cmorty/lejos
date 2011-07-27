@@ -224,5 +224,6 @@
 #define OP_LDC_4 214
 #define OP_GETFIELD_1 215
 #define OP_PUTFIELD_1 216
-
+// special method used by leJOS to call out to java
+#define OP_INVOKEJAVA 217
 #endif // _OPCODES_H

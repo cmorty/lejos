@@ -415,10 +415,10 @@ done_pi:
         printf ("Starting thread %d: %d\n", (int) candidate, candidate->threadId);
         #endif
             currentThread = candidate;	// Its just easier this way.
+            
             empty_stacks();
             candidate->state = RUNNING;
-            set_top_ref_cur (ptr2ref (candidate));
-            dispatch_virtual ((Object *) candidate, run_4_5V, null);
+            call_run(candidate);
             // The following is needed because the current stack frame
             // was just created
             stackFrame = current_stackframe();

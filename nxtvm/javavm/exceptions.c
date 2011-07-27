@@ -137,7 +137,7 @@ int throw_exception (Throwable *exception)
   // No good handlers in current stack frame - go up.
   do_return (0);
   // Note: return takes care of synchronized methods.
-  if (currentThread->state == DEAD)
+  if (currentThread->stackFrameIndex == 0)
   {
 #if DEBUG_EXCEPTIONS
   printf("Thread is dead\n");
@@ -159,8 +159,6 @@ int throw_exception (Throwable *exception)
   			         methodNo,
 			         tempCurrentOffset))
       {
-        // bring the thread back from the dead!
-        currentThread->state = RUNNING;
         call_exception_handler(exception, methodNo, tempCurrentOffset);
       }
     }

@@ -43,6 +43,7 @@ typedef struct _flags
   byte     length:6;
   byte     mark:2;
 } __attribute__((packed)) objFlags;
+
 /**
  * Synchronization state.
  */
@@ -59,7 +60,7 @@ typedef struct S_Object
 {
   objFlags flags;
   objSync sync;
-} __attribute__((packed)) Object;
+} Object;
 
 typedef struct S_BigArray
 {

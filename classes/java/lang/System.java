@@ -95,6 +95,10 @@ public final class System
  }
  
 
+ /**
+  * Return the time since system start in nano-seconds
+  * @return
+  */
  public static native long nanoTime();
 
 }

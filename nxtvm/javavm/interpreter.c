@@ -471,6 +471,7 @@ static DISPATCH_LABEL dispatch[] =
   &&L_OP_LDC_2 - &&CHECK_EVENT, // Duplicate entries. See above
   &&L_OP_GETFIELD_1 - &&CHECK_EVENT,
   &&L_OP_PUTFIELD_1 - &&CHECK_EVENT,
+  &&L_OP_INVOKEJAVA - &&CHECK_EVENT,
   
 
 };

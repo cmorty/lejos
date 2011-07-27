@@ -49,6 +49,13 @@ OPCODE(OP_RETURN)
   LOAD_REGS();
   DISPATCH_CHECKED;
 
+OPCODE(OP_INVOKEJAVA)
+  // Call java method from VM
+  SAVE_REGS();
+  dispatch_java(pc[0], pc[1], pc + 2, pc -1);
+  LOAD_REGS();
+  DISPATCH_CHECKED;
+
 
 // Notes:
 // * INVOKEINTERFACE cannot occur because it's replaced

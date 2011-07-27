@@ -24,8 +24,6 @@
 #define get_stack_object(MREC_)  ((Object *) get_ref_at ((MREC_)->numParameters - 1))
 #endif
 
-// Reliable globals:
-
 byte* installedBinary;
 
 ConstantRecord* constantTableBase;
@@ -39,13 +37,43 @@ byte *classStaticStateBase;
 byte *classStatusBase;
 #endif
 
-// Temporary globals:
+/*
+ *
+ *The following arrays all contain short sequences of Java byte code.
+ * These are used to allow the VM to call out to the user program.
+ * These sequences are only used when the stack is empty,
+ * They basically consist of a call to the java method, followed by
+ * a call to a native method that will end the thread. So if the 
+ * java method returns the thread will end.
+ *
+ * We do things this way to allow the call to the java method to be
+ * restarted. This may be required if we need to call the static
+ * initializer of the containing class, or if we need to retry the
+ * operation to claim a mointor, or because of memory allocation
+ * failure.
+ */
 
-// (Gotta be careful with these; a lot of stuff
-// is not reentrant because of globals like these).
-
-// static ClassRecord *tempClassRecord;
-// static MethodRecord *tempMethodRecord;
+// Call the run method (used to start a thread)
+static const byte callRun[] = {OP_INVOKEVIRTUAL, 0, run_4_5V, 
+                               OP_INVOKEJAVA, JAVA_LANG_THREAD, exitThread_4_5V};
+// Call the default exception handler
+static const byte callDEH[] = {OP_INVOKEJAVA, JAVA_LANG_THREAD, systemUncaughtExceptionHandler_4Ljava_3lang_3Throwable_2II_5V,
+                               OP_INVOKEJAVA, JAVA_LANG_THREAD, exitThread_4_5V};
+// Call the program entry point ( we support entury points 0 - 4)
+#define PROGRAM0_CLASS_NO NUM_SPECIAL_CLASSES
+static const byte callProgram[5][6] = {
+         {OP_INVOKEJAVA, PROGRAM0_CLASS_NO,  main_4_1Ljava_3lang_3String_2_5V,
+          OP_INVOKEJAVA, JAVA_LANG_THREAD, exitThread_4_5V},
+         {OP_INVOKEJAVA, PROGRAM0_CLASS_NO+1,  main_4_1Ljava_3lang_3String_2_5V,
+          OP_INVOKEJAVA, JAVA_LANG_THREAD, exitThread_4_5V},
+         {OP_INVOKEJAVA, PROGRAM0_CLASS_NO+2,  main_4_1Ljava_3lang_3String_2_5V,
+          OP_INVOKEJAVA, JAVA_LANG_THREAD, exitThread_4_5V},
+         {OP_INVOKEJAVA, PROGRAM0_CLASS_NO+3,  main_4_1Ljava_3lang_3String_2_5V,
+          OP_INVOKEJAVA, JAVA_LANG_THREAD, exitThread_4_5V},
+         {OP_INVOKEJAVA, PROGRAM0_CLASS_NO+4,  main_4_1Ljava_3lang_3String_2_5V,
+          OP_INVOKEJAVA, JAVA_LANG_THREAD, exitThread_4_5V}
+                                       };
+                             
 
 // Methods:
 
@@ -215,6 +243,7 @@ void dispatch_special_checked (byte classIndex, byte methodIndex,
   printf ("dispatch_special_checked: %d, %d, %d, %d\n",
           classIndex, methodIndex, (int) retAddr, (int) btAddr);
   #endif
+
   // If we need to run the initializer then the real method will get called
   // later, when we re-run the current instruction.
   classRecord = get_class_record (classIndex);
@@ -243,6 +272,21 @@ void dispatch_special_checked (byte classIndex, byte methodIndex,
     }
   }
 }
+
+
+/**
+ * Call a java static method from the VM
+ * NOTE: This can only be used to call methods that have a signature
+ * value that is less than 255. Normally it will be used to call
+ * one of the specialsignature entries (which are all less than 255).
+ */
+void dispatch_java(byte classIndex, byte sig, byte *retAddr, byte *btAddr)
+{
+  ClassRecord *classRecord = get_class_record (classIndex);
+  MethodRecord *mRec = find_method (classRecord, sig);
+  dispatch_special_checked(classIndex, mRec - get_method_table(classRecord), retAddr, btAddr);
+}
+
 
 /**
  * @param classRecord Record for method class.
@@ -441,16 +485,6 @@ void do_return (int numWords)
   // Assign registers
   update_registers (stackFrame);
 
-  if (currentThread->stackFrameIndex == 0)
-  {
-    #if DEBUG_METHODS
-    printf ("do_return: thread is done: %d\n", (int) currentThread);
-    #endif
-    currentThread->state = DEAD;
-    schedule_request (REQUEST_SWITCH_THREAD);
-    return;
-  }
-
   #if DEBUG_METHODS
   printf ("do_return: stack reset to:\n");
   printf ("-- stack ptr = %d\n", (int) get_stack_ptr());
@@ -522,30 +556,6 @@ void empty_stacks()
 }
 
 /**
- * Setup the vm to call an entry point in Java. We do this by dynamically
- * generating a short (one instruction) code sequence to call the static
- * method. By doing things this way we ensure that the sequence is 
- * restartable which is required to enable the correct handling of memory
- * allocation and the calling of static initializers...
- * NOTE: We make use of the sleepUntil member of the thread structure to
- * hold the generated code. This ensure that we can call different
- * methods on different threads at the same time. We re-use the var space
- * to avoid making the thread structure any larger.
- */
-void call_entry_point(int class, int sig)
-{
-  byte *code = &(currentThread->sleepUntil);
-  ClassRecord *classRecord = get_class_record (class);
-  MethodRecord *mRec = find_method (classRecord, sig);
-  // generate the call instruction
-  code[0] = OP_INVOKESTATIC;
-  code[1] = class;
-  code[2] = mRec - get_method_table(classRecord);
-  // and setup the pc to execute it...
-  curPc = code;
-}
-
-/**
  * Exceute a "program" on the current thread.
  * NOTE: This call, resets both stacks and so the called method
  * will never return. The thread will exit.
@@ -557,8 +567,7 @@ int execute_program(int prog)
   empty_stacks();
   // Push the param (we save a word by setting the top param)
   set_top_ref_cur(JNULL);
-  // Push stack frame for main method:
-  call_entry_point(get_entry_class (prog), main_4_1Ljava_3lang_3String_2_5V);
+  curPc = (byte *)callProgram[prog];
   return EXEC_RUN;
 }
 
@@ -574,8 +583,19 @@ int call_exception_handler(Throwable *exception, int method, int pc)
   set_top_ref_cur((STACKWORD)exception);
   push_word_cur(method);
   push_word_cur(pc);
-  call_entry_point(JAVA_LANG_THREAD, systemUncaughtExceptionHandler_4Ljava_3lang_3Throwable_2II_5V);
+  curPc = (byte *)callDEH;
   return EXEC_RUN;
+}
+
+/**
+ * Call the run method of the specifed thread. The thread will
+ * exit if the run method ever returns.
+ */
+void call_run(Thread *thread)
+{
+  empty_stacks();
+  set_top_ref_cur((STACKWORD)thread);
+  curPc = (byte *)callRun;
 }
 
 
