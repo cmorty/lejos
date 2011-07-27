@@ -90,8 +90,13 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 		addField(new DirectoryFieldEditor(PreferenceConstants.KEY_NXJ_HOME,
 				"&NXJ_HOME:", parent));
 		
+		Composite p2 = newParent(parent, 3);
+		addField(new BooleanFieldEditor(PreferenceConstants.KEY_SEPARATE_JVM,
+				"&Run Tools in separate JVM", p2));
+		
 		Group g = createGroup(parent, 2, "Defaults for run configurations:");
 		
+		//TODO add option for skipping the upload
 		// connection type
 		addField(new RadioGroupFieldEditor(
 				PreferenceConstants.KEY_CONNECTION_TYPE, "Connection type", 3,
@@ -102,24 +107,19 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 				}, newParent(g, 2)));
 		
 		// connect to NXT address?
-		addField(new BooleanFieldEditor(
-				PreferenceConstants.KEY_CONNECT_TO_BRICK_ADDRESS,
+		addField(new BooleanFieldEditor(PreferenceConstants.KEY_CONNECT_TO_BRICK_ADDRESS,
 				"&Connect to address", newParent(g, 1)));
-		addField(new StringFieldEditor(
-				PreferenceConstants.KEY_CONNECTION_BRICK_ADDRESS, "&Address",
-				newParentF(g, 1)));
+		addField(new StringFieldEditor(PreferenceConstants.KEY_CONNECTION_BRICK_ADDRESS,
+				"&Address",	newParentF(g, 1)));
 		// connect to named NXT?
-		addField(new BooleanFieldEditor(
-				PreferenceConstants.KEY_CONNECT_TO_NAMED_BRICK,
+		addField(new BooleanFieldEditor(PreferenceConstants.KEY_CONNECT_TO_NAMED_BRICK,
 				"Connect to &named brick", newParent(g, 1)));
-		addField(new StringFieldEditor(
-				PreferenceConstants.KEY_CONNECTION_BRICK_NAME, "&Name",
-				newParentF(g, 1)));
+		addField(new StringFieldEditor(PreferenceConstants.KEY_CONNECTION_BRICK_NAME,
+				"&Name", newParentF(g, 1)));
 		
 		g = createGroup(parent, 2, "Defaults for run mode");
 		
-		addField(new BooleanFieldEditor(
-				PreferenceConstants.KEY_NORMAL_RUN_AFTER_UPLOAD,
+		addField(new BooleanFieldEditor(PreferenceConstants.KEY_NORMAL_RUN_AFTER_UPLOAD,
 				"&Run program after upload", newParent(g, 1)));
 		addField(new BooleanFieldEditor(PreferenceConstants.KEY_NORMAL_LINK_VERBOSE,
 				"Link &verbose", newParent(g, 1)));
@@ -128,17 +128,15 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 		
 		g = createGroup(parent, 2, "Defaults for debug mode");
 		
-		addField(new BooleanFieldEditor(
-				PreferenceConstants.KEY_DEBUG_RUN_AFTER_UPLOAD,
+		addField(new BooleanFieldEditor(PreferenceConstants.KEY_DEBUG_RUN_AFTER_UPLOAD,
 				"&Run program after upload", newParent(g, 1)));
 		addField(new BooleanFieldEditor(PreferenceConstants.KEY_DEBUG_LINK_VERBOSE,
 				"Link &verbose", newParent(g, 1)));
 		addField(new BooleanFieldEditor(PreferenceConstants.KEY_DEBUG_START_CONSOLE,
 				"Start nxj&console after upload (not functional yet)", newParent(g, 2)));
 		
-		addField(new RadioGroupFieldEditor(
-				PreferenceConstants.KEY_DEBUG_MONITOR_TYPE, "Debug Monitor", 2,
-				new String[][] {
+		addField(new RadioGroupFieldEditor(PreferenceConstants.KEY_DEBUG_MONITOR_TYPE, 
+				"Debug Monitor", 2,	new String[][] {
 						{ "Normal Debug Monitor", PreferenceConstants.VAL_DEBUG_TYPE_NORMAL },
 						{ "Remote Debug Monitor", PreferenceConstants.VAL_DEBUG_TYPE_REMOTE },
 				}, newParent(g, 2)));

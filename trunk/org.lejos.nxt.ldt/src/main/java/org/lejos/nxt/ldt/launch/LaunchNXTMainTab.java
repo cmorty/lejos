@@ -262,6 +262,8 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 
 	private void createOptionEditor(Composite parent, SelectionListener updater)
 	{
+		//TODO add radiobuttons for configuring upload type, address, name and stuff
+		
 		Group g = newGroup(parent, 2, "When in run mode:");
 
 		GridData gd = new GridData();
