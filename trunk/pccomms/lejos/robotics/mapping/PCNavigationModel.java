@@ -836,6 +836,7 @@ public class PCNavigationModel extends NavigationModel {
 							lastPlannedMove.loadObject(dis);
 							break;
 						case MOVE_STOPPED: // Get executed move
+							lastMove = new Move(false, 0, 0);  // Dummy move
 							lastMove.loadObject(dis);
 							moves.add(lastMove);
 							break;

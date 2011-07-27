@@ -23,7 +23,7 @@ public class MapPanel extends JPanel {
 	protected static final Color NEIGHBOR_COLOR = Color.ORANGE;
 	protected static final Color TARGET_COLOR = Color.MAGENTA;
 	protected static final Color PATH_COLOR = Color.BLUE;
-	protected static final Color MOVE_COLOR = Color.PINK;
+	protected static final Color MOVE_COLOR = Color.RED;
 	protected static final Color FEATURE_COLOR = Color.CYAN;
 	protected static final Color WAYPOINT_COLOR = Color.BLUE;
 	protected static final Color ROBOT_COLOR = Color.RED;
@@ -281,15 +281,46 @@ public class MapPanel extends JPanel {
 	protected void paintMoves(Graphics2D g2d) {
 		if (!parent.showMoves) return;
 		ArrayList<Pose> poses = model.getPoses();
+		ArrayList<Move> moves = model.getMoves();
+		//parent.log(poses.size() + " poses");
+	    //parent.log(moves.size() + " moves");
 		if (poses == null || poses.size() < 2) return;
 		Pose previousPose = null;
 		
 		g2d.setColor(colors[MOVE_COLOR_INDEX]);
-		for(Pose pose: poses) {
+		Iterator<Move> iter = moves.iterator();
+		for(Pose pose: poses) {	
 			if (previousPose == null) previousPose = pose;
 			else {
-				//parent.log("Drawing line from " + previousPose.getX() + ","  + previousPose.getY() + " to " + pose.getX() + "," + pose.getY());
-				g2d.drawLine((int) getX(previousPose.getX()), (int) getY(previousPose.getY()), (int) getX(pose.getX()), (int) getY(pose.getY()));
+				Move move = iter.next();
+				if (move.getMoveType() == Move.MoveType.ARC) {
+					//parent.log("Move = " + move);
+					int radius = Math.round(move.getArcRadius());
+					int diameter = radius*2;
+					int startAngle = Math.round(previousPose.getHeading() - 90);
+					int angleTurned = Math.round(move.getAngleTurned());
+ 
+					if (radius < 0) {
+						startAngle -= 180;
+						radius = -radius;
+					}
+					
+					int startX = (int) Math.round(previousPose.getX() - radius - radius*Math.cos(Math.toRadians(startAngle)));
+					int startY = (int) Math.round(previousPose.getY() + radius - radius*Math.sin(Math.toRadians(startAngle)));						
+					
+					if (angleTurned < 0) {
+						startAngle += angleTurned;
+						angleTurned =- angleTurned;					
+					}
+					
+					diameter = Math.abs(diameter);
+					
+					//parent.log("Drawing arc:" + startX + "," + startY + "," + diameter + "," + diameter + "," + startAngle + "," + angleTurned);
+					g2d.drawArc((int) getX(startX), (int) getY(startY), (int) getDistance(diameter),(int)  getDistance(diameter), startAngle, angleTurned);
+				} else {
+					//parent.log("Drawing line from " + previousPose.getX() + ","  + previousPose.getY() + " to " + pose.getX() + "," + pose.getY());
+					g2d.drawLine((int) getX(previousPose.getX()), (int) getY(previousPose.getY()), (int) getX(pose.getX()), (int) getY(pose.getY())); 
+				}
 				previousPose = pose;
 			}
 		}	
