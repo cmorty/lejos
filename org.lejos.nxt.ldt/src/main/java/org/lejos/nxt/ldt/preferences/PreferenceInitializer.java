@@ -39,6 +39,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		String nxjHome = System.getenv("NXJ_HOME");
 		if (nxjHome != null)
 			store.put(PreferenceConstants.KEY_NXJ_HOME, nxjHome);
+		
+		String osName = System.getProperty("os.name", "").toLowerCase();
+		store.putBoolean(PreferenceConstants.KEY_SEPARATE_JVM, osName.startsWith("windows "));
 	}
 
 }

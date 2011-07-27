@@ -11,6 +11,7 @@ import org.eclipse.debug.core.ILaunchManager;
 public class PreferenceConstants {
 
 	public static final String KEY_NXJ_HOME = "nxjHome";
+	public static final String KEY_SEPARATE_JVM = "useSeparateJVM";
 	public static final String KEY_CONNECTION_TYPE = "connectionType";
 	public static final String KEY_CONNECT_TO_NAMED_BRICK = "ConnectToName";
 	public static final String KEY_CONNECT_TO_BRICK_ADDRESS = "ConnectToAddress";
