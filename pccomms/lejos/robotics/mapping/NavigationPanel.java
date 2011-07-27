@@ -814,24 +814,25 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 	protected void createCommandMenu() {
 		commandsMenu = new JMenu("Commands");
 		menuBar.add(commandsMenu);
-		getPose = new JMenuItem("Get Pose");
-		commandsMenu.add(getPose);
-		getPose.addActionListener(this);
-		randomMove = new JMenuItem("Random Move");
-		commandsMenu.add(randomMove);
-		randomMove.addActionListener(this);
-		localize = new JMenuItem("Localize");
-		commandsMenu.add(localize);
-		localize.addActionListener(this);
-		stop = new JMenuItem("Stop");
-		commandsMenu.add(stop);
-		stop.addActionListener(this);
+		
 		calculatePath = new JMenuItem("Calculate Path");
 		commandsMenu.add(calculatePath);
 		calculatePath.addActionListener(this);
 		followPath = new JMenuItem("Follow Path");
 		commandsMenu.add(followPath);
 		followPath.addActionListener(this);
+		getPose = new JMenuItem("Get Pose");
+		commandsMenu.add(getPose);
+		getPose.addActionListener(this);
+		localize = new JMenuItem("Localize");
+		commandsMenu.add(localize);
+		localize.addActionListener(this);
+		randomMove = new JMenuItem("Random Move");
+		commandsMenu.add(randomMove);
+		randomMove.addActionListener(this);
+		stop = new JMenuItem("Stop");
+		commandsMenu.add(stop);
+		stop.addActionListener(this);
 	}
 	
 	/**
