@@ -8,12 +8,7 @@ package lejos.nxt;
  *
  */
 public class NXT {	
-	
-	/**
-	 * Terminate the application.
-	 */	  
-	public static native void exit(int code);
-	
+		
 	/**
 	 * Shutdown the brick
 	 */

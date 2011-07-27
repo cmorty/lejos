@@ -52,7 +52,7 @@ public class Runtime {
    */
   public void halt(int code)
   {
-      Shutdown.exit(code);
+      Shutdown.halt(code);
   }
 
   /**

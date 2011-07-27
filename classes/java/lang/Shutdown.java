@@ -74,7 +74,7 @@ class Shutdown
                     i--;
                 }
             // Now make the system exit
-            exit(exitCode);
+            halt(exitCode);
         }
     }
     
@@ -86,7 +86,7 @@ class Shutdown
     /**
      * Terminate the application. Does not trigger the calling of shutdown hooks.
      */
-    public static native void exit(int code);
+    public static native void halt(int code);
     
 
     
@@ -98,7 +98,7 @@ class Shutdown
     {
         // If no singleton then no hooks, so simply exit
         if (singleton == null)
-            exit(code);
+            halt(code);
         // If not already running notify it it to run
         if (!running)
         {
