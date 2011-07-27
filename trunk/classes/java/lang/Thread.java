@@ -262,6 +262,12 @@ public class Thread implements Runnable
           VM.firmwareExceptionHandler(exception, method, pc);
       }
   }
+
+  /**
+   * This native call is used by the VM to end the current thread. It is
+   * called when the initial method in the thread returns.
+   */
+  private final static native void exitThread();
 }
 
 

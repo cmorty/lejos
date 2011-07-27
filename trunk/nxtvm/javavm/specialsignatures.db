@@ -26,6 +26,7 @@ notifyAll()V
 wait()V
 wait(J)V
 getDataAddress(Ljava/lang/Object;)I
+cloneObject(Ljava/lang/Object;)Ljava/lang/Object;
 
 # java.lang.Thread
 start()V
@@ -41,13 +42,13 @@ setDaemon(Z)V
 isDaemon()Z
 join()V
 join(J)V
+exitThread()V
 
 # java.lang.System
 currentTimeMillis()J
-exit(I)V
 arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
 gc()V
-shutDown()V
+nanoTime()J
 
 # java.lang.Runtime
 freeMemory()J
@@ -55,14 +56,20 @@ totalMemory()J
 
 # java.lang.Throwable
 getMessage()Ljava/lang/String;
+createStackTrace(Ljava/lang/Thread;Ljava/lang/Object;)[I
 
 # lejos.nxt.SensorPort
 readSensorValue(I)I
 setPowerTypeById(II)V
-
-# lejos.nxt.Poller
-setPoller()V
-setThrottle(I)V
+i2cEnableById(II)V
+i2cStatusById(I)I
+i2cCompleteById(I[BII)I
+i2cStartById(II[BIII)I
+i2cDisableById(I)V
+setSensorPin(III)V
+getSensorPin(II)I
+setSensorPinMode(III)V
+readSensorPin(II)I
 
 # java.lang.Float
 floatToRawIntBits(F)I
@@ -74,11 +81,12 @@ drawInt(III)V
 drawInt(IIII)V
 asyncRefresh()V
 clear()V
-setDisplay([I)V
 getDisplay()[B
 setAutoRefreshPeriod(I)I
 bitBlt([BIIII[BIIIIIII)V
 getSystemFont()[B
+setContrast(I)V
+getRefreshCompleteTime()I
 
 #lejos.nxt.Battery
 getBatteryStatus()I
@@ -91,18 +99,15 @@ getTachoCountById(I)I
 controlMotorById(III)V
 resetTachoCountById(I)V
 
-#lejos.nxt.SensorPort
-i2cEnableById(II)V
-i2cStatusById(I)I
-i2cStartById(II[BIII)I
-i2cDisableById(I)V
-
 #lejos.nxt.Sound
 playFreq(III)V
 playSample(IIIII)V
 getTime()I
+playQueuedSample([BIIII)I
 
 #lejos.nxt.comm.Bluetooth
+btEnable()V
+btDisable()V
 btSend([BI)V
 btReceive([B)V
 btGetBC4CmdMode()I
@@ -130,24 +135,23 @@ eventOptions(II)I
 suspendThread(Ljava/lang/Object;)V
 resumeThread(Ljava/lang/Object;)V
 
-#System
+#lejos.nxt
 getProgramExecutionsCount()I
+boot()V
+shutDown()V
+getFirmwareRevision()I
+getFirmwareRawVersion()I
+getUserPages()I
 
-#USB
+#java.lang.shutdown
+halt(I)V
+
+#lejos.nxt.USB
 usbStatus()I
 usbEnable(I)V
 usbDisable()V
-
-#System
-getFirmwareRevision()I
-getFirmwareRawVersion()I
-
-#USB
 usbSetSerialNo(Ljava/lang/String;)V
 usbSetName(Ljava/lang/String;)V
-
-#System
-boot()V
 
 #RS485/Hispeed
 hsEnable()V
@@ -158,61 +162,21 @@ hsPending()I
 hsSend(BB[BII[C)I
 hsRecv([BI[CI)I
 
-#System
-getUserPages()I
-
-#i2c
-i2cCompleteById(I[BII)I
-
-#Bluetooth
-btEnable()V
-btDisable()V
-
 # java.lang.Double
 doubleToRawLongBits(D)J
 longBitsToDouble(J)D
 
-#Runtime
+#lejos.nxt.VM
 setVMOptions(I)V
 getVMOptions()I
-
-#Object
-cloneObject(Ljava/lang/Object;)Ljava/lang/Object;
-
-#memory access
 memPeek(III)I
 memCopy(Ljava/lang/Object;IIII)V
 getObjectAddress(Ljava/lang/Object;)I
 memGetReference(II)Ljava/lang/Object;
-
-#Sensor port access
-setSensorPin(III)V
-getSensorPin(II)I
-setSensorPinMode(III)V
-readSensorPin(II)I
-
-#System
-nanoTime()J
-
-#VM
 isAssignable(II)Z
+firmwareExceptionHandler(Ljava/lang/Throwable;II)V
 
-#LCD
-setContrast(I)V
-
-#Throwable
-createStackTrace(Ljava/lang/Thread;Ljava/lang/Object;)[I
-
-#Sound
-playQueuedSample([BIIII)I
-
-#LCD
-getRefreshCompleteTime()I
-
-#NXTEvent
+#lejos.nxt.NXTEvent
 registerEvent()I
 unregisterEvent()I
 changeEvent(II)I
-
-#VM
-firmwareExceptionHandler(Ljava/lang/Throwable;II)V
