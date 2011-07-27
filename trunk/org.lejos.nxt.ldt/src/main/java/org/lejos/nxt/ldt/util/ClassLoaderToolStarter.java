@@ -95,7 +95,7 @@ public class ClassLoaderToolStarter implements ToolStarter
 		this.classloader = cl;		
 	}
 
-	public int invokeTool(File nxjHome, String tool, List<String> args)	throws Exception, InvocationTargetException
+	public int invokeTool(String tool, List<String> args)	throws Exception, InvocationTargetException
 	{
 		String[] args2 = args.toArray(new String[args.size()]);
 		
