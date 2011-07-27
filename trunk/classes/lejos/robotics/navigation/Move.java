@@ -247,6 +247,7 @@ public class Move implements Transmittable {
 		dos.writeFloat(rotateSpeed);
 		dos.writeFloat(distanceTraveled);
 		dos.writeFloat(angleTurned);
+		dos.writeFloat(arcRadius);
 		dos.flush();
 	}
 
@@ -256,6 +257,7 @@ public class Move implements Transmittable {
 		rotateSpeed = dis.readFloat();
 		distanceTraveled = dis.readFloat();
 		angleTurned = dis.readFloat();
+		arcRadius = dis.readFloat();
 	}
 	
 	@Override
@@ -269,7 +271,7 @@ public class Move implements Transmittable {
 			s += distanceTraveled + " at " + travelSpeed;
 			break;
 		case ARC:
-			s += " of " + arcRadius + " for " + distanceTraveled + " at " + travelSpeed;
+			s += " of " + arcRadius + " for " + angleTurned + "degrees  at " + travelSpeed;
 			break;
 		}
 		return s;
