@@ -24,9 +24,9 @@ public class EventPanel extends JPanel implements ActionListener {
 	protected JTextField param3 = new JTextField(8);
 	protected PCNavigationModel model;
 	protected NavEvent[] events = {NavEvent.ADD_WAYPOINT, NavEvent.ARC, NavEvent.CALCULATE_PATH, 
-			NavEvent.CLEAR_PATH, NavEvent.EXIT, NavEvent.FOLLOW_PATH, NavEvent.GET_BATTERY, NavEvent.GET_POSE, 
-			NavEvent.GOTO, NavEvent.RANDOM_MOVE, NavEvent.ROTATE, NavEvent.ROTATE_SPEED, NavEvent.ROTATE_TO, NavEvent.SET_POSE, NavEvent.SET_TARGET,
-			NavEvent.SOUND, NavEvent.START_NAVIGATOR, NavEvent.STOP, NavEvent.TAKE_READINGS, NavEvent.TRAVEL, NavEvent.TRAVEL_SPEED};
+			  NavEvent.CLEAR_PATH, NavEvent.EXIT, NavEvent.FOLLOW_PATH, NavEvent.GET_BATTERY, NavEvent.GET_ESTIMATED_POSE, NavEvent.GET_PARTICLES, NavEvent.GET_POSE, 
+			  NavEvent.GET_READINGS, NavEvent.GOTO, NavEvent.LOCALIZE, NavEvent.RANDOM_MOVE, NavEvent.ROTATE, NavEvent.ROTATE_SPEED, NavEvent.ROTATE_TO, NavEvent.SET_POSE, NavEvent.SET_TARGET,
+			  NavEvent.SOUND, NavEvent.START_NAVIGATOR, NavEvent.STOP, NavEvent.TAKE_READINGS, NavEvent.TRAVEL, NavEvent.TRAVEL_SPEED};
 	protected JComboBox eventCombo = new JComboBox(events);
 	protected NavigationPanel panel;
 	
@@ -206,6 +206,18 @@ public class EventPanel extends JPanel implements ActionListener {
 					break;
 				case EXIT:
 					model.sendExit();
+					break;
+				case LOCALIZE:
+					model.localize();
+					break;
+				case GET_ESTIMATED_POSE:
+					model.getEstimatedPose();
+					break;
+				case GET_PARTICLES:
+					model.getRemoteParticles();
+					break;
+				case GET_READINGS:
+					model.getRemoteReadings();
 					break;
 				}
 			} catch (NumberFormatException nfe) {

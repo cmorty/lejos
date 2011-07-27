@@ -44,6 +44,12 @@ public class MapPanel extends JPanel {
 			                    PATH_COLOR, MOVE_COLOR, FEATURE_COLOR,
 			                    WAYPOINT_COLOR, ROBOT_COLOR};
 	
+	public String[] colorKeys  = {"MAP_COLOR", "PARTICLE_COLOR", "BACKGROUND_COLOR",
+			                      "GRID_COLOR", "ESTIMATE_COLOR", "CLOSEST_COLOR",
+			                      "MESH_COLOR", "NEIGHBOR_COLOR", "TARGET_COLOR",
+			                      "PATH_COLOR", "MOVE_COLOR", "FEATURE_COLOR",
+			                      "WAYPOINT_COLOR", "ROBOT_COLOR"};
+	
 	public static final int MAP_COLOR_INDEX = 0;
 	public static final int PARTICLE_COLOR_INDEX = 1;
 	public static final int BACKGROUND_COLOR_INDEX = 2;
@@ -397,5 +403,27 @@ public class MapPanel extends JPanel {
 		Pose p = part.getPose(); 
 		if (Math.abs(p.getX() - x) <= 2f && Math.abs(p.getY() - y) <= 2f) return  "Weight " + part.getWeight();
 		else return null;
+	}
+	
+	public void showColors() {
+		for(int i=0;i<colors.length;i++) {
+			System.out.println(colorKeys[i] + " is " + Integer.toHexString(colors[i].getRGB()));
+		}
+	}
+	
+	public void getColors(Properties props) {
+		for(int i=0;i<colorKeys.length;i++) {
+			String colorRGB = props.getProperty(colorKeys[i]);
+			if (colorRGB != null) {
+				int rgb = Integer.parseInt(colorRGB.substring(2), 16);
+				colors[i] = new Color(rgb);
+			}
+		}
+	}
+	
+	public void saveColors(Properties props) {
+		for(int i=0;i<colorKeys.length;i++) {
+			props.setProperty(colorKeys[i], Integer.toHexString(colors[i].getRGB()));
+		}
 	}
 }
