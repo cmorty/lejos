@@ -3,6 +3,7 @@
  */
 package lejos.internal.jni;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -38,6 +39,9 @@ public class OSInfo
 	{
 		String path = '/' + OSInfo.class.getName().replace('.', '/') + ".properties";
 		URL u = OSInfo.class.getResource(path);
+		if (u == null)
+			throw new FileNotFoundException(path + " not found in classpath");
+		
 		InputStream is = u.openStream();
 		try
 		{
