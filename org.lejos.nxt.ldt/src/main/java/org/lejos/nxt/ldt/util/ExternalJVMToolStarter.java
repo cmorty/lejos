@@ -13,7 +13,7 @@ public class ExternalJVMToolStarter implements ToolStarter {
 		this.nxjHome = nxjHome;
 	}
 	
-	public int invokeTool(File nxjHome, String tool, List<String> args) throws Exception, InvocationTargetException
+	public int invokeTool(String tool, List<String> args) throws Exception, InvocationTargetException
 	{
 		
 		return 0;

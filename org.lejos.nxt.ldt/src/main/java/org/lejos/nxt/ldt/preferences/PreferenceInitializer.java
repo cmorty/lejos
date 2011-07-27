@@ -41,7 +41,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			store.put(PreferenceConstants.KEY_NXJ_HOME, nxjHome);
 		
 		String osName = System.getProperty("os.name", "").toLowerCase();
-		store.putBoolean(PreferenceConstants.KEY_SEPARATE_JVM, osName.startsWith("windows "));
+		store.putBoolean(PreferenceConstants.KEY_SEPARATE_JVM, osName.startsWith("windows ")
+				|| osName.startsWith("mac os x"));
 	}
 
 }
