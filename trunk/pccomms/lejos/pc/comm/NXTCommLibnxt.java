@@ -2,9 +2,9 @@ package lejos.pc.comm;
 
 import java.util.Vector;
 
-import lejos.util.jni.JNIClass;
-import lejos.util.jni.JNIException;
-import lejos.util.jni.JNILoader;
+import lejos.internal.jni.JNIClass;
+import lejos.internal.jni.JNIException;
+import lejos.internal.jni.JNILoader;
 
 /**
  * Implementation of NXTComm over USB using libnxt.

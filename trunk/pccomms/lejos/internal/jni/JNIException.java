@@ -1,4 +1,4 @@
-package lejos.util.jni;
+package lejos.internal.jni;
 
 public class JNIException extends Exception {
 
