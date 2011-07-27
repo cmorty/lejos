@@ -462,11 +462,16 @@ public class PCNavigationModel extends NavigationModel {
 	public LineMap loadMap(String mapFileName, int finder) {
 		try {
 			File mapFile = new File(mapFileName);
-			if (debug) panel.log("Map file is " + mapFile.getAbsolutePath());
 			if (!mapFile.exists()) {
-				panel.error(mapFile.getAbsolutePath() + " does not exist");
-				return null;
+				String abs = mapFile.getAbsolutePath();
+				// Try with .svg suffix
+				mapFile = new File(mapFileName + ".svg");
+				if (!mapFile.exists()) {
+					panel.error(abs + " does not exist");
+					return null;
+				}
 			}
+			if (debug) panel.log("Map file is " + mapFile.getAbsolutePath());
 			FileInputStream is = new FileInputStream(mapFile);
 			SVGMapLoader mapLoader = new SVGMapLoader(is);
 			map = mapLoader.readLineMap();
@@ -490,7 +495,7 @@ public class PCNavigationModel extends NavigationModel {
 	
 	public void setPathFinder(int finder) {
 		if (map == null) return;
-		if (debug) panel.log("Path finder " + finder);
+		//if (debug) panel.log("Path finder " + finder);
 		if (finder == 0) {
 			pf = new NodePathFinder(alg, mesh);
 		} else if (finder == 1) {
