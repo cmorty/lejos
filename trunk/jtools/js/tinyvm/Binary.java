@@ -418,6 +418,14 @@ public class Binary
          ClassRecord classRecord = iClassTable.get(pIndex);
          iNewClassTable.add(classRecord);
       }
+      // Add in the entry point classes so they are in a fixed location after
+      // the special classes. This makes it easy for the firmware to locate
+      // them.
+      for (int pIndex = 0; pIndex < iEntryClassIndices.size(); pIndex++)
+      {
+          ClassRecord classRecord = getClassRecord(iEntryClassIndices.get(pIndex).getName());
+          iNewClassTable.add(classRecord);
+      }   
       // Now we add in any classes that have interfaces. This keeps them all
       // together and keeps the interface map small. Note duplicates are
       // not allowed so we can add the same entry multiple times.
@@ -494,8 +502,10 @@ public class Binary
       Signature runMethod = new Signature("run", "()V");
       Signature mainMethod = new Signature("main", "([Ljava/lang/String;)V");
       Signature uncaughtExceptionMethod = new Signature("systemUncaughtExceptionHandler", "(Ljava/lang/Throwable;II)V");
+      Signature exitThreadMethod = new Signature("exitThread", "()V");
       boolean mainFound = false;
       boolean exceptionHandlerFound = false;
+      boolean exitThreadFound = false;
       // We now add in the static initializers of all marked classes. 
       // We also add in the special entry points that may be called
       // directly from the VM.
@@ -549,6 +559,12 @@ public class Binary
                 classRecord.markMethod(pRec, true);
                 exceptionHandlerFound = true;
             }
+            if (classRecord.hasMethod(exitThreadMethod, true))
+            {
+                MethodRecord pRec = classRecord.getMethodRecord(exitThreadMethod);
+                classRecord.markMethod(pRec, true);
+                exitThreadFound = true;
+            }
          }
          // Finally mark starting from all of the entry classes
          for (int i = 0; i < entryClassNames.length; i++)
@@ -565,7 +581,9 @@ public class Binary
       if (!mainFound)
          throw new TinyVMException("main method not found, program has no entry point");
       if (!exceptionHandlerFound)
-         throw new TinyVMException("System exception handler not found. Are you using the correct classes.jar");
+          throw new TinyVMException("System exception handler not found. Are you using the correct classes.jar");
+      if (!exitThreadFound)
+          throw new TinyVMException("Thread exit method not found. Are you using the correct classes.jar");
    }
 
    public void processSpecialSignatures ()

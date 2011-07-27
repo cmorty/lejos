@@ -26,7 +26,7 @@ static struct
 {
   BigArray arrayHdr;
   U8 display[DISPLAY_DEPTH+1][DISPLAY_WIDTH];
-} __attribute__((packed)) display_array;
+} display_array;
 static U8 (*display_buffer)[DISPLAY_WIDTH] = display_array.display;
 
 /* Font table for a 5x8 font. 1 pixel spacing between chars */
@@ -39,7 +39,7 @@ static const struct
 {
   BigArray arrayHdr;
   U8 font[N_CHARS][FONT_WIDTH];
-} __attribute__((packed)) font_array =
+} font_array =
 {{{{
     .length=LEN_BIGARRAY,
     .mark = 3,

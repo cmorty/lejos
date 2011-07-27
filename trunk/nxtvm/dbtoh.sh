@@ -28,6 +28,7 @@ convert_class()
 			let i++
 		fi
 	done
+	echo "#define NUM_SPECIAL_CLASSES $i"
 	
 	echo
 	echo "#endif" 

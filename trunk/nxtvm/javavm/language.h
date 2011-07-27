@@ -169,12 +169,14 @@ void dispatch_special_checked (byte classIndex, byte methodIndex, byte *retAddr,
 Object *create_stack_trace(Thread *thread, Object *ignore);
 int execute_program(int prog);
 int call_exception_handler(Throwable *exception, int method, int pc);
+void call_run(Thread* thread);
 extern boolean is_assignable(const byte srcSig, const byte dstSig);
 extern byte get_base_type(ClassRecord *classRec);
 
 void install_binary(const byte *ptr);
 extern boolean is_valid_executable(byte * start, int len);
 void empty_stacks();
+extern void dispatch_java(byte classIndex, byte sig, byte *retAddr, byte *btAddr);
 
 #define get_master_record()         ((MasterRecord *) installedBinary)
 #define get_magic_number()          get_master_record()->magicNumber
