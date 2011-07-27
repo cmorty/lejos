@@ -4,8 +4,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.VolatileImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Properties;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -22,6 +25,31 @@ import lejos.robotics.mapping.NavigationModel.NavEvent;
  */
 public abstract class NavigationPanel extends JPanel implements MapApplicationUI, MouseListener, MouseMotionListener, ActionListener {
 	private static final long serialVersionUID = 1L;
+	
+	protected final static String KEY_DEFAULT_NXT = "DEFAULT_NXT";
+	protected final static String KEY_DEFAULT_MAP = "DEFAULT_MAP";
+	protected final static String KEY_DIFF_PILOT_WHEEL_DIAMETER = "DIFFERENTIAL_PILOT_WHEEL_DIAMETER";
+	protected final static String KEY_DIFF_PILOT_TRACK_WIDTH = "DIFFERENTIAL_PILOT_TRACK_WIDTH";
+	protected final static String KEY_DIFF_PILOT_LEFT_MOTOR = "DIFFERENTIAL_PILOT_LEFT_MOTOR";
+	protected final static String KEY_DIFF_PILOT_REVERSE = "DIFFERENTIAL_PILOT_REVERSE";
+	protected final static String KEY_STEER_PILOT_WHEEL_DIAMETER = "STEERING_PILOT_WHEEL_DIAMETER";
+	protected final static String KEY_STEER_PILOT_DRIVE_MOTOR = "STEERING_PILOT_DRIVE_MOTOR";
+	protected final static String KEY_STEER_PILOT_DRIVE_MOTOR_REVERSE = "STEERING_PILOT_DRIVE_MOTOR_REVERSE";
+	protected final static String KEY_STEER_PILOT_STEERING_MOTOR = "STEERING_PILOT_STEERING_MOTOR";
+	protected final static String KEY_STEER_PILOT_LEFT_TACHO = "STEERING_PILOT_LEFT_TACHO_COUNT";
+	protected final static String KEY_STEER_PILOT_RIGHT_TACHO = "STEERING_PILOT_RIGHT_TACHO_COUNT";
+	protected final static String KEY_MESH_GRID_SIZE = "MESH_GRID_SIZE";
+	protected final static String KEY_MESH_CLEARANCE = "MESH_CLEARANCE";
+	protected final static String KEY_DETECTOR_DELAY = "RANGE_FEATURE_DETECTOR_DELAY";
+	protected final static String KEY_DETECTOR_MAX_DISTANCE = "RANGE_FEATURE_DETECTOR_MAX_DISTANCE";
+	protected final static String KEY_RANGE_SCANNER_GEAR_RATIO = "ROTATING_RANGE_SCANNER_GEAR_RATIO";
+	protected final static String KEY_RANGE_SCANNER_HEAD_MOTOR = "ROTATING_RANGE_SCANNER_HEAD_MOTOR";
+	protected final static String KEY_RANDOM_MOVE_MAX_DISTANCE = "RANDOM_MOVE_MAX_DISTANCE";
+	protected final static String KEY_RANDOM_MOVE_CLEARANCE = "RANDOM_MOVE_CLEARANCE";
+	protected final static String KEY_MCL_NUM_PARTICLES = "MCL_NUMBER_OF_PARTICLES";
+	protected final static String KEY_MCL_CLEARANCE = "MCL_CLEARANCE";
+	protected final static String KEY_MAX_TRAVEL_SPEED = "MAXIMUM_TRAVEL_SPEED";
+	protected final static String KEY_MAX_ROTATE_SPEED = "MAXIMUM_ROTATE_SPEED";
 	
 	// Zoom control parameters
 	protected int minZoom = 50;
@@ -197,6 +225,34 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 	protected JButton mclOKButton = new JButton("OK");
 	protected JDialog configureMCL;
 	
+	protected Properties props = new Properties();
+	protected String propsFileName = "nav.props";
+	
+	public NavigationPanel() {	
+		loadProperties();
+	}
+	
+	protected void loadProperties() {
+		try {
+			FileInputStream fis =new FileInputStream(propsFileName);
+			props.load(fis);
+		} catch (IOException ioe) {
+			log("Error loading properties file: " + ioe.getMessage());
+		}  
+	}
+	
+	protected void saveProperties() {
+		mapPanel.saveColors(props);
+		FileOutputStream out; 
+		try {
+			out = new FileOutputStream(propsFileName);
+			props.store(out, "Automatic save");
+			out.close();
+		} catch (IOException ioe) {
+			log("Failed to store properties");
+		}
+	}
+	
 	/**
 	 * Build all the panels
 	 */
@@ -220,6 +276,8 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		createLoadPanel();
 		createReadingsPanel();
 		createMenu();
+		mapPanel.getColors(props);
+		saveProperties();
 	}
 	
 	/**
@@ -256,6 +314,7 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 	protected void createLoadPanel() {
 		loadPanel.add(mapFileLabel);
 		loadPanel.add(mapFileField);
+		mapFileField.setText(props.getProperty(KEY_DEFAULT_MAP,""));
 		loadPanel.add(loadMapButton);
 		loadPanel.setBorder(BorderFactory.createTitledBorder("Load Map"));
 		loadMapButton.addActionListener(this);
@@ -564,6 +623,7 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 	protected void createConnectPanel() {
 		connectPanel.add(nxtLabel);
 		connectPanel.add(nxtName);
+		nxtName.setText(props.getProperty(KEY_DEFAULT_NXT,""));
 		connectPanel.add(connectButton);
 		connectPanel.add(uploadBox);
 		uploadBox.setSelected(true);
@@ -574,6 +634,8 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 			public void actionPerformed(ActionEvent event) {
 				if (uploadBox.isSelected()) model.connectAndUpload(nxtName.getText(), new File(program));
 				model.connect(nxtName.getText());
+				props.setProperty(KEY_DEFAULT_NXT, nxtName.getText());
+				saveProperties();
 			}
 		});
 	}
@@ -1209,7 +1271,11 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 			model.followPath();
 		} else if (e.getSource() == loadMapButton) {
 			model.loadMap(mapFileField.getText(),pfBox.getSelectedIndex());
-			if (model.getMap() != null) mapLabel.setText("Map: " + mapFileField.getText());
+			if (model.getMap() != null) {
+				mapLabel.setText("Map: " + mapFileField.getText());
+				props.setProperty(KEY_DEFAULT_MAP, mapFileField.getText());
+				saveProperties();
+			}
 			repaint();
 		} else if (e.getSource() == pilot) {
 			configurePilot = new JDialog(frame, "Configure Pilot", true);
@@ -1290,7 +1356,9 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
                 this,
                 "Choose " + name + " Color",
                 mapPanel.colors[index]);
+		log("Setting color " + index + " to " + newColor);
 		mapPanel.colors[index] = newColor;
+		saveProperties();
 		repaint();
 	}
 	
