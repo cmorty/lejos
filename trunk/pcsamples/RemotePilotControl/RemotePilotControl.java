@@ -64,8 +64,8 @@ public class RemotePilotControl implements RemotePilotMethod
       System.out.println("handshake failed - is RCPilot running?");
      return false;
     }
-    dataIn = con.getDataIn();
-    dataOut = con.getDataOut();
+    dataIn = new DataInputStream(con.getInputStream());
+    dataOut = new DataOutputStream(con.getOutputStream());
     if (dataIn != null)
     {
       System.out.println(" data In  OK");

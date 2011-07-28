@@ -46,8 +46,8 @@ public class USBSend {
 			System.exit(1);
 		}
 		
-		DataInputStream inDat = conn.getDataIn();
-		DataOutputStream outDat = conn.getDataOut();
+		DataInputStream inDat = new DataInputStream(conn.getInputStream());
+		DataOutputStream outDat = new DataOutputStream(conn.getOutputStream());
 		
 		int x = 0;
 		for(int i=0;i<100;i++) 
