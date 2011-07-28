@@ -31,6 +31,7 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 	protected final static String KEY_DIFF_PILOT_WHEEL_DIAMETER = "DIFFERENTIAL_PILOT_WHEEL_DIAMETER";
 	protected final static String KEY_DIFF_PILOT_TRACK_WIDTH = "DIFFERENTIAL_PILOT_TRACK_WIDTH";
 	protected final static String KEY_DIFF_PILOT_LEFT_MOTOR = "DIFFERENTIAL_PILOT_LEFT_MOTOR";
+	protected final static String KEY_DIFF_PILOT_RIGHT_MOTOR = "DIFFERENTIAL_PILOT_RIGHT_MOTOR";
 	protected final static String KEY_DIFF_PILOT_REVERSE = "DIFFERENTIAL_PILOT_REVERSE";
 	protected final static String KEY_STEER_PILOT_WHEEL_DIAMETER = "STEERING_PILOT_WHEEL_DIAMETER";
 	protected final static String KEY_STEER_PILOT_DRIVE_MOTOR = "STEERING_PILOT_DRIVE_MOTOR";
@@ -152,9 +153,9 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 	protected JButton pilotOKButton = new JButton("OK");
 	protected String[] motors = {"A","B","C"};
 	protected JLabel leftMotorLabel = new JLabel("Left Motor:");
-	protected JComboBox leftMotorField = new JComboBox(motors);
+	protected JComboBox leftMotorBox = new JComboBox(motors);
 	protected JLabel rightMotorLabel = new JLabel("Right Motor:");
-	protected JComboBox rightMotorField = new JComboBox(motors);
+	protected JComboBox rightMotorBox = new JComboBox(motors);
 	protected JLabel reverseLabel = new JLabel("Reverse?");
 	protected JCheckBox reverseBox = new JCheckBox();
 	protected JPanel steeringPanel = new JPanel();
@@ -368,8 +369,14 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 					case 0:			
 						model.setDifferentialPilotParams(Float.parseFloat(wheelDiameterField.getText()), 
 							Float.parseFloat(trackWidthField.getText()),
-							leftMotorField.getSelectedIndex(), rightMotorField.getSelectedIndex(), 
+							leftMotorBox.getSelectedIndex(), rightMotorBox.getSelectedIndex(), 
 							reverseBox.isSelected());
+						props.setProperty(KEY_DIFF_PILOT_WHEEL_DIAMETER, wheelDiameterField.getText());
+						props.setProperty(KEY_DIFF_PILOT_TRACK_WIDTH, trackWidthField.getText());
+						props.setProperty(KEY_DIFF_PILOT_LEFT_MOTOR, "" + leftMotorBox.getSelectedIndex());
+						props.setProperty(KEY_DIFF_PILOT_RIGHT_MOTOR, "" + rightMotorBox.getSelectedIndex());
+						props.setProperty(KEY_DIFF_PILOT_REVERSE, "" + reverseBox.isSelected());
+						saveProperties();
 						break;
 					}
 					configurePilot.setVisible(false);
@@ -388,11 +395,17 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		differentialPanel.add(trackWidthLabel);
 		differentialPanel.add(trackWidthField);
 		differentialPanel.add(leftMotorLabel);
-		differentialPanel.add(leftMotorField);
+		differentialPanel.add(leftMotorBox);
 		differentialPanel.add(rightMotorLabel);
-		differentialPanel.add(rightMotorField);
+		differentialPanel.add(rightMotorBox);
 		differentialPanel.add(reverseLabel);
 		differentialPanel.add(reverseBox);
+		
+		wheelDiameterField.setText(props.getProperty(KEY_DIFF_PILOT_WHEEL_DIAMETER, "5.6"));
+		trackWidthField.setText(props.getProperty(KEY_DIFF_PILOT_TRACK_WIDTH,"16.0"));
+		leftMotorBox.setSelectedIndex(Integer.parseInt(props.getProperty(KEY_DIFF_PILOT_LEFT_MOTOR, "0")));
+		rightMotorBox.setSelectedIndex(Integer.parseInt(props.getProperty(KEY_DIFF_PILOT_RIGHT_MOTOR, "2")));
+		reverseBox.setSelected(Boolean.parseBoolean(props.getProperty(KEY_DIFF_PILOT_REVERSE, "false")));
 		
 		makeCompactGrid(differentialPanel,
                 5, 2,    //rows, cols
