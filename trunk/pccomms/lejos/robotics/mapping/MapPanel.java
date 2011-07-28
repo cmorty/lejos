@@ -68,6 +68,12 @@ public class MapPanel extends JPanel {
 	// The maximum size of a cluster of particles for a located robot (in cm)
 	protected static final int MAX_CLUSTER_SIZE = 50;
 	
+	protected final Color[] INITIAL_COLORS = {MAP_COLOR, PARTICLE_COLOR, BACKGROUND_COLOR,
+            GRID_COLOR, ESTIMATE_COLOR, CLOSEST_COLOR,
+            MESH_COLOR, NEIGHBOR_COLOR, TARGET_COLOR,
+            PATH_COLOR, MOVE_COLOR, FEATURE_COLOR,
+            WAYPOINT_COLOR, ROBOT_COLOR};
+	
 	public Point viewStart = new Point(0,0);
 	
 	/**
@@ -425,5 +431,9 @@ public class MapPanel extends JPanel {
 		for(int i=0;i<colorKeys.length;i++) {
 			props.setProperty(colorKeys[i], Integer.toHexString(colors[i].getRGB()));
 		}
+	}
+	
+	public void setDefaults() {
+		colors = INITIAL_COLORS;
 	}
 }
