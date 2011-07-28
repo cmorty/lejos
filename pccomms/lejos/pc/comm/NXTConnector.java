@@ -18,9 +18,8 @@ import java.util.Properties;
  */
 public class NXTConnector extends NXTCommLoggable
 {
-	//TODO switch to Input/OutputStream instead of DataInput/OutputStream
-	private DataInputStream dataIn;
-	private DataOutputStream dataOut;
+	private InputStream input;
+	private OutputStream output;
 	private NXTInfo nxtInfo;
 	private NXTComm nxtComm;
 	private boolean debugOn = false;
@@ -291,8 +290,8 @@ public class NXTConnector extends NXTCommLoggable
 			}
 			try
 			{
-				this.dataIn = new DataInputStream(nxtComm.getInputStream());
-				this.dataOut = new DataOutputStream(nxtComm.getOutputStream());
+				this.input = new DataInputStream(nxtComm.getInputStream());
+				this.output = new DataOutputStream(nxtComm.getOutputStream());
 				this.nxtInfo = nxtInfo;
 				this.nxtComm = nxtComm;
 				success = true;
@@ -305,8 +304,8 @@ public class NXTConnector extends NXTCommLoggable
 					nxtComm.close();
 					this.nxtComm = null;
 					this.nxtInfo = null;
-					this.dataOut = null;
-					this.dataIn = null;
+					this.output = null;
+					this.input = null;
 				}
 			}
 		} catch (NXTCommException e) {
@@ -372,27 +371,13 @@ public class NXTConnector extends NXTCommLoggable
 	/**
 	 * @return the <code>InputStream</code> for this connection;
 	 */
-	public InputStream getInputStream() {return dataIn;}
+	public InputStream getInputStream() {return input;}
     
 	/**
 	 * @return the <code>OutputStream</code> for this connection;
 	 */
-	public OutputStream getOutputStream() {return dataOut;}
+	public OutputStream getOutputStream() {return output;}
  
-	/**
-	 * @return the <code>DataInputStream</code> for this connection;
-	 * @deprecated use {@link #getInputStream()} instead
-	 */
-	@Deprecated
-	public DataInputStream getDataIn() {return dataIn;}
-
-	/**
-	 * @return the <code>DataOutputStream</code> for this connection
-	 * @deprecated use {@link #getOutputStream()} instead
-	 */
-	@Deprecated
-	public DataOutputStream getDataOut() {return dataOut;}
-
 	/**
 	 * @return the <code>NXTInfo</code> for this connection
 	 */   
@@ -414,8 +399,8 @@ public class NXTConnector extends NXTCommLoggable
 			this.nxtComm.close();
 			this.nxtComm = null;
 			this.nxtInfo = null;
-			this.dataOut = null;
-			this.dataIn = null;
+			this.output = null;
+			this.input = null;
 		}
 	}
 	
