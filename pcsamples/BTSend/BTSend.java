@@ -50,8 +50,8 @@ public class BTSend {
 			System.exit(1);
 		}
 		
-		DataOutputStream dos = conn.getDataOut();
-		DataInputStream dis = conn.getDataIn();
+		DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+		DataInputStream dis = new DataInputStream(conn.getInputStream());
 				
 		for(int i=0;i<100;i++) {
 			try {

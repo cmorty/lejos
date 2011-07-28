@@ -47,7 +47,7 @@ public class DataViewComms
             return false;
         }
         os = con.getOutputStream();
-        dataIn = con.getDataIn();
+        dataIn = new DataInputStream(con.getInputStream());
         if (dataIn == null)
         {
         	viewer.logMessage("NULL input stream ");

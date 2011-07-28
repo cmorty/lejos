@@ -42,8 +42,8 @@ public class RCNavComms
     {
       return connected;
     }
-    dataIn = connector.getDataIn();
-    dataOut = connector.getDataOut();
+    dataIn = new DataInputStream(connector.getInputStream());
+    dataOut = new DataOutputStream(connector.getOutputStream());
     if (dataIn == null)
     {
       connected = false;

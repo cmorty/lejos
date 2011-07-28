@@ -83,8 +83,8 @@ public class NXJSocketProxy
 			return 1;
 		}
 
-		DataInputStream inFromNXT = conn.getDataIn();
-		DataOutputStream outToNXT = conn.getDataOut();
+		DataInputStream inFromNXT = new DataInputStream(conn.getInputStream());
+		DataOutputStream outToNXT = new DataOutputStream(conn.getOutputStream());
 		
 		// Check to see if socket is a server or a client
 		boolean isServer = inFromNXT.readBoolean();
