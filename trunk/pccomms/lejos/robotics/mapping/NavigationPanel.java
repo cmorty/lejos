@@ -503,6 +503,9 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 					switch (pfBox.getSelectedIndex()) {
 						case 0:
 							model.setMeshParams(Integer.parseInt(gridSizeField.getText()), Integer.parseInt(clearanceField.getText()));
+							props.setProperty(KEY_MESH_CLEARANCE, clearanceField.getText());
+							props.setProperty(KEY_MESH_GRID_SIZE, gridSizeField.getText());
+							saveProperties();
 							break;		
 					}
 					configureMesh.setVisible(false);
@@ -523,6 +526,9 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		meshPanel.add(gridSizeField);
 		meshPanel.add(clearanceLabel);
 		meshPanel.add(clearanceField);
+		
+		gridSizeField.setText(props.getProperty(KEY_MESH_CLEARANCE, ""));
+		clearanceField.setText(props.getProperty(KEY_MESH_GRID_SIZE, ""));
 		
 		makeCompactGrid(meshPanel,
                 2, 2, //rows, cols
