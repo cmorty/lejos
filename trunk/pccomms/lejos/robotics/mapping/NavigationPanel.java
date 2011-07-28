@@ -200,7 +200,7 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 	protected JLabel gearRatioLabel = new JLabel("Gear ratio:");
 	protected JTextField gearRatioField = new JTextField(4);
 	protected JLabel headMotorLabel = new JLabel("Head motor");
-	protected JTextField headMotorField = new JTextField(4);
+	protected JComboBox headMotorBox = new JComboBox(motors);
 	protected JPanel scannerPanel = new JPanel();
 	protected JPanel scannerForm = new JPanel();
 	protected JDialog configureScanner;
@@ -546,6 +546,9 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		detectorPanel.add(maxDistanceLabel);
 		detectorPanel.add(maxDistanceField);
 		
+		delayField.setText(props.getProperty(KEY_DETECTOR_DELAY, ""));
+		maxDistanceField.setText(props.getProperty(KEY_DETECTOR_MAX_DISTANCE, ""));
+		
 		makeCompactGrid(detectorPanel,
                 2, 2, //rows, cols
                 20, 20,        //initX, initY
@@ -558,6 +561,9 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 			public void actionPerformed(ActionEvent e) {
 				try {
 					model.setRangeFeatureParams(Float.parseFloat(maxDistanceField.getText()), Integer.parseInt(delayField.getText()));
+					props.setProperty(KEY_DETECTOR_DELAY, delayField.getText());
+					props.setProperty(KEY_DETECTOR_MAX_DISTANCE, maxDistanceField.getText());
+					saveProperties();
 					configureDetector.setVisible(false);
 				} catch (NumberFormatException nfe) {
 					error("Inalid parameter");
@@ -574,7 +580,10 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		scannerPanel.add(gearRatioLabel);
 		scannerPanel.add(gearRatioField);
 		scannerPanel.add(headMotorLabel);
-		scannerPanel.add(headMotorField);
+		scannerPanel.add(headMotorBox);
+		
+		gearRatioField.setText(props.getProperty(KEY_RANGE_SCANNER_GEAR_RATIO, ""));
+		headMotorBox.setSelectedIndex(Integer.parseInt(props.getProperty(KEY_RANGE_SCANNER_HEAD_MOTOR, "0")));
 		
 		makeCompactGrid(scannerPanel,
                 2, 2, //rows, cols
@@ -587,7 +596,9 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		scannerOKButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					model.setRotatingRangeScannerParams(Integer.parseInt(gearRatioField.getText()), Integer.parseInt(headMotorField.getText()));
+					model.setRotatingRangeScannerParams(Integer.parseInt(gearRatioField.getText()), headMotorBox.getSelectedIndex());
+					props.setProperty(KEY_RANGE_SCANNER_GEAR_RATIO, gearRatioField.getText());
+					saveProperties();
 					configureScanner.setVisible(false);
 				} catch (NumberFormatException nfe) {
 					error("Inalid parameter");
