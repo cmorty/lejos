@@ -1,8 +1,12 @@
 package lejos.nxt.comm;
 
-import lejos.nxt.*;
-import java.io.*;
-import javax.microedition.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import javax.microedition.io.StreamConnection;
+
 import lejos.util.Delay;
 
 
@@ -34,6 +38,7 @@ import lejos.util.Delay;
  * @author Andy Shaw
  */
 public abstract class NXTConnection implements StreamConnection {
+	//TODO this does not properly implement StreamConnection (semantics of open*Stream methods)
     /* Connection modes */
 
     /**
@@ -264,7 +269,7 @@ ioloop: while (offset < len)
 			if (pktOffset < 0)
 			{
 				// Deal with the header, at this point we have at least one header byte
-				pktLen += ((int) inBuf[inOffset++] & 0xff) << (header + pktOffset)*8;
+				pktLen += (inBuf[inOffset++] & 0xff) << (header + pktOffset)*8;
 				pktOffset++;
 				inCnt--;
 				//RConsole.print("Header len " +pktLen + " offset " + pktOffset + "\n");
@@ -331,8 +336,7 @@ ioloop: while (offset < len)
 			if (what == 0 && ret > inCnt) ret = inCnt;
 			return ret;
 		}
-		else
-			return inCnt;
+		return inCnt;
 	}
 
     /** Convenience method that calls <code>available(0)</code>
@@ -484,6 +488,7 @@ ioloop: while (offset < len)
     {
 
     }
+    
 	/**
 	 * Close the connection. Flush any pending output. Informs the remote side
 	 * that the connection is now closed and frees resources.
