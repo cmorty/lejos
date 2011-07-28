@@ -307,8 +307,8 @@ public class LoggerComms {
         dbg("isConnConnected=" + isConnConnected);
         // ref the DIS/DOS to class vars
         if (isConnConnected) {
-            this.dis = this.conn.getDataIn();
-            this.dos = this.conn.getDataOut();
+            this.dis = new DataInputStream(conn.getInputStream());
+            this.dos = new DataOutputStream(conn.getOutputStream());
             this.isEOF=false; // used to flag EOF
         }
         return isConnConnected;
