@@ -378,6 +378,15 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 						props.setProperty(KEY_DIFF_PILOT_REVERSE, "" + reverseBox.isSelected());
 						saveProperties();
 						break;
+					case 1:
+						props.setProperty(KEY_STEER_PILOT_WHEEL_DIAMETER, steerWheelDiameterField.getText());
+						props.setProperty(KEY_STEER_PILOT_DRIVE_MOTOR, "" + driveMotorBox.getSelectedIndex());
+						props.setProperty(KEY_STEER_PILOT_DRIVE_MOTOR_REVERSE, "" + driveReverseBox.isSelected());
+						props.setProperty(KEY_STEER_PILOT_STEERING_MOTOR, "" + steeringMotorBox.getSelectedIndex());
+						props.setProperty(KEY_STEER_PILOT_LEFT_TACHO, leftTachoField.getText());
+						props.setProperty(KEY_STEER_PILOT_RIGHT_TACHO, rightTachoField.getText());
+						saveProperties();
+						break;
 					}
 					configurePilot.setVisible(false);
 				} catch (NumberFormatException nfe) {
@@ -428,6 +437,13 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		steeringPanel.add(leftTachoField);
 		steeringPanel.add(rightTachoLabel);
 		steeringPanel.add(rightTachoField);
+		
+		steerWheelDiameterField.setText(props.getProperty(KEY_STEER_PILOT_WHEEL_DIAMETER, "5.6"));
+		driveMotorBox.setSelectedIndex(Integer.parseInt(props.getProperty(KEY_STEER_PILOT_DRIVE_MOTOR, "0")));
+		driveReverseBox.setSelected(Boolean.parseBoolean(props.getProperty(KEY_STEER_PILOT_DRIVE_MOTOR_REVERSE, "false")));
+		driveMotorBox.setSelectedIndex(Integer.parseInt(props.getProperty(KEY_STEER_PILOT_DRIVE_MOTOR, "0")));
+		leftTachoField.setText(props.getProperty(KEY_STEER_PILOT_LEFT_TACHO, ""));
+		rightTachoField.setText(props.getProperty(KEY_STEER_PILOT_RIGHT_TACHO, ""));
 		
 		makeCompactGrid(steeringPanel,
                 6, 2,    //rows, cols
