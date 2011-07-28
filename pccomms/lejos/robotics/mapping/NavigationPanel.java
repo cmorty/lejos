@@ -123,7 +123,7 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 						mapColor, particleColor, meshColor, targetColor, waypointColor,
 						pathColor, moveColor, featureColor, backgroundColor, estimateColor, closestColor,
 						getPose, randomMove, localize, stop, calculatePath, followPath, pilot, scanner,
-						finder, detector, random, mcl;
+						finder, detector, random, mcl, defaultColors;
 	protected JCheckBoxMenuItem viewGrid, viewMousePosition, viewControls,
 	                          viewConnect, viewCommands, viewMesh, viewLog,
 	                          viewLastMove, viewParticlePanel, viewParticles,
@@ -859,6 +859,9 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		pathColor = new JMenuItem("Path");
 		pathColor.addActionListener(this);
 		colorMenu.add(pathColor);
+		defaultColors = new JMenuItem("Reset Defaults");
+		defaultColors.addActionListener(this);
+		colorMenu.add(defaultColors);
 		robotColor = new JMenuItem("Robot");
 		robotColor.addActionListener(this);
 		colorMenu.add(robotColor);
@@ -1269,6 +1272,10 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 			repaint();
 		} else if (e.getSource() == followPath) {
 			model.followPath();
+		} else if (e.getSource() == defaultColors) {
+			mapPanel.setDefaults();
+			saveProperties();
+			repaint();
 		} else if (e.getSource() == loadMapButton) {
 			model.loadMap(mapFileField.getText(),pfBox.getSelectedIndex());
 			if (model.getMap() != null) {
