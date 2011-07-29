@@ -14,6 +14,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.progress.IProgressService;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
+import org.lejos.nxt.ldt.util.ToolStarter;
 
 /**
  * links and uploads a leJOS NXJ program to the brick
@@ -53,7 +54,7 @@ public class UploadAction extends ActionDelegate {
 			progressMonitor.beginTask("Uploading files...", IProgressMonitor.UNKNOWN);
 			try
 			{
-				File nxjHome = LeJOSNXJUtil.getNXJHome();
+				ToolStarter starter = LeJOSNXJUtil.getCachedToolStarter();
 				//LeJOSNXJPlugin.getDefault().getConsole().activate();
 				
 				ArrayList<String> args = new ArrayList<String>();
@@ -61,7 +62,7 @@ public class UploadAction extends ActionDelegate {
 				for (File f : fileList)
 					args.add(f.getAbsolutePath());
 				
-				int r = LeJOSNXJUtil.invokeTool(nxjHome, LeJOSNXJUtil.TOOL_UPLOAD, args);
+				int r = starter.invokeTool(LeJOSNXJUtil.TOOL_UPLOAD, args);
 				if (r == 0)
 					LeJOSNXJUtil.message("files have been uploaded successfully");
 				else

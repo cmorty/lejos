@@ -106,6 +106,12 @@ public class ClassLoaderToolStarter implements ToolStarter
 		return r2;
 	}
 
+	public int invokeSwingTool(String tool, List<String> args) throws Exception, InvocationTargetException
+	{
+		//TODO move to swing thread
+		return this.invokeTool(tool, args);
+	}
+	
 	public boolean isUp2Date()
 	{
 		//TODO check timestamps of files

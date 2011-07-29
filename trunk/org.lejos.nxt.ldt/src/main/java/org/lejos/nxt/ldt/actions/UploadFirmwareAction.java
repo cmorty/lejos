@@ -14,6 +14,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.actions.ActionDelegate;
 import org.lejos.nxt.ldt.LeJOSPlugin;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
+import org.lejos.nxt.ldt.util.ToolStarter;
 
 /**
  * 
@@ -49,13 +50,13 @@ public class UploadFirmwareAction extends ActionDelegate implements IWorkbenchWi
 			try
 			{
 				// upload firmware
-				File nxjHome = LeJOSNXJUtil.getNXJHome();
+				ToolStarter starter = LeJOSNXJUtil.getCachedToolStarter();
 				
 				ArrayList<String> args = new ArrayList<String>();
 //				args.add(new File(nxjHome, "bin/lejos_nxt_rom.bin").getAbsolutePath());
 //				args.add(new File(nxjHome, "bin/StartUpText.bin").getAbsolutePath());
 				
-				int r = LeJOSNXJUtil.invokeTool(nxjHome, LeJOSNXJUtil.TOOL_FLASH, args);
+				int r = starter.invokeTool(LeJOSNXJUtil.TOOL_FLASH, args);
 				if (r == 0)
 					LeJOSNXJUtil.message("firmware has been uploaded successfully");
 				else
