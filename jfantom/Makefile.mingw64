@@ -28,7 +28,7 @@ fantom.lib: fantom.def
 
 # I think it's safe to use build host's javah
 jfantom.h:
-	javah -o "$@" -classpath ../pccomms/build lejos.pc.comm.NXTCommFantom 
+	"$(LEJOS_NXT_WIN32_JDK)/bin/javah" -o "$@" -classpath ../pccomms/build lejos.pc.comm.NXTCommFantom 
 
 jfantom.dll: jfantom.cpp fantom.lib | jfantom.h 
 	"$(LEJOS_NXT_WIN32_GCC)" $(LEJOS_NXT_WIN32_CFLAGS) \
