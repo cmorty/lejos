@@ -480,6 +480,7 @@ public class PCNavigationModel extends NavigationModel {
 			setPathFinder(finder);
 			panel.repaint();
 			if (mcl != null) mcl.setMap(map);
+			panel.eventReceived(NavEvent.LOAD_MAP);
 			if (connected) {
 				synchronized(receiver) {
 					dos.writeByte(NavEvent.LOAD_MAP.ordinal());
