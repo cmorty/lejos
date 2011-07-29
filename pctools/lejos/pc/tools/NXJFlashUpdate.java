@@ -231,6 +231,7 @@ public class NXJFlashUpdate {
 			throw new NXTCommException("Failed to open device in SAM-BA mode.");
 		}
 		ui.message("Opened device in firmware update mode.");
+		ui.message("Connected to SAM-BA "+samba.getVersion());
 		return samba;
 	}
 

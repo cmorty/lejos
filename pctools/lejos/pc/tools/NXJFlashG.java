@@ -8,6 +8,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
@@ -110,16 +111,25 @@ public class NXJFlashG extends javax.swing.JFrame {
 	private class Flasher extends Thread implements NXJFlashUI {
 		NXJFlashUpdate updater = new NXJFlashUpdate(this);
 
-		public void message(String str) {
-			progressTxt.append(str + "\n");
+		public void message(final String str) {
+			SwingUtilities.invokeLater(new Runnable() {				
+				public void run() {
+					progressTxt.append(str + "\n");
+					progressTxt.setCaretPosition(progressTxt.getDocument().getLength());
+				}
+			});
 		}
 
-		public void progress(String str, int percent) {
-			if (str.length() <= 0)
-				progBarLabel.setText(" ");
-			else
-				progBarLabel.setText(str);
-			progBar.setValue(percent);
+		public void progress(final String str, final int percent) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					if (str.length() <= 0)
+						progBarLabel.setText(" ");
+					else
+						progBarLabel.setText(str);
+					progBar.setValue(percent);
+				}
+			});
 		}
 
 		@Override
@@ -185,7 +195,7 @@ public class NXJFlashG extends javax.swing.JFrame {
 				return samba;
 			
 			NXTInfo[] nxts;
-			progressTxt.append("\nNo devices in firmware update mode were found.\nSearching for other NXT devices.\n");
+			message("\nNo devices in firmware update mode were found.\nSearching for other NXT devices.");
 			NXTConnector conn = new NXTConnector();
 			nxts = conn.search(null, null, NXTCommFactory.USB);
 			if (nxts.length <= 0) {
@@ -194,9 +204,9 @@ public class NXJFlashG extends javax.swing.JFrame {
 								"Warning", JOptionPane.WARNING_MESSAGE);
 				return null;
 			}
-			progressTxt.append("Found " + nxts[0].name
-					+ " Bluetooth address  " + nxts[0].deviceAddress
-					+ "\n\n");
+			message("Found " + nxts[0].name
+					+ " Address  " + nxts[0].deviceAddress
+					+ "\n");
 			// Force into firmware update mode.
 			updater.resetDevice(nxts[0]);
 			return updater.openSambaDevice(30000);
