@@ -1,9 +1,12 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.*;
 import javax.swing.*;
 import lejos.robotics.mapping.MenuAction;
 import lejos.robotics.mapping.NavigationPanel;
+import lejos.robotics.mapping.SliderPanel;
 import lejos.robotics.mapping.NavigationModel.NavEvent;
 import lejos.robotics.localization.*;
 
@@ -37,8 +40,8 @@ import lejos.robotics.localization.*;
 public class MCLCommand extends NavigationPanel {
 	private static final long serialVersionUID = 1L;
 
-	private static final int FRAME_WIDTH = 1000;
-	private static final int FRAME_HEIGHT = 800;
+	private static final int FRAME_WIDTH = 1050;
+	private static final int FRAME_HEIGHT = 700;
 	private static final int NUM_PARTICLES = 200;
 	private static final String TITLE = "MCL Command";
 	private static final int INITIAL_ZOOM = 150;
@@ -46,8 +49,10 @@ public class MCLCommand extends NavigationPanel {
 	private static final String MAP_FILE_NAME = "Room.svg";
 	private static final int MCL_CLEARANCE = 20;
 
-	private static final JButton randomButton = new JButton("Random move");
-	private static final JButton getPoseButton = new JButton("Get Pose");
+	private final JPanel leftPanel = new JPanel();
+	private final JPanel rightPanel = new JPanel();
+	private final JButton randomButton = new JButton("Random move");
+	private final JButton getPoseButton = new JButton("Get Pose");
 	
 	private static MCLPoseProvider mcl = new MCLPoseProvider(null,NUM_PARTICLES,MCL_CLEARANCE);
   
@@ -71,8 +76,10 @@ public class MCLCommand extends NavigationPanel {
   	 */
   	@Override
   	protected void buildGUI() {
+  		setLayout(new BorderLayout());
   		// All panels required
-	    super.buildGUI();
+	    showZoomLabels = true;
+	    buildPanels();
 	    
 	    // Add the Get Pose and Random Move buttons
 		commandPanel.add(getPoseButton);
@@ -108,6 +115,29 @@ public class MCLCommand extends NavigationPanel {
 		
 		// Switch on tool tips for particle weights
 		mapPanel.setToolTipText("");
+		
+	    // Add the required panels, configure them, and set their sizes
+	    rightPanel.setLayout(new BorderLayout());    
+	    loadPanel.setPreferredSize(new Dimension(300,70));
+	    leftPanel.add(loadPanel);
+	    connectPanel.setPreferredSize(new Dimension(300,90));
+	    leftPanel.add(connectPanel);	    
+	    commandPanel.setPreferredSize(new Dimension(300,70));
+	    leftPanel.add(commandPanel);
+	    rightPanel.add(mapPanel, BorderLayout.CENTER);
+	    leftPanel.add(controlPanel);
+	    leftPanel.add(readingsPanel);
+	    readingsPanel.setPreferredSize(new Dimension(300,70));
+	    leftPanel.add(lastMovePanel);
+	    lastMovePanel.setPreferredSize(new Dimension(300,70));
+	    leftPanel.add(particlePanel);
+	    particlePanel.setPreferredSize(new Dimension(300,70));
+	    rightPanel.add(statusPanel, BorderLayout.SOUTH);
+	    leftPanel.setPreferredSize(new Dimension(320,650));
+	    add(leftPanel, BorderLayout.WEST);
+	    add(rightPanel, BorderLayout.CENTER);
+	    controlPanel.setPreferredSize(new Dimension(300,80));
+	    zoomSlider.setValue(INITIAL_ZOOM);
   	}
   
   	/**
@@ -127,6 +157,9 @@ public class MCLCommand extends NavigationPanel {
 		// Enable the Get Pose button when the estimated pose has been sent
 		if (navEvent == NavEvent.ESTIMATED_POSE) {
 			getPoseButton.setEnabled(true);
+		} else if (navEvent == NavEvent.LOAD_MAP) {
+			model.generateParticles();
+			repaint();
 		}
 	}
 	
