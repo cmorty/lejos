@@ -34,7 +34,9 @@ public class ExternalJVMToolStarter implements ToolStarter {
 		
 		ArrayList<String> args2 = new ArrayList<String>();
 		args2.add(f.getAbsolutePath());
-		//TODO add -d32 on OSX
+		String osName = System.getProperty("os.name", "").toLowerCase();
+		if (osName.startsWith("mac os x"))
+			args2.add("-d32");
 		args2.add("-Dnxj.home="+nxjHome.getAbsolutePath());
 		args2.add("-classpath");
 		args2.add(LeJOSNXJUtil.getClasspathString(pccp));
