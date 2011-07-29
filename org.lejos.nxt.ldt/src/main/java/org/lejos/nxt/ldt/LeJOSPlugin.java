@@ -1,5 +1,7 @@
 package org.lejos.nxt.ldt;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -33,6 +35,7 @@ public class LeJOSPlugin extends AbstractUIPlugin {
 	// the leJOS NXJ console
 	private IOConsole console;
 	private PrintWriter consoleWriter;
+	private BufferedReader consoleReader;
 
 	/*
 	 * (non-Javadoc)
@@ -97,20 +100,23 @@ public class LeJOSPlugin extends AbstractUIPlugin {
 	public IOConsole getConsole() {
 		if (console == null) {
 			// create console
-			console = new IOConsole("leJOS NXJ", null, getImageDescriptor("icons/nxt.jpg"), LeJOSPlugin.CONSOLE_CHARSET, false);
+			IOConsole newConsole = new IOConsole("leJOS NXJ", null, getImageDescriptor("icons/nxt.jpg"), LeJOSPlugin.CONSOLE_CHARSET, false);
 			// add to console manager
 			ConsolePlugin cplugin = ConsolePlugin.getDefault();
 			IConsoleManager conMan = cplugin.getConsoleManager();
-			conMan.addConsoles(new IConsole[] { console });
 			
 			try
 			{
-				consoleWriter = new PrintWriter(new OutputStreamWriter(console.newOutputStream(), CONSOLE_CHARSET), true);
+				consoleWriter = new PrintWriter(new OutputStreamWriter(newConsole.newOutputStream(), CONSOLE_CHARSET), true);
+				consoleReader = new BufferedReader(new InputStreamReader(newConsole.getInputStream(), CONSOLE_CHARSET));
 			}
 			catch (UnsupportedEncodingException e)
 			{
 				throw new RuntimeException(e);
 			}
+			
+			conMan.addConsoles(new IConsole[] { newConsole });
+			this.console = newConsole;
 		}
 
 //		// make it visible
@@ -137,5 +143,11 @@ public class LeJOSPlugin extends AbstractUIPlugin {
 	{
 		getConsole();
 		return this.consoleWriter;
+	}
+	
+	public BufferedReader getConsoleReader()
+	{
+		getConsole();
+		return this.consoleReader;
 	}
 }
