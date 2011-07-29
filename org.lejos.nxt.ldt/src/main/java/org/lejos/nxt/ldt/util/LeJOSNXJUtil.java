@@ -33,7 +33,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.console.IOConsole;
 import org.lejos.nxt.ldt.LeJOSNature;
 import org.lejos.nxt.ldt.LeJOSPlugin;
 import org.lejos.nxt.ldt.preferences.PreferenceConstants;
@@ -208,70 +207,6 @@ public class LeJOSNXJUtil {
 	}
 	
 	
-	private static File currentNxjHome;
-	private static ClassLoader currentClassLoader;
-	
-	public static ClassLoader getCachedPCClassLoader(File nxjHome) throws LeJOSNXJException
-	{
-		// TODO if JAR files have changed, throw the old classloader away, and create a new one
-		if (currentClassLoader == null || !nxjHome.equals(currentNxjHome))
-		{
-			message("Initializing LeJOS JDK at "+nxjHome);
-			
-			ArrayList<File> tmp = new ArrayList<File>();
-			buildPCClasspath(nxjHome, tmp);
-			URL[] urls = new URL[tmp.size()];
-			int i = 0;
-			for (File e : tmp)
-			{
-				try
-				{
-					urls[i++] = e.toURI().toURL();
-				}
-				catch (MalformedURLException e1)
-				{
-					throw new RuntimeException(e1);
-				}
-			}
-			
-			URLClassLoader cl = new URLClassLoader(urls);
-			initializeSystemContext(cl, nxjHome);
-			
-			currentNxjHome = nxjHome;
-			currentClassLoader = cl;
-		}
-		return currentClassLoader;
-	}
-
-	private static void initializeSystemContext(ClassLoader cl, File nxjHome) throws LeJOSNXJException
-	{
-		LeJOSPlugin p = LeJOSPlugin.getDefault();
-		Writer consw = p.getConsoleWriter();
-		Reader cinsr = p.getConsoleReader();
-		
-		try
-		{
-			Class<?> c = cl.loadClass("lejos.pc.comm.SystemContext");
-			Method m;
-			
-			m = c.getDeclaredMethod("setNxjHome", String.class);
-			m.invoke(null, nxjHome.getAbsolutePath());
-			
-			m = c.getDeclaredMethod("setOut", Writer.class);
-			m.invoke(null, consw);
-			
-			m = c.getDeclaredMethod("setErr", Writer.class);
-			m.invoke(null, consw);
-			
-			m = c.getDeclaredMethod("setIn", Reader.class);
-			m.invoke(null, cinsr);
-		}
-		catch (Exception e)
-		{
-			throw new LeJOSNXJException("unanble to initialize system context", e);
-		}
-	}
-	
 	public static File getNXJHome() throws LeJOSNXJException
 	{
 		// get NXJ_HOME
@@ -390,28 +325,27 @@ public class LeJOSNXJUtil {
 		return sb.toString();
 	}
 	
-	public static ToolStarter getCachedToolStarter()
+	private static ToolStarter currentStarter;
+	private static boolean currentStarterType;
+	
+	public static synchronized ToolStarter getCachedToolStarter() throws LeJOSNXJException
 	{
 		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
 		boolean separateJVM = p.getBoolean(PreferenceConstants.KEY_SEPARATE_JVM, false);
+		File nxjHome = getNXJHome();
 		
-		//TODO
-		return null;
-	}
-
-	public static int invokeTool(File nxjHome, String tool, List<String> args) throws LeJOSNXJException, ClassNotFoundException,
-			NoSuchMethodException, IllegalAccessException, InvocationTargetException
-	{
-		String[] args2 = args.toArray(new String[args.size()]);
+		if (currentStarter == null || currentStarterType != separateJVM || !nxjHome.equals(currentStarter.getNxjHome()))
+		{
+			if (separateJVM)
+				currentStarter = new ExternalJVMToolStarter(nxjHome);
+			else
+				currentStarter = new ClassLoaderToolStarter(nxjHome);
+			
+			currentStarterType = separateJVM;
+		}
 		
-		ClassLoader cl = getCachedPCClassLoader(nxjHome);
-		Class<?> c = cl.loadClass(tool);
-		Method m = c.getDeclaredMethod("start", String[].class);
-		Object r1 = m.invoke(null, (Object)args2);
-		int r2 = ((Integer)r1).intValue();
-		return r2;
+		return currentStarter;
 	}
-
 
 	public static final String TOOL_UPLOAD = "lejos.pc.tools.NXJUpload";
 	public static final String TOOL_FLASH = "lejos.pc.tools.NXJFlash";

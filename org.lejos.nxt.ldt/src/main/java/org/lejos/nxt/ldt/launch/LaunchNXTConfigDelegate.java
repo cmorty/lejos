@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.lejos.nxt.ldt.preferences.PreferenceConstants;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
+import org.lejos.nxt.ldt.util.ToolStarter;
 
 public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDelegate {
 	public static final String ID_TYPE = "org.lejos.nxt.ldt.LaunchType";
@@ -58,7 +59,7 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 			if (monitor.isCanceled())
 				return;
 		
-			File nxjHome = LeJOSNXJUtil.getNXJHome();
+			ToolStarter starter = LeJOSNXJUtil.getCachedToolStarter();
 
 			String simpleName;
 			int i = mainTypeName.lastIndexOf('.');
@@ -97,7 +98,7 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 				args.add(binaryDebugPath);
 				args.add(mainTypeName);
 
-				r = LeJOSNXJUtil.invokeTool(nxjHome, LeJOSNXJUtil.TOOL_LINK, args);
+				r = starter.invokeTool(LeJOSNXJUtil.TOOL_LINK, args);
 			}
 			finally
 			{
@@ -119,7 +120,7 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 					args.add("-r");			
 				args.add(binaryPath);
 				
-				r = LeJOSNXJUtil.invokeTool(nxjHome, LeJOSNXJUtil.TOOL_UPLOAD, args);
+				r = starter.invokeTool(LeJOSNXJUtil.TOOL_UPLOAD, args);
 				if (r == 0)
 					LeJOSNXJUtil.message("program has been uploaded");
 				else

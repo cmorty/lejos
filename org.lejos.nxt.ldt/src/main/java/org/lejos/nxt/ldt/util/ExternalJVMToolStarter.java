@@ -30,11 +30,18 @@ public class ExternalJVMToolStarter implements ToolStarter {
 		File f = new File(javaHome);
 		if (!f.isDirectory())
 			throw new LeJOSNXJException("java.home property is not a directory");
-		f = new File(f, "bin/java");
+		
+		String osName = System.getProperty("os.name", "").toLowerCase();
+		if (osName.startsWith("windows "))
+			f = new File(f, "bin/java.exe");
+		else
+			f = new File(f, "bin/java");
+		
+		if (!f.isFile())
+			throw new LeJOSNXJException(f.getAbsolutePath()+ " does not exist");
 		
 		ArrayList<String> args2 = new ArrayList<String>();
 		args2.add(f.getAbsolutePath());
-		String osName = System.getProperty("os.name", "").toLowerCase();
 		if (osName.startsWith("mac os x"))
 			args2.add("-d32");
 		args2.add("-Dnxj.home="+nxjHome.getAbsolutePath());
@@ -69,6 +76,11 @@ public class ExternalJVMToolStarter implements ToolStarter {
 		}
 	}
 
+	public int invokeSwingTool(String tool, List<String> args) throws Exception, InvocationTargetException
+	{
+		return this.invokeTool(tool, args);
+	}
+	
 	public boolean isUp2Date()
 	{
 		return true;
@@ -78,4 +90,5 @@ public class ExternalJVMToolStarter implements ToolStarter {
 	{
 		return this.nxjHome;
 	}
+
 }
