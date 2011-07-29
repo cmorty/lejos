@@ -1,11 +1,8 @@
 package org.lejos.nxt.ldt.util;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -216,6 +213,7 @@ public class LeJOSNXJUtil {
 	
 	public static ClassLoader getCachedPCClassLoader(File nxjHome) throws LeJOSNXJException
 	{
+		// TODO if JAR files have changed, throw the old classloader away, and create a new one
 		if (currentClassLoader == null || !nxjHome.equals(currentNxjHome))
 		{
 			message("Initializing LeJOS JDK at "+nxjHome);
@@ -248,21 +246,8 @@ public class LeJOSNXJUtil {
 	private static void initializeSystemContext(ClassLoader cl, File nxjHome) throws LeJOSNXJException
 	{
 		LeJOSPlugin p = LeJOSPlugin.getDefault();
-		IOConsole con = p.getConsole();
 		Writer consw = p.getConsoleWriter();
-//		OutputStream cons = con.newOutputStream();
-//		OutputStreamWriter consw;
-		InputStream cins = con.getInputStream();
-		InputStreamReader cinsr;
-		try
-		{
-//			consw = new OutputStreamWriter(cons, CONSOLE_CHARSET);
-			cinsr = new InputStreamReader(cins, LeJOSPlugin.CONSOLE_CHARSET);
-		}
-		catch (UnsupportedEncodingException e1)
-		{
-			throw new RuntimeException(e1);
-		}
+		Reader cinsr = p.getConsoleReader();
 		
 		try
 		{
@@ -387,6 +372,31 @@ public class LeJOSNXJUtil {
 				}
 			}
 		}
+	}
+	
+	public static String getClasspathString(List<File> c)
+	{
+		StringBuilder sb = new StringBuilder();
+		Iterator<File> i = c.iterator();
+		if (i.hasNext())
+		{
+			sb.append(i.next().getAbsolutePath());
+			while (i.hasNext())
+			{
+				sb.append(File.pathSeparatorChar);
+				sb.append(i.next().getAbsolutePath());
+			}
+		}
+		return sb.toString();
+	}
+	
+	public static ToolStarter getCachedToolStarter()
+	{
+		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
+		boolean separateJVM = p.getBoolean(PreferenceConstants.KEY_SEPARATE_JVM, false);
+		
+		//TODO
+		return null;
 	}
 
 	public static int invokeTool(File nxjHome, String tool, List<String> args) throws LeJOSNXJException, ClassNotFoundException,
