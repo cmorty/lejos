@@ -4,6 +4,7 @@
 package lejos.pc.tools;
 
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -38,6 +39,9 @@ public class NXJFlash implements NXJFlashUI {
 		{		
 			SystemContext.out.print(msg);
 			String tmp = SystemContext.in.readLine();
+			if (tmp == null)
+				throw new EOFException();
+			
 			try{
 				int i = Integer.parseInt(tmp.trim());
 				if (i >= min && i <= max)
