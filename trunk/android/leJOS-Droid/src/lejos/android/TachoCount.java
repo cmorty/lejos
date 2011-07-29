@@ -2,12 +2,10 @@ package lejos.android;
 
 import java.io.IOException;
 
-import lejos.android.LeJOSDroid.*;
+import lejos.android.LeJOSDroid.CONN_TYPE;
 import lejos.nxt.Motor;
 import lejos.nxt.Sound;
 import lejos.nxt.remote.NXTCommand;
-import lejos.pc.comm.NXTCommAndroid;
-import lejos.pc.comm.NXTCommLogListener;
 import lejos.pc.comm.NXTConnector;
 import android.os.Looper;
 import android.util.Log;
