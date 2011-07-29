@@ -617,6 +617,9 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		randomPanel.add(clearLabel);
 		randomPanel.add(clearField);
 		
+		maxDistField.setText(props.getProperty(KEY_RANDOM_MOVE_MAX_DISTANCE, ""));
+		clearField.setText(props.getProperty(KEY_RANDOM_MOVE_CLEARANCE,""));
+		
 		makeCompactGrid(randomPanel,
                 2, 2, //rows, cols
                 20, 20,        //initX, initY
@@ -629,6 +632,9 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 			public void actionPerformed(ActionEvent e) {
 				try {
 					model.sendRandomMoveParams(Float.parseFloat(maxDistField.getText()), Float.parseFloat(clearField.getText()));
+					props.setProperty(KEY_RANDOM_MOVE_MAX_DISTANCE, maxDistField.getText());
+					props.setProperty(KEY_RANDOM_MOVE_CLEARANCE, clearField.getText());
+					saveProperties();
 					configureRandom.setVisible(false);
 				} catch (NumberFormatException nfe) {
 					error("Inalid parameter");
@@ -647,6 +653,10 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		mclPanel.add(borderLabel);
 		mclPanel.add(borderField);
 		
+		numParticlesField.setText(props.getProperty(KEY_MCL_NUM_PARTICLES,""));
+		borderField.setText(props.getProperty(KEY_MCL_CLEARANCE, ""));
+		
+		
 		makeCompactGrid(mclPanel,
                 2, 2, //rows, cols
                 20, 20,        //initX, initY
@@ -658,6 +668,9 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		mclOKButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//model.sendRandomMoveParams(Float.parseFloat(maxDistField.getText()), Float.parseFloat(clearField.getText()));
+				props.setProperty(KEY_MCL_NUM_PARTICLES, numParticlesField.getText());
+				props.setProperty(KEY_MCL_CLEARANCE, borderField.getText());
+				saveProperties();
 				configureMCL.setVisible(false);
 			}
 		});	
