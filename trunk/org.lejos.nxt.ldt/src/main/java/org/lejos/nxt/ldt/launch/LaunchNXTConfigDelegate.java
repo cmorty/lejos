@@ -78,6 +78,7 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 			int r;
 			try
 			{
+				LeJOSNXJUtil.message("Linking ...");
 				monitor.subTask("Linking ...");
 				ArrayList<String> args = new ArrayList<String>();
 				args.add("--writeorder");
@@ -107,12 +108,12 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 			}
 		
 			if (r != 0)
-				LeJOSNXJUtil.error("linking the file failed with exit status "+r);
+				LeJOSNXJUtil.error("Linking the file failed with exit status "+r);
 			else
 			{
-				LeJOSNXJUtil.message("program has been linked successfully");
-				LeJOSNXJUtil.message("uploading ...");
+				LeJOSNXJUtil.message("Program has been linked successfully");
 				
+				LeJOSNXJUtil.message("Uploading ...");
 				monitor.subTask("Uploading ...");					
 				ArrayList<String> args = new ArrayList<String>();
 				LeJOSNXJUtil.getUploadOpts(args);
