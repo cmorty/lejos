@@ -80,10 +80,10 @@ public class MapCommand extends NavigationPanel {
 	    rotate = new SliderPanel(model, NavEvent.ROTATE_TO, "Rotate To:", "Go", 360);
 	    rotate.setPreferredSize(new Dimension(280,80));
 	    commandPanel.add(rotate);
-	    travelSpeed = new SliderPanel(model, NavEvent.TRAVEL_SPEED, "Travel Speed", "Set", 60);
+	    travelSpeed = new SliderPanel(model, NavEvent.TRAVEL_SPEED, "Travel Speed", "Set", Integer.parseInt(props.getProperty(KEY_MAX_TRAVEL_SPEED, "60")));
 	    travelSpeed.setPreferredSize(new Dimension(280,80));
 	    commandPanel.add(travelSpeed);
-	    rotateSpeed = new SliderPanel(model, NavEvent.ROTATE_SPEED, "Rotate Speed", "Set", 60);
+	    rotateSpeed = new SliderPanel(model, NavEvent.ROTATE_SPEED, "Rotate Speed", "Set", Integer.parseInt(props.getProperty(KEY_MAX_ROTATE_SPEED, "60")));
 	    rotateSpeed.setPreferredSize(new Dimension(280,80));
 	    commandPanel.add(rotateSpeed);	    
 	    commandPanel.setPreferredSize(new Dimension(300,370));
