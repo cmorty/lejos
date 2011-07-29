@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 
-import java.util.HashSet;
+//import java.util.HashSet;
 import java.util.LinkedList;
 
 import lejos.pc.comm.NXTComm;
@@ -76,19 +76,18 @@ public class LoggerComms {
     private boolean isConnConnected = false;
     private LinkedList<Byte> readBuffer;
     private boolean isEOF=true;
-    private HashSet<IOStateListener> notifListeners = new HashSet<IOStateListener>();
+//    private HashSet<IOStateListener> notifListeners = new HashSet<IOStateListener>();
     private float bytesPerMillisec=0f;
 
     // constructor
 
-    /** Create an instance
-     * @param queueSize
+    /** Create a LoggerComms instance
      */
-    private LoggerComms(int queueSize) {        
+    public LoggerComms() {        
         String[] thisClass = this.getClass().getName().split("[\\s\\.]");
         THISCLASS=thisClass[thisClass.length-1];
         
-        readBuffer = new LinkedList<Byte>(); // TODO queueSize was passed to ArrayDeque constructor but not needed here
+        readBuffer = new LinkedList<Byte>(); 
         threadInputReader = new InputReader();
         threadInputReader.start();
         
@@ -96,12 +95,6 @@ public class LoggerComms {
 //        addIOStateListener(self_Notifier);
     }
 
-    /**Create a LoggerComms instance
-     */
-    public LoggerComms() {        
-        this(4096);
-    }
-    
     /** Register an IO state listener.
      * @param listener The IO listener instance to register
      * @see IOStateListener
@@ -307,8 +300,8 @@ public class LoggerComms {
         dbg("isConnConnected=" + isConnConnected);
         // ref the DIS/DOS to class vars
         if (isConnConnected) {
-            this.dis = new DataInputStream(conn.getInputStream());
-            this.dos = new DataOutputStream(conn.getOutputStream());
+            this.dis = new DataInputStream(this.conn.getInputStream());
+            this.dos = new DataOutputStream(this.conn.getOutputStream());
             this.isEOF=false; // used to flag EOF
         }
         return isConnConnected;
