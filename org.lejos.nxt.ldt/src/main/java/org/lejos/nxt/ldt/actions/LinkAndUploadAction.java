@@ -23,7 +23,7 @@ public class LinkAndUploadAction extends ActionDelegate {
 
 	@Override
 	public void run(IAction action) {
-		MessageDialog.openInformation(LeJOSPlugin.getShell(), "The plugin has changed", "Please use the 'Run As' menu.");	
+		MessageDialog.openInformation(LeJOSPlugin.getShell(), "The plugin has changed", "Please use the Run As -> LeJOS NXT Program.");	
 	}
 
 	/*
