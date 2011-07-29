@@ -580,8 +580,6 @@ public class NXTSamba {
             	// strip everything after the first whitespace 
             	version = version.replaceAll("\\s.*", "");
                 
-                // Check that we are all in sync
-                System.out.println("Connected to SAM-BA " + version);
                 // Now upload the flash writer helper routine
                 writeBytes(HELPER_CODEADR, helper_code);
                 // And set the the clock into PLL/2 mode ready for writing
