@@ -50,13 +50,13 @@ public class UploadFirmwareAction extends ActionDelegate implements IWorkbenchWi
 			try
 			{
 				// upload firmware
-				ToolStarter starter = LeJOSNXJUtil.getCachedToolStarter();
+				ToolStarter starter = LeJOSNXJUtil.getCachedExternalStarter();
 				
 				ArrayList<String> args = new ArrayList<String>();
 //				args.add(new File(nxjHome, "bin/lejos_nxt_rom.bin").getAbsolutePath());
 //				args.add(new File(nxjHome, "bin/StartUpText.bin").getAbsolutePath());
 				
-				int r = starter.invokeTool(LeJOSNXJUtil.TOOL_FLASH, args);
+				int r = starter.invokeSwingTool(LeJOSNXJUtil.TOOL_FLASHG, args);
 				if (r == 0)
 					LeJOSNXJUtil.message("firmware has been uploaded successfully");
 				else

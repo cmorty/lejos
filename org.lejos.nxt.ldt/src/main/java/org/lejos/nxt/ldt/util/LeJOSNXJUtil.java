@@ -2,14 +2,6 @@ package org.lejos.nxt.ldt.util;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -326,29 +318,45 @@ public class LeJOSNXJUtil {
 	}
 	
 	private static ToolStarter currentStarter;
+	private static ToolStarter currentStarterExt;
 	private static boolean currentStarterType;
-	
-	public static synchronized ToolStarter getCachedToolStarter() throws LeJOSNXJException
+
+	private static synchronized void updateStarters() throws LeJOSNXJException
 	{
 		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
 		boolean separateJVM = p.getBoolean(PreferenceConstants.KEY_SEPARATE_JVM, false);
 		File nxjHome = getNXJHome();
 		
-		if (currentStarter == null || currentStarterType != separateJVM || !nxjHome.equals(currentStarter.getNxjHome()))
+		if (currentStarterExt == null || !nxjHome.equals(currentStarterExt.getNxjHome()) || !currentStarterExt.isUp2Date())
+		{
+			currentStarterExt = new ExternalJVMToolStarter(nxjHome);
+		}
+		if (currentStarter == null || currentStarterType != separateJVM || !nxjHome.equals(currentStarter.getNxjHome()) || !currentStarter.isUp2Date())
 		{
 			if (separateJVM)
-				currentStarter = new ExternalJVMToolStarter(nxjHome);
+				currentStarter = currentStarterExt;
 			else
 				currentStarter = new ClassLoaderToolStarter(nxjHome);
 			
 			currentStarterType = separateJVM;
 		}
-		
+	}
+	
+	public static synchronized ToolStarter getCachedExternalStarter() throws LeJOSNXJException
+	{
+		updateStarters();
+		return currentStarterExt;
+	}
+	
+	public static synchronized ToolStarter getCachedToolStarter() throws LeJOSNXJException
+	{
+		updateStarters();
 		return currentStarter;
 	}
 
 	public static final String TOOL_UPLOAD = "lejos.pc.tools.NXJUpload";
 	public static final String TOOL_FLASH = "lejos.pc.tools.NXJFlash";
+	public static final String TOOL_FLASHG = "lejos.pc.tools.NXJFlashG";
 	public static final String TOOL_LINK_AND_UPLOAD = "lejos.pc.tools.NXJLinkAndUpload";
 	public static final String TOOL_LINK = "lejos.pc.tools.NXJLink";
 }
