@@ -115,6 +115,7 @@ public class NXJFlashG extends JFrame {
 		flasher = new Flasher(format);
 		flasher.start();
 		goButton.setEnabled(false);
+		logArea.setText("");
 	}
 	
 	private void flashComplete() {
@@ -177,23 +178,27 @@ public class NXJFlashG extends JFrame {
 				byte[] fs = format ? updater.createFilesystemImage() : null;
 				NXTSamba nxt = openDevice(updater);
 				if (nxt == null) {
-					message("Unable to locate the device in firmware update mode.\nPlease place the device in reset mode and try again.");
+					message("Unable to locate a device in firmware update mode.");
+					message("Please place the device in reset mode and try again.");
+					JOptionPane.showMessageDialog(NXJFlashG.this,
+							"No NXT found.\nPlease check that it's turned on and connected via USB.",
+							"Warning", JOptionPane.WARNING_MESSAGE);
 				} else {
 					try {
-						updater.updateDevice(nxt, memoryImage, fs, true, true,
-								true);
+						updater.updateDevice(nxt, memoryImage, fs, true, true, true);
 					} finally {
 						nxt.close();
 					}
+					JOptionPane.showMessageDialog(NXJFlashG.this,
+							"Good news: Flashing was successful!\n"+
+							"You may now exit the application or flash another NXT.",
+							"Congratulations!",
+							JOptionPane.INFORMATION_MESSAGE);
 				}
-				JOptionPane.showMessageDialog(NXJFlashG.this,
-						"Good news: Flashing was successful!\n You may now exit the application or flash another NXT.",
-						"Congratulations!",
-						JOptionPane.INFORMATION_MESSAGE);
 			} catch (Exception e) {
 				//TODO better error dialog 
 				JOptionPane.showMessageDialog(NXJFlashG.this,
-						"Bad news: An error has occurred " + e, "Fatal error",
+						"Bad news: An error has occurred\n" + e, "Fatal error",
 						JOptionPane.ERROR_MESSAGE);
 			} finally {
 				SwingUtilities.invokeLater(new Runnable() {
@@ -219,18 +224,14 @@ public class NXJFlashG extends JFrame {
 				return samba;
 			
 			NXTInfo[] nxts;
-			message("\nNo devices in firmware update mode were found.\nSearching for other NXT devices.");
+			message("No devices in firmware update mode were found.");
+			message("Searching for other NXT devices.");
 			NXTConnector conn = new NXTConnector();
 			nxts = conn.search(null, null, NXTCommFactory.USB);
 			if (nxts.length <= 0) {
-				JOptionPane.showMessageDialog(NXJFlashG.this,
-						"No NXT found. \nPlease check that it's turned on and connected.",
-						"Warning", JOptionPane.WARNING_MESSAGE);
 				return null;
 			}
-			message("Found " + nxts[0].name
-					+ " Address  " + nxts[0].deviceAddress
-					+ "\n");
+			message("Found " + nxts[0].name	+ " Address " + nxts[0].deviceAddress);
 			// Force into firmware update mode.
 			updater.resetDevice(nxts[0]);
 			return updater.openSambaDevice(30000);
