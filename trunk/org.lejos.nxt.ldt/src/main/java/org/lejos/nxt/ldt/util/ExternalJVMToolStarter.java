@@ -19,8 +19,8 @@ public class ExternalJVMToolStarter implements ToolStarter {
 		this.nxjHome = nxjHome;
 	}
 	
-	public int invokeTool(String tool, List<String> args) throws Exception, InvocationTargetException
-	{
+	public Process createProcess(String tool, List<String> args)
+			throws LeJOSNXJException {
 		ArrayList<File> pccp = new ArrayList<File>();
 		LeJOSNXJUtil.buildPCClasspath(nxjHome, pccp);
 		
@@ -51,17 +51,21 @@ public class ExternalJVMToolStarter implements ToolStarter {
 		args2.addAll(args);
 		String[] args3 = args2.toArray(new String[args2.size()]);
 		
-		LeJOSPlugin p2 = LeJOSPlugin.getDefault();
-		Writer consw = p2.getConsoleWriter();
-		
-		Process t;
 		try {
-			t = Runtime.getRuntime().exec(args3);
+			return Runtime.getRuntime().exec(args3);
 		} catch (IOException e) {
 			throw new LeJOSNXJException("Failed to start external JVM", e);
 		}
+	}
+
+	public int invokeTool(String tool, List<String> args) throws Exception, InvocationTargetException
+	{
+		LeJOSPlugin p2 = LeJOSPlugin.getDefault();
+		Writer consw = p2.getConsoleWriter();
 		
-		t.getOutputStream().close();
+		Process t = createProcess(tool, args);
+		
+		t.getOutputStream().close();		
 		new PipeThread(new InputStreamReader(t.getInputStream()), consw).start();
 		new PipeThread(new InputStreamReader(t.getErrorStream()), consw).start();
 		//TODO join with threads
@@ -78,7 +82,13 @@ public class ExternalJVMToolStarter implements ToolStarter {
 
 	public int invokeSwingTool(String tool, List<String> args) throws Exception, InvocationTargetException
 	{
-		return this.invokeTool(tool, args);
+		Process t = createProcess(tool, args);
+		t.getOutputStream().close();
+		t.getInputStream().close();
+		t.getErrorStream().close();
+		
+		//TODO what to return? How to check that program actually started?
+		return 0;
 	}
 	
 	public boolean isUp2Date()
