@@ -14,10 +14,12 @@ package lejos.nxt;
  * Similarly, it is said that a button is released (release event), if its states changed from down to up.
  * 
  * <b>Thread Safety</b>:
- * This class is - in principle - thread safe, that is you can call its methods from multiple Threads simultaneously.
- * However, each event is delivered to one thread only.
- * It is strongly recommended, that you write your own Thread, which waits for button events
- * and dispatches the events to anybody who's interested.
+ * All methods that return buttons states can be used safely from multiple threads, even while
+ * a call to one of the waitFor* methods active. However, it is not safe to invoke waitFor* methods
+ * in parallel from different threads. This includes the waitFor* methods of different buttons.
+ * For example Button.ENTER.waitForPress() must not be invoked in parallel to Button.ESCAPE.waitForPress()
+ * or the static Button.waitForAnyEvent(). In case this is needed, it is strongly recommended that you write
+ * your own Thread, which waits for button events and dispatches the events to anyone who's interested.
  */
 public class Button implements ListenerCaller
 {
@@ -27,13 +29,9 @@ public class Button implements ListenerCaller
   public static final int ID_ESCAPE = 0x8;
   private static final int ID_ALL = 0xf;
   
-  // the events method call state methods, so it may occur that both locks are obtained
-  // in the order LOCK_EVENT -> Button.class. It must never occur that a Thread tries to obtain
-  // the locks in the opposite order.
-  private static final Object LOCK_EVENT = new Object();
-  
   private static final int PRESS_EVENT_SHIFT = 0;
   private static final int RELEASE_EVENT_SHIFT = 8;
+  private static final int WAITFOR_RELEASE_SHIFT = 8;
   
   public static final String VOL_SETTING = "lejos.keyclick_volume";
   
@@ -67,7 +65,7 @@ public class Button implements ListenerCaller
   private static int clickVol;
   private static int clickLen;
   private static int curButtonsS;
-  // protected by LOCK_EVENT monitor
+  // not protected by any monitor
   private static int curButtonsE;
 
   
@@ -119,30 +117,37 @@ public class Button implements ListenerCaller
 		return (readButtons() & iCode) != 0;
 	}
 
-  /**
-   * Wait until the button is released.
-   */
-  public final void waitForPressAndRelease()
-  {
-    NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
-    try{
-        event.waitEvent(iCode << PRESS_EVENT_SHIFT, NXTEvent.WAIT_FOREVER);
-        readButtons();
-        event.waitEvent(iCode << RELEASE_EVENT_SHIFT, NXTEvent.WAIT_FOREVER);
-        readButtons();
-    }
-    catch(InterruptedException e)
-    {
-        // TODO: need to work out how to do this properly
-        // preserve state of interrupt flag
-        Thread.currentThread().interrupt();
-        return;
-    }
-    finally
-    {
-        event.free();
-    }
-  }
+	/**
+	 * Check if the current state of the button is up.
+	 * 
+	 * @return <code>true</code> if button is down, <code>false</code> if up.
+	 */
+	public final boolean isUp()
+	{
+		return (readButtons() & iCode) == 0;
+	}
+
+	/**
+	 * Wait until the button is released.
+	 */
+	public final void waitForPress() {
+		while ((Button.waitForAnyPress(0) & iCode) == 0)
+		{
+			// wait for next press
+		}
+	}
+
+	/**
+	 * Wait until the button is released.
+	 */
+	public final void waitForPressAndRelease() {
+		this.waitForPress();
+		int tmp = iCode << WAITFOR_RELEASE_SHIFT;
+		while ((Button.waitForAnyEvent(0) & tmp) == 0)
+		{
+			// wait for next event
+		}
+	}
 
 	/**
 	 * This method discards and events.
@@ -150,10 +155,7 @@ public class Button implements ListenerCaller
 	 */
 	public static void discardEvents()
 	{
-		synchronized (LOCK_EVENT)
-		{
-			curButtonsE = getButtons();
-		}
+		curButtonsE = getButtons();
 	}
   
 	/**
@@ -171,21 +173,18 @@ public class Button implements ListenerCaller
 		NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
 		try
 		{
-			synchronized (LOCK_EVENT)
+			int oldDown = curButtonsE;
+			while (true)
 			{
-				int oldDown = curButtonsE;
-				while (true)
-				{
-					long curTime = System.currentTimeMillis();
-					if (curTime >= end)
-						return 0;
-					
-					event.waitEvent((oldDown << RELEASE_EVENT_SHIFT) | ((ID_ALL ^ oldDown) << PRESS_EVENT_SHIFT),
-							end - curTime);
-					int newDown = curButtonsE = readButtons();
-					if (newDown != oldDown)
-						return ((oldDown & (~newDown)) << 8) | (newDown & (~oldDown)); 
-				}
+				long curTime = System.currentTimeMillis();
+				if (curTime >= end)
+					return 0;
+				
+				event.waitEvent((oldDown << RELEASE_EVENT_SHIFT) | ((ID_ALL ^ oldDown) << PRESS_EVENT_SHIFT),
+						end - curTime);
+				int newDown = curButtonsE = readButtons();
+				if (newDown != oldDown)
+					return ((oldDown & (~newDown)) << WAITFOR_RELEASE_SHIFT) | (newDown & (~oldDown)); 
 			}
 		}
 		catch(InterruptedException e)
@@ -214,24 +213,21 @@ public class Button implements ListenerCaller
 		NXTEvent event = NXTEvent.allocate(NXTEvent.BUTTONS, 0, 10);
 		try
 		{
-			synchronized (LOCK_EVENT)
+			int oldDown = curButtonsE;
+			while (true)
 			{
-				int oldDown = curButtonsE;
-				while (true)
-				{
-					long curTime = System.currentTimeMillis();
-					if (curTime >= end)
-						return 0;
-					
-					event.waitEvent((oldDown << RELEASE_EVENT_SHIFT) | ((ID_ALL ^ oldDown) << PRESS_EVENT_SHIFT),
-							end - curTime);
-					int newDown = curButtonsE = readButtons();
-					int pressed = newDown & (~oldDown);
-					if (pressed != 0)
-						return pressed;
-					
-					oldDown = newDown;
-				}
+				long curTime = System.currentTimeMillis();
+				if (curTime >= end)
+					return 0;
+				
+				event.waitEvent((oldDown << RELEASE_EVENT_SHIFT) | ((ID_ALL ^ oldDown) << PRESS_EVENT_SHIFT),
+						end - curTime);
+				int newDown = curButtonsE = readButtons();
+				int pressed = newDown & (~oldDown);
+				if (pressed != 0)
+					return pressed;
+				
+				oldDown = newDown;
 			}
 		}
 		catch(InterruptedException e)
