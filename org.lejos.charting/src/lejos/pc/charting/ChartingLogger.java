@@ -6,20 +6,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-import org.jfree.chart.ChartFrame;
 
 
-/** Swing application entry point for NXT Charting Logger GUI client
+/**
+ * Swing application entry point for NXT Charting Logger GUI client
  * 
- *  @author Kirk P. Thompson
+ * @author Kirk P. Thompson
  */
 public class ChartingLogger {
-    DataLogger dataLogger;
     private LogChartFrame frame;
-    private ChartFrame pOCFrame;
     private MyWindowListener myWindowListener = new MyWindowListener();
     
     public ChartingLogger() {
@@ -37,9 +32,8 @@ public class ChartingLogger {
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(myWindowListener);
         frame.setVisible(true);
-
-
     }
+    
     private class MyWindowListener extends WindowAdapter {
         public void windowClosed(WindowEvent e) {
             System.out.println("windowClosed");
@@ -51,22 +45,5 @@ public class ChartingLogger {
             frame.closeCurrentConnection();
             frame.dispose();
         }
-    }
-
-    public static void main(String[] args) {
-        try {
-//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        SwingUtilities.invokeLater(new Runnable(){
-            public void run() {
-                new ChartingLogger();
-            }
-        });
-        
-        //        
     }
 }
