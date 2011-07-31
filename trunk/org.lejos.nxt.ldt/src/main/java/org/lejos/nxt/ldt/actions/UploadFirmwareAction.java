@@ -1,6 +1,5 @@
 package org.lejos.nxt.ldt.actions;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
