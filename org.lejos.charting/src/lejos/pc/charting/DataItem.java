@@ -4,11 +4,11 @@ package lejos.pc.charting;
  * <code>DataItem</code> instance
  */
 class DataItem {
-    public static int DT_INTEGER = 3;
-    public static int DT_LONG    = 4;
-    public static int DT_FLOAT   = 5;
-    public static int DT_DOUBLE  = 6;
-    public static int DT_STRING  = 7;
+    public static final int DT_INTEGER = 3;
+    public static final int DT_LONG    = 4;
+    public static final int DT_FLOAT   = 5;
+    public static final int DT_DOUBLE  = 6;
+    public static final int DT_STRING  = 7;
     
     /** The wrapper object of the datatype.
      */
