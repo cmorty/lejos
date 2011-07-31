@@ -30,7 +30,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  * @author Kirk P. Thompson
  */
 public class CustomChartPanel extends JPanel implements ChangeListener, AxisChangeListener, ChartProgressListener, ChartChangeListener{
-    private final int SLIDER_MAX= 10000;
+    private static final int SLIDER_MAX= 10000;
     private LoggingChart loggingChartPanel = new LoggingChart();
     private JSlider domainScaleSlider = new JSlider();
     private JLabel xYValueLabel = new JLabel();
