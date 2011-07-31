@@ -58,9 +58,9 @@ public class UploadFirmwareAction extends ActionDelegate implements IWorkbenchWi
 				
 				int r = starter.invokeSwingTool(LeJOSNXJUtil.TOOL_FLASHG, args);
 				if (r == 0)
-					LeJOSNXJUtil.message("firmware has been uploaded successfully");
+					LeJOSNXJUtil.message("nxjflashg has been started successfully");
 				else
-					LeJOSNXJUtil.error("flashing the firmware failed with exit status "+r);
+					LeJOSNXJUtil.error("starting nxjflashg failed with exit status "+r);
 			}
 			finally
 			{
@@ -71,7 +71,7 @@ public class UploadFirmwareAction extends ActionDelegate implements IWorkbenchWi
 				t = ((InvocationTargetException)t).getTargetException();
 			
 			// log
-			LeJOSNXJUtil.error("flashing the firmware failed", t);
+			LeJOSNXJUtil.error("starting nxjflashg failed", t);
 		}
 	}
 
