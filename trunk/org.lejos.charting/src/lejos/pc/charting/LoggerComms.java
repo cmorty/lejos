@@ -29,28 +29,6 @@ import lejos.pc.comm.NXTInfo;
  * @author Kirk P. Thompson
  */
 public class LoggerComms {
-    /**Change listener to report an <code>IOException</code> from <code>LoggerComms</code>. Any <code>IOException</code>, including
-     * <code>EOFException</code> will invoke <code>EOFEvent</code>. This design choice was made because once we have any IO problem
-     * or EOF, we need to treat the stream like an EOF and close and clean so downstream consumers can act appropriately.
-     */
-    public interface IOStateListener {
-        /** Invoked when the connection <code>DataInputStream</code> throws an <code>IOException</code>, including <code>EOFException</code>.
-         * @param BufferedBytes The number of bytes available in the buffer. These can be read by <code>LoggerComms.getByte()</code>.
-         * @see LoggerComms#getByte
-         */
-        void EOFEvent(int BufferedBytes);
-    }
-
-    /** because I must eat my own dog food, reap what I sow, etc.
-     */
-    private class Self_Notifier implements IOStateListener {
-
-        public void EOFEvent(int BufferedBytes) {
-            dbg("EOFEvent. avail buffered bytes=" + BufferedBytes);
-            closeConnection();
-        }
-    }
-
     /** Used to get more details from <code>NXTConnector</code> for the Status pane. Notice that the GUI
      * forks STDOUT to the Status textarea so using <code>System.out.println()</code> works to put data into
      * the Status textarea.
@@ -76,11 +54,10 @@ public class LoggerComms {
     private boolean isConnConnected = false;
     private LinkedList<Byte> readBuffer;
     private boolean isEOF=true;
-//    private HashSet<IOStateListener> notifListeners = new HashSet<IOStateListener>();
     private float bytesPerMillisec=0f;
-
+    private String connectedNXTName=null;
+    
     // constructor
-
     /** Create a LoggerComms instance
      */
     public LoggerComms() {        
@@ -90,30 +67,8 @@ public class LoggerComms {
         readBuffer = new LinkedList<Byte>(); 
         threadInputReader = new InputReader();
         threadInputReader.start();
-        
-//        Self_Notifier self_Notifier = new Self_Notifier();
-//        addIOStateListener(self_Notifier);
     }
 
-    /** Register an IO state listener.
-     * @param listener The IO listener instance to register
-     * @see IOStateListener
-     */
-//    public void addIOStateListener(IOStateListener listener) {
-////        dbg("Listenr: " + listener.toString());
-//        notifListeners.add(listener);
-//    }
-
-    /** De-register a IO state listener.
-     * @param listener The IO listener instance to de-register
-     * @return <code>true</code> if listener was de-registered. <code>false</code> if passed <code>listener</code> is
-     * not registered
-     */
-//    public boolean removeIOStateListener(IOStateListener listener) {
-//        return notifListeners.remove(listener);
-//    }
-    
-    
     private void dbg(String msg){
         System.out.println(THISCLASS + "-" + msg);
     }
@@ -158,10 +113,6 @@ public class LoggerComms {
                         bytesPerMillisec=(float)readCount / (System.currentTimeMillis() - beginTime);
                     }
                 } catch (IOException e) {
-                    // notify listeners of EOFException
-//                    for (IOStateListener listener:notifListeners){
-//                        listener.EOFEvent(readBuffer.size());
-//                    }
                     closeConnection();
                 } 
             }
@@ -178,7 +129,6 @@ public class LoggerComms {
      * actual connection <code>DataInputStream</code> throws an <code>IOException</code>.
      * @return the number of available bytes
      * @see #getByte
-     * @see #addIOStateListener
      * @throws EOFException
      */
     public int available() throws EOFException{
@@ -282,14 +232,6 @@ public class LoggerComms {
         this.conn.addLogListener(new ll());
 
         dbg("connect() to: " + NXT + ", NXTConnector this.conn=" + this.conn.toString());
-        
-        // Connect to any NXT over Bluetooth        
-//        NXTInfo NXTInfo = new NXTInfo(NXTCommFactory.BLUETOOTH, "DORK-1", "00:16:53:00:37:AF");
-//        connected = this.conn.connectTo(NXTInfo, NXTComm.PACKET);
-//        connected = this.conn.connectTo();
-//        connected = this.conn.connectTo("DORK-1","00:16:53:00:37:AF",NXTCommFactory.BLUETOOTH,NXTComm.PACKET);
-//        isBTConnected = this.conn.connectTo("btspp://" + NXT);
-        
         // connect to NXT over USB or BT
         NXTInfo[] theNXTInfo = this.conn.search(NXT,null,NXTCommFactory.ALL_PROTOCOLS);
         if (theNXTInfo.length==0) {
@@ -300,6 +242,7 @@ public class LoggerComms {
         dbg("isConnConnected=" + isConnConnected);
         // ref the DIS/DOS to class vars
         if (isConnConnected) {
+            this.connectedNXTName=theNXTInfo[0].name;
             this.dis = new DataInputStream(this.conn.getInputStream());
             this.dos = new DataOutputStream(this.conn.getOutputStream());
             this.isEOF=false; // used to flag EOF
@@ -311,7 +254,14 @@ public class LoggerComms {
      * @return <code>true</code> if so
      */
     public boolean isConnected(){
-        return isConnConnected;
+        return this.isConnConnected;
+    }
+
+    /** Return the name of the NXT last sucessfully connected to.
+     * @return name of the NXT
+     */
+    public String getConnectedNXTName() {
+        return this.connectedNXTName;
     }
     
     /** Flush the output streams, close the connection and clean up. This is called automatically by the buffering reader
