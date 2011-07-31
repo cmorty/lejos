@@ -19,8 +19,6 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 
 import java.util.Date;
-import java.util.Formatter;
-import java.util.Locale;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.swing.BorderFactory;
