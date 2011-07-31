@@ -19,6 +19,8 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 
 import java.util.Date;
+import java.util.Formatter;
+import java.util.Locale;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.swing.BorderFactory;
@@ -713,7 +715,7 @@ public class LogChartFrame extends JFrame {
         for (int i = 0; i < 10000; i++) {
             if (i%100==0) value2=(float)(Math.random()*5000-2500);
             if (i % 10 == 0) {
-                loggerHook.logLineAvailable(String.format("%1$-1d\t%2$-13.4f\t%3$-13.4f\n", x, Math.sin(value), value2));
+                loggerHook.logLineAvailable(new Formatter(Locale.US).format("%1$-1d\t%2$-13.4f\t%3$-13.4f\n", x, Math.sin(value), value2).toString());
                 x += 10;
                 value += .1f;
             }
