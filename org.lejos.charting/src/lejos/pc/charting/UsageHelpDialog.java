@@ -9,7 +9,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 
 
-public class UsageHelpDialog extends JDialog {
+class UsageHelpDialog extends JDialog {
 
     private JLabel jLabel1 = new JLabel();
     private GridLayout verticalFlowLayout1 = new GridLayout(0,1);

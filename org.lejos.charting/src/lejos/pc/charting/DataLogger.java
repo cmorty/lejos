@@ -5,18 +5,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import java.util.Formatter;
 import java.util.HashSet;
-import java.util.Locale;
 
 
 /**
- * This class provides the PC side of the <code>NXTDataLogger</code>. One instance per log session. The session ends when NXT ends the connection.
- * <p>This class can also be used stand-alone on the command line. First arg is the NXT name, second is the log file name. 
- * If no file specified, STDOUT is used for output and no file is created. Default connection is to "NXT". File specified is 
- * overwritten if it exists.
+ * This class provides the PC side of the <code>NXTDataLogger</code>. One instance per log session. The session ends when 
+ * the NXT ends the connection.
+ * 
  * @see LoggerComms
- * @see net.mosen.nxt.instrumentation.NXTDataLogger 
+ * @see lejos.util.NXTDataLogger 
  * @author Kirk P. Thompson
  */
 public class DataLogger {
@@ -37,22 +34,16 @@ public class DataLogger {
     private final byte COMMAND_FLUSH        = 3; 
     
     private final String THISCLASS;
-
-    /** For holding read and parsed objects (values) and their output format
-     */
-    private class ReadValsStruct{
-        public Object value = null;
-        public String format = "-1d";
-    }
     
     /** Change listener to notify of events when log data has been recieved, a data stream EOF, and header name changed.
      * @see  #addLoggerListener
      */
     public interface LoggerListener {
-        /** Invoked when a log line (all fields read as per headers) is logged. 
-         * @param logLine The line of tab-delimited data (includes \n).
+        /** Invoked when a log line (all fields read as per headers) is logged. Each logged data field/column is represented by a 
+         * <code>DataItem</code> instance.
+         * @param logDataItems The array of <code>DataItem</code> instances representing a line of logged data.
          */
-        void logLineAvailable(String logLine);
+        void logLineAvailable(DataItem[] logDataItems);
 
         /**Invoked when an <code>EOFException</code> occurs from the <code>LoggerComms</code>.
          * @see LoggerComms
@@ -74,17 +65,15 @@ public class DataLogger {
     /** Internal Logger implementation 'cause we must eat our own dogfood too...
      */
     private class Self_Logger implements LoggerListener{
-        public void logLineAvailable(String logLine){
+        public void logLineAvailable(DataItem[] logDataItems){
             if (validLogFile) {
                 try {
-                    fw.write(logLine);
+                    fw.write(parseLogData(logDataItems));
                 } catch (IOException e) {
-                    // TODO what to do?
-                    System.out.print("!** logLineAvailableEvent IOException: logline=\"" + logLine + "\"");
+                    System.out.print("!** logLineAvailableEvent IOException");
                     e.printStackTrace();
                 }
             }
-//            System.out.print(logLine);
         }
 
         public void dataInputStreamEOF() {
@@ -93,7 +82,6 @@ public class DataLogger {
                 if (fw!=null) fw.close();
                 fw=null;
             } catch (IOException e) {
-                // TODO
                 System.out.print("!** dataInputStreamEOF IOException in fw.close()");
                 e.printStackTrace();
             }
@@ -114,7 +102,6 @@ public class DataLogger {
                 try {
                     fw.write(sb.toString());
                 } catch (IOException e) {
-                    // TODO what to do?
                     System.out.print("!** logFieldNamesChanged IOException: sb.toString()=\"" + sb.toString() + "\"");
                     e.printStackTrace();
                 }
@@ -127,17 +114,16 @@ public class DataLogger {
     private File logFile = null;
     private FileWriter fw;
     private HashSet<LoggerListener> listeners = new HashSet<LoggerListener>();
-    private StringBuilder logLine = new StringBuilder();
     private Self_Logger dataLogger;
     private boolean validLogFile=false;;
     private int elementsPerLine = 1;
-    private ReadValsStruct[] readVals = new ReadValsStruct[elementsPerLine];
     private boolean fileAppend;
     
     /**Create an instance. logging output goes to STDOUT and specified logfile. <code>LoggerComms</code>
      * connection must already be established.
-     * @param connManager the instance to use for the connection
-     * @param logFile the log file name to use. File will be overwritten if exists
+     * @param connManager The <code>LoggerComms</code> instance to use for the connection.
+     * @param logFile The log file name to use. 
+     * @param fileAppend If <code>false</code>, the specified File will be overwritten if exists. 
      * @see LoggerComms
      * @see #startLogging
      */
@@ -168,45 +154,6 @@ public class DataLogger {
         System.out.println(THISCLASS + "-" + msg);
     }
     
-    /** Execute the logger from a command line. 1st arg is NXT name, 2nd is log file name. 
-     * If no file specified, STDOUT is used. Default connection is to "NXT". File is 
-     * overwritten if exists
-     * @param args
-     */
-    public static void main(String[] args){
-        if (args.length==0) {
-            System.out.println("parameters: NXT-name [Filename]");
-            System.out.println("If [Filename] is not specifed, stdout is used.");
-            return;
-        }
-        LoggerComms connManager = new LoggerComms();
-        String connectTo="NXT";
-        System.out.println("args:");
-        for (int i=0;i<args.length;i++) System.out.println(i + ": " + args[i]);
-        System.out.println("----------------");
-        if (args.length>0) {
-            connectTo=args[0];
-        }
-        System.out.println("Attempting to connect to " + connectTo + "...");
-        if (!connManager.connect(connectTo)) System.exit(-1);
-        System.out.println("Connected to " + connManager.getConnectedNXTName());
-        DataLogger dlogger=null;
-        if (args.length>1) {
-            dlogger = new DataLogger(connManager,new File(args[1]), false);
-        } else {
-            dlogger = new DataLogger(connManager);
-        }
-        
-        // start the logger
-        try {
-            dlogger.startLogging();
-        } catch (IOException e) {
-            System.out.println("IOException in startLogging(): " + e);
-            e.printStackTrace();
-        }
-        
-    }
-    
     /**Register a Logger listener.
      * @param listener The Logger listener instance to register
      * @see LoggerListener
@@ -233,7 +180,7 @@ public class DataLogger {
         try {
             Thread.sleep(sleepval);
         } catch (InterruptedException e) {
-            // TODO
+            ; // do nothing
         }
     }
 
@@ -262,6 +209,7 @@ public class DataLogger {
         byte streamedDataType = DT_INTEGER;  // also set as default in lejo.util.NXTDataLogger
         byte[] tempBytes;
         String FQPfileName=null;
+        DataItem[] readVals = new DataItem[elementsPerLine];
         
         if (!this.connectionManager.isConnected()) {
             throw new IOException("No Connection in startLogging()!");
@@ -308,9 +256,9 @@ public class DataLogger {
                     case COMMAND_ITEMSPERLINE: // byte 3=0: Set elementsPerLine to 4th byte
                         elementsPerLine = ((int)readBytes[1])&0xff;
                         // if we have residual, output it
-                        if (endOfLineCycler>0) dumpLine(); // send readvals[] to output
+                        if (endOfLineCycler>0) notifyListeners(readVals); // send readvals[] to output
                         endOfLineCycler = 0;
-                        readVals = new ReadValsStruct[elementsPerLine]; // set to new bounds. 
+                        readVals = new DataItem[elementsPerLine]; // set to new bounds. 
                         break;
                     case COMMAND_DATATYPE:
                         streamedDataType = readBytes[1];
@@ -319,7 +267,7 @@ public class DataLogger {
                     case COMMAND_SETHEADERS:
                         elementsPerLine=((int)readBytes[1])&0xff;
                         // if we have residual, output it
-                        if (endOfLineCycler>0) dumpLine(); // send readvals[] to output
+                        if (endOfLineCycler>0) notifyListeners(readVals); // send readvals[] to output
                         // get the headers from the stream
                         String[] fieldNames = new String[elementsPerLine];
                         for (int i=0;i<elementsPerLine;i++){
@@ -335,12 +283,12 @@ public class DataLogger {
                             listener.logFieldNamesChanged(fieldNames);
                         }
                         endOfLineCycler = 0;
-                        readVals = new ReadValsStruct[elementsPerLine]; // set to new bounds. 
+                        readVals = new DataItem[elementsPerLine]; // set to new bounds. 
                         break;
                     case COMMAND_FLUSH:
-                        if (endOfLineCycler>0) dumpLine(); // send readvals[] to output
+                        if (endOfLineCycler>0) notifyListeners(readVals); // send readvals[] to output
                         endOfLineCycler = 0;
-                        readVals = new ReadValsStruct[elementsPerLine]; // init the row holding array
+                        readVals = new DataItem[elementsPerLine]; // init the row holding array
                         break;
                     default:
                         // allow the bytes to pass through to datatype parsers if no CASE matches (this should not happen but...)
@@ -356,13 +304,13 @@ public class DataLogger {
                     case DT_SHORT:
                     case DT_INTEGER:
                         // Parse an int from the 4 bytes
-                        readVals[endOfLineCycler] = new ReadValsStruct();
+                        readVals[endOfLineCycler] = new DataItem();
                         readVals[endOfLineCycler].value = new Integer(this.parseInt(readBytes));
-                        readVals[endOfLineCycler].format = "-1d";
+                        readVals[endOfLineCycler].datatype=DT_INTEGER;
                         break;
                     case DT_LONG:
                         // Parse a long from the 4 + 4 more bytes
-                        readVals[endOfLineCycler] = new ReadValsStruct();
+                        readVals[endOfLineCycler] = new DataItem();
                         tempBytes = new byte[8];
                         System.arraycopy(readBytes,0,tempBytes,0,4);
                         try {
@@ -372,16 +320,16 @@ public class DataLogger {
                         }
                         System.arraycopy(readBytes,0,tempBytes,4,4);
                         readVals[endOfLineCycler].value = new Long(this.parseLong(tempBytes));
-                        readVals[endOfLineCycler].format = "-1d";
+                        readVals[endOfLineCycler].datatype=streamedDataType;
                         break;
                     case DT_FLOAT:
-                        readVals[endOfLineCycler] = new ReadValsStruct();
+                        readVals[endOfLineCycler] = new DataItem();
                         readVals[endOfLineCycler].value = new Float(this.parseFloat(readBytes));
-                        readVals[endOfLineCycler].format = "-32.16e";
+                        readVals[endOfLineCycler].datatype=streamedDataType;
                         break;
                     case DT_DOUBLE:
                         // Parse a long from the 4 + 4 more bytes
-                        readVals[endOfLineCycler] = new ReadValsStruct();
+                        readVals[endOfLineCycler] = new DataItem();
                         tempBytes = new byte[8];
                         System.arraycopy(readBytes,0,tempBytes,0,4);
                         try {
@@ -392,28 +340,26 @@ public class DataLogger {
                         System.arraycopy(readBytes,0,tempBytes,4,4);
                         readVals[endOfLineCycler].value = new Double(this.parseDouble(tempBytes));
 //                        dbg(this.parseLong(tempBytes));
-                        readVals[endOfLineCycler].format = "-32.16e";
+                        readVals[endOfLineCycler].datatype=streamedDataType;
                         break;
                     case DT_STRING:
-                        readVals[endOfLineCycler] = new ReadValsStruct();
+                        readVals[endOfLineCycler] = new DataItem();
                         try {
                             readVals[endOfLineCycler].value = new String(this.parseString(readBytes));
                         } catch (EOFException e){
                             break mainloop;
                         }
-                        readVals[endOfLineCycler].format = "s";
+                        readVals[endOfLineCycler].datatype=streamedDataType;
                         break;
-                    // TODO add DOUBLE case
-                    
                     default:
                         dbg("!** Invalid streamedDataType:" + streamedDataType);
                 }
                 // if we have cycled through enough items, do EOL and output the entire line as a formatted string
                 if (endOfLineCycler == elementsPerLine - 1) {
                     // send readvals[] to output and reset endOfLineCycler, readVals[]
-                    dumpLine(); 
+                    notifyListeners(readVals); 
                     endOfLineCycler = 0;
-                    readVals = new ReadValsStruct[elementsPerLine]; // set to new bounds. 
+                    readVals = new DataItem[elementsPerLine]; // set to new bounds. 
                 } else
                     endOfLineCycler++;
             } // END BLOCK: If not a command, output the data
@@ -426,23 +372,41 @@ public class DataLogger {
         dbg("clearing all listeners");
         listeners.clear();
     }
-
-    /** send readvals[] to output and reset endOfLineCycler, readVals[]
-     */
-    private void dumpLine() {
-        for (int i = 0; i < readVals.length; i++) {
-            if (readVals[i]==null) continue;
-            this.logLine.append(new Formatter(Locale.US).format("%1$" + readVals[i].format, readVals[i].value).toString().trim());
-            if (i < readVals.length - 1)
-                this.logLine.append("\t");
+    
+    private static String getDataTypeFormat(int datatype){
+        switch (datatype) {
+            case 3:
+            case 4:
+                return "-1d";
+            case 5:
+            case 6:
+                return "-32.16e";
+            case 7:
+                return "s";
+            default:
         }
-        this.logLine.append("\n");
-
+        return "1d";
+    }
+    
+    public static String parseLogData(DataItem[] logDataItems){
+        StringBuilder logLineBuilder = new StringBuilder();
+        for (int i = 0; i < logDataItems.length; i++) {
+            if (logDataItems[i]==null) continue;
+            logLineBuilder.append(String.format("%1$" + getDataTypeFormat(logDataItems[i].datatype), logDataItems[i].value).toString().trim());
+            if (i < logDataItems.length - 1)
+                logLineBuilder.append("\t");
+        }
+        logLineBuilder.append("\n"); 
+        return logLineBuilder.toString();
+    }
+    
+    /** send readvals[] to output
+     */
+    private void notifyListeners(DataItem[] readVals) {
         // notify all listeners that a new line of data fields is available
         for (LoggerListener listener: listeners) {
-            listener.logLineAvailable(logLine.toString());
+            listener.logLineAvailable(readVals);
         }
-        this.logLine = new StringBuilder();
     }
     
     private void hexByteOut(String desc, long value, int bits) {
@@ -465,7 +429,7 @@ public class DataLogger {
             doWait(50);
         }
        
-        // Get 4 bytes from the buffer. Null pointer if the poll() method in btmanager.getByte() has no data. TODO verify poll() behaviour
+        // Get 4 bytes from the buffer. Null pointer if the poll() method in btmanager.getByte() has no data. 
         for (int i=0;i<byteCount;i++) {
             readBytes[i]=connectionManager.getByte();
         }
