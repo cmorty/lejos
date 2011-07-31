@@ -86,7 +86,6 @@ public class DataLogger {
         }
 
         public void dataInputStreamEOF() {
-//            BTManagerEOF=true;
             dbg("!** dataInputStreamEOF from NXT");
             try {
                 if (fw!=null) fw.close();
@@ -122,7 +121,6 @@ public class DataLogger {
         }
     }
 
-    //private boolean connectionManagerEOF = false;
     private LoggerComms connectionManager = null;
     private File logFile = null;
     private FileWriter fw;
@@ -154,15 +152,6 @@ public class DataLogger {
         // internal logger callback object
         this.dataLogger = new Self_Logger();
         addLoggerListener(dataLogger);
-        
-        // AIC for detecting EOF from LoggerComms
-//        LoggerComms.IOStateListener EOFListener = new LoggerComms.IOStateListener(){
-//            public void EOFEvent(int BufferedBytes) {
-//                dbg("!** EOFEvent from LoggerComms");
-//                connectionManagerEOF=true;
-//            }
-//        };
-//        this.connectionManager.addIOStateListener(EOFListener);
     }
 
     /** Create an instance. logging output goes to STDOUT only since no file specified.
@@ -198,6 +187,7 @@ public class DataLogger {
         }
         System.out.println("Attempting to connect to " + connectTo + "...");
         if (!connManager.connect(connectTo)) System.exit(-1);
+        System.out.println("Connected to " + connManager.getConnectedNXTName());
         DataLogger dlogger=null;
         if (args.length>1) {
             dlogger = new DataLogger(connManager,new File(args[1]), false);
@@ -470,10 +460,6 @@ public class DataLogger {
     {
         // wait until byteCount bytes are avail or we have a EOF
         while (connectionManager.available() < byteCount) {
-//            if (connectionManagerEOF) {
-//                dbg("connectionManagerEOF");
-//                throw new EOFException("getBytes(): EOF in btmanager and partial data avail. byteCount=" + byteCount);
-//            }
             doWait(50);
         }
        

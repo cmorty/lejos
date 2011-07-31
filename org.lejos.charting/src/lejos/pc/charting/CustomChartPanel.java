@@ -14,7 +14,6 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
@@ -31,7 +30,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  * @author Kirk P. Thompson
  */
 public class CustomChartPanel extends JPanel implements ChangeListener, AxisChangeListener, ChartProgressListener, ChartChangeListener{
-    private final int SLIDER_MAX= 1000;
+    private final int SLIDER_MAX= 10000;
     private LoggingChart loggingChartPanel = new LoggingChart();
     private JSlider domainScaleSlider = new JSlider();
     private JLabel xYValueLabel = new JLabel();
@@ -98,7 +97,7 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         this.add(xYValueLabel, null);
         this.add(loggingChartPanel, null);
         
-        this.getChart().addChangeListener(this); // to capture dataset changes to populate row count
+        loggingChartPanel.getChart().addChangeListener(this); // to capture dataset changes to populate row count
         
         // set up springs
         layout.putConstraint(SpringLayout.WEST, loggingChartPanel, 0, SpringLayout.WEST, this);
@@ -120,41 +119,9 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         
     }
     
-    protected JFreeChart getChart() {
-        return loggingChartPanel.getChart();
+    protected LoggingChart getLoggingChartPanel() {
+        return loggingChartPanel;
     }
-    
-    
-//    /** Wrapper for <code>LoggingChart.setSeries()</code>
-//     * @param seriesNames
-//     * @return
-//     * @see LoggingChart#setSeries
-//     */
-//    protected int setSeries(String[] seriesNames){
-//        return loggingChartPanel.setSeries(seriesNames);
-//    }
-//
-//    /** Wrapper for <code>LoggingChart.addDataPoints()</code>
-//     * @param logLine
-//     * @see LoggingChart#setSeries
-//     */
-//    protected void addDataPoints(String logLine) {
-//        loggingChartPanel.addDataPoints(logLine);
-//    }
-//
-//    /** Wrapper for <code>LoggingChart.setTitle()</code>
-//     * @param title
-//     * @see LoggingChart#setTitle
-//     */
-//    protected void setTitle(String title){
-//        loggingChartPanel.setTitle(title);
-//    }
-    
-//    protected void initZoomWorkaround(){
-//        // WORKAROUND ALERT: we do this to establish internal vars in chart classes so initial restoreAutoBounds() does the Y axis as well
-//        loggingChartPanel.zoomOutBoth(0,0);
-//        loggingChartPanel.restoreAutoBounds();
-//    }
     
     public void axisChanged(AxisChangeEvent event) {
         Range domainRange = ((NumberAxis)event.getAxis()).getRange();
@@ -170,15 +137,8 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         domainScaleSlider.setValue((int)((float)domainRange.getLength()/(maxXVal-minXVal)*SLIDER_MAX));
         // this ensures that the mouse wheel zoom works after messing with slider and not clicking on chart
         if (!loggingChartPanel.getChart().isNotify()) loggingChartPanel.getChart().setNotify(true);
-//        loggingChartPanel.setChartDirty();
     }
     
-//    protected void setChartDirty(){
-//        loggingChartPanel.setChartDirty();
-//    }
-    
-
- 
     public void chartProgress(ChartProgressEvent event) {
 //        System.out.println("chartProgress");
         long xval = (long)loggingChartPanel.getChart().getXYPlot().getDomainCrosshairValue();
@@ -199,9 +159,6 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
 
     public void chartChanged(ChartChangeEvent event) {
         try {
-//            if (event.getChart()==null) return;
-//            if (event.getChart().getXYPlot()==null) return;
-//            if (event.getChart().getXYPlot().getDataset()==null) return;
             if (event.getChart().getXYPlot().getDataset().getSeriesCount()==0) return;
             dataRowsLabel.setText(String.format("%1$-,1d rows", event.getChart().getXYPlot().getDataset().getItemCount(0)));
         } catch (NullPointerException e) {
@@ -246,7 +203,7 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
       * @see #addDataPoints
       */
     public int setSeries(String[] seriesNames){
-    // TODO change to not specify timestamp and do timestamp automatically
+    // ENHANCE change to not specify timestamp and do timestamp automatically
         return loggingChartPanel.setSeries(seriesNames);
     }
     
