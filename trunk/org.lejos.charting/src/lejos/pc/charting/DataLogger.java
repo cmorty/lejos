@@ -17,21 +17,21 @@ import java.util.HashSet;
  * @author Kirk P. Thompson
  */
 public class DataLogger {
-    private final byte ATTENTION1 = (byte)(0xff&0xff);
-    private final byte ATTENTION2 = (byte)(0xab&0xff);
-    private final byte COMMAND_ITEMSPERLINE = 0;
-    private final byte COMMAND_DATATYPE     = 1;    
+    private static final byte ATTENTION1 = (byte)0xff;
+    private static final byte ATTENTION2 = (byte)0xab;
+    private static final byte COMMAND_ITEMSPERLINE = 0;
+    private static final byte COMMAND_DATATYPE     = 1;    
     // sub-commands of COMMAND_DATATYPE
-    private final byte    DT_BOOLEAN = 0;
-    private final byte    DT_BYTE    = 1;
-    private final byte    DT_SHORT   = 2;
-    private final byte    DT_INTEGER = 3;        
-    private final byte    DT_LONG    = 4;
-    private final byte    DT_FLOAT   = 5;
-    private final byte    DT_DOUBLE  = 6;
-    private final byte    DT_STRING  = 7;
-    private final byte COMMAND_SETHEADERS   = 2;  
-    private final byte COMMAND_FLUSH        = 3; 
+    private static final byte    DT_BOOLEAN = 0;
+    private static final byte    DT_BYTE    = 1;
+    private static final byte    DT_SHORT   = 2;
+    private static final byte    DT_INTEGER = 3;        
+    private static final byte    DT_LONG    = 4;
+    private static final byte    DT_FLOAT   = 5;
+    private static final byte    DT_DOUBLE  = 6;
+    private static final byte    DT_STRING  = 7;
+    private static final byte COMMAND_SETHEADERS   = 2;  
+    private static final byte COMMAND_FLUSH        = 3; 
     
     private final String THISCLASS;
     
@@ -375,17 +375,19 @@ public class DataLogger {
     
     private static String getDataTypeFormat(int datatype){
         switch (datatype) {
-            case 3:
-            case 4:
-                return "-1d";
-            case 5:
-            case 6:
-                return "-32.16e";
-            case 7:
+            case DT_INTEGER:
+                return "-16d";
+            case DT_LONG:
+                return "-24d";
+            case DT_FLOAT:
+                return "-16.8e";
+            case DT_DOUBLE:
+                return "-24.16e";
+            case DT_STRING:
                 return "s";
             default:
+                return "-1d";
         }
-        return "1d";
     }
     
     public static String parseLogData(DataItem[] logDataItems){
