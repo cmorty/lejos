@@ -195,7 +195,7 @@ public class LogChartFrame extends JFrame {
             for (int i=0;i<values.length;i++) { 
                 if (seriesDefs[i].chartable) {
                     try {
-                        seriesTempvalues[chartableCount]=Double.valueOf(values[i]);
+                        seriesTempvalues[chartableCount]=Double.parseDouble(values[i]);
                     } catch (NumberFormatException e){
                         System.err.format("%1$s.parseDataPoints: iterator [%2$d] invalid value: %3$s", this.getClass().getName(), i, values[i]);
                     }
