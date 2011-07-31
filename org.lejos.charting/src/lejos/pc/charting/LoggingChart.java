@@ -30,18 +30,18 @@ import org.jfree.ui.RectangleInsets;
  */
 public class LoggingChart extends ChartPanel{
     private final String THISCLASS;
-    private final float DOMAIN_SIZE_MULT=1.01f; // provides a small gap between series and chart right,left edges on domain axis
-    private final int MAX_SCALE=10000;
+    private static final float DOMAIN_SIZE_MULT=1.01f; // provides a small gap between series and chart right,left edges on domain axis
+    private static final int MAX_SCALE=10000;
 
     /** No domain range limiting
      */
-    final int DAL_UNLIMITED=0;
+    final static int DAL_UNLIMITED=0;
     /** Domain range limiting by Time (in ms)
      */
-    final int DAL_TIME=1;
+    final static int DAL_TIME=1;
     /** Domain range limiting by Count (# of domain items in dataset(s))
      */
-    final int DAL_COUNT=2;
+    final static int DAL_COUNT=2;
     
     private Range domainRange;
     private XYSeriesCollection[] dataset = new XYSeriesCollection[4];

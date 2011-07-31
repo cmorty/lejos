@@ -56,9 +56,9 @@ import org.jfree.chart.JFreeChart;
  */
 public class LogChartFrame extends JFrame {
     private final String THISCLASS;
-    private final int MAXDOMAIN_DATAPOINT_LIMIT= 10000;
-    private final int MAXDOMAIN_TIME_LIMIT = 30000;
-    private final int MINDOMAIN_LIMIT= 10;
+    private static final int MAXDOMAIN_DATAPOINT_LIMIT= 10000;
+    private static final int MAXDOMAIN_TIME_LIMIT = 30000;
+    private static final int MINDOMAIN_LIMIT= 10;
     
     private JButton jButtonConnect = new JButton();
     private JPanel connectionPanel = new JPanel();
