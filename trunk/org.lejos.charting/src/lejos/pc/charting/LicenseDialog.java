@@ -15,8 +15,7 @@ import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-
-public class LicenseDialog extends JDialog {
+class LicenseDialog extends JDialog {
     private JScrollPane jScrollPane1 = new JScrollPane();
     private JTextArea licenseTextArea = new JTextArea();
     private JTextArea jLabel1 = new JTextArea();

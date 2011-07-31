@@ -97,7 +97,7 @@ public class LogChartFrame extends JFrame {
     
     private JPanel chartDomLimitsPanel = new JPanel();
     private JSlider domainDisplayLimitSlider = new JSlider();
-    private int domainLimitSliderValue=0; //MAXDOMAIN_DATAPOINT_LIMIT;
+    private int domainLimitSliderValue=MAXDOMAIN_DATAPOINT_LIMIT;
     private JRadioButton useTimeRadioButton = new JRadioButton();
     private JRadioButton useDataPointsRadioButton = new JRadioButton();
     private JCheckBox datasetLimitEnableCheckBox = new JCheckBox();
@@ -187,17 +187,28 @@ public class LogChartFrame extends JFrame {
          * @param logLine
          * @return
          */
-        private double[] parseDataPoints(String logLine) {
-            String[] values = logLine.split("\t");
-            double[] seriesTempvalues = new double[values.length];
+        private double[] parseDataPoints(DataItem[] logDataItems) {
+            double[] seriesTempvalues = new double[logDataItems.length];
             int chartableCount=0;
            
-            for (int i=0;i<values.length;i++) { 
+            for (int i=0;i<logDataItems.length;i++) { 
                 if (seriesDefs[i].chartable) {
-                    try {
-                        seriesTempvalues[chartableCount]=Double.parseDouble(values[i]);
-                    } catch (NumberFormatException e){
-                        System.err.format("%1$s.parseDataPoints: iterator [%2$d] invalid value: %3$s", this.getClass().getName(), i, values[i]);
+                    switch (logDataItems[i].datatype) {
+                        case 3: // DT_INTEGER
+                            seriesTempvalues[chartableCount]=((Integer)logDataItems[i].value).doubleValue();
+                            break;
+                        case 4: // DT_LONG
+                            seriesTempvalues[chartableCount]=((Long)logDataItems[i].value).doubleValue();
+                            break;
+                        case 5: // DT_FLOAT
+                            seriesTempvalues[chartableCount]=((Float)logDataItems[i].value).doubleValue();
+                            break;
+                        case 6: // DT_DOUBLE
+                            seriesTempvalues[chartableCount]=((Double)logDataItems[i].value).doubleValue();
+                            break;
+                        case 7: // DT_STRING
+                            chartableCount--;
+                        default:
                     }
                     chartableCount++;
                 }
@@ -207,12 +218,13 @@ public class LogChartFrame extends JFrame {
             return seriesTempvalues2;
         }
         
-        public void logLineAvailable(String logLine) {
+        public void logLineAvailable(DataItem[] logDataItems) {
             // tell the chart it has some data
-            customChartPanel.addDataPoints(parseDataPoints(logLine)); 
-            LogChartFrame.this.logDataQueue.add(logLine);
+            customChartPanel.addDataPoints(parseDataPoints(logDataItems)); 
+            // queue text line for log textarea
+            LogChartFrame.this.logDataQueue.add(DataLogger.parseLogData(logDataItems));
         }
-
+        
         public void dataInputStreamEOF() {
             closeCurrentConnection();
             // allows user to use interactive stuff without chart glitch    
@@ -710,12 +722,18 @@ public class LogChartFrame extends JFrame {
     private void populateSampleData() {
         float value=0, value2=0;
         int x=0;
-        
+        DataItem[] di = {new DataItem(), new DataItem(), new DataItem()};
+        di[0].datatype=DataItem.DT_INTEGER;
+        di[1].datatype=DataItem.DT_FLOAT;
+        di[2].datatype=DataItem.DT_FLOAT;
         loggerHook.logFieldNamesChanged(new String[]{"System_ms!n!1","Sine!Y!2","Random!y!3"}); 
         for (int i = 0; i < 10000; i++) {
             if (i%100==0) value2=(float)(Math.random()*5000-2500);
             if (i % 10 == 0) {
-                loggerHook.logLineAvailable(new Formatter(Locale.US).format("%1$-1d\t%2$-13.4f\t%3$-13.4f\n", x, Math.sin(value), value2).toString());
+                di[0].value=new Integer(x);
+                di[1].value=new Float(Math.sin(value));
+                di[2].value=new Float(value2);
+                loggerHook.logLineAvailable(di);
                 x += 10;
                 value += .1f;
             }
