@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import java.util.Formatter;
 import java.util.HashSet;
+import java.util.Locale;
 
 
 /**
@@ -430,7 +432,7 @@ public class DataLogger {
     private void dumpLine() {
         for (int i = 0; i < readVals.length; i++) {
             if (readVals[i]==null) continue;
-            this.logLine.append(String.format("%1$" + readVals[i].format, readVals[i].value).trim());
+            this.logLine.append(new Formatter(Locale.US).format("%1$" + readVals[i].format, readVals[i].value).toString().trim());
             if (i < readVals.length - 1)
                 this.logLine.append("\t");
         }
