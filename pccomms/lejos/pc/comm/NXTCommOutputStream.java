@@ -14,10 +14,18 @@ public class NXTCommOutputStream extends OutputStream {
 		baos = new ByteArrayOutputStream();
 	}
 	
+	@Override
+	public void write(byte[] b, int off, int len) throws IOException
+	{
+		baos.write(b, off, len);
+	}
+	
+	@Override
 	public void write(int b) throws IOException {
 		baos.write(b);
 	}
 	
+	@Override
 	public void flush() throws IOException {
         if (baos.size() > 0)
         {
