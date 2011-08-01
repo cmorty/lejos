@@ -79,7 +79,8 @@ public class NXTCommInputStream extends InputStream {
     /**
      * returns the number of bytes in the input buffer - can be read without blocking
      */
-    public int available() throws IOException
+    @Override
+	public int available() throws IOException
     {
        return bufSize - bufIdx;
     }
@@ -87,7 +88,8 @@ public class NXTCommInputStream extends InputStream {
     /**
      * Close the stream
      */
-    public void close() throws IOException
+    @Override
+	public void close() throws IOException
     { 
         endOfFile = true;
     }
