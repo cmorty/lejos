@@ -32,21 +32,21 @@ import lejos.util.Delay;
  * @author Kirk P. Thompson
  */
 public class NXTDataLogger implements Logger{
-    private final byte ATTENTION1 = (byte)(0xff&0xff);
-    private final byte ATTENTION2 = (byte)(0xab&0xff);
+    private static final byte ATTENTION1 = (byte)0xff;
+    private static final byte ATTENTION2 = (byte)0xab;
 //    private final byte COMMAND_ITEMSPERLINE = 0;
-    private final byte COMMAND_DATATYPE     = 1;    
+    private static final byte COMMAND_DATATYPE     = 1;    
     // sub-commands of COMMAND_DATATYPE
-//    private final byte    DT_BOOLEAN = 3;
-//    private final byte    DT_BYTE    = 3;
-//    private final byte    DT_SHORT   = 3;
-    private final byte    DT_INTEGER = 3;        
-    private final byte    DT_LONG    = 4;
-    private final byte    DT_FLOAT   = 5;
-    private final byte    DT_DOUBLE  = 6;
+//    private static final byte    DT_BOOLEAN = 3;
+//    private static final byte    DT_BYTE    = 3;
+//    private static final byte    DT_SHORT   = 3;
+    private static final byte    DT_INTEGER = 3;        
+    private static final byte    DT_LONG    = 4;
+    private static final byte    DT_FLOAT   = 5;
+    private static final byte    DT_DOUBLE  = 6;
 //    private final byte    DT_STRING  = 7;
-    private final byte COMMAND_SETHEADERS   = 2;  
-    private final byte COMMAND_FLUSH        = 3;    
+    private static final byte COMMAND_SETHEADERS   = 2;  
+    private static final byte COMMAND_FLUSH        = 3;    
     
     private DataOutputStream dos = null;
     private DataInputStream dis = null;
