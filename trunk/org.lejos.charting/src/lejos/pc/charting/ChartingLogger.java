@@ -1,9 +1,13 @@
 package lejos.pc.charting;
 
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
 
@@ -19,16 +23,11 @@ public class ChartingLogger {
     
     public ChartingLogger() {
         frame = new LogChartFrame();
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension frameSize = frame.getSize();
-        if (frameSize.height > screenSize.height) {
-            frameSize.height = screenSize.height;
-        }
-        if (frameSize.width > screenSize.width) {
-            frameSize.width = screenSize.width;
-        }
-        frame.setLocation((screenSize.width - frameSize.width) / 2, 
-                          (screenSize.height - frameSize.height) / 2);
+        // Toolkit.getDefaultToolkit().getScreenSize() doesn't work for multi monitor setups
+        Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+        frame.setLocation(center.x - frameSize.width / 2, 
+                          center.y - frameSize.height / 2);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(myWindowListener);
         frame.setVisible(true);
