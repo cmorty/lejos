@@ -1,6 +1,8 @@
 package lejos.pc.comm;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Implementation of OutputStream over NXTComm using Bluetooth.

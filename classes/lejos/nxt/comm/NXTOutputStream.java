@@ -1,6 +1,7 @@
 package lejos.nxt.comm;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Implements an OutputStream over NXT connections.
@@ -17,13 +18,16 @@ public class NXTOutputStream extends OutputStream {
         buffer = new byte[buffSize];
 	}
 	
-    public synchronized void write(int b) throws IOException {
+    @Override
+	public synchronized void write(int b) throws IOException {
     	if (numBytes >= buffer.length) {
     		flush();
     	}
     	buffer[numBytes] = (byte) b;
     	numBytes++;  	
     }
+    
+    //TODO implement write(byte[], int, int)
     
     @Override
 	public synchronized void flush() throws IOException{
@@ -32,4 +36,10 @@ public class NXTOutputStream extends OutputStream {
 			numBytes = 0;
 		}
 	}
+    
+    @Override
+    public void close() throws IOException {
+    	this.flush();
+    	//TODO mark stream closed
+    }
 }
