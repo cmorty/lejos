@@ -34,4 +34,10 @@ public class NXTCommOutputStream extends OutputStream {
             baos.reset();
         }
 	}
+	
+	@Override
+	public void close() throws IOException {
+		this.flush();
+		//TODO mark this stream as closed
+	}
 }
