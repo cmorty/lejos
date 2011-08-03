@@ -73,13 +73,12 @@ public class TestLogger {
             new LogColumn("Random", LogColumn.DT_FLOAT, false) // do not chart this series
         });
 
-        for (int i=0;i<1000;i++){ 
+        for (int i=0;i<2500;i++){ 
             this.dlog.writeLog((float)Math.sin(value));
             this.dlog.writeLog(i);
             this.dlog.writeLog((float)(Math.random()*5-2.5));
             this.dlog.finishLine();
             value+=.1f;
-            Delay.msDelay(10);
         }
         
         try {
