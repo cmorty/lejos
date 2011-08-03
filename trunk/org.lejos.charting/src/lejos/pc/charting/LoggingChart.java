@@ -7,8 +7,6 @@ import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.SwingUtilities;
-
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
@@ -59,7 +57,6 @@ public class LoggingChart extends ChartPanel{
     private int domainAxisLimitMode=DAL_UNLIMITED;
     private int domainAxisLimitValue=0;
     private boolean emptyChart=true;
-    private boolean haltAdd=false;
     private Range[] yExtents=new Range[RANGE_AXIS_COUNT];
     
     private class SeriesDef {
@@ -81,7 +78,7 @@ public class LoggingChart extends ChartPanel{
             e.printStackTrace();
         }
         
-        // chart updater thread
+        // chart updater, clipping, and domain scroller thread
         final Thread t1 = new Thread(new Runnable(){
             public void run() {
                 while (true) {
@@ -114,26 +111,17 @@ public class LoggingChart extends ChartPanel{
                                 }
                                 
                                 // if we have a clipping mode set...
-                                lockblock: if (LoggingChart.this.domainAxisLimitMode!=DAL_UNLIMITED) {
+                                if (LoggingChart.this.domainAxisLimitMode!=DAL_UNLIMITED) {
                                     // coordinate with addDataPoints to prevent it from adding whilst we remove
-                                    LoggingChart.this.haltAdd=true;
-                                    synchronized (lockObj2) {
-                                        try {
-                                            lockObj2.wait(100);
-                                        } catch (InterruptedException e) {
-                                            LoggingChart.this.haltAdd=false;
-                                            lockObj2.notify();
-                                            break lockblock;
-                                        }
-                                    }
                                     int length=((XYSeriesCollection)plot.getDataset()).getItemCount(0);
                                     int endIndex=0;
-                                    synchblock1: synchronized (lockObj3) { // ensure that no repaint is in progress
+                                    synchronized (lockObj2) {
                                         // do clipping here
                                         if (LoggingChart.this.domainAxisLimitMode==DAL_COUNT) {
                                             endIndex = length-LoggingChart.this.domainAxisLimitValue;
                                         } else if (LoggingChart.this.domainAxisLimitMode==DAL_TIME){
                                             double currentDomainVal=((XYSeriesCollection)plot.getDataset()).getDomainUpperBound(false);
+                                            // find the range to meet TIME criteria
                                             for (int i=length-1;i>=0;i--) {
                                                 if (currentDomainVal-(((XYSeriesCollection)plot.getDataset()).getXValue(0,i))>
                                                     LoggingChart.this.domainAxisLimitValue) 
@@ -143,27 +131,22 @@ public class LoggingChart extends ChartPanel{
                                                 }
                                             }
                                         } else {
-                                            break synchblock1;
+                                            break; 
                                         }
                                         // delete the identified range from all datasets and their series
-                                        if (endIndex>0) {
-                                            LoggingChart.this.getChart().setNotify(false);
-                                            for (int i=0;i<plot.getDatasetCount();i++){
-                                                for (int j=0;j<plot.getDataset(i).getSeriesCount();j++) {
-                                                    ((XYSeriesCollection)plot.getDataset(i)).getSeries(j).delete(0,endIndex-1);
+                                        synchronized (lockObj3) {
+                                            if (endIndex>0) {
+                                                LoggingChart.this.getChart().setNotify(false);
+                                                for (int i=0;i<plot.getDatasetCount();i++){
+                                                    for (int j=0;j<plot.getDataset(i).getSeriesCount();j++) {
+                                                        ((XYSeriesCollection)plot.getDataset(i)).getSeries(j).delete(0,endIndex-1);
+                                                    }
                                                 }
+                                                LoggingChart.this.getChart().setNotify(true);
                                             }
-                                            LoggingChart.this.getChart().setNotify(true);
                                         }
-                                        
-                                    }
-                                    LoggingChart.this.haltAdd=false;
-                                    synchronized (lockObj2) {
-                                        // allow add to continue
-                                        lockObj2.notify();
                                     }
                                 }
-
                             doDomainAdjust=false;
                         }
                         chartDirty=false;
@@ -175,16 +158,7 @@ public class LoggingChart extends ChartPanel{
         t1.setDaemon(true);
         t1.start();
         
-        
-//        // create thread with invokeLater() to ensure swing thread safety for update thread
-//        SwingUtilities.invokeLater(new Runnable(){
-//            public void run() {
-//                t1.start();
-//            }
-//        });
-        
-        
-        // set the 
+        // Set a listener to set the width of the x-axis (domain) scale instance var this.domainWidth due to a chart resize event
         setAxisChangeListener();
         // set the double-click to restore zoom to extents
         setMouseListener();
@@ -194,19 +168,6 @@ public class LoggingChart extends ChartPanel{
         synchronized (lockObj3) {
             super.paintComponent(g);
         }
-//        // try two times for intermittent repaint problem (identified 7/22/2011) with jfreechart
-//        for (int i=0;i<2;i++) {
-//            try {
-//                synchronized (lockObj3) {
-//                    super.paintComponent(g);
-//                }
-//            } catch (NullPointerException e) {
-//                ; // ignore
-////                System.out.println("!*** NullPointerException in chart paintComponent(try #" + i + ")");
-//            } //catch (IndexOutOfBoundsException e) {
-////                ; // ignore. this happens when I clip the dataset probably due to a synchronization issue
-////            }
-//        }
     }
     
     private void setDomainRange(Range range){
@@ -231,7 +192,6 @@ public class LoggingChart extends ChartPanel{
         setLayout(null);
         setChart(getBaselineChart());
         setVisible(true);
-       // setDomainScale(MAX_SCALE);
         chartDirty=true;
     }
 
@@ -470,7 +430,7 @@ public class LoggingChart extends ChartPanel{
             // add series to dataset 
             getAxisDataset(seriesDefs[i].axisIndex).addSeries(new XYSeries(seriesDefs[i].label,true, true));
         }
-//        System.out.println("getDatasetCount=" + getChart().getXYPlot().getDatasetCount());
+        // set colors for series
         int colorIndex=0;
         for (int i=0;i<getChart().getXYPlot().getDatasetCount();i++){
             if (getChart().getXYPlot().getDataset(i)==null) continue;
@@ -482,9 +442,6 @@ public class LoggingChart extends ChartPanel{
             }
             
         }
-//        System.out.println("getRendererCount=" + getChart().getXYPlot().getRendererCount());
-//        System.out.println("getSeriesCount=" + getChart().getXYPlot().getSeriesCount());
-        
         getChart().getXYPlot().getDomainAxis().setLabel(domainLabel); 
         chartDirty=true;
         return getChart().getXYPlot().getSeriesCount();
@@ -495,7 +452,6 @@ public class LoggingChart extends ChartPanel{
         class ml extends MouseAdapter{
             public void mouseClicked(MouseEvent e) {
                 if ((e.getButton()&MouseEvent.BUTTON1)==MouseEvent.BUTTON1) {
-//                    dbg("mouseclicked");
                     // doubleclick zooms extents of data
                     if (e.getClickCount()==2) {
                         if (!emptyChart) {
@@ -510,6 +466,10 @@ public class LoggingChart extends ChartPanel{
                     }
                 }
             }
+            public void mouseReleased(MouseEvent e) {
+                getChart().setNotify(true);
+            }
+            
         }
         this.addMouseListener(new ml());
     }
@@ -527,65 +487,21 @@ public class LoggingChart extends ChartPanel{
             return;
         }
         
-        // if flagged by update thread, wait for it to signal before we add datapoints
-        if (this.haltAdd) {
-            synchronized (lockObj2) {
-                lockObj2.notify(); // because the thread set the flag and is now waiting
-                try {
-                    lockObj2.wait();
-                } catch (InterruptedException e) {
-                    // TODO
-                    //System.out.println("InterruptedException in haltAdd");
-                }
-            }
-        }
-        
         // seriesData[0]: first element should always be timestamp from NXT
         // add the datapoint series by series in correct axis ID
         XYPlot plot= getChart().getXYPlot();
         XYSeries tempSeries=null;
-        for (int i=1;i<seriesData.length;i++) { // 1-based to ignore ms value of first element/column      
-            tempSeries=((XYSeriesCollection)plot.getDataset(seriesDefs[i-1].axisIndex-1)).getSeries(seriesDefs[i-1].seriesIndex-1);
-            tempSeries.add(seriesData[0], seriesData[i], false);
-            //if (this.domainAxisLimitMode!=DAL_UNLIMITED) clipSeries(tempSeries, seriesData[0]);
+        synchronized (lockObj2) {
+            for (int i=1;i<seriesData.length;i++) { // 1-based to ignore ms value of first element/column      
+                tempSeries=((XYSeriesCollection)plot.getDataset(seriesDefs[i-1].axisIndex-1)).getSeries(seriesDefs[i-1].seriesIndex-1);
+                tempSeries.add(seriesData[0], seriesData[i], false);
+            }
         }
-
         // the updater thread picks this up every xxx ms and has the JFreeChart do it's notifications for rendering, 
         // etc. The domain axis is also scrolled for incoming data in this thread via doDomainAdjust=true
         this.chartDirty=true;
         this.doDomainAdjust=true;
         this.emptyChart=false;
-    }
-    
-    private void clipSeries(XYSeries tempSeries, double currentDomainVal){
-        int length=tempSeries.getItemCount();
-        if (this.domainAxisLimitMode==DAL_COUNT) {
-            length = length-this.domainAxisLimitValue;
-            if (length<1) return;
-            tempSeries.delete(0,length-1);
-            return;
-        }
-        
-        // remove series items that are too old
-        int i=0;
-        for (;i<length;i++){
-            if (this.domainAxisLimitMode==DAL_TIME) {
-                if (currentDomainVal-tempSeries.getX(i).doubleValue()<=this.domainAxisLimitValue) break;
-            } 
-        }
-        if (i==0) return;
-        tempSeries.delete(0,i-1);
-        
-       /* 
-         while (tempSeries.getItemCount()>0) {
-            if (this.domainAxisLimitMode==DAL_TIME) {
-                if (currentDomainVal-tempSeries.getX(0).doubleValue()<=this.domainAxisLimitValue) break;
-            } else if (this.domainAxisLimitMode==DAL_COUNT) {
-                if (tempSeries.getItemCount()<=this.domainAxisLimitValue) break;
-            }
-            tempSeries.remove(0);
-        }
-        */
     }
     
     /** Set the domain axis limiting mode. When limited, the domain "width" will not exceed the specified value by dropping the
