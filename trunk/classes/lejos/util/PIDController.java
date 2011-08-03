@@ -59,8 +59,8 @@ package lejos.util;
  * the noise and the derivative gain Kd are sufficiently large.
  *  <p>
  *  It is important to tune the PID controller with an implementation of a consistent delay between calls to <code>doPID()</code>
- *  because the MV calc in a PID controller is time-dependent by definition. This implementation calculates the time delta 
- *  (<code>dt</code>) between 
+ *  because the MV calc in a PID controller is time-dependent by definition. This implementation provides an optional delay (set
+ *  in the constructor) and calculates the time delta (<code>dt</code>) between 
  *  calls to <code>{@link #doPID}</code> in milliseconds.
  *  <p>
  *  Reference: Wikipedia- <a href="http://en.wikipedia.org/wiki/PID_controller" target="_blank">http://en.wikipedia.org/wiki/PID_controller</a>
@@ -196,13 +196,20 @@ public class PIDController {
     private float power = 0;
     private int rampThresold = 0;
     private double rampExtent = 1;
+    private int msdelay;
+    private  NXTDataLogger dataLogger=null;
+    private int cycleCount=0;
     
     /**
-     * construct a PID controller instance using passed setpoint (SP)
+     * Construct a PID controller instance using passed setpoint (SP) and millisecond delay (used before returning from a call to
+     * <code>doPID()</code>).
      * @param setpoint The goal of the MV 
+     * @param msdelay The delay in milliseconds. Set to 0 to disable any delay.
+     * @see #doPID
      */
-    public PIDController(int setpoint) {
+    public PIDController(int setpoint, int msdelay) {
         this.setpoint = setpoint;
+        this.msdelay = msdelay;
     }
 
     /**
@@ -242,7 +249,7 @@ public class PIDController {
                 break;
             case PIDController.PID_SETPOINT:
                 this.setpoint = (int)value;
-                cycleTime = 0;
+                this.cycleTime = 0;
                 integral = 0;
                 break; 
             case PIDController.PID_I_LIMITLOW:
@@ -320,14 +327,16 @@ public class PIDController {
     }
     
     /**
-     * Do the PID calc for a single iteration. Your implementation must provide the delay between calls to this method .
+     * Do the PID calc for a single iteration. Your implementation must provide the delay between calls to this method if you have
+     * not set one with <code>setDelay()</code> or in the constructor.
      * @param processVariable The PV value from the process (sensor reading, etc.). 
+     * @see #setDelay
      * @return The Manipulated Variable <code>MV</code> to input into the process (motor speed, etc.)
      */
     public int doPID(int processVariable){
         int outputMV;
-        if (cycleTime==0) {
-            cycleTime = System.currentTimeMillis();
+        if (this.cycleTime==0) {
+            this.cycleTime = System.currentTimeMillis();
             return 0;
         }
         error = setpoint - processVariable;
@@ -343,9 +352,72 @@ public class PIDController {
         if (outputMV>highLimit) outputMV=highLimit;
         if (outputMV<lowLimit) outputMV=lowLimit;
         previous_error = error;
-        dt = (int)(System.currentTimeMillis() - cycleTime);
-        cycleTime = System.currentTimeMillis();
-        return rampOut(outputMV);
+        outputMV=rampOut(outputMV);
+
+        // log data if logger registered
+        if (this.dataLogger!=null&&cycleCount>2) {
+            this.dataLogger.writeLog(outputMV);
+            this.dataLogger.writeLog(processVariable);
+            this.dataLogger.writeLog(integral);
+            this.dataLogger.writeLog(error);
+            this.dataLogger.writeLog(dt);
+            this.dataLogger.writeLog(derivative);
+            this.dataLogger.finishLine();
+        }
+        cycleCount++;
+        
+        
+        // delay the difference of desired cycle time and actual cycle time
+        if (this.msdelay>0) {
+            int delay = this.msdelay-((int)(System.currentTimeMillis() - this.cycleTime)); // desired cycle time minus actual time
+            if (delay>0) {
+                Delay.msDelay(delay);
+            }
+        }
+        // global time it took to get back to this statement
+        dt = (int)(System.currentTimeMillis() - this.cycleTime);
+        this.cycleTime = System.currentTimeMillis();
+        return outputMV;
+    }
+
+    /** Register a <code>NXTDataLogger</code> instance to log the PID variables. If the logger instance is in
+     * cached mode, the headers must not have been set before calling this method or <code>false</code> is returned. 
+     * <code>PIDController</code> will
+     * set the column headers and log values on every call to <code>doPID()</code>.
+     * <p>
+     * This is useful when using the NXJChartingLogger tool to visualize the PID response by monitoring the internal
+     * variables.
+     * @param dataLogger A <code>NXTDataLogger</code> instance in realtime or cached logging mode.
+     * @return <code>true</code> if successful, <code>false</code> otherwise.
+     * @see NXTDataLogger
+     * @see #deregisterDataLogger
+     */
+    public boolean registerDataLogger(NXTDataLogger dataLogger){
+        LogColumn[] logColumns = {
+            new LogColumn("MV",LogColumn.DT_INTEGER),
+            new LogColumn("PV",LogColumn.DT_INTEGER),
+            new LogColumn("Integral",LogColumn.DT_INTEGER),
+            new LogColumn("Error",LogColumn.DT_INTEGER),
+            new LogColumn("dt",LogColumn.DT_INTEGER),
+            new LogColumn("Derivitive",LogColumn.DT_FLOAT)
+        };
+        try {
+            dataLogger.setColumns(logColumns);
+        } catch (UnsupportedOperationException e){
+            return false;
+        }
+        this.dataLogger=dataLogger;
+        return true;
+    }
+
+    /** De-register the registered <code>NXTDataLogger</code>. 
+     * @return The <code>NXTDataLogger</code> that was registered, <code>null</code> if no logger has been registered.
+     * @see #registerDataLogger
+     */
+    public NXTDataLogger deregisterDataLogger(){
+        NXTDataLogger tempDL=this.dataLogger;
+        this.dataLogger=null;
+        return tempDL;
     }
     
     private int rampOut(int ov){
@@ -354,6 +426,13 @@ public class PIDController {
         int workingOV;
         workingOV=(int)(Math.pow(Math.abs(ov), power) / rampExtent * rampThresold);
         return (ov<0)?-1*workingOV:workingOV;
+    }
+
+    /** Set the desired delay before <code>doPID()</code> returns. Set to zero to effectively disable.
+     * @param msdelay Delay in milliseconds
+     */
+    public void setDelay(int msdelay) {
+        this.msdelay = msdelay;
     }
 }
 
