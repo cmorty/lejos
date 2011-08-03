@@ -125,7 +125,9 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
     
     public void axisChanged(AxisChangeEvent event) {
         Range domainRange = ((NumberAxis)event.getAxis()).getRange();
-        domainWidthLabel.setText(String.format("%1$-,3d ms",(long)domainRange.getLength()));
+        
+        double domainWidth = domainRange.getLength();
+        domainWidthLabel.setText(String.format("%1$-,3d ms",(long)domainWidth));
         
         // return if no series yet
         if (loggingChartPanel.getChart().getXYPlot().getSeriesCount()==0) return;
@@ -134,7 +136,7 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         double maxXVal = ((XYSeriesCollection)loggingChartPanel.getChart().getXYPlot().getDataset()).getSeries(0).getMaxX();
         // set the flag to not update the chart because the chart is updating the slider here
         sliderSetFlag=false;
-        domainScaleSlider.setValue((int)((float)domainRange.getLength()/(maxXVal-minXVal)*SLIDER_MAX));
+        domainScaleSlider.setValue((int)(domainWidth/(maxXVal-minXVal)*SLIDER_MAX));
         // this ensures that the mouse wheel zoom works after messing with slider and not clicking on chart
         if (!loggingChartPanel.getChart().isNotify()) loggingChartPanel.getChart().setNotify(true);
     }
