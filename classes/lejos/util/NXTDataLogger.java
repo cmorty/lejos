@@ -17,10 +17,9 @@ import lejos.util.Delay;
  * <code>boolean</code>, <code>byte</code>, and <code>short</code> are all represented as [a 4 byte] <code>int</code>.
  * <p>
  * This class communicates with 
- * <code>lejos.pc.charting.DataLogger</code> via Bluetooth or USB which is used by the NXT Charting Logger tool or can be used 
- * stand-alone at a command prompt.
+ * <code>lejos.pc.charting.DataLogger</code> via Bluetooth or USB which is used by the NXT Charting Logger tool.
  * <p>When instantiated, the <code>NXTDataLogger</code> starts out in cached mode (<code>{@link #startCachingLog}</code>) as default.
- * Cache mode uses a growable ring buffer that consumes all available memory during a logging run.
+ * Cache mode uses a growable ring buffer that consumes up to all available memory during a logging run.
  * <p>Hints for real-time logging efficiency:
  * <ul>
  * <li>Try to keep your datatypes the same across <code>writeLog()</code> method calls to avoid the protocol
@@ -44,9 +43,10 @@ public class NXTDataLogger implements Logger{
     private static final byte    DT_LONG    = 4;
     private static final byte    DT_FLOAT   = 5;
     private static final byte    DT_DOUBLE  = 6;
-//    private final byte    DT_STRING  = 7;
+//    private static final byte    DT_STRING  = 7;
     private static final byte COMMAND_SETHEADERS   = 2;  
     private static final byte COMMAND_FLUSH        = 3;    
+    private static final int XORMASK = 0xff;
     
     private DataOutputStream dos = null;
     private DataInputStream dis = null;
@@ -61,9 +61,9 @@ public class NXTDataLogger implements Logger{
     private int chksumSeedIndex=-1;
     
     // logging mode state management
-    private final int LMSTATE_UNINIT=0;
-    private final int LMSTATE_CACHE=1;
-    private final int LMSTATE_REAL=2;
+    private static final int LMSTATE_UNINIT=0;
+    private static final int LMSTATE_CACHE=1;
+    private static final int LMSTATE_REAL=2;
     private int logmodeState = LMSTATE_UNINIT; // 0=uninititalized, 1=startCachingLog, 2=startRealtimeLog, 
     private boolean disableWriteState=false;
     
@@ -71,8 +71,6 @@ public class NXTDataLogger implements Logger{
     private int setColumnsCount=0;
     private int lineBytes;
     private NXTConnection passedNXTConnection=null;
-    
-//    private int lineCount=0;
     
     /**
      * Default constructor establishes a data logger instance in cache mode.
@@ -94,10 +92,8 @@ public class NXTDataLogger implements Logger{
      * (i.e. datatypes and their position in the row) from setColumns()
      */
     class CacheOutputStream extends OutputStream {
-//        private long byteCount=0;
         @Override
         public void write(int b) throws IOException {
-//            byteCount++;
             byteQueue.add((byte)(b&0xff));
         }
     }
@@ -108,11 +104,10 @@ public class NXTDataLogger implements Logger{
         private byte[] barr;
         private boolean reachedQueueEnd=false;
         private int lineByteCounter=0;
-//        private int lineCount=0;
         private boolean ringMode=false;
         
         ByteRingQueue() {
-            barr=new byte[2048];
+            barr=new byte[1024];
         }
         
         /** Get the next FIFO value from the queue. If it is the last element in the ring buffer, the next call to this method
@@ -137,8 +132,6 @@ public class NXTDataLogger implements Logger{
             if (!ringMode && !ensureCapacity(256)){ 
                 // out of memory
                 ringMode=true;
-//                System.out.println("outofmem");
-//                System.out.println("lineCount=" + lineCount);
                 // since this is the first "use" of ringbuffer, move the pointer to next line (lose first row of data). 
                 // assumes that read pos = 0 and no reads have happened (until all data is written to the buffer)
                 wrapReadpointerToBONL();
@@ -147,7 +140,6 @@ public class NXTDataLogger implements Logger{
             // and we need the byte buffer read position to point to start of a row
              if (this.lineByteCounter>NXTDataLogger.this.lineBytes-1) {
                 this.lineByteCounter=0; // zero-based 
-//                this.lineCount++;
                 if (ringMode) wrapReadpointerToBONL();
              }
             
@@ -155,8 +147,12 @@ public class NXTDataLogger implements Logger{
             if (addIndex>=barr.length) addIndex=0;
             return;
         }
-        
-        boolean ensureCapacity(int capacity) throws OutOfMemoryError{
+
+        /** expand array by capacity bytes. if OutOfMemoryError, return  false
+         * @param capacity expand by how many bytes?
+         * @return true for success, false if OutOfMemoryError
+         */
+        boolean ensureCapacity(int capacity){
             // premptive expand array if not in ring buffer mode
             if(this.addIndex >= this.barr.length-1) {
                 try {
@@ -167,7 +163,6 @@ public class NXTDataLogger implements Logger{
                     this.barr=tb;
                     tb=null;
                 } catch(OutOfMemoryError e) {
-//                    System.out.println("rmidx="+removeIndex);
                     return false;   
                 }
             }
@@ -208,16 +203,15 @@ public class NXTDataLogger implements Logger{
      * @see #setColumns
      */
     public void startRealtimeLog(DataOutputStream out, DataInputStream in) throws IOException{
-        logmodeState=LMSTATE_REAL;
         if (out==null) throw new IOException("DataOutputStream is null");
         if (in==null) throw new IOException("DataInputStream is null");
+        logmodeState=LMSTATE_REAL;
         
         this.dos=out;
         this.dis=in;
         sessionBeginTime=(int)System.currentTimeMillis();
         setColumnsCount=0;
     } 
-    // isConnected()=true and streams must be valid (not null)
 
     /** Start a realtime logging session using passed <code>NXTConnection</code> to retrieve the data streams. The
      * connection must already be established.
@@ -238,6 +232,7 @@ public class NXTDataLogger implements Logger{
         startRealtimeLog(connection.openDataOutputStream(), connection.openDataInputStream());
     }
 
+    
     /** Stop the logging session and close down the connection and data streams. After this method is called, you must call
      * one of the logging mode start methods to begin a new logging session.
      * @see #startRealtimeLog(NXTConnection)
@@ -268,13 +263,10 @@ public class NXTDataLogger implements Logger{
     public void startCachingLog(){
         logmodeState=LMSTATE_CACHE;
         // set up the cacher
-//        byteCache = new Queue<Byte>();
-//        byteCache.ensureCapacity(2048);
         byteQueue = new ByteRingQueue();
         this.dos = new DataOutputStream(new CacheOutputStream());
         sessionBeginTime=(int)System.currentTimeMillis();
         setColumnsCount=0;
-//        this.lineCount=0;
     }
 
     /** Sends the log cache. Valid only for caching (deferred) logging using startCachingLog(). 
@@ -333,17 +325,7 @@ public class NXTDataLogger implements Logger{
         }
         return temp;
     }
-    
-    private void manageClose(){
-        // In cache mode, the CacheOutputStream class will throw a new IOException when OutOfMemoryError occurs so the 
-        // writeLog() methods call
-        // this on their trap. We then intercept the IOException and redo it as an OutOfMemoryError here
-        if (logmodeState==LMSTATE_CACHE) {
-            throw new OutOfMemoryError("Too Much Data!");
-        }
-        cleanConnection();
-    }
-    
+
     private void signalFlush(){
         // Send ATTENTION request and remote FLUSH command
         sendATTN();
@@ -437,13 +419,8 @@ public class NXTDataLogger implements Logger{
      * @see #setColumns
      */
     public void finishLine() {
-//        System.out.println("finline");
-//        System.out.println("colpos="+ this.currColumnPosition);
-//        System.out.println(("ipl="+(((int)this.itemsPerLine)&0xff)));
-//        Button.waitForPress();
         if (this.currColumnPosition!=((this.itemsPerLine)&0xff)) throw new IllegalStateException("too few cols ");
         currColumnPosition=1;
-//        this.lineCount++;
     }
     
     /** send the command to set the active datatype
@@ -476,7 +453,7 @@ public class NXTDataLogger implements Logger{
     /** Send an ATTENTION request. Commands usually follow. There is no response/handshake mechanism.
      */
     private void sendATTN(){
-        final int XORMASK = 0xff;
+        
         // 2 ATTN bytes
         byte[] command = {ATTENTION1,ATTENTION2,0,0};  
         int total=0;
@@ -552,7 +529,6 @@ public class NXTDataLogger implements Logger{
       * the datatype that was set in <code>setColumns()</code>, the column position exceeds the total column count (i.e.
       * <code>finishLine()</code> was not called after last column logged), or the column
       * definitions have not been set with <code>setColumns()</code>.
-      * @throws OutOfMemoryError if in cache mode and memory is exhausted.
       * @see #setColumns
       * @see #finishLine
       */
@@ -561,7 +537,7 @@ public class NXTDataLogger implements Logger{
         try {
             this.dos.writeInt(datapoint);
         } catch (IOException e) {
-            manageClose();
+            cleanConnection();
         }
     }
      
@@ -574,7 +550,6 @@ public class NXTDataLogger implements Logger{
     * the datatype that was set in <code>setColumns()</code>, the column position exceeds the total column count (i.e.
     * <code>finishLine()</code> was not called after last column logged), or the column
     * definitions have not been set with <code>setColumns()</code>.
-    * @throws OutOfMemoryError if in cache mode and memory is exhausted.
     * @see #setColumns
     * @see #finishLine
     */
@@ -583,7 +558,7 @@ public class NXTDataLogger implements Logger{
         try {
             this.dos.writeLong(datapoint);
         } catch (IOException e) {
-            manageClose();
+            cleanConnection();
         }
     }
     
@@ -596,7 +571,6 @@ public class NXTDataLogger implements Logger{
     * the datatype that was set in <code>setColumns()</code>, the column position exceeds the total column count (i.e.
     * <code>finishLine()</code> was not called after last column logged), or the column
     * definitions have not been set with <code>setColumns()</code>.
-    * @throws OutOfMemoryError if in cache mode and memory is exhausted.
     * @see #setColumns
     * @see #finishLine
     */
@@ -606,7 +580,7 @@ public class NXTDataLogger implements Logger{
 //            LCD.drawString("this.dos " + value + " ",0,1);
             this.dos.writeFloat(datapoint);
         } catch (IOException e) {
-            manageClose();
+            cleanConnection();
         }
     }
     
@@ -619,7 +593,6 @@ public class NXTDataLogger implements Logger{
     * the datatype that was set in <code>setColumns()</code>, the column position exceeds the total column count (i.e.
     * <code>finishLine()</code> was not called after last column logged), or the column
     * definitions have not been set with <code>setColumns()</code>.
-    * @throws OutOfMemoryError if in cache mode and memory is exhausted.
     * @see #setColumns
     * @see #finishLine
     */
@@ -629,7 +602,7 @@ public class NXTDataLogger implements Logger{
     //            LCD.drawString("this.dos " + value + " ",0,1);
             this.dos.writeDouble(datapoint);
         } catch (IOException e) {
-            manageClose();
+            cleanConnection();
         }
     }
 
@@ -675,7 +648,7 @@ public class NXTDataLogger implements Logger{
         try {
             this.dos.write(tempBytes);
         } catch (IOException e) {
-            manageClose();
+            cleanConnection();
         }
     }
 
