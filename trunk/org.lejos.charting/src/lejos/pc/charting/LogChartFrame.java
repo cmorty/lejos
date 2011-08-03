@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -90,7 +92,7 @@ public class LogChartFrame extends JFrame {
     private SelfLogger loggerHook = new SelfLogger();
     private JTextArea FQPathTextArea = new JTextArea();
     private JButton selectFolderButton = new JButton();
-    private ArrayBlockingQueue<String> logDataQueue= new ArrayBlockingQueue<String>(2000);
+    private ConcurrentLinkedQueue<String> logDataQueue= new ConcurrentLinkedQueue<String>();
     private JPanel chartOptionsPanel = new JPanel();
     
     private JPanel chartDomLimitsPanel = new JPanel();
@@ -672,7 +674,7 @@ public class LogChartFrame extends JFrame {
                 }
             }
          };
-         new Timer(250, taskPerformer).start();
+         new Timer(2000, taskPerformer).start();
     }
 
     /** Attempt to start a connection using a thread so the GUI stays responsive.
