@@ -85,9 +85,9 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         // updates the x,y label and domain scale slider
         xYValueLabel.setSize(new Dimension(60, 14));
         xYValueLabel.setPreferredSize(new Dimension(150, 14));
-        xYValueLabel.setMinimumSize(new Dimension(100, 14));
+        xYValueLabel.setMinimumSize(new Dimension(150, 14));
         xYValueLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        xYValueLabel.setMaximumSize(new Dimension(150, 14));
+        xYValueLabel.setMaximumSize(new Dimension(170, 14));
         domainWidthLabel.setFocusable(false);
         domainWidthLabel.setHorizontalAlignment(JTextField.LEFT);
         domainWidthLabel.setText("Domain Scale");
