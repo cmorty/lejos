@@ -2,7 +2,10 @@ package lejos.pc.charting;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -24,6 +27,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -50,6 +54,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
+
 import org.jfree.chart.JFreeChart;
 
 
@@ -63,6 +68,7 @@ public class LogChartFrame extends JFrame {
     private static final int MINDOMAIN_LIMIT= 10;
     
     private JButton jButtonConnect = new JButton();
+    private JPanel UIPanel = new JPanel();
     private JPanel connectionPanel = new JPanel();
     private JLabel jLabel1logfilename = new JLabel();
     private JTextField jTextFieldNXTName = new JTextField();
@@ -83,7 +89,7 @@ public class LogChartFrame extends JFrame {
     private boolean isNXTConnected = false;
     private File theLogFile; 
     
-    private JMenuBar menuBar;
+    private JMenuBar menuBar=new JMenuBar();
     private JMenu menu;
     private JMenuItem menuItem;
     
@@ -114,6 +120,8 @@ public class LogChartFrame extends JFrame {
     private JTextField axis2LabelTextField = new JTextField();
     private JTextField axis3LabelTextField = new JTextField();
     private JTextField axis4LabelTextField = new JTextField();
+    private BoxLayout boxLayout21;
+    private GridBagLayout gridBagLayout1 = new GridBagLayout();
 
     /** Default constructor
      */
@@ -434,15 +442,17 @@ public class LogChartFrame extends JFrame {
      * @throws Exception
      */
     private void jbInit() throws Exception {
-        this.getContentPane().setLayout(null);
-        this.setSize(new Dimension(823, 621));
+        this.setJMenuBar(menuBar);
+//        JPanel boxLayoutpane = new JPanel();
+//        boxLayout21 = new BoxLayout(boxLayoutpane,BoxLayout.Y_AXIS);
+        this.setSize(new Dimension(819, 609));
         this.setTitle("NXT Charting Logger");
-        this.setResizable(false);
         this.setEnabled(true);
-        
+
+        this.getContentPane().setLayout(gridBagLayout1);
+        this.setResizable(false);
         MenuListener mlistener = new MenuListener();
-        this.menuBar=new JMenuBar();
-        this.setJMenuBar(this.menuBar);
+        
         menu = new JMenu("Edit");
         menu.setMnemonic(KeyEvent.VK_E);
         menuBar.add(menu);
@@ -466,7 +476,7 @@ public class LogChartFrame extends JFrame {
         menuItem.addActionListener(mlistener);
         menu.add(menuItem);
         
-        jTabbedPane1.setBounds(new Rectangle(200, 370, 615, 195));
+        jTabbedPane1.setBounds(new Rectangle(195, 5, 620, 195));
 
         jButtonConnect.setText("Connect");
         jButtonConnect.setBounds(new Rectangle(25, 65, 115, 25));
@@ -478,13 +488,18 @@ public class LogChartFrame extends JFrame {
                         jButtonConnect_actionPerformed(e);
                     }
                 });
-        connectionPanel.setBounds(new Rectangle(10, 380, 175, 100));
+        UIPanel.setSize(new Dimension(820, 200));
+        UIPanel.setLayout(null);
+        UIPanel.setPreferredSize(new Dimension(700, 200));
+        UIPanel.setMinimumSize(new Dimension(500, 150));
+        UIPanel.setBounds(new Rectangle(0, 350, 820, 200));
+        connectionPanel.setBounds(new Rectangle(10, 10, 175, 100));
         connectionPanel.setBorder(BorderFactory.createTitledBorder("Connection"));
         connectionPanel.setLayout(null);
         connectionPanel.setFont(new Font("Tahoma", 0, 11));
-        
+
         jLabel1logfilename.setText("Log File:");
-        jLabel1logfilename.setBounds(new Rectangle(10, 490, 165, 20));
+        jLabel1logfilename.setBounds(new Rectangle(10, 125, 165, 20));
         jLabel1logfilename.setHorizontalTextPosition(SwingConstants.RIGHT);
         jLabel1logfilename.setHorizontalAlignment(SwingConstants.LEFT);
         jLabel1logfilename.setToolTipText("Specify the name of your log file here");
@@ -503,7 +518,7 @@ public class LogChartFrame extends JFrame {
         dataLogTextArea.setFont(new Font("Tahoma", 0, 11));
         dataLogTextArea.setBackground(SystemColor.window);
 
-        FQPathTextArea.setBounds(new Rectangle(10, 530, 185, 38));
+        FQPathTextArea.setBounds(new Rectangle(5, 170, 185, 40));
         FQPathTextArea.setLineWrap(true);
         FQPathTextArea.setText(getCanonicalName(new File(".", "")));
         FQPathTextArea.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -514,7 +529,7 @@ public class LogChartFrame extends JFrame {
         FQPathTextArea.setEditable(false);
         
         selectFolderButton.setText("Folder...");
-        selectFolderButton.setBounds(new Rectangle(120, 490, 70, 20));
+        selectFolderButton.setBounds(new Rectangle(120, 125, 70, 20));
         selectFolderButton.setMargin(new Insets(1, 1, 1, 1));
         selectFolderButton.setFocusable(false);
         selectFolderButton.setMnemonic('F');
@@ -596,35 +611,34 @@ public class LogChartFrame extends JFrame {
         axis4LabelTextField.setBounds(new Rectangle(315, 120, 290, 20));
         axis4LabelTextField.getDocument().addDocumentListener(notifier);
         
-        logFileTextField.setBounds(new Rectangle(10, 510, 180, 20));
+        logFileTextField.setBounds(new Rectangle(10, 145, 180, 20));
         logFileTextField.setText("NXTData.txt");
         logFileTextField.setPreferredSize(new Dimension(180, 20));
         logFileTextField.setToolTipText("File name. Leave empty to not log to file.");
         statusScrollPane.setOpaque(false);
         dataLogScrollPane.setOpaque(false);
         
-        customChartPanel.setPreferredSize(new Dimension(805, 335));
-        customChartPanel.setBounds(new Rectangle(5, 5, 810, 340));
-        customChartPanel.setMinimumSize(new Dimension(400, 200));
-        customChartPanel.setBounds(new Rectangle(0, 0, 820, 360));
-        customChartPanel.setBounds(new Rectangle(5, 5, 810, 360));
-        
+        customChartPanel.setMinimumSize(new Dimension(400,300));
+        //customChartPanel.setBounds(this.getContentPane().getBounds());
+
+        customChartPanel.setPreferredSize(new Dimension(700, 400));
         jLabel5.setText("NXT Name/Address:");
         jLabel5.setBounds(new Rectangle(5, 20, 160, 20));
         jLabel5.setToolTipText(jTextFieldNXTName.getToolTipText());
         jLabel5.setHorizontalTextPosition(SwingConstants.RIGHT);
         jLabel5.setHorizontalAlignment(SwingConstants.LEFT);
 
+
         connectionPanel.add(jTextFieldNXTName, null);
         connectionPanel.add(jButtonConnect, null);
+
+
         connectionPanel.add(jLabel5, null);
-        
         dataLogScrollPane.getViewport().add(dataLogTextArea,null);
         jTabbedPane1.addTab("Data Log", dataLogScrollPane);
         statusScrollPane.getViewport().add(jTextAreaStatus, null);
         jTabbedPane1.addTab("Status", statusScrollPane);
-
-
+        jTabbedPane1.addTab("Chart", chartOptionsPanel);
         chartDomLimitsPanel.add(datasetLimitEnableCheckBox, null);
         chartDomLimitsPanel.add(useDataPointsRadioButton, null);
         chartDomLimitsPanel.add(useTimeRadioButton, null);
@@ -633,6 +647,9 @@ public class LogChartFrame extends JFrame {
         chartOptionsPanel.add(axis4LabelTextField, null);
         chartOptionsPanel.add(axis3LabelTextField, null);
         chartOptionsPanel.add(axis2LabelTextField, null);
+
+        // maxDataPointsButtonGroup
+
         chartOptionsPanel.add(axis1LabelTextField, null);
         chartOptionsPanel.add(chartTitleTextField, null);
         chartOptionsPanel.add(jLabel6, null);
@@ -641,25 +658,37 @@ public class LogChartFrame extends JFrame {
         chartOptionsPanel.add(jLabel2, null);
         chartOptionsPanel.add(jLabel1, null);
         chartOptionsPanel.add(chartDomLimitsPanel, null);
-        jTabbedPane1.addTab("Chart", chartOptionsPanel);
-
-        // maxDataPointsButtonGroup
-
         jTabbedPane1.setToolTipTextAt(0, 
                                       "The tab-delimited log of the data sent from the NXT");
         jTabbedPane1.setToolTipTextAt(1, "Status output");
         jTabbedPane1.setToolTipTextAt(2, 
                                       "Change Title, Range Axis labels, maximum display points");
 
-        this.getContentPane().add(customChartPanel, null);
-        this.getContentPane().add(selectFolderButton, null);
-        this.getContentPane().add(FQPathTextArea, null);
-        this.getContentPane().add(jTabbedPane1, null);
-        this.getContentPane().add(connectionPanel, null);
-        this.getContentPane().add(logFileTextField, null);
-        this.getContentPane().add(jLabel1logfilename, null);
+        //        this.getContentPane().add(selectFolderButton, null);
+//        this.getContentPane().add(FQPathTextArea, null);
+//        this.getContentPane().add(jTabbedPane1, null);
+        // this.getContentPane().add(UIPanel.add(jTabbedPane1,null),null);
+        //        this.getContentPane().add(connectionPanel, null);
+//        this.getContentPane().add(logFileTextField, null);
+//        this.getContentPane().add(jLabel1logfilename, null);
+
+        this.getContentPane().add(customChartPanel, 
+                                  new GridBagConstraints(0, 0, 1, 1, 1.0, 0.9, GridBagConstraints.WEST, GridBagConstraints.BOTH, 
+                                                         new Insets(0, 1, 0, 
+                                                                    1), 0, 0));
+        this.getContentPane().add(UIPanel, 
+                                  new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, 
+                                                         new Insets(0, 0, 0, 
+                                                                    0), 0, 0));
+        UIPanel.add(connectionPanel,null);
+        UIPanel.add(jTabbedPane1,null);
+        UIPanel.add(selectFolderButton,null);
+        UIPanel.add(logFileTextField,null);
+        UIPanel.add(jLabel1logfilename,null);
 
         // datalog textarea updater thread
+
+        UIPanel.add(FQPathTextArea, null);
         ActionListener taskPerformer = new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 String theData=null;

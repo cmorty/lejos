@@ -48,7 +48,7 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
 
     private void jbInit() throws Exception {
         this.setLayout( null );
-        this.setSize(new Dimension(732, 477));
+        this.setSize(new Dimension(800, 395));
         this.setOpaque(true);
         this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 
@@ -100,7 +100,7 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         loggingChartPanel.getChart().addChangeListener(this); // to capture dataset changes to populate row count
         
         // set up springs
-        layout.putConstraint(SpringLayout.WEST, loggingChartPanel, 0, SpringLayout.WEST, this);
+        layout.putConstraint(SpringLayout.WEST,  loggingChartPanel, 0, SpringLayout.WEST, this);
         layout.putConstraint(SpringLayout.SOUTH, loggingChartPanel, -20, SpringLayout.SOUTH, this);
         layout.putConstraint(SpringLayout.NORTH, loggingChartPanel, 0, SpringLayout.NORTH, this);
         layout.putConstraint(SpringLayout.EAST, loggingChartPanel, -5, SpringLayout.EAST, this);
