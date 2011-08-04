@@ -2,13 +2,15 @@ package lejos.pc.charting;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
@@ -37,7 +39,8 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
     private JLabel domainWidthLabel = new JLabel();
     private boolean sliderSetFlag=false;
     private JLabel dataRowsLabel = new JLabel();
-        
+    private GridBagLayout gridBagLayout1 = new GridBagLayout();
+
     public CustomChartPanel() {
         try {
             jbInit();
@@ -48,15 +51,15 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
 
     private void jbInit() throws Exception {
         this.setLayout( null );
-        this.setSize(new Dimension(800, 395));
+        this.setSize(new Dimension(738, 540));
         this.setOpaque(true);
         this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 
         this.setBackground(Color.white);
-//        this.setBounds(new Rectangle(1, 1, 800, 300));
         loggingChartPanel.setOpaque(false);
-        loggingChartPanel.setPreferredSize(new Dimension(800, 300));
+        loggingChartPanel.setPreferredSize(new Dimension(800, 450));
         loggingChartPanel.setMinimumSize(new Dimension(400, 200));
+        loggingChartPanel.setSize(new Dimension(770, 443));
         loggingChartPanel.getChart().getXYPlot().getDomainAxis().addChangeListener(this);
         loggingChartPanel.getChart().addProgressListener(this);
         
@@ -71,52 +74,52 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         domainScaleSlider.setFocusable(false);   
         domainScaleSlider.addChangeListener(this);
         domainScaleSlider.setToolTipText("Use slider to change domain scale");
-        
-        
+
+
+        domainScaleSlider.setMinimumSize(new Dimension(200, 16));
         xYValueLabel.setFocusable(false);
         xYValueLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         xYValueLabel.setText("--, --");
         xYValueLabel.setToolTipText("The X:Y coordinate of the crosshair");
         
         // updates the x,y label and domain scale slider
+        xYValueLabel.setSize(new Dimension(60, 14));
+        xYValueLabel.setPreferredSize(new Dimension(100, 14));
+        xYValueLabel.setMinimumSize(new Dimension(100, 14));
+        xYValueLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+        xYValueLabel.setMaximumSize(new Dimension(100, 14));
         domainWidthLabel.setFocusable(false);
         domainWidthLabel.setHorizontalAlignment(JTextField.LEFT);
         domainWidthLabel.setText("Domain Scale");
         domainWidthLabel.setToolTipText("The domain axis length in ms");
-        
+
+        domainWidthLabel.setPreferredSize(new Dimension(90, 14));
+        domainWidthLabel.setSize(new Dimension(90, 14));
+        domainWidthLabel.setMinimumSize(new Dimension(90, 14));
+        domainWidthLabel.setMaximumSize(new Dimension(100, 14));
         dataRowsLabel.setText("data rows");
         dataRowsLabel.setToolTipText("The number of rows logged");
-        
-        SpringLayout layout=new SpringLayout();
-        this.setLayout(layout);
-//        this.setSize(new Dimension(732, 419));
-//        this.setPreferredSize(new Dimension(600, 300));
-        this.add(domainScaleSlider, null);
-        this.add(dataRowsLabel, null);
-        this.add(domainWidthLabel, null);
-        this.add(xYValueLabel, null);
-        this.add(loggingChartPanel, null);
+
+        dataRowsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        dataRowsLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+        this.setLayout(gridBagLayout1);
+        this.add(domainScaleSlider, 
+                 new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,GridBagConstraints.CENTER, GridBagConstraints.NONE, 
+                                        new Insets(0, 0, 0, 0), 0, 0));
+        this.add(dataRowsLabel, 
+                 new GridBagConstraints(0, 1, 4, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, 
+                                        new Insets(0, 0, 0, 0), 0, 0));
+        this.add(domainWidthLabel, 
+                 new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, 
+                                        new Insets(0, 5, 0, 0), 0, 0));
+        this.add(xYValueLabel, 
+                 new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, 
+                                        new Insets(0, 0, 0, 18), 0, 0));
+        this.add(loggingChartPanel, 
+                 new GridBagConstraints(0, 0, 4, 1, 1.0, 1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, 
+                                        new Insets(0, 1, 0, 5), 0, 0));
         
         loggingChartPanel.getChart().addChangeListener(this); // to capture dataset changes to populate row count
-        
-        // set up springs
-        layout.putConstraint(SpringLayout.WEST,  loggingChartPanel, 0, SpringLayout.WEST, this);
-        layout.putConstraint(SpringLayout.SOUTH, loggingChartPanel, -20, SpringLayout.SOUTH, this);
-        layout.putConstraint(SpringLayout.NORTH, loggingChartPanel, 0, SpringLayout.NORTH, this);
-        layout.putConstraint(SpringLayout.EAST, loggingChartPanel, -5, SpringLayout.EAST, this);
-        
-        layout.putConstraint(SpringLayout.SOUTH, domainScaleSlider, -5, SpringLayout.SOUTH, this);
-        layout.putConstraint(SpringLayout.WEST, domainScaleSlider, 20, SpringLayout.WEST, loggingChartPanel);
-        
-        layout.putConstraint(SpringLayout.SOUTH, domainWidthLabel, 0, SpringLayout.SOUTH, domainScaleSlider);
-        layout.putConstraint(SpringLayout.WEST, domainWidthLabel, 10, SpringLayout.EAST, domainScaleSlider);
-        
-        layout.putConstraint(SpringLayout.SOUTH, dataRowsLabel, 0, SpringLayout.SOUTH, domainScaleSlider);
-        layout.putConstraint(SpringLayout.EAST, dataRowsLabel, 430, SpringLayout.WEST, this);
-        
-        layout.putConstraint(SpringLayout.SOUTH, xYValueLabel, 0,SpringLayout.SOUTH, domainScaleSlider);
-        layout.putConstraint(SpringLayout.EAST, xYValueLabel, -30, SpringLayout.EAST, this);
-        
     }
     
     protected LoggingChart getLoggingChartPanel() {
