@@ -84,10 +84,10 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         
         // updates the x,y label and domain scale slider
         xYValueLabel.setSize(new Dimension(60, 14));
-        xYValueLabel.setPreferredSize(new Dimension(100, 14));
+        xYValueLabel.setPreferredSize(new Dimension(150, 14));
         xYValueLabel.setMinimumSize(new Dimension(100, 14));
         xYValueLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
-        xYValueLabel.setMaximumSize(new Dimension(100, 14));
+        xYValueLabel.setMaximumSize(new Dimension(150, 14));
         domainWidthLabel.setFocusable(false);
         domainWidthLabel.setHorizontalAlignment(JTextField.LEFT);
         domainWidthLabel.setText("Domain Scale");
@@ -102,6 +102,7 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
 
         dataRowsLabel.setHorizontalAlignment(SwingConstants.CENTER);
         dataRowsLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+        dataRowsLabel.setMaximumSize(new Dimension(100, 14));
         this.setLayout(gridBagLayout1);
         this.add(domainScaleSlider, 
                  new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,GridBagConstraints.CENTER, GridBagConstraints.NONE, 
@@ -114,7 +115,7 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
                                         new Insets(0, 5, 0, 0), 0, 0));
         this.add(xYValueLabel, 
                  new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, 
-                                        new Insets(0, 0, 0, 18), 0, 0));
+                                        new Insets(0, 0, 0, 15), 0, 0));
         this.add(loggingChartPanel, 
                  new GridBagConstraints(0, 0, 4, 1, 1.0, 1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, 
                                         new Insets(0, 1, 0, 5), 0, 0));
