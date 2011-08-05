@@ -455,13 +455,20 @@ public class LoggingChart extends ChartPanel{
                     // doubleclick zooms extents of data
                     if (e.getClickCount()==2) {
                         if (!emptyChart) {
-                            restoreAutoDomainBounds();
-                            // restore calced Y range bounds for all axes
-                            for (int i=0;i<getChart().getXYPlot().getDatasetCount();i++){
-                                if (yExtents[i]!=null) {
-                                    getChart().getXYPlot().getRangeAxis(i).setRange(yExtents[i]);                                      
-                                }
-                            }      
+                            LoggingChart.this.restoreAutoDomainBounds();
+                            // reset [session] historical range zoom extents if CTRL-Doubelleftclick
+                            //if ((e.getModifiers()&MouseEvent.SHIFT_DOWN_MASK)==MouseEvent.SHIFT_DOWN_MASK) {
+                            if (e.isControlDown()) {
+                                LoggingChart.this.restoreAutoRangeBounds();
+                                yExtents=new Range[RANGE_AXIS_COUNT];
+                            } else {
+                                // restore calced Y range bounds for all axes
+                                for (int i=0;i<getChart().getXYPlot().getDatasetCount();i++){
+                                    if (yExtents[i]!=null) {
+                                        getChart().getXYPlot().getRangeAxis(i).setRange(yExtents[i]);                                      
+                                    }
+                                }  
+                            }
                         }
                     }
                 }
