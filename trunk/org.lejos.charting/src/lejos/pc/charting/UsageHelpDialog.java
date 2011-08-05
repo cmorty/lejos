@@ -29,7 +29,7 @@ class UsageHelpDialog extends JDialog {
     }
     
     private void jbInit() throws Exception {
-        this.setSize(new Dimension(539, 288));
+        this.setSize(new Dimension(539, 312));
         this.setLayout(verticalFlowLayout1);
         this.setModal(false);
         this.setResizable(true);
@@ -38,8 +38,8 @@ class UsageHelpDialog extends JDialog {
         jLabel1.setText("<html>Chart Data Examination Controls" +
         "<ul>" +
         "<li>Zooming<ul>" +
-        "<li> Historical extents (including clipped): Doubleclick on chart area" +
-        "<li>Reset Historical extents to current: CTLR+Doubleclick on chart area" +
+        "<li> Historical extents (including clipped due to Domain Display Limiting): Double-left click on chart area" +
+        "<li>Reset Historical extents to current: CTRL+Double-left click on chart area" +
         "<li>Current extents: Left click-drag to left, and/or up then release" + 
         "<li>Zoom window: Left click-drag to right and down then release" + 
         "<li>Zoom in/out dynamic: Use mouse wheel" + 
