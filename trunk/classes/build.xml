@@ -35,18 +35,15 @@
     		verbose="false"
     	>
       		<!--
-      			All that is need to kick any class from Sun's JDK out of the classpath.
-      			Check the search paths using verbose="true" that they really don't contain
-      			anything from the JDK, Ant, etc.
+      			bootclasspath and extdirs are set to an empty directory, to kick any class from
+      			Sun's JDK out of the classpath. Use verbose="true" to check that javac really doesn't
+      			touch anything from the JDK, Ant, etc.
       			There doesn't seem to be a clean way of having an empty (boot)classpath.
       			javac keeps adding "." or even worse "" to the path. So i'm adding the
       			nirvana path to the classpath. 
       		--> 
-    		<bootclasspath>
-    			<pathelement location="${nirvana.dir}" />
-    		</bootclasspath>
-    		<compilerarg value="-extdirs"/>
-    		<compilerarg path="${nirvana.dir}" />
+    		<bootclasspath location="${nirvana.dir}" />
+    		<extdirs location="${nirvana.dir}"/>
     		
     		<!-- enable warnings -->
     		<compilerarg value="-Xlint:${source.warn}" />
