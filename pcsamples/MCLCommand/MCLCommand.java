@@ -45,9 +45,9 @@ public class MCLCommand extends NavigationPanel {
 	private static final int NUM_PARTICLES = 200;
 	private static final String TITLE = "MCL Command";
 	private static final int INITIAL_ZOOM = 150;
-	private static final Point INITIAL_VIEW_START = new Point(-150,-30);
-	private static final String MAP_FILE_NAME = "Room.svg";
+	private static final Point INITIAL_MAP_ORIGIN = new Point(-150,-30);
 	private static final int MCL_CLEARANCE = 20;
+	private static final Dimension MAP_AREA_SIZE = new Dimension(800,500);
 
 	private final JPanel leftPanel = new JPanel();
 	private final JPanel rightPanel = new JPanel();
@@ -80,6 +80,10 @@ public class MCLCommand extends NavigationPanel {
   		// All panels required
 	    showZoomLabels = true;
 	    buildPanels();
+	    
+	    // Set the size of the map panel, and the viewport origin 
+	    setMapPanelSize(MAP_AREA_SIZE);
+	    setMapOrigin(INITIAL_MAP_ORIGIN);
 	    
 	    // Add the Get Pose and Random Move buttons
 		commandPanel.add(getPoseButton);
@@ -157,9 +161,6 @@ public class MCLCommand extends NavigationPanel {
 		// Enable the Get Pose button when the estimated pose has been sent
 		if (navEvent == NavEvent.ESTIMATED_POSE) {
 			getPoseButton.setEnabled(true);
-		} else if (navEvent == NavEvent.LOAD_MAP) {
-			model.generateParticles();
-			repaint();
 		}
 	}
 	
@@ -168,13 +169,12 @@ public class MCLCommand extends NavigationPanel {
 	 */
 	@Override
 	public void whenConnected() {
-		model.setDebug(true);
-		// Load the map and generate the particles and sends both to the NXT
-		model.loadMap(MAP_FILE_NAME);
-		zoomSlider.setValue(INITIAL_ZOOM);
-		mapPanel.viewStart = INITIAL_VIEW_START;
-		model.generateParticles();
-		
+		// If the map has been loaded, send it to the NXT
+		if (model.getMap() != null) {
+			model.sendMap();
+			// Generate the particles
+			model.generateParticles();
+		}
 		// Enable buttons
 		getPoseButton.setEnabled(true);
 		randomButton.setEnabled(true);
@@ -184,10 +184,15 @@ public class MCLCommand extends NavigationPanel {
 	 * Run the sample 
 	 */
 	public void run() throws Exception {
+		// Set the NXT program to MCLTest
+		program = "../samples/MCLTest/MCLTest.nxj";
+		
+		// Set debugging on the model
+		model.setDebug(true);
 		// Associate the MCLPoseProvider with the model
 		model.setMCL(mcl);
 		
 		// Open the MCLTest navigation panel in a JFrame window
-	    openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, TITLE, Color.white, menuBar);
+	    openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, TITLE, Color.WHITE, menuBar);
 	}
 }
