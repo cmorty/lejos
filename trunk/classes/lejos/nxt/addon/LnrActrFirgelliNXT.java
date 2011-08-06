@@ -20,21 +20,20 @@ import lejos.robotics.LinearActuator;
  * 
  */
 public class LnrActrFirgelliNXT implements LinearActuator{
-    private final int MIN_POWER = 30;
-    private EncoderMotor _encoderMotor;
-    private int _realPower =0;
-    private int _userSpecifiedPower =0;
-    private int _tick_wait; // this is calculated in setPower() to fit the power setting. Variable because lower powers move it slower.
-    private boolean _isMoveCommand = false;
-    private boolean _isStalled=false;
-    private Thread _stallDetector;
-    private Thread _actuator;
-    private boolean _dirExtend = true;
-    private int _distanceTicks;
-    private boolean _killCurrentAction=true;
-    private boolean _enableStallStop;
-    private Object _lockObj = new Object();
-    private int _tachoCount=0;
+    private static final int MIN_POWER = 30;
+    
+    private EncoderMotor encoderMotor;
+    private volatile int realPower =0;
+    private int userSpecifiedPower =0;
+    private volatile int tick_wait; // this is calculated in setPower() to fit the power setting. Variable because lower powers move it slower.
+    private volatile boolean isMoveCommand = false;
+    private volatile boolean isStalled=false;
+    private Thread actuator;
+    private volatile boolean dirExtend = true;
+    private volatile int distanceTicks;
+    private volatile boolean killCurrentAction=false;
+    private Object synchObj1 = new Object();
+    private volatile int tachoCount=0;
     
     /**Create a <code>LnrActrFirgelliNXT</code> instance.
      * Use this constructor to assign an instance of <code>EncoderMotor</code> used to drive the actuater motor. This constructor
@@ -48,18 +47,18 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * @see EncoderMotor
      */
     public LnrActrFirgelliNXT(EncoderMotor encoderMotor) {
-        _encoderMotor=encoderMotor;
-        _encoderMotor.flt();
+        this.encoderMotor=encoderMotor;
+        this.encoderMotor.flt();
         
         setPower(30);
         // set up the threads
-        _stallDetector = new Thread(new StallDetector());
-        _stallDetector.setPriority(Thread.MAX_PRIORITY - 1);
-        _stallDetector.setDaemon(true);
-        _stallDetector.start();
-        _actuator = new Thread(new Actuator());
-        _actuator.setDaemon(true);
-        _actuator.start();
+//        _stallDetector = new Thread(new StallDetector());
+//        _stallDetector.setPriority(Thread.MAX_PRIORITY - 1);
+//        _stallDetector.setDaemon(true);
+//        _stallDetector.start();
+        this.actuator = new Thread(new Actuator());
+        this.actuator.setDaemon(true);
+        this.actuator.start();
         doWait(100); 
     }
 
@@ -89,15 +88,15 @@ public class LnrActrFirgelliNXT implements LinearActuator{
     public void setPower(int power){
         power=Math.abs(power);
         power = (power>100)?100:power;
-        _userSpecifiedPower=power;
+        this.userSpecifiedPower=power;
         // calc real power with proper ranging
-         _realPower = Math.round((float)power/100 * (100-MIN_POWER) + MIN_POWER);
-        _encoderMotor.setPower(_realPower);
+        this.realPower = Math.round((float)power/100 * (100-MIN_POWER) + MIN_POWER);
+        this.encoderMotor.setPower(this.realPower);
         
         // calc encoder tick/ms based on my testing. y=mm/sec, x=power
         // y=.135 * x -1.5 + 20%  R2=0.989
-         _tick_wait = (int)(500/(0.135f * _realPower - 1.5)*1.2) ;
-         //dbg("_tick_wait " + _tick_wait);
+         this.tick_wait = (int)(500/(0.135f * this.realPower - 1.5)*1.2) ;
+         //dbg("this.tick_wait " + this.tick_wait);
     }
           
     /**
@@ -105,14 +104,14 @@ public class LnrActrFirgelliNXT implements LinearActuator{
     * @return current power 0-100%
     */
     public int getPower() {
-        return _userSpecifiedPower;
+        return this.userSpecifiedPower;
     }
  
     /**Returns true if the actuator is in motion.
      * @return true if the actuator is in motion.
      */
     public boolean isMoving() {
-        return _isMoveCommand; 
+        return this.isMoveCommand; 
     }
 
     /**Returns true if a <code>move()</code> or <code>moveTo()</code> order ended due to a motor stall. This behaves 
@@ -122,12 +121,9 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * @see LinearActuator#move(int,boolean)
      */
     public boolean isStalled() {
-        return _isStalled; 
+        return this.isStalled; 
     }
     
-//    private void dbg(String msg) {
-//        System.out.println(msg);
-//    }
     
     /**Causes the actuator to move <code>distance</code> in encoder ticks. The <code>distance</code> is relative to the actuator 
      * shaft position at the time of calling this method. 
@@ -158,8 +154,8 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      */
     public synchronized void move(int distance, boolean immediateReturn ){
         // set globals
-         _dirExtend=distance>=0;
-        _distanceTicks = Math.abs(distance);
+        this.dirExtend=distance>=0;
+        this.distanceTicks = Math.abs(distance);
          // initiate the action
         doAction(immediateReturn);
     }
@@ -173,169 +169,151 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * @see #resetTachoCount
      */
     public void moveTo(int position, boolean immediateReturn ){
-        int distance = position - _tachoCount;
+        int distance = position - this.tachoCount;
         move(distance, immediateReturn);
     }
-    // only called by actuate()
+    
+    // only called by move()
     private void doAction(boolean immediateReturn){
-        if (_realPower<=MIN_POWER) return;
-        
+        if (this.realPower<=MIN_POWER) return;
         // If we already have an active command, signal it to cease and wait until cleared
-        if (_isMoveCommand) {
-            _killCurrentAction=true;
-            synchronized(_lockObj){
-                try {
-//                    dbg("doact wait");
-                    _lockObj.wait();
-                } catch (InterruptedException e) {
-//                    dbg("wait done");
+        if (this.isMoveCommand) {
+            this.killCurrentAction=true;
+            synchronized(this.synchObj1){
+                while (this.isMoveCommand) {
+                    try {
+                        this.synchObj1.wait();
+                    } catch (InterruptedException e) {
+                        ; //ignore
+                    }
                 }
             }
         }
-        
         // initiate the action by waking up the actuator thread to do the action
-        synchronized (_actuator) {
-            _actuator.notify();
+        this.killCurrentAction=false; // ensure state baseline
+        synchronized (this.actuator) {
+            // set state to indicate an action is in effect
+            this.isMoveCommand=true;
+            this.isStalled=false;
+            this.actuator.notify();
         }
         
-        // if told to block, wait until the actuator thread completes its current task. When done, it will do a notify()
+        // if told to block, wait until the actuator thread completes its current task. When done, it will do a notify() to wake 
+        // us up here.
         if (!immediateReturn) {
-//            dbg("blk wait");
-            synchronized(_lockObj){
-                try {
-                    _lockObj.wait();
-                } catch (InterruptedException e) {
-//                    dbg("blk wait done");
+            synchronized(this.synchObj1){
+                while (!this.killCurrentAction) {
+                    try {
+                        this.synchObj1.wait();
+                    } catch (InterruptedException e) {
+                        ; // ignore
+                    }
                 }
             }
         }
     }
-    
     
     /**This thread does the actuator control
      */
     private class Actuator implements Runnable{
+        private static final int STALL_COUNT = 3; 
+        
         public void run() {
             while(true) {
                 // wait until triggered to do an actuation
-                synchronized (_actuator) {
-                    try {
-                        _actuator.wait();
-                    } catch (InterruptedException e) {
-                        ; // do nothing and continue
+                synchronized (LnrActrFirgelliNXT.this.actuator) {
+                    while (true){
+                        try {
+                            LnrActrFirgelliNXT.this.actuator.wait();
+                            if (LnrActrFirgelliNXT.this.isMoveCommand) break;
+                        } catch (InterruptedException e) {
+                            ; // do nothing and continue
+                        }
                     }
                 }
-                // set state to indicate an action is in effect
-                _isMoveCommand=true;
-                // this blocks. When finished, toExtent() will reset _isMoveCommand, etc. w/ call to stop()
+                
+                // this blocks. When finished, toExtent() will reset this.isMoveCommand, etc. w/ call to stop()
                 toExtent(); 
+                
+                // wake up any wait in doAction()
+                synchronized(LnrActrFirgelliNXT.this.synchObj1){
+                    LnrActrFirgelliNXT.this.synchObj1.notify();
+                }
             }
         }
         
-        // starts the motor and waits until move is completed or interrupted with _killCurrentAction
-        // flag which in effect, causes the thread wait/block until next command is issued (_isMoveCommand set to true)
+        // starts the motor and waits until move is completed or interrupted with the this.killCurrentAction
+        // flag which in effect, causes the thread wait/block until next command is issued (this.isMoveCommand set to true)
         private void toExtent() {
-            // the MoveDetector thread sets _isMoving. The MoveDetector does this when _doActuate is set true. _doActuate is
-            // set by doAction() which is called for extend or retract. The Actuator thread calls this method when _doActuate=true
-            int power = _realPower;
-            int tacho=0, temptacho=_tachoCount;
+            int power = LnrActrFirgelliNXT.this.realPower;
+            int tacho=0;
+            int temptacho;
             
-            _encoderMotor.resetTachoCount();
-            _killCurrentAction = false;
+            LnrActrFirgelliNXT.this.encoderMotor.resetTachoCount();
+            
             // initiate the actuator action
-            motorGoDirection(); 
-            // monitor and stop when stalled or action completes
-            while (!_killCurrentAction) {
-                tacho = _encoderMotor.getTachoCount();
-                _tachoCount = temptacho - tacho;
-                tacho=Math.abs(tacho);
-                 // reduce speed when near destination when at higher speeds
-                if (_distanceTicks-tacho<=4&&power>80) _encoderMotor.setPower(70);
-                // exit loop if destination is reached
-                if (tacho>=_distanceTicks) break;
-                // if power changed during this run.... (used only if immediateReturn=true)
-                if (power!=_realPower) {
-                    power = _realPower;
-                    _encoderMotor.setPower(power);
-                }
-                if (_killCurrentAction) break;
-                doWait(40);
-            }
-            // stop the motor
-            stop(); 
-            _tachoCount=temptacho-_encoderMotor.getTachoCount();
-            // wake up any wait in doAction()
-            synchronized(_lockObj){
-                _lockObj.notify();
-            }
-            // set the power back (if changed)
-            if (_distanceTicks-tacho<=4&&power>80) _encoderMotor.setPower(_realPower);
-        }
-        // only called by toExtent(). starts the actuator movement and waits until moving or times out (stalled)
-        private void motorGoDirection(){
-            if (_dirExtend) {
-                _encoderMotor.forward(); 
+            if (LnrActrFirgelliNXT.this.dirExtend) {
+                LnrActrFirgelliNXT.this.encoderMotor.forward(); 
             } else {
-                _encoderMotor.backward(); 
+                LnrActrFirgelliNXT.this.encoderMotor.backward(); 
             }
             
             // wait until the actuator shaft starts moving (with a time limit)
+            int begTacho=LnrActrFirgelliNXT.this.encoderMotor.getTachoCount();
             long begTime = System.currentTimeMillis();
-            // flag to control the stall detector to set the _killCurrentAction flag if stalled. Since we are starting a move, we 
-            // want to give some time for the motor to start and actuator to begin movement hence we don't want to issue a stop.
-             _enableStallStop=false; 
-            // wait until the shaft is moving or we timeout
-            _isStalled=false;
-            int begTacho=_encoderMotor.getTachoCount();
-            while (begTacho==_encoderMotor.getTachoCount()) {
-                doWait(5);
+            while (!LnrActrFirgelliNXT.this.killCurrentAction&&(begTacho==LnrActrFirgelliNXT.this.encoderMotor.getTachoCount())) {
+                doWait(LnrActrFirgelliNXT.this.tick_wait/2);
                 // kill the move and exit if it takes too long to start moving  
-                if (System.currentTimeMillis() - begTime>(_tick_wait*4)) {
-//                    dbg("mgoact tmout");
-                    _killCurrentAction=true; // will cause the actuate/monitor loop in toExtent() to never start
-                    _isStalled=true;
+                if ((System.currentTimeMillis()-begTime)>LnrActrFirgelliNXT.this.tick_wait*6) {
+                    LnrActrFirgelliNXT.this.isStalled=true;
+                    LnrActrFirgelliNXT.this.killCurrentAction=true; // will cause loop below to immediately finish
                     break;
                 }
             }
-            _enableStallStop=true;
-        }
-    }
-
-    /**This thread determines if the actuator has stalled.
-     */
-    private class StallDetector implements Runnable{
-        private final int STALL_COUNT = 2; 
-        private int begTacho;
-        private long begTime;
-        
-        public void run() {
-            begTacho = _encoderMotor.getTachoCount();
-            // monitor tacho and determine if we have a stall condition during an action
-            while (true) {                
-                doWait(_tick_wait);
-                // if no current command, don't mess with flags
-                if (!_isMoveCommand) continue;
-                
+            
+            // monitor the move and stop when stalled or action completes
+            begTime = System.currentTimeMillis();
+            temptacho=LnrActrFirgelliNXT.this.tachoCount;
+            while (!LnrActrFirgelliNXT.this.killCurrentAction) {
                 // Stall check. if no tacho change...
-                if (begTacho==_encoderMotor.getTachoCount()) {
-                    // ...and we exceed STALL_COUNT wait periods and have been command to move, it probably means we have stalled
-                    if (System.currentTimeMillis()- begTime>_tick_wait*STALL_COUNT) {
-                        // so set this so toExtent() will exit it's tacho monitor loop and call stopActuator()
-                        _isStalled=true;
+                if (begTacho==LnrActrFirgelliNXT.this.encoderMotor.getTachoCount()) {
+                    // ...and we exceed STALL_COUNT wait periods and have been commanded to move, it probably means we have stalled
+                    if (System.currentTimeMillis()- begTime>LnrActrFirgelliNXT.this.tick_wait*STALL_COUNT) {
+                        LnrActrFirgelliNXT.this.isStalled=true;
+                        break;
                     }
                 } else {
                     // The tacho is moving, get the current point and time for next comparision
-                    _isStalled=false;
-                    begTacho=_encoderMotor.getTachoCount();
+                    begTacho=LnrActrFirgelliNXT.this.encoderMotor.getTachoCount();
                     begTime = System.currentTimeMillis();
                 }
+                // calc abs tacho
+                tacho = LnrActrFirgelliNXT.this.encoderMotor.getTachoCount();
+                LnrActrFirgelliNXT.this.tachoCount = temptacho - tacho;
+                tacho=Math.abs(tacho);
                 
-                // stop any motor action if stalled and flag allows it
-                if (_enableStallStop && _isStalled){
-                    _killCurrentAction=true;
-//                    dbg("stall & kill");
+                 // reduce speed when near destination when at higher speeds
+                if (LnrActrFirgelliNXT.this.distanceTicks-tacho<=4&&power>80) LnrActrFirgelliNXT.this.encoderMotor.setPower(70);
+                // exit loop if destination is reached
+                if (tacho>=LnrActrFirgelliNXT.this.distanceTicks) break;
+                // if power changed during this run.... (only when immediateReturn=true)
+                if (power!=LnrActrFirgelliNXT.this.realPower) {
+                    power = LnrActrFirgelliNXT.this.realPower;
+                    LnrActrFirgelliNXT.this.encoderMotor.setPower(power);
                 }
+                
+                if (LnrActrFirgelliNXT.this.killCurrentAction) break;
+                doWait(LnrActrFirgelliNXT.this.tick_wait/2);
             }
+            
+            // stop the motor
+            LnrActrFirgelliNXT.this.encoderMotor.stop(); 
+            stop(); // potentially redundant state-setting when user calls stop()
+            LnrActrFirgelliNXT.this.tachoCount=temptacho-LnrActrFirgelliNXT.this.encoderMotor.getTachoCount();
+            
+            // set the power back (if changed)
+            if (LnrActrFirgelliNXT.this.distanceTicks-tacho<=4&&power>80) 
+                LnrActrFirgelliNXT.this.encoderMotor.setPower(LnrActrFirgelliNXT.this.realPower);
         }
     }
     
@@ -351,9 +329,9 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * @see LinearActuator#move(int,boolean)
      */
     public void stop() {
-        _killCurrentAction = true;
-        _isMoveCommand = false; 
-        _encoderMotor.stop();
+        this.killCurrentAction = true;
+        this.isMoveCommand = false; 
+        
     }
 
     /** Returns the absolute tachometer (encoder) position of the actuator shaft. The zero position of the actuator shaft is where 
@@ -365,14 +343,14 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * @see #resetTachoCount
      */
     public int getTachoCount() {
-       return _tachoCount;
+       return this.tachoCount;
     }
     
     /**Resets the tachometer (encoder) count to zero at the current actuator shaft position.
      * @see #getTachoCount
      */
     public void resetTachoCount() {
-         _tachoCount=0;
+         this.tachoCount=0;
     }
     
 }
