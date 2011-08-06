@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry including="js/**" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry kind="lib" path="3rdparty/lib/bcel.jar"/>
+	<classpathentry exported="true" kind="lib" path="3rdparty/lib/bcel.jar" sourcepath="3rdparty/lib/bcel-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

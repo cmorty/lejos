@@ -4,7 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pccomms"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pctools"/>
-	<classpathentry kind="lib" path="lib/pc/3rdparty/jcommon-1.0.16.jar"/>
-	<classpathentry kind="lib" path="lib/pc/3rdparty/jfreechart-1.0.13.jar"/>
+	<classpathentry exported="true" kind="lib" path="3rdparty/lib/jcommon.jar" sourcepath="3rdparty/lib/jcommon-src.zip"/>
+	<classpathentry exported="true" kind="lib" path="3rdparty/lib/jfreechart.jar" sourcepath="3rdparty/lib/jfreechart-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

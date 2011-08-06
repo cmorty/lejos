@@ -69,9 +69,7 @@
 	<target name="clean" description="clean up all generated files">
 	  	<!-- delete transient release folders -->
 		<delete dir="${release.bin}"/>
-		<delete dir="${release.lib}" includeemptydirs="true">
-			<exclude name="${3rdparty.subdir}/**" />
-		</delete>
+		<delete dir="${release.lib}"/>
 	  	<delete dir="${release.src}"/>
 	  	<delete dir="${release.projects}"/>
   	</target>
@@ -232,6 +230,7 @@
  		<mkdir dir="${release.dist}"/>
     	<mkdir dir="${release.bin}"/>
     	<mkdir dir="${release.lib}"/>
+    	<mkdir dir="${release.3rdparty.libs}"/>
     	<mkdir dir="${release.src}"/>
     	<mkdir dir="${release.projects}"/>
   	</target>
@@ -280,7 +279,7 @@
 	</target>
 	
 	<!-- copies the jar files -->
-	<target name="libs" depends="create.folders" description="copies the jar files">
+	<target name="libs" depends="create.folders,3rdparty.libs" description="copies the jar files">
 		<copy todir="${release.nxt.libs}">
       		<fileset dir="${lejos.root}/classes/lib">
         		<include name="*.jar"/>
@@ -290,19 +289,32 @@
       		<fileset dir="${lejos.root}/jtools/lib">
         		<include name="*.jar"/>
       		</fileset>
-    	</copy>
-		<copy todir="${release.pc.libs}">
-      		<fileset dir="${lejos.root}/pctools/lib">
+      		<fileset dir="${lejos.root}/pccomms/lib">
         		<include name="*.jar"/>
       		</fileset>
-    	</copy>
-		<copy todir="${release.pc.libs}">
-      		<fileset dir="${lejos.root}/pccomms/lib">
+      		<fileset dir="${lejos.root}/pctools/lib">
         		<include name="*.jar"/>
       		</fileset>
     	</copy>
 	</target>
 	
+	<!-- copies the jar files -->
+	<target name="3rdparty.libs" depends="create.folders" description="copies the jar files">
+		<copy todir="${release.3rdparty.libs}">
+      		<fileset dir="${lejos.root}/jtools/3rdparty/lib">
+        		<include name="*.jar"/>
+        		<include name="*-src.zip"/>
+      		</fileset>
+      		<fileset dir="${lejos.root}/pccomms/3rdparty/lib">
+        		<include name="*.jar"/>
+        		<include name="*-src.zip"/>
+      		</fileset>
+      		<fileset dir="${lejos.root}/pctools/3rdparty/lib">
+        		<include name="*.jar"/>
+				<include name="*-src.zip"/>
+      		</fileset>
+		</copy>
+	</target>
 
 	<!-- copies the samples -->
 	<target name="samples" depends="create.folders" description="copies the samples">
