@@ -41,6 +41,7 @@ public class MapTest {
     	RangeFeatureDetector detector = new RangeFeatureDetector(sonic, MAX_DISTANCE, DETECTOR_DELAY); 
     	NXTNavigationModel model = new NXTNavigationModel();
     	model.setDebug(true);
+    	model.setSendMoveStart(true);
     	
     	// Adding the navigator, adds the pilot and pose provider as well
     	model.addNavigator(navigator);
