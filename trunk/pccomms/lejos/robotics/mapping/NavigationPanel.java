@@ -1408,10 +1408,12 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 	 */
 	public void setMapPanelSize(Dimension size) {
 		mapPaneSize = size;
+		repaint();
 	}
 	
 	public void setMapOrigin(Point origin) {
-		initialViewStart = origin;
+		mapPanel.viewStart = origin;
+		repaint();
 	}
 	
 	/**
