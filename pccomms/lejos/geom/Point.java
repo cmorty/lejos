@@ -4,15 +4,25 @@ import java.awt.geom.*;
 
 /**
  * Point with float co-ordinates for use in navigation.
+ * This class includes methods allow it to behave as a vector in 2 dimensional
+ * vector space. It includes the standard  vector  arithmetic operatins of addition,  * subtraction, scalar multiplication, and inner  product.
  * 
- * @author Lawrie Griffiths
+ * @author Lawrie Griffiths ,  Roger Glassey
  *
  */
-public class Point extends Point2D.Float {	
+public class Point extends Point2D.Float {
+   /**
+    * returns a Point at location x,y
+    * @param x coordinate
+    * @param y coordinate
+    */
 	public Point(float x, float y) {
 		super(x,y);
 	}
-
+/**
+      * Returns a point ad distance 1 from the origin and an angle <code>radans</code> to the x-axis
+      * @param radians 
+      */
     public Point(float radians)
     {
         this.x = (float)Math.cos(radians);
@@ -22,7 +32,7 @@ public class Point extends Point2D.Float {
 /**
  * Returns the direction angle from this point to the Point p
  * @param p the Point to determine the angle to
- * @return the angle
+ * @return the angle in degrees
  */
     public float angleTo(Point p)
     {
@@ -50,116 +60,174 @@ public class Point extends Point2D.Float {
         p.y = y;
         return p;
     }
+    
+    /**
+     * returns a clone of itself
+     * @return  clone of this point
+     */
 
     @Override
     public Point clone()
     {
         return new Point(x, y);
     }
-
+/**
+     * Returns the vector sum of <code>this</code> and other
+     * @param other the point added to <code>this</code>
+     * @return vector sum
+     */
     public Point add(Point other)
     {
         return new Point(this.x + other.x, this.y + other.y);
     }
-
-    public void moveTo(Point other)
-    {
-        x = other.x;
-        y = other.y;
-    }
-
-    public Point subtract(Point other)
-    {
-        return new Point(this.x - other.x, this.y - other.y);
-    }
-
-    public Point subtract(float length)
-    {
-        return this.subtract(this.getNormalized().multiply(length));
-    }
-
-    public Point multiply(float length)
-    {
-        return new Point(this.x * length, this.y * length);
-    }
-
-    public Point getNormalized()
-    {
-        return new Point(this.x / length(), this.y / length());
-    }
-
-    public Point reverse()
-    {
-        return this.multiply(-1.0F);
-    }
-
-    public Point unproject(Point origin, Point xDir)
-    {
-        if(origin == null)
-            origin = new Point(0, 0);
-        xDir = xDir.getNormalized();
-        Point yDir = xDir.leftOrth();
-        Point offset = this.subtract(origin);
-        Point np = new Point(0, 0);
-        np.x = offset.dotProduct(xDir);
-        np.y = offset.dotProduct(yDir);
-        return np;
-    }
-
-    public Point project(Point origin, Point xDir)
-    {
-        Point yDir = xDir.leftOrth();
-        Point p = origin.add(xDir.multiply(this.x));
-        p = p.add(yDir.multiply(this.y));
-        return p;
-    }
-
-    public float angle()
-    {
-        return (float)Math.atan2(this.y, this.x);
-    }
-
-    public Point leftOrth()
-    {
-        return new Point(-y, x);
-    }
-
-    public Point rightOrth()
-    {
-        return new Point(y, -x);
-    }
-
+    
+     /**
+     *  Vector addition; add other to <code>this</code>
+     * @param other is added to <code>this</code>
+     * @return  <code>this</code> after the addition
+     */
     public Point addWith(Point other)
     {
         x += other.x;
         y += other.y;
         return this;
     }
+/**
+     * Makes <code>this</code> a copy of the other point
+     * @param other 
+     */
+    public void moveTo(Point other)
+    {
+        x = other.x;
+        y = other.y;
+    }
+/**
+     * Vector subtraction
+     * @param other is subtracted from <code>this</code>
+     * @return a new point; this point  is unchanged
+     */
+    public Point subtract(Point other)
+    {
+        return new Point(this.x - other.x, this.y - other.y);
+    }
+/**
+     * 
+     * Vector subtraction
+     * @param length of a copy of <code>this</code>
+     * @return a new vector, obtained b subtracting a scaled version of this point
+     */
+    public Point subtract(float length)
+    {
+        return this.subtract(this.getNormalized().multiply(length));
+    }
+/**
+     * Scalar multiplication
+     * @param scale multilies the length of this to give a new length
+     * @return a new copy of this, with length scaled
+     */
+    public Point multiply(float scale)
+    {
+        return new Point(this.x * scale , this.y * scale);
+    }
+/**
+     * get a copy of <code>this</code> with length 1
+     * @return a new vector of unit length
+     */
+    public Point getNormalized()
+    {
+        return new Point(this.x / length(), this.y / length());
+    }
+ /**
+     * same as multiply(-1);
+     * @return  this pointing in the opposite direction
+     */  
+    public Point reverse()
+    {
+        return this.multiply(-1.0F);
+    }
 
+ /**
+     * Finds the orthogonal projection of this point onto the line.
+     * The projection may lie on an extension of the line 
+     * @param line onto which the projection is made
+     * @return  the projection
+     */
+
+    public Point projectOn(Line line)
+    {
+       Point origin = line.getP1();
+       Point basis = line.getP2().subtract(origin);
+       Point xx = this.subtract(origin);
+       float lamda = xx.dotProduct(basis)/basis.dotProduct(basis);
+       Point projection = basis.multiply(lamda);
+       projection = projection.add(origin);
+       return projection;
+    }
+    
+    /**
+     * returns the angle in radians of this point from the origin.
+     * The X- axis ie at angle 0.
+     * @return  the angle in radians
+     */
+
+    public float angle()
+    {
+        return (float)Math.atan2(this.y, this.x);
+    }
+/**
+     * calculate left orthogonal vector of <code>this</code>
+     * @return orthogonal vector
+     */
+    public Point leftOrth()
+    {
+        return new Point(-y, x);
+    }
+
+    /**
+     * calculate the right handed cartesian  orthogonal of this poiont
+     * @return orthogonal vector
+     */
+    public Point rightOrth()
+    {
+        return new Point(y, -x);
+    }
+
+   
+/**
+     * vector subtraction
+     * @param other is subtracted from <code>this</code>
+     * @return this point after subtraction
+     */
     public Point subtractWith(Point other)
     {
         x -= other.x;
         y -= other.y;
         return this;
     }
-
-    public Point multiplyBy(float length)
+/**
+     * scalar multiplication
+     * @param scale
+     * @return scaled this point after multiplication
+     */
+    public Point multiplyBy(float scale)
     {
-        x *= length;
-        y *= length;
+        x *= scale;
+        y *= scale;
         return this;
     }
 
-    /*
-     * Returns the length of this vector
+    /**
+     * Returns the length of this  vector
+     * @return the length
      */
     public float length()
     {
         return (float)Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
 
-    /*
+    /**
      * Sets this vector's length to 1 unit while retaining direction
+     * @return  this vector normalized
      */
     public Point normalize()
     {
@@ -169,7 +237,7 @@ public class Point extends Point2D.Float {
         return this;
     }
 
-    /*
+    /**
      * Turns this vector into its left-handed cartesian orthagonal
      */
     public Point makeLeftOrth()
@@ -180,7 +248,7 @@ public class Point extends Point2D.Float {
         return this;
     }
 
-    /*
+    /**
      * Turns this vector into its right-handed cartesian orthagonal
      */
     public Point makeRightOrth()
@@ -190,53 +258,16 @@ public class Point extends Point2D.Float {
         y = -temp;
         return this;
     }
-
-    public Point projectWith(Point xDir)
-    {
-        return projectWith(xDir, null);
-    }
-
-    public Point projectWith(Point xDir, Point origin)
-    {
-        float tx = 0;
-        float ty = 0;
-        if(origin != null)
-        {
-            tx = origin.x;
-            ty = origin.y;
-        }
-
-        // Do projection
-        this.x = tx + xDir.x * this.x - xDir.y * this.y;
-        this.y = ty + xDir.y * this.x + xDir.x * this.y;
-        return this;
-    }
-
-    public Point unProjectWith(Point xDir)
-    {
-        return unProjectWith(xDir, null);
-    }
-
+    /**
+     * Returns the inner dot product.
+     * @return dot product of this with other
+     */
+ 
     public float dotProduct(Point other)
     {
         return this.x * other.x + this.y * other.y;
     }
 
-    public Point unProjectWith(Point xDir, Point origin)
-    {
-        float tx = this.x;
-        float ty = this.y;
-        if(origin != null)
-        {
-            tx -= origin.x;
-            ty -= origin.y;
-        }
-
-        // Unproject
-        x = tx * xDir.x + ty * xDir.y;
-        y = tx * -xDir.y + ty * xDir.x;
-        return this;
-    }
 
      /**
      * Returns a new point at the specified distance in the direction angle  from

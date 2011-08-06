@@ -481,17 +481,29 @@ public class PCNavigationModel extends NavigationModel {
 			panel.repaint();
 			if (mcl != null) mcl.setMap(map);
 			panel.eventReceived(NavEvent.LOAD_MAP);
-			if (connected) {
-				synchronized(receiver) {
-					dos.writeByte(NavEvent.LOAD_MAP.ordinal());
-					map.dumpObject(dos);
-				}
-			}
+			sendMap();
 			return map;
 		} catch (Exception ioe) {
 			panel.error("Exception in loadMap:" + ioe);
 			return null;
 		}	
+	}
+	
+	/**
+	 * Send the map to the NXT
+	 */
+	public void sendMap() {
+		if (!connected) return;
+		if (map == null) return;
+		try {
+			synchronized(receiver) {
+				dos.writeByte(NavEvent.LOAD_MAP.ordinal());
+				map.dumpObject(dos);
+			}
+		} catch (IOException ioe) {
+			panel.error("IOException in sendMap");
+		}
+		
 	}
 	
 	public void setPathFinder(int finder) {
@@ -840,6 +852,7 @@ public class PCNavigationModel extends NavigationModel {
 						switch (navEvent) {
 						case MOVE_STARTED: // Get planned move
 							lastPlannedMove.loadObject(dis);
+							if(debug) panel.log("Move Started: " + lastPlannedMove);
 							break;
 						case MOVE_STOPPED: // Get executed move
 							lastMove = new Move(false, 0, 0);  // Dummy move

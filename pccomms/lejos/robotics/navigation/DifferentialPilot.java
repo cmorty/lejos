@@ -398,6 +398,8 @@ public class DifferentialPilot implements
   public void rotate(final double angle, final boolean immediateReturn)
   {
     _type = Move.MoveType.ROTATE;
+    _distance = 0;
+    _angle = angle;
     movementStart(immediateReturn);
     setSpeed(Math.round(_robotRotateSpeed * _leftTurnRatio), Math.round(_robotRotateSpeed * _rightTurnRatio));
     int rotateAngleLeft = _parity * (int) (angle * _leftTurnRatio);
@@ -458,6 +460,8 @@ public class DifferentialPilot implements
   public void travel(final double distance, final boolean immediateReturn)
   {
     _type = Move.MoveType.TRAVEL;
+    _distance = distance;
+    _angle = 0;
     if (distance == Double.POSITIVE_INFINITY)
     {
       forward();
@@ -708,6 +712,8 @@ public class DifferentialPilot implements
       return;
     }
    _type = Move.MoveType.ARC;
+   _angle = angle;
+   _distance = 0; // TODO: calculate distance that will be traveled
    movementStart(immediateReturn);
     steerPrep(turnRate);
     int side = (int) Math.signum(turnRate);
@@ -786,7 +792,7 @@ public class DifferentialPilot implements
     reset();
     for(MoveListener ml : _listeners)
       ml.moveStarted(new Move(_type,
-            getMovementIncrement(), getAngleIncrement(), 
+            (float) _distance, (float) _angle, 
             _robotTravelSpeed, _robotRotateSpeed, isMoving()), this);
   }
 
@@ -796,9 +802,11 @@ public class DifferentialPilot implements
    */
   private synchronized void movementStop()
   {
+	  
     for(MoveListener ml : _listeners)
       ml.moveStopped(new Move(_type,
-            getMovementIncrement(), getAngleIncrement(), isMoving()), this);
+            getMovementIncrement(), getAngleIncrement(), 
+            _robotTravelSpeed, _robotRotateSpeed, isMoving()), this);
   }
   
   /**
@@ -969,5 +977,15 @@ public class DifferentialPilot implements
   /**
    */
    protected Move.MoveType _type;
+   
+   /**
+    * Distance about to travel - used by movementStarted
+    */
+   private double _distance;
+   
+   /**
+    * Angle about to turn - used by movementStopped
+    */
+   private double _angle;
 
 }
