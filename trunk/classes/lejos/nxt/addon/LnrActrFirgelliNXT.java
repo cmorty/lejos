@@ -174,16 +174,25 @@ public class LnrActrFirgelliNXT implements LinearActuator{
     // only called by move()
     private void doAction(boolean immediateReturn){
         if (this.realPower<=MIN_POWER) return;
-        
         // If we already have an active command, signal it to cease and wait until cleared
-        if (this.isMoveCommand) this.killCurrentAction=true;
-        // blocks here until action has completed. (Doh!)
-        synchronized(this.actuator){
-            this.killCurrentAction=false; // ensure state baseline
+        if (this.isMoveCommand) {
+            this.killCurrentAction=true;
+            synchronized(this.synchObj1){
+                while (this.isMoveCommand) {
+                    try {
+                        this.synchObj1.wait();
+                    } catch (InterruptedException e) {
+                        ; //ignore
+                    }
+                }
+            }
+        }
+        // initiate the action by waking up the actuator thread to do the action
+        this.killCurrentAction=false; // ensure state baseline
+        synchronized (this.actuator) {
             // set state to indicate an action is in effect
             this.isMoveCommand=true;
             this.isStalled=false;
-            // initiate the action by waking up the actuator thread to do the action
             this.actuator.notify();
         }
         
@@ -209,22 +218,22 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         
         public void run() {
             while(true) {
+                // wait until triggered to do an actuation
                 synchronized (LnrActrFirgelliNXT.this.actuator) {
-                    while (true) {
+                    while (true){
                         try {
-                            // wait until triggered to do an actuation
                             LnrActrFirgelliNXT.this.actuator.wait();
-                            // if spurious notify, wait again
                             if (LnrActrFirgelliNXT.this.isMoveCommand) break;
                         } catch (InterruptedException e) {
-                            ; //ignore
+                            ; // do nothing and continue
                         }
                     }
-                    // Do the action. When finished, toExtent() will reset this.isMoveCommand, etc. w/ call to stop()
-                    toExtent(); 
                 }
                 
-                // wake up any wait in doAction() for immediateReturn=false;
+                // this blocks. When finished, toExtent() will reset this.isMoveCommand, etc. w/ call to stop()
+                toExtent(); 
+                
+                // wake up any wait in doAction()
                 synchronized(LnrActrFirgelliNXT.this.synchObj1){
                     LnrActrFirgelliNXT.this.synchObj1.notify();
                 }
