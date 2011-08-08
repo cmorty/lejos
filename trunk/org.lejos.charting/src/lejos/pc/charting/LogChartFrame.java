@@ -56,7 +56,7 @@ import org.jfree.chart.JFreeChart;
 /** The main GUI window for NXT Charting Logger.
  * @author Kirk P. Thompson
  */
-public class LogChartFrame extends JFrame {
+class LogChartFrame extends JFrame {
     private final String THISCLASS;
     private static final int MAXDOMAIN_DATAPOINT_LIMIT= 10000;
     private static final int MAXDOMAIN_TIME_LIMIT = 30000;
@@ -476,16 +476,17 @@ public class LogChartFrame extends JFrame {
         menuItem.addActionListener(mlistener);
         menu.add(menuItem);
         
+        
         menu = new JMenu("Help");
         menu.setMnemonic(KeyEvent.VK_H);
         menuBar.add(menu);
-        menuItem = new JMenuItem("About",KeyEvent.VK_A);
+        menuItem = new JMenuItem("Chart controls", KeyEvent.VK_C);
         menuItem.addActionListener(mlistener);
         menu.add(menuItem);
         menuItem = new JMenuItem("Generate sample data", KeyEvent.VK_G);
         menuItem.addActionListener(mlistener);
         menu.add(menuItem);
-        menuItem = new JMenuItem("Chart controls", KeyEvent.VK_C);
+        menuItem = new JMenuItem("About",KeyEvent.VK_A);
         menuItem.addActionListener(mlistener);
         menu.add(menuItem);
         
