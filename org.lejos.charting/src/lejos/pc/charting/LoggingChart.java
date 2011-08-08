@@ -26,7 +26,7 @@ import org.jfree.ui.RectangleInsets;
 /** JFreeChart object in a ChartPanel. Includes methods to add titles (headers), series datapoints, and change domain scaling
  * @author Kirk P. Thompson
  */
-public class LoggingChart extends ChartPanel{
+class LoggingChart extends ChartPanel{
     private final String THISCLASS;
     private static final float DOMAIN_SIZE_MULT=1.01f; // provides a small gap between series and chart right,left edges on domain axis
     private static final int MAX_SCALE=10000; // percentage as scaled int

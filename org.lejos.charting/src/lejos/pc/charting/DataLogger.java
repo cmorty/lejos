@@ -431,7 +431,7 @@ public class DataLogger {
             doWait(50);
         }
        
-        // Get 4 bytes from the buffer. Null pointer if the poll() method in btmanager.getByte() has no data. 
+        // Get n bytes from the buffer. Null pointer if the poll() method in btmanager.getByte() has no data. 
         for (int i=0;i<byteCount;i++) {
             readBytes[i]=connectionManager.getByte();
         }
