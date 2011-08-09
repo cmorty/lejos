@@ -3,13 +3,13 @@
 # for OSX
 function my_resolve() {
 	if [ "${2:0:1}" == "/" ]; then
-		echo "$2"
+		printf "%s" "$2"
 	elif [ "$2" == "." ]; then
-		echo "$1"
+		printf "%s" "$1"
 	elif [ "$1" == "." ]; then
-		echo "$2"
+		printf "%s" "$2"
 	else
-		echo "$1/$2"
+		printf "%s" "$1/$2"
 	fi
 }
 function my_readlink() {
@@ -28,7 +28,7 @@ function my_build_cp() {
 
 	local TMP_CP="$(find "$DIR" -name "*.jar" -print0 | tr "\0" "$SEP")"
 	# remove last $SEP 
-	echo ${TMP_CP%?}
+	printf "%s" ${TMP_CP%?}
 }
 function set_java_and_javac() {
 	local VAR="$1"
