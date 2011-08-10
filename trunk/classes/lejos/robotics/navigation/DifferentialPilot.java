@@ -292,6 +292,8 @@ public class DifferentialPilot implements
   public void forward()
   {
     _type = Move.MoveType.TRAVEL;
+    _angle = 0;
+    _distance = Double.POSITIVE_INFINITY;
     movementStart(false);
     setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math.round(_robotTravelSpeed * _rightDegPerDistance));
     if (_parity == 1)
@@ -309,6 +311,9 @@ public class DifferentialPilot implements
   public void backward()
   {
     _type = Move.MoveType.TRAVEL;
+    _distance = Double.NEGATIVE_INFINITY;
+    _angle = 0;
+
     movementStart(false);
     setSpeed(Math.round(_robotTravelSpeed * _leftDegPerDistance), Math.round(_robotTravelSpeed * _rightDegPerDistance));
 
@@ -342,6 +347,8 @@ public class DifferentialPilot implements
   public void rotateLeft()
   {
     _type = Move.MoveType.ROTATE;
+    _distance = 0;
+    _angle = Double.POSITIVE_INFINITY;
     movementStart(true);
     if(_parity >0)
     {
@@ -358,6 +365,8 @@ public class DifferentialPilot implements
   public void rotateRight()
   {
     _type = Move.MoveType.ROTATE;
+    _distance = 0;
+    _angle = Double.NEGATIVE_INFINITY;
     movementStart(true);
     if (_parity > 0)
     {
@@ -426,8 +435,7 @@ public class DifferentialPilot implements
   {
     _left.stop(true);
     _right.stop(true);
-    waitComplete();
-    Thread.yield(); // give other threads a chance to react 
+    waitComplete();                           
   }
 
   /**
@@ -483,6 +491,15 @@ public class DifferentialPilot implements
   public void arcForward(final double radius)
   {
     _type = Move.MoveType.ARC;
+    if (radius > 0)
+    {
+      _angle = Double.POSITIVE_INFINITY;
+      _distance = Double.POSITIVE_INFINITY;
+    } else
+    {
+      _angle = Double.NEGATIVE_INFINITY;
+      _distance = Double.NEGATIVE_INFINITY;
+    }
     movementStart(true);
     double turnRate = turnRate(radius);
     steerPrep(turnRate); // sets motor speeds
@@ -495,6 +512,15 @@ public class DifferentialPilot implements
   public void arcBackward(final double radius)
   {
      _type = Move.MoveType.ARC;
+    if (radius < 0)
+    {
+      _angle = Double.POSITIVE_INFINITY;
+     _distance = Double.NEGATIVE_INFINITY;
+    } else
+    {
+     _angle = Double.NEGATIVE_INFINITY;
+      _distance = Double.POSITIVE_INFINITY;
+    }
     movementStart(true);
     double turnRate = turnRate(radius);
     steerPrep(turnRate);// sets motor speeds
@@ -566,6 +592,21 @@ public class DifferentialPilot implements
     double ratio = (2 * radiusToUse - _trackWidth) / (2 * radiusToUse + _trackWidth);
     return (direction * 100 * (1 - ratio));
   }
+  
+  
+  /**
+   * Returns the radius of the turn made by steer(turnRate)
+   * Used in for planned distance at start of arc and steer moves.
+   * @param turnRate
+   * @return radius of the turn.    
+   */
+  private  double radius(double turnRate)
+  {
+    double radius = 100*_trackWidth / turnRate;
+    if(turnRate > 0 ) radius -= _trackWidth/2;
+    else radius += _trackWidth/2;  
+    return radius;  
+  }
 
 /**
    * Starts the robot moving forward along a curved path. This method is similar to the
@@ -574,9 +615,9 @@ public class DifferentialPilot implements
    * it useful for line following applications.
    * <p>
    * The <code>turnRate</code> specifies the sharpness of the turn.  Use values  between -200 and +200.<br>
-   * A negative value means that center of the turn is on the left.  If the
+   * A positive value means that center of the turn is on the left.  If the
  * robot is traveling toward the top of the page the arc looks like this: <b>)</b>. <br>
-   * A positive value means that center of the turn is on the  right so the arc liiks  this: <b>(</b>. <br>.
+   * A negative  value means that center of the turn is on the  right so the arc looks  this: <b>(</b>. <br>.
    *  In this class,  this parameter determines the  ratio of inner wheel speed to outer wheel speed <b>as a percent</b>.<br>
    * <I>Formula:</I> <code>ratio = 100 - abs(turnRate)</code>.<br>
    * When the ratio is negative, the outer and inner wheels rotate in
@@ -607,6 +648,16 @@ public class DifferentialPilot implements
     if (!_steering)  //only call movement start if this is the most recent methoc called
     {
       _type = Move.MoveType.ARC;
+         if(turnRate > 0 )
+     {
+       _angle = Double.POSITIVE_INFINITY;
+       _distance = Double.POSITIVE_INFINITY;
+     }
+     else 
+     {
+       _angle = Double.NEGATIVE_INFINITY;
+       _distance = Double.NEGATIVE_INFINITY;
+     }
       movementStart(true);
       _steering = true;
     }
@@ -635,6 +686,16 @@ public class DifferentialPilot implements
     if (!_steering)  //only call movement start if this is the most recent methoc called
     {
       _type = Move.MoveType.ARC;
+         if(turnRate < 0 )
+     {
+       _angle = Double.POSITIVE_INFINITY;
+       _distance = Double.NEGATIVE_INFINITY;
+     }
+     else 
+     {
+       _angle = Double.NEGATIVE_INFINITY;
+       _distance = Double.POSITIVE_INFINITY;
+     }
       movementStart(true);
       _steering = true;
     }
@@ -713,7 +774,7 @@ public class DifferentialPilot implements
     }
    _type = Move.MoveType.ARC;
    _angle = angle;
-   _distance = 0; // TODO: calculate distance that will be traveled
+   _distance = 2*Math.toRadians(angle)*radius(turnRate); 
    movementStart(immediateReturn);
     steerPrep(turnRate);
     int side = (int) Math.signum(turnRate);
@@ -898,9 +959,8 @@ public class DifferentialPilot implements
   protected final RegulatedMotor _left;
   /**
    * Right motor.
-   * @deprecated Access to this field will be private in NXJ version 1.0 when the CompassPilot is removed.
    */
-  @Deprecated protected final RegulatedMotor _right;
+  protected final RegulatedMotor _right;
   /**
    * The motor at the inside of the turn. set by steer(turnRate)
    * used by other steer methodsl
