@@ -837,11 +837,13 @@ class LogChartFrame extends JFrame {
     }
     
     private void selectFolderButton_actionPerformed(ActionEvent e) {
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         JFileChooser jfc = new JFileChooser(new File(FQPathTextArea.getText(), ""));
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         jfc.setApproveButtonText("Select");
         jfc.setDialogTitle("Select Directory");
         jfc.setDialogType(JFileChooser.OPEN_DIALOG);
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         int returnVal = jfc.showOpenDialog(this);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             FQPathTextArea.setText(getCanonicalName(jfc.getSelectedFile()));
