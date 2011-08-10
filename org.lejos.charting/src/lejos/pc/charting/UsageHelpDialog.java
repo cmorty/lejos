@@ -29,7 +29,7 @@ class UsageHelpDialog extends JDialog {
     }
     
     private void jbInit() throws Exception {
-        this.setSize(new Dimension(539, 312));
+        this.setSize(new Dimension(537, 372));
         this.setLayout(verticalFlowLayout1);
         this.setModal(false);
         this.setResizable(true);
@@ -48,6 +48,8 @@ class UsageHelpDialog extends JDialog {
         "<li>Slider changes domain scale dynamically from 0.1 to 100% of (domain) X dataset extents/range" + 
         "<li>Tootip: Hover over data point on a series and series name, x-y val is shown" + 
         "<li>Left-click moves crosshair to nearest datapoint and those coordinates are displayed in lower right of chart area" +
+        "<li>Mouse over series legend item highlights the series" +
+        "<li>Left Mouse click on series legend item toggles series visibility" +
         "</ul></html>");jLabel1.setVerticalAlignment(SwingConstants.TOP);
         this.getContentPane().add(jLabel1, null);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

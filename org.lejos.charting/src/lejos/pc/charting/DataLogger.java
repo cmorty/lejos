@@ -16,7 +16,7 @@ import java.util.HashSet;
  * @see lejos.util.NXTDataLogger 
  * @author Kirk P. Thompson
  */
-public class DataLogger {
+class DataLogger {
     private static final byte ATTENTION1 = (byte)0xff;
     private static final byte ATTENTION2 = (byte)0xab;
     private static final byte COMMAND_ITEMSPERLINE = 0;
@@ -38,7 +38,7 @@ public class DataLogger {
     /** Change listener to notify of events when log data has been recieved, a data stream EOF, and header name changed.
      * @see  #addLoggerListener
      */
-    public interface LoggerListener {
+    interface LoggerListener {
         /** Invoked when a log line (all fields read as per headers) is logged. Each logged data field/column is represented by a 
          * <code>DataItem</code> instance.
          * @param logDataItems The array of <code>DataItem</code> instances representing a line of logged data.
