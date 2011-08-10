@@ -2,19 +2,25 @@ package lejos.pc.charting;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.entity.ChartEntity;
+import org.jfree.chart.entity.LegendItemEntity;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYSeries;
@@ -62,7 +68,66 @@ class LoggingChart extends ChartPanel{
         int axisIndex; // cooresponds to dataset(index). could be sparse
         int seriesIndex; //
     }
-    
+
+    /** Allows user control of chart series visibility and series highlight on mouseover
+     */
+    private class MyChartMouseListener implements ChartMouseListener{
+        
+        private int getSeriesDefsIndex(ChartEntity ce){
+            LegendItemEntity lie= (LegendItemEntity)ce;
+            for (int i=0;i<seriesDefs.length;i++){
+                if (seriesDefs[i].label.equals(lie.getSeriesKey().toString())) return i;
+            }
+            return -1;
+        }
+        
+        private void setStroke(int seriesDefIndex, float desiredWidth) {
+            XYItemRenderer ir=getChart().getXYPlot().getRenderer(seriesDefs[seriesDefIndex].axisIndex-1);
+            if (((BasicStroke)ir.getSeriesStroke(seriesDefs[seriesDefIndex].seriesIndex-1)).getLineWidth()!=desiredWidth) {
+                ir.setSeriesStroke(seriesDefs[seriesDefIndex].seriesIndex-1, 
+                    new BasicStroke(desiredWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+                getChart().setNotify(true);
+            }
+        }
+        
+        private void toggleSeriesVisible(int seriesDefIndex) {
+            XYItemRenderer ir=getChart().getXYPlot().getRenderer(seriesDefs[seriesDefIndex].axisIndex-1);
+            XYLineAndShapeRenderer lsr = (XYLineAndShapeRenderer)ir;
+            Boolean vis = lsr.getSeriesLinesVisible(seriesDefs[seriesDefIndex].seriesIndex-1);
+            lsr.setSeriesLinesVisible(seriesDefs[seriesDefIndex].seriesIndex-1,vis==null?false:!vis.booleanValue());
+        }
+        
+        public void chartMouseClicked(ChartMouseEvent event) {
+            ChartEntity ce = event.getEntity();
+            if (!(ce instanceof LegendItemEntity)) return;
+            int seriesDefIndex = getSeriesDefsIndex(ce);
+            toggleSeriesVisible(seriesDefIndex);
+//            System.out.println(seriesDefs[seriesDefIndex].label + ": " + seriesDefIndex);
+        }
+
+        public void chartMouseMoved(ChartMouseEvent event) {
+            ChartEntity ce = event.getEntity();
+            if (ce==null || seriesDefs==null) return;
+            if (ce instanceof LegendItemEntity) {
+                int seriesDefIndex = getSeriesDefsIndex(ce);
+                if (seriesDefIndex==-1) return;
+                               
+                LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                setStroke(seriesDefIndex,1.5f);
+                float width=0;
+                for (int i=0;i<seriesDefs.length;i++){
+                    if (i==seriesDefIndex) width=1.5f; else width = .5f;
+                    setStroke(i, width);
+                }
+            } else {
+                LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                for (int i=0;i<seriesDefs.length;i++){
+                    setStroke(i,.5f);
+                }
+            }
+        }
+    }
+
     public LoggingChart() {
         super(null);
         
@@ -158,6 +223,8 @@ class LoggingChart extends ChartPanel{
         setAxisChangeListener();
         // set the double-click to restore zoom to extents
         setMouseListener();
+        
+        this.addChartMouseListener(new MyChartMouseListener());
     }
     
     public void paintComponent(Graphics g) {
