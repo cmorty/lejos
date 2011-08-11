@@ -11,11 +11,15 @@ import lejos.robotics.LinearActuator;
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 
-/** A Linear Actuator class that provides non-blocking move actions with stall detection. Developed for the Firgelli L12-NXT-50 and L12-NXT-100
+/** A Linear Actuator class that provides blocking and non-blocking move actions with stall detection. Developed for the 
+ * Firgelli L12-NXT-50 and L12-NXT-100
  * but may work for others. These linear actuators are self contained units which include an electric motor and encoder. They will push 
  * up to 25N and move at up to 12 mm/sec unloaded. 
  * <p>
- * See <a href="http://www.firgelli.com">www.firgelli.com.</a>.
+ * This class in not thread-safe and it is up to the caller to properly handle synchronization when calling its methods in a 
+ * multithreaded software implementation.
+ * <p>
+ * This is not an endorsement: For informational purposes, see <a href="http://www.firgelli.com">www.firgelli.com.</a> for details on the actuators.
  * @author Kirk P. Thompson
  * 
  */
@@ -51,11 +55,6 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         this.encoderMotor.flt();
         
         setPower(30);
-        // set up the threads
-//        _stallDetector = new Thread(new StallDetector());
-//        _stallDetector.setPriority(Thread.MAX_PRIORITY - 1);
-//        _stallDetector.setDaemon(true);
-//        _stallDetector.start();
         this.actuator = new Thread(new Actuator());
         this.actuator.setDaemon(true);
         this.actuator.start();
@@ -96,7 +95,6 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         // calc encoder tick/ms based on my testing. y=mm/sec, x=power
         // y=.135 * x -1.5 + 20%  R2=0.989
          this.tick_wait = (int)(500/(0.135f * this.realPower - 1.5)*1.2) ;
-         //dbg("this.tick_wait " + this.tick_wait);
     }
           
     /**
