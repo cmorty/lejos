@@ -29,27 +29,28 @@ class UsageHelpDialog extends JDialog {
     }
     
     private void jbInit() throws Exception {
-        this.setSize(new Dimension(399, 405));
+        this.setSize(new Dimension(284, 661));
         this.setLayout(verticalFlowLayout1);
         this.setModal(false);
         this.setResizable(true);
 
 
-        jLabel1.setText("<html>Chart Data Examination Controls" +
-        "<ul>" +
+        jLabel1.setText("<html><ul>" +
         "<li>Zooming<ul>" +
-        "<li> Historical extents (including clipped due to Domain Display Limiting): Double-left click on chart area" +
-        "<li>Reset Historical extents to current: CTRL+Double-left click on chart area" +
-        "<li>Current extents: click-drag to left, and/or up then release" + 
-        "<li>Zoom window: click-drag to right and down then release" + 
+        "<li> Historical extents (including clipped due to Domain Display Limiting): Double-Left Mouse click on chart area" +
+        "<li>Reset Historical extents to current: CTRL+Double-left Mouse click on chart area" +
+        "<li>Current extents: Left Mouse click-drag to left, and/or up then release" + 
+        "<li>Zoom window: Left Mouse click-drag to right and down then release" + 
         "<li>Zoom in/out dynamic: Use mouse wheel" + 
         "</ul>" +
-        "<li>Panning dynamic: CTRL+click-drag" +
+        "<li>Panning dynamic: CTRL+Left Mouse click-drag" +
         "<li>Slider changes domain scale dynamically from 0.1 to 100% of (domain) X dataset extents/range" + 
-        "<li>Tootip: Hover over data point on a series and series name, x-y val is shown" + 
-        "<li>Left-click moves crosshair to nearest datapoint and those coordinates are displayed in lower right of chart area" +
-        "<li>Mouse over series legend item highlights the series" +
+        "<li>Series Tootips: Hover over data point on a series and series name, x-y val is shown" + 
+        "<li>Left Mouse click moves crosshair to nearest datapoint and those coordinates are displayed in lower right of chart area" +
+        "<li>Mouse-over series legend item highlights the series" +
         "<li>Left Mouse click on series legend item toggles series visibility" +
+        "<li>Shift+Left Mouse click on chart toggles domain range delta display. While in this mode, move the mouse (while holding the shift" +
+        " key) to measure domain distances" +
         "</ul></html>");jLabel1.setVerticalAlignment(SwingConstants.TOP);
         this.getContentPane().add(jLabel1, null);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

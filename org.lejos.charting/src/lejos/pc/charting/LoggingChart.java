@@ -3,10 +3,15 @@ package lejos.pc.charting;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.JFrame;
 
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -62,6 +67,7 @@ class LoggingChart extends ChartPanel{
     private int domainAxisLimitValue=0;
     private boolean emptyChart=true;
     private Range[] yExtents=new Range[RANGE_AXIS_COUNT];
+    private MarkerManager markerManager=null;
     
     private class SeriesDef {
         String label;
@@ -72,68 +78,105 @@ class LoggingChart extends ChartPanel{
     /** Allows user control of chart series visibility and series highlight on mouseover
      */
     private class MyChartMouseListener implements ChartMouseListener{
+        private class DataIndexes{
+            int datasetSlashAxisIndex;
+            int seriesIndex;
+        }
+        private DataIndexes dataIndexs = new DataIndexes();
+      
+//        private int getSeriesDefsIndex(ChartEntity ce){
+//            LegendItemEntity lie= (LegendItemEntity)ce;
+//            for (int i=0;i<seriesDefs.length;i++){
+//                if (seriesDefs[i].label.equals(lie.getSeriesKey().toString())) return i;
+//            }
+//            return -1;
+//        }
         
-        private int getSeriesDefsIndex(ChartEntity ce){
-            LegendItemEntity lie= (LegendItemEntity)ce;
-            for (int i=0;i<seriesDefs.length;i++){
-                if (seriesDefs[i].label.equals(lie.getSeriesKey().toString())) return i;
+        private XYSeries getXYSeriesForEntity(ChartEntity ce) {
+            Comparable name=((LegendItemEntity)ce).getSeriesKey();
+            XYPlot plot = getChart().getXYPlot();
+            for (int i=0;i<plot.getDatasetCount();i++){
+                for (int j=0;j<plot.getDataset(i).getSeriesCount();j++){
+                    if (name.compareTo(plot.getDataset(i).getSeriesKey(j))==0) {
+                        this.dataIndexs.datasetSlashAxisIndex=i;
+                        this.dataIndexs.seriesIndex=j;
+                        return ((XYSeriesCollection)plot.getDataset(i)).getSeries(j);
+                    }
+                }
             }
-            return -1;
+            return null;
         }
         
-        private void setStroke(int seriesDefIndex, float desiredWidth) {
-            XYItemRenderer ir=getChart().getXYPlot().getRenderer(seriesDefs[seriesDefIndex].axisIndex);
-            if (((BasicStroke)ir.getSeriesStroke(seriesDefs[seriesDefIndex].seriesIndex)).getLineWidth()!=desiredWidth) {
-                ir.setSeriesStroke(seriesDefs[seriesDefIndex].seriesIndex, 
-                    new BasicStroke(desiredWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
-                getChart().setNotify(true);
+        // assumes DataIndexes is set by getXYSeriesForEntity()
+        private boolean setStroke(float desiredWidth) {
+            XYItemRenderer ir=getChart().getXYPlot().getRenderer(this.dataIndexs.datasetSlashAxisIndex);
+            if (ir==null) return false;
+            try {
+                if (((BasicStroke)ir.getSeriesStroke(this.dataIndexs.seriesIndex)).getLineWidth()!=desiredWidth) {
+                    ir.setSeriesStroke(this.dataIndexs.seriesIndex, 
+                        new BasicStroke(desiredWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+                    getChart().setNotify(true);
+                }
+            } catch (NullPointerException e) {
+                return false;
             }
+            return true;
         }
         
-        private void toggleSeriesVisible(int seriesDefIndex) {
-            XYItemRenderer ir=getChart().getXYPlot().getRenderer(seriesDefs[seriesDefIndex].axisIndex);
+        // assumes DataIndexes is set by getXYSeriesForEntity()
+        private void toggleSeriesVisible() {
+            XYItemRenderer ir=getChart().getXYPlot().getRenderer(this.dataIndexs.datasetSlashAxisIndex);
+//            XYItemRenderer ir=getChart().getXYPlot().getRenderer(seriesDefIndex);
             XYLineAndShapeRenderer lsr = (XYLineAndShapeRenderer)ir;
-            Boolean vis = lsr.getSeriesLinesVisible(seriesDefs[seriesDefIndex].seriesIndex);
-            lsr.setSeriesLinesVisible(seriesDefs[seriesDefIndex].seriesIndex,vis==null?false:!vis.booleanValue());
+            Boolean vis = lsr.getSeriesLinesVisible(this.dataIndexs.seriesIndex);
+            lsr.setSeriesLinesVisible(this.dataIndexs.seriesIndex, vis==null?false:!vis.booleanValue());
         }
         
         public void chartMouseClicked(ChartMouseEvent event) {
             ChartEntity ce = event.getEntity();
-            if (!(ce instanceof LegendItemEntity)) return;
-            int seriesDefIndex = getSeriesDefsIndex(ce);
-            toggleSeriesVisible(seriesDefIndex);
-//            System.out.println(seriesDefs[seriesDefIndex].label + ": " + seriesDefIndex);
+            if (ce instanceof LegendItemEntity) {
+                getXYSeriesForEntity(ce); // set DataIndexes.blah 
+                toggleSeriesVisible();
+            }
         }
 
         public void chartMouseMoved(ChartMouseEvent event) {
             ChartEntity ce = event.getEntity();
             if (ce==null || seriesDefs==null) return;
+    
             if (ce instanceof LegendItemEntity) {
-                int seriesDefIndex = getSeriesDefsIndex(ce);
-                if (seriesDefIndex==-1) return;
-                               
+                if (getXYSeriesForEntity(ce)==null) return;
                 LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                setStroke(seriesDefIndex,1.5f);
-                float width=0;
-                for (int i=0;i<seriesDefs.length;i++){
-                    if (i==seriesDefIndex) width=1.5f; else width = .5f;
-                    setStroke(i, width);
+                if (!setStroke(1.5f)) {
+                    LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    return;
                 }
             } else {
                 LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                for (int i=0;i<seriesDefs.length;i++){
-                    setStroke(i,.5f);
+                this.dataIndexs.seriesIndex=-1;
+                this.dataIndexs.datasetSlashAxisIndex=-1;
+            }
+            
+            XYPlot plot = getChart().getXYPlot();
+            int datasetSlashAxisIndex = this.dataIndexs.datasetSlashAxisIndex;
+            int seriesIndex = this.dataIndexs.seriesIndex;
+            for (int i=0;i<plot.getDatasetCount();i++){
+                for (int j=0;j<plot.getDataset(i).getSeriesCount();j++) {
+                    if (datasetSlashAxisIndex==i && seriesIndex==j) continue; 
+                    this.dataIndexs.datasetSlashAxisIndex=i;
+                    this.dataIndexs.seriesIndex=j;
+                    setStroke(.5f);
                 }
             }
         }
     }
-
+    
     public LoggingChart() {
         super(null);
         
         String[] thisClass = this.getClass().getName().split("[\\s\\.]");
         THISCLASS=thisClass[thisClass.length-1];
- 
+    
         try {
             jbInit();
         } catch (Exception e) {
@@ -154,24 +197,8 @@ class LoggingChart extends ChartPanel{
                                 double maxXVal = ((XYSeriesCollection)plot.getDataset()).getSeries(0).getMaxX();
                                 // sets this.domainRange
                                 setDomainRange( new Range(maxXVal-LoggingChart.this.domainWidth, maxXVal));
-                                
                                 // ensure value (range) axis displays extents of data as it scrolls
-                                // dataset cooresponds to axis one-to-one
-                                Range yRange=null;
-                                for (int i=0;i<plot.getDatasetCount();i++){
-                                    yRange=((XYSeriesCollection)plot.getDataset(i)).getRangeBounds(true);
-                                    if (yRange==null) continue;
-                                    yRange=Range.expand(yRange,.05,.05);
-                                    if (yExtents[i]==null) {
-                                        yExtents[i]=yRange; 
-                                        plot.getRangeAxis(i).setRange(yExtents[i]);
-                                    }
-                                    // ensure that range axis scale is always fits the biggest value per session (does not shrink)
-                                    if (!(yExtents[i].contains(yRange.getLowerBound())&&yExtents[i].contains(yRange.getUpperBound()))) {
-                                        yExtents[i]=yRange;
-                                        plot.getRangeAxis(i).setRange(yExtents[i]);
-                                    }
-                                }
+                                doRangeExtents(false);
                                 
                                 // if we have a clipping mode set...
                                 if (LoggingChart.this.domainAxisLimitMode!=DAL_UNLIMITED) {
@@ -227,6 +254,55 @@ class LoggingChart extends ChartPanel{
         this.addChartMouseListener(new MyChartMouseListener());
     }
     
+    public void mouseMoved(MouseEvent e) {
+        if (!e.isShiftDown()) {
+            super.mouseMoved(e);
+            return;
+        }
+        if (this.markerManager!=null) this.markerManager.mouseMoved(e);
+    }
+    
+    public void mouseDragged(MouseEvent e) {
+        if (!e.isShiftDown()) {
+            // override to only allow left button to drag
+            if ((e.getModifiersEx()&e.BUTTON1_DOWN_MASK)==e.BUTTON1_DOWN_MASK) super.mouseDragged(e);
+            return;
+        }
+    }
+    
+    public void mouseClicked(MouseEvent e) {
+        if (!e.isShiftDown()&&!e.isControlDown()) {
+            super.mouseClicked(e);
+            return;
+        }
+        if (this.markerManager!=null) this.markerManager.mouseClicked(e);
+    }
+    
+    /**
+     * @param forceExtents true to always do a setRange. false to only do one if extents expand
+     */
+    private synchronized void doRangeExtents(boolean forceExtents) {
+        // ensure value (range) axis displays extents of data as it scrolls
+        // dataset cooresponds to axis one-to-one
+        Range yRange=null;
+        XYPlot plot = getChart().getXYPlot();
+        for (int i=0;i<plot.getDatasetCount();i++){
+            yRange=((XYSeriesCollection)plot.getDataset(i)).getRangeBounds(true);
+            if (yRange==null) continue;
+            yRange=Range.expand(yRange,.05,.05);
+            if (yExtents[i]==null) {
+                yExtents[i]=yRange; 
+                plot.getRangeAxis(i).setRange(yExtents[i]);
+            }
+            // ensure that range axis scale is always fits the biggest value per session (does not shrink)
+            if (!(yExtents[i].contains(yRange.getLowerBound())&&yExtents[i].contains(yRange.getUpperBound()))) {
+                yExtents[i]=yRange;
+                if (!forceExtents) plot.getRangeAxis(i).setRange(yExtents[i]);
+            }
+            if (forceExtents) plot.getRangeAxis(i).setRange(yExtents[i]);
+        }
+    }
+    
     public void paintComponent(Graphics g) {
         synchronized (lockObj1) {
             try {
@@ -257,6 +333,7 @@ class LoggingChart extends ChartPanel{
         setLayout(null);
         setChart(getBaselineChart());
         chartDirty=true;
+        this.markerManager = new MarkerManager(this);
         setVisible(true);
     }
 
@@ -366,9 +443,31 @@ class LoggingChart extends ChartPanel{
         plot.setDomainPannable(true);
         plot.setDomainCrosshairVisible(true);
         plot.setRangePannable(true);
-        
         plot.setDataset(new XYSeriesCollection());
         
+//        CrosshairOverlay cho = new CrosshairOverlay();
+//        cho.addDomainCrosshair(new Crosshair(5000));
+//        this.addOverlay(cho);
+//        this.setHorizontalAxisTrace(true);
+
+//                Marker cooling = new IntervalMarker(500, 1001);
+//                cooling.setLabelOffsetType(LengthAdjustmentType.EXPAND);
+//                cooling.setPaint(new Color(150, 150, 255));
+//                cooling.setLabel("Automatic Cooling");
+//                cooling.setLabelFont(new Font("SansSerif", Font.PLAIN, 11));
+//                cooling.setLabelPaint(Color.blue);
+//                cooling.setLabelAnchor(RectangleAnchor.TOP_LEFT);
+//                cooling.setLabelTextAnchor(TextAnchor.TOP_RIGHT);
+//                plot.addDomainMarker(cooling, Layer.BACKGROUND);
+
+//                Marker coolingStart = new ValueMarker(millis1, Color.blue,
+//                        new BasicStroke(2.0f));
+//                Marker coolingEnd = new ValueMarker(millis2, Color.blue,
+//                        new BasicStroke(2.0f));
+//                plot.addDomainMarker(coolingStart, Layer.BACKGROUND);
+//                plot.addDomainMarker(coolingEnd, Layer.BACKGROUND);
+                
+                
         // create and return the chart        
         JFreeChart chart = new JFreeChart("", new Font("Arial", Font.BOLD, 14), plot, true);       
         chart.setNotify(false);
@@ -392,7 +491,7 @@ class LoggingChart extends ChartPanel{
         
         // set the renderer
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        renderer.setBaseStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT,  BasicStroke.JOIN_BEVEL)); 
+//        renderer.setBaseStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT,  BasicStroke.JOIN_BEVEL)); 
         renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
         renderer.setBaseLegendTextPaint(getAxisColor(axisIndex));
         renderer.setBaseShapesVisible(false);
@@ -419,7 +518,35 @@ class LoggingChart extends ChartPanel{
         return dataset; 
     }
     
-    
+    private void spawnChartCopy(){
+        if (this.emptyChart) return;
+        JFrame frame = new ChartDisplay();
+        JFreeChart chartClone;
+        try {
+            chartClone = (JFreeChart)getChart().clone();
+            // clear all series in all datasets/axes and set all axes to axis 0
+            int dsCount=getChart().getXYPlot().getDatasetCount();
+            for (int i=0;i<dsCount;i++) {
+                if (getChart().getXYPlot().getDataset(i)!=null) {
+                    chartClone.getXYPlot().setDataset(i, (XYSeriesCollection)((XYSeriesCollection)getChart().getXYPlot().getDataset(i)).clone());
+                }
+            }
+            
+        } catch (CloneNotSupportedException e) {
+            // TODO
+            return;
+        }
+        ((ChartDisplay)frame).setChart(chartClone); 
+        Dimension frameSize = frame.getSize();
+        // Toolkit.getDefaultToolkit().getScreenSize() doesn't work for multi monitor setups
+        Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+        frame.setLocation(center.x - frameSize.width / 2, 
+                          center.y - frameSize.height / 2);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//        frame.addWindowListener(myWindowListener);
+        frame.pack();
+        frame.setVisible(true);
+    }
     /** Set the passed series/header definitions as new XYseries in the dataset. Existing series are wiped. Must be at least two items
      * in the array or any existing series is left intact and method exits with 0. First item (series 0) is set as domain label and should
      * be system time in milliseconds, and is always axis 0 for multi-axis charts.
@@ -431,15 +558,16 @@ class LoggingChart extends ChartPanel{
      * @return The number of series created
      */
     int setSeries(String[] seriesNames){
-//        System.out.println("setSeries");
         // TODO clone existing chart and put it in a new frame and display before we whack the dataset
+         // spawnChartCopy(); Not ready. cloning problems with legend items and listeners
+         
         // don't allow empty range (length==1 means only domain series defined)
         if (seriesNames.length<2) return 0;
         
-        // clear any series
+        // clear any series, etc.
         dataset = new XYSeriesCollection[RANGE_AXIS_COUNT];
         rangeAxis = new NumberAxis[RANGE_AXIS_COUNT];
-        
+        // clear all series in all datasets/axes and set all axes to axis 0
         int dsCount=getChart().getXYPlot().getDatasetCount();
         for (int i=0;i<dsCount;i++) {
             getChart().getXYPlot().mapDatasetToRangeAxis(i, 0);
@@ -448,12 +576,15 @@ class LoggingChart extends ChartPanel{
                 ((XYSeriesCollection)getChart().getXYPlot().getDataset(i)).removeAllSeries();
             }
         }
+        // used to disable zoom extent calc when there is no data
         this.emptyChart=true;
+        // remove any markers
+        this.markerManager.markersOff();
+        // clear so extents will be calculated for new data
         yExtents=new Range[RANGE_AXIS_COUNT];
         
-        String[] fields;
-        
         // remove domain def from series def
+        String[] fields;
         String[] theSeries = new String[seriesNames.length-1];
         System.arraycopy(seriesNames, 1, theSeries, 0, theSeries.length);
         fields=seriesNames[0].split(":");
@@ -531,14 +662,9 @@ class LoggingChart extends ChartPanel{
                                 LoggingChart.this.restoreAutoRangeBounds();
                                 // effectively resets the Y range zoom extents
                                 yExtents=new Range[RANGE_AXIS_COUNT];
-                            } else {
-                                // restore calced Y range bounds for all axes
-                                for (int i=0;i<getChart().getXYPlot().getDatasetCount();i++){
-                                    if (yExtents[i]!=null) {
-                                        getChart().getXYPlot().getRangeAxis(i).setRange(yExtents[i]);                                      
-                                    }
-                                }  
                             }
+                            // restore calced Y range bounds for all axes
+                            doRangeExtents(true);
                         }
                     }
                 }

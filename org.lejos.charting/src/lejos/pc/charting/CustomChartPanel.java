@@ -2,6 +2,7 @@ package lejos.pc.charting;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -88,6 +89,8 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         xYValueLabel.setMinimumSize(new Dimension(150, 14));
         xYValueLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
         xYValueLabel.setMaximumSize(new Dimension(170, 14));
+        xYValueLabel.setFont(new Font("Tahoma", 0, 11));
+        
         domainWidthLabel.setFocusable(false);
         domainWidthLabel.setHorizontalAlignment(JTextField.LEFT);
         domainWidthLabel.setText("Domain Scale");
@@ -97,12 +100,14 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         domainWidthLabel.setSize(new Dimension(90, 14));
         domainWidthLabel.setMinimumSize(new Dimension(90, 14));
         domainWidthLabel.setMaximumSize(new Dimension(100, 14));
+        domainWidthLabel.setFont(new Font("Tahoma", 0, 11));
         dataRowsLabel.setText("data rows");
         dataRowsLabel.setToolTipText("The number of rows logged");
 
         dataRowsLabel.setHorizontalAlignment(SwingConstants.CENTER);
         dataRowsLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         dataRowsLabel.setMaximumSize(new Dimension(100, 14));
+        dataRowsLabel.setFont(new Font("Tahoma", 0, 11));
         this.setLayout(gridBagLayout1);
         this.add(domainScaleSlider, 
                  new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,GridBagConstraints.CENTER, GridBagConstraints.NONE, 
