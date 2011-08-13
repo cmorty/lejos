@@ -246,7 +246,7 @@ public class PCNavigationModel extends NavigationModel {
 		if (info.fileName.equals(name)) return info;
 		do {
 			info = nxtCommand.findNextNXJ((byte) 0);
-			if (info.fileName.equals(name)) return info;
+			if (info != null && info.fileName.equals(name)) return info;
 		} while (info != null);
 		return null;
 	}
