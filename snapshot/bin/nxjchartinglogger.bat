@@ -66,5 +66,5 @@ if "%OS%" == "Windows_NT" goto :winnt
 	)
 
 
-"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjchartinglogger" -classpath "%NXJ_CP_PC%" lejos.pc.charting.ChartingLogger  %*
+"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjchartinglogger" -classpath "%NXJ_CP_PC%" lejos.pc.tools.NXJChartingLogger  %*
 :eof
