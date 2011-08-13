@@ -1,13 +1,10 @@
 package lejos.pc.charting;
 
 import java.awt.Dimension;
-import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Arrays;
 
 import javax.swing.JFrame;
 
@@ -30,6 +27,7 @@ public class ChartingLogger {
                           center.y - frameSize.height / 2);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(myWindowListener);
+        frame.pack();
         frame.setVisible(true);
     }
     

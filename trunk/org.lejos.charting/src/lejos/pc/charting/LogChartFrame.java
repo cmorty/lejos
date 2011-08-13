@@ -504,7 +504,7 @@ class LogChartFrame extends JFrame {
                 });
         UIPanel.setSize(new Dimension(820, 200));
         UIPanel.setLayout(null);
-        UIPanel.setPreferredSize(new Dimension(700, 200));
+        UIPanel.setPreferredSize(new Dimension(814, 200));
         UIPanel.setMinimumSize(new Dimension(814, 200));
         UIPanel.setBounds(new Rectangle(0, 350, 820, 200));
         connectionPanel.setBounds(new Rectangle(10, 10, 175, 100));
@@ -633,7 +633,7 @@ class LogChartFrame extends JFrame {
         dataLogScrollPane.setOpaque(false);
         
         customChartPanel.setMinimumSize(new Dimension(400,300));
-        customChartPanel.setPreferredSize(new Dimension(700, 400));
+        customChartPanel.setPreferredSize(new Dimension(812, 400));
         
         jLabel5.setText("NXT Name/Address:");
         jLabel5.setBounds(new Rectangle(5, 20, 160, 20));
