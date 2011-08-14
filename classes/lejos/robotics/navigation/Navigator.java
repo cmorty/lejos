@@ -327,6 +327,7 @@ public class Navigator implements WaypointListener
             ((RotateMoveController) _pilot).rotate(destinationRelativeBearing,true); 
             while (_pilot.isMoving() && _keepGoing);       
             if(!_keepGoing) break;
+            else  _interrupted = !_pilot.isMoving();
           }
           else // begin arc direction change
           {
