@@ -41,6 +41,7 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.MenuElement;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -48,6 +49,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.text.BadLocationException;
 
 import org.jfree.chart.JFreeChart;
@@ -265,6 +268,9 @@ class LogChartFrame extends JFrame {
             }
             LogChartFrame.this.logDataQueue.add(sb.toString());
             
+            // set the chartable series headers/labels
+            customChartPanel.setSeries(chartLabels.toString().split("!"));  
+            
             if (theLogFile!=null) {
                 if (theLogFile.isFile()) {
                     setChartTitle(getCanonicalName(theLogFile));
@@ -272,9 +278,6 @@ class LogChartFrame extends JFrame {
                     setChartTitle("Run " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ").format(new Date()));
                 }
             }
-            
-            // set the chartable series headers/labels
-            customChartPanel.setSeries(chartLabels.toString().split("!"));  
             
             // manange Range axis label fields state
             for (int i=0;i<4;i++) manageAxisLabel(i);
@@ -363,10 +366,55 @@ class LogChartFrame extends JFrame {
         chartTitleTextField.setText(title);
     }
     
-
     
+    private class MenuEventListener implements MenuListener {
+        private JMenuItem  getMenuItem(String menuFind, String menuItemFind) {
+            MenuElement[] menus =  menuBar.getSubElements();
+            //System.out.println(menus.length + ", " + menus.toString());
+            JMenu menu=null;
+            for (int i=0;i<menus.length;i++) {
+                menu = (JMenu)menus[i];
+//                System.out.println("menu.getActionCommand()=" + menu.getActionCommand());
+                if (!menu.getActionCommand().equals(menuFind)) continue;
+                MenuElement[] menuItems =  menu.getPopupMenu().getSubElements();
+                JMenuItem menuItem=null;
+                for (int j=0;j<menuItems.length;j++){
+//                System.out.println(menuItems[j].toString());
+                    menuItem = (JMenuItem)menuItems[j];
+//                    System.out.println("   menuItem.getActionCommand()=" + menuItem.getActionCommand());
+                    if (menuItem.getActionCommand().equalsIgnoreCase(menuItemFind)) return menuItem;
+                }
+            }
+            return null;
+        }
+        
+        public void menuSelected(MenuEvent e) {
+            JMenu menu = (JMenu)e.getSource();
+            if (menu.getActionCommand().equals("VIEW_MENU")) {
+                JMenuItem tempMenuItem = getMenuItem(menu.getActionCommand(), "Chart in New Window");
+                if (tempMenuItem==null) {
+//                    System.out.println("NULL!");
+                    return;
+                }
+                if (customChartPanel.getLoggingChartPanel().isEmptyChart()) {
+                    tempMenuItem.setEnabled(false);
+                } else {
+                    tempMenuItem.setEnabled(true);
+                }
+            }
+        }
+
+        public void menuDeselected(MenuEvent e) {
+            
+        }
+
+        public void menuCanceled(MenuEvent e) {
+        }
+    }
+
     // to handle menu events
-    private class MenuListener implements ActionListener {
+    private class MenuActionListener implements ActionListener {
+        
         public void actionPerformed(ActionEvent e) {
             if (e.getActionCommand().equalsIgnoreCase("about")) new LicenseDialog(LogChartFrame.this).setVisible(true);
             if (e.getActionCommand().equalsIgnoreCase("generate sample data")) {
@@ -391,17 +439,20 @@ class LogChartFrame extends JFrame {
                 dataLogTextArea.setCaretPosition(curPos);
             }
             
-            if (e.getActionCommand().equalsIgnoreCase("Full Chart")) {
+            if (e.getActionCommand().equalsIgnoreCase("Expand Chart")) {
                 JMenuItem mi = (JMenuItem)e.getSource();
-                mi.setText("Normal Chart");
+                mi.setText("Restore Chart");
                 mi.setMnemonic(KeyEvent.VK_N);
                 UIPanel.setVisible(false);
             }
-            if (e.getActionCommand().equalsIgnoreCase("Normal Chart")) {
+            if (e.getActionCommand().equalsIgnoreCase("Restore Chart")) {
                 JMenuItem mi = (JMenuItem)e.getSource();
-                mi.setText("Full Chart");
+                mi.setText("Expand Chart");
                 mi.setMnemonic(KeyEvent.VK_F);
                 UIPanel.setVisible(true);
+            }
+            if (e.getActionCommand().equalsIgnoreCase("Chart in New Window")) {
+                customChartPanel.getLoggingChartPanel().spawnChartCopy();
             }
             
         }
@@ -457,37 +508,42 @@ class LogChartFrame extends JFrame {
 
         this.getContentPane().setLayout(gridBagLayout1);
         this.setResizable(false);
-        MenuListener mlistener = new MenuListener();
+        MenuActionListener menuItemActionListener = new MenuActionListener();
+        MenuEventListener menuListener = new MenuEventListener();
         
         menu = new JMenu("Edit");
         menu.setMnemonic(KeyEvent.VK_E);
         menuBar.add(menu);
         menuItem = new JMenuItem("Copy Chart Image", KeyEvent.VK_I);
-        menuItem.addActionListener(mlistener);
+        menuItem.addActionListener(menuItemActionListener);
         menu.add(menuItem);
         menuItem = new JMenuItem("Copy Data Log", KeyEvent.VK_D);
-        menuItem.addActionListener(mlistener);
+        menuItem.addActionListener(menuItemActionListener);
         menu.add(menuItem);
         
         menu = new JMenu("View");
         menu.setMnemonic(KeyEvent.VK_V);
+        menu.setActionCommand("VIEW_MENU");
+        menu.addMenuListener(menuListener); 
         menuBar.add(menu);
-        menuItem = new JMenuItem("Full Chart",KeyEvent.VK_F);
-        menuItem.addActionListener(mlistener);
+        menuItem = new JMenuItem("Expand Chart",KeyEvent.VK_F);
+        menuItem.addActionListener(menuItemActionListener);
         menu.add(menuItem);
-        
+        menuItem = new JMenuItem("Chart in New Window",KeyEvent.VK_N);
+        menuItem.addActionListener(menuItemActionListener);
+        menu.add(menuItem);
         
         menu = new JMenu("Help");
         menu.setMnemonic(KeyEvent.VK_H);
         menuBar.add(menu);
         menuItem = new JMenuItem("Chart controls", KeyEvent.VK_C);
-        menuItem.addActionListener(mlistener);
+        menuItem.addActionListener(menuItemActionListener);
         menu.add(menuItem);
         menuItem = new JMenuItem("Generate sample data", KeyEvent.VK_G);
-        menuItem.addActionListener(mlistener);
+        menuItem.addActionListener(menuItemActionListener);
         menu.add(menuItem);
         menuItem = new JMenuItem("About",KeyEvent.VK_A);
-        menuItem.addActionListener(mlistener);
+        menuItem.addActionListener(menuItemActionListener);
         menu.add(menuItem);
         
         jTabbedPane1.setBounds(new Rectangle(195, 5, 620, 195));
@@ -752,7 +808,7 @@ class LogChartFrame extends JFrame {
         di[0].datatype=DataItem.DT_INTEGER;
         di[1].datatype=DataItem.DT_FLOAT;
         di[2].datatype=DataItem.DT_FLOAT;
-        loggerHook.logFieldNamesChanged(new String[]{"System_ms!n!1","Sine!Y!2","Random!y!3"}); 
+        loggerHook.logFieldNamesChanged(new String[]{"System_ms!n!1","Sine!Y!1","Random!y!3"}); 
         for (int i = 0; i < 10000; i++) {
             if (i%100==0) value2=(float)(Math.random()*5000-2500);
             if (i % 10 == 0) {

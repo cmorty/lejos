@@ -45,7 +45,7 @@ class LicenseDialog extends JDialog {
         licenseTextArea.setText(getLicenseText());
         licenseTextArea.setOpaque(true);
         licenseTextArea.setBackground(new Color(231, 231, 231));
-        jLabel1.setText("NXT Charting Logger for LeJOS - http://lejos.sourceforge.net\nAuthor: Kirk Thompson, 2011\n\nUses JFreeChart v1.0.13 from David " +
+        jLabel1.setText("NXT Charting Logger for LeJOS - http://lejos.sourceforge.net\nAuthor: Kirk Thompson <lejos@mosen.net>, ©2011\n\nUses JFreeChart v1.0.13 from David " +
             "Gilbert, Object Refinery Limited");
         jLabel1.setBounds(new Rectangle(5, 5, 525, 60));
         jLabel1.setOpaque(false);
