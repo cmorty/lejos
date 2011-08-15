@@ -5,33 +5,38 @@ import java.awt.Dimension;
 
 import javax.swing.JFrame;
 
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
 
 public class ChartDisplay extends JFrame {
-    private CustomChartPanel customChartPanel1 = new CustomChartPanel();
+    private ChartPanel chartPanel;
     private BorderLayout borderLayout1 = new BorderLayout();
 
-    public ChartDisplay() {
+    public ChartDisplay(JFreeChart chart) {
         try {
+            this.chartPanel = new ChartPanel(chart);
+            chartPanel.getChart().setNotify(false);
+            chartPanel.setMouseWheelEnabled(true);
+            chartPanel.getChart().getXYPlot().setDomainPannable(true);
+            chartPanel.getChart().getXYPlot().setDomainCrosshairVisible(true);
+            chartPanel.getChart().getXYPlot().setRangePannable(true);
+            chartPanel.getChart().getXYPlot().setRangeCrosshairVisible(true);
+            chartPanel.setMouseZoomable(true);
+            
             jbInit();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    JFreeChart getChart(){
-        return this.customChartPanel1.getLoggingChartPanel().getChart();
-    }
-    void setChart(JFreeChart chart){
-        this.customChartPanel1.getLoggingChartPanel().setChart(chart);
-        this.customChartPanel1.getLoggingChartPanel().getChart().setNotify(true);
-    }
     
     private void jbInit() throws Exception {
         this.getContentPane().setLayout(borderLayout1);
         this.setSize(new Dimension(626, 319));
-        this.setTitle( "Chart Title Goes here" );
-//        customChartPanel1.setPreferredSize(new Dimension(600, 470));
-        this.getContentPane().add(customChartPanel1, BorderLayout.CENTER);
+        this.getContentPane().add(chartPanel, BorderLayout.CENTER);
+    }
+    
+    ChartPanel getChartPanel() {
+        return this.chartPanel; 
     }
 }
