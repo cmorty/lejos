@@ -1,6 +1,7 @@
 package js.tinyvm;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,6 +17,9 @@ public class SpecialConstants
 	private static String[] loadDB(String name) throws IOException
 	{
 		URL url = SpecialConstants.class.getResource(name);
+		if (url == null)
+			throw new FileNotFoundException("file "+name+" not found");
+		
 		InputStream is = url.openStream();
 		try
 		{		
@@ -54,9 +58,9 @@ public class SpecialConstants
 			CLASSES = loadDB("specialclasses.db");
 			SIGNATURES = loadDB("specialsignatures.db");
 		}
-		catch (Exception e)
+		catch (IOException e)
 		{
-			throw new RuntimeException("could not load databases", e);
+			throw new RuntimeException("unable to load databases", e);
 		}
 	}
 }
