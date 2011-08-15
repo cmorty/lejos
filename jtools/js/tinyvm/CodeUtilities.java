@@ -383,6 +383,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
    int processMethod (int aMethodIndex, boolean aSpecial, boolean aInterface)
       throws TinyVMException
    {
+      //TODO findMethod may return null, throw Exception in findMethod
       MethodRecord pMethod = findMethod (aMethodIndex, aSpecial, aInterface);
       ClassRecord pTopClass = pMethod.getClassRecord();
       if (aSpecial)
@@ -446,6 +447,8 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
         pMethod = pClassRecord.getSpecialMethodRecord(pSig);
       else
         pMethod = pClassRecord.getVirtualMethodRecord(pSig);
+      //TODO throw Exception if pMethod is null (method not found)
+      // logging is not sufficient, since other stuff will break
       //if (pMethod == null)
           // _logger.log(Level.INFO, "Failed to find " + pSig + " class " + className);
       return pMethod;
@@ -728,6 +731,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                break;
             case OP_INVOKESPECIAL:
             case OP_INVOKESTATIC:
+               //TODO separate invokespecial from invokestatic and check whether method is instance/static
                // Opcode is changed:
                int pWord4 = processMethod((aCode[i] & 0xFF) << 8
                   | (aCode[i + 1] & 0xFF), true, false);
