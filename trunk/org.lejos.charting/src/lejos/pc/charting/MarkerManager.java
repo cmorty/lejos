@@ -23,6 +23,9 @@ import org.jfree.ui.TextAnchor;
 
 
 class MarkerManager {
+    private final static int DIR_BACKWARD=0;
+    private final static int DIR_FORWARD=1;
+    
     private IntervalMarker marker1Range;
     private ValueMarker marker1Beg;
     private ValueMarker marker1End;
@@ -30,6 +33,7 @@ class MarkerManager {
     private LoggingChart loggingChartPanel=null;
     private JFreeChart chart=null;
     private XYTextAnnotation endPosText;
+    private int dragDir=DIR_FORWARD;
     
     MarkerManager(LoggingChart loggingChartPanel) {
         registerLoggingChart(loggingChartPanel);
@@ -164,9 +168,11 @@ class MarkerManager {
  
             this.marker1End.setValue(snapPoint);
             
-            if (snapPoint<this.marker1Beg.getValue()) {
-                this.marker1Range.setEndValue(this.marker1Beg.getValue());
+            Block1: if (snapPoint<this.marker1Beg.getValue()) {
                 this.marker1Range.setStartValue(snapPoint);
+                if (dragDir==DIR_BACKWARD) break Block1;
+                dragDir=DIR_BACKWARD;
+                this.marker1Range.setEndValue(this.marker1Beg.getValue());
                 endPosText.setTextAnchor(TextAnchor.TOP_RIGHT);
                 marker1End.setLabelAnchor(RectangleAnchor.BOTTOM_LEFT);
                 marker1End.setLabelTextAnchor(TextAnchor.BOTTOM_RIGHT);
@@ -174,6 +180,8 @@ class MarkerManager {
                 marker1Beg.setLabelTextAnchor(TextAnchor.TOP_LEFT);
             } else {
                 this.marker1Range.setEndValue(snapPoint);
+                if (dragDir==DIR_FORWARD) break Block1;
+                dragDir=DIR_FORWARD;
                 this.marker1Range.setStartValue(this.marker1Beg.getValue());
                 endPosText.setTextAnchor(TextAnchor.TOP_LEFT);
                 marker1End.setLabelAnchor(RectangleAnchor.BOTTOM_RIGHT);
