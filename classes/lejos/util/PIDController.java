@@ -335,6 +335,8 @@ public class PIDController {
      */
     public int doPID(int processVariable){
         int outputMV;
+        int delay=0;
+        
         if (this.cycleTime==0) {
             this.cycleTime = System.currentTimeMillis();
             return 0;
@@ -356,24 +358,27 @@ public class PIDController {
 
         // log data if logger registered
         if (this.dataLogger!=null&&cycleCount>2) {
+            this.dataLogger.writeLog(setpoint);
             this.dataLogger.writeLog(outputMV);
             this.dataLogger.writeLog(processVariable);
             this.dataLogger.writeLog(integral);
+            this.dataLogger.writeLog((float)Kp*error);
+            this.dataLogger.writeLog((float)Kd*derivative);
             this.dataLogger.writeLog(error);
             this.dataLogger.writeLog(dt);
-            this.dataLogger.writeLog(derivative);
+            
             this.dataLogger.finishLine();
         }
-        cycleCount++;
-        
         
         // delay the difference of desired cycle time and actual cycle time
         if (this.msdelay>0) {
-            int delay = this.msdelay-((int)(System.currentTimeMillis() - this.cycleTime)); // desired cycle time minus actual time
+            delay = this.msdelay-((int)(System.currentTimeMillis() - this.cycleTime)); // desired cycle time minus actual time
             if (delay>0) {
                 Delay.msDelay(delay);
             }
         }
+
+        cycleCount++;
         // global time it took to get back to this statement
         dt = (int)(System.currentTimeMillis() - this.cycleTime);
         this.cycleTime = System.currentTimeMillis();
@@ -394,12 +399,15 @@ public class PIDController {
      */
     public boolean registerDataLogger(NXTDataLogger dataLogger){
         LogColumn[] logColumns = {
+            new LogColumn("SP",LogColumn.DT_INTEGER),
             new LogColumn("MV",LogColumn.DT_INTEGER),
             new LogColumn("PV",LogColumn.DT_INTEGER),
-            new LogColumn("Integral",LogColumn.DT_INTEGER),
-            new LogColumn("Error",LogColumn.DT_INTEGER),
-            new LogColumn("dt",LogColumn.DT_INTEGER),
-            new LogColumn("Derivitive",LogColumn.DT_FLOAT)
+            new LogColumn("Integral",LogColumn.DT_INTEGER,2),
+            new LogColumn("Kp*error",LogColumn.DT_FLOAT),
+            new LogColumn("Kd*derivative",LogColumn.DT_FLOAT,2),
+            new LogColumn("error",LogColumn.DT_INTEGER),
+            new LogColumn("dt",LogColumn.DT_INTEGER,3),
+            
         };
         try {
             dataLogger.setColumns(logColumns);
