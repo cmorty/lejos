@@ -8,6 +8,9 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYTextAnnotation;
+import org.jfree.chart.event.AxisChangeEvent;
+import org.jfree.chart.event.AxisChangeListener;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.ValueMarker;
@@ -26,16 +29,19 @@ class MarkerManager {
     private boolean showMarker = false;
     private LoggingChart loggingChartPanel=null;
     private JFreeChart chart=null;
+    private XYTextAnnotation endPosText;
     
     MarkerManager(LoggingChart loggingChartPanel) {
         registerLoggingChart(loggingChartPanel);
         initMarkers();
+        
     }
     
     void markersOff(){
         ((XYPlot)this.chart.getPlot()).removeDomainMarker(this.marker1Beg);
         ((XYPlot)this.chart.getPlot()).removeDomainMarker(this.marker1End);
         ((XYPlot)this.chart.getPlot()).removeDomainMarker(this.marker1Range, Layer.BACKGROUND);
+        ((XYPlot)this.chart.getPlot()).removeAnnotation(endPosText);
         this.showMarker=false;
     }
     
@@ -106,13 +112,31 @@ class MarkerManager {
         marker1End.setLabelAnchor(RectangleAnchor.BOTTOM_RIGHT);
         marker1End.setLabelTextAnchor(TextAnchor.BOTTOM_LEFT);
         
-        
         marker1Range= new IntervalMarker(100,100);
         setBaseMarkerAttributes(marker1Range);
+        
+        endPosText=new XYTextAnnotation("", 0, 0);
+        endPosText.setTextAnchor(TextAnchor.TOP_LEFT);
+        endPosText.setFont(new Font("SansSerif", Font.PLAIN, 9));
+        endPosText.setPaint(Color.RED.darker());
     }
-
+    
+    private synchronized void setTextAnnotationY(){
+        double lb=this.chart.getXYPlot().getRangeAxis().getLowerBound();
+        double ub=this.chart.getXYPlot().getRangeAxis().getUpperBound();
+        this.endPosText.setY(ub-(ub-lb)*.010);
+    }
+   
+    void addChangeListener(){
+        this.chart.getXYPlot().getRangeAxis().addChangeListener(new AxisChangeListener(){
+            public void axisChanged(AxisChangeEvent event) {
+                setTextAnnotationY();
+            }
+        });
+    }
+    
     void mouseClicked(MouseEvent e) {
-        if (e.isShiftDown()) {
+        if (!loggingChartPanel.isEmptyChart() && e.isShiftDown()) {
             this.showMarker = !this.showMarker;
             if (showMarker) {
                 this.marker1Beg.setValue(getSnapPoint(e));
@@ -120,21 +144,22 @@ class MarkerManager {
                 this.marker1End.setValue(this.marker1Beg.getValue());
                 this.marker1Range.setStartValue(this.marker1Beg.getValue());
                 this.marker1Range.setEndValue(this.marker1Beg.getValue());
+                this.endPosText.setX(this.marker1End.getValue());
+                setTextAnnotationY();
+                
                 ((XYPlot)this.chart.getPlot()).addDomainMarker(this.marker1Beg, Layer.FOREGROUND);
                 ((XYPlot)this.chart.getPlot()).addDomainMarker(this.marker1End, Layer.FOREGROUND);
                 ((XYPlot)this.chart.getPlot()).addDomainMarker(this.marker1Range, Layer.BACKGROUND);
+                ((XYPlot)this.chart.getPlot()).addAnnotation(this.endPosText);
             } else {
                 markersOff();
             }
             chart.setNotify(true);
         }
-
-        //            this.marker1.setValue(getSnapPoint(event.getTrigger()));
-
     }
 
     void mouseMoved(MouseEvent e) {
-        if (e.isShiftDown() && this.showMarker) {
+        if (!loggingChartPanel.isEmptyChart() && e.isShiftDown() && this.showMarker) {
             double snapPoint = getSnapPoint(e);
  
             this.marker1End.setValue(snapPoint);
@@ -142,11 +167,24 @@ class MarkerManager {
             if (snapPoint<this.marker1Beg.getValue()) {
                 this.marker1Range.setEndValue(this.marker1Beg.getValue());
                 this.marker1Range.setStartValue(snapPoint);
+                endPosText.setTextAnchor(TextAnchor.TOP_RIGHT);
+                marker1End.setLabelAnchor(RectangleAnchor.BOTTOM_LEFT);
+                marker1End.setLabelTextAnchor(TextAnchor.BOTTOM_RIGHT);
+                marker1Beg.setLabelAnchor(RectangleAnchor.TOP_RIGHT);
+                marker1Beg.setLabelTextAnchor(TextAnchor.TOP_LEFT);
             } else {
                 this.marker1Range.setEndValue(snapPoint);
                 this.marker1Range.setStartValue(this.marker1Beg.getValue());
+                endPosText.setTextAnchor(TextAnchor.TOP_LEFT);
+                marker1End.setLabelAnchor(RectangleAnchor.BOTTOM_RIGHT);
+                marker1End.setLabelTextAnchor(TextAnchor.BOTTOM_LEFT);
+                marker1Beg.setLabelAnchor(RectangleAnchor.TOP_LEFT);
+                marker1Beg.setLabelTextAnchor(TextAnchor.TOP_RIGHT);
             }
             this.marker1End.setLabel(String.format("%1$+,1.0f", (snapPoint - this.marker1Beg.getValue())));
+            
+            this.endPosText.setText(String.format(" %1$,1.0f ", snapPoint));
+            this.endPosText.setX(this.marker1End.getValue());
             chart.setNotify(true);
         }
     }
