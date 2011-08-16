@@ -22,6 +22,8 @@ import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.TextAnchor;
 
 
+/** manages the shift-click-drag domain marker & delta display on chart in LoggingChart
+ */
 class MarkerManager {
     private final static int DIR_BACKWARD=0;
     private final static int DIR_FORWARD=1;
@@ -38,7 +40,6 @@ class MarkerManager {
     MarkerManager(LoggingChart loggingChartPanel) {
         registerLoggingChart(loggingChartPanel);
         initMarkers();
-        
     }
     
     void markersOff(){
@@ -60,6 +61,7 @@ class MarkerManager {
         return new Point2D.Double(xx, yy);
     }
     
+    // get the domain value closest to the x-click pos
     private double getSnapPoint(MouseEvent e){
         int mouseX = e.getX();
         int mouseY = e.getY();
@@ -96,27 +98,30 @@ class MarkerManager {
     //            System.out.println("domX=" + domX);
         return cacheVal;
     }
+    
     private void setBaseMarkerAttributes(Marker marker){
         marker.setPaint(Color.RED.darker());
         marker.setStroke(new BasicStroke(.8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,10f, new float[] {2.5f,2f},0f));
         marker.setLabelFont(new Font("SansSerif", Font.PLAIN, 9));
         marker.setLabelPaint(Color.RED.darker());
-        marker.setLabelAnchor(RectangleAnchor.TOP_LEFT);
-        marker.setLabelTextAnchor(TextAnchor.TOP_RIGHT);
+        
         if (marker instanceof IntervalMarker) {
-            marker.setAlpha(.15f);
+            marker.setAlpha(.10f);
         }
     }
+    
     private void initMarkers(){
         marker1Beg= new ValueMarker(0); 
         setBaseMarkerAttributes(marker1Beg);
+        marker1Beg.setLabelAnchor(RectangleAnchor.TOP_LEFT);
+        marker1Beg.setLabelTextAnchor(TextAnchor.TOP_RIGHT);
         
         marker1End= new ValueMarker(0);
         setBaseMarkerAttributes(marker1End);
         marker1End.setLabelAnchor(RectangleAnchor.BOTTOM_RIGHT);
         marker1End.setLabelTextAnchor(TextAnchor.BOTTOM_LEFT);
         
-        marker1Range= new IntervalMarker(100,100);
+        marker1Range= new IntervalMarker(0,0);
         setBaseMarkerAttributes(marker1Range);
         
         endPosText=new XYTextAnnotation("", 0, 0);
@@ -128,9 +133,10 @@ class MarkerManager {
     private synchronized void setTextAnnotationY(){
         double lb=this.chart.getXYPlot().getRangeAxis().getLowerBound();
         double ub=this.chart.getXYPlot().getRangeAxis().getUpperBound();
-        this.endPosText.setY(ub-(ub-lb)*.010);
+        this.endPosText.setY(ub-(ub-lb)*.010); // looks right & lines up with marker text on my setup...
     }
    
+    // must be called for new primary range axis because the listener ref is lost when LoggingChart.setSeries() kills the axes 
     void addChangeListener(){
         this.chart.getXYPlot().getRangeAxis().addChangeListener(new AxisChangeListener(){
             public void axisChanged(AxisChangeEvent event) {
