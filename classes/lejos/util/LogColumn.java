@@ -21,15 +21,15 @@ public class LogColumn {
     private int rangeAxisID = 1; // one-based ID of range axis for multi-axis charting. limit to 4 axes
     private int byteCount=4;
 
-    /**
-     * @param name name the label/name of the column/series. <code>RangeAxisID</code> defaults to 1,
+    /** <code>RangeAxisID</code> defaults to 1,
      * <code>chartable</code> defaults to <code>true</code>, and datatype defaults to <code>DT_FLOAT</code>.
+     * @param name name the label/name of the column/series. 
      */
     public LogColumn(String name) {
         this.name = name;
     }
 
-    /** throws unchecked IllegalArgumentException if bad datatype val. <code>RangeAxisID</code> defaults to 1 and
+    /** Throws unchecked IllegalArgumentException if bad datatype value. <code>RangeAxisID</code> defaults to 1 and
      * <code>chartable</code> defaults to <code>true</code>.
      * @param name The label/name of the column/series
      * @param datatype The datatype of of the column/series
@@ -45,7 +45,7 @@ public class LogColumn {
         this(name);
         setDatatype(datatype);
     }
-    /** throws unchecked IllegalArgumentException if bad datatype val. <code>RangeAxisID</code> defaults to 1.
+    /** Throws unchecked IllegalArgumentException if bad datatype value. <code>RangeAxisID</code> defaults to 1.
      * @param name The label/name of the column/series
      * @param datatype The datatype of of the column/series
      * @param chartable <code>true</code> to chart the data, <code>false</code> to only log it.
@@ -56,7 +56,7 @@ public class LogColumn {
         this.chartable=chartable;
     }
     
-    /** throws unchecked IllegalArgumentException if bad datatype val or <code>rangeAxisID</code> is not in within 1-4.
+    /** Throws unchecked IllegalArgumentException if bad datatype value or <code>rangeAxisID</code> is not in within 1-4.
      * <code>chartable</code> defaults to <code>true</code>.
      * @param name The label/name of the column/series
      * @param datatype The datatype of of the column/series
@@ -69,7 +69,7 @@ public class LogColumn {
         this.rangeAxisID=rangeAxisID;
     }
     
-    /** Set the datatype for this column/series. Throws unchecked IllegalArgumentException if bad datatype val
+    /** Set the datatype for this column/series. Throws unchecked IllegalArgumentException if bad datatype value
      * @param datatype The datatype. Use one of the constant values list below in "See also".
      * @see Logger
      * @see #DT_BOOLEAN
