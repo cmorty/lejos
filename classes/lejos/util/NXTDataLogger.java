@@ -318,6 +318,11 @@ public class NXTDataLogger implements Logger{
         sendCache(connection.openDataOutputStream(), connection.openDataInputStream());
     }
     
+    // TODO future implementation
+    void registerPIDTuner(Object pIDTuner){
+        
+    }
+    
     private byte[] getBytesFromCache(int count) throws EmptyQueueException{
         byte[] temp = new byte[count];
         for (int i=0;i<count;i++) {
@@ -690,7 +695,7 @@ public class NXTDataLogger implements Logger{
         if (this.setColumnsCount>1&&logmodeState==LMSTATE_CACHE) throw new UnsupportedOperationException("already called");
         LogColumn[] tempColumnDefs = new LogColumn[columnDefs.length+1];
         // set default ms domain column
-        tempColumnDefs[0] = new LogColumn("milliseconds", LogColumn.DT_INTEGER, true, 1);
+        tempColumnDefs[0] = new LogColumn("milliseconds", LogColumn.DT_INTEGER, 1);
         System.arraycopy(columnDefs, 0, tempColumnDefs, 1, columnDefs.length);
         this.columnDefs = tempColumnDefs;
         this.setColumnsCount++;
