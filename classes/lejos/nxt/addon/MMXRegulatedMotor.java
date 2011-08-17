@@ -100,7 +100,7 @@ public class MMXRegulatedMotor implements RegulatedMotor, EncoderMotor{
     private boolean _isMoving = false;
     private final int MOTOR_MAX_DPS; 
     private int _limitAngle=0;
-    private RegulatedMotorListener _listener = null;
+    private RegulatedMotorListener listener = null;
     private boolean _resetTacho = false;
     private boolean latchRotStart=false;
     private boolean latchRotEnd=false;
@@ -147,12 +147,12 @@ public class MMXRegulatedMotor implements RegulatedMotor, EncoderMotor{
      * @see RegulatedMotorListener
      */
     public void addListener(RegulatedMotorListener listener) {
-        _listener = listener;
+        this.listener = listener;
     }
 
     public RegulatedMotorListener removeListener() {
-		RegulatedMotorListener old = _listener;
-		_listener = null;
+		RegulatedMotorListener old = this.listener;
+		this.listener = null;
 		return old;
 	}
     
@@ -313,8 +313,8 @@ public class MMXRegulatedMotor implements RegulatedMotor, EncoderMotor{
     }
     
     /**
-     * Set the power level 0-100% to be applied to the motor. Setting power during a rotate method will have no effect on the 
-     * running rotate but will on the next rotate
+     * Set the power level 0-100% to be applied to the motor. Setting power during a rotate method will have no effect on a 
+     * running rotate command but will on the next rotate
      * method call.
      * @param power new motor power 0-100%
      * @see #setSpeed
@@ -587,17 +587,18 @@ public class MMXRegulatedMotor implements RegulatedMotor, EncoderMotor{
     }
     
     private void notifyListener(int state){
-        if (_listener==null) return;
-        if (state==0)
-            _listener.rotationStopped(this, getTachoCount(), _isStalled, System.currentTimeMillis());
-        else if(state==1)
-            _listener.rotationStarted(this, getTachoCount(), _isStalled, System.currentTimeMillis());
-    }
+        if (this.listener==null) return;
+            if (state==0)
+            this.listener.rotationStopped(this, getTachoCount(), _isStalled, System.currentTimeMillis());
+            else if(state==1)
+            this.listener.rotationStarted(this, getTachoCount(), _isStalled, System.currentTimeMillis());
+        }
     
     /** calcs degrees/sec. checks status.
      */
     private class TachoStatusMonitor implements Runnable{
         private float degpersecAccum=0f;
+        private final int LOOP_WAIT=100;
         
         public void run(){            
             int tc, tcBegin, tcDelta, index=0;
@@ -614,7 +615,7 @@ public class MMXRegulatedMotor implements RegulatedMotor, EncoderMotor{
                     _tachoCount=tcBegin=getTacho();
                     synchronized (_tachoMonitor) {_tachoMonitor.notifyAll();} // wake up the resetTachoCount() method
                 }
-                Delay.msDelay(100); 
+                Delay.msDelay(LOOP_WAIT); 
                 _tachoCount=tc=getTacho();
                 tcDelta=Math.abs(tc-tcBegin); 
                 tcBegin=tc;
