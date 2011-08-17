@@ -9,6 +9,7 @@ import lejos.nxt.comm.USB;
 
 import lejos.util.Delay;
 import lejos.util.LogColumn;
+import lejos.util.Logger;
 import lejos.util.NXTDataLogger;
 
 
@@ -19,7 +20,7 @@ public class TestLogger {
     /** Use Bluetooth for the connection
      */
     private static final int CONN_BLUETOOTH = 2;
-    NXTDataLogger dlog = new NXTDataLogger();
+    Logger dlog = new NXTDataLogger();
  
     public static void main(String[] args) {
         TestLogger testLogger = new TestLogger();
@@ -69,7 +70,7 @@ public class TestLogger {
         
         this.dlog.setColumns(new LogColumn[] {
             new LogColumn("sine(v)", LogColumn.DT_FLOAT),
-            new LogColumn("iterator", LogColumn.DT_INTEGER, true, 2), // use different range axis (2)
+            new LogColumn("iterator", LogColumn.DT_INTEGER, 2), // use different range axis (2)
             new LogColumn("Random", LogColumn.DT_FLOAT, false) // do not chart this series
         });
 
