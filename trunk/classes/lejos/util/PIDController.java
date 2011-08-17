@@ -197,7 +197,7 @@ public class PIDController {
     private int rampThresold = 0;
     private double rampExtent = 1;
     private int msdelay;
-    private  NXTDataLogger dataLogger=null;
+    private Logger dataLogger=null;
     private int cycleCount=0;
     
     /**
@@ -397,7 +397,7 @@ public class PIDController {
      * @see NXTDataLogger
      * @see #deregisterDataLogger
      */
-    public boolean registerDataLogger(NXTDataLogger dataLogger){
+    public boolean registerDataLogger(Logger dataLogger){
         LogColumn[] logColumns = {
             new LogColumn("SP",LogColumn.DT_INTEGER),
             new LogColumn("MV",LogColumn.DT_INTEGER),
@@ -407,7 +407,6 @@ public class PIDController {
             new LogColumn("Kd*derivative",LogColumn.DT_FLOAT,2),
             new LogColumn("error",LogColumn.DT_INTEGER),
             new LogColumn("dt",LogColumn.DT_INTEGER,3),
-            
         };
         try {
             dataLogger.setColumns(logColumns);
@@ -422,8 +421,8 @@ public class PIDController {
      * @return The <code>NXTDataLogger</code> that was registered, <code>null</code> if no logger has been registered.
      * @see #registerDataLogger
      */
-    public NXTDataLogger deregisterDataLogger(){
-        NXTDataLogger tempDL=this.dataLogger;
+    public Logger deregisterDataLogger(){
+        Logger tempDL=this.dataLogger;
         this.dataLogger=null;
         return tempDL;
     }

@@ -1,7 +1,7 @@
 package lejos.util;
 
 /**
- * Use to define the header names, datatypes, count, chartable attribute, and range axis ID (for multiple axis charting).
+ * Use to define the header names, datatypes, count, chartable attribute, and range axis ID (for multiple axis charts).
  * 
  * @see Logger#setColumns
  * @see NXTDataLogger
@@ -23,17 +23,23 @@ public class LogColumn {
 
     /**
      * @param name name the label/name of the column/series. <code>RangeAxisID</code> defaults to 1,
-     * <code>chartable</code> defaults to true, and datatype defaults to <code>DT_FLOAT</code>.
+     * <code>chartable</code> defaults to <code>true</code>, and datatype defaults to <code>DT_FLOAT</code>.
      */
     public LogColumn(String name) {
         this.name = name;
     }
 
     /** throws unchecked IllegalArgumentException if bad datatype val. <code>RangeAxisID</code> defaults to 1 and
-     * <code>chartable</code> defaults to true.
+     * <code>chartable</code> defaults to <code>true</code>.
      * @param name The label/name of the column/series
      * @param datatype The datatype of of the column/series
-     * @see #setDatatype
+     * @see #DT_BOOLEAN
+     * @see #DT_BYTE
+     * @see #DT_SHORT
+     * @see #DT_INTEGER
+     * @see #DT_LONG
+     * @see #DT_FLOAT
+     * @see #DT_DOUBLE
      */
     public LogColumn(String name, int datatype) {
         this(name);
@@ -43,7 +49,7 @@ public class LogColumn {
      * @param name The label/name of the column/series
      * @param datatype The datatype of of the column/series
      * @param chartable <code>true</code> to chart the data, <code>false</code> to only log it.
-     * @see #setDatatype
+     * @see #LogColumn(String, int, int)
      */
     public LogColumn(String name, int datatype, boolean chartable) {
         this(name, datatype);
@@ -51,27 +57,18 @@ public class LogColumn {
     }
     
     /** throws unchecked IllegalArgumentException if bad datatype val or <code>rangeAxisID</code> is not in within 1-4.
+     * <code>chartable</code> defaults to <code>true</code>.
      * @param name The label/name of the column/series
      * @param datatype The datatype of of the column/series
-     * @param chartable <code>true</code> to chart the data, <code>false</code> to only log it.
      * @param rangeAxisID Range axis ID 1-4
-     * @see #setDatatype
+     * @see #LogColumn(String, int, boolean)
      */
-    public LogColumn(String name, int datatype, boolean chartable, int rangeAxisID) {
-        this(name, datatype, chartable);
+    public LogColumn(String name, int datatype, int rangeAxisID) {
+        this(name, datatype, true);
         if (rangeAxisID<1 || rangeAxisID>4) throw new IllegalArgumentException("Invalid rangeAxisID " + rangeAxisID);
         this.rangeAxisID=rangeAxisID;
     }
     
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-    // 
-
     /** Set the datatype for this column/series. Throws unchecked IllegalArgumentException if bad datatype val
      * @param datatype The datatype. Use one of the constant values list below in "See also".
      * @see Logger
@@ -84,7 +81,7 @@ public class LogColumn {
      * @see #DT_DOUBLE
      * @throws IllegalArgumentException if bad datatype value
      */
-    public void setDatatype(int datatype) {
+    private void setDatatype(int datatype) {
         // validate datatypes
         switch (datatype) { 
             case DT_BOOLEAN :
@@ -110,30 +107,32 @@ public class LogColumn {
     public int getSize() {
         return this.byteCount;
     }
-    
+
+    /**
+     * @return The datatype value set in the constructor
+     */
     public int getDatatype() {
         return this.datatype;
     }
 
-    public void setChartable(boolean chartable) {
-        this.chartable = chartable;
-    }
-
+    /**
+     * @return The chartable flag value set in the constructor
+     */
     public boolean isChartable() {
         return this.chartable;
     }
-
-    /** Throws unchecked IllegalArgumentException if rangeAxisID &lt;1 or rangeAxisID &gt;4.
-     * 4 range axes are available for multiple axis charting. Default is 1
-     * @param rangeAxisID The range axis ID 1-4
-     * @throws IllegalArgumentException
+    /**
+    
+     * @return The range Axis ID value set in the constructor
      */
-    public void setRangeAxisID(int rangeAxisID) {
-        if (rangeAxisID<1 || rangeAxisID>4) throw new IllegalArgumentException("Invalid axis ID " + rangeAxisID);
-        this.rangeAxisID = rangeAxisID;
-    }
-
     public int getRangeAxisID() {
         return this.rangeAxisID;
+    }
+    
+    /**
+     * @return The name value set in the constructor
+     */
+    public String getName() {
+        return name;
     }
 }
