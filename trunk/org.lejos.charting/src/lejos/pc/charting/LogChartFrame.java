@@ -444,12 +444,14 @@ class LogChartFrame extends JFrame {
                 mi.setText("Restore Chart");
                 mi.setMnemonic(KeyEvent.VK_N);
                 UIPanel.setVisible(false);
+                jTabbedPane1.setVisible(false);
             }
             if (e.getActionCommand().equalsIgnoreCase("Restore Chart")) {
                 JMenuItem mi = (JMenuItem)e.getSource();
                 mi.setText("Expand Chart");
                 mi.setMnemonic(KeyEvent.VK_F);
                 UIPanel.setVisible(true);
+                jTabbedPane1.setVisible(true);
             }
             if (e.getActionCommand().equalsIgnoreCase("Chart in New Window")) {
                 customChartPanel.getLoggingChartPanel().spawnChartCopy();
@@ -507,7 +509,6 @@ class LogChartFrame extends JFrame {
         this.setEnabled(true);
 
         this.getContentPane().setLayout(gridBagLayout1);
-        this.setResizable(false);
         MenuActionListener menuItemActionListener = new MenuActionListener();
         MenuEventListener menuListener = new MenuEventListener();
         
@@ -545,8 +546,7 @@ class LogChartFrame extends JFrame {
         menuItem = new JMenuItem("About",KeyEvent.VK_A);
         menuItem.addActionListener(menuItemActionListener);
         menu.add(menuItem);
-        
-        jTabbedPane1.setBounds(new Rectangle(195, 5, 620, 195));
+
 
         jButtonConnect.setText("Connect");
         jButtonConnect.setBounds(new Rectangle(25, 65, 115, 25));
@@ -560,9 +560,10 @@ class LogChartFrame extends JFrame {
                 });
         UIPanel.setSize(new Dimension(820, 200));
         UIPanel.setLayout(null);
-        UIPanel.setPreferredSize(new Dimension(814, 200));
-        UIPanel.setMinimumSize(new Dimension(814, 200));
+        UIPanel.setPreferredSize(new Dimension(300, 200));
+        UIPanel.setMinimumSize(new Dimension(300, 200));
         UIPanel.setBounds(new Rectangle(0, 350, 820, 200));
+        UIPanel.setMaximumSize(new Dimension(300, 32767));
         connectionPanel.setBounds(new Rectangle(10, 10, 175, 100));
         connectionPanel.setBorder(BorderFactory.createTitledBorder("Connection"));
         connectionPanel.setLayout(null);
@@ -700,7 +701,7 @@ class LogChartFrame extends JFrame {
         connectionPanel.add(jTextFieldNXTName, null);
         connectionPanel.add(jButtonConnect, null);
         connectionPanel.add(jLabel5, null);
-        
+
         dataLogScrollPane.getViewport().add(dataLogTextArea,null);
         jTabbedPane1.addTab("Data Log", dataLogScrollPane);
         statusScrollPane.getViewport().add(jTextAreaStatus, null);
@@ -729,15 +730,21 @@ class LogChartFrame extends JFrame {
                                       "Change Title, Range Axis labels, maximum display points");
 
         this.getContentPane().add(customChartPanel, 
-                                  new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, 
-                                                         new Insets(0, 1, 0, 
-                                                                    1), 0, 0));
-        this.getContentPane().add(UIPanel, 
-                                  new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, 
+                                  new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, 
                                                          new Insets(0, 0, 0, 
                                                                     0), 0, 0));
+        this.getContentPane().add(UIPanel, 
+                                  new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, 
+                                                         new Insets(0, 0, 0, 
+                                                                    0), -107, 
+                                                         0));
+
+        this.getContentPane().add(jTabbedPane1, 
+                                  new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, 
+                                                         new Insets(0, 0, 0, 
+                                                                    0), 549, 
+                                                         115));
         UIPanel.add(connectionPanel,null);
-        UIPanel.add(jTabbedPane1,null);
         UIPanel.add(selectFolderButton,null);
         UIPanel.add(logFileTextField,null);
         UIPanel.add(jLabel1logfilename,null);
