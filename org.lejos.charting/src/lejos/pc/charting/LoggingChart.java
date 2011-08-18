@@ -663,7 +663,6 @@ class LoggingChart extends ChartPanel{
         
         // create the datasets per axisID one-to-one using defs in seriesDefs[]
         addDataSets(getChart(), false);
-        markerManager.addChangeListener(); // to support XYTextAnnotaion Y positioning on zoom
         chartDirty=true;
         
         return getChart().getXYPlot().getSeriesCount();
