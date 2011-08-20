@@ -16,7 +16,7 @@ import java.util.HashSet;
  * @see lejos.util.NXTDataLogger 
  * @author Kirk P. Thompson
  */
-class DataLogger {
+public class DataLogger {
     private static final byte ATTENTION1 = (byte)0xff;
     private static final byte ATTENTION2 = (byte)0xab;
     private static final byte COMMAND_ITEMSPERLINE = 0;
@@ -32,10 +32,12 @@ class DataLogger {
     private static final byte    DT_STRING  = 7;
     private static final byte COMMAND_SETHEADERS   = 2;  
     private static final byte COMMAND_FLUSH        = 3; 
+    private static final byte COMMAND_COMMENT      = 4;   
     
     private final String THISCLASS;
     
-    /** Change listener to notify of events when log data has been recieved, a data stream EOF, and header name changed.
+    /** Change listener to notify of events when log data has been recieved, a data stream EOF, a comment has been received, and 
+     * header defs have changed.
      * @see  #addLoggerListener
      */
     interface LoggerListener {
@@ -60,6 +62,14 @@ class DataLogger {
          * @see lejos.util.LogColumn
          */
         void logFieldNamesChanged(String[] logFields);
+
+        /** Invoked when a comment is logged. Comments are sent after the <code>finishLine()</code> method completes. In 
+         * <code>NXTChartingLogger</code>, comments are displayed on the chart as an event marker on the domain axis with 
+         * the comment text as a label.
+         * @param timestamp The timestamp when the comment was generated on the NXT
+         * @param comment The text comment
+         */
+        void logCommentReceived(int timestamp, String comment);
     }
 
     /** Internal Logger implementation 'cause we must eat our own dogfood too...
@@ -107,6 +117,19 @@ class DataLogger {
                 }
             }
 //            System.out.print(sb.toString());
+        }
+
+        public void logCommentReceived(int timestamp, String comment) {
+            //System.out.format("Ts=%1$d %2$s\n", timestamp, comment);
+            String theComment =String.format("%1$1d\t%2$s\n", timestamp, comment);
+            if (validLogFile) {
+                try {
+                    fw.write(theComment);
+                } catch (IOException e) {
+                    System.out.print("!** logCommentRecieved IOException: theComment=\"" + theComment + "\"");
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -256,7 +279,7 @@ class DataLogger {
                     case COMMAND_ITEMSPERLINE: // byte 3=0: Set elementsPerLine to 4th byte
                         elementsPerLine = ((int)readBytes[1])&0xff;
                         // if we have residual, output it
-                        if (endOfLineCycler>0) notifyListeners(readVals); // send readvals[] to output
+                        if (endOfLineCycler>0) notifyLogLineAvailable(readVals); // send readvals[] to output
                         endOfLineCycler = 0;
                         readVals = new DataItem[elementsPerLine]; // set to new bounds. 
                         break;
@@ -267,7 +290,7 @@ class DataLogger {
                     case COMMAND_SETHEADERS:
                         elementsPerLine=((int)readBytes[1])&0xff;
                         // if we have residual, output it
-                        if (endOfLineCycler>0) notifyListeners(readVals); // send readvals[] to output
+                        if (endOfLineCycler>0) notifyLogLineAvailable(readVals); // send readvals[] to output
                         // get the headers from the stream
                         String[] fieldNames = new String[elementsPerLine];
                         for (int i=0;i<elementsPerLine;i++){
@@ -286,9 +309,26 @@ class DataLogger {
                         readVals = new DataItem[elementsPerLine]; // set to new bounds. 
                         break;
                     case COMMAND_FLUSH:
-                        if (endOfLineCycler>0) notifyListeners(readVals); // send readvals[] to output
+                        if (endOfLineCycler>0) notifyLogLineAvailable(readVals); // send readvals[] to output
                         endOfLineCycler = 0;
                         readVals = new DataItem[elementsPerLine]; // init the row holding array
+                        break;
+                    case COMMAND_COMMENT:
+                        try {
+                            // get the timestamp
+                            getBytes(readBytes,4);
+                            int timestamp = this.parseInt(readBytes);
+                            
+                            // get the comment
+                            getBytes(readBytes,4);
+                            String comment=this.parseString(readBytes);
+                            
+                            // notify all listeners of new comment
+                            this.notifyCommentRecieved(timestamp, comment);
+                        } catch (EOFException e){
+                            break mainloop;
+                        }
+                        
                         break;
                     default:
                         // allow the bytes to pass through to datatype parsers if no CASE matches (this should not happen but...)
@@ -357,7 +397,7 @@ class DataLogger {
                 // if we have cycled through enough items, do EOL and output the entire line as a formatted string
                 if (endOfLineCycler == elementsPerLine - 1) {
                     // send readvals[] to output and reset endOfLineCycler, readVals[]
-                    notifyListeners(readVals); 
+                    notifyLogLineAvailable(readVals); 
                     endOfLineCycler = 0;
                     readVals = new DataItem[elementsPerLine]; // set to new bounds. 
                 } else
@@ -404,10 +444,19 @@ class DataLogger {
     
     /** send readvals[] to output
      */
-    private void notifyListeners(DataItem[] readVals) {
+    private void notifyLogLineAvailable(DataItem[] readVals) {
         // notify all listeners that a new line of data fields is available
         for (LoggerListener listener: listeners) {
             listener.logLineAvailable(readVals);
+        }
+    }
+    
+    /** Notify of comment event
+     */
+    private void notifyCommentRecieved(int timeStamp, String comment) {
+        // notify all listeners that a new comment is available
+        for (LoggerListener listener: listeners) {
+            listener.logCommentReceived(timeStamp, comment);
         }
     }
     
@@ -474,7 +523,7 @@ class DataLogger {
         StringBuilder sb = new StringBuilder();
         
         tempBytes = ba;   
-        // get all the next bytes (chunks of 4) up until the first null (0) to make the string
+        // get all the next bytes (chunks of 4) up until the first null (0) to make the string. 
         outerloop: 
         for(;;) {
             for(int i=0;i<4;i++) {
