@@ -29,7 +29,11 @@ public interface Logger {
     // This is mandatory and implies a new log structure when called
     // throws IllegalArgumentException if bad datatype val
     void setColumns(LogColumn[] columnDefs) throws IllegalArgumentException; 
-  
+    
+    // Log a comment. Displayed as event marker on domain axis of chart and after the current line in the log. 
+    // Ignored in cache mode.
+    void writeComment(String comment);
+    
     // All of these throw unchecked IllegalStateException if datatypes don't match what was set in setColumns(), 
     // column counts don't match what was set in setColumns(), or startxxxLog() has not been called
     void writeLog(boolean datapoint); 
