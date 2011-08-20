@@ -200,9 +200,26 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
     public void addDataPoints(double[] seriesData){
         loggingChartPanel.addDataPoints(seriesData);
     }
-    
 
-     /** Set the passed series/header definitions as new XYseries in the dataset. Existing series are wiped. Must be at least two items
+    /** Add a comment marker to the chart at specified domain position.
+     * @param xVal Domain value
+     * @param comment The comment text
+     * @see #setCommentsVisible
+     */
+    public void addCommentMarker(double xVal, String comment){
+        loggingChartPanel.addCommentMarker(xVal, comment);
+    }
+
+    /** Control the visibility of any comment markers defined for the chart.
+     * @param visible <code>true</code> to show, <code>false</code> to hide
+     * @see #addCommentMarker
+     */
+    public void setCommentsVisible(boolean visible){
+        loggingChartPanel.setCommentsVisible(visible);
+    }
+    
+     /** Set the passed series/header definitions as new XYseries in the dataset. Existing series and comment markers are wiped. 
+      * Must be at least two items
       * in the array or any existing series is left intact and method exits with 0. First item (series 0) is set as domain label and should
       * be system time in milliseconds, and is always axis 0 for multi-axis charts.
       * <p>
