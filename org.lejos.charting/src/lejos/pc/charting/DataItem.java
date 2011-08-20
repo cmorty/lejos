@@ -3,7 +3,7 @@ package lejos.pc.charting;
 /** Each logged data item is represented by a 
  * <code>DataItem</code> instance
  */
-class DataItem {
+public class DataItem {
     public static final int DT_INTEGER = 3;
     public static final int DT_LONG    = 4;
     public static final int DT_FLOAT   = 5;
