@@ -402,11 +402,11 @@ public class PIDController {
             new LogColumn("SP",LogColumn.DT_INTEGER),
             new LogColumn("MV",LogColumn.DT_INTEGER),
             new LogColumn("PV",LogColumn.DT_INTEGER),
-            new LogColumn("Integral",LogColumn.DT_INTEGER,2),
+            new LogColumn("Integral",LogColumn.DT_INTEGER),
             new LogColumn("Kp*error",LogColumn.DT_FLOAT),
             new LogColumn("Kd*derivative",LogColumn.DT_FLOAT,2),
             new LogColumn("error",LogColumn.DT_INTEGER),
-            new LogColumn("dt",LogColumn.DT_INTEGER,3),
+            new LogColumn("dt",LogColumn.DT_INTEGER),
         };
         try {
             dataLogger.setColumns(logColumns);
