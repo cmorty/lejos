@@ -76,9 +76,7 @@ class MarkerManager implements PlotChangeListener, RendererChangeListener, AxisC
                 ((XYPlot)MarkerManager.this.chart.getPlot()).addDomainMarker(markerLine);
                 ((XYPlot)MarkerManager.this.chart.getPlot()).addAnnotation(commentMarkerLabel);
             }
-            double lb=MarkerManager.this.chart.getXYPlot().getRangeAxis().getLowerBound();
-            double ub=MarkerManager.this.chart.getXYPlot().getRangeAxis().getUpperBound();
-            setY(ub-(ub-lb)*.05);
+            setY(getCommentY());
         }
         
         void setY(double yVal){
@@ -303,11 +301,19 @@ class MarkerManager implements PlotChangeListener, RendererChangeListener, AxisC
     
     // fired when zooming and y scale changes
     public synchronized void axisChanged(AxisChangeEvent event) {
-//        System.out.println("axisChanged: " + event.getType().toString());
-        double lb=this.chart.getXYPlot().getRangeAxis().getLowerBound();
-        double ub=this.chart.getXYPlot().getRangeAxis().getUpperBound();
+        if (comments.isEmpty()) return;
+        // set the Y value of comment as the axis scale changes (due to zooming, autoFit, etc.)
         for (CommentMarker item: comments){
-            item.setY(ub-(ub-lb)*.05);
+            item.setY(getCommentY());
         }
+    }
+    
+    private double getCommentY() {
+        Rectangle2D dataArea = loggingChartPanel.getChartRenderingInfo().getPlotInfo().getDataArea();
+        XYPlot plot = this.chart.getXYPlot();
+        double ub=plot.getRangeAxis().getUpperBound();
+        double rangeMaxJava2d = plot.getRangeAxis().valueToJava2D(ub, dataArea, plot.getRangeAxisEdge());
+        rangeMaxJava2d+=18;
+        return plot.getRangeAxis().java2DToValue(rangeMaxJava2d, dataArea, plot.getRangeAxisEdge());
     }
 }
