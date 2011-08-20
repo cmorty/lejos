@@ -46,6 +46,7 @@ public class NXTDataLogger implements Logger{
 //    private static final byte    DT_STRING  = 7;
     private static final byte COMMAND_SETHEADERS   = 2;  
     private static final byte COMMAND_FLUSH        = 3;    
+    private static final byte COMMAND_COMMENT      = 4;    
     private static final int XORMASK = 0xff;
     
     private DataOutputStream dos = null;
@@ -71,6 +72,8 @@ public class NXTDataLogger implements Logger{
     private int setColumnsCount=0;
     private int lineBytes;
     private NXTConnection passedNXTConnection=null;
+    private String commentText = new String("");
+    private int currentTimeStamp=0;
     
     /**
      * Default constructor establishes a data logger instance in cache mode.
@@ -387,7 +390,8 @@ public class NXTDataLogger implements Logger{
         // ensure first column item always is timestamp
         if (this.currColumnPosition==1) {
             setDataType(DT_INTEGER);
-            writeLog((int)System.currentTimeMillis()-sessionBeginTime);
+            this.currentTimeStamp=(int)System.currentTimeMillis()-sessionBeginTime;
+            writeLog(currentTimeStamp);
             
             // do an initial flush after the first sent data because I found that without this, BT will block a little 
             // on the first autoflush it does
@@ -426,6 +430,20 @@ public class NXTDataLogger implements Logger{
     public void finishLine() {
         if (this.currColumnPosition!=((this.itemsPerLine)&0xff)) throw new IllegalStateException("too few cols ");
         currColumnPosition=1;
+        
+        if (this.commentText.equals("") || currentTimeStamp==0) return;
+        
+        // if a comment was set, send command, timestamp, and comment text
+        sendATTN();
+        byte[] command = {COMMAND_COMMENT,-1};  
+        sendCommand(command);
+        try {
+            this.dos.writeInt(this.currentTimeStamp);
+        } catch (IOException e) {
+            cleanConnection();
+        }
+        writeStringData(this.commentText);
+        this.commentText="";
     }
     
     /** send the command to set the active datatype
@@ -613,9 +631,8 @@ public class NXTDataLogger implements Logger{
 
 
     // TODO
-    /** Don't quite know how to handle this is the chart so it is private for now
-     * @param strData The <code>String</code> to log
-     */
+    //**Don't quite know how to handle this is the chart so it is private for now
+
 //    private final synchronized void writeStringLine(String strData){
 //        byte oldIPL = itemsPerLine;
 //        if (itemsPerLine!=1) setItemsPerLine((byte)1);
@@ -625,6 +642,18 @@ public class NXTDataLogger implements Logger{
 //        writeStringData(strData);
 //        if (itemsPerLine!=1) setItemsPerLine(oldIPL);
 //    }
+    
+    /** Log a comment. Displayed as event marker on domain axis of NXJChartingLogger chart and after the current line in the log. 
+     * Ignored in cache mode.
+     * Only one comment per line. (i.e. before <code>finishLine()</code> is called)
+    * @param comment The comment
+    */
+    public void writeComment(String comment){
+        // return if user logging in cache mode
+        if (logmodeState!=LMSTATE_REAL) return;
+        this.commentText=comment;
+    }
+    
     
     /**
     * Write an <code>String</code> to the <code>DataOutputStream</code> as a null (0) terminated ASCII byte stream.
