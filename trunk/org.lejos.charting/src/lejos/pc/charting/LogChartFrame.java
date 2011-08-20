@@ -11,6 +11,8 @@ import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 
 import java.io.File;
@@ -119,6 +121,7 @@ class LogChartFrame extends JFrame {
     private JTextField axis3LabelTextField = new JTextField();
     private JTextField axis4LabelTextField = new JTextField();
     private GridBagLayout gridBagLayout1 = new GridBagLayout();
+    private JCheckBox showCommentsCheckBox = new JCheckBox();
 
     /** Default constructor
      */
@@ -153,9 +156,17 @@ class LogChartFrame extends JFrame {
         });
     }
 
+
+
     /**This class is used to provide listener callbacks from DataLogger.
      */
     private class SelfLogger implements DataLogger.LoggerListener{
+        public void logCommentReceived(int timestamp, String comment) {
+            String theComment = String.format("%1$-1d\t%2$s\n", timestamp, comment);
+            LogChartFrame.this.logDataQueue.add(theComment);
+            customChartPanel.addCommentMarker(timestamp, comment);
+        }
+
         /** used to track series defs
          */
         private class SeriesDef{
@@ -612,7 +623,7 @@ class LogChartFrame extends JFrame {
 
         // domain display limits GUI
         chartOptionsPanel.setLayout(null);
-        chartDomLimitsPanel.setBounds(new Rectangle(5, 15, 180, 135));
+        chartDomLimitsPanel.setBounds(new Rectangle(5, 5, 180, 135));
         chartDomLimitsPanel.setLayout(gridLayout1);
         chartDomLimitsPanel.setBorder(BorderFactory.createTitledBorder("Domain Display Limiting"));
         domainDisplayLimitSlider.setEnabled(false);
@@ -626,6 +637,7 @@ class LogChartFrame extends JFrame {
                 });
         useTimeRadioButton.setText("By Time");
         useTimeRadioButton.setEnabled(false);
+        useTimeRadioButton.setMnemonic('T');
         useTimeRadioButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         domainDisplayLimitRadioButton_actionPerformed(e);
@@ -637,6 +649,7 @@ class LogChartFrame extends JFrame {
         bg1.add(useDataPointsRadioButton);
         useDataPointsRadioButton.setSelected(true);
         useDataPointsRadioButton.setEnabled(false);
+        useDataPointsRadioButton.setMnemonic('D');
         useDataPointsRadioButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         domainDisplayLimitRadioButton_actionPerformed(e);
@@ -644,6 +657,7 @@ class LogChartFrame extends JFrame {
                 });
         datasetLimitEnableCheckBox.setText("Enable");
         datasetLimitEnableCheckBox.setRolloverEnabled(true);
+        datasetLimitEnableCheckBox.setMnemonic('A');
         datasetLimitEnableCheckBox.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         datasetLimitEnableCheckBox_actionPerformed(e);
@@ -680,6 +694,17 @@ class LogChartFrame extends JFrame {
         axis3LabelTextField.setBounds(new Rectangle(315, 95, 290, 20));
         axis3LabelTextField.getDocument().addDocumentListener(notifier);
         axis4LabelTextField.setBounds(new Rectangle(315, 120, 290, 20));
+        showCommentsCheckBox.setText("Show Comment Markers");
+        showCommentsCheckBox.setBounds(new Rectangle(10, 145, 185, 25));
+        showCommentsCheckBox.setToolTipText("Show/Hide any comment markers on the chart");
+        showCommentsCheckBox.setRolloverEnabled(true);
+        showCommentsCheckBox.setSelected(true);
+        showCommentsCheckBox.setMnemonic('S');
+        showCommentsCheckBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                customChartPanel.setCommentsVisible(e.getStateChange()==ItemEvent.SELECTED);
+            }
+        });
         axis4LabelTextField.getDocument().addDocumentListener(notifier);
         
         logFileTextField.setBounds(new Rectangle(10, 145, 180, 20));
@@ -712,6 +737,7 @@ class LogChartFrame extends JFrame {
         chartDomLimitsPanel.add(useTimeRadioButton, null);
         chartDomLimitsPanel.add(domainDisplayLimitSlider, null);
         chartDomLimitsPanel.add(domainLimitLabel, null);
+        chartOptionsPanel.add(showCommentsCheckBox, null);
         chartOptionsPanel.add(axis4LabelTextField, null);
         chartOptionsPanel.add(axis3LabelTextField, null);
         chartOptionsPanel.add(axis2LabelTextField, null);

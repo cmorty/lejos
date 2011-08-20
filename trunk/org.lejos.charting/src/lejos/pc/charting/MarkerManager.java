@@ -7,10 +7,17 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import java.util.Vector;
+
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
+import org.jfree.chart.event.PlotChangeEvent;
+import org.jfree.chart.event.PlotChangeListener;
+import org.jfree.chart.event.RendererChangeEvent;
+import org.jfree.chart.event.RendererChangeListener;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.ValueMarker;
@@ -24,9 +31,11 @@ import org.jfree.ui.TextAnchor;
 
 /** manages the shift-click-drag domain marker & delta display on chart in LoggingChart
  */
-class MarkerManager {
+class MarkerManager implements PlotChangeListener, RendererChangeListener, AxisChangeListener{
     private final static int DIR_BACKWARD=0;
     private final static int DIR_FORWARD=1;
+    private static final Color MARKER_COLOR =  Color.MAGENTA.darker();
+    private static final int MAX_COMMENT_LABEL_LENGTH=10;
     
     private IntervalMarker marker1Range;
     private ValueMarker marker1Beg;
@@ -36,6 +45,65 @@ class MarkerManager {
     private LoggingChart loggingChartPanel=null;
     private JFreeChart chart=null;
     private int dragDir=DIR_FORWARD;
+    Vector<CommentMarker> comments = new Vector<CommentMarker>();
+    private boolean doRendererChangedRegistration=false;
+    private boolean commentMarkersVisible=true;
+    
+    private class CommentMarker{
+        private ValueMarker markerLine;
+        private XYPointerAnnotation commentMarkerLabel;
+        
+        CommentMarker(double xVal,String comment) {
+            String markerLabel=comment;
+            if (comment.length()>MAX_COMMENT_LABEL_LENGTH) {
+                markerLabel=comment.substring(0, MAX_COMMENT_LABEL_LENGTH) + "...";
+            }
+            markerLine= new ValueMarker(xVal);
+            markerLine.setPaint(MARKER_COLOR);
+            markerLine.setStroke(new BasicStroke(.8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,10f, new float[] {5f,2.5f},0f));
+            markerLine.setLabelAnchor(RectangleAnchor.TOP_LEFT);
+            markerLine.setLabelTextAnchor(TextAnchor.TOP_RIGHT);
+            commentMarkerLabel=new XYPointerAnnotation(markerLabel, xVal,0,0);
+            commentMarkerLabel.setFont(new Font("SansSerif", Font.PLAIN, 9));
+            commentMarkerLabel.setPaint(MARKER_COLOR);
+            commentMarkerLabel.setArrowLength(8);
+            commentMarkerLabel.setArrowPaint(MARKER_COLOR);
+            commentMarkerLabel.setTipRadius(0);
+            commentMarkerLabel.setTextAnchor(TextAnchor.CENTER_LEFT);
+            commentMarkerLabel.setBaseRadius(8);
+            commentMarkerLabel.setToolTipText(String.format("(%1$,1.0f) ",xVal) + comment);
+            if (MarkerManager.this.commentMarkersVisible) {
+                ((XYPlot)MarkerManager.this.chart.getPlot()).addDomainMarker(markerLine);
+                ((XYPlot)MarkerManager.this.chart.getPlot()).addAnnotation(commentMarkerLabel);
+            }
+            double lb=MarkerManager.this.chart.getXYPlot().getRangeAxis().getLowerBound();
+            double ub=MarkerManager.this.chart.getXYPlot().getRangeAxis().getUpperBound();
+            setY(ub-(ub-lb)*.05);
+        }
+        
+        void setY(double yVal){
+            if (commentMarkerLabel==null) return;
+            commentMarkerLabel.setY(yVal);
+        }
+        
+        void die(){
+            if (commentMarkerLabel==null) return;
+            setVisible(false);
+            markerLine=null;
+            commentMarkerLabel=null;
+        }
+        
+        void setVisible(boolean visible){
+            if (commentMarkerLabel==null) return;
+            if (!visible){
+                ((XYPlot)MarkerManager.this.chart.getPlot()).removeDomainMarker(markerLine);
+                ((XYPlot)MarkerManager.this.chart.getPlot()).removeAnnotation(commentMarkerLabel);
+            } else {
+                ((XYPlot)MarkerManager.this.chart.getPlot()).addDomainMarker(markerLine);
+                ((XYPlot)MarkerManager.this.chart.getPlot()).addAnnotation(commentMarkerLabel);
+            }
+        }
+    }
     
     MarkerManager(LoggingChart loggingChartPanel) {
         registerLoggingChart(loggingChartPanel);
@@ -53,6 +121,7 @@ class MarkerManager {
     void registerLoggingChart(LoggingChart loggingChartPanel){
         this.loggingChartPanel=loggingChartPanel;
         this.chart=this.loggingChartPanel.getChart();
+        this.chart.getPlot().addChangeListener(this);
     }
     
     private Point2D getPointInRectangle(int x, int y, Rectangle2D area) {
@@ -128,7 +197,6 @@ class MarkerManager {
         
         marker1Range= new IntervalMarker(0,0);
         setBaseMarkerAttributes(marker1Range);
-        
     }
     
     void mouseClicked(MouseEvent e) {
@@ -189,5 +257,57 @@ class MarkerManager {
             chart.setNotify(true);
         }
     }
-       
+    
+    void addCommentMarker(double xVal, String comment){
+        if (this.chart.getXYPlot().getRenderer()==null) return;
+        comments.add(new CommentMarker(xVal, comment));
+    }
+    
+    void clearComments(){
+        if (comments.isEmpty()) return;
+        for (CommentMarker item: comments){
+            item.die();
+        }
+        comments.removeAllElements();
+    }
+    
+    void setCommentsVisible(boolean visible){
+        this.commentMarkersVisible=visible;
+        if (comments.isEmpty()) return;
+//        System.out.println("setCommentsVisible " + visible + ". comments.size=" + comments.size());
+        for (CommentMarker item: comments){
+            item.setVisible(visible);
+        }
+        this.chart.setNotify(true);
+    }
+    
+    // event hooks to ensure we can register rendererChanged when new axis is created
+    public void plotChanged(PlotChangeEvent event) {
+        if (event.getType().toString().indexOf("DATASET_UPDATED")==-1) return;
+        // this keeps us registered as an axisChangeListener when the range axes are inited on new data (setSeries())
+        if (this.chart.getXYPlot().getRenderer()!=null) {
+            this.doRendererChangedRegistration=true;
+            this.chart.getXYPlot().getRenderer().removeChangeListener(this);
+            this.chart.getXYPlot().getRenderer().addChangeListener(this);
+        }
+    }
+
+    // ensure we are registered as a axisChanged listener
+    public void rendererChanged(RendererChangeEvent event) {
+        if (!this.doRendererChangedRegistration) return;
+//        System.out.println("** RCE: " + event.getType().toString());
+        this.chart.getXYPlot().getRangeAxis().removeChangeListener(this);
+        this.chart.getXYPlot().getRangeAxis().addChangeListener(this);
+        this.doRendererChangedRegistration=false;
+    }
+    
+    // fired when zooming and y scale changes
+    public synchronized void axisChanged(AxisChangeEvent event) {
+//        System.out.println("axisChanged: " + event.getType().toString());
+        double lb=this.chart.getXYPlot().getRangeAxis().getLowerBound();
+        double ub=this.chart.getXYPlot().getRangeAxis().getUpperBound();
+        for (CommentMarker item: comments){
+            item.setY(ub-(ub-lb)*.05);
+        }
+    }
 }

@@ -536,6 +536,7 @@ class LoggingChart extends ChartPanel{
                 if (ir.getSeriesLinesVisible(j)==null) ir.setSeriesLinesVisible(j,true); // because will return null if never defined through API
                 if (!ir.getSeriesLinesVisible(j)) {
                     chartClone.getXYPlot().getRenderer(i).setSeriesVisible(j, false);
+                    System.out.println("Excluding series \"" + ir.getLegendItem(i,j).getLabel() + "\"");
                     continue;
                 }
                 // dupe the data
@@ -565,7 +566,10 @@ class LoggingChart extends ChartPanel{
                     break;
                 }
             }
-            if (!hasData) chartClone.getXYPlot().getRangeAxis(i).setVisible(false);
+            if (!hasData) {
+                chartClone.getXYPlot().getRangeAxis(i).setVisible(false);
+                System.out.println("Removing unused axis \"" + chartClone.getXYPlot().getRangeAxis(i).getLabel() + "\"");
+            }
         }
          
         chartClone.getTitle().setText(getChart().getTitle().getText());
@@ -610,8 +614,9 @@ class LoggingChart extends ChartPanel{
         }
         // used to disable zoom extent calc when there is no data
         this.emptyChart=true;
-        // remove any markers
+        // remove any markers and clear any comments
         this.markerManager.markersOff();
+        this.markerManager.clearComments();
         // clear so extents will be calculated for new data
         yExtents=new Range[RANGE_AXIS_COUNT];
         
@@ -768,6 +773,16 @@ class LoggingChart extends ChartPanel{
         this.chartDirty=true;
         this.doDomainAdjust=true;
         this.emptyChart=false;
+    }
+    
+    void addCommentMarker(double xVal, String comment){
+        if (this.markerManager==null) return;
+        this.markerManager.addCommentMarker(xVal, comment);
+    }
+    
+    void setCommentsVisible(boolean visible){
+        if (this.markerManager==null) return;
+        this.markerManager.setCommentsVisible(visible);
     }
     
     /** Set the domain axis limiting mode. When limited, the domain "width" will not exceed the specified value by dropping the
