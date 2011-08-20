@@ -71,17 +71,17 @@ class MarkerManager implements PlotChangeListener, RendererChangeListener, AxisC
             commentMarkerLabel.setTipRadius(0);
             commentMarkerLabel.setTextAnchor(TextAnchor.CENTER_LEFT);
             commentMarkerLabel.setBaseRadius(8);
-            commentMarkerLabel.setToolTipText(String.format("(%1$,1.0f) ",xVal) + comment);
+            commentMarkerLabel.setToolTipText(String.format("(%1$,1.0f) ", xVal) + comment);
             if (MarkerManager.this.commentMarkersVisible) {
                 ((XYPlot)MarkerManager.this.chart.getPlot()).addDomainMarker(markerLine);
                 ((XYPlot)MarkerManager.this.chart.getPlot()).addAnnotation(commentMarkerLabel);
             }
-            setY(getCommentY());
+            setY();
         }
         
-        void setY(double yVal){
+        void setY(){
             if (commentMarkerLabel==null) return;
-            commentMarkerLabel.setY(yVal);
+            commentMarkerLabel.setY(getCommentY());
         }
         
         void die(){
@@ -304,16 +304,17 @@ class MarkerManager implements PlotChangeListener, RendererChangeListener, AxisC
         if (comments.isEmpty()) return;
         // set the Y value of comment as the axis scale changes (due to zooming, autoFit, etc.)
         for (CommentMarker item: comments){
-            item.setY(getCommentY());
+            item.setY();
         }
     }
     
+    // get the Y (Range axis) cooridinate in data values after using java2d space to ensure absolute relative pos from top of axis.
     private double getCommentY() {
         Rectangle2D dataArea = loggingChartPanel.getChartRenderingInfo().getPlotInfo().getDataArea();
         XYPlot plot = this.chart.getXYPlot();
-        double ub=plot.getRangeAxis().getUpperBound();
-        double rangeMaxJava2d = plot.getRangeAxis().valueToJava2D(ub, dataArea, plot.getRangeAxisEdge());
-        rangeMaxJava2d+=18;
-        return plot.getRangeAxis().java2DToValue(rangeMaxJava2d, dataArea, plot.getRangeAxisEdge());
+        double ub=plot.getRangeAxis().getUpperBound(); // top of Y in data units
+        double rangeMaxJava2d = plot.getRangeAxis().valueToJava2D(ub, dataArea, plot.getRangeAxisEdge()); // convert to real units
+        rangeMaxJava2d+=18; // add offset
+        return plot.getRangeAxis().java2DToValue(rangeMaxJava2d, dataArea, plot.getRangeAxisEdge()); // convert back to data units
     }
 }
