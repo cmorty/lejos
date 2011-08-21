@@ -33,17 +33,15 @@ import lejos.util.Delay;
 public class NXTDataLogger implements Logger{
     private static final byte ATTENTION1 = (byte)0xff;
     private static final byte ATTENTION2 = (byte)0xab;
-//    private final byte COMMAND_ITEMSPERLINE = 0;
     private static final byte COMMAND_DATATYPE     = 1;    
     // sub-commands of COMMAND_DATATYPE
-//    private static final byte    DT_BOOLEAN = 3;
-//    private static final byte    DT_BYTE    = 3;
-//    private static final byte    DT_SHORT   = 3;
+    private static final byte    DT_BOOLEAN = 0;
+    private static final byte    DT_BYTE    = 1;
+    private static final byte    DT_SHORT   = 2;
     private static final byte    DT_INTEGER = 3;        
     private static final byte    DT_LONG    = 4;
     private static final byte    DT_FLOAT   = 5;
     private static final byte    DT_DOUBLE  = 6;
-//    private static final byte    DT_STRING  = 7;
     private static final byte COMMAND_SETHEADERS   = 2;  
     private static final byte COMMAND_FLUSH        = 3;    
     private static final byte COMMAND_COMMENT      = 4;    
@@ -321,11 +319,6 @@ public class NXTDataLogger implements Logger{
         sendCache(connection.openDataOutputStream(), connection.openDataInputStream());
     }
     
-    // TODO future implementation
-    void registerPIDTuner(Object pIDTuner){
-        
-    }
-    
     private byte[] getBytesFromCache(int count) throws EmptyQueueException{
         byte[] temp = new byte[count];
         for (int i=0;i<count;i++) {
@@ -358,9 +351,9 @@ public class NXTDataLogger implements Logger{
             if (this.dis!=null) this.dis.close();
             if (this.dos!=null) this.dos.close();
         } catch (IOException e) {
-            // ignore
+            ; // ignore
         } catch (Exception e) {
-            // ignore
+            ; // ignore
         }
         this.dis = null;
         this.dos = null;
@@ -407,13 +400,8 @@ public class NXTDataLogger implements Logger{
         if (datatype!=columnDefs[currColumnPosition].getDatatype()) throw new IllegalStateException("datatyp mismatch ");
         // if DT needs to be changed, signal receiver
         setDataType(datatype);
-        
         // keep track of current column and reset to 1 (exclude 0-timestamp) if needed
         this.currColumnPosition++;
-        // I don't like this but finishLine() has majority support. Why not just wrap? Answer: So the user knows they f'ed 
-        // up, that's why.
-        //if (this.currColumnPosition>=(((int)this.itemsPerLine)&0xff)) this.currColumnPosition=1; // wrap if EOL
-        
         // enable state management
         this.disableWriteState=false;
     }
@@ -450,8 +438,6 @@ public class NXTDataLogger implements Logger{
      * @param datatype
      */
     private void setDataType(int datatype) {
-        // force boolean, byte, short to int
-        if (datatype<DT_INTEGER) datatype=DT_INTEGER;
         // exit if already current
         if (this.currentDataType==(datatype&0xff)) return;
         
@@ -465,18 +451,9 @@ public class NXTDataLogger implements Logger{
         sendCommand(command);
     }
     
-//    private void setItemsPerLine(int itemsPerLine){
-//       sendATTN();
-//       this.itemsPerLine= (byte)(itemsPerLine&0xff);
-//       byte[] command = {COMMAND_ITEMSPERLINE,-1};
-//       command[1] = this.itemsPerLine;
-//       sendCommand(command);
-//    }
-    
     /** Send an ATTENTION request. Commands usually follow. There is no response/handshake mechanism.
      */
     private void sendATTN(){
-        
         // 2 ATTN bytes
         byte[] command = {ATTENTION1,ATTENTION2,0,0};  
         int total=0;
@@ -504,7 +481,7 @@ public class NXTDataLogger implements Logger{
     * @see #finishLine
     */
     public void writeLog(boolean datapoint) {
-        writeLog(datapoint ? 1 : 0);
+        writeInt(datapoint ? 1 : 0, DT_BOOLEAN);
     }
 
     /** 
@@ -522,7 +499,7 @@ public class NXTDataLogger implements Logger{
     * @see #finishLine
     */
     public void writeLog(byte datapoint) {
-        writeLog((int)datapoint);
+        writeInt(datapoint, DT_BYTE);
     }
     
     /** 
@@ -540,7 +517,7 @@ public class NXTDataLogger implements Logger{
     * @see #finishLine
     */
     public void writeLog(short datapoint) {
-        writeLog((int)datapoint);
+        writeInt(datapoint, DT_SHORT);
     }
 
     /** 
@@ -556,14 +533,17 @@ public class NXTDataLogger implements Logger{
       * @see #finishLine
       */
     public void writeLog(int datapoint) {
-        checkWriteState(DT_INTEGER);
+        writeInt(datapoint, DT_INTEGER);
+    }
+    
+    private void writeInt(int datapoint, byte datatype) {
+        checkWriteState(datatype);  // TODO this flagging needs to change to accomodate boolean, byte, short sent as int
         try {
             this.dos.writeInt(datapoint);
         } catch (IOException e) {
             cleanConnection();
         }
-    }
-     
+    } 
     /** 
     * Write an <code>long</code> to the log. In realtime logging mode, if an <code>IOException</code> occurs, the connection
     * and data streams are silently closed down and no exception is thrown from this method.
@@ -629,20 +609,6 @@ public class NXTDataLogger implements Logger{
         }
     }
 
-
-    // TODO
-    //**Don't quite know how to handle this is the chart so it is private for now
-
-//    private final synchronized void writeStringLine(String strData){
-//        byte oldIPL = itemsPerLine;
-//        if (itemsPerLine!=1) setItemsPerLine((byte)1);
-//        // skip the [potential] timestamp
-//        // TODO maybe checkWriteState(DT_STRING);?
-//        setDataType(DT_STRING); 
-//        writeStringData(strData);
-//        if (itemsPerLine!=1) setItemsPerLine(oldIPL);
-//    }
-    
     /** Log a comment. Displayed as event marker on domain axis of NXJChartingLogger chart and after the current line in the log. 
      * Ignored in cache mode.
      * Only one comment per line. (i.e. before <code>finishLine()</code> is called)
@@ -653,19 +619,6 @@ public class NXTDataLogger implements Logger{
         if (logmodeState!=LMSTATE_REAL) return;
         this.commentText=comment;
     }
-    
-    
-    /**
-    * Write an <code>String</code> to the <code>DataOutputStream</code> as a null (0) terminated ASCII byte stream.
-    * 
-    * @param strData The <code>String</code> value to log.
-    * @see java.io.DataOutputStream#write(byte)
-    */
-    // TODO set to private until I figure out/decide if I want to publish this method
-//    private final synchronized void writeLog(String strData) {
-//        checkWriteState(DT_STRING);
-//        writeStringData(strData);
-//    }
     
     private void writeStringData(String strData) {
         byte[] strBytes;
