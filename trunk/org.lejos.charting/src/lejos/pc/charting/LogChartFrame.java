@@ -198,10 +198,10 @@ class LogChartFrame extends JFrame {
             return sd;
         }
 
-        /** Parse chartable datapoints into a double array. Uses previous parsed seriesDefs[] to determine chartable
+        /**Parse chartable datapoints into a double array. Uses previous parsed seriesDefs[] to determine chartable
          * 
-         * @param logLine
-         * @return
+         * @param logDataItems The datatype representational "structs" from the logger
+         * @return array of representative <code>double</code>
          */
         private double[] parseDataPoints(DataItem[] logDataItems) {
             double[] seriesTempvalues = new double[logDataItems.length];
@@ -210,21 +210,25 @@ class LogChartFrame extends JFrame {
             for (int i=0;i<logDataItems.length;i++) { 
                 if (seriesDefs[i].chartable) {
                     switch (logDataItems[i].datatype) {
-                        case 3: // DT_INTEGER
+                        case DataItem.DT_BOOLEAN: 
+                        case DataItem.DT_BYTE: 
+                        case DataItem.DT_SHORT: 
+                        case DataItem.DT_INTEGER:
                             seriesTempvalues[chartableCount]=((Integer)logDataItems[i].value).doubleValue();
                             break;
-                        case 4: // DT_LONG
+                        case DataItem.DT_LONG: 
                             seriesTempvalues[chartableCount]=((Long)logDataItems[i].value).doubleValue();
                             break;
-                        case 5: // DT_FLOAT
+                        case DataItem.DT_FLOAT:
                             seriesTempvalues[chartableCount]=((Float)logDataItems[i].value).doubleValue();
                             break;
-                        case 6: // DT_DOUBLE
+                        case DataItem.DT_DOUBLE:
                             seriesTempvalues[chartableCount]=((Double)logDataItems[i].value).doubleValue();
                             break;
-                        case 7: // DT_STRING
+                        case DataItem.DT_STRING:
                             chartableCount--;
                         default:
+                            System.out.println("Bad datatype!" + logDataItems[i].datatype);
                     }
                     chartableCount++;
                 }
@@ -841,7 +845,7 @@ class LogChartFrame extends JFrame {
         di[0].datatype=DataItem.DT_INTEGER;
         di[1].datatype=DataItem.DT_FLOAT;
         di[2].datatype=DataItem.DT_FLOAT;
-        loggerHook.logFieldNamesChanged(new String[]{"System_ms!n!1","Sine!Y!1","Random!y!3"}); 
+        loggerHook.logFieldNamesChanged(new String[]{"System_ms!n!1","Sine!Y!1","Random!y!2"}); 
         for (int i = 0; i < 10000; i++) {
             if (i%100==0) value2=(float)(Math.random()*5000-2500);
             if (i % 10 == 0) {
@@ -849,6 +853,9 @@ class LogChartFrame extends JFrame {
                 di[1].value=new Float(Math.sin(value));
                 di[2].value=new Float(value2);
                 loggerHook.logLineAvailable(di);
+                if (i==4000) loggerHook.logCommentReceived(x,"Event 1: This is an example of what NXTDataLogger.writeComment() does.");
+                if (i==6510) loggerHook.logCommentReceived(x,"Event 2: This illustrates that multiple comment markers can be added to the chart.");
+                if (i==9000) loggerHook.logCommentReceived(x,"Look! Did you notice that the domain value is displayed in the tooltip? ");
                 x += 10;
                 value += .1f;
             }

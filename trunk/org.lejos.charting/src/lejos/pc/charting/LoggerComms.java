@@ -27,7 +27,7 @@ import lejos.pc.comm.NXTInfo;
  * @see NXTConnector
  * @author Kirk P. Thompson
  */
-class LoggerComms {
+public class LoggerComms {
     /** Used to get more details from <code>NXTConnector</code> for the Status pane. Notice that the GUI
      * forks STDOUT to the Status textarea so using <code>System.out.println()</code> works to put data into
      * the Status textarea.
