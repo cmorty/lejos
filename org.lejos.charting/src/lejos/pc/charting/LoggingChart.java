@@ -24,6 +24,7 @@ import org.jfree.chart.entity.LegendItemEntity;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -87,6 +88,7 @@ class LoggingChart extends ChartPanel{
         String label;
         int axisIndex; // cooresponds to dataset(index). could be sparse
         int seriesIndex; // cooresponds to series(index) in a dataset. is not sparse
+        XYToolTipGenerator tooltipGenerator; // The series tooltip generator
     }
     
     /** Allows user control of chart series visibility and series highlight on mouseover, click of legend
@@ -130,11 +132,37 @@ class LoggingChart extends ChartPanel{
             return true;
         }
         
+        
         // assumes DataIndexes is set by getXYSeriesForEntity()
         private void toggleSeriesVisible() {
             XYLineAndShapeRenderer lsr=(XYLineAndShapeRenderer)(getChart().getXYPlot().getRenderer(this.dataIndexs.datasetSlashAxisIndex));
             Boolean vis = lsr.getSeriesLinesVisible(this.dataIndexs.seriesIndex);
-            lsr.setSeriesLinesVisible(this.dataIndexs.seriesIndex, vis==null?false:!vis.booleanValue());
+            boolean lineVisible = vis==null?false:!vis.booleanValue();
+            lsr.setSeriesLinesVisible(this.dataIndexs.seriesIndex, lineVisible);
+            // effectively disable the series tootips if not shown by killing them. Harsh but no setVisble() method available
+            // 8/21/11: It appears that the renderer, plot, whatever, does not create and/or respect all but one tootip for multiple series that 
+            // overlap/share the same datapoints on the same axis def. Only one tooltip per that cooridinate is displayed. The workaround
+            // at this point is to put any series with duplicate coordinates on a different range axis to be able to display its 
+            // coordinate tootips.
+            XYToolTipGenerator ttg=null;
+            if (lineVisible) {
+//                System.out.println("look for: " + this.dataIndexs.datasetSlashAxisIndex + "-" + this.dataIndexs.seriesIndex);
+                for (int i=0;i<LoggingChart.this.seriesDefs.length;i++) {
+                    if (LoggingChart.this.seriesDefs[i].axisIndex==this.dataIndexs.datasetSlashAxisIndex &&
+                        LoggingChart.this.seriesDefs[i].seriesIndex==this.dataIndexs.seriesIndex) 
+                    {
+                        ttg=LoggingChart.this.seriesDefs[i].tooltipGenerator;
+//                        System.out.println("found: i= " +i + ": " + LoggingChart.this.seriesDefs[i].axisIndex + "-" + 
+//                            LoggingChart.this.seriesDefs[i].seriesIndex);
+                        break;
+                    }
+                }
+                if (lsr.getSeriesToolTipGenerator(this.dataIndexs.seriesIndex)==null) {
+                lsr.setSeriesToolTipGenerator(this.dataIndexs.seriesIndex, ttg);
+                }
+            } else {
+                lsr.setSeriesToolTipGenerator(this.dataIndexs.seriesIndex, null);
+            }
         }
         
         public void chartMouseClicked(ChartMouseEvent event) {
@@ -476,7 +504,6 @@ class LoggingChart extends ChartPanel{
         // set the renderer
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         renderer.setBaseStroke(new BasicStroke(NORMAL_SERIES_LINE_WEIGHT, BasicStroke.CAP_BUTT,  BasicStroke.JOIN_BEVEL)); 
-        renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
         renderer.setBaseLegendTextPaint(getAxisColor(axisIndex));
         renderer.setBaseShapesVisible(false);
         renderer.clearSeriesPaints(true);
@@ -693,10 +720,18 @@ class LoggingChart extends ChartPanel{
         
         // create the datasets per axisID one-one.
         for (int i=0;i<seriesDefs.length;i++){
-            getAxisDataset(seriesDefs[i].axisIndex, chart, tempDandA).addSeries(new XYSeries(seriesDefs[i].label,true, true));
+            XYSeriesCollection xysc = getAxisDataset(seriesDefs[i].axisIndex, chart, tempDandA);
+            XYSeries xys = new XYSeries(seriesDefs[i].label,true, true);
+            xysc.addSeries(xys);
+            // assign tooltip generators to each series
+            seriesDefs[i].tooltipGenerator = new StandardXYToolTipGenerator();
+//            System.out.println("TTG assigned: seriesDefs[" + i + "].axisIndex=" + seriesDefs[i].axisIndex + ", .seriesIndex=" + 
+//                seriesDefs[i].seriesIndex + ", name=" + xys.getDescription());
+            chart.getXYPlot().getRenderer(seriesDefs[i].axisIndex).setSeriesToolTipGenerator(seriesDefs[i].seriesIndex, seriesDefs[i].tooltipGenerator);
+            
         }
         
-        // reassign labels
+        // reassign axis labels if a spawn
         if (spawnable) {
             for (int i=0;i<tempDandA.length;i++) {
                 if (chart.getXYPlot().getRangeAxis(i)!=null) {

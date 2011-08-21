@@ -9,7 +9,8 @@ import java.util.HashSet;
 
 
 /**
- * This class provides the PC side of the <code>NXTDataLogger</code>. One instance per log session. The session ends when 
+ * This class provides the PC side of the <code>lejos.util.NXTDataLogger</code> counterpart running on the NXT. 
+ * One instance per log session. The session ends when 
  * the NXT ends the connection.
  * 
  * @see LoggerComms
@@ -40,10 +41,11 @@ public class DataLogger {
      * header defs have changed.
      * @see  #addLoggerListener
      */
-    interface LoggerListener {
+    public interface LoggerListener {
         /** Invoked when a log line (all fields read as per headers) is logged. Each logged data field/column is represented by a 
          * <code>DataItem</code> instance.
          * @param logDataItems The array of <code>DataItem</code> instances representing a line of logged data.
+         * @see DataItem
          */
         void logLineAvailable(DataItem[] logDataItems);
 
@@ -65,7 +67,7 @@ public class DataLogger {
 
         /** Invoked when a comment is logged. Comments are sent after the <code>finishLine()</code> method completes. In 
          * <code>NXTChartingLogger</code>, comments are displayed on the chart as an event marker on the domain axis with 
-         * the comment text as a label.
+         * the comment text as a label and the timestamp as the domain (X) value of the marker.
          * @param timestamp The timestamp when the comment was generated on the NXT
          * @param comment The text comment
          */
@@ -346,7 +348,7 @@ public class DataLogger {
                         // Parse an int from the 4 bytes
                         readVals[endOfLineCycler] = new DataItem();
                         readVals[endOfLineCycler].value = new Integer(this.parseInt(readBytes));
-                        readVals[endOfLineCycler].datatype=DT_INTEGER;
+                        readVals[endOfLineCycler].datatype=streamedDataType;
                         break;
                     case DT_LONG:
                         // Parse a long from the 4 + 4 more bytes
@@ -415,6 +417,12 @@ public class DataLogger {
     
     private static String getDataTypeFormat(int datatype){
         switch (datatype) {
+            case DT_BOOLEAN:
+                return "1d";
+            case DT_BYTE:
+                return "-3d";
+            case DT_SHORT:
+                return "-5d";
             case DT_INTEGER:
                 return "-16d";
             case DT_LONG:

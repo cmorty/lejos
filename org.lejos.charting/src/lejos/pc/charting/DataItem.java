@@ -2,24 +2,31 @@ package lejos.pc.charting;
 
 /** Each logged data item is represented by a 
  * <code>DataItem</code> instance
+ * @see DataLogger
+ * @see DataLogger.LoggerListener#logLineAvailable
  */
 public class DataItem {
+    public static final int DT_BOOLEAN = 0;
+    public static final int DT_BYTE    = 1;
+    public static final int DT_SHORT   = 2;
     public static final int DT_INTEGER = 3;
     public static final int DT_LONG    = 4;
     public static final int DT_FLOAT   = 5;
     public static final int DT_DOUBLE  = 6;
     public static final int DT_STRING  = 7;
     
-    /** The wrapper object of the datatype.
+    /** The <code>Number</code> wrapper object of the datatype.
      */
     public Object value = null;
-    
-    /** The datatype 
-     * DT_INTEGER = 3<BR>
-     * DT_LONG    = 4<BR>
-     * DT_FLOAT   = 5<BR>
-     * DT_DOUBLE  = 6<BR>
-     * DT_STRING  = 7
+
+    /** The datatype. 
+     *@see #DT_BYTE
+     *@see #DT_SHORT
+     *@see #DT_INTEGER
+     *@see #DT_LONG
+     *@see #DT_FLOAT
+     *@see #DT_DOUBLE
+     *@see #DT_STRING
      */
     public int datatype = 3;
 }
