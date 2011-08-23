@@ -47,8 +47,11 @@ public class BufferedReader extends Reader {
 				this.limit = len;
 			}
 
-			if (skipLF && this.buffer[this.offset] == '\n') {
-				this.offset++;
+			if (skipLF) {
+				skipLF = false;
+				if (this.buffer[this.offset] == '\n') {
+					this.offset++;
+				}
 			}
 		} while (this.offset >= this.limit);
 
