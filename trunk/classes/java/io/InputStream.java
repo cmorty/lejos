@@ -27,7 +27,7 @@ package java.io;
  * @see	 java.io.OutputStream
  * @since   JDK1.0
  */
-public abstract class InputStream
+public abstract class InputStream implements Closeable
 {
 	private static final int SKIP_BUF_LEN = 32;
 
