@@ -23,7 +23,7 @@ import lejos.pc.comm.NXTInfo;
  * <p>
  * The <code>connect()</code> method will attempt to connect via USB first, then Bluetooth via the <code>NXTConnector</code> class.
  * @see lejos.pc.charting.DataLogger
- * @see NXTDataLogger
+ * @see lejos.util.NXTDataLogger
  * @see NXTConnector
  * @author Kirk P. Thompson
  */
@@ -47,8 +47,6 @@ public class LoggerComms {
     private NXTConnector conn;
     private DataInputStream dis = null;
     private DataOutputStream dos = null;
-    private InputReader threadInputReader;
-    private Object lockObject = new Object();
     private int maxQueueSize = 0;
     private boolean isConnConnected = false;
     private LinkedList<Byte> readBuffer;
@@ -63,9 +61,8 @@ public class LoggerComms {
         String[] thisClass = this.getClass().getName().split("[\\s\\.]");
         THISCLASS=thisClass[thisClass.length-1];
         
-        readBuffer = new LinkedList<Byte>(); 
-        threadInputReader = new InputReader();
-        threadInputReader.start();
+        this.readBuffer = new LinkedList<Byte>(); 
+        new InputReader().start();
     }
 
     private void dbg(String msg){
@@ -90,26 +87,24 @@ public class LoggerComms {
             beginTime = System.currentTimeMillis();
             while (true){
                 try {                
-                    if (dis==null) {
+                    if (LoggerComms.this.dis==null) {
                         doWait(10);
                         continue;
                     }
                     // get a byte (will block)
-                    readByte = dis.readByte();
-
-//                    System.out.format("%1$02x%2$02x%3$02x%4$02x\n", readByte[0],readByte[1],readByte[2],readByte[3]);
+                    readByte = LoggerComms.this.dis.readByte();
                     readCount++;
                     if (readCount==Long.MAX_VALUE) {
                         readCount=1;
                         beginTime = System.currentTimeMillis();
                     }
-                    synchronized(lockObject) {
-                        readBuffer.add(readByte);
-                        queueSize = readBuffer.size();
+                    synchronized(LoggerComms.this) {
+                        LoggerComms.this.readBuffer.add(readByte);
+                        queueSize = LoggerComms.this.readBuffer.size();
                     }
                     if (queueSize > maxQueueSize) maxQueueSize = queueSize;
                     if (readCount%100==0 || readCount<100) {
-                        bytesPerMillisec=(float)readCount / (System.currentTimeMillis() - beginTime);
+                        LoggerComms.this.bytesPerMillisec=(float)readCount / (System.currentTimeMillis() - beginTime);
                     }
                 } catch (IOException e) {
                     closeConnection();
@@ -132,10 +127,10 @@ public class LoggerComms {
      */
     public int available() throws EOFException{
         int val;
-        synchronized(lockObject) {
-            val=readBuffer.size();
+        synchronized(this) {
+            val=this.readBuffer.size();
         }
-        if (val==0 && isEOF) throw new EOFException("available(): buffer is empty and isEOF");
+        if (val==0 && this.isEOF) throw new EOFException("available(): buffer is empty and isEOF");
         return val;
     }
 
@@ -148,10 +143,10 @@ public class LoggerComms {
      */
     public byte getByte() throws EOFException{
         Byte val;
-        synchronized(lockObject) {
-            val=readBuffer.poll();
+        synchronized(this) {
+            val=this.readBuffer.poll();
         }
-        if (val==null && isEOF) throw new EOFException("getByte(): buffer is empty and isEOF");
+        if (val==null && this.isEOF) throw new EOFException("getByte(): buffer is empty and isEOF");
         return val.byteValue();
     }
 
@@ -160,8 +155,8 @@ public class LoggerComms {
      */
 //    public void writeByte(int value){
 //        try {
-//            dos.writeByte(value);
-//            dos.flush();
+//            this.dos.writeByte(value);
+//            this.dos.flush();
 //        } catch (IOException e) {
 //            // TODO
 //            dbg("!** writeByte() error: " + e.toString());
@@ -175,8 +170,8 @@ public class LoggerComms {
      **/
 //    public void write(byte[] value){
 //        try {
-//            dos.write(value);
-//            dos.flush();
+//            this.dos.write(value);
+//            this.dos.flush();
 //        } catch (IOException e) {
 //            // TODO
 //            dbg("!** write() error: " + e.toString());
@@ -190,8 +185,8 @@ public class LoggerComms {
      **/
 //    public void writeInt(int value){
 //        try {
-//            dos.writeInt(value);
-//            dos.flush();
+//            this.dos.writeInt(value);
+//            this.dos.flush();
 //        } catch (IOException e) {
 //            // TODO
 //            dbg("!** writeInt() error: " + e.toString());
@@ -222,7 +217,7 @@ public class LoggerComms {
      * @param NXT The name or address of the NXT to connect to. Be aware that NXT names are case-sensitive.
      * @return <code>true</code> if successful connection with Data input/output streams established. <code>false</code>
      * if the connection failed.
-     * @see NXTDataLogger
+     * @see lejos.util.NXTDataLogger
      * 
      */
     public boolean connect(String NXT){
@@ -231,22 +226,32 @@ public class LoggerComms {
         this.conn.addLogListener(new ll());
 
         dbg("connect() to: " + NXT + ", NXTConnector this.conn=" + this.conn.toString());
-        // connect to NXT over USB or BT
-        NXTInfo[] theNXTInfo = this.conn.search(NXT,null,NXTCommFactory.ALL_PROTOCOLS);
-        if (theNXTInfo.length==0) {
-            dbg("No NXT found. Returning false.");
-            return false;
+        NXTInfo[] theNXTInfo=null;
+        this.isConnConnected = false;
+        tryBlock1:
+        try {
+            // connect to NXT over USB or BT
+            theNXTInfo = this.conn.search(NXT,null,NXTCommFactory.ALL_PROTOCOLS);
+            if (theNXTInfo.length==0) {
+                dbg("No NXT found. Returning false.");
+                break tryBlock1;
+            }
+            this.isConnConnected = this.conn.connectTo(theNXTInfo[0], NXTComm.PACKET);
+            dbg("isConnConnected=" + this.isConnConnected);
+        } catch (Error e) {
+            dbg("!** Problem with establishing connection. Error: " + e.toString());
+            
+        } catch (Exception e) {
+            dbg("!** Problem with establishing connection. Exception: " + e.toString());
         }
-        isConnConnected = this.conn.connectTo(theNXTInfo[0], NXTComm.PACKET);
-        dbg("isConnConnected=" + isConnConnected);
         // ref the DIS/DOS to class vars
-        if (isConnConnected) {
+        if (this.isConnConnected) {
             this.connectedNXTName=theNXTInfo[0].name;
             this.dis = new DataInputStream(this.conn.getInputStream());
             this.dos = new DataOutputStream(this.conn.getOutputStream());
             this.isEOF=false; // used to flag EOF
         }
-        return isConnConnected;
+        return this.isConnConnected;
     }
 
     /** Is there a current valid connection?
@@ -256,7 +261,7 @@ public class LoggerComms {
         return this.isConnConnected;
     }
 
-    /** Return the name of the NXT last sucessfully connected to.
+    /** Return the name of the NXT last successfully connected to.
      * @return name of the NXT
      */
     public String getConnectedNXTName() {
@@ -268,25 +273,25 @@ public class LoggerComms {
      * @see #connect
      */
     public void closeConnection(){
-        if (isEOF) return;
-        isEOF=true;
+        if (this.isEOF) return;
+        this.isEOF=true;
         try {
-            if (dis!=null) {
-                dis.close();
-                dis=null;
+            if (this.dis!=null) {
+                this.dis.close();
+                this.dis=null;
             }
         } catch (IOException e) {
             // TODO
-            dbg("closeConnection(): dis.close() IOException: " + e.toString());
+            dbg("closeConnection(): this.dis.close() IOException: " + e.toString());
         } catch (NullPointerException e) {
             ; // ignore
         }
         try {
-            if (dos!=null) {
-                dos.flush();
+            if (this.dos!=null) {
+                this.dos.flush();
                 doWait(100);
-                dos.close();
-                dos=null;
+                this.dos.close();
+                this.dos=null;
             }
         } catch (IOException e) {
             // TODO
@@ -301,7 +306,7 @@ public class LoggerComms {
             dbg("closeConnection(): this.conn.close() IOException: " + e.toString());
         }
         this.conn=null;
-        isConnConnected = false;
+        this.isConnConnected = false;
         System.gc();
         dbg("Connection teardown complete. maxQueueSize was " + maxQueueSize);
         dbg("Average data throughput was " + getByteThroughput() + " bytes/msec");
@@ -318,7 +323,7 @@ public class LoggerComms {
      * @return bytes/ms
      */
     public float getByteThroughput() {
-        return bytesPerMillisec;
+        return this.bytesPerMillisec;
     }
     
     private void doWait(long milliseconds) {
