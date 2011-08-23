@@ -5,7 +5,7 @@ package java.io;
  * 
  * @author Sven Köhler
  */
-public abstract class Reader
+public abstract class Reader implements Closeable
 {
 	private static final int SKIP_BUF_LEN = 32;
 	

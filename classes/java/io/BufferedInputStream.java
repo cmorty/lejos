@@ -93,6 +93,9 @@ public class BufferedInputStream extends FilterInputStream
 	{
 		checkOpen();
 		
+		if (!fillBuffer())
+			return -1;
+		
 		int blen = this.limit - this.offset;
 		// case 1: buffer is not empty
 		if (blen > 0)

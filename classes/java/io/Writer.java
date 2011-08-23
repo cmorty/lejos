@@ -5,14 +5,12 @@ package java.io;
  * 
  * @author Sven Köhler
  */
-public abstract class Writer
+public abstract class Writer implements Flushable, Closeable
 {
 	private static final int STRING_BUF_SIZE = 32; 
 	
 	//MISSING protected Object lock
 	//MISSING protected Writer(Object lock)
-	//MISSING Writer append(CharSequence str)
-	//MISSING Writer append(CharSequence str, int start, int end)
 	
 	protected Writer()
 	{
