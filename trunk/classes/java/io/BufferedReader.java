@@ -98,13 +98,12 @@ public class BufferedReader extends Reader {
 	}
 
 	public String readLine() throws IOException {
-		StringBuilder sb = new StringBuilder();
-		
 		int c = this.read();
 		if (c < 0)
 			return null;
 		
-		while (c != '\n' && c != 'r')
+		StringBuilder sb = new StringBuilder();
+		while (c != '\n' && c != '\r')
 		{
 			sb.append((char)c);
 			c = this.read();
