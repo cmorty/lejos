@@ -37,19 +37,25 @@ public class DataLogger {
     
     private final String THISCLASS;
     
-    /** Change listener to notify of events when log data has been recieved, a data stream EOF, a comment has been received, and 
-     * header defs have changed.
+    /** Change listener to notify of events when log data has been recieved, a data stream EOF has occurred, a comment has been received, and 
+     * header defs have been changed by the NXT-side <code>lejos.util.NXTDataLogger</code>.
      * @see  #addLoggerListener
+     * @author Kirk P. Thompson
      */
     public interface LoggerListener {
-        /** Invoked when a log line (all fields read as per headers) is logged. Each logged data field/column is represented by a 
-         * <code>DataItem</code> instance.
+        /** Invoked when a log line [whose fields are defined in <code>NXTDataLogger.setColumns()</code>] is logged and 
+         * <code>NXTDataLogger.finishLine()</code> is invoked.
+         * <p>
+         * Each logged data field/column is represented by a 
+         * <code>DataItem</code> instance which provides the datatype and value in a wrapper class.
          * @param logDataItems The array of <code>DataItem</code> instances representing a line of logged data.
          * @see DataItem
+         * @see lejos.util.NXTDataLogger
          */
         void logLineAvailable(DataItem[] logDataItems);
 
-        /**Invoked when an <code>EOFException</code> occurs from the <code>LoggerComms</code>.
+        /**Invoked when an <code>EOFException</code> (or other <code>IOException</code>) occurs from the <code>LoggerComms</code>
+         * instance.
          * @see LoggerComms
          */
         void dataInputStreamEOF();
@@ -78,21 +84,21 @@ public class DataLogger {
      */
     private class Self_Logger implements LoggerListener{
         public void logLineAvailable(DataItem[] logDataItems){
-            if (validLogFile) {
-                try {
-                    fw.write(parseLogData(logDataItems));
-                } catch (IOException e) {
-                    System.out.print("!** logLineAvailableEvent IOException");
-                    e.printStackTrace();
-                }
+            if (!validLogFile) return; 
+            
+            try {
+                DataLogger.this.fw.write(parseLogData(logDataItems));
+            } catch (IOException e) {
+                System.out.print("!** logLineAvailableEvent IOException");
+                e.printStackTrace();
             }
         }
 
         public void dataInputStreamEOF() {
             dbg("!** dataInputStreamEOF from NXT");
             try {
-                if (fw!=null) fw.close();
-                fw=null;
+                if (DataLogger.this.fw!=null) DataLogger.this.fw.close();
+                DataLogger.this.fw=null;
             } catch (IOException e) {
                 System.out.print("!** dataInputStreamEOF IOException in fw.close()");
                 e.printStackTrace();
@@ -101,6 +107,8 @@ public class DataLogger {
         }
 
         public void logFieldNamesChanged(String[] logFields) {
+            if (!validLogFile) return;
+            
             StringBuilder sb = new StringBuilder();
             String[] tempFields;
             dbg("!** New headers");
@@ -110,27 +118,24 @@ public class DataLogger {
                 if (i<logFields.length-1) sb.append("\t");
             }
             sb.append("\n");
-            if (validLogFile) {
-                try {
-                    fw.write(sb.toString());
-                } catch (IOException e) {
-                    System.out.print("!** logFieldNamesChanged IOException: sb.toString()=\"" + sb.toString() + "\"");
-                    e.printStackTrace();
-                }
+            // write to file
+            try {
+                DataLogger.this.fw.write(sb.toString());
+            } catch (IOException e) {
+                System.out.print("!** logFieldNamesChanged IOException: sb.toString()=\"" + sb.toString() + "\"");
+                e.printStackTrace();
             }
-//            System.out.print(sb.toString());
         }
 
         public void logCommentReceived(int timestamp, String comment) {
-            //System.out.format("Ts=%1$d %2$s\n", timestamp, comment);
-            String theComment =String.format("%1$1d\t%2$s\n", timestamp, comment);
-            if (validLogFile) {
-                try {
-                    fw.write(theComment);
-                } catch (IOException e) {
-                    System.out.print("!** logCommentRecieved IOException: theComment=\"" + theComment + "\"");
-                    e.printStackTrace();
-                }
+            if (!validLogFile) return;
+            
+            String theComment=String.format("%1$1d\t%2$s\n", timestamp, comment);
+            try {
+                DataLogger.this.fw.write(theComment);
+            } catch (IOException e) {
+                System.out.print("!** logCommentRecieved IOException: theComment=\"" + theComment + "\"");
+                e.printStackTrace();
             }
         }
     }
@@ -139,39 +144,48 @@ public class DataLogger {
     private File logFile = null;
     private FileWriter fw;
     private HashSet<LoggerListener> listeners = new HashSet<LoggerListener>();
-    private Self_Logger dataLogger;
     private boolean validLogFile=false;;
     private int elementsPerLine = 1;
     private boolean fileAppend;
     
-    /**Create an instance. logging output goes to STDOUT and specified logfile. <code>LoggerComms</code>
-     * connection must already be established.
+    /**Create a <code>DataLogger</code> instance. The passed passed <code>logfile</code> is opened and the logging output is written 
+     * to it.<p>
+     * Register a <code>DataLogger.LoggerListener</code> to 
+     * receive logging events.
+     * <code>LoggerComms</code>
+     * connection must already be established or <code>IOException</code> is thrown.
      * @param connManager The <code>LoggerComms</code> instance to use for the connection.
-     * @param logFile The log file name to use. 
-     * @param fileAppend If <code>false</code>, the specified File will be overwritten if exists. 
+     * @param logFile The log file <code>File</code> to write output to. 
+     * @param fileAppend If <code>false</code>, the specified file will be overwritten if exists. 
      * @see LoggerComms
      * @see #startLogging
+     * @see #addLoggerListener
      */
-    public DataLogger(LoggerComms connManager, File logFile, boolean fileAppend) {
+    public DataLogger(LoggerComms connManager, File logFile, boolean fileAppend) throws IOException {
         String[] thisClass = this.getClass().getName().split("[\\s\\.]");
         THISCLASS=thisClass[thisClass.length-1];
         this.fileAppend=fileAppend;
         
-        if (!connManager.isConnected()) return;
+        if (!connManager.isConnected()) {
+            throw new IOException("lejos.pc.charting.LoggerComms is not connected");
+        }
         
         this.connectionManager = connManager;
         this.logFile = logFile;
         validLogFile=(this.logFile!=null&&!this.logFile.isDirectory()); 
         // internal logger callback object
-        this.dataLogger = new Self_Logger();
-        addLoggerListener(dataLogger);
+        addLoggerListener(new Self_Logger());
     }
 
-    /** Create an instance. logging output goes to STDOUT only since no file specified.
+    /** Create a <code>DataLogger</code> instance with no file output. Register a <code>DataLogger.LoggerListener</code> to 
+     * receive logging events.
+     * The connection must already be established or <code>IOException</code> is thrown.
      * @param connManager the instance to use for the connection
      * @see #DataLogger(LoggerComms, File, boolean)
+     * @see DataLogger.LoggerListener
+     * @see #addLoggerListener
      */
-    public DataLogger(LoggerComms connManager) {
+    public DataLogger(LoggerComms connManager) throws IOException {
         this(connManager,null,false);
     }
 
@@ -179,14 +193,13 @@ public class DataLogger {
         System.out.println(THISCLASS + "-" + msg);
     }
     
-    /**Register a Logger listener.
+    /**Register a Logger listener so data received from the NXT can be managed.
      * @param listener The Logger listener instance to register
      * @see LoggerListener
      * @see #removeLoggerListener
      */
     public void addLoggerListener(LoggerListener listener) {
-//        dbg("Listener: " + listener.toString());
-        listeners.add(listener);
+        this.listeners.add(listener);
     }
 
     /**Remove a logger listener.
@@ -197,7 +210,7 @@ public class DataLogger {
      * @see #addLoggerListener
      */
     public boolean removeLoggerListener(LoggerListener listener) {
-        return listeners.remove(listener);
+        return this.listeners.remove(listener);
     }
     
 
@@ -223,18 +236,21 @@ public class DataLogger {
         return false;
     }
     
-    /** Start the logging. After the NXT closes the connection (i.e on EOF), the logging session ends and this instance is no longer
+    /** Start the logging. After the NXT closes the connection (i.e. on EOF or other <code>IOException</code>), 
+     * the <code>dataInputStreamEOF()</code> method is 
+     * invoked on registered <code>LoggerListener</code>s, the logging session ends, and this instance is no longer
      * connected. A new instance must be created to log again.
      * @throws IOException if connection has not been established
+     * @see LoggerListener
      */
     public void startLogging() throws IOException { 
         int endOfLineCycler=0;
         byte[] readBytes = new byte[4];
         boolean isCommand;
-        byte streamedDataType = DT_INTEGER;  // also set as default in lejo.util.NXTDataLogger
+        byte streamedDataType = DT_INTEGER;  // also must be set as initial default in lejo.util.NXTDataLogger
         byte[] tempBytes;
         String FQPfileName=null;
-        DataItem[] readVals = new DataItem[elementsPerLine];
+        DataItem[] readVals = new DataItem[this.elementsPerLine];
         
         if (!this.connectionManager.isConnected()) {
             throw new IOException("No Connection in startLogging()!");
@@ -242,11 +258,11 @@ public class DataLogger {
         
         if (validLogFile) {
             try {
-                FQPfileName = logFile.getCanonicalPath();
+                FQPfileName = this.logFile.getCanonicalPath();
                 dbg("log file is:" + FQPfileName);
-                if (!logFile.exists())
-                    logFile.createNewFile();
-                fw = new FileWriter(logFile, this.fileAppend);
+                if (!this.logFile.exists())
+                    this.logFile.createNewFile();
+                this.fw = new FileWriter(this.logFile, this.fileAppend);
             } catch (IOException e) {
                 dbg("startLogging(): IOException in creating file " + FQPfileName + ": " + e.toString());
                 validLogFile=false;
@@ -278,24 +294,24 @@ public class DataLogger {
                 }
                 // do valid commands
                 switch(readBytes[0]) {
-                    case COMMAND_ITEMSPERLINE: // byte 3=0: Set elementsPerLine to 4th byte
-                        elementsPerLine = ((int)readBytes[1])&0xff;
+                    case COMMAND_ITEMSPERLINE: // byte 3=0: Set this.elementsPerLine to 4th byte
+                        this.elementsPerLine = ((int)readBytes[1])&0xff;
                         // if we have residual, output it
                         if (endOfLineCycler>0) notifyLogLineAvailable(readVals); // send readvals[] to output
                         endOfLineCycler = 0;
-                        readVals = new DataItem[elementsPerLine]; // set to new bounds. 
+                        readVals = new DataItem[this.elementsPerLine]; // set to new bounds. 
                         break;
                     case COMMAND_DATATYPE:
                         streamedDataType = readBytes[1];
-                        //if (streamedDataType==DT_STRING); // TODO maybe temporarily set elementsPerLine to 1 here?
+                        //if (streamedDataType==DT_STRING); // TODO maybe temporarily set this.elementsPerLine to 1 here?
                         break;
                     case COMMAND_SETHEADERS:
-                        elementsPerLine=((int)readBytes[1])&0xff;
+                        this.elementsPerLine=((int)readBytes[1])&0xff;
                         // if we have residual, output it
                         if (endOfLineCycler>0) notifyLogLineAvailable(readVals); // send readvals[] to output
                         // get the headers from the stream
-                        String[] fieldNames = new String[elementsPerLine];
-                        for (int i=0;i<elementsPerLine;i++){
+                        String[] fieldNames = new String[this.elementsPerLine];
+                        for (int i=0;i<this.elementsPerLine;i++){
                             try {
                                 getBytes(readBytes,4);
                                 fieldNames[i]=this.parseString(readBytes);
@@ -304,16 +320,16 @@ public class DataLogger {
                             }
                         }
                         // notify all listeners of new header label event
-                        for (LoggerListener listener: listeners) {
+                        for (LoggerListener listener: this.listeners) {
                             listener.logFieldNamesChanged(fieldNames);
                         }
                         endOfLineCycler = 0;
-                        readVals = new DataItem[elementsPerLine]; // set to new bounds. 
+                        readVals = new DataItem[this.elementsPerLine]; // set to new bounds. 
                         break;
                     case COMMAND_FLUSH:
                         if (endOfLineCycler>0) notifyLogLineAvailable(readVals); // send readvals[] to output
                         endOfLineCycler = 0;
-                        readVals = new DataItem[elementsPerLine]; // init the row holding array
+                        readVals = new DataItem[this.elementsPerLine]; // init the row holding array
                         break;
                     case COMMAND_COMMENT:
                         try {
@@ -397,22 +413,22 @@ public class DataLogger {
                         dbg("!** Invalid streamedDataType:" + streamedDataType);
                 }
                 // if we have cycled through enough items, do EOL and output the entire line as a formatted string
-                if (endOfLineCycler == elementsPerLine - 1) {
+                if (endOfLineCycler == this.elementsPerLine - 1) {
                     // send readvals[] to output and reset endOfLineCycler, readVals[]
                     notifyLogLineAvailable(readVals); 
                     endOfLineCycler = 0;
-                    readVals = new DataItem[elementsPerLine]; // set to new bounds. 
+                    readVals = new DataItem[this.elementsPerLine]; // set to new bounds. 
                 } else
                     endOfLineCycler++;
             } // END BLOCK: If not a command, output the data
         } // END BLOCK: while
         
         // notify all listeners of EOF event
-        for (LoggerListener listener: listeners) {
+        for (LoggerListener listener: this.listeners) {
             listener.dataInputStreamEOF();
         }
         dbg("clearing all listeners");
-        listeners.clear();
+        this.listeners.clear();
     }
     
     private static String getDataTypeFormat(int datatype){
@@ -437,7 +453,12 @@ public class DataLogger {
                 return "-1d";
         }
     }
-    
+
+    /** Parse an array of <code>DataItem</code>s and return a formatted string suitable for logging
+     * @param logDataItems
+     * @return A formatted string representation of the <code>DataItem</code>s
+     * @see DataItem
+     */
     public static String parseLogData(DataItem[] logDataItems){
         StringBuilder logLineBuilder = new StringBuilder();
         for (int i = 0; i < logDataItems.length; i++) {
@@ -454,7 +475,7 @@ public class DataLogger {
      */
     private void notifyLogLineAvailable(DataItem[] readVals) {
         // notify all listeners that a new line of data fields is available
-        for (LoggerListener listener: listeners) {
+        for (LoggerListener listener: this.listeners) {
             listener.logLineAvailable(readVals);
         }
     }
@@ -463,7 +484,7 @@ public class DataLogger {
      */
     private void notifyCommentRecieved(int timeStamp, String comment) {
         // notify all listeners that a new comment is available
-        for (LoggerListener listener: listeners) {
+        for (LoggerListener listener: this.listeners) {
             listener.logCommentReceived(timeStamp, comment);
         }
     }
@@ -543,5 +564,4 @@ public class DataLogger {
         
         return sb.toString();
     }
-    
 }
