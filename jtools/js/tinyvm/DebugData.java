@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.bcel.classfile.Code;
 import org.apache.bcel.classfile.LineNumber;
@@ -20,6 +21,7 @@ import org.apache.bcel.classfile.LineNumberTable;
 
 /**
  *
+ * @author Michael Mirwaldt (programCounterToLineNumberMap() added)
  * @author andys
  */
 public class DebugData implements Serializable
@@ -191,6 +193,22 @@ public class DebugData implements Serializable
          }
       }
       return best.line;
+   }
+   
+   /**
+    * returns a map with program counters with their associated line numbers 
+    * 
+    * @param methodIndex
+    * @return a map with the program counters as keys and their corresponding line numbers as values
+    */
+   public Map<Integer, Integer> programCounterToLineNumberMap(int methodIndex) {
+	   Map<Integer, Integer> programCounterToLineNumberMap = new HashMap<Integer, Integer>();
+	   MethodData mdata = methodData.get(methodIndex);
+	   LineNo[] lnos = mdata.lineNumbers;
+	   for (LineNo lineNo : lnos) {
+		   programCounterToLineNumberMap.put(lineNo.pc, lineNo.line);
+	   }
+	   return programCounterToLineNumberMap;
    }
 
    public static DebugData load(InputStream in) throws IOException
