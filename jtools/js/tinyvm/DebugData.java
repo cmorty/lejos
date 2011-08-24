@@ -199,14 +199,16 @@ public class DebugData implements Serializable
     * returns a map with program counters with their associated line numbers 
     * 
     * @param methodIndex
-    * @return a map with the program counters as keys and their corresponding line numbers as values
+    * @return a map with the program counters as keys and their corresponding line numbers as values. can return an empty map.
     */
    public Map<Integer, Integer> programCounterToLineNumberMap(int methodIndex) {
 	   Map<Integer, Integer> programCounterToLineNumberMap = new HashMap<Integer, Integer>();
 	   MethodData mdata = methodData.get(methodIndex);
 	   LineNo[] lnos = mdata.lineNumbers;
-	   for (LineNo lineNo : lnos) {
-		   programCounterToLineNumberMap.put(lineNo.pc, lineNo.line);
+	   if(lnos!=null) {
+		   for (LineNo lineNo : lnos) {
+			   programCounterToLineNumberMap.put(lineNo.pc, lineNo.line);
+		   }
 	   }
 	   return programCounterToLineNumberMap;
    }
