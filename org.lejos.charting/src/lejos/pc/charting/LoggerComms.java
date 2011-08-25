@@ -7,6 +7,8 @@ import java.io.IOException;
 
 import java.util.LinkedList;
 
+import java.util.Vector;
+
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTCommLogListener;
@@ -49,7 +51,7 @@ public class LoggerComms {
     private DataOutputStream dos = null;
     private int maxQueueSize = 0;
     private boolean isConnConnected = false;
-    private LinkedList<Byte> readBuffer;
+    private Vector<Byte> readBuffer;
     private boolean isEOF=true;
     private float bytesPerMillisec=0f;
     private String connectedNXTName=null;
@@ -61,7 +63,7 @@ public class LoggerComms {
         String[] thisClass = this.getClass().getName().split("[\\s\\.]");
         THISCLASS=thisClass[thisClass.length-1];
         
-        this.readBuffer = new LinkedList<Byte>(); 
+        this.readBuffer = new Vector<Byte>(); 
         new InputReader().start();
     }
 
@@ -144,7 +146,7 @@ public class LoggerComms {
     public byte getByte() throws EOFException{
         Byte val;
         synchronized(this) {
-            val=this.readBuffer.poll();
+            val=this.readBuffer.remove(0);
         }
         if (val==null && this.isEOF) throw new EOFException("getByte(): buffer is empty and isEOF");
         return val.byteValue();
