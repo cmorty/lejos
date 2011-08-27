@@ -42,6 +42,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	protected ArrayList<FeatureDetector> detectors = new ArrayList<FeatureDetector>(); // Multiple feature detectors allowed
 	protected PathFinder finder; // Only one local path finder is allowed
 	protected RangeScanner scanner; // Only one scanner is allowed
+	protected NavEventListener listener;
 	
 	protected float clearance = 10;
 	protected float maxDistance = 40;
@@ -193,6 +194,11 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 		running = false;
 	}
 	
+	@SuppressWarnings("hiding")
+	public void addListener(NavEventListener listener) {
+		this.listener = listener;
+	}
+	
 	/**
 	 * The Receiver thread receives events from the PC
 	 * 
@@ -205,18 +211,20 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 			NXTConnection conn = connector.waitForConnection(0, NXTConnection.PACKET);
 			dis = conn.openDataInputStream();
 			dos = conn.openDataOutputStream();
+			if (listener != null) listener.whenConnected();
 			if (debug) log("Connected");
-			
 			while(running) {
 				try {
 					// Wait for any outstanding apply moves
 					if (mcl != null && mcl.isBusy()) Thread.yield();
 					byte event = dis.readByte();
-					synchronized(this) {
-						NavEvent navEvent = NavEvent.values()[event];
-						if (debug) log(navEvent.name());
+					NavEvent navEvent = NavEvent.values()[event];
+					if (debug) log(navEvent.name());
+					if (listener != null) listener.eventReceived(navEvent);
+					
+					synchronized(this) {					
 						switch (navEvent) {
-						case LOAD_MAP: // Map sent from POC
+						case LOAD_MAP: // Map sent from PC
 							if (map == null) map = new LineMap();
 							map.loadObject(dis);
 							if (mcl != null) mcl.setMap(map);
