@@ -362,8 +362,8 @@ public class PIDController {
             this.dataLogger.writeLog(outputMV);
             this.dataLogger.writeLog(processVariable);
             this.dataLogger.writeLog(integral);
-            this.dataLogger.writeLog((float)Kp*error);
-            this.dataLogger.writeLog((float)Kd*derivative);
+            this.dataLogger.writeLog(Kp*error);
+            this.dataLogger.writeLog(Kd*derivative);
             this.dataLogger.writeLog(error);
             this.dataLogger.writeLog(dt);
             
