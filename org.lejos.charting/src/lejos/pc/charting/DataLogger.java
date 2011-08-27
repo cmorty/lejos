@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 
 import java.util.HashSet;
 
@@ -147,6 +148,7 @@ public class DataLogger {
     private boolean validLogFile=false;;
     private int elementsPerLine = 1;
     private boolean fileAppend;
+    private InputStream cachedInputStream;
     
     /**Create a <code>DataLogger</code> instance. The passed passed <code>logfile</code> is opened and the logging output is written 
      * to it.<p>
@@ -255,7 +257,7 @@ public class DataLogger {
         if (!this.connectionManager.isConnected()) {
             throw new IOException("No Connection in startLogging()!");
         }
-        
+        this.cachedInputStream = connectionManager.getInputStream();
         if (validLogFile) {
             try {
                 FQPfileName = this.logFile.getCanonicalPath();
@@ -271,7 +273,7 @@ public class DataLogger {
         
         mainloop:
         while (true) {
-            // get 4 bytes from the connectionManager
+            // get 4 bytes from the is
             try {
                 getBytes(readBytes,4);
             } catch (EOFException e) {
@@ -505,13 +507,22 @@ public class DataLogger {
     private void getBytes(byte[] readBytes, int byteCount) throws EOFException
     {
         // wait until byteCount bytes are avail or we have a EOF
-        while (connectionManager.available() < byteCount) {
+
+        // Get n bytes from the buffer. Null pointer if the poll() method in btmanager.getByte() has no data. 
+        try {
+            while (this.cachedInputStream.available() < byteCount) {
             doWait(50);
         }
-       
-        // Get n bytes from the buffer. Null pointer if the poll() method in btmanager.getByte() has no data. 
+        } catch (IOException e) {
+            throw new EOFException("getBytes: is.available(): " + e);
+        }
+        
         for (int i=0;i<byteCount;i++) {
-            readBytes[i]=connectionManager.getByte();
+            try {
+                readBytes[i]=(byte)(this.cachedInputStream.read()&0xff);
+            } catch (IOException e) {
+                throw new EOFException("getBytes: is.read(): " + e);
+            }
         }
     }
 
