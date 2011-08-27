@@ -59,7 +59,7 @@ public class CruizcoreGyro extends I2CSensor {
 	 * @param port the port the sensor is attached to
 	 */
 	public CruizcoreGyro(I2CPort port) {
-		super(port, GYRO_ADDRESS, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
+		super(port, GYRO_ADDRESS, I2CPort.HIGH_SPEED, TYPE_LOWSPEED);
 	}
 	
 	/**
