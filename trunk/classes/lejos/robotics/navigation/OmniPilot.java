@@ -3,9 +3,9 @@ package lejos.robotics.navigation;
 import lejos.geom.Point;
 import lejos.nxt.Battery;
 import lejos.nxt.LCD;
-import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.addon.CruizcoreGyro;
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.Pose;
 import lejos.util.Delay;
@@ -17,10 +17,10 @@ import lejos.util.Matrix;
  *       central wheel 
  * 			   |
  * 			   |
- *     120°    |    120°
+ *     120ï¿½    |    120ï¿½
  *            / \
  *           /   \         
- *          /120° \
+ *          /120ï¿½ \
  *   left wheel   right wheel
  * 
  * wi is the i-th wheel angular speed in [rad/s]
@@ -53,9 +53,9 @@ public class OmniPilot implements PoseProvider {
 	private boolean reverse = false; // true when linearSpeed is negative
 	private float speedVectorDirection = 0;
 	private float angularSpeed = 0; // deg/s
-	protected final NXTRegulatedMotor motor1; // central motor
-	protected final NXTRegulatedMotor motor2; // left motor
-	protected final NXTRegulatedMotor motor3; // right motor
+	protected final RegulatedMotor motor1; // central motor
+	protected final RegulatedMotor motor2; // left motor
+	protected final RegulatedMotor motor3; // right motor
 	private int motor1Speed = 0; //deg/s
 	private int motor2Speed = 0; //deg/s
 	private int motor3Speed = 0; //deg/s
@@ -83,7 +83,7 @@ public class OmniPilot implements PoseProvider {
 	 * @param motorReverse if motors are mounted reversed
 	 */
 	public OmniPilot (float wheelDistanceFromCenter, float wheelDiameter, 
-					NXTRegulatedMotor centralMotor, NXTRegulatedMotor CW120degMotor, NXTRegulatedMotor CCW120degMotor,  
+					RegulatedMotor centralMotor, RegulatedMotor CW120degMotor, RegulatedMotor CCW120degMotor,  
 					boolean centralWheelFrontal, boolean motorReverse) {
 		this.wheelBase = wheelDistanceFromCenter;
 		this.wheelDiameter = wheelDiameter;
@@ -112,7 +112,7 @@ public class OmniPilot implements PoseProvider {
 	 * @param gyroPort the gyro port
 	 */
 	public OmniPilot(float wheelDistanceFromCenter, float wheelDiameter, 
-			NXTRegulatedMotor centralMotor, NXTRegulatedMotor CW120degMotor, NXTRegulatedMotor CCW120degMotor,  
+			RegulatedMotor centralMotor, RegulatedMotor CW120degMotor, RegulatedMotor CCW120degMotor,  
 			boolean centralWheelFrontal, boolean motorReverse, SensorPort gyroPort) {
 		this(wheelDistanceFromCenter, wheelDiameter,centralMotor, CW120degMotor, CCW120degMotor,  
 				centralWheelFrontal, motorReverse);
