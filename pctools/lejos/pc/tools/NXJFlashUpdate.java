@@ -215,7 +215,7 @@ public class NXJFlashUpdate {
 				try {
 					ui.progress("Searching", (i * 100) / (timeout / 1000));
 					Thread.sleep(1000);
-				} catch (Exception e) {
+				} catch (InterruptedException e) {
 				}
 			}
 		}
