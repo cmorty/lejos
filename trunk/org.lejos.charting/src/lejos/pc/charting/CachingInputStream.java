@@ -19,7 +19,7 @@ public class CachingInputStream extends InputStream {
     private volatile IOException anIOException=null;
     private int maxQueuedBytes=0;
 
-    /** Construct an input stream with the specified buffer size and source.
+    /** Construct an <code>CachingInputStream</code> with the specified buffer size and source.
      * @param in The source input stream
      * @param bufferSize The byte buffer size
      */
@@ -44,7 +44,7 @@ public class CachingInputStream extends InputStream {
                 
                 if (byteCount>=buf.length) {
                     //if (byteCount!=50 )System.out.println("byteCount=" + byteCount);
-                    doWait(10);
+                    doWait(50);
                     continue;
                 }
                 try {                

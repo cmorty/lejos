@@ -4,6 +4,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.io.OutputStream;
+
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTCommLogListener;
@@ -13,14 +15,16 @@ import lejos.pc.comm.NXTInfo;
 
 /**
  * Provides a general connection manager on the PC that 
- * provides a InputStream from the <code>NXTDataLogger</code> running on the NXT. 
+ * provides an InputStream and OutputStream from/to the <code>NXTDataLogger</code> running on the NXT. 
  * <p>
- * The InputStream buffers the byte stream from the NXT to minimize blocking on the NXT writes. 
+ * The InputStream flavor used is a <code>CachingInputStream</code> which buffers the byte stream from the NXT to minimize 
+ * blocking on the NXT writes. The out 
  * <p>
  * The <code>connect()</code> method will attempt to connect via USB first, then Bluetooth via the <code>NXTConnector</code> class.
  * @see lejos.pc.charting.DataLogger
  * @see lejos.util.NXTDataLogger
  * @see NXTConnector
+ * @see CachingInputStream
  * @author Kirk P. Thompson
  */
 public class LoggerComms {
@@ -41,8 +45,8 @@ public class LoggerComms {
     private final String THISCLASS;
     
     private NXTConnector conn;
-    private InputStream dis = null;
-    private DataOutputStream dos = null;
+    private InputStream in = null;
+    private OutputStream out = null;
     private boolean isConnConnected = false;
     private boolean isEOF=true;
     private String connectedNXTName=null;
@@ -156,8 +160,8 @@ public class LoggerComms {
         // ref the DIS/DOS to class vars
         if (this.isConnConnected) {
             this.connectedNXTName=theNXTInfo[0].name;
-            this.dis = new CachingInputStream(this.conn.getInputStream(), 20000); 
-            this.dos = new DataOutputStream(this.conn.getOutputStream());
+            this.in = new CachingInputStream(this.conn.getInputStream(), 20000); 
+            this.out = this.conn.getOutputStream();
             this.isEOF=false; // used to flag EOF
         }
         return this.isConnConnected;
@@ -177,15 +181,21 @@ public class LoggerComms {
         return this.connectedNXTName;
     }
     
-    /** Return the InputStream from the NXT.
-     * @return the InputStream
+    /** Return the <code>InputStream</code> from the NXT.
+     * @return the <code>InputStream</code>
      */
     public InputStream getInputStream() {
-        return dis;
+        return this.in;
     }
     
-    /** Flush the output streams, close the connection and clean up. This is called automatically by the buffering reader
-     * thread on any <code>IOException</code>. 
+    /** Return the <code>OutputStream</code> to the NXT.
+     * @return the <code>OutputStream</code>
+     */
+    public OutputStream getOutputStream() {
+        return this.out;
+    }
+    
+    /** Flush the streams, close the connection and clean up. 
      * @see #connect
      */
     public void closeConnection(){
@@ -193,10 +203,10 @@ public class LoggerComms {
         this.isEOF=true;
         int maxQueuedBytes=0;
         try {
-            if (this.dis!=null) {
-                maxQueuedBytes=((CachingInputStream)dis).getMaxQueuedBytes();
-                this.dis.close();
-                this.dis=null;
+            if (this.in!=null) {
+                maxQueuedBytes=((CachingInputStream)this.in).getMaxQueuedBytes();
+                this.in.close();
+                this.in=null;
             }
         } catch (IOException e) {
             // TODO
@@ -205,11 +215,11 @@ public class LoggerComms {
             ; // ignore
         }
         try {
-            if (this.dos!=null) {
-                this.dos.flush();
+            if (this.out!=null) {
+                this.out.flush();
                 doWait(100);
-                this.dos.close();
-                this.dos=null;
+                this.out.close();
+                this.out=null;
             }
         } catch (IOException e) {
             // TODO
