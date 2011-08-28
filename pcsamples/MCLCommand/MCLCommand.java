@@ -6,7 +6,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import lejos.robotics.mapping.MenuAction;
 import lejos.robotics.mapping.NavigationPanel;
-import lejos.robotics.mapping.SliderPanel;
 import lejos.robotics.mapping.NavigationModel.NavEvent;
 import lejos.robotics.localization.*;
 
@@ -161,6 +160,9 @@ public class MCLCommand extends NavigationPanel {
 		// Enable the Get Pose button when the estimated pose has been sent
 		if (navEvent == NavEvent.ESTIMATED_POSE) {
 			getPoseButton.setEnabled(true);
+		} else if (navEvent == NavEvent.LOAD_MAP) {
+			// Generate the particles
+			model.generateParticles();			
 		}
 	}
 	
@@ -169,6 +171,7 @@ public class MCLCommand extends NavigationPanel {
 	 */
 	@Override
 	public void whenConnected() {
+		super.whenConnected();
 		// If the map has been loaded, send it to the NXT
 		if (model.getMap() != null) {
 			model.sendMap();
