@@ -177,6 +177,12 @@ public class NXTDataLogger implements Logger{
             this.removeIndex+=NXTDataLogger.this.lineBytes;
             if (this.removeIndex>=this.barr.length) this.removeIndex=0;
         }
+        
+        int byteCount(){
+            int size=addIndex-removeIndex;
+            if (size<0) size=barr.length+size;
+            return size;
+        }
     }
     
     // return one of our seeded random check vals
@@ -285,6 +291,11 @@ public class NXTDataLogger implements Logger{
         
         // set to allow state protocol data sends
         logmodeState=LMSTATE_REAL;
+        
+        // TODO this provides the basis to talk to Roger's logger (lejos.pc.tools.DataViewComms.startDownload()). It expects a handshake:
+        // I receive a 15 and then send the number of floats it needs to capture. It then iterates to read the floats  out of it;s
+        // dis and outputs the values to the GUI.
+        //System.out.println("itm cnt=" + byteQueue.byteCount()/lineBytes*columnDefs.length);
         
         // send the headers TODO ensure that these are set but not for DataViewer GUI
         sendHeaders();  // guaranteed to be set by checkWriteState()
