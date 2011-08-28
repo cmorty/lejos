@@ -586,10 +586,6 @@ public class NXTSamba {
                 writeWord(0xfffffc30, 0x7);
                 success = true;
             }
-            catch (IOException e)
-            {
-                // Some sort of error
-            }
             finally
             {
             	if (!success)
