@@ -813,7 +813,7 @@ class LogChartFrame extends JFrame {
                     // if the log file field is empty, the PC logger will handle it. we need to make sure the title is appropo
                     // start the logger
                     try {
-                        dataLogger = new DataLogger(connectionManager, theLogFile,fileAction==1);
+                        dataLogger = new DataLogger(connectionManager.getInputStream(), theLogFile,fileAction==1);
                         dataLogger.addLoggerListener(loggerHook);
                         dataLogger.startLogging(); // will block until logging session ends
                     } catch (IOException e) {

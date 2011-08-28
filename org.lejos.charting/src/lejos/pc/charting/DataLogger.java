@@ -141,38 +141,35 @@ public class DataLogger {
         }
     }
 
-    private LoggerComms connectionManager = null;
     private File logFile = null;
     private FileWriter fw;
     private HashSet<LoggerListener> listeners = new HashSet<LoggerListener>();
     private boolean validLogFile=false;;
     private int elementsPerLine = 1;
     private boolean fileAppend;
-    private InputStream cachedInputStream;
+    private InputStream nXTInputStream;
     
     /**Create a <code>DataLogger</code> instance. The passed passed <code>logfile</code> is opened and the logging output is written 
      * to it.<p>
      * Register a <code>DataLogger.LoggerListener</code> to 
      * receive logging events.
-     * <code>LoggerComms</code>
-     * connection must already be established or <code>IOException</code> is thrown.
-     * @param connManager The <code>LoggerComms</code> instance to use for the connection.
+     * The connection must already be established and the passed <code>InputStream</code> valid or <code>IOException</code> is thrown.
+     * @param is The established connection's <code>InputStream</code> from the NXT
      * @param logFile The log file <code>File</code> to write output to. 
      * @param fileAppend If <code>false</code>, the specified file will be overwritten if exists. 
      * @see LoggerComms
      * @see #startLogging
      * @see #addLoggerListener
      */
-    public DataLogger(LoggerComms connManager, File logFile, boolean fileAppend) throws IOException {
+    public DataLogger(InputStream is, File logFile, boolean fileAppend) throws IOException {
         String[] thisClass = this.getClass().getName().split("[\\s\\.]");
         THISCLASS=thisClass[thisClass.length-1];
         this.fileAppend=fileAppend;
         
-        if (!connManager.isConnected()) {
-            throw new IOException("lejos.pc.charting.LoggerComms is not connected");
+        if (is==null) {
+            throw new IOException("lejos.pc.charting.LoggerComms InputStream is null");
         }
-        
-        this.connectionManager = connManager;
+        this.nXTInputStream=is;
         this.logFile = logFile;
         validLogFile=(this.logFile!=null&&!this.logFile.isDirectory()); 
         // internal logger callback object
@@ -182,20 +179,20 @@ public class DataLogger {
     /** Create a <code>DataLogger</code> instance with no file output. Register a <code>DataLogger.LoggerListener</code> to 
      * receive logging events.
      * The connection must already be established or <code>IOException</code> is thrown.
-     * @param connManager the instance to use for the connection
-     * @see #DataLogger(LoggerComms, File, boolean)
+     * @param is The established connection's <code>InputStream</code> from the NXT
+     * @see #DataLogger(InputStream, File, boolean)
      * @see DataLogger.LoggerListener
      * @see #addLoggerListener
      */
-    public DataLogger(LoggerComms connManager) throws IOException {
-        this(connManager,null,false);
+    public DataLogger(InputStream is) throws IOException {
+        this(is,null,false);
     }
 
     private void dbg(String msg){
         System.out.println(THISCLASS + "-" + msg);
     }
     
-    /**Register a Logger listener so data received from the NXT can be managed.
+    /**Register a Logger listener so data can be managed and acted upon when it is received from the NXT.
      * @param listener The Logger listener instance to register
      * @see LoggerListener
      * @see #removeLoggerListener
@@ -254,10 +251,9 @@ public class DataLogger {
         String FQPfileName=null;
         DataItem[] readVals = new DataItem[this.elementsPerLine];
         
-        if (!this.connectionManager.isConnected()) {
-            throw new IOException("No Connection in startLogging()!");
+        if (this.nXTInputStream==null) {
+            throw new IOException("Null InputStream in startLogging()!");
         }
-        this.cachedInputStream = connectionManager.getInputStream();
         if (validLogFile) {
             try {
                 FQPfileName = this.logFile.getCanonicalPath();
@@ -510,7 +506,7 @@ public class DataLogger {
 
         // Get n bytes from the buffer. Null pointer if the poll() method in btmanager.getByte() has no data. 
         try {
-            while (this.cachedInputStream.available() < byteCount) {
+            while (this.nXTInputStream.available() < byteCount) {
             doWait(50);
         }
         } catch (IOException e) {
@@ -519,7 +515,7 @@ public class DataLogger {
         
         for (int i=0;i<byteCount;i++) {
             try {
-                readBytes[i]=(byte)(this.cachedInputStream.read()&0xff);
+                readBytes[i]=(byte)(this.nXTInputStream.read()&0xff);
             } catch (IOException e) {
                 throw new EOFException("getBytes: is.read(): " + e);
             }
