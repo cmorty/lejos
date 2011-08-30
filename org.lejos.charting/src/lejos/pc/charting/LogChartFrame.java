@@ -122,6 +122,7 @@ class LogChartFrame extends JFrame {
     private JTextField axis4LabelTextField = new JTextField();
     private GridBagLayout gridBagLayout1 = new GridBagLayout();
     private JCheckBox showCommentsCheckBox = new JCheckBox();
+    private Timer updateLogTextAreaTimer;
 
     /** Default constructor
      */
@@ -161,6 +162,8 @@ class LogChartFrame extends JFrame {
     /**This class is used to provide listener callbacks from DataLogger.
      */
     private class SelfLogger implements DataLogger.LoggerListener{
+        private long lastUpdate=0;
+        
         public void logCommentReceived(int timestamp, String comment) {
             String theComment = String.format("%1$-1d\t%2$s\n", timestamp, comment);
             LogChartFrame.this.logDataQueue.add(theComment);
@@ -206,7 +209,8 @@ class LogChartFrame extends JFrame {
         private double[] parseDataPoints(DataItem[] logDataItems) {
             double[] seriesTempvalues = new double[logDataItems.length];
             int chartableCount=0;
-           
+            
+            
             for (int i=0;i<logDataItems.length;i++) { 
                 if (seriesDefs[i].chartable) {
                     switch (logDataItems[i].datatype) {
@@ -243,6 +247,14 @@ class LogChartFrame extends JFrame {
             customChartPanel.addDataPoints(parseDataPoints(logDataItems)); 
             // queue text line for log textarea
             LogChartFrame.this.logDataQueue.add(DataLogger.parseLogData(logDataItems));
+            
+            if (this.lastUpdate==0) this.lastUpdate=System.currentTimeMillis()-1;
+            // variable textarea update timer delay based on update rate
+            int period = (int)(System.currentTimeMillis()-lastUpdate);
+            period=(int)(2155.1*Math.exp(-.0024*period));
+            if (period<200) period=200;
+            LogChartFrame.this.updateLogTextAreaTimer.setDelay(period);
+            lastUpdate=System.currentTimeMillis();
         }
         
         public void dataInputStreamEOF() {
@@ -793,7 +805,8 @@ class LogChartFrame extends JFrame {
                 }
             }
          };
-         new Timer(2000, taskPerformer).start();
+        this.updateLogTextAreaTimer = new Timer(1000, taskPerformer);
+        this.updateLogTextAreaTimer.start();
     }
 
     /** Attempt to start a connection using a thread so the GUI stays responsive.
