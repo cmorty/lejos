@@ -46,6 +46,8 @@ public class NXTDataLogger implements Logger{
     private static final byte COMMAND_FLUSH        = 3;    
     private static final byte COMMAND_COMMENT      = 4;    
     private static final int XORMASK = 0xff;
+    private static final int FLUSH_THRESHOLD_MS = 200;
+    private static final int BYTEBUF_CAPCITY_INCREMENT = 256;
     
     private DataOutputStream dos = null;
     private DataInputStream dis = null;
@@ -72,6 +74,7 @@ public class NXTDataLogger implements Logger{
     private NXTConnection passedNXTConnection=null;
     private String commentText = new String("");
     private int currentTimeStamp=0;
+    private long finishLineTS=0;
     
     /**
      * Default constructor establishes a data logger instance in cache mode.
@@ -130,7 +133,7 @@ public class NXTDataLogger implements Logger{
         void add(byte b){
             barr[addIndex++]=b;
             this.lineByteCounter++; 
-            if (!ringMode && !ensureCapacity(256)){ 
+            if (!ringMode && !ensureCapacity(BYTEBUF_CAPCITY_INCREMENT)){ 
                 // out of memory
                 ringMode=true;
                 // since this is the first "use" of ringbuffer, move the pointer to next line (lose first row of data). 
@@ -429,10 +432,23 @@ public class NXTDataLogger implements Logger{
     public void finishLine() {
         if (this.currColumnPosition!=((this.itemsPerLine)&0xff)) throw new IllegalStateException("too few cols ");
         currColumnPosition=1;
+        if (currentTimeStamp==0) {
+            return;
+        }
         
-        if (this.commentText.equals("") || currentTimeStamp==0) return;
+        // if a "slow" update, flush the buffer so shows immediate in chart & log. Suggested by Aswin 8/29/11
+        if (this.finishLineTS==0) this.finishLineTS=System.currentTimeMillis();
+        if ((System.currentTimeMillis()-this.finishLineTS)>FLUSH_THRESHOLD_MS) {
+            try {
+                dos.flush();
+            } catch (IOException e) {
+                ; // ignore
+            }
+        }
+        this.finishLineTS=System.currentTimeMillis();
+        if (this.commentText.equals("")) return;
         
-        // if a comment was set, send command, timestamp, and comment text
+        // a comment was set: send command, timestamp, and comment text
         sendATTN();
         byte[] command = {COMMAND_COMMENT,-1};  
         sendCommand(command);
@@ -548,7 +564,7 @@ public class NXTDataLogger implements Logger{
     }
     
     private void writeInt(int datapoint, byte datatype) {
-        checkWriteState(datatype);  // TODO this flagging needs to change to accomodate boolean, byte, short sent as int
+        checkWriteState(datatype); 
         try {
             this.dos.writeInt(datapoint);
         } catch (IOException e) {
