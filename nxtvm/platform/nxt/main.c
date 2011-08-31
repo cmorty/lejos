@@ -205,7 +205,7 @@ run(int jsize)
     MasterRecord *mrec = get_master_record();
     int staticSize = mrec->staticStateLength;
     int syncSize = (mrec->lastClass + 1) * sizeof(objSync);
-    int statusSize = (mrec->lastClass + 1) * sizeof( classStatusBase[0]);
+
 #if ! EXECUTE_FROM_FLASH
     // Skip java binary if it is an top of ram
     if (jsize > 0)
@@ -213,7 +213,6 @@ run(int jsize)
 #endif
 
     staticSize = (staticSize + 3) & ~(3);
-    statusSize = (statusSize + 3) & ~(3);
     syncSize = (syncSize + 3) & ~(3);
   
     ram_end -= staticSize;
@@ -225,6 +224,8 @@ run(int jsize)
 
 #if EXECUTE_FROM_FLASH
     // When we execute from flash we need extra storage for the class state.
+    int statusSize = (mrec->lastClass + 1) * sizeof( classStatusBase[0]);
+    statusSize = (statusSize + 3) & ~(3);
     ram_end -= statusSize;
     classStatusBase = ram_end;
     memset( (byte *)classStatusBase, 0, statusSize);
