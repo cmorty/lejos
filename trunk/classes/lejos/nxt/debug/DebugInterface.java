@@ -19,7 +19,7 @@ public class DebugInterface
     public static final int DBG_EVENT_IGNORE = 2;
     // This is reflected in the kernel structure  
     public int typ;                // type of debug event
-    public Exception exception;
+    public Throwable exception;
     public Thread thread;
     public int method;
     public int pc;
