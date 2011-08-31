@@ -114,7 +114,7 @@ void shutdown_program()
   for(i = 0; i < eventCnt; i++)
   {
     NXTEvent *event = events[i];
-    if (event->typ == SYSTEM_EVENT && event->filter == SHUTDOWN)
+    if (event->typ == SYSTEM_EVENT && event->filter == SHUTDOWN && event->state == WAITING)
     {
       change_event(event, SHUTDOWN, 0);
       return;
