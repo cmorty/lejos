@@ -633,9 +633,15 @@ public final class VM
          */
         public VMMethods getMethods()
         {
-            // Interfaces and arrays to not have method tables.
+            // Interfaces and arrays do not have method tables.
             if ((flags & (C_ARRAY|C_INTERFACE)) != 0)
+            {
+                if((flags & (C_HASCLINIT)) != 0){
+                    // But some interfaces have a <clinit> method
+                    return new VMMethods(CIAData1 + IMAGE_BASE, 1);
+                }
                 return new VMMethods(0, 0);
+            } 
             else
                 return new VMMethods(CIAData1 + IMAGE_BASE, ((int)CIACnt1 & 0xff));
         }
