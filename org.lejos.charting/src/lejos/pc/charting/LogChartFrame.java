@@ -460,10 +460,12 @@ class LogChartFrame extends JFrame {
                 LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
             if (e.getActionCommand().equalsIgnoreCase("Copy Data Log")) {
+                LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 int curPos = dataLogTextArea.getCaretPosition();
                 dataLogTextArea.selectAll();
                 dataLogTextArea.copy();
                 dataLogTextArea.setCaretPosition(curPos);
+                LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
             
             if (e.getActionCommand().equalsIgnoreCase("Expand Chart")) {
@@ -481,7 +483,9 @@ class LogChartFrame extends JFrame {
                 jTabbedPane1.setVisible(true);
             }
             if (e.getActionCommand().equalsIgnoreCase("Chart in New Window")) {
+                LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 customChartPanel.getLoggingChartPanel().spawnChartCopy();
+                LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
             
         }
