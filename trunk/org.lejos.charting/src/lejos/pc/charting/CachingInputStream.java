@@ -9,30 +9,31 @@ import java.io.InputStream;
  * @author Kirk P. Thompson
  */
 public class CachingInputStream extends InputStream {
-    private final InputStream in; 
-    private volatile byte[] buf;
-    private volatile int wIndex=0;
-    private volatile int rIndex=0;
-    private Object readLock=new Object();
-    private volatile int byteCount=0;
-    private volatile boolean flagEOF=false;
-    private volatile IOException anIOException=null;
-    private int maxQueuedBytes=0;
-
+    private InputReader ir;
+    
     /** Construct an <code>CachingInputStream</code> with the specified buffer size and source.
      * @param in The source input stream
      * @param bufferSize The byte buffer size
      */
     public CachingInputStream(InputStream in, int bufferSize) {
-        this.in=in;
-        buf = new byte[bufferSize];
-        new InputReader().start();
+        this.ir = new InputReader(in, bufferSize);
+        this.ir.start();
     }
     
     private class InputReader extends Thread {
         private int readVal=-1;
+        private int maxQueuedBytes=0;
+        private boolean flagEOF=false;
+        private int byteCount=0;
+        private volatile byte[] buf;
+        private final InputStream in;
+        private IOException anIOException=null;
+        private int wIndex=0;
+        private int rIndex=0;
         
-        public InputReader(){
+        InputReader(InputStream in, int bufferSize) {
+            this.in=in;
+            this.buf = new byte[bufferSize];
             this.setDaemon(true);
         }
         
@@ -43,89 +44,94 @@ public class CachingInputStream extends InputStream {
                 }
                 
                 if (byteCount>=buf.length) {
-                    //if (byteCount!=50 )System.out.println("byteCount=" + byteCount);
                     doWait(50);
                     continue;
                 }
                 try {                
                    // get a byte (will block)
                     readVal = in.read();
-//                    System.out.println("readVal=" + readVal);
                 } catch (IOException e) {
-//                    System.out.println("########## InputReader: IOException-" + e.toString());
                     anIOException=e;
                     break; // will cause thread to exit
                 } 
                 
                 if (readVal==-1) {
-//                    System.out.println("readVal==-1");
                     // end of stream reached. flag EOFException
                     flagEOF=true;
                     break;
                 }
                 
-                synchronized(readLock) {
+                synchronized(this) {
                     buf[wIndex++] = (byte)(readVal&0xff);
                     byteCount++;
                     if (byteCount>maxQueuedBytes) maxQueuedBytes=byteCount;
-                    readLock.notify();
+                    this.notify();
                 }
             }
-            synchronized(readLock) {
-                readLock.notify();
+            // do final notify on loop end
+            synchronized(this) {
+                this.notify();
             }
         }
-    }
-    
-    private void doWait(long milliseconds) {
-         try {
-             Thread.sleep(milliseconds);
-         } catch (InterruptedException e) {
-             //Thread.currentThread().interrupt();
-         }
-    }
-    
-    private void checkExceptions() throws IOException{
-//        if (flagEOF) System.out.println("########   flagEOF! byteCount=" + byteCount + ", idx delta=" + (wIndex-rIndex));
-        if (byteCount==0 && flagEOF) throw new EOFException("read: No more data!!");
-        if (anIOException!=null) throw anIOException;
-    }
-    
-    public synchronized int read() throws IOException{
-        int retVal;
         
-        if (rIndex>=buf.length){
-            rIndex=0;
+        synchronized int getMaxQueuedBytes(){
+            return maxQueuedBytes;
         }
         
-        while (!flagEOF && byteCount==0) {
-            synchronized(readLock) {
+        synchronized int read() throws IOException{
+            int retVal;
+            
+            if (rIndex>=buf.length){
+                rIndex=0;
+            }
+            
+            while (!flagEOF && byteCount==0) {
                 // block if no data buffered
                 try {
-                    readLock.wait();
+                    this.wait();
                 } catch (InterruptedException e) {
                     ; // ignore
                 }
             }
-        }
-        
-        synchronized(readLock) {
+           
             checkExceptions();
             retVal=buf[rIndex++]&0xff;
             byteCount--;
+            
+            return retVal;
         }
-        return retVal;
+        
+        private void checkExceptions() throws IOException{
+            if (byteCount==0 && flagEOF) throw new EOFException("read: No more data!!");
+            if (anIOException!=null) throw anIOException;
+        }
+        
+        synchronized int available() throws IOException {
+            checkExceptions();
+            return byteCount;
+        }
+        
+        private void doWait(long milliseconds) {
+            try {
+                Thread.sleep(milliseconds);
+            } catch (InterruptedException e) {
+                //Thread.currentThread().interrupt();
+            }
+        }
     }
     
-    public synchronized int available() throws IOException {
-        checkExceptions();
-        return byteCount;
+    public int read() throws IOException{
+        return ir.read();
+    }
+    
+    public int available() throws IOException {
+        return ir.available();
     }
 
     /** Return the maximum number of bytes buffered.
      * @return byte count
      */
     public int getMaxQueuedBytes(){
-        return maxQueuedBytes;
+        return ir.getMaxQueuedBytes();
     }
 }
