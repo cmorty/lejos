@@ -11,9 +11,9 @@ import lejos.nxt.Flash;
  */
 public class FileInputStream extends InputStream
 {
-	private int offset;
+	protected int offset;
 	private int file_limit;
-	private int page_limit;
+	protected int page_limit;
 	private int first_page;
 	private byte[] buff;
 	
