@@ -537,8 +537,6 @@ class LoggingChart extends ChartPanel{
         int pointCounter=0;
         
         JFrame frame = new ChartDisplay(chartClone);
-        frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        this.getTopLevelAncestor().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         Dimension frameSize = frame.getSize();
         // Toolkit.getDefaultToolkit().getScreenSize() doesn't work for multi monitor setups (SK)
         Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
@@ -606,8 +604,6 @@ class LoggingChart extends ChartPanel{
         ((ChartDisplay)frame).getChartPanel().restoreAutoBounds();
         
         chartClone.setNotify(true);
-        frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        this.getTopLevelAncestor().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         dbg("Cloning complete");
         return true;
     }
