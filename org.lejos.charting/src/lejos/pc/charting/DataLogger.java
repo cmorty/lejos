@@ -148,6 +148,7 @@ public class DataLogger {
     private int elementsPerLine = 1;
     private boolean fileAppend;
     private InputStream nXTInputStream;
+    private boolean isEOF=false;
     
     /**Create a <code>DataLogger</code> instance. The passed passed <code>logfile</code> is opened and the logging output is written 
      * to it.<p>
@@ -502,20 +503,13 @@ public class DataLogger {
     
     private void getBytes(byte[] readBytes, int byteCount) throws EOFException
     {
-        // wait until byteCount bytes are avail or we have a EOF
-
-        // Get n bytes from the buffer. Null pointer if the poll() method in btmanager.getByte() has no data. 
-        try {
-            while (this.nXTInputStream.available() < byteCount) {
-            doWait(50);
-        }
-        } catch (IOException e) {
-            throw new EOFException("getBytes: is.available(): " + e);
-        }
-        
+        // Get byteCount bytes from the buffer.
+        int readVal=-1;
         for (int i=0;i<byteCount;i++) {
             try {
-                readBytes[i]=(byte)(this.nXTInputStream.read()&0xff);
+                readVal=this.nXTInputStream.read();
+                if (readVal==-1) throw new EOFException();
+                readBytes[i]=(byte)readVal;
             } catch (IOException e) {
                 throw new EOFException("getBytes: is.read(): " + e);
             }
