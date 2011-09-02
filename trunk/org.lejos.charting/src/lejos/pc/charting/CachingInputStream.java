@@ -4,9 +4,16 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
-/** Provide a read-ahead buffer input stream of bytes.
+/** Provide a read-ahead buffer input stream of bytes. The source <code>InputStream</code> (passed in the constructor) is
+ * constantly read into a <code>byte</code> buffer which values are then made available through the <code>read</code> methods. 
+ * This methodology is used to help ensure the NXT does not block on a <code>write()</code> (using BlueTooth or USB) as it would if its limited
+ * buffer is filled and nothing is reading from the stream.
+ * <p>
+ * If the buffer fills completely, the reader thread will wait/block until bytes are <code>read()</code> so make sure the size of the
+ * buffer is appropriate for the application intended.
  * 
  * @author Kirk P. Thompson
+ * @author Sven K\u00F6hler
  */
 public class CachingInputStream extends InputStream {
     private InputReader ir;
@@ -19,13 +26,15 @@ public class CachingInputStream extends InputStream {
         this.ir = new InputReader(in, bufferSize);
         this.ir.start();
     }
-    
+
+    /** read from input stream passed in constructor and save to buf array
+     */
     private class InputReader extends Thread {
         private int readVal=-1;
         private int maxQueuedBytes=0;
         private boolean flagEOF=false;
         private int byteCount=0;
-        private volatile byte[] buf;
+        private byte[] buf;
         private final InputStream in;
         private IOException anIOException=null;
         private int wIndex=0;
@@ -43,10 +52,17 @@ public class CachingInputStream extends InputStream {
                     wIndex=0;
                 }
                 
-                if (byteCount>=buf.length) {
-                    doWait(50);
-                    continue;
+                // if buf is full, wait until a read()
+                synchronized(this) {
+                    while (byteCount>=buf.length) {
+                        try {
+                            this.wait();
+                        } catch (InterruptedException e) {
+                            ; // Do nothing
+                        }
+                    }
                 }
+                
                 try {                
                    // get a byte (will block)
                     readVal = in.read();
@@ -65,7 +81,7 @@ public class CachingInputStream extends InputStream {
                     buf[wIndex++] = (byte)(readVal&0xff);
                     byteCount++;
                     if (byteCount>maxQueuedBytes) maxQueuedBytes=byteCount;
-                    this.notify();
+                    this.notifyAll(); // wake up the read() wait (if waiting)
                 }
             }
             // do final notify on loop end
@@ -97,6 +113,7 @@ public class CachingInputStream extends InputStream {
             checkExceptions();
             retVal=buf[rIndex++]&0xff;
             byteCount--;
+            this.notifyAll(); // wake up the in read() from NXT (if waiting because the buffer is full)
             
             return retVal;
         }
@@ -110,20 +127,13 @@ public class CachingInputStream extends InputStream {
             checkExceptions();
             return byteCount;
         }
-        
-        private void doWait(long milliseconds) {
-            try {
-                Thread.sleep(milliseconds);
-            } catch (InterruptedException e) {
-                //Thread.currentThread().interrupt();
-            }
-        }
     }
     
     public int read() throws IOException{
         return ir.read();
     }
     
+    @Override
     public int available() throws IOException {
         return ir.available();
     }
