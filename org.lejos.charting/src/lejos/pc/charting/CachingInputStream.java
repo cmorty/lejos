@@ -49,7 +49,7 @@ public class CachingInputStream extends InputStream {
 	            while (true){
 	            	int readVal = in.read();
 	                
-	                if (readVal==-1) {
+	                if (readVal < 0) {
 	                    // end of stream reached.
 	                    break;
 	                }
