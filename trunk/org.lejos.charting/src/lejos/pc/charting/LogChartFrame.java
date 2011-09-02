@@ -456,14 +456,27 @@ class LogChartFrame extends JFrame {
             if (e.getActionCommand().equalsIgnoreCase("chart controls")) new UsageHelpDialog(LogChartFrame.this).setVisible(true);
             if (e.getActionCommand().equalsIgnoreCase("copy chart image")) {
                 LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                customChartPanel.copyChart();
+                try { 
+                    customChartPanel.copyChart();
+                } catch (OutOfMemoryError e2) {
+                    JOptionPane.showMessageDialog(LogChartFrame.this, "Not enough memory to copy chart image!", "Houston, we have a problem...",
+                        JOptionPane.ERROR_MESSAGE);
+                }
                 LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
             if (e.getActionCommand().equalsIgnoreCase("Copy Data Log")) {
                 LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 int curPos = dataLogTextArea.getCaretPosition();
-                dataLogTextArea.selectAll();
-                dataLogTextArea.copy();
+                try {
+                    dataLogTextArea.selectAll();
+                    dataLogTextArea.copy();
+                } catch (OutOfMemoryError e2) {
+                    JOptionPane.showMessageDialog(LogChartFrame.this, "Not enough memory to copy log data!", "Houston, we have a problem...",
+                        JOptionPane.ERROR_MESSAGE);
+                } catch (Exception e2) {
+                    JOptionPane.showMessageDialog(LogChartFrame.this, "Problem copying log data! " + e2.toString(), "Houston, we have a problem...",
+                        JOptionPane.ERROR_MESSAGE);
+                }
                 dataLogTextArea.setCaretPosition(curPos);
                 LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
@@ -471,20 +484,25 @@ class LogChartFrame extends JFrame {
             if (e.getActionCommand().equalsIgnoreCase("Expand Chart")) {
                 JMenuItem mi = (JMenuItem)e.getSource();
                 mi.setText("Restore Chart");
-                mi.setMnemonic(KeyEvent.VK_N);
+                mi.setMnemonic(KeyEvent.VK_R);
                 UIPanel.setVisible(false);
                 jTabbedPane1.setVisible(false);
             }
             if (e.getActionCommand().equalsIgnoreCase("Restore Chart")) {
                 JMenuItem mi = (JMenuItem)e.getSource();
                 mi.setText("Expand Chart");
-                mi.setMnemonic(KeyEvent.VK_F);
+                mi.setMnemonic(KeyEvent.VK_X);
                 UIPanel.setVisible(true);
                 jTabbedPane1.setVisible(true);
             }
             if (e.getActionCommand().equalsIgnoreCase("Chart in New Window")) {
                 LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                customChartPanel.getLoggingChartPanel().spawnChartCopy();
+                try {
+                    customChartPanel.getLoggingChartPanel().spawnChartCopy();
+                } catch (OutOfMemoryError e2) {
+                    JOptionPane.showMessageDialog(LogChartFrame.this, "Not enough memory to create chart!", "Houston, we have a problem...",
+                        JOptionPane.ERROR_MESSAGE);
+                }
                 LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
             

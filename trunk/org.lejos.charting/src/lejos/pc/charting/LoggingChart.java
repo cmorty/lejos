@@ -530,7 +530,7 @@ class LoggingChart extends ChartPanel{
         return dataset; 
     }
     
-    boolean spawnChartCopy(){
+    boolean spawnChartCopy() throws OutOfMemoryError {
         if (this.emptyChart) return false;
         dbg("Constructing chart clone: \"" + getChart().getTitle().getText() + "\"..");
         JFreeChart chartClone=getBaselineChart();
