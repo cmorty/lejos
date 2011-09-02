@@ -1,6 +1,5 @@
 package lejos.pc.charting;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -30,14 +29,12 @@ public class CachingInputStream extends InputStream {
     /** read from input stream passed in constructor and save to buf array
      */
     private class InputReader extends Thread {
-        private int readVal=-1;
+        private final InputStream in;
         private int maxQueuedBytes=0;
         private boolean flagEOF=false;
         private int byteCount=0;
-        private byte[] buf;
-        private final InputStream in;
+        private final byte[] buf;
         private IOException anIOException=null;
-        private int wIndex=0;
         private int rIndex=0;
         
         InputReader(InputStream in, int bufferSize) {
@@ -47,48 +44,52 @@ public class CachingInputStream extends InputStream {
         }
         
         public void run() {
-            while (true){
-                if (wIndex>=buf.length) {
-                    wIndex=0;
-                }
-                
-                // if buf is full, wait until a read()
-                synchronized(this) {
-                    while (byteCount>=buf.length) {
-                        try {
-                            this.wait();
-                        } catch (InterruptedException e) {
-                            ; // Do nothing
-                        }
-                    }
-                }
-                
-                try {                
-                   // get a byte (will block)
-                    readVal = in.read();
-                } catch (IOException e) {
-                    anIOException=e;
-                    break; // will cause thread to exit
-                } 
-                
-                if (readVal==-1) {
-                    // end of stream reached. flag EOFException
-                    flagEOF=true;
-                    break;
-                }
-                
-                synchronized(this) {
-                    buf[wIndex++] = (byte)(readVal&0xff);
-                    byteCount++;
-                    if (byteCount>maxQueuedBytes) maxQueuedBytes=byteCount;
-                    this.notifyAll(); // wake up the read() wait (if waiting)
-                }
-            }
-            // do final notify on loop end
-            synchronized(this) {
-                this.notify();
-            }
+        	IOException e = null;
+        	try	{
+	            while (true){
+	            	int readVal = in.read();
+	                
+	                if (readVal==-1) {
+	                    // end of stream reached.
+	                    break;
+	                }
+	                
+                    write(readVal);
+	            }
+	        } catch (IOException t) {
+	            e = t;
+	        } catch (Throwable t) {
+	        	e = new IOException("exception during read");
+	        	e.initCause(t);
+	        }
+	        finally {
+	            // do final notify on loop end
+	        	signalEOF(e);
+	        }
         }
+        
+        synchronized void signalEOF(IOException e) {
+        	anIOException = e;
+            flagEOF = true;
+            this.notifyAll();
+        }
+
+		synchronized void write(int val) {
+            // if buf is full, wait until a read()
+			while (byteCount>=buf.length) {
+			    try {
+			        this.wait();
+			    } catch (InterruptedException e) {
+			        ; // Do nothing
+			    }
+			}
+			buf[(rIndex + byteCount) % buf.length] = (byte)val;
+			if (byteCount == 0)
+				this.notifyAll(); // wake up the read() wait (if waiting)
+			byteCount++;
+			if (byteCount>maxQueuedBytes)
+				maxQueuedBytes=byteCount;
+		}
         
         synchronized int getMaxQueuedBytes(){
             return maxQueuedBytes;
@@ -97,11 +98,7 @@ public class CachingInputStream extends InputStream {
         synchronized int read() throws IOException{
             int retVal;
             
-            if (rIndex>=buf.length){
-                rIndex=0;
-            }
-            
-            while (!flagEOF && byteCount==0) {
+            while (!flagEOF && byteCount == 0) {
                 // block if no data buffered
                 try {
                     this.wait();
@@ -111,21 +108,26 @@ public class CachingInputStream extends InputStream {
             }
            
             checkExceptions();
-            retVal=buf[rIndex++]&0xff;
+            if (flagEOF && byteCount == 0)
+            	return -1;
+            
+            retVal=buf[rIndex] & 0xff;
+            rIndex = (rIndex + 1) % buf.length;
+            if (byteCount >= buf.length)
+            	this.notifyAll(); // wake up the in read() from NXT (if waiting because the buffer is full)
             byteCount--;
-            this.notifyAll(); // wake up the in read() from NXT (if waiting because the buffer is full)
             
             return retVal;
         }
         
         private void checkExceptions() throws IOException{
-            if (byteCount==0 && flagEOF) throw new EOFException("read: No more data!!");
-            if (anIOException!=null) throw anIOException;
+            if (flagEOF && anIOException != null)
+            	throw anIOException;
         }
         
         synchronized int available() throws IOException {
             checkExceptions();
-            return byteCount;
+           	return byteCount;
         }
     }
     
