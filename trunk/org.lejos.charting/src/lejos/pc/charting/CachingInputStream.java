@@ -42,7 +42,7 @@ public class CachingInputStream extends InputStream {
             this.buf = new byte[bufferSize];
             this.setDaemon(true);
         }
-        
+
         public void run() {
         	IOException e = null;
         	try	{
@@ -55,41 +55,40 @@ public class CachingInputStream extends InputStream {
 	                }
 	                
                     write(readVal);
-	            }
-	        } catch (IOException t) {
-	            e = t;
-	        } catch (Throwable t) {
-	        	e = new IOException("exception during read");
-	        	e.initCause(t);
-	        }
-	        finally {
-	            // do final notify on loop end
-	        	signalEOF(e);
-	        }
+                }
+            } catch (IOException t) {
+                e = t;
+            } catch (Throwable t) {
+                e = new IOException("exception during read");
+                e.initCause(t);
+            } finally {
+                // do final notify on loop end
+                signalEOF(e);
+            }
         }
         
         synchronized void signalEOF(IOException e) {
-        	anIOException = e;
+            anIOException = e;
             flagEOF = true;
             this.notifyAll();
         }
 
-		synchronized void write(int val) {
+        synchronized void write(int val) {
             // if buf is full, wait until a read()
-			while (byteCount>=buf.length) {
-			    try {
-			        this.wait();
-			    } catch (InterruptedException e) {
-			        ; // Do nothing
-			    }
-			}
-			buf[(rIndex + byteCount) % buf.length] = (byte)val;
-			if (byteCount == 0)
-				this.notifyAll(); // wake up the read() wait (if waiting)
-			byteCount++;
-			if (byteCount>maxQueuedBytes)
-				maxQueuedBytes=byteCount;
-		}
+            while (byteCount >= buf.length) {
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                    ; // Do nothing
+                }
+            }
+            buf[(rIndex + byteCount) % buf.length] = (byte)val;
+            if (byteCount == 0)
+                this.notifyAll(); // wake up the read() wait (if waiting)
+            byteCount++;
+            if (byteCount > maxQueuedBytes)
+                maxQueuedBytes = byteCount;
+        }
         
         synchronized int getMaxQueuedBytes(){
             return maxQueuedBytes;
@@ -106,15 +105,15 @@ public class CachingInputStream extends InputStream {
                     ; // ignore
                 }
             }
-           
+
             checkExceptions();
             if (flagEOF && byteCount == 0)
-            	return -1;
+                return -1;
             
             retVal=buf[rIndex] & 0xff;
             rIndex = (rIndex + 1) % buf.length;
             if (byteCount >= buf.length)
-            	this.notifyAll(); // wake up the in read() from NXT (if waiting because the buffer is full)
+                this.notifyAll(); // wake up the in read() from NXT (if waiting because the buffer is full)
             byteCount--;
             
             return retVal;
@@ -122,12 +121,12 @@ public class CachingInputStream extends InputStream {
         
         private void checkExceptions() throws IOException{
             if (flagEOF && anIOException != null)
-            	throw anIOException;
+                throw anIOException;
         }
         
         synchronized int available() throws IOException {
             checkExceptions();
-           	return byteCount;
+            return byteCount;
         }
     }
     
