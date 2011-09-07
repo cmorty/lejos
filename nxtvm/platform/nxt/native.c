@@ -135,6 +135,9 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case halt_4I_5V:
     schedule_request(REQUEST_EXIT);
     break;
+  case shutdown_4_5V:
+    shutdown_program(false);
+    break;
   case currentTimeMillis_4_5J:
     push_word(0);
     push_word(systick_get_ms());
