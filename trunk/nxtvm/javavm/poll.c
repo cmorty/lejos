@@ -106,17 +106,27 @@ void check_events()
 
 // Called to shutdown the current program. If the program has
 // shutdown hooks then these will be initiated, if not the
-// program will be terminated.
-void shutdown_program()
+// program will be terminated. The abort parameter controls what
+// happens if shutdown is already in progress. If it is true and
+// the shutdown sequence is already in progress then this will be
+// aborted and the program terminated.
+//
+void shutdown_program(boolean abort)
 {
   // Search for a thread waiting for a shutdown event.
   int i;
   for(i = 0; i < eventCnt; i++)
   {
     NXTEvent *event = events[i];
-    if (event->typ == SYSTEM_EVENT && event->filter == SHUTDOWN && event->state == WAITING)
+    if (event->typ == SYSTEM_EVENT && event->filter == SHUTDOWN)
     {
-      change_event(event, SHUTDOWN, 0);
+      // if a process is waiting the shutdown process has not started, so start it
+      if (event->state == WAITING)
+        change_event(event, SHUTDOWN, 0);
+      else
+        // process already underway, should we abort?
+        if (abort)
+          break;
       return;
     }
   }

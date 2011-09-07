@@ -497,7 +497,7 @@ printf ("currentThread=%d, ndr=%d\n", (int) currentThread, (int)nonDaemonRunnabl
   }
   if (!nonDaemonRunnable)
   {
-    shutdown_program();
+    shutdown_program(false);
     return false;
   }
   return true;

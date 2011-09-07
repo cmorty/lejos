@@ -151,7 +151,7 @@ switch_thread_hook()
       buttonsDown = true;
       if (debug_user_interrupt()) return;
       // exit the program
-      shutdown_program();
+      shutdown_program(true);
     }
   }
   else

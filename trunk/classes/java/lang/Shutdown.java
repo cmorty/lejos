@@ -55,12 +55,12 @@ class Shutdown
             catch (InterruptedException e)
             {
                 // If we get interrupted just give up...
+                event.free();
                 return;
             }
-            running = true;
             // make sure we continue to run, even if other threads exit.
             setDaemon(false);
-            event.free();
+            running = true;
             // Call each of the hooks in turn
             for(int i = 0; i < hooks.size(); i++)
                 hooks.elementAt(i).start();
@@ -88,6 +88,12 @@ class Shutdown
      */
     public static native void halt(int code);
     
+    /**
+     * Tell the system that we want to shutdown. Calling this will trigger the running
+     * of any shutdown hooks. If no hooks are installed the system will simply terminate.
+     */
+    private static native void shutdown();
+    
 
     
     /**
@@ -99,11 +105,11 @@ class Shutdown
         // If no singleton then no hooks, so simply exit
         if (singleton == null)
             halt(code);
-        // If not already running notify it it to run
         if (!running)
         {
+            // Not already running the shutdown code, so go do it
             exitCode = code;
-            event.notifyEvent(SHUTDOWN_EVENT);
+            shutdown();
         }
         // Now wait for ever for the system to shut down
         Delay.msDelay(NXTEvent.WAIT_FOREVER);

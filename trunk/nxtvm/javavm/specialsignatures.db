@@ -145,6 +145,7 @@ getUserPages()I
 
 #java.lang.shutdown
 halt(I)V
+shutdown()V
 
 #lejos.nxt.USB
 usbStatus()I
@@ -161,6 +162,7 @@ hsRead([BII)I
 hsPending()I
 hsSend(BB[BII[C)I
 hsRecv([BI[CI)I
+hsSetBaudRate(I)V
 
 # java.lang.Double
 doubleToRawLongBits(D)J
