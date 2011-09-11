@@ -237,21 +237,22 @@ class LoggingChart extends ChartPanel{
                                 double minXVal = ((XYSeriesCollection)plot.getDataset()).getSeries(0).getMinX();
                                 // sets this.domainRange
                                 Range dRange=null;
-                                if (LoggingChart.this.scrollDomain){
-                                    dRange=new Range(maxXVal-LoggingChart.this.domainWidth, maxXVal);
-                                } else {
-                                    dRange=new Range(minXVal, maxXVal);
-                                }
-                                setDomainRange(dRange);
-                                // ensure value (range) axis displays extents of data as it scrolls
-                                doRangeExtents(false);
-                                
-                                // if we have a clipping mode set...
-                                if (LoggingChart.this.domainAxisLimitMode!=DAL_UNLIMITED) {
-                                    // coordinate with addDataPoints to prevent it from adding whilst we remove
-                                    int length=((XYSeriesCollection)plot.getDataset()).getItemCount(0);
-                                    int endIndex=0;
-                                    synchblock1: synchronized (lockObj1) {
+                                synchblock1: synchronized (lockObj1) {
+                                    if (LoggingChart.this.scrollDomain){
+                                        dRange=new Range(maxXVal-LoggingChart.this.domainWidth, maxXVal);
+                                    } else {
+                                        dRange=new Range(minXVal, maxXVal);
+                                    }
+                                    setDomainRange(dRange);
+                                    // ensure value (range) axis displays extents of data as it scrolls
+                                    doRangeExtents(false);
+                                    
+                                    // if we have a clipping mode set...
+                                    if (LoggingChart.this.domainAxisLimitMode!=DAL_UNLIMITED) {
+                                        // coordinate with addDataPoints to prevent it from adding whilst we remove
+                                        int length=((XYSeriesCollection)plot.getDataset()).getItemCount(0);
+                                        int endIndex=0;
+                                    
                                         // identify clipping range here
                                         if (LoggingChart.this.domainAxisLimitMode==DAL_COUNT) {
                                             endIndex = length-LoggingChart.this.domainAxisLimitValue;
