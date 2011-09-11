@@ -134,8 +134,8 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
     
     public void axisChanged(AxisChangeEvent event) {
         Range domainRange = ((NumberAxis)event.getAxis()).getRange();
-        
         double domainWidth = domainRange.getLength();
+
         domainWidthLabel.setText(String.format("%1$-,3d ms",(long)domainWidth));
         
         // return if no series yet
@@ -144,14 +144,14 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         double minXVal = ((XYSeriesCollection)loggingChartPanel.getChart().getXYPlot().getDataset()).getSeries(0).getMinX();
         double maxXVal = ((XYSeriesCollection)loggingChartPanel.getChart().getXYPlot().getDataset()).getSeries(0).getMaxX();
         // set the flag to not update the chart because the chart is updating the slider here
+        int sliderVal = (int)(domainWidth/(maxXVal-minXVal)*SLIDER_MAX);
         sliderSetFlag=false;
-        domainScaleSlider.setValue((int)(domainWidth/(maxXVal-minXVal)*SLIDER_MAX));
+        domainScaleSlider.setValue(sliderVal);
         // this ensures that the mouse wheel zoom works after messing with slider and not clicking on chart
         if (!loggingChartPanel.getChart().isNotify()) loggingChartPanel.getChart().setNotify(true);
     }
     
     public void chartProgress(ChartProgressEvent event) {
-//        System.out.println("chartProgress");
         long xval = (long)loggingChartPanel.getChart().getXYPlot().getDomainCrosshairValue();
         double yval = loggingChartPanel.getChart().getXYPlot().getRangeCrosshairValue();
         xYValueLabel.setText(String.format("%1$,6d : %2$,7.3f", xval, yval));

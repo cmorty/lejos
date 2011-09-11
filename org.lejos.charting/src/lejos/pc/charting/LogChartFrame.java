@@ -11,6 +11,8 @@ import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -63,9 +65,10 @@ import org.jfree.chart.JFreeChart;
  */
 class LogChartFrame extends JFrame {
     private final String THISCLASS;
-    private static final int MAXDOMAIN_DATAPOINT_LIMIT= 10000;
+    private static final int MAXDOMAIN_DATAPOINT_LIMIT= 50000;
     private static final int MAXDOMAIN_TIME_LIMIT = 30000;
     private static final int MINDOMAIN_LIMIT= 10;
+    private final static float DOMLIMIT_POW = 2.4f;
     
     private JButton jButtonConnect = new JButton();
     private JPanel UIPanel = new JPanel();
@@ -123,6 +126,7 @@ class LogChartFrame extends JFrame {
     private GridBagLayout gridBagLayout1 = new GridBagLayout();
     private JCheckBox showCommentsCheckBox = new JCheckBox();
     private Timer updateLogTextAreaTimer;
+    private JCheckBox scrollDomainCheckBox = new JCheckBox();
 
     /** Default constructor
      */
@@ -157,6 +161,9 @@ class LogChartFrame extends JFrame {
         });
     }
 
+    private void scrollDomainCheckBox_actionPerformed(ActionEvent e) {
+        customChartPanel.getLoggingChartPanel().setDomainScrolling(scrollDomainCheckBox.isSelected());
+    }
 
 
     /**This class is used to provide listener callbacks from DataLogger.
@@ -262,6 +269,7 @@ class LogChartFrame extends JFrame {
             // allows user to use interactive stuff without chart glitch    
             System.out.println("Finalizing chart");  
             loggingJFreeChart.setNotify(true); 
+            customChartPanel.getLoggingChartPanel().setChartDirty();
         }
 
 //        *  The string format/structure of each string field passed by NXTDataLogger is:<br>
@@ -397,18 +405,14 @@ class LogChartFrame extends JFrame {
     private class MenuEventListener implements MenuListener {
         private JMenuItem  getMenuItem(String menuFind, String menuItemFind) {
             MenuElement[] menus =  menuBar.getSubElements();
-            //System.out.println(menus.length + ", " + menus.toString());
             JMenu menu=null;
             for (int i=0;i<menus.length;i++) {
                 menu = (JMenu)menus[i];
-//                System.out.println("menu.getActionCommand()=" + menu.getActionCommand());
                 if (!menu.getActionCommand().equals(menuFind)) continue;
                 MenuElement[] menuItems =  menu.getPopupMenu().getSubElements();
                 JMenuItem menuItem=null;
                 for (int j=0;j<menuItems.length;j++){
-//                System.out.println(menuItems[j].toString());
                     menuItem = (JMenuItem)menuItems[j];
-//                    System.out.println("   menuItem.getActionCommand()=" + menuItem.getActionCommand());
                     if (menuItem.getActionCommand().equalsIgnoreCase(menuItemFind)) return menuItem;
                 }
             }
@@ -420,7 +424,6 @@ class LogChartFrame extends JFrame {
             if (menu.getActionCommand().equals("VIEW_MENU")) {
                 JMenuItem tempMenuItem = getMenuItem(menu.getActionCommand(), "Chart in New Window");
                 if (tempMenuItem==null) {
-//                    System.out.println("NULL!");
                     return;
                 }
                 if (customChartPanel.getLoggingChartPanel().isEmptyChart()) {
@@ -554,8 +557,27 @@ class LogChartFrame extends JFrame {
     private void jbInit() throws Exception {
         this.setJMenuBar(menuBar);
         this.setSize(new Dimension(819, 613));
+        this.setMinimumSize(new Dimension(819, 613));
         this.setTitle("NXT Charting Logger");
         this.setEnabled(true);
+        // enforce minimum window size
+        this.addComponentListener(new ComponentAdapter(){
+            public void componentResized(ComponentEvent e){
+                JFrame theFrame =(JFrame)e.getSource();
+                Dimension d1=theFrame.getMinimumSize();
+                Dimension d2=theFrame.getSize();
+                boolean enforce=false;
+                if (theFrame.getWidth()<d1.getWidth()) {
+                    d2.setSize(d1.getWidth(),d2.getHeight());
+                    enforce=true;
+                }
+                if (theFrame.getHeight()<d1.getHeight()) {
+                    d2.setSize(d2.getWidth(),d1.getHeight());
+                    enforce=true;
+                }
+                if (enforce) theFrame.setSize(d2);
+            }
+        });
 
         this.getContentPane().setLayout(gridBagLayout1);
         MenuActionListener menuItemActionListener = new MenuActionListener();
@@ -594,6 +616,8 @@ class LogChartFrame extends JFrame {
         menu.add(menuItem);
         menuItem = new JMenuItem("About",KeyEvent.VK_A);
         menuItem.addActionListener(menuItemActionListener);
+        jTabbedPane1.setPreferredSize(new Dimension(621, 199));
+        jTabbedPane1.setMinimumSize(new Dimension(621, 199));
         menu.add(menuItem);
 
 
@@ -661,7 +685,7 @@ class LogChartFrame extends JFrame {
 
         // domain display limits GUI
         chartOptionsPanel.setLayout(null);
-        chartDomLimitsPanel.setBounds(new Rectangle(5, 5, 180, 135));
+        chartDomLimitsPanel.setBounds(new Rectangle(5, 35, 180, 135));
         chartDomLimitsPanel.setLayout(gridLayout1);
         chartDomLimitsPanel.setBorder(BorderFactory.createTitledBorder("Domain Display Limiting"));
         domainDisplayLimitSlider.setEnabled(false);
@@ -675,7 +699,7 @@ class LogChartFrame extends JFrame {
                 });
         useTimeRadioButton.setText("By Time");
         useTimeRadioButton.setEnabled(false);
-        useTimeRadioButton.setMnemonic('T');
+        useTimeRadioButton.setMnemonic('I');
         useTimeRadioButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         domainDisplayLimitRadioButton_actionPerformed(e);
@@ -687,7 +711,7 @@ class LogChartFrame extends JFrame {
         bg1.add(useDataPointsRadioButton);
         useDataPointsRadioButton.setSelected(true);
         useDataPointsRadioButton.setEnabled(false);
-        useDataPointsRadioButton.setMnemonic('D');
+        useDataPointsRadioButton.setMnemonic('P');
         useDataPointsRadioButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         domainDisplayLimitRadioButton_actionPerformed(e);
@@ -696,6 +720,7 @@ class LogChartFrame extends JFrame {
         datasetLimitEnableCheckBox.setText("Enable");
         datasetLimitEnableCheckBox.setRolloverEnabled(true);
         datasetLimitEnableCheckBox.setMnemonic('A');
+        datasetLimitEnableCheckBox.setToolTipText("Enable Domain Clipping");
         datasetLimitEnableCheckBox.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         datasetLimitEnableCheckBox_actionPerformed(e);
@@ -708,41 +733,52 @@ class LogChartFrame extends JFrame {
 
         
         jLabel1.setText("Chart Title:");
-        jLabel1.setBounds(new Rectangle(200, 20, 85, 20));
+        jLabel1.setBounds(new Rectangle(200, 10, 85, 20));
         jLabel1.setPreferredSize(new Dimension(115, 14));
         jLabel2.setText("Range Axis 1 Label:");
-        jLabel2.setBounds(new Rectangle(200, 45, 115, 20));
+        jLabel2.setBounds(new Rectangle(200, 35, 115, 20));
         jLabel2.setSize(new Dimension(115, 20));
         jLabel3.setText("Range Axis 2 Label:");
-        jLabel3.setBounds(new Rectangle(200, 70, 115, 20));
+        jLabel3.setBounds(new Rectangle(200, 60, 115, 20));
         jLabel3.setSize(new Dimension(115, 20));
         jLabel4.setText("Range Axis 3 Label:");
-        jLabel4.setBounds(new Rectangle(200, 95, 115, 20));
+        jLabel4.setBounds(new Rectangle(200, 85, 115, 20));
         jLabel4.setSize(new Dimension(115, 20));
         jLabel6.setText("Range Axis 4 Label:");
-        jLabel6.setBounds(new Rectangle(200, 120, 115, 20));
+        jLabel6.setBounds(new Rectangle(200, 110, 115, 20));
         jLabel6.setSize(new Dimension(115, 20));
         titleLabelChangeNotifier notifier = new titleLabelChangeNotifier();
-        chartTitleTextField.setBounds(new Rectangle(315, 20, 290, 20));
+        chartTitleTextField.setBounds(new Rectangle(315, 10, 290, 20));
         chartTitleTextField.getDocument().addDocumentListener(notifier);
-        axis1LabelTextField.setBounds(new Rectangle(315, 45, 290, 20));
+        axis1LabelTextField.setBounds(new Rectangle(315, 35, 290, 20));
         axis1LabelTextField.getDocument().addDocumentListener(notifier);
-        axis2LabelTextField.setBounds(new Rectangle(315, 70, 290, 20));
+        axis2LabelTextField.setBounds(new Rectangle(315, 60, 290, 20));
         axis2LabelTextField.getDocument().addDocumentListener(notifier);
-        axis3LabelTextField.setBounds(new Rectangle(315, 95, 290, 20));
+        axis3LabelTextField.setBounds(new Rectangle(315, 85, 290, 20));
         axis3LabelTextField.getDocument().addDocumentListener(notifier);
-        axis4LabelTextField.setBounds(new Rectangle(315, 120, 290, 20));
+        axis4LabelTextField.setBounds(new Rectangle(315, 110, 290, 20));
         showCommentsCheckBox.setText("Show Comment Markers");
-        showCommentsCheckBox.setBounds(new Rectangle(10, 145, 185, 25));
+        showCommentsCheckBox.setBounds(new Rectangle(200, 140, 185, 25));
         showCommentsCheckBox.setToolTipText("Show/Hide any comment markers on the chart");
         showCommentsCheckBox.setRolloverEnabled(true);
         showCommentsCheckBox.setSelected(true);
-        showCommentsCheckBox.setMnemonic('S');
+        showCommentsCheckBox.setMnemonic('M');
         showCommentsCheckBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 customChartPanel.setCommentsVisible(e.getStateChange()==ItemEvent.SELECTED);
             }
         });
+        scrollDomainCheckBox.setText("Scroll Domain");
+        scrollDomainCheckBox.setBounds(new Rectangle(10, 5, 175, 20));
+        scrollDomainCheckBox.setSize(new Dimension(175, 25));
+        scrollDomainCheckBox.setSelected(true);
+        scrollDomainCheckBox.setMnemonic('O');
+        scrollDomainCheckBox.setToolTipText("Checked to scroll domain as new data is received");
+        scrollDomainCheckBox.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        scrollDomainCheckBox_actionPerformed(e);
+                    }
+                });
         axis4LabelTextField.getDocument().addDocumentListener(notifier);
         
         logFileTextField.setBounds(new Rectangle(10, 145, 180, 20));
@@ -751,7 +787,7 @@ class LogChartFrame extends JFrame {
         logFileTextField.setToolTipText("File name. Leave empty to not log to file.");
         statusScrollPane.setOpaque(false);
         dataLogScrollPane.setOpaque(false);
-        
+
         customChartPanel.setMinimumSize(new Dimension(400,300));
         customChartPanel.setPreferredSize(new Dimension(812, 400));
         
@@ -775,6 +811,7 @@ class LogChartFrame extends JFrame {
         chartDomLimitsPanel.add(useTimeRadioButton, null);
         chartDomLimitsPanel.add(domainDisplayLimitSlider, null);
         chartDomLimitsPanel.add(domainLimitLabel, null);
+        chartOptionsPanel.add(scrollDomainCheckBox, null);
         chartOptionsPanel.add(showCommentsCheckBox, null);
         chartOptionsPanel.add(axis4LabelTextField, null);
         chartOptionsPanel.add(axis3LabelTextField, null);
@@ -787,12 +824,12 @@ class LogChartFrame extends JFrame {
         chartOptionsPanel.add(jLabel2, null);
         chartOptionsPanel.add(jLabel1, null);
         chartOptionsPanel.add(chartDomLimitsPanel, null);
-        jTabbedPane1.setToolTipTextAt(0, 
-                                      "The tab-delimited log of the data sent from the NXT");
+        jTabbedPane1.setToolTipTextAt(0, "The tab-delimited log of the data sent from the NXT");
         jTabbedPane1.setToolTipTextAt(1, "Status output");
-        jTabbedPane1.setToolTipTextAt(2, 
-                                      "Change Title, Range Axis labels, maximum display points");
-
+        jTabbedPane1.setToolTipTextAt(2, "Chart options");
+        jTabbedPane1.setMnemonicAt(0, KeyEvent.VK_D);
+        jTabbedPane1.setMnemonicAt(1,KeyEvent.VK_S);
+        jTabbedPane1.setMnemonicAt(2,KeyEvent.VK_T);
         this.getContentPane().add(customChartPanel, 
                                   new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, 
                                                          new Insets(0, 0, 0, 
@@ -805,9 +842,7 @@ class LogChartFrame extends JFrame {
 
         this.getContentPane().add(jTabbedPane1, 
                                   new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, 
-                                                         new Insets(0, 0, 0, 
-                                                                    0), 549, 
-                                                         115));
+                    new Insets(0, 0, 0, 0), 0, 0));
         UIPanel.add(connectionPanel,null);
         UIPanel.add(selectFolderButton,null);
         UIPanel.add(logFileTextField,null);
@@ -896,6 +931,7 @@ class LogChartFrame extends JFrame {
             }
         }
         setChartTitle("Sample Multiple Range Axis Dataset");
+        loggerHook.dataInputStreamEOF();
         System.out.println("Sample dataset generation complete");
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
@@ -958,7 +994,6 @@ class LogChartFrame extends JFrame {
                     }
 
                     System.out.println(ee.getActionCommand().toString());
-                    //            System.out.println(e.paramString());
                 } else {
                     closeCurrentConnection();
                 }
@@ -1010,14 +1045,24 @@ class LogChartFrame extends JFrame {
         
         String unit="ms";
         int mode = customChartPanel.getLoggingChartPanel().DAL_TIME;
+        int maxSliderPerMode=MAXDOMAIN_TIME_LIMIT;
         if (useDataPointsRadioButton.isSelected()) {
             unit="datapoints";
             mode=customChartPanel.getLoggingChartPanel().DAL_COUNT;
+            maxSliderPerMode=MAXDOMAIN_DATAPOINT_LIMIT;
         }
         this.domainLimitSliderValue=workingSlider.getValue();
-        domainLimitLabel.setText(String.format("%1$,d %2$s",this.domainLimitSliderValue, unit));
+        
+        int working=maxSliderPerMode;
+        if (this.domainLimitSliderValue!=maxSliderPerMode) {
+            working=(int)(Math.pow(this.domainLimitSliderValue, DOMLIMIT_POW) / Math.pow(maxSliderPerMode, DOMLIMIT_POW) * 
+                this.domainLimitSliderValue)+MINDOMAIN_LIMIT;
+        } 
+        
+        domainLimitLabel.setText(String.format("%1$,d %2$s",working, unit));
+         
         if (workingSlider.getValueIsAdjusting()) return;
-        customChartPanel.getLoggingChartPanel().setDomainLimiting(mode, this.domainLimitSliderValue);
+        customChartPanel.getLoggingChartPanel().setDomainLimiting(mode, working);
     }
 
     private void domainDisplayLimitRadioButton_actionPerformed(ActionEvent e) {
