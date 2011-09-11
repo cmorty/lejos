@@ -60,13 +60,14 @@ class LoggingChart extends ChartPanel{
     
     private Range domainRange;
     private volatile boolean chartDirty = false; // used by update thread to flag an event notification for repaints
-    private volatile boolean doDomainAdjust=false;
     private double domainWidth=INIT_DOMAIN_WIDTH; // milli seconds defining how big to initially  make the domain scale (for sliding it)
     private SeriesDef[] seriesDefs; 
     private Object lockObj1 = new Object(); 
     private int domainAxisLimitMode=DAL_UNLIMITED;
     private int domainAxisLimitValue=0;
     private boolean emptyChart=true;
+    private boolean scrollDomain=true; // domain will scroll, otherwise, autoFit all series
+    
     private Range[] yExtents=new Range[RANGE_AXIS_COUNT];
     private MarkerManager markerManager=null; // supplies the domain distance delta marker service
     
@@ -231,10 +232,17 @@ class LoggingChart extends ChartPanel{
                     if (chartDirty && LoggingChart.this.getChart()!=null) {
                         // slide the the domain range to show animation of data coming in
                         XYPlot plot = getChart().getXYPlot();
-                        if (doDomainAdjust && plot.getDataset().getSeriesCount()>0) {
+                        if (plot.getDataset().getSeriesCount()>0) {
                                 double maxXVal = ((XYSeriesCollection)plot.getDataset()).getSeries(0).getMaxX();
+                                double minXVal = ((XYSeriesCollection)plot.getDataset()).getSeries(0).getMinX();
                                 // sets this.domainRange
-                                setDomainRange( new Range(maxXVal-LoggingChart.this.domainWidth, maxXVal));
+                                Range dRange=null;
+                                if (LoggingChart.this.scrollDomain){
+                                    dRange=new Range(maxXVal-LoggingChart.this.domainWidth, maxXVal);
+                                } else {
+                                    dRange=new Range(minXVal, maxXVal);
+                                }
+                                setDomainRange(dRange);
                                 // ensure value (range) axis displays extents of data as it scrolls
                                 doRangeExtents(false);
                                 
@@ -271,9 +279,13 @@ class LoggingChart extends ChartPanel{
                                             }
                                             LoggingChart.this.getChart().setNotify(true);
                                         }
+                                        try {
+                                            lockObj1.wait(50);;
+                                        } catch (InterruptedException e) {
+                                            // TODO
+                                        }
                                     }
                                 }
-                            doDomainAdjust=false;
                         }
                         chartDirty=false;
                     }
@@ -290,6 +302,14 @@ class LoggingChart extends ChartPanel{
         setMouseListener();
         
         this.addChartMouseListener(new MyChartMouseListener());
+    }
+    
+    void setDomainScrolling(boolean scrollDomain){
+        this.scrollDomain=scrollDomain;
+    }
+    
+    void setChartDirty() {
+        this.chartDirty=true;
     }
     
     boolean isEmptyChart() {
@@ -333,6 +353,7 @@ class LoggingChart extends ChartPanel{
             yRange=((XYSeriesCollection)plot.getDataset(i)).getRangeBounds(true);
             if (yRange==null) continue;
             yRange=Range.expand(yRange,.05,.05);
+            
             if (yExtents[i]==null) {
                 yExtents[i]=yRange; 
                 plot.getRangeAxis(i).setRange(yExtents[i]);
@@ -358,8 +379,8 @@ class LoggingChart extends ChartPanel{
     
     private synchronized void setDomainRange(Range range){
         if (range==null) return;
-            this.domainRange=range;
-            getChart().getXYPlot().getDomainAxis().setRange(range);
+        this.domainRange=range;
+        getChart().getXYPlot().getDomainAxis().setRange(range);
     }
     
     // z..z..z..z..z..z...z...
@@ -398,7 +419,8 @@ class LoggingChart extends ChartPanel{
         rangeAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 9));
         rangeAxis.setLabelFont(new Font("Arial", Font.PLAIN, 12));
         rangeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
-        rangeAxis.setAutoRange(true);
+       // rangeAxis.setRange(new Range(0,0)); // need to set a range or we get a NaN on getRange() calls
+        rangeAxis.setAutoRange(false);
         rangeAxis.setAutoRangeIncludesZero(false);
         
         // set colors
@@ -473,9 +495,9 @@ class LoggingChart extends ChartPanel{
         domainAxis.setLowerMargin(0.0);
         domainAxis.setUpperMargin(0.0);
         domainAxis.setTickLabelsVisible(true);
-        domainAxis.setAutoRange(true); 
         this.domainRange= new Range(0, domainWidth);
-        domainAxis.setRange(this.domainRange);
+//        domainAxis.setRange(this.domainRange);
+        domainAxis.setAutoRange(false); 
         domainAxis.setAutoRangeIncludesZero(false);
         plot.setDomainAxis(domainAxis);
         
@@ -799,10 +821,11 @@ class LoggingChart extends ChartPanel{
                 tempSeries.add(seriesData[0], seriesData[i], false);
             }
         }
+        
         // the updater thread picks this up every xxx ms and has the JFreeChart do it's notifications for rendering, 
-        // etc. The domain axis is also scrolled for incoming data in this thread via doDomainAdjust=true
+        // etc. The domain axis is also scrolled for incoming data in this thread 
         this.chartDirty=true;
-        this.doDomainAdjust=true;
+        
         this.emptyChart=false;
     }
     
@@ -842,6 +865,7 @@ class LoggingChart extends ChartPanel{
     void setDomainScale(int domainWidth) { 
         // set this.domainWidth
         setDomainWidth(domainWidth);
+//        System.out.println("setDomainScale: domainWidth=" + domainWidth        );
         
         XYPlot plot= getChart().getXYPlot();
         double xval = plot.getDomainCrosshairValue();
@@ -861,16 +885,16 @@ class LoggingChart extends ChartPanel{
      * @return
      */
     private boolean setDomainWidth(int domainWidthPercent){
-         if (domainWidthPercent<1 || domainWidthPercent>MAX_SCALE) return false;
-         if (getChart().getXYPlot().getDataset()==null) return false;
-         try {
-             double minXVal = ((XYSeriesCollection)getChart().getXYPlot().getDataset()).getSeries(0).getMinX();
-             double maxXVal = ((XYSeriesCollection)getChart().getXYPlot().getDataset()).getSeries(0).getMaxX();
-             this.domainWidth=(maxXVal-minXVal)*(float)domainWidthPercent/(float)MAX_SCALE*DOMAIN_SIZE_MULT;
-         } catch (Exception e) {
-             ; // do nothing
-         }
-         return true;
+        if (domainWidthPercent<1 || domainWidthPercent>MAX_SCALE) return false;
+        if (getChart().getXYPlot().getDataset()==null) return false;
+        try {
+            double minXVal = ((XYSeriesCollection)getChart().getXYPlot().getDataset()).getSeries(0).getMinX();
+            double maxXVal = ((XYSeriesCollection)getChart().getXYPlot().getDataset()).getSeries(0).getMaxX();
+            this.domainWidth=(maxXVal-minXVal)*(float)domainWidthPercent/(float)MAX_SCALE*DOMAIN_SIZE_MULT;
+        } catch (Exception e) {
+            ; // do nothing
+        }
+        return true;
      }
     
     /** Set a listener to set the width of the x-axis (domain) scale instance var this.domainWidth due to a chart resize event.
@@ -881,7 +905,8 @@ class LoggingChart extends ChartPanel{
         new AxisChangeListener() {
             public void axisChanged(AxisChangeEvent event) {
                 domainWidth = LoggingChart.this.getChart().getXYPlot().getDomainAxis().getRange().getLength();
-                // set domain width to 10 seconds if new chart (no sereis data and domain is empty)
+                if (Double.isNaN(domainWidth)) domainWidth=INIT_DOMAIN_WIDTH;
+                // set domain width to 10 seconds if new chart (no series data and domain is empty)
                 if (domainWidth==1.0 && LoggingChart.this.getChart().getXYPlot().getSeriesCount()==0) domainWidth=INIT_DOMAIN_WIDTH;
             }
         });

@@ -160,7 +160,7 @@ public class LoggerComms {
         // ref the DIS/DOS to class vars
         if (this.isConnConnected) {
             this.connectedNXTName=theNXTInfo[0].name;
-            this.in = new CachingInputStream(this.conn.getInputStream(), 20000); 
+            this.in = new CachingInputStream(this.conn.getInputStream(), 100000); 
             this.out = this.conn.getOutputStream();
             this.isEOF=false; // used to flag EOF
         }
