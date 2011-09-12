@@ -11,6 +11,9 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+
 import javax.swing.JFrame;
 
 import org.jfree.chart.ChartMouseEvent;
@@ -173,21 +176,38 @@ class LoggingChart extends ChartPanel{
                 toggleSeriesVisible();
             }
         }
-
+        
+        private Point2D getPointInRectangle(int x, int y, Rectangle2D area) {
+            double xx = Math.max(area.getMinX(), Math.min(x, area.getMaxX()));
+            double yy = Math.max(area.getMinY(), Math.min(y, area.getMaxY()));
+            return new Point2D.Double(xx, yy);
+        }
+        
         public void chartMouseMoved(ChartMouseEvent event) {
             ChartEntity ce = event.getEntity();
             if (ce==null || seriesDefs==null) return;
     
             if (ce instanceof LegendItemEntity) {
                 if (getXYSeriesForEntity(ce)==null) return;
-                LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                if (LoggingChart.this.getCursor()!=Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)) {
+                    LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                }
                 if (!setStroke(HIGHLIGHT_SERIES_LINE_WEIGHT)) {
                     LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                     return;
                 }
             } else {
-                if (LoggingChart.this.getCursor()==Cursor.getPredefinedCursor(Cursor.HAND_CURSOR))
-                    LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                if (getScreenDataArea().contains(event.getTrigger().getX(), event.getTrigger().getY())) {
+                    if (LoggingChart.this.getCursor()!=Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR)) {
+                        //if (LoggingChart.this.getCursor()==Cursor.getPredefinedCursor(Cursor.HAND_CURSOR))
+                        LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR ));
+                    }
+                } else {
+                    if (LoggingChart.this.getCursor()!=Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)) {
+                        //if (LoggingChart.this.getCursor()==Cursor.getPredefinedCursor(Cursor.HAND_CURSOR))
+                        LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR ));
+                    }
+                }
                 this.dataIndexs.seriesIndex=-1;
                 this.dataIndexs.datasetSlashAxisIndex=-1;
             }

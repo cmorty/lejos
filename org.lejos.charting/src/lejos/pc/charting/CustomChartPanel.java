@@ -34,6 +34,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  */
 public class CustomChartPanel extends JPanel implements ChangeListener, AxisChangeListener, ChartProgressListener, ChartChangeListener{
     private static final int SLIDER_MAX= 10000;
+    private static final float SLIDER_CURVE_POWER= 2.4f;
     private LoggingChart loggingChartPanel = new LoggingChart();
     private JSlider domainScaleSlider = new JSlider();
     private JLabel xYValueLabel = new JLabel();
@@ -145,8 +146,11 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         double maxXVal = ((XYSeriesCollection)loggingChartPanel.getChart().getXYPlot().getDataset()).getSeries(0).getMaxX();
         // set the flag to not update the chart because the chart is updating the slider here
         int sliderVal = (int)(domainWidth/(maxXVal-minXVal)*SLIDER_MAX);
+        int working=(int)Math.pow((sliderVal*Math.pow(SLIDER_MAX, SLIDER_CURVE_POWER)), (1/(1+SLIDER_CURVE_POWER)));
+//        System.out.println("sliderVal=" + sliderVal + ", working=" + working);
         sliderSetFlag=false;
-        domainScaleSlider.setValue(sliderVal);
+//        domainScaleSlider.setValue(sliderVal);
+        domainScaleSlider.setValue(working);
         // this ensures that the mouse wheel zoom works after messing with slider and not clicking on chart
         if (!loggingChartPanel.getChart().isNotify()) loggingChartPanel.getChart().setNotify(true);
     }
@@ -162,7 +166,11 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
             // if not being triggered by the chart setting slider to match scale (i.e. on a zoom, resize, etc.)...
             if (sliderSetFlag) {
                 // set the domain scale based on slider value
-                loggingChartPanel.setDomainScale(domainScaleSlider.getValue());
+                int sliderVal=domainScaleSlider.getValue();
+                int working=(int)(Math.pow(sliderVal, SLIDER_CURVE_POWER) / Math.pow(SLIDER_MAX, SLIDER_CURVE_POWER) * 
+                     sliderVal);
+    //                loggingChartPanel.setDomainScale(domainScaleSlider.getValue());
+                loggingChartPanel.setDomainScale(working);
             } 
             sliderSetFlag=true;
         }
