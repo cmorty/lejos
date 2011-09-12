@@ -1055,8 +1055,7 @@ class LogChartFrame extends JFrame {
         
         int working=maxSliderPerMode;
         if (this.domainLimitSliderValue!=maxSliderPerMode) {
-            working=(int)(Math.pow(this.domainLimitSliderValue, DOMLIMIT_POW) / Math.pow(maxSliderPerMode, DOMLIMIT_POW) * 
-                this.domainLimitSliderValue)+MINDOMAIN_LIMIT;
+            working=(int)(Math.pow((float)this.domainLimitSliderValue/maxSliderPerMode, DOMLIMIT_POW) * this.domainLimitSliderValue)+MINDOMAIN_LIMIT;
         } 
         
         domainLimitLabel.setText(String.format("%1$,d %2$s",working, unit));
