@@ -17,6 +17,9 @@ public interface RegulatedMotor extends BaseMotor, Tachometer {
    * Adds a listener object that will be notified when rotation has started or stopped 
    * @param listener
    */
+	//TODO method name sounds like listener is added to some list.
+	// javadoc and method name should be changed such that they indicate that only one listener is supported.
+	// suggested method name: setListener(...)
 	public void addListener(RegulatedMotorListener listener);
 
 	/**
