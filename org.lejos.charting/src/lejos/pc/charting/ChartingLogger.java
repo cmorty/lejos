@@ -2,10 +2,13 @@ package lejos.pc.charting;
 
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 
@@ -27,6 +30,14 @@ public class ChartingLogger {
                           center.y - frameSize.height / 2);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(myWindowListener);
+        //frame.setIconImage(Toolkit.getDefaultToolkit().getImage("graph.png"));
+        Image appIcon=null;
+        try {
+            appIcon = new ImageIcon(getClass().getResource("/resource/graph.png")).getImage();
+        } catch (Exception e){
+            appIcon = frame.getIconImage();
+        }
+        frame.setIconImage(appIcon);
         frame.pack();
         frame.setVisible(true);
     }
