@@ -580,6 +580,8 @@ class LoggingChart extends ChartPanel{
         int pointCounter=0;
         
         JFrame frame = new ChartDisplay(chartClone);
+        frame.setIconImage(((JFrame)this.getTopLevelAncestor()).getIconImage()); 
+
         Dimension frameSize = frame.getSize();
         // Toolkit.getDefaultToolkit().getScreenSize() doesn't work for multi monitor setups (SK)
         Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
