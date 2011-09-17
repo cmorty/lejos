@@ -33,7 +33,7 @@ public class ChartingLogger {
         //frame.setIconImage(Toolkit.getDefaultToolkit().getImage("graph.png"));
         Image appIcon=null;
         try {
-            appIcon = new ImageIcon(getClass().getResource("/resource/graph.png")).getImage();
+            appIcon = new ImageIcon(getClass().getResource("graph.png")).getImage();
         } catch (Exception e){
             appIcon = frame.getIconImage();
         }
