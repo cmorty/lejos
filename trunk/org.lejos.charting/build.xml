@@ -16,12 +16,10 @@
 			<classpath location="3rdparty/lib/jfreechart.jar"/>
 			<classpath location="3rdparty/lib/jcommon.jar"/>
 		</javac>
-		<copy todir="build/resource">
-    <fileset dir="./resource"
-              excludes="*/.java"  />
-  </copy> 
 		<mkdir dir="lib"/>
-		<jar destfile="lib/pccharting.jar" basedir="build" update="false">
+		<jar destfile="lib/pccharting.jar" update="false">
+			<fileset dir="build" />
+			<fileset dir="resource" />
 		</jar>
 	</target>
 	
