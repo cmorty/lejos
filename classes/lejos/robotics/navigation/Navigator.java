@@ -67,7 +67,7 @@ public class Navigator implements WaypointListener
     * reaches a WayPoint.
     * @param listener  the NavitationListener
     */
-   public void addWaypointListener(NavigationListener listener)
+   public void addNavigationListener(NavigationListener listener)
    {
       _listeners.add(listener);
    }
