@@ -11,7 +11,7 @@ import lejos.robotics.pathfinding.Path;
  */
 /**
  * This class controls a robot to traverse a Path,  a sequence of  {@link  lejos.robotics.navigation.Waypoint}s.
- * It's default mode is continuous movement(no stopping at waypoints)  but see also {@link #singleStep(boolean). }
+ * It's default mode is continuous movement(no stopping at waypoints)  but see also {@link #singleStep(boolean). }  To interrupt the path following task,  call stup().
  *  It uses  an inner class running its own thread to issue movement commands to its
  * {@link lejos.robotics.navigation.MoveController},
  * which can be either a  {@link lejos.robotics.navigation.DifferentialPilot}
@@ -126,8 +126,8 @@ public class Navigator implements WaypointListener
    }
 
    /**
-    * Starts the robot traversing  the path.
-    * By default, the robot will not stop along  along the way.  
+    * Starts the robot traversing the path.
+    * By default, the robot will not stop along  along the way unless stop() is called.
     * @param path  to be followed.
     */
    public void followPath(Path path)
@@ -138,7 +138,7 @@ public class Navigator implements WaypointListener
 
    /**
     * Starts the robot traversing the current path. 
-    * By default, the robot will not stop along  along the way. . 
+    * By default, the robot will not stop along  along the way unless stop() is called. 
     */
    public void followPath()
    {
@@ -327,7 +327,6 @@ public class Navigator implements WaypointListener
             ((RotateMoveController) _pilot).rotate(destinationRelativeBearing,true); 
             while (_pilot.isMoving() && _keepGoing);       
             if(!_keepGoing) break;
-            else  _interrupted = !_pilot.isMoving();
           }
           else // begin arc direction change
           {
