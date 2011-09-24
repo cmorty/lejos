@@ -98,7 +98,7 @@ public class NXTNavigationModel extends NavigationModel implements MoveListener,
 	@SuppressWarnings("hiding")
 	public void addNavigator(Navigator navigator) {
 		this.navigator = navigator;
-		navigator.addWaypointListener(this);
+		navigator.addNavigationListener(this);
 		addPoseProvider(navigator.getPoseProvider());
 		addPilot(navigator.getMoveController());
 	}
