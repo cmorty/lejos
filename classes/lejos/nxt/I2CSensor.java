@@ -14,17 +14,17 @@ public class I2CSensor implements SensorConstants {
 	/**
 	 * Returns the version number of the sensor. e.g. "V1.0" Reply length = 8.
 	 */
-	protected static byte REG_VERSION = 0x00;
+	protected static final byte REG_VERSION = 0x00;
 	/**
 	 * Returns the product ID of the sensor.  e.g. "LEGO" Reply length = 8.
 	 */
-	protected static byte REG_PRODUCT_ID = 0x08;
+	protected static final byte REG_PRODUCT_ID = 0x08;
 	/**
 	 * Returns the sensor type. e.g. "Sonar" Reply length = 8.
 	 */
-	protected static byte REG_SENSOR_TYPE = 0x10;
+	protected static final byte REG_SENSOR_TYPE = 0x10;
 	
-	protected static int DEFAULT_I2C_ADDRESS = 0x02;
+	protected static final int DEFAULT_I2C_ADDRESS = 0x02;
 	
 	protected I2CPort port;
 	protected int address;
