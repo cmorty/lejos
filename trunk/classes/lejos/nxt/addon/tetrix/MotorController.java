@@ -7,10 +7,12 @@ import lejos.nxt.I2CSensor;
 import lejos.util.Delay;
 import lejos.util.EndianTools;
 
-/**HiTechnic Motor Controller abstraction. Provides <code>BasicMotor</code> instances which are used to control
- * the Tetrix motors.
+/** HiTechnic Motor Controller abstraction. Provides <code>BasicMotor</code> and <code>TachoMotor</code> instances 
+ * which are used to control the Tetrix motors.
  * 
  * @see ControllerProvider
+ * @see BasicMotor
+ * @see TachoMotor
  * @author Kirk P. Thompson
  */
 public class MotorController extends I2CSensor {

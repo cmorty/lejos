@@ -1,6 +1,6 @@
 package lejos.nxt.addon.tetrix;
 
-/** Basic Tetrix DC motor without encoder support.
+/** Basic Tetrix DC motor abstraction without encoder support.
  * 
  * @author Kirk P. Thompson
  */
@@ -47,6 +47,8 @@ public class BasicMotor implements lejos.robotics.DCMotor{
 
     /** Used to alter the forward/reverse direction mapping for the motor output. This is primarily intended to
      * harmonize the forward and reverse directions for motors on opposite sides of a skid-steer chassis.
+     * <p>
+     * Changes to this setting take effect on the next motor command.
      * @param reverse <code>true</code> to reverse direction mapping for this motor
      */
     public void setReverse(boolean reverse) {

@@ -4,9 +4,18 @@ import lejos.nxt.Button;
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 
-/** HiTechnic Tetrix Motor and Servo controller base class. Motor and Servo controllers are provided by this class
- * to use to obtain motor and servo instances
+/** HiTechnic Tetrix Motor and Servo controller base class. When instantiated, any single controller or 
+ * all controllers in a daisy-chain are discovered and made available as instances of the
+ * <code>MotorController</code> and <code>ServoController</code> classes.
+ * <p>
+ * Motor and Servo controller abstractions are provided by this class
+ * to use to obtain motor and servo instances. These abstraction classes are <code>MotorController</code> and 
+ * <code>ServoController</code>, respectively.
+ * <p>
+ * Motor and servo controllers are enumerated starting at the controller connected to one of the NXT's sensor ports and then
+ * working outwards along the daisy chain. 4 controllers can be daisy-chained, with a mixture of servo and/or motor controllers.
  * 
+ * @author Kirk P. Thompson
  */
 public class ControllerProvider {
     private static final int MAX_CHAINED_CONTROLLERS=4;
@@ -123,7 +132,6 @@ public class ControllerProvider {
      * @throws IllegalStateException If no more motor controllers can be returned. If there are no motor controllers
      * in the daisy-chain, this exception is also thrown.
      * @see #getServoController
-     * @see MotorController
      */
     public MotorController getMotorController() throws IllegalStateException {
         if (motorControllerIndex>motorControllerCount) throw new IllegalStateException("No available motor controllers");
