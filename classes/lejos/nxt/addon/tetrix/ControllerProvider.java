@@ -1,12 +1,16 @@
 package lejos.nxt.addon.tetrix;
 
-import lejos.nxt.Button;
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
+import lejos.nxt.SensorPort;
 
-/** HiTechnic Tetrix Motor and Servo controller base class. When instantiated, any single controller or 
- * all controllers in a daisy-chain are discovered and made available as instances of the
- * <code>MotorController</code> and <code>ServoController</code> classes.
+/**
+ * This class represents a daisy chain of HiTechnic Tetrix Motor and Servo controllers.
+ * The daisy chain can be configured manually by calling {@link #addMotorController()} and {@link #addServoController()}
+ * in the order the devices are attached to the port. It also supports the automatic detection of the controllers 
+ * in a daisy-chain. It then provides them as instances of the
+ * <code>MotorController</code> and <code>ServoController</code> classes. Those can be obtained by calling
+ * {@link #getMotorControllers()} and {@link #getServoControllers()}.
  * <p>
  * Motor and Servo controller abstractions are provided by this class
  * to use to obtain motor and servo instances. These abstraction classes are <code>MotorController</code> and 
@@ -14,144 +18,170 @@ import lejos.nxt.I2CSensor;
  * <p>
  * Motor and servo controllers are enumerated starting at the controller connected to one of the NXT's sensor ports and then
  * working outwards along the daisy chain. 4 controllers can be daisy-chained, with a mixture of servo and/or motor controllers.
+ * <p>Code Example:<br>
+ * <code>
+ *  {@link ControllerProvider} daisyChain = new {@link ControllerProvider}({@link SensorPort#S1});<br>
+ *  daisyChain.{@link #addMotorController()};<br>
+ *  daisyChain.{@link #addServoController()};<br>
+ *  daisyChain.{@link #addMotorController()};<br>
+ *  {@link MotorController}[] r1 = daisyChain.{@link #getMotorControllers()}; //will return 2 motor controller<br>
+ *  {@link ServoController}[] r2 = daisyChain.{@link #getServoControllers()}; //will return 1 servo controller<br>
+ * </code>
  * 
  * @author Kirk P. Thompson
  */
 public class ControllerProvider {
+    /** I2C address of the first device in a Tetrix daisy chain. */
+    public static final int I2CADDRESS_DEVICE0 = 0x02;
+    /** I2C address of the second device in a Tetrix daisy chain. */
+    public static final int I2CADDRESS_DEVICE1 = I2CADDRESS_DEVICE0 << 1;
+    /** I2C address of the third device in a Tetrix daisy chain. */
+    public static final int I2CADDRESS_DEVICE2 = I2CADDRESS_DEVICE0 << 2;
+    /** I2C address of the fourth device in a Tetrix daisy chain. */
+    public static final int I2CADDRESS_DEVICE3 = I2CADDRESS_DEVICE0 << 3;
+    
     private static final int MAX_CHAINED_CONTROLLERS=4;
     
-    private final I2CPort sensorPortNXT;
-    private MotorController[] motorControllers;
-    private ServoController[] servoControllers;
+    private final I2CPort i2cport;
+    // those arrays are Object[] in order to not pull in all classes
+    private Object[] motorControllers = new Object[MAX_CHAINED_CONTROLLERS];
+    private Object[] servoControllers = new Object[MAX_CHAINED_CONTROLLERS];
     private int motorControllerCount = 0;
-    private int motorControllerIndex = 0;
     private int servoControllerCount = 0;
-    private int servoControllerIndex = 0;
 
-    /** Instantiate a <code>ControllerProvider</code> using the specified NXT sensor port.
+    /** 
+     * Instantiate a <code>ControllerProvider</code> using the specified NXT sensor port.
      * @param port The NXT port the controller is connected to
-     * @throws IllegalStateException if no Hitechnic Motor or Servo controllers could be found
      */
     public ControllerProvider(I2CPort port) throws IllegalStateException{
-        sensorPortNXT = port;
-        enumerateControllers();
-    }
-
-    private void enumerateControllers() throws IllegalStateException {
-        class GetControllers extends I2CSensor {
-            private static final int TYPE_MOTOR = 1;
-            private static final int TYPE_SERVO = 2;
-            
-            private int[] controllerType = new int[MAX_CHAINED_CONTROLLERS];
-
-            GetControllers(I2CPort sensorPort) throws IllegalStateException {
-                super(sensorPort, 0x02, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
-                String sID, sType;
-                
-                for (int i = 0; i < MAX_CHAINED_CONTROLLERS; i++) controllerType[i]=-1;
-                
-                // spin through and ID sensor types
-                for (int i = 0; i < MAX_CHAINED_CONTROLLERS; i++) {
-                    this.address = (i + 1) * 2;
-                    sID = getProductID(); // TODO use full names for these once the I2C stuff gets fixed
-                    if (sID.length() == 0) sID = "n/a";
-//                    for (int j=0;j<sID.length();j++) {
-//                        System.out.print(Integer.valueOf(sID.charAt(j))+":");
-//                    }
-//                    Button.waitForAnyPress();
-
-                    sType = getSensorType();
-                    if (sType.length() == 0) sType = "-";
-                    //System.out.println(address + " " + sID + "," + sType); // TODO remove after testing
-
-                    if (sID.equalsIgnoreCase("HiTechnc")) { 
-                        if (sType.equalsIgnoreCase("MotorCon")) {
-                            controllerType[i] = TYPE_MOTOR;
-                            motorControllerCount++;
-                        }
-                        if (sType.equalsIgnoreCase("ServoCon")) {
-                            controllerType[i] = TYPE_SERVO;
-                            servoControllerCount++;
-                        } 
-                    }
-                }
-                
-                // no controllers? Throw exception
-                if (motorControllerCount == 0 && servoControllerCount == 0) {
-                    throw new IllegalStateException("No controllers found");
-                }
-            }
-
-            MotorController[] getMotorControllers() {
-                MotorController[] theMotors = new MotorController[motorControllerCount];
-                int index = 0;
-                for (int i = 0; i < MAX_CHAINED_CONTROLLERS; i++) {
-                    this.address = (i + 1) * 2;
-                    if (controllerType[i] == TYPE_MOTOR) {
-                        theMotors[index++] = new MotorController(sensorPortNXT, this.address);
-                    }
-                }
-                return theMotors;
-            }
-            
-            ServoController[] getServoControllers() {
-                ServoController[] theServos = new ServoController[servoControllerCount];
-                int index = 0;
-                for (int i = 0; i < MAX_CHAINED_CONTROLLERS; i++) {
-                    this.address = (i + 1) * 2;
-                    if (controllerType[i] == TYPE_SERVO) {
-                        theServos[index++] = new ServoController(sensorPortNXT, this.address);
-                    }
-                }
-                return theServos;
-            }
-            
-        }
-        GetControllers controllerFinder = new GetControllers(sensorPortNXT);
-        // get array of discovered motor controllers
-        if (motorControllerCount==0) {
-            motorControllerCount=-1; // will cause IllegalStateException on getMotorController()
-        } else {
-            motorControllers = controllerFinder.getMotorControllers();
-        }
-        // get array of discovered servo controllers
-        if (servoControllerCount==0) {
-            servoControllerCount=-1; // will cause IllegalStateException on getServoController()
-        } else {
-            servoControllers = controllerFinder.getServoControllers();
-        }
-        controllerFinder=null;
-    }
-
-    /**Get the next available Motor controller.
-     * Successive controllers in a daisy-chain go "outwards" from controller closest to the NXT as #1 to #4 for each controller
-     * in the chain. Once a controller has been retrieved using this method, it cannot be retrieved again.
-     * <p>
-     * A combination of Servo and Motor controllers can be daisy-chained.
-     * @return The next available <code>MotorController</code>.
-     * @throws IllegalStateException If no more motor controllers can be returned. If there are no motor controllers
-     * in the daisy-chain, this exception is also thrown.
-     * @see #getServoController
-     */
-    public MotorController getMotorController() throws IllegalStateException {
-        if (motorControllerIndex>motorControllerCount) throw new IllegalStateException("No available motor controllers");
-        return motorControllers[motorControllerIndex++];
+        i2cport = port;
     }
     
-     /**Get the next available Servo controller.
-      * Successive controllers in a daisy-chain go "outwards" from controller closest to the NXT as #1 to #4 for each controller
-      * in the chain. Once a controller has been retrieved using this method, it cannot be retrieved again.
-      * <p>
-      * A combination of Servo and Motor controllers can be daisy-chained.
+    //TODO replace this workaround with some function from internal utility class
+    static class DummySensor extends I2CSensor {
+        public DummySensor(I2CPort port, int address) {
+            super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
+        }
+
+        @Override
+        public String getProductID() {
+            // TODO Auto-generated method stub
+            return super.getProductID();
+        }
+        
+        @Override
+        public String getSensorType() {
+            // TODO Auto-generated method stub
+            return super.getSensorType();
+        }
+    }
+
+    /**
+     * Automatically detect and add all Tetrix devices attached to this daisy chain.
+     * Calling this method will remove any previously added motor or servo controllers.
+     * 
+     * @return the number of devices discovered
+     */
+    public int autoDetect() {
+        
+        this.motorControllerCount = 0;
+        this.servoControllerCount = 0;
+        
+        // spin through and ID sensor types
+        for (int i = 0; i < MAX_CHAINED_CONTROLLERS; i++) {
+            int address = I2CADDRESS_DEVICE0 << i;
+            DummySensor s = new DummySensor(this.i2cport, address);
+            String sID = s.getProductID(); // TODO use full names for these once the I2C stuff gets fixed
+            String sType = s.getSensorType();
+
+            if (sID.equalsIgnoreCase("HiTechnc")) { 
+                if (sType.equalsIgnoreCase("MotorCon")) {
+                    this.motorControllers[this.motorControllerCount++] = new MotorController(this.i2cport, address);
+                } else if (sType.equalsIgnoreCase("ServoCon")) {
+                    this.servoControllers[this.servoControllerCount++] = new ServoController(this.i2cport, address);
+                } else {
+                    throw new RuntimeException("unknown controller typer "+sType);
+                }
+            } else {
+                throw new RuntimeException("unknown product ID "+sID);
+            }
+        }
+        
+        for (int i=motorControllerCount; i < MAX_CHAINED_CONTROLLERS; i++)
+            this.motorControllers[i] = null;
+        
+        for (int i=servoControllerCount; i < MAX_CHAINED_CONTROLLERS; i++)
+            this.servoControllers[i] = null;
+        
+        return motorControllerCount + servoControllerCount;
+    }
+    
+    /**
+     * Manually adds a Tetrix motor controller to this daisy chain.
+     * The returned motor controller can be used directly. The same motor
+     * controller instance can also be obtained using {@link #getMotorControllers()},
+     * after all controllers have been added to the daisy chain.
+     * 
+     * @return the motor controller
+     */
+    public MotorController addMotorController()
+    {
+        int i = this.motorControllerCount + this.servoControllerCount;
+        if (i >= MAX_CHAINED_CONTROLLERS)
+            throw new IllegalStateException("no more controllers allowed");
+        
+        MotorController r = new MotorController(this.i2cport, I2CADDRESS_DEVICE0 << i);
+        this.motorControllers[this.motorControllerCount++] = r;
+        return r;
+    }
+    
+    /**
+     * Manually add a Tetrix servo controller to this daisy chain.
+     * The returned servo controller can be used directly. The same servo
+     * controller instance can also be obtained using {@link #getServoControllers()},
+     * after all controllers have been added to the daisy chain.
+     * 
+     * @return
+     */
+    public ServoController addServoController()
+    {
+        int i = this.motorControllerCount + this.servoControllerCount;
+        if (i >= MAX_CHAINED_CONTROLLERS)
+            throw new IllegalStateException("no more controllers allowed");
+        
+        ServoController r = new ServoController(this.i2cport, I2CADDRESS_DEVICE0 << i);
+        this.servoControllers[this.servoControllerCount++] = r;
+        return r;
+    }
+    
+    /**
+     * Get all available Motor controllers.
+     * The array contains the motor controllers in the order they occur in the daisy chain.
+     * The method returns a newly created copy of an array. Hence the returned array may be modified. 
+     * 
+     * @return An array of all <code>MotorController</code> in the daisy chain.
+     * @see #getServoController
+     */
+    public MotorController[] getMotorControllers() throws IllegalStateException {
+        MotorController[] r = new MotorController[this.motorControllerCount];
+        System.arraycopy(this.motorControllers, 0, r, 0, this.motorControllerCount);
+        return r;
+    }
+    
+     /**
+      * Get the all available Servo controllers.
+      * The array contains the servo controllers in the order they occur in the daisy chain.
+      * The method returns a newly created copy of an array. Hence the returned array may be modified. 
+      * 
       * @return The next available servo controller.
       * @throws IllegalStateException If no more servo controllers can be returned. If there are no servo controllers
       * in the daisy-chain, this exception is also thrown.
       * @see #getMotorController
       */
-    public ServoController getServoController() throws IllegalStateException { 
-        // TODO use as yet to be defined servo interface
-        if (servoControllerIndex>servoControllerCount) throw new IllegalStateException("No available servo controllers");
-        return servoControllers[servoControllerIndex++];
+    public ServoController[] getServoControllers() throws IllegalStateException { 
+        ServoController[] r = new ServoController[this.motorControllerCount];
+        System.arraycopy(this.motorControllers, 0, r, 0, this.motorControllerCount);
+        return r;
     }
 
 
