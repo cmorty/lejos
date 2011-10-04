@@ -81,7 +81,7 @@ public class ControllerProvider {
      * 
      * @return the motor controller
      */
-    public MotorController nextMotorController()
+    public MotorController newMotorController()
     {
         if (this.currentPosition >= MAX_CHAINED_CONTROLLERS)
             throw new IllegalStateException("no more controllers allowed");
@@ -100,7 +100,7 @@ public class ControllerProvider {
      * 
      * @return
      */
-    public ServoController nextServoController()
+    public ServoController newServoController()
     {
         if (this.currentPosition >= MAX_CHAINED_CONTROLLERS)
             throw new IllegalStateException("no more controllers allowed");
