@@ -64,15 +64,15 @@ public class ControllerProvider {
         }
 
         @Override
-        public String getProductID() {
+        public String getVendorID() {
             // TODO Auto-generated method stub
-            return super.getProductID();
+            return super.getVendorID();
         }
         
         @Override
-        public String getSensorType() {
+        public String getProductID() {
             // TODO Auto-generated method stub
-            return super.getSensorType();
+            return super.getProductID();
         }
     }
 
@@ -91,8 +91,8 @@ public class ControllerProvider {
         for (int i = 0; i < MAX_CHAINED_CONTROLLERS; i++) {
             int address = I2CADDRESS_DEVICE0 << i;
             DummySensor s = new DummySensor(this.i2cport, address);
-            String sID = s.getProductID(); // TODO use full names for these once the I2C stuff gets fixed
-            String sType = s.getSensorType();
+            String sID = s.getVendorID(); // TODO use full names for these once the I2C stuff gets fixed
+            String sType = s.getProductID();
 
             if (sID.equalsIgnoreCase("HiTechnc")) { 
                 if (sType.equalsIgnoreCase("MotorCon")) {

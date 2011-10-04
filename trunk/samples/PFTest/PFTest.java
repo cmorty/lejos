@@ -15,8 +15,8 @@ import lejos.nxt.addon.*;
 	public static void main(String[] args) {
 		IRLink link = new IRLink(SensorPort.S1);
 		LCD.drawString(link.getVersion(), 0, 0);
-		LCD.drawString(link.getProductID(), 0, 1);
-		LCD.drawString(link.getSensorType(), 0, 2);
+		LCD.drawString(link.getVendorID(), 0, 1);
+		LCD.drawString(link.getProductID(), 0, 2);
 		
 		// Move Motor A forwards and B backwards on channel 4
 		while(!Button.ESCAPE.isDown()) {

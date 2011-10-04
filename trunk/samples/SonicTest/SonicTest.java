@@ -16,8 +16,8 @@ public class SonicTest {
 		LCD.setAutoRefresh(false);
 		LCD.clear();
 		LCD.drawString(sonic.getVersion(), 0, 0);
-		LCD.drawString(sonic.getProductID(), 0, 1);
-		LCD.drawString(sonic.getSensorType(), 0, 2);
+		LCD.drawString(sonic.getVendorID(), 0, 1);
+		LCD.drawString(sonic.getProductID(), 0, 2);
 		
 		while(!Button.ESCAPE.isDown()) {
 			LCD.asyncRefreshWait();

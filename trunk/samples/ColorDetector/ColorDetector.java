@@ -19,8 +19,8 @@ public class ColorDetector {
 		
 		while(!Button.ESCAPE.isDown()) {
 			LCD.clear();
-			LCD.drawString(cmps.getProductID(), 0, 0);
-			LCD.drawString(cmps.getSensorType(), 0, 1);
+			LCD.drawString(cmps.getVendorID(), 0, 0);
+			LCD.drawString(cmps.getProductID(), 0, 1);
 			LCD.drawString(cmps.getVersion(), 9, 1);
 			LCD.drawString(color, 0, 3);
 			LCD.drawInt((int)cmps.getColorID(),7,3);

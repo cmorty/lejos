@@ -21,8 +21,8 @@ public class NXTCamTest {
 	
 		while(!Button.ESCAPE.isDown()) {
 			LCD.clear();
-			LCD.drawString(camera.getProductID(), 0, 0);
-			LCD.drawString(camera.getSensorType(), 0, 1);
+			LCD.drawString(camera.getVendorID(), 0, 0);
+			LCD.drawString(camera.getProductID(), 0, 1);
 			LCD.drawString(camera.getVersion(), 9, 1);
 			LCD.drawString(objects, 0, 2);
 			LCD.drawInt(numObjects = camera.getNumberOfObjects(),1,9,2);

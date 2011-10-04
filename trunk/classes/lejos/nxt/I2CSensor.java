@@ -12,17 +12,20 @@ import java.lang.IllegalArgumentException;
  */
 public class I2CSensor implements SensorConstants {
 	/**
-	 * Returns the version number of the sensor. e.g. "V1.0" Reply length = 8.
+	 * Register number of sensor version string, as defined by standard Lego I2C register layout.
+	 * @see #getVersion() 
 	 */
 	protected static final byte REG_VERSION = 0x00;
 	/**
-	 * Returns the product ID of the sensor.  e.g. "LEGO" Reply length = 8.
+     * Register number of sensor vendor ID, as defined by standard Lego I2C register layout.
+     * @see #getVendorID() 
 	 */
-	protected static final byte REG_PRODUCT_ID = 0x08;
+	protected static final byte REG_VENDOR_ID = 0x08;
 	/**
-	 * Returns the sensor type. e.g. "Sonar" Reply length = 8.
+     * Register number of sensor product ID, as defined by standard Lego I2C register layout.
+     * @see #getProductID() 
 	 */
-	protected static final byte REG_SENSOR_TYPE = 0x10;
+	protected static final byte REG_PRODUCT_ID = 0x10;
 	
 	protected static final int DEFAULT_I2C_ADDRESS = 0x02;
 	
@@ -124,6 +127,7 @@ public class I2CSensor implements SensorConstants {
 	 * Read the sensor version number.
 	 * This method reads up to 8 bytes
 	 * and returns the characters before the zero termination byte.
+     * Examples: "V1.0", ...
 	 * 
 	 * @return version number
 	 */
@@ -135,22 +139,24 @@ public class I2CSensor implements SensorConstants {
 	 * Read the sensor product identifier.
 	 * This method reads up to 8 bytes
 	 * and returns the characters before the zero termination byte.
+	 * Examples: "LEGO", "HiTechnc", ...
 	 * 
-	 * @return product identifier
+	 * @return vendor identifier
 	 */
-	public String getProductID() {
-		return fetchString(REG_PRODUCT_ID, 8);
+	public String getVendorID() {
+		return fetchString(REG_VENDOR_ID, 8);
 	}
 	
 	/**
 	 * Read the sensor type.
 	 * This method reads up to 8 bytes
 	 * and returns the characters before the zero termination byte.
+     * Examples: "Sonar", ...
 	 * 
-	 * @return sensor type
+	 * @return product identifier
 	 */
-	public String getSensorType() {
-		return fetchString(REG_SENSOR_TYPE, 8);
+	public String getProductID() {
+		return fetchString(REG_PRODUCT_ID, 8);
 	}
 
     /**

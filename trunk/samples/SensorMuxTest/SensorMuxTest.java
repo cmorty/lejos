@@ -15,9 +15,9 @@ public class SensorMuxTest {
 		
 		LCD.drawString("HT SMUX Test" , 0, 0);
 		
-		LCD.drawString("" + sm1.getProductID(), 0,2);
+		LCD.drawString("" + sm1.getVendorID(), 0,2);
 		LCD.drawString("" + sm1.getVersion(), 0,3);
-		LCD.drawString("" + sm1.getSensorType(), 0,4);
+		LCD.drawString("" + sm1.getProductID(), 0,4);
 		LCD.drawString("Bat: " + sm1.isBatteryLow(), 0, 5);
 		LCD.refresh();
 
