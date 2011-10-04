@@ -42,12 +42,12 @@ public class ControllerProvider {
     
     private static final int MAX_CHAINED_CONTROLLERS=4;
     
+    private static final String TETRIX_VENDOR_ID = "HiTechnc";
+    private static final String TETRIX_MOTORCON_PRODUCT_ID = "MotorCon";
+    private static final String TETRIX_SERVOCON_PRODUCT_ID = "ServoCon";
+    
     private final I2CPort i2cport;
-    // those arrays are Object[] in order to not pull in all classes
-    private Object[] motorControllers = new Object[MAX_CHAINED_CONTROLLERS];
-    private Object[] servoControllers = new Object[MAX_CHAINED_CONTROLLERS];
-    private int motorControllerCount = 0;
-    private int servoControllerCount = 0;
+    private int currentPosition;
 
     /** 
      * Instantiate a <code>ControllerProvider</code> using the specified NXT sensor port.
@@ -57,63 +57,20 @@ public class ControllerProvider {
         i2cport = port;
     }
     
-    //TODO replace this workaround with some function from internal utility class
-    static class DummySensor extends I2CSensor {
-        public DummySensor(I2CPort port, int address) {
-            super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
+    private void verifyType(I2CSensor s, String product) {
+        
+        String sID = s.getVendorID(); // TODO use full names for these once the I2C stuff gets fixed
+        String sType = s.getProductID();
+        
+        if (sID.equals("") || sType.equals("")) {
+        	throw new RuntimeException("controller does not respond, i2c error");
         }
-
-        @Override
-        public String getVendorID() {
-            // TODO Auto-generated method stub
-            return super.getVendorID();
+        if (!sID.equalsIgnoreCase(TETRIX_VENDOR_ID)) { 
+            throw new RuntimeException("wrong vendor ID "+sID);
         }
-        
-        @Override
-        public String getProductID() {
-            // TODO Auto-generated method stub
-            return super.getProductID();
+        if (!sType.equalsIgnoreCase(product)) {
+            throw new RuntimeException("wrong product ID "+sType);
         }
-    }
-
-    /**
-     * Automatically detect and add all Tetrix devices attached to this daisy chain.
-     * Calling this method will remove any previously added motor or servo controllers.
-     * 
-     * @return the number of devices discovered
-     */
-    public int autoDetect() {
-        
-        this.motorControllerCount = 0;
-        this.servoControllerCount = 0;
-        
-        // spin through and ID sensor types
-        for (int i = 0; i < MAX_CHAINED_CONTROLLERS; i++) {
-            int address = I2CADDRESS_DEVICE0 << i;
-            DummySensor s = new DummySensor(this.i2cport, address);
-            String sID = s.getVendorID(); // TODO use full names for these once the I2C stuff gets fixed
-            String sType = s.getProductID();
-
-            if (sID.equalsIgnoreCase("HiTechnc")) { 
-                if (sType.equalsIgnoreCase("MotorCon")) {
-                    this.motorControllers[this.motorControllerCount++] = new MotorController(this.i2cport, address);
-                } else if (sType.equalsIgnoreCase("ServoCon")) {
-                    this.servoControllers[this.servoControllerCount++] = new ServoController(this.i2cport, address);
-                } else {
-                    throw new RuntimeException("unknown controller typer "+sType);
-                }
-            } else {
-                throw new RuntimeException("unknown product ID "+sID);
-            }
-        }
-        
-        for (int i=motorControllerCount; i < MAX_CHAINED_CONTROLLERS; i++)
-            this.motorControllers[i] = null;
-        
-        for (int i=servoControllerCount; i < MAX_CHAINED_CONTROLLERS; i++)
-            this.servoControllers[i] = null;
-        
-        return motorControllerCount + servoControllerCount;
     }
     
     /**
@@ -124,14 +81,14 @@ public class ControllerProvider {
      * 
      * @return the motor controller
      */
-    public MotorController addMotorController()
+    public MotorController nextMotorController()
     {
-        int i = this.motorControllerCount + this.servoControllerCount;
-        if (i >= MAX_CHAINED_CONTROLLERS)
+        if (this.currentPosition >= MAX_CHAINED_CONTROLLERS)
             throw new IllegalStateException("no more controllers allowed");
         
-        MotorController r = new MotorController(this.i2cport, I2CADDRESS_DEVICE0 << i);
-        this.motorControllers[this.motorControllerCount++] = r;
+        MotorController r = new MotorController(this.i2cport, I2CADDRESS_DEVICE0 << this.currentPosition);
+        this.verifyType(r, TETRIX_MOTORCON_PRODUCT_ID);
+        currentPosition++;
         return r;
     }
     
@@ -143,46 +100,14 @@ public class ControllerProvider {
      * 
      * @return
      */
-    public ServoController addServoController()
+    public ServoController nextServoController()
     {
-        int i = this.motorControllerCount + this.servoControllerCount;
-        if (i >= MAX_CHAINED_CONTROLLERS)
+        if (this.currentPosition >= MAX_CHAINED_CONTROLLERS)
             throw new IllegalStateException("no more controllers allowed");
         
-        ServoController r = new ServoController(this.i2cport, I2CADDRESS_DEVICE0 << i);
-        this.servoControllers[this.servoControllerCount++] = r;
+        ServoController r = new ServoController(this.i2cport, I2CADDRESS_DEVICE0 << this.currentPosition);
+        this.verifyType(r, TETRIX_SERVOCON_PRODUCT_ID);
+        currentPosition++;
         return r;
     }
-    
-    /**
-     * Get all available Motor controllers.
-     * The array contains the motor controllers in the order they occur in the daisy chain.
-     * The method returns a newly created copy of an array. Hence the returned array may be modified. 
-     * 
-     * @return An array of all <code>MotorController</code> in the daisy chain.
-     * @see #getServoController
-     */
-    public MotorController[] getMotorControllers() throws IllegalStateException {
-        MotorController[] r = new MotorController[this.motorControllerCount];
-        System.arraycopy(this.motorControllers, 0, r, 0, this.motorControllerCount);
-        return r;
-    }
-    
-     /**
-      * Get the all available Servo controllers.
-      * The array contains the servo controllers in the order they occur in the daisy chain.
-      * The method returns a newly created copy of an array. Hence the returned array may be modified. 
-      * 
-      * @return The next available servo controller.
-      * @throws IllegalStateException If no more servo controllers can be returned. If there are no servo controllers
-      * in the daisy-chain, this exception is also thrown.
-      * @see #getMotorController
-      */
-    public ServoController[] getServoControllers() throws IllegalStateException { 
-        ServoController[] r = new ServoController[this.motorControllerCount];
-        System.arraycopy(this.motorControllers, 0, r, 0, this.motorControllerCount);
-        return r;
-    }
-
-
 }
