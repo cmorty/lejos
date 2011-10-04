@@ -52,7 +52,7 @@ public class I2CDevices {
                 for(address=2; address < 256; address += 2)
                 {
                     sensors[i].setAddress(address);
-                    sensorType = sensors[i].getSensorType();
+                    sensorType = sensors[i].getProductID();
                     if (!sensorType.isEmpty()) break;
                 }
                 if (address < 256)

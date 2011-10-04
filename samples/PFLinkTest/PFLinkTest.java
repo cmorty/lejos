@@ -18,8 +18,8 @@ public class PFLinkTest {
         PFLink link = new PFLink(SensorPort.S1); 
 
         LCD.drawString(link.getVersion(), 0, 0); 
-        LCD.drawString(link.getProductID(), 0, 1); 
-        LCD.drawString(link.getSensorType(), 0, 2); 
+        LCD.drawString(link.getVendorID(), 0, 1); 
+        LCD.drawString(link.getProductID(), 0, 2); 
         
         link.initialize(PFLink.NR_RANGE_LONG); 
 

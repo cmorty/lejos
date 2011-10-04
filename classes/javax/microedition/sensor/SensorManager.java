@@ -205,7 +205,7 @@ public class SensorManager {
 			
 			// Try a few times as Ultrasonic sensor is unreliable
 			for(int j=0;j<10;j++) {
-				type = i2cSensor.getSensorType();
+				type = i2cSensor.getProductID();
 				if (type.length() > 0) break;
 			}
 			if (type.length()== 0) continue;
@@ -216,7 +216,7 @@ public class SensorManager {
 			if (info != null) {
 				info.setPortNumber(i);
 				info.setType(type);
-				info.setVendor(i2cSensor.getProductID());
+				info.setVendor(i2cSensor.getVendorID());
 				info.setVersion(i2cSensor.getVersion());
 					
 				current.add(info);

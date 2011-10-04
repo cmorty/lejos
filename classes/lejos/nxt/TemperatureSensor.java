@@ -90,7 +90,7 @@ public class TemperatureSensor extends I2CSensor
 	 * Sensor does not support Lego standard I2C layout.
 	 */
 	@Override
-	public String getProductID() {
+	public String getVendorID() {
 		throw new UnsupportedOperationException();
 	}
 	
@@ -98,7 +98,7 @@ public class TemperatureSensor extends I2CSensor
 	 * Sensor does not support Lego standard I2C layout.
 	 */
 	@Override
-	public String getSensorType() {
+	public String getProductID() {
 		throw new UnsupportedOperationException();
 	}
 	

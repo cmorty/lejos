@@ -14,8 +14,8 @@ import lejos.nxt.addon.*;
 	public static void main(String[] args) throws Exception {
 		RFIDSensor rfid = new RFIDSensor(SensorPort.S1);
 
-        LCD.drawString("Type " + rfid.getSensorType(), 0, 0);
-        LCD.drawString("PID " + rfid.getProductID(), 0, 1);
+        LCD.drawString("Type " + rfid.getProductID(), 0, 0);
+        LCD.drawString("PID " + rfid.getVendorID(), 0, 1);
         LCD.drawString("Version " + rfid.getVersion(), 0, 2);
         Thread.sleep(5000);
 		while(!Button.ESCAPE.isDown()) {
