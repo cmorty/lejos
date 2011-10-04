@@ -3,9 +3,24 @@ package lejos.nxt.addon.tetrix;
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 
-/** HiTechnic Servo Controller abstraction. Provides <code>TetrixMotor</code> instances which are used to control
+/** HiTechnic Servo Controller abstraction. Provides <code>ServoMotor</code> instances which are used to control
  * the Tetrix servos.
- *
+ *<p>
+ *Servos are driven by a PWM signal with varying pulse widths
+  * contolling the rotational position of the servo actuator.
+  * <p>
+  *The pulse nominally ranges from 1.0 ms to 2.0 ms with 1.5 ms always being center of range. 
+  * Pulse widths outside this range can be used for "overtravel" -moving the servo beyond its normal range.
+  * <p>
+  * A servo pulse of 1.5 ms width will typically set the servo to its "neutral" position or 45 deg., 
+  * a pulse of 1.25 ms could set it to 0 deg. and a pulse of 1.75 ms to 90 deg. 
+  * The physical limits and timings of the servo hardware varies between brands and models, but a 
+  * general servo's angular motion will travel somewhere in the range of 90 deg. - 120 deg. and the 
+  * neutral position is almost always at 1.5 ms. This is the "standard pulse servo mode" used by all hobby analog servos.
+  * <p>
+  * The HiTechic Servo Controller allows setting of the PWM output from 0.75 – 2.25mS. Note that some servos may hit their 
+  * internal mechanical limits at each end of this range causing them to consume excessive current and <b>potentially be damaged</b>.
+  * 
  * @see ControllerProvider
  * @author Kirk P. Thompson
  */
@@ -30,7 +45,7 @@ public class ServoController extends I2CSensor {
      * HiTechnic Servo Controller.
      * @return The <code>ServoMotor</code> instance associated with the labeled channel
      */
-    public ServoMotor getServo(int servoID) {
+    public ServoMotor getServoMotor(int servoID) {
         if (servoID<SERVO_1 || servoID>SERVO_6) {
             throw new IllegalArgumentException("Invalid servo ID");
         }
