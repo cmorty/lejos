@@ -32,7 +32,7 @@ import lejos.nxt.SensorPort;
  * 
  * @author Kirk P. Thompson
  */
-public class TetrixControllerFactory extends I2CSensor {
+public class TetrixControllerFactory  {
     private static final int MAX_CHAINED_CONTROLLERS=4;
     private static final String TETRIX_VENDOR_ID = "HiTechnc";
     private static final String TETRIX_MOTORCON_PRODUCT_ID = "MotorCon";
@@ -40,27 +40,36 @@ public class TetrixControllerFactory extends I2CSensor {
     
     private int currentMotorIndex=0;
     private int currentServoIndex=0;
+    private I2CPort port;
+    private Finder finder;
     
     /**
      * Instantiate a <code>TetrixControllerFactory</code> using the specified NXT sensor port.
      * @param port The NXT sensor port the Tetrix controller is connected to
      */
     public TetrixControllerFactory(I2CPort port){
-        super(port, I2CPort.LEGO_MODE);
+        this.port=port;
+        finder = new Finder(port);
     }
     
-    /**
-     * @param i where to start searching index-wise
-     * @param product the product ID string
-     * @return the index the product ID was found. -1 if not found or outside MAX_CHAINED_CONTROLLERS bounds
-     */
-    private int findProduct(int i, String product){
-        if (i<0 || i>=MAX_CHAINED_CONTROLLERS) return -1;
-        for (;i<MAX_CHAINED_CONTROLLERS;i++) {
-            address=(i + 1) * 2;
-            if (getVendorID().equalsIgnoreCase(TETRIX_VENDOR_ID) && getProductID().equalsIgnoreCase(product)) return i;
+    private class Finder extends I2CSensor {
+        Finder(I2CPort port) {
+            super(port, I2CPort.LEGO_MODE);
         }
-        return -1;
+        
+        /**
+         * @param i where to start searching index-wise
+         * @param product the product ID string
+         * @return the index the product ID was found. -1 if not found or outside MAX_CHAINED_CONTROLLERS bounds
+         */
+        private int findProduct(int i, String product){
+            if (i<0 || i>=MAX_CHAINED_CONTROLLERS) return -1;
+            for (;i<MAX_CHAINED_CONTROLLERS;i++) {
+                address=(i + 1) * 2;
+                if (getVendorID().equalsIgnoreCase(TETRIX_VENDOR_ID) && getProductID().equalsIgnoreCase(product)) return i;
+            }
+            return -1;
+        }
     }
     
     /**
@@ -77,7 +86,7 @@ public class TetrixControllerFactory extends I2CSensor {
      */
     public TetrixMotorController newMotorController()
     {
-        this.currentMotorIndex = findProduct(this.currentMotorIndex, TETRIX_MOTORCON_PRODUCT_ID);
+        this.currentMotorIndex = finder.findProduct(this.currentMotorIndex, TETRIX_MOTORCON_PRODUCT_ID);
         if (this.currentMotorIndex<0) throw new IllegalStateException("no motor controllers available");
         TetrixMotorController mc = new TetrixMotorController(this.port, (this.currentMotorIndex + 1) * 2);
         this.currentMotorIndex++;
@@ -98,7 +107,7 @@ public class TetrixControllerFactory extends I2CSensor {
      */
     public TetrixServoController newServoController()
     {
-        this.currentServoIndex = findProduct(this.currentServoIndex, TETRIX_SERVOCON_PRODUCT_ID);
+        this.currentServoIndex = finder.findProduct(this.currentServoIndex, TETRIX_SERVOCON_PRODUCT_ID);
         if (this.currentServoIndex<0) throw new IllegalStateException("no servo controllers available");
         TetrixServoController sc = new TetrixServoController(this.port, (this.currentServoIndex + 1) * 2);
         this.currentServoIndex++;
