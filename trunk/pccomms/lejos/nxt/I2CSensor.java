@@ -17,21 +17,24 @@ public class I2CSensor implements SensorConstants {
 	private static byte STOP = 0x00; // Commands don't seem to use this?
 	private static String BLANK = "       ";
 	
-	/**
-	 * Returns the version number of the sensor. e.g. "V1.0" Reply length = 8.
-	 */
-	protected static byte REG_VERSION = 0x00;
-	/**
-	 * Returns the product ID of the sensor.  e.g. "LEGO" Reply length = 8.
-	 */
-	protected static byte REG_PRODUCT_ID = 0x08;
-	/**
-	 * Returns the sensor type. e.g. "Sonar" Reply length = 8.
-	 */
-	protected static byte REG_SENSOR_TYPE = 0x10;
-	
-	protected static int DEFAULT_I2C_ADDRESS = 0x02;
-	
+    /**
+     * Register number of sensor version string, as defined by standard Lego I2C register layout.
+     * @see #getVersion() 
+     */
+    protected static final byte REG_VERSION = 0x00;
+    /**
+     * Register number of sensor vendor ID, as defined by standard Lego I2C register layout.
+     * @see #getVendorID() 
+     */
+    protected static final byte REG_VENDOR_ID = 0x08;
+    /**
+     * Register number of sensor product ID, as defined by standard Lego I2C register layout.
+     * @see #getProductID() 
+     */
+    protected static final byte REG_PRODUCT_ID = 0x10;
+    
+    protected static final int DEFAULT_I2C_ADDRESS = 0x02;
+    
 	protected byte port;
 	protected int address;
 	
@@ -167,35 +170,42 @@ public class I2CSensor implements SensorConstants {
 			return -1;
 		}
 	}
-	/**
-	 * Returns the version number of the sensor hardware.
-	 * NOTE: A little unreliable at the moment due to a bug in firmware. Keep
-	 * trying if it doesn't get it the first time.
-	 * @return The version number. e.g. "V1.0"
-	 */
+
+    /**
+     * Read the sensor's version string.
+     * This method reads up to 8 bytes
+     * and returns the characters before the zero termination byte.
+     * Examples: "V1.0", ...
+     * 
+     * @return version number
+     */
 	public String getVersion() {
 		return fetchString(REG_VERSION, 8);
 	}
 	
-	/**
-	 * Returns the Product ID as a string.
-	 * NOTE: A little unreliable at the moment due to a bug in firmware. Keep
-	 * trying if it doesn't get it the first time.
-	 * @return The product ID. e.g. "LEGO"
-	 */
-	public String getProductID() {
-		return fetchString(REG_PRODUCT_ID, 8);
+    /**
+     * Read the sensor's vendor identifier.
+     * This method reads up to 8 bytes
+     * and returns the characters before the zero termination byte.
+     * Examples: "LEGO", "HiTechnc", ...
+     * 
+     * @return vendor identifier
+     */
+	public String getVendorID() {
+		return fetchString(REG_VENDOR_ID, 8);
 	}
 	
-	/**
-	 * Returns the type of sensor as a string.
-	 * NOTE: A little unreliable at the moment due to a bug in firmware. Keep
-	 * trying if it doesn't get it the first time.
-	 * @return The sensor type. e.g. "Sonar"
-	 */
-	public String getSensorType() {
-		return fetchString(REG_SENSOR_TYPE, 8);
-	}
+    /**
+     * Read the sensor's product identifier.
+     * This method reads up to 8 bytes
+     * and returns the characters before the zero termination byte.
+     * Examples: "Sonar", ...
+     * 
+     * @return product identifier
+     */
+    public String getProductID() {
+        return fetchString(REG_PRODUCT_ID, 8);
+    }
 	
     /**
      * Read a string from the device.
@@ -220,17 +230,28 @@ public class I2CSensor implements SensorConstants {
 		return new String(charBuff, 0, i);
 	}
 
-	/**
-	 * Set the address of the port 
-	 * Note that addresses are from 0x01 to 0x7F not
-	 * even numbers from 0x02 to 0xFE as given in some I2C device specifications.
-	 * They are 7-bit addresses not 8-bit addresses.
-	 * 
-	 * @param addr 0x02 to 0xfe
-	 * @deprecated If the device has a changeable address, then constructor of the class should have an address parameter. If not, please report a bug.
-	 */
+    /**
+     * Set the address of the port
+     * Addresses use the standard Lego/NXT format and are in the range 0x2-0xfe.
+     * The low bit must always be zero. Some data sheets (and older versions
+     * of leJOS) may use i2c 7 bit format (0x1-0x7f) in which case this address
+     * must be shifted left one place to be used with this function.
+     * 
+     * @param addr 0x02 to 0xfe
+     * @deprecated If the device has a changeable address, then constructor of the class should have an address parameter. If not, please report a bug.
+     */
 	public void setAddress(int addr) {
         if ((address & 1) != 0) throw new IllegalArgumentException("Bad address format");
 		address = addr;
 	}
+
+	/**
+     * Return the the I2C address of the sensor.
+     * The sensor uses the address for writing/reading.
+     * @return the I2C address.
+     */
+    public int getAddress()
+    {
+        return this.address;
+    }
 }
