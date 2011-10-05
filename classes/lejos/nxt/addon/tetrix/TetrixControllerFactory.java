@@ -20,14 +20,14 @@ import lejos.nxt.SensorPort;
  * // Instantiate the factory and get a Motor and servo controller. We assume that there is one of 
  * // each daisy-chained.
  * TetrixControllerFactory cf = new TetrixControllerFactory(SensorPort.S1);
- * MotorController mc = cf.newMotorController();
- * ServoController sc = cf.newServoController();
+ * TetrixMotorController mc = cf.newMotorController();
+ * TetrixServoController sc = cf.newServoController();
  * 
  * // Display the voltage from the motor controller
  * System.out.println("v=" + mc.getVoltage());'
  * 
- * // Get a motor instance. The physical motor is connected to the Motor 2 terminals on the controller
- * TachoMotor mot1 = mc.getTachoMotor(TetrixMotorController.MOTOR_2);
+ * // Get an encoder motor instance. The physical motor (with encoder) is connected to the Motor 2 terminals on the controller
+ * TetrixEncoderMotor mot1 = mc.getEncoderMotor(TetrixMotorController.MOTOR_2);
  * </pre>
  * 
  * @author Kirk P. Thompson

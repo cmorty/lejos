@@ -87,10 +87,10 @@ public class TetrixMotorController extends I2CSensor {
      * represented using <code> {@link #MOTOR_1}</code> or <code> {@link #MOTOR_2}</code>.
      * @return The <code>TetrixMotor</code> instance 
      * @see lejos.nxt.addon.tetrix.TetrixMotor
-     * @see #getTachoMotor
+     * @see #getEncoderMotor
      */
     public TetrixMotor getBasicMotor(int motorID) {
-        return getTachoMotor(motorID);
+        return getEncoderMotor(motorID);
     }
     
     /**Get the <code>TetrixEncoderMotor</code> instance that is associated with the <code>motorID</code>.
@@ -102,7 +102,7 @@ public class TetrixMotorController extends I2CSensor {
      * @see lejos.nxt.addon.tetrix.TetrixEncoderMotor
      * @see #getBasicMotor
      */
-    public TetrixEncoderMotor getTachoMotor(int motorID) {
+    public TetrixEncoderMotor getEncoderMotor(int motorID) {
         if (motorID<MOTOR_1 || motorID>MOTOR_2) {
             throw new IllegalArgumentException("Invalid motor ID");
         }
@@ -141,6 +141,12 @@ public class TetrixMotorController extends I2CSensor {
         System.out.println(msg);
         Button.waitForAnyPress();
     }
+    
+    private int getEncoderValue(int channel) {
+        getData(REGISTER_MAP[REG_IDX_ENCODER_CURRENT][channel], buf, 4);
+        return EndianTools.decodeIntBE(buf, 0);
+    }
+    
     synchronized int doCommand(int command, int operand, int channel) {
         byte workingByte=0;
         int commandRetVal=0;
@@ -150,6 +156,7 @@ public class TetrixMotorController extends I2CSensor {
                 motorState[channel]=STATE_RUNNING_FWD;
             case CMD_BACKWARD:
                 if (motorState[channel]==STATE_RUNNING_BKWD) break;
+                motorParams[MOTPARAM_ROTATE][channel]=0;
                 // set the mode
                 sendData(REGISTER_MAP[REG_IDX_MODE][channel], getMode(channel));
                 // set the power to turn on the motor
@@ -182,6 +189,19 @@ public class TetrixMotorController extends I2CSensor {
                 break;
             case CMD_ROTATE:
                 // TODO implement
+                motorParams[MOTPARAM_ROTATE][channel]=1;
+                int enc = getEncoderValue(channel);
+                dbg("enc=" + enc);
+                EndianTools.encodeIntBE(enc+operand*4, buf, 0);
+                sendData(REGISTER_MAP[REG_IDX_ENCODER_TARGET][channel], buf, 4); 
+                motorState[channel]=STATE_ROTATE_TO;
+                // set the mode
+                sendData(REGISTER_MAP[REG_IDX_MODE][channel], getMode(channel));
+                
+            // set the power to turn on the motor
+            workingByte=(byte)motorParams[MOTPARAM_POWER][channel];
+            sendData(REGISTER_MAP[REG_IDX_POWER][channel], workingByte); 
+            
                 break;
             case CMD_GETPOWER:
                 commandRetVal=motorParams[MOTPARAM_POWER][channel];
@@ -192,8 +212,7 @@ public class TetrixMotorController extends I2CSensor {
                 motorState[channel]=STATE_STOPPED;
                 break;
             case CMD_GETTACHO:
-                getData(REGISTER_MAP[REG_IDX_ENCODER_CURRENT][channel], buf, 4);
-                commandRetVal=(int)(EndianTools.decodeIntBE(buf, 0)*.25);
+                commandRetVal=(int)(getEncoderValue(channel)*.25);
                 break;
             case CMD_SETREVERSE:
                 motorParams[MOTPARAM_REVERSED][channel]=1;

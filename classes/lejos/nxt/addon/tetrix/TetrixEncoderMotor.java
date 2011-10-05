@@ -23,4 +23,8 @@ public class TetrixEncoderMotor extends TetrixMotor implements Encoder{
     public void resetTachoCount() {
         retVal = mc.doCommand(TetrixMotorController.CMD_RESETTACHO, 0, channel);
     }
+    
+    public void rotate(int degrees){
+        retVal = mc.doCommand(TetrixMotorController.CMD_ROTATE, degrees, channel);
+    }
 }
