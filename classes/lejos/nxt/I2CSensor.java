@@ -124,7 +124,7 @@ public class I2CSensor implements SensorConstants {
 	}
 	
 	/**
-	 * Read the sensor version number.
+	 * Read the sensor's version string.
 	 * This method reads up to 8 bytes
 	 * and returns the characters before the zero termination byte.
      * Examples: "V1.0", ...
@@ -136,7 +136,7 @@ public class I2CSensor implements SensorConstants {
 	}
 	
 	/**
-	 * Read the sensor product identifier.
+	 * Read the sensor's vendor identifier.
 	 * This method reads up to 8 bytes
 	 * and returns the characters before the zero termination byte.
 	 * Examples: "LEGO", "HiTechnc", ...
@@ -148,7 +148,7 @@ public class I2CSensor implements SensorConstants {
 	}
 	
 	/**
-	 * Read the sensor type.
+	 * Read the sensor's product identifier.
 	 * This method reads up to 8 bytes
 	 * and returns the characters before the zero termination byte.
      * Examples: "Sonar", ...
