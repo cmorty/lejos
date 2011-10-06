@@ -18,6 +18,7 @@ import lejos.util.EndianTools;
 public class TetrixMotorController extends I2CSensor {
     public static final int MOTOR_1 = 0;
     public static final int MOTOR_2 = 1;
+    private static final int CHANNELS = 2;
     
     static final int CMD_FORWARD = 0;
     static final int CMD_BACKWARD = 1;
@@ -25,11 +26,14 @@ public class TetrixMotorController extends I2CSensor {
     static final int CMD_STOP = 3;
     static final int CMD_SETPOWER = 4;
     static final int CMD_ROTATE = 5;
-    static final int CMD_GETPOWER = 6;
-    static final int CMD_RESETTACHO = 7;
-    static final int CMD_GETTACHO = 8;
-    static final int CMD_SETREVERSE = 9;
-    static final int CMD_ISMOVING = 10;
+    static final int CMD_ROTATE_TO = 6;
+    static final int CMD_GETPOWER = 7;
+    static final int CMD_RESETTACHO = 8;
+    static final int CMD_SETREVERSE = 10;
+    static final int CMD_ISMOVING = 11;
+    static final int CMD_ROTATE_WAIT = 12;
+    static final int CMD_ROTATE_TO_WAIT = 13;
+    static final int CMD_SETREGULATE = 14;
     
     private int[] motorState = {STATE_STOPPED, STATE_STOPPED};
     private static final int STATE_STOPPED = 0;
@@ -64,14 +68,15 @@ public class TetrixMotorController extends I2CSensor {
     private static final int MODEBIT_SEL_RST_ENCODER = 0x03;
     
     // motor
-    private int[][] motorParams = new int[5][2]; 
+    private int[][] motorParams = new int[4][CHANNELS]; 
     private static final int MOTPARAM_POWER = 0; // current power value
-    private static final int MOTPARAM_ROTATE_ENCODER = 1; // target encoder value
-    private static final int MOTPARAM_REGULATED = 2; // 0=false=power control, 1=speed control
-    private static final int MOTPARAM_REVERSED = 3; // 1=reversed, 0= normal
-    private static final int MOTPARAM_ROTATE = 4; // 1=rotate to target mode
+    private static final int MOTPARAM_REGULATED = 1; // 0=false=power control, 1=speed control
+    private static final int MOTPARAM_REVERSED = 2; // 1=reversed, 0= normal
+    private static final int MOTPARAM_ROTATE = 3; // 1=rotate to target mode
     
-    private TetrixEncoderMotor[] motors= new TetrixEncoderMotor[2];
+    private TetrixEncoderMotor[] motors= new TetrixEncoderMotor[CHANNELS];
+    private BUSYMonitor[] bUSYMonitors = new BUSYMonitor[CHANNELS];
+    
     private byte[] buf = new byte[12];
     private int retVal;
     
@@ -81,6 +86,24 @@ public class TetrixMotorController extends I2CSensor {
         initController();
     }
 
+    private class BUSYMonitor extends Thread {
+        int channel;
+        BUSYMonitor(int channel){
+            this.channel = channel;
+        }
+        public void run(){
+            waitUntilBUSYClear();
+            motorState[channel]=STATE_ROTATE_DONE;
+        }
+        void waitUntilBUSYClear(){
+            byte buf[] = {(byte)MODEBIT_BUSY};
+            while ((buf[0] & MODEBIT_BUSY) == MODEBIT_BUSY) {
+                Delay.msDelay(50);
+                if (getData(REGISTER_MAP[REG_IDX_MODE][channel], buf, 1)!=0) break;
+            }
+        }
+    }
+    
     /**Get the <code>TetrixMotor</code> instance that is associated with the <code>motorID</code>.
      * 
      * @param motorID The motor ID number. This is indicated on the HiTechnic Motor Controller and is
@@ -118,14 +141,17 @@ public class TetrixMotorController extends I2CSensor {
         Button.waitForAnyPress();
     }
     
-//    private byte byteVal(int value) {
-//        return 0;
-//    }
+    public void dbg(String msg){
+        System.out.println(msg);
+        Button.waitForAnyPress();
+    }
     
-    private byte getMode(int channel) {
+    private int setMode(int channel, boolean resetEncoder) {
         int mode=MODEBIT_SEL_POWER | MODEBIT_NTO;
-        // constant speed SEL bit
-        if (motorParams[MOTPARAM_REGULATED][channel]!=0) {
+        // constant speed SEL bit and not in ROTATE (POS) state, set the bit. This is done because
+        // if we set both the MODEBIT_SEL_SPEED and MODEBIT_SEL_POSITION, it equals MODEBIT_SEL_RST_ENCODER and
+        // cancels out the ROTATE command
+        if (motorParams[MOTPARAM_REGULATED][channel]!=0 &&  motorState[channel]!=STATE_ROTATE_TO) {
             mode = mode | MODEBIT_SEL_SPEED;
         } 
         // run to position SEL bit
@@ -133,18 +159,67 @@ public class TetrixMotorController extends I2CSensor {
             mode = mode | MODEBIT_SEL_POSITION;
         }
         // reverse operation bit
-        if (motorParams[MOTPARAM_REVERSED][channel]!=0) mode = mode | MODEBIT_REVERSE;
+        if (motorParams[MOTPARAM_REVERSED][channel]!=0) {
+            mode = mode | MODEBIT_REVERSE;
+        }
+        // if encoder reset requested
+        if (resetEncoder) {
+            mode = mode |  MODEBIT_SEL_RST_ENCODER;
+        }
         
-        return (byte)(mode & 0xff);
-    }
-    public void dbg(String msg){
-        System.out.println(msg);
-        Button.waitForAnyPress();
+        // set the mode
+        return sendData(REGISTER_MAP[REG_IDX_MODE][channel], (byte)(mode & 0xff));
     }
     
-    private int getEncoderValue(int channel) {
+    int getEncoderValue(int channel) {
         getData(REGISTER_MAP[REG_IDX_ENCODER_CURRENT][channel], buf, 4);
         return EndianTools.decodeIntBE(buf, 0);
+    }
+    
+    private void rotate(int channel, int value, int cmd){
+        byte workingByte=0;
+        motorParams[MOTPARAM_ROTATE][channel]=1;
+        
+        if (cmd==CMD_ROTATE || cmd==CMD_ROTATE_WAIT) {
+            // set the target based current + degrees passed
+            value = getEncoderValue(channel) + value * 4;
+        } else if(cmd==CMD_ROTATE_TO || cmd==CMD_ROTATE_TO_WAIT) {
+            value *= 4;
+        } else return;
+        
+        // set the encoder position
+        EndianTools.encodeIntBE(value, buf, 0);
+        sendData(REGISTER_MAP[REG_IDX_ENCODER_TARGET][channel], buf, 4); 
+        motorState[channel]=STATE_ROTATE_TO;
+        
+        // set the mode
+        setMode(channel, false);
+        
+        // set the power to turn on the motor. Ensure it is positive (do not adjust for BACKWARDS)
+        workingByte=(byte)motorParams[MOTPARAM_POWER][channel];
+        sendData(REGISTER_MAP[REG_IDX_POWER][channel], workingByte); 
+        bUSYMonitors[channel] = new BUSYMonitor(channel);
+        bUSYMonitors[channel].start();
+        
+        return;
+    }
+    
+    boolean rotateIsBUSY(int channel) {
+        return motorState[channel]!=STATE_ROTATE_DONE;
+    }
+    
+    private void motorGo(int channel, int command) {
+        byte workingByte=0;
+        motorState[channel]=command + 1; // STATE_RUNNING_FWD, STATE_RUNNING_BKWD assuming command IN(CMD_FORWARD,CMD_BACKWARD)
+        motorParams[MOTPARAM_ROTATE][channel]=0; //false
+        // set the mode
+        setMode(channel, false);
+        // set the power to turn on the motor
+        workingByte=(byte)motorParams[MOTPARAM_POWER][channel];
+        if (command==CMD_BACKWARD) {
+            workingByte*=-1; // negative power runs backwards
+        }
+        sendData(REGISTER_MAP[REG_IDX_POWER][channel], workingByte); 
     }
     
     synchronized int doCommand(int command, int operand, int channel) {
@@ -153,20 +228,9 @@ public class TetrixMotorController extends I2CSensor {
         switch (command) {
             case CMD_FORWARD:
                 if (motorState[channel]==STATE_RUNNING_FWD) break;
-                motorState[channel]=STATE_RUNNING_FWD;
             case CMD_BACKWARD:
                 if (motorState[channel]==STATE_RUNNING_BKWD) break;
-                motorParams[MOTPARAM_ROTATE][channel]=0;
-                // set the mode
-                sendData(REGISTER_MAP[REG_IDX_MODE][channel], getMode(channel));
-                // set the power to turn on the motor
-                workingByte=(byte)motorParams[MOTPARAM_POWER][channel];
-                if (command==CMD_BACKWARD) {
-                    workingByte*=-1; // negative power runs backwards
-                    motorState[channel]=STATE_RUNNING_BKWD;                    
-                }
-                sendData(REGISTER_MAP[REG_IDX_POWER][channel], workingByte); 
-                
+                motorGo(channel, command);
                 break;
             case CMD_FLT:
                 workingByte=-128;
@@ -179,8 +243,9 @@ public class TetrixMotorController extends I2CSensor {
             case CMD_SETPOWER:
                 motorParams[MOTPARAM_POWER][channel] = operand;
                 // if not running, exit
-                if (motorState[channel]==STATE_STOPPED)  break;
+                if (motorState[channel]==STATE_STOPPED || motorState[channel]==STATE_ROTATE_DONE)  break;
                 
+                // set the power if running to take effect immediately
                 workingByte = (byte)motorParams[MOTPARAM_POWER][channel];
                 if (motorState[channel]==STATE_RUNNING_BKWD ) {
                     workingByte *= -1;
@@ -188,39 +253,30 @@ public class TetrixMotorController extends I2CSensor {
                 sendData(REGISTER_MAP[REG_IDX_POWER][channel], workingByte); 
                 break;
             case CMD_ROTATE:
-                // TODO implement
-                motorParams[MOTPARAM_ROTATE][channel]=1;
-                int enc = getEncoderValue(channel);
-                dbg("enc=" + enc);
-                EndianTools.encodeIntBE(enc+operand*4, buf, 0);
-                sendData(REGISTER_MAP[REG_IDX_ENCODER_TARGET][channel], buf, 4); 
-                motorState[channel]=STATE_ROTATE_TO;
-                // set the mode
-                sendData(REGISTER_MAP[REG_IDX_MODE][channel], getMode(channel));
-                
-            // set the power to turn on the motor
-            workingByte=(byte)motorParams[MOTPARAM_POWER][channel];
-            sendData(REGISTER_MAP[REG_IDX_POWER][channel], workingByte); 
-            
+            case CMD_ROTATE_TO:
+            case CMD_ROTATE_WAIT:
+            case CMD_ROTATE_TO_WAIT:
+                rotate(channel, operand, command);
                 break;
             case CMD_GETPOWER:
                 commandRetVal=motorParams[MOTPARAM_POWER][channel];
                 break;
             case CMD_RESETTACHO:
                 // reset encoder/tacho 
-                sendData(REGISTER_MAP[REG_IDX_MODE][channel], (byte)(getMode(channel) | MODEBIT_SEL_RST_ENCODER & 0xff));
+                setMode(channel, true);
+                Delay.msDelay(15); // small delay to allow encoder value reset in controller to happen
                 motorState[channel]=STATE_STOPPED;
-                break;
-            case CMD_GETTACHO:
-                commandRetVal=(int)(getEncoderValue(channel)*.25);
                 break;
             case CMD_SETREVERSE:
                 motorParams[MOTPARAM_REVERSED][channel]=1;
-                sendData(REGISTER_MAP[REG_IDX_MODE][channel], getMode(channel));
+                setMode(channel, false);
                 break;
             case CMD_ISMOVING:
                 commandRetVal=1;
-                if (motorState[channel]==STATE_ROTATE_DONE | motorState[channel]==STATE_STOPPED) commandRetVal=0;
+                if ((motorState[channel]==STATE_ROTATE_DONE) || (motorState[channel]==STATE_STOPPED)) commandRetVal=0;
+                break;
+            case CMD_SETREGULATE:
+                motorParams[MOTPARAM_REGULATED][channel]=operand; //1=true, 0=false
                 break;
             default:
                 throw new IllegalArgumentException("Invalid Command");
