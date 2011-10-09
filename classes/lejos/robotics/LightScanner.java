@@ -21,7 +21,7 @@ import lejos.robotics.RangeReading;
 public class LightScanner
 {
 
-   RegulatedMotor head;
+   protected RegulatedMotor head;
    LightDetector eye;
    private int _numReadings;
    private RangeReadings _readings;
@@ -235,4 +235,6 @@ public class LightScanner
       }
       return arc;
    }
+   
+   public RegulatedMotor getMotor() { return head;}
 }
