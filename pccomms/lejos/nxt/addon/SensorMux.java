@@ -49,7 +49,7 @@ public class SensorMux extends I2CSensor {
    /**
     * Method used to know the Product ID
     */
-   public String getProductID(){
+   public String getVendorID(){
       byte[] buf = new byte[8];
       int failed = this.getData(0x08, buf, 8);
       if(failed!=0) return "failed. ";
@@ -63,7 +63,7 @@ public class SensorMux extends I2CSensor {
    /**
     * Method used to know the type of the sensor
     */
-   public String getSensorType(){
+   public String getProductID(){
       byte[] buf = new byte[8];
       int failed = this.getData(0x10, buf, 8);
       if(failed!=0) return "failed. ";

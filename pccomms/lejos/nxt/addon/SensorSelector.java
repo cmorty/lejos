@@ -24,7 +24,7 @@ public class SensorSelector {
 		
 	public static Accelerometer createAccelerometer(I2CPort port) throws SensorSelectorException {
 		I2CSensor tester = new I2CSensor(port);
-		String type = tester.getProductID().toLowerCase();
+		String type = tester.getVendorID().toLowerCase();
 		
 		if (type.equals(MINDSENSORS_ID))
 			return new AccelMindSensor(port);
@@ -36,7 +36,7 @@ public class SensorSelector {
 	
 	public static IRTransmitter createIRTransmitter(I2CPort port) throws SensorSelectorException {
 		I2CSensor tester = new I2CSensor(port);
-		String type = tester.getProductID().toLowerCase();
+		String type = tester.getVendorID().toLowerCase();
 		
 		if (type.equals(MINDSENSORS_ID))
 			return new RCXLink(port);

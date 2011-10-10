@@ -41,7 +41,7 @@ public class OdometryPoseProvider implements PoseProvider, MoveListener
    * data from its MoveProvider
    * @return pose
    */
-  public Pose getPose()
+  public synchronized Pose getPose()
   {
     if (!current )
     {
@@ -55,7 +55,7 @@ public class OdometryPoseProvider implements PoseProvider, MoveListener
    * @param move - the event that just started
    * @param mp the MoveProvider that called this method
    */
-  public void moveStarted(Move move, MoveProvider mp)
+  public synchronized void moveStarted(Move move, MoveProvider mp)
   {
     angle0 = 0;
     distance0 = 0;
@@ -63,7 +63,7 @@ public class OdometryPoseProvider implements PoseProvider, MoveListener
     this.mp = mp;
   }
   
-  public void setPose(Pose aPose )
+  public synchronized void   setPose(Pose aPose )
   {
     setPosition(aPose.getLocation());
     setHeading(aPose.getHeading());
@@ -83,7 +83,7 @@ public class OdometryPoseProvider implements PoseProvider, MoveListener
    * Update the pose with the incremental movement that has occurred since the
    * movementStarted 
    */
-  private void updatePose(Move event)
+  private synchronized void  updatePose(Move event)
   {
     float angle = event.getAngleTurned() - angle0;
     float distance = event.getDistanceTraveled() - distance0;
