@@ -236,6 +236,12 @@ class LoggingChart extends ChartPanel{
         // init the instance datasets and axes holding object
         datasetsAndAxes=initDatasetAndAxisArray();
         
+        // Effectively disable font scaling/skewing 
+        // JFreeCHart forum: Graphics context and custom shapes
+        // http://www.jfree.org/forum/viewtopic.php?f=3&t=24499&hilit=font+scaling
+        this.setMaximumDrawWidth(1800);
+        this.setMaximumDrawHeight(1280);
+        
         try {
             jbInit();
         } catch (Exception e) {
