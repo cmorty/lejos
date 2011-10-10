@@ -73,10 +73,10 @@ public class TetrixControllerFactory  {
     }
     
     /**
-     * Get the next available Tetrix Motor controller. Servo controllers in the daisy-chain are skipped in the search.
+     * Get the next available Tetrix Motor controller. Servo controllers in the daisy-chain (if any) are skipped in the search.
      * <p>
-     * Successive controllers in a daisy-chain go "outwards" from controller closest to the NXT as #1 to #4 for each controller
-     * in the chain. Once a specific controller has been retrieved using this method, it cannot be retrieved again.
+     * Successive controllers in a daisy-chain logically go "outwards" from the controller closest to the NXT as #1 to #4 for each controller
+     * in the chain. Once a specific, logical controller has been retrieved using this method, it cannot be retrieved again.
      * <p>
      * A combination of Servo and Motor controllers can be daisy-chained. 
      * @return The next available <code>TetrixMotorController</code> instance.
@@ -94,10 +94,10 @@ public class TetrixControllerFactory  {
     }
     
     /**
-     * Get the next available Tetrix Servo controller. Motor controllers in the daisy-chain are skipped in the search.
+     * Get the next available Tetrix Servo controller. Motor controllers in the daisy-chain (if any) are skipped in the search.
      * <p>
-     * Successive controllers in a daisy-chain go "outwards" from controller closest to the NXT as #1 to #4 for each controller
-     * in the chain. Once a specific controller has been retrieved using this method, it cannot be retrieved again.
+     * Successive controllers in a daisy-chain logically go "outwards" from the controller closest to the NXT as #1 to #4 for each controller
+     * in the chain. Once a specific, logical controller has been retrieved using this method, it cannot be retrieved again.
      * <p>
      * A combination of Servo and Motor controllers can be daisy-chained.
      * @return The next available <code>TetrixServoController</code> instance.
