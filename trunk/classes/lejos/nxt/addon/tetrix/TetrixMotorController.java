@@ -1,14 +1,15 @@
 package lejos.nxt.addon.tetrix;
 
-import lejos.nxt.Button;
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 
 import lejos.util.Delay;
 import lejos.util.EndianTools;
 
-/**HiTechnic Motor Controller abstraction. Provides <code>TetrixMotor</code> and <code>TetrixEncoderMotor</code> instances 
+/**HiTechnic Tetrix Motor Controller abstraction. Provides <code>TetrixMotor</code> and <code>TetrixEncoderMotor</code> instances 
  * which are used to control the Tetrix motors.
+ * <p>
+ * Use <code>{@link TetrixControllerFactory#newMotorController}</code> to retrieve a <code>TetrixMotorController</code> instance.
  * 
  * @see lejos.nxt.addon.tetrix.TetrixControllerFactory
  * @see lejos.nxt.addon.tetrix.TetrixMotor
@@ -16,9 +17,14 @@ import lejos.util.EndianTools;
  * @author Kirk P. Thompson
  */
 public class TetrixMotorController extends I2CSensor {
+    /** Represents Motor 1 as indicated on the controller
+     */
     public static final int MOTOR_1 = 0;
+    /** Represents Motor 2 as indicated on the controller
+     */
     public static final int MOTOR_2 = 1;
     private static final int CHANNELS = 2;
+    private static final int KEEPALIVE_PING_INTERVAL = 2450;
     
     static final int CMD_FORWARD = 0;
     static final int CMD_BACKWARD = 1;
@@ -31,16 +37,14 @@ public class TetrixMotorController extends I2CSensor {
     static final int CMD_RESETTACHO = 8;
     static final int CMD_SETREVERSE = 10;
     static final int CMD_ISMOVING = 11;
-    static final int CMD_ROTATE_WAIT = 12;
-    static final int CMD_ROTATE_TO_WAIT = 13;
-    static final int CMD_SETREGULATE = 14;
+    static final int CMD_SETREGULATE = 12;
+    static final int CMD_GETTACHO = 13;
     
     private int[] motorState = {STATE_STOPPED, STATE_STOPPED};
     private static final int STATE_STOPPED = 0;
     private static final int STATE_RUNNING_FWD = 1;
     private static final int STATE_RUNNING_BKWD = 2;
     private static final int STATE_ROTATE_TO = 3;
-    private static final int STATE_ROTATE_DONE = 4;
     
     // common registers
     private static final int REG_ALL_MOTORCONTROL = 0x40;
@@ -59,52 +63,70 @@ public class TetrixMotorController extends I2CSensor {
     
     // Mode OR masks
     private static final int MODEBIT_REVERSE = 0x08;
-    private static final int MODEBIT_NTO = 0x10;
-    private static final int MODEBIT_ERROR = 0x40;
+//    private static final int MODEBIT_NTO = 0x10;
+//    private static final int MODEBIT_ERROR = 0x40;
     private static final int MODEBIT_BUSY = 0x80;
     private static final int MODEBIT_SEL_POWER = 0x00;
     private static final int MODEBIT_SEL_SPEED = 0x01;
     private static final int MODEBIT_SEL_POSITION = 0x02;
     private static final int MODEBIT_SEL_RST_ENCODER = 0x03;
     
-    // motor
+    // motor parameters
     private int[][] motorParams = new int[4][CHANNELS]; 
     private static final int MOTPARAM_POWER = 0; // current power value
     private static final int MOTPARAM_REGULATED = 1; // 0=false=power control, 1=speed control
     private static final int MOTPARAM_REVERSED = 2; // 1=reversed, 0= normal
     private static final int MOTPARAM_ROTATE = 3; // 1=rotate to target mode
+    static final int MOTPARAM_OP_TRUE=1;
+    static final int MOTPARAM_OP_FALSE=0;
     
+    // motor and monitor instance buckets
     private TetrixEncoderMotor[] motors= new TetrixEncoderMotor[CHANNELS];
     private BUSYMonitor[] bUSYMonitors = new BUSYMonitor[CHANNELS];
     
+    // I2C buffer
     private byte[] buf = new byte[12];
-    private int retVal;
     
     TetrixMotorController(I2CPort port, int i2cAddress) {
         super(port, i2cAddress, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
         address = i2cAddress;
         initController();
+        
+        // This thread will keep the controller active. Without I2C activity within 2.5 seconds, it times out.
+        // We could use the NTO bit of mode (MODEBIT_NTO) to keep the controller from timing
+        // out but the motors would still run if the NXT faulted, was shutdown, etc. which could be unsafe with big,
+        // metal robots with sharp slicing attachments. 
+        Thread t1 = new Thread(new Runnable(){
+            public void run() {
+                byte[] buf = new byte[1];
+                for (;;){
+                    getData(REG_VERSION, buf, 0);
+                    Delay.msDelay(KEEPALIVE_PING_INTERVAL);
+                }
+            }
+        });
+        t1.setDaemon(true);
+        t1.start();
     }
 
+    // when a rotate is issued, an instance monitors the BUSY bit and sets STATE_STOPPED when the command completes
     private class BUSYMonitor extends Thread {
         int channel;
         BUSYMonitor(int channel){
             this.channel = channel;
         }
         public void run(){
-            waitUntilBUSYClear();
-            motorState[channel]=STATE_ROTATE_DONE;
-        }
-        void waitUntilBUSYClear(){
             byte buf[] = {(byte)MODEBIT_BUSY};
             while ((buf[0] & MODEBIT_BUSY) == MODEBIT_BUSY) {
                 Delay.msDelay(50);
-                if (getData(REGISTER_MAP[REG_IDX_MODE][channel], buf, 1)!=0) break;
+                if (getData(REGISTER_MAP[REG_IDX_MODE][channel], buf, 1)!=0) break; // exit on 12c fault
             }
+            motorState[channel]=STATE_STOPPED;
         }
     }
     
-    /**Get the <code>TetrixMotor</code> instance that is associated with the <code>motorID</code>.
+    /**
+     * Get the <code>TetrixMotor</code> instance that is associated with the <code>motorID</code>.
      * 
      * @param motorID The motor ID number. This is indicated on the HiTechnic Motor Controller and is
      * represented using <code> {@link #MOTOR_1}</code> or <code> {@link #MOTOR_2}</code>.
@@ -116,7 +138,8 @@ public class TetrixMotorController extends I2CSensor {
         return getEncoderMotor(motorID);
     }
     
-    /**Get the <code>TetrixEncoderMotor</code> instance that is associated with the <code>motorID</code>.
+    /**
+     * Get the <code>TetrixEncoderMotor</code> instance that is associated with the <code>motorID</code>.
      * 
      * @param motorID The motor ID number. This is indicated on the HiTechnic Motor Controller and is
      * represented using <code> {@link #MOTOR_1}</code> or <code> {@link #MOTOR_2}</code>.
@@ -133,33 +156,31 @@ public class TetrixMotorController extends I2CSensor {
         return motors[motorID];
     }
     
-    void dumpArray(int[] arr) {
-        for (int i=0;i<arr.length;i++) {
-            System.out.print(arr[i] + ":");
-        }
-        System.out.println("");
-        Button.waitForAnyPress();
-    }
-    
-    public void dbg(String msg){
-        System.out.println(msg);
-        Button.waitForAnyPress();
-    }
+//    void dumpArray(int[] arr) {
+//        for (int i=0;i<arr.length;i++) {
+//            System.out.print(arr[i] + ":");
+//        }
+//        System.out.println("");
+//        Button.waitForAnyPress();
+//    }
+
     
     private int setMode(int channel, boolean resetEncoder) {
-        int mode=MODEBIT_SEL_POWER | MODEBIT_NTO;
+//        int mode=MODEBIT_SEL_POWER | MODEBIT_NTO;
+        int mode=MODEBIT_SEL_POWER; 
+        
         // constant speed SEL bit and not in ROTATE (POS) state, set the bit. This is done because
         // if we set both the MODEBIT_SEL_SPEED and MODEBIT_SEL_POSITION, it equals MODEBIT_SEL_RST_ENCODER and
         // cancels out the ROTATE command
-        if (motorParams[MOTPARAM_REGULATED][channel]!=0 &&  motorState[channel]!=STATE_ROTATE_TO) {
+        if (motorParams[MOTPARAM_REGULATED][channel]==MOTPARAM_OP_TRUE && motorState[channel]!=STATE_ROTATE_TO) {
             mode = mode | MODEBIT_SEL_SPEED;
         } 
         // run to position SEL bit
-        if (motorParams[MOTPARAM_ROTATE][channel]!=0) {
+        if (motorParams[MOTPARAM_ROTATE][channel]==MOTPARAM_OP_TRUE) {
             mode = mode | MODEBIT_SEL_POSITION;
         }
         // reverse operation bit
-        if (motorParams[MOTPARAM_REVERSED][channel]!=0) {
+        if (motorParams[MOTPARAM_REVERSED][channel]==MOTPARAM_OP_TRUE) {
             mode = mode | MODEBIT_REVERSE;
         }
         // if encoder reset requested
@@ -171,19 +192,19 @@ public class TetrixMotorController extends I2CSensor {
         return sendData(REGISTER_MAP[REG_IDX_MODE][channel], (byte)(mode & 0xff));
     }
     
-    int getEncoderValue(int channel) {
+    private int getEncoderValue(int channel) {
         getData(REGISTER_MAP[REG_IDX_ENCODER_CURRENT][channel], buf, 4);
         return EndianTools.decodeIntBE(buf, 0);
     }
     
     private void rotate(int channel, int value, int cmd){
         byte workingByte=0;
-        motorParams[MOTPARAM_ROTATE][channel]=1;
+        motorParams[MOTPARAM_ROTATE][channel]=MOTPARAM_OP_TRUE;
         
-        if (cmd==CMD_ROTATE || cmd==CMD_ROTATE_WAIT) {
+        if (cmd==CMD_ROTATE) {
             // set the target based current + degrees passed
             value = getEncoderValue(channel) + value * 4;
-        } else if(cmd==CMD_ROTATE_TO || cmd==CMD_ROTATE_TO_WAIT) {
+        } else if(cmd==CMD_ROTATE_TO) {
             value *= 4;
         } else return;
         
@@ -204,14 +225,10 @@ public class TetrixMotorController extends I2CSensor {
         return;
     }
     
-    boolean rotateIsBUSY(int channel) {
-        return motorState[channel]!=STATE_ROTATE_DONE;
-    }
-    
     private void motorGo(int channel, int command) {
         byte workingByte=0;
         motorState[channel]=command + 1; // STATE_RUNNING_FWD, STATE_RUNNING_BKWD assuming command IN(CMD_FORWARD,CMD_BACKWARD)
-        motorParams[MOTPARAM_ROTATE][channel]=0; //false
+        motorParams[MOTPARAM_ROTATE][channel]=MOTPARAM_OP_FALSE; //false
         // set the mode
         setMode(channel, false);
         // set the power to turn on the motor
@@ -221,7 +238,14 @@ public class TetrixMotorController extends I2CSensor {
         }
         sendData(REGISTER_MAP[REG_IDX_POWER][channel], workingByte); 
     }
-    
+
+    /** execute a command. designed to never block because it is shared across two motors. The rotate WAITS are done
+     * in the TetrixEncoderMotor class
+     * @param command the command
+     * @param operand the value from the caller. Mostly not used and set to 0
+     * @param channel the channel: MOTOR_1, MOTOR_2
+     * @return a value depending on the command
+     */
     synchronized int doCommand(int command, int operand, int channel) {
         byte workingByte=0;
         int commandRetVal=0;
@@ -243,7 +267,7 @@ public class TetrixMotorController extends I2CSensor {
             case CMD_SETPOWER:
                 motorParams[MOTPARAM_POWER][channel] = operand;
                 // if not running, exit
-                if (motorState[channel]==STATE_STOPPED || motorState[channel]==STATE_ROTATE_DONE)  break;
+                if (motorState[channel]==STATE_STOPPED)  break;
                 
                 // set the power if running to take effect immediately
                 workingByte = (byte)motorParams[MOTPARAM_POWER][channel];
@@ -254,12 +278,13 @@ public class TetrixMotorController extends I2CSensor {
                 break;
             case CMD_ROTATE:
             case CMD_ROTATE_TO:
-            case CMD_ROTATE_WAIT:
-            case CMD_ROTATE_TO_WAIT:
                 rotate(channel, operand, command);
                 break;
             case CMD_GETPOWER:
                 commandRetVal=motorParams[MOTPARAM_POWER][channel];
+                break;
+            case CMD_GETTACHO:
+                commandRetVal=getEncoderValue(channel);
                 break;
             case CMD_RESETTACHO:
                 // reset encoder/tacho 
@@ -268,12 +293,12 @@ public class TetrixMotorController extends I2CSensor {
                 motorState[channel]=STATE_STOPPED;
                 break;
             case CMD_SETREVERSE:
-                motorParams[MOTPARAM_REVERSED][channel]=1;
+                motorParams[MOTPARAM_REVERSED][channel]=operand;
                 setMode(channel, false);
                 break;
             case CMD_ISMOVING:
-                commandRetVal=1;
-                if ((motorState[channel]==STATE_ROTATE_DONE) || (motorState[channel]==STATE_STOPPED)) commandRetVal=0;
+                commandRetVal=MOTPARAM_OP_TRUE;
+                if (motorState[channel]==STATE_STOPPED) commandRetVal=MOTPARAM_OP_FALSE;
                 break;
             case CMD_SETREGULATE:
                 motorParams[MOTPARAM_REGULATED][channel]=operand; //1=true, 0=false
@@ -289,16 +314,24 @@ public class TetrixMotorController extends I2CSensor {
         byte[] initBuf = {0,0,0,0,0,0,0,0,0,0,0,0};
         sendData(REG_ALL_MOTORCONTROL, initBuf, initBuf.length);
         Delay.msDelay(50);
-        // reset encoder/tacho and set NTO mode
-        byte mode = (byte)(MODEBIT_SEL_RST_ENCODER | MODEBIT_NTO) & 0xff;
-        sendData(REGISTER_MAP[REG_IDX_MODE][MOTOR_1], mode);
-        sendData(REGISTER_MAP[REG_IDX_MODE][MOTOR_2], mode);
+        // reset motor params, encoder/tacho, and set NTO mode
+//        byte mode = (byte)(MODEBIT_SEL_RST_ENCODER | MODEBIT_NTO) & 0xff;
+        byte mode = (byte)MODEBIT_SEL_RST_ENCODER & 0xff;
+        for (int i = 0;i<CHANNELS;i++){
+            motorParams[MOTPARAM_POWER][i] = 0;         // current power value
+            motorParams[MOTPARAM_REGULATED][i] = MOTPARAM_OP_FALSE;     // 0=false=power control, 1=speed control
+            motorParams[MOTPARAM_REVERSED][i] = MOTPARAM_OP_FALSE;      // 1=reversed, 0= normal
+            motorParams[MOTPARAM_ROTATE][i] = MOTPARAM_OP_FALSE;        // 1=rotate to target mode, 0=no rotate
+            sendData(REGISTER_MAP[REG_IDX_MODE][i], mode);
+        }
     }
     
     /** Return the current battery voltage supplied to the controller.
      * @return The current battery voltage in volts
      */
     public synchronized float getVoltage() {
+        int retVal;
+        
         retVal = getData(REG_BATTERY, buf, 2);
         retVal=(buf[0] & 0xff)<<2;
         retVal=retVal | (buf[1] & 0x03);
