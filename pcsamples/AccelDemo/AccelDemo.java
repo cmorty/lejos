@@ -14,7 +14,7 @@ public class AccelDemo {
 		//AccelHTSensor a = new AccelHTSensor(SensorPort.S1);
 		
 		System.out.println("Prod ID " + a.getProductID());
-		System.out.println("Port Type " + a.getSensorType());
+		System.out.println("Vendor ID " + a.getVendorID());
 		System.out.println("Version " + a.getVersion());
 				
 		for(;;) {
