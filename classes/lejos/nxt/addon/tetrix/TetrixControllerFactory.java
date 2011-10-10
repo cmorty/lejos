@@ -5,11 +5,11 @@ import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 import lejos.nxt.SensorPort;
 
-/**HiTechnic Tetrix Motor and Servo controller factory class. 
- * 
- * Motor and Servo controller abstractions are provided by this class
- * to use to obtain motor and servo instances. These abstraction classes are <code>TetrixMotorController</code> and 
- * <code>TetrixServoController</code>, respectively.
+/**
+ * HiTechnic Tetrix Motor and Servo Controller factory class used to provide Motor and Servo controller abstractions.
+ * These are then used 
+ * to obtain motor and servo instances respectively. These abstraction classes are <code>TetrixMotorController</code> and 
+ * <code>TetrixServoController</code>.
  * <p>
  * Motor and servo controllers are enumerated starting at the controller connected to one of the NXT's sensor ports and then
  * working outwards along the daisy chain. 4 controllers can be daisy-chained, with a mixture of servo and/or motor controllers.
@@ -28,9 +28,14 @@ import lejos.nxt.SensorPort;
  * 
  * // Get an encoder motor instance. The physical motor (with encoder) is connected to the Motor 2 terminals on the controller
  * TetrixEncoderMotor mot1 = mc.getEncoderMotor(TetrixMotorController.MOTOR_2);
+ * 
+ * // Start the motor
+ * mot1.forward();
  * </pre>
  * 
  * @author Kirk P. Thompson
+ * @see TetrixMotorController
+ * @see TetrixServoController
  */
 public class TetrixControllerFactory  {
     private static final int MAX_CHAINED_CONTROLLERS=4;
