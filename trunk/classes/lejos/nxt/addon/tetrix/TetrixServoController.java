@@ -10,8 +10,8 @@ import lejos.util.Delay;
 // Required Pulse: 3-5 Volt Peak to Peak Square Wave
 // Operating Voltage: 4.8-6.0 Volts
 // Operating Temperature Range: -20 to +60 Degree C
-// Operating Speed (4.8V): 0.22sec/60° at no load
-// Operating Speed (6.0V): 0.18sec/60° at no load
+// Operating Speed (4.8V): 0.22sec/60 deg at no load
+// Operating Speed (6.0V): 0.18sec/60 deg at no load
 // Stall Torque (4.8V): 66.6 oz/in. (4.8kg.cm)
 // Stall Torque (6.0V): 83.3 oz/in. (6.0kg.cm)
 // Operating Angle: 45 Deg. one side pulse traveling 400usec
@@ -189,7 +189,7 @@ public class TetrixServoController extends I2CSensor {
     }
     
     synchronized float getAngle(int channel) {
-        float servoResolution = (float)(servoParams[SRVOPARAM_PULSEWIDTH_RANGE_HIGH][channel] 
+        float servoResolution = (servoParams[SRVOPARAM_PULSEWIDTH_RANGE_HIGH][channel] 
             - (float)servoParams[SRVOPARAM_PULSEWIDTH_RANGE_LOW][channel]) / servoParams[SRVOPARAM_ROTATION_RANGE][channel];
         float angle = (servoParams[SRVOPARAM_PULSEBYTE][channel] - (float)servoParams[SRVOPARAM_PULSEWIDTH_RANGE_LOW][channel] 
             * PULSE_RESOLUTION 
@@ -206,7 +206,7 @@ public class TetrixServoController extends I2CSensor {
         // multiply by requested angle
         // add offset between servo low range and contoller low range to determine actual target pulse width
         // multiply by controller range pulse resolution [inverse] constant to get byte
-        float servoResolution = (float)(servoParams[SRVOPARAM_PULSEWIDTH_RANGE_HIGH][channel] 
+        float servoResolution = (servoParams[SRVOPARAM_PULSEWIDTH_RANGE_HIGH][channel] 
             - (float)servoParams[SRVOPARAM_PULSEWIDTH_RANGE_LOW][channel]) / servoParams[SRVOPARAM_ROTATION_RANGE][channel];
         int theByte = (int)(
         (   servoResolution * angle 
@@ -227,9 +227,11 @@ public class TetrixServoController extends I2CSensor {
     }
     
     /**
-     * Returns whether or not there are servos on this controller that are moving.
+     * Returns whether or not there are servos on this controller that are moving. This method always returns 
+     * <code>false</code> when the step time is set to 0 (disabled).
      * 
      * @return <code>true</code> if any servo is moving to position.
+     * @see #setStepTime
      */
     public synchronized boolean isMoving(){
         byte[] buf = new byte[1];
@@ -246,20 +248,24 @@ public class TetrixServoController extends I2CSensor {
     }
     
     /**
-     * Sets the step time used for all servos on this controller. The Step time sets the step time for the servo channel 
+     * Sets the step time used for all servos on this controller. This sets the step time for the servo channel 
      * which has the furthest to move. Other servo channels which are not at their designated positions yet will run at a 
-     * slower rate to ensure they reach their destination positions at the same time.
+     * slower rate to ensure they reach their destination positions at the same time. The controller defaults to 0 on power-up.
      * <p>
-     * The step time is a delay before progressing to the next step. For example, if a servo is at 50, and you give it a 
-     * new position of 200, it will normally go as fast as it can to get to the new position. If you want it to 
-     * go to 200, but not at maximum output, you can set the speed to a value from 0 to 15.
+     * The step time can be considered a delay before progressing to the next step. For example, if a servo is positioned 
+     * at 1500 microseconds pulse width, and you give it a 
+     * new position command of 2000 microseconds, it will normally go as fast as it can to get to the new position. If you want it to 
+     * go to the new position but not at the maximum output, you can set the step to a value from 0 to 15.
      * <p>
      * One of the main things it could be useful for, is if you have two servos with different loads, and you want them 
      * to be as much in sync as possible. You can set the speed to slow the controller from changing the servo signals instantly.
+     * <p>
+     * The <code>isMoving()</code> method always returns <code>false</code> if the step time is set to zero.
      * 
      * @param step Step Time, 0-15. Setting to 0 disables step time.
      * @throws IllegalArgumentException If step is not in the range 0 to 15
      * @see #getStepTime
+     * @see #isMoving
      */
      // TODO this needs to be tested when I get more than one servo
     public synchronized void setStepTime(int step){
