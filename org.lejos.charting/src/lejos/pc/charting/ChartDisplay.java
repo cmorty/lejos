@@ -23,7 +23,11 @@ public class ChartDisplay extends JFrame {
             chartPanel.getChart().getXYPlot().setRangePannable(true);
             chartPanel.getChart().getXYPlot().setRangeCrosshairVisible(true);
             chartPanel.setMouseZoomable(true);
-            
+            // Effectively disable font scaling/skewing 
+            // JFreeCHart forum: Graphics context and custom shapes
+            // http://www.jfree.org/forum/viewtopic.php?f=3&t=24499&hilit=font+scaling
+            chartPanel.setMaximumDrawWidth(1800);
+            chartPanel.setMaximumDrawHeight(1280);
             jbInit();
         } catch (Exception e) {
             e.printStackTrace();
