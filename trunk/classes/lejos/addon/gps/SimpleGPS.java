@@ -294,10 +294,7 @@ public class SimpleGPS extends Thread {
 				//Jab
 				//Bug detected: 06/08/2008
 				System.err.println("SimpleGPS.run() error. ArrayIndexOutOfBounds");
-			}
-			//2008/07/18
-			//Increase the list with more NMEA Sentences
-		
+			}		
 		}
 	}
 
