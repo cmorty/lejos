@@ -42,7 +42,7 @@ class NXJUploadCommandLineParser extends AbstractCommandLineParser
 
 		result = new GnuParser().parse(options, args);
 		
-		if (result.getArgs().length == 0)
+		if (!result.hasOption('h') && result.getArgs().length == 0)
 			throw new ParseException("No file name specified");
 		
 		assert result != null : "Postconditon: result != null";
