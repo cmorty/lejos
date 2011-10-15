@@ -3,8 +3,6 @@ package lejos.addon.gps;
 import java.io.*;
 import java.util.*;
 
-import lejos.nxt.Button;
-
 /**
  * This class manages data received from a GPS Device.
  * SimpleGPS Class manages the following NMEA Sentences
