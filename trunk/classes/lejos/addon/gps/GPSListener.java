@@ -2,7 +2,6 @@ package lejos.addon.gps;
 
 
 import java.util.EventListener;
-import javax.microedition.location.Coordinates;
 
 /**
  * This is the interface to manage events with GPS

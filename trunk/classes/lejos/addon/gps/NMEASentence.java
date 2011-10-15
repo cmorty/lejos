@@ -3,8 +3,6 @@ package lejos.addon.gps;
 
 import java.util.*;
 
-import lejos.nxt.Button;
-
 /**
  * Class designed to manage all NMEA Sentence.
  * 
