@@ -187,7 +187,7 @@ public class RemoteMotor implements RegulatedMotor, DCMotor, NXTProtocol {
     {
         while (isMoving())
             Thread.yield();
-        if (listener != null) listener.rotationStarted(this, getTachoCount(), false, System.currentTimeMillis());
+        if (listener != null) listener.rotationStopped(this, getTachoCount(), false, System.currentTimeMillis());
     }
 	
 	/**
