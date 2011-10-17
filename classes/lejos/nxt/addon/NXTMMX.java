@@ -3,7 +3,6 @@ package lejos.nxt.addon;
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 import lejos.nxt.SensorPort;
-//import lejos.nxt.addon.NXTMMXMotor;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -128,13 +127,13 @@ public class NXTMMX extends I2CSensor{
 	}
 	
 	/**
-	 * Returns the voltage in millivolts
-	 * @return the voltage in millivolts
+	 * Returns the voltage supplied to the NXTMMX
+	 * @return the voltage in volts
 	 */
-	public int getVoltage(){
+	public float getVoltage(){
 		 getData(REG_MuxCommand, buffer, 1);
 		 // 37 is the constant given by Mindsensors support 5/2011 to return millivolts. KPT
-         return (37*(0x00ff & buffer[0]));
+         return (37f*(buffer[0]&0xff))*.001f;
 	}
 /*	
 	//Proportional gain tacho
