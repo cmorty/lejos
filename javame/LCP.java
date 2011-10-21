@@ -118,7 +118,6 @@ public class LCP {
 
 	public int lsGetStatus(int port){
 		int packet[] = { 0x00, 0x0E, port};
-		int anz;
 		try{
 			writePacket(packet);
 			readPacket();
@@ -133,8 +132,6 @@ public class LCP {
 	
 	int lsRead(int port){
 		int packet[] = {0x00, 0x10, port};
-		int anz;
-		
 		try{
 			writePacket(packet);		
 			readPacket();
