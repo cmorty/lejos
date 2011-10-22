@@ -1,6 +1,7 @@
 package lejos.nxt.addon.tetrix;
 
-/** Tetrix basic DC motor abstraction without encoder support. The default power at instantiation is 100%.
+/** 
+ * Tetrix basic DC motor abstraction without encoder support. The default power at instantiation is 100%.
  * <p>Use <code>{@link TetrixMotorController#getBasicMotor}</code> to retrieve a <code>TetrixMotor</code> instance.
  * 
  * @author Kirk P. Thompson
@@ -52,7 +53,8 @@ public class TetrixMotor implements lejos.robotics.DCMotor{
         return TetrixMotorController.MOTPARAM_OP_TRUE==mc.doCommand(TetrixMotorController.CMD_ISMOVING, 0, channel);
     }
 
-    /** Used to alter the forward/reverse direction mapping for the motor output. This is primarily intended to
+    /** 
+     * Used to alter the forward/reverse direction mapping for the motor output. This is primarily intended to
      * harmonize the forward and reverse directions for motors on opposite sides of a skid-steer chassis.
      * <p>
      * Changes to this setting take effect on the next motor command.

@@ -38,10 +38,27 @@ import lejos.nxt.SensorPort;
  * @see TetrixServoController
  */
 public class TetrixControllerFactory  {
+    /**
+     * Position 1 (nearest to the NXT) in the daisy chain. Use this if only one controller.
+     */
+    public static final int DAISY_CHAIN_POSITION_1 = 2;
+    /**
+     * Position 2 in the daisy chain. 
+     */
+    public static final int DAISY_CHAIN_POSITION_2 = 4;
+    /**
+     * Position 3 in the daisy chain. 
+     */
+    public static final int DAISY_CHAIN_POSITION_3 = 6;
+    /**
+     * Position 3 (furthest from the NXT)in the daisy chain. 
+     */
+    public static final int DAISY_CHAIN_POSITION_4 = 8;
+    
     private static final int MAX_CHAINED_CONTROLLERS=4;
-    private static final String TETRIX_VENDOR_ID = "HiTechnc";
-    private static final String TETRIX_MOTORCON_PRODUCT_ID = "MotorCon";
-    private static final String TETRIX_SERVOCON_PRODUCT_ID = "ServoCon";
+    static final String TETRIX_VENDOR_ID = "HiTechnc";
+    static final String TETRIX_MOTORCON_PRODUCT_ID = "MotorCon";
+    static final String TETRIX_SERVOCON_PRODUCT_ID = "ServoCon";
     
     private int currentMotorIndex=0;
     private int currentServoIndex=0;

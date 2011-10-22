@@ -5,7 +5,8 @@ import lejos.robotics.Encoder;
 import lejos.util.Delay;
 
 
-/** Tetrix DC motor abstraction with encoder support. The Tetrix motor must have an encoder installed and connected to
+/** 
+ * Tetrix DC motor abstraction with encoder support. The Tetrix motor must have an encoder installed and connected to
  * the controller for the methods in this class to work. If an encoder is not installed, use the <code>{@link TetrixMotor}</code>
  * class instead.
  * <p>Use <code>{@link TetrixMotorController#getEncoderMotor}</code> to retrieve a <code>TetrixEncoderMotor</code> instance.
@@ -21,7 +22,8 @@ public class TetrixEncoderMotor extends TetrixMotor implements Encoder{
         return (int)(mc.doCommand(TetrixMotorController.CMD_GETTACHO, 0, channel) * .25);
     }
     
-    /** Reset the the tachometer count. Calling this method will stop any current motor action. This is imposed by the HiTechic
+    /** 
+     * Reset the the tachometer count. Calling this method will stop any current motor action. This is imposed by the HiTechic
      * Motor Controller firmware. 
      */
     public synchronized void resetTachoCount() {
