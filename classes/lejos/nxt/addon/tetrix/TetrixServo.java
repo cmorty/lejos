@@ -2,7 +2,8 @@ package lejos.nxt.addon.tetrix;
 
 import lejos.robotics.Servo;
 
-/** Basic servo motor abstraction. Servos are driven by a PWM signal from the controller with varying pulse widths
+/** 
+ * Basic servo motor abstraction. Servos are driven by a PWM signal from the controller with varying pulse widths
  * controlling the rotational position of the servo actuator shaft.
  * <P>
  * The HiTechnic Servo Controller allows setting of the PWM output from 0.75 - 2.25ms. Note that some servos may hit their 
@@ -19,7 +20,8 @@ public class TetrixServo implements Servo{
         this.channel=channel;
     }
 
-    /**Set the allowable pulse width operating range of this servo in microseconds and the total travel range. 
+    /**
+     * Set the allowable pulse width operating range of this servo in microseconds and the total travel range. 
      * Default for pulse width at instantiation is 750 & 2250 microseconds. Default for travel is 200 degrees. 
      * <p>
      * The midpoint

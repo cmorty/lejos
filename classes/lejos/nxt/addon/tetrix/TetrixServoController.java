@@ -28,7 +28,8 @@ import lejos.util.Delay;
 // Dimensions: See Schematic
 // Weight: 1.59oz (45g)
 
-/**HiTechnic Servo Controller abstraction. Provides <code>TetrixServo</code> instances which are used to control
+/**
+ * HiTechnic Servo Controller abstraction. Provides <code>TetrixServo</code> instances which are used to control
  * the Tetrix servos.
  * <p>
  * Servos are driven by a PWM signal with varying pulse widths
@@ -110,9 +111,25 @@ public class TetrixServoController extends I2CSensor {
     // servo instances
     private TetrixServo[] servos= new TetrixServo[CHANNELS];
     
-    TetrixServoController(I2CPort port, int i2cAddress) {
-        super(port, i2cAddress, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
-        address = i2cAddress;
+    /**
+     * Instantiate for a HiTechnic TETRIX Servo Controller connected to the given <code>port</code> and daisy chain position.
+     * 
+     * @param port The sensor port the controller (if daisy-chained, the first) is connected to.
+     * @param daisyChainPosition The position of the controller in the daisy chain.
+     * @see TetrixControllerFactory#DAISY_CHAIN_POSITION_1
+     * @see TetrixControllerFactory#DAISY_CHAIN_POSITION_2
+     * @see TetrixControllerFactory#DAISY_CHAIN_POSITION_3
+     * @see TetrixControllerFactory#DAISY_CHAIN_POSITION_4
+     * @see lejos.nxt.SensorPort
+     * @throws IllegalStateException if a Servo Controller was not found with given <code>port</code> and <code>daisyChainPosition</code>
+     */
+    public TetrixServoController(I2CPort port, int daisyChainPosition) {
+        super(port, daisyChainPosition, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
+        address = daisyChainPosition;
+        if (!(getVendorID().equalsIgnoreCase(TetrixControllerFactory.TETRIX_VENDOR_ID) && 
+            getProductID().equalsIgnoreCase(TetrixControllerFactory.TETRIX_SERVOCON_PRODUCT_ID))) {
+            throw new IllegalStateException("Not a servo controller");
+        }
         initController();
         // This thread will keep the controller active. Without I2C activity within 10 seconds, it times out.
         // We could use the PWM Enable value 0xAA in REG_PWM_ENABLE to keep the controller from timing
@@ -158,7 +175,8 @@ public class TetrixServoController extends I2CSensor {
         sendData(REG_PWM_ENABLE, PWMMODE_ENABLE); 
     }
     
-    /**Set the operating range of the servo in microseconds. Default at instantiation is 750 & 2250.
+    /**
+     * Set the operating range of the servo in microseconds. Default at instantiation is 750 & 2250.
      * @param microsecLOW the low end of the servos response range in microseconds
      * @param microsecHIGH the high end of the servos response range in microseconds
      * @throws IllegalArgumentException if the range isn't within 750 and 2250
@@ -239,7 +257,8 @@ public class TetrixServoController extends I2CSensor {
         return buf[0]!=0;
     }
 
-    /** Set all servos connected to this controller to float mode. This means they are powered down and will not attempt 
+    /** 
+     * Set all servos connected to this controller to float mode. This means they are powered down and will not attempt 
      * to hold their current
      * position. The next call to any motion command for any servo will re-enable power to all servo channels.
      */

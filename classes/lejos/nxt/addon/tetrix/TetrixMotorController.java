@@ -6,7 +6,12 @@ import lejos.nxt.I2CSensor;
 import lejos.util.Delay;
 import lejos.util.EndianTools;
 
-/**HiTechnic Tetrix Motor Controller abstraction. Provides <code>TetrixMotor</code> and <code>TetrixEncoderMotor</code> instances 
+
+//import lejos.nxt.SensorPort;
+
+
+/**
+ * HiTechnic Tetrix Motor Controller abstraction. Provides <code>TetrixMotor</code> and <code>TetrixEncoderMotor</code> instances 
  * which are used to control the Tetrix motors.
  * <p>
  * Use <code>{@link TetrixControllerFactory#newMotorController}</code> to retrieve a <code>TetrixMotorController</code> instance.
@@ -23,6 +28,7 @@ public class TetrixMotorController extends I2CSensor {
     /** Represents Motor 2 as indicated on the controller
      */
     public static final int MOTOR_2 = 1;
+    
     private static final int CHANNELS = 2;
     private static final int KEEPALIVE_PING_INTERVAL = 2450;
     
@@ -86,10 +92,26 @@ public class TetrixMotorController extends I2CSensor {
     
     // I2C buffer
     private byte[] buf = new byte[12];
-    
-    TetrixMotorController(I2CPort port, int i2cAddress) {
-        super(port, i2cAddress, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
-        address = i2cAddress;
+
+    /**
+     * Instantiate a HiTechnic TETRIX Motor Controller connected to the given <code>port</code> and daisy chain position.
+     * 
+     * @param port The sensor port the controller (if daisy-chained, the first) is connected to.
+     * @param daisyChainPosition The position of the controller in the daisy chain.
+     * @see TetrixControllerFactory#DAISY_CHAIN_POSITION_1
+     * @see TetrixControllerFactory#DAISY_CHAIN_POSITION_2
+     * @see TetrixControllerFactory#DAISY_CHAIN_POSITION_3
+     * @see TetrixControllerFactory#DAISY_CHAIN_POSITION_4
+     * @see lejos.nxt.SensorPort
+     * @throws IllegalStateException if a Motor Controller was not found with given <code>port</code> and <code>daisyChainPosition</code>
+     */
+    public TetrixMotorController(I2CPort port, int daisyChainPosition) {
+        super(port, daisyChainPosition, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
+        address = daisyChainPosition;
+        if (!(getVendorID().equalsIgnoreCase(TetrixControllerFactory.TETRIX_VENDOR_ID) && 
+            getProductID().equalsIgnoreCase(TetrixControllerFactory.TETRIX_MOTORCON_PRODUCT_ID))) {
+            throw new IllegalStateException("Not a motor controller");
+        }
         initController();
         
         // This thread will keep the controller active. Without I2C activity within 2.5 seconds, it times out.
@@ -239,7 +261,8 @@ public class TetrixMotorController extends I2CSensor {
         sendData(REGISTER_MAP[REG_IDX_POWER][channel], workingByte); 
     }
 
-    /** execute a command. designed to never block because it is shared across two motors. The rotate WAITS are done
+    /** 
+     * Execute a command. designed to never block because it is shared across two motors. The rotate WAITS are done
      * in the TetrixEncoderMotor class
      * @param command the command
      * @param operand the value from the caller. Mostly not used and set to 0
@@ -326,7 +349,8 @@ public class TetrixMotorController extends I2CSensor {
         }
     }
     
-    /** Return the current battery voltage supplied to the controller.
+    /** 
+     * Return the current battery voltage supplied to the controller.
      * @return The current battery voltage in volts
      */
     public synchronized float getVoltage() {
