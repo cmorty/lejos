@@ -3,33 +3,21 @@ package lejos.pc.charting;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GraphicsEnvironment;
-import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-
 import javax.swing.JFrame;
 
-import org.jfree.chart.ChartMouseEvent;
-import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.entity.ChartEntity;
-import org.jfree.chart.entity.LegendItemEntity;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.AxisChangeListener;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
-import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYSeries;
@@ -49,7 +37,7 @@ class LoggingChart extends ChartPanel{
     private static final int RANGE_AXIS_COUNT=4;
     private static final int REFRESH_FREQUENCY_MS=500; // used by update thread 
     private static final float NORMAL_SERIES_LINE_WEIGHT = 0.5f;
-    private static final float HIGHLIGHT_SERIES_LINE_WEIGHT = 1.5f;
+    
     
     /** No domain range limiting
      */
@@ -73,6 +61,7 @@ class LoggingChart extends ChartPanel{
     
     private Range[] yExtents=new Range[RANGE_AXIS_COUNT];
     private MarkerManager markerManager=null; // supplies the domain distance delta marker service
+    private MouseManager mouseManager=null; // handles all mouse events,
     
     private class DatasetAndAxis {
         XYSeriesCollection datasetObj=null;
@@ -92,141 +81,8 @@ class LoggingChart extends ChartPanel{
         String label;
         int axisIndex; // cooresponds to dataset(index). could be sparse
         int seriesIndex; // cooresponds to series(index) in a dataset. is not sparse
-        XYToolTipGenerator tooltipGenerator; // The series tooltip generator
     }
-    
-    /** Allows user control of chart series visibility and series highlight on mouseover, click of legend
-     */
-    private class MyChartMouseListener implements ChartMouseListener{
-        private class DataIndexes{
-            int datasetSlashAxisIndex;
-            int seriesIndex;
-        }
-        private DataIndexes dataIndexs = new DataIndexes();
-      
-        private XYSeries getXYSeriesForEntity(ChartEntity ce) {
-            Comparable name=((LegendItemEntity)ce).getSeriesKey();
-            XYPlot plot = getChart().getXYPlot();
-            for (int i=0;i<plot.getDatasetCount();i++){
-                if (plot.getDataset(i)==null) continue;
-                for (int j=0;j<plot.getDataset(i).getSeriesCount();j++){
-                    if (name.compareTo(plot.getDataset(i).getSeriesKey(j))==0) {
-                        this.dataIndexs.datasetSlashAxisIndex=i;
-                        this.dataIndexs.seriesIndex=j;
-                        return ((XYSeriesCollection)plot.getDataset(i)).getSeries(j);
-                    }
-                }
-            }
-            return null;
-        }
-        
-        // assumes DataIndexes is set by getXYSeriesForEntity()
-        private boolean setStroke(float desiredWidth) {
-            XYItemRenderer ir=getChart().getXYPlot().getRenderer(this.dataIndexs.datasetSlashAxisIndex);
-            if (ir==null) return false;
-            try {
-                if (((BasicStroke)ir.getSeriesStroke(this.dataIndexs.seriesIndex)).getLineWidth()!=desiredWidth) {
-                    ir.setSeriesStroke(this.dataIndexs.seriesIndex, 
-                        new BasicStroke(desiredWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
-                    getChart().setNotify(true);
-                }
-            } catch (NullPointerException e) {
-                return false;
-            }
-            return true;
-        }
-        
-        
-        // assumes DataIndexes is set by getXYSeriesForEntity()
-        private void toggleSeriesVisible() {
-            XYLineAndShapeRenderer lsr=(XYLineAndShapeRenderer)(getChart().getXYPlot().getRenderer(this.dataIndexs.datasetSlashAxisIndex));
-            Boolean vis = lsr.getSeriesLinesVisible(this.dataIndexs.seriesIndex);
-            boolean lineVisible = vis==null?false:!vis.booleanValue();
-            lsr.setSeriesLinesVisible(this.dataIndexs.seriesIndex, lineVisible);
-            // effectively disable the series tootips if not shown by killing them. Harsh but no setVisble() method available
-            // 8/21/11: It appears that the renderer, plot, whatever, does not create and/or respect all but one tootip for multiple series that 
-            // overlap/share the same datapoints on the same axis def. Only one tooltip per that cooridinate is displayed. The workaround
-            // at this point is to put any series with duplicate coordinates on a different range axis to be able to display its 
-            // coordinate tootips.
-            XYToolTipGenerator ttg=null;
-            if (lineVisible) {
-//                System.out.println("look for: " + this.dataIndexs.datasetSlashAxisIndex + "-" + this.dataIndexs.seriesIndex);
-                for (int i=0;i<LoggingChart.this.seriesDefs.length;i++) {
-                    if (LoggingChart.this.seriesDefs[i].axisIndex==this.dataIndexs.datasetSlashAxisIndex &&
-                        LoggingChart.this.seriesDefs[i].seriesIndex==this.dataIndexs.seriesIndex) 
-                    {
-                        ttg=LoggingChart.this.seriesDefs[i].tooltipGenerator;
-//                        System.out.println("found: i= " +i + ": " + LoggingChart.this.seriesDefs[i].axisIndex + "-" + 
-//                            LoggingChart.this.seriesDefs[i].seriesIndex);
-                        break;
-                    }
-                }
-                if (lsr.getSeriesToolTipGenerator(this.dataIndexs.seriesIndex)==null) {
-                lsr.setSeriesToolTipGenerator(this.dataIndexs.seriesIndex, ttg);
-                }
-            } else {
-                lsr.setSeriesToolTipGenerator(this.dataIndexs.seriesIndex, null);
-            }
-        }
-        
-        public void chartMouseClicked(ChartMouseEvent event) {
-            ChartEntity ce = event.getEntity();
-            if (ce instanceof LegendItemEntity) {
-                getXYSeriesForEntity(ce); // set DataIndexes.blah 
-                toggleSeriesVisible();
-            }
-        }
-        
-        private Point2D getPointInRectangle(int x, int y, Rectangle2D area) {
-            double xx = Math.max(area.getMinX(), Math.min(x, area.getMaxX()));
-            double yy = Math.max(area.getMinY(), Math.min(y, area.getMaxY()));
-            return new Point2D.Double(xx, yy);
-        }
-        
-        public void chartMouseMoved(ChartMouseEvent event) {
-            ChartEntity ce = event.getEntity();
-            if (ce==null || seriesDefs==null) return;
-    
-            if (ce instanceof LegendItemEntity) {
-                if (getXYSeriesForEntity(ce)==null) return;
-                if (LoggingChart.this.getCursor()!=Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)) {
-                    LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                }
-                if (!setStroke(HIGHLIGHT_SERIES_LINE_WEIGHT)) {
-                    LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    return;
-                }
-            } else {
-                if (getScreenDataArea().contains(event.getTrigger().getX(), event.getTrigger().getY())) {
-                    if (LoggingChart.this.getCursor()!=Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR)) {
-                        //if (LoggingChart.this.getCursor()==Cursor.getPredefinedCursor(Cursor.HAND_CURSOR))
-                        LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR ));
-                    }
-                } else {
-                    if (LoggingChart.this.getCursor()!=Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)) {
-                        //if (LoggingChart.this.getCursor()==Cursor.getPredefinedCursor(Cursor.HAND_CURSOR))
-                        LoggingChart.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR ));
-                    }
-                }
-                this.dataIndexs.seriesIndex=-1;
-                this.dataIndexs.datasetSlashAxisIndex=-1;
-            }
-            
-            XYPlot plot = getChart().getXYPlot();
-            int datasetSlashAxisIndex = this.dataIndexs.datasetSlashAxisIndex;
-            int seriesIndex = this.dataIndexs.seriesIndex;
-            for (int i=0;i<plot.getDatasetCount();i++){
-                if (plot.getDataset(i)==null) continue;
-                for (int j=0;j<plot.getDataset(i).getSeriesCount();j++) {
-                    if (datasetSlashAxisIndex==i && seriesIndex==j) continue; 
-                    this.dataIndexs.datasetSlashAxisIndex=i;
-                    this.dataIndexs.seriesIndex=j;
-                    setStroke(NORMAL_SERIES_LINE_WEIGHT);
-                }
-            }
-        }
-    }
-    
+     
     public LoggingChart() {
         super(null);
         
@@ -237,7 +93,7 @@ class LoggingChart extends ChartPanel{
         datasetsAndAxes=initDatasetAndAxisArray();
         
         // Effectively disable font scaling/skewing 
-        // JFreeCHart forum: Graphics context and custom shapes
+        // JFreeChart forum: Graphics context and custom shapes
         // http://www.jfree.org/forum/viewtopic.php?f=3&t=24499&hilit=font+scaling
         this.setMaximumDrawWidth(1800);
         this.setMaximumDrawHeight(1280);
@@ -309,7 +165,7 @@ class LoggingChart extends ChartPanel{
                                         try {
                                             lockObj1.wait(50);;
                                         } catch (InterruptedException e) {
-                                            // TODO
+                                            ; // do nothing
                                         }
                                     }
                                 }
@@ -325,10 +181,46 @@ class LoggingChart extends ChartPanel{
         
         // Set a listener to set the width of the x-axis (domain) scale instance var this.domainWidth due to a chart resize event
         setAxisChangeListener();
-        // set the double-click to restore zoom to extents
-        setMouseListener();
         
-        this.addChartMouseListener(new MyChartMouseListener());
+        // set up managers for comment event markers and domain measuring markers
+        this.markerManager = new MarkerManager(this);
+        this.mouseManager = new MouseManager(this, this.markerManager);
+        setMouseListener();
+    }
+    
+    // set the double-click to restore zoom to extents
+    private void setMouseListener() {
+        class ml extends MouseAdapter{
+            public void mouseClicked(MouseEvent e) {
+                if ((e.getButton()&MouseEvent.BUTTON1)==MouseEvent.BUTTON1) {
+                    // doubleclick zooms extents of data
+                    if (e.getClickCount()==2) {
+                        
+                        if (getCursor()==Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)) {
+                            return;
+                        }
+                        
+                        if (!isEmptyChart()) {
+                            restoreAutoDomainBounds();
+                            // reset [session] historical range zoom extents if CTRL-Doubleleftclick
+                            if (e.isControlDown()) {
+                                restoreAutoRangeBounds();
+                                // effectively resets the Y range zoom extents
+                                resetYExtents();
+                            }
+                            // restore calced Y range bounds for all axes
+                            doRangeExtents(true);
+                        }
+                    }
+                }
+            }
+            
+            public void mouseReleased(MouseEvent e) {
+                getChart().setNotify(true);
+            }
+            
+        }
+        this.addMouseListener(new ml());
     }
     
     void setDomainScrolling(boolean scrollDomain){
@@ -344,33 +236,27 @@ class LoggingChart extends ChartPanel{
     }
     
     public void mouseMoved(MouseEvent e) {
-        if (!e.isShiftDown()) {
+        if (mouseManager.doMouseMoved(e))  {
             super.mouseMoved(e);
-            return;
         }
-        if (this.markerManager!=null) this.markerManager.mouseMoved(e);
     }
     
     public void mouseDragged(MouseEvent e) {
-        if (!e.isShiftDown()) {
-            // override to only allow left button to drag
-            if ((e.getModifiersEx()&e.BUTTON1_DOWN_MASK)==e.BUTTON1_DOWN_MASK) super.mouseDragged(e);
-            return;
+        if (mouseManager.doMouseDragged(e)) {
+            super.mouseDragged(e);
         }
     }
     
     public void mouseClicked(MouseEvent e) {
-        if (!e.isShiftDown()&&!e.isControlDown()) {
+        if (mouseManager.doMouseClicked(e)) {
             super.mouseClicked(e);
-            return;
-        }
-        if (this.markerManager!=null) this.markerManager.mouseClicked(e);
+        }    
     }
     
     /**
      * @param forceExtents true to always do a setRange. false to only do one if extents expand
      */
-    private synchronized void doRangeExtents(boolean forceExtents) {
+    synchronized void doRangeExtents(boolean forceExtents) {
         // ensure value (range) axis displays extents of data as it scrolls
         // dataset cooresponds to axis one-to-one
         Range yRange=null;
@@ -392,6 +278,10 @@ class LoggingChart extends ChartPanel{
             }
             if (forceExtents) plot.getRangeAxis(i).setRange(yExtents[i]);
         }
+    }
+    
+    private synchronized void resetYExtents(){
+        yExtents=new Range[RANGE_AXIS_COUNT];
     }
     
     public void paintComponent(Graphics g) {
@@ -424,8 +314,6 @@ class LoggingChart extends ChartPanel{
         setLayout(null);
         setChart(getBaselineChart());
         chartDirty=true;
-        this.markerManager = new MarkerManager(this);
-        this.setMouseWheelEnabled(true);
         setVisible(true);
     }
 
@@ -529,7 +417,7 @@ class LoggingChart extends ChartPanel{
         plot.setDomainAxis(domainAxis);
         
         plot.setDomainPannable(true);
-        plot.setDomainCrosshairVisible(true);
+        plot.setDomainCrosshairVisible(true); 
         plot.setRangePannable(true);
         plot.setDataset(new XYSeriesCollection());
         
@@ -572,7 +460,7 @@ class LoggingChart extends ChartPanel{
         }
         chart.getXYPlot().setRangeAxisLocation(axisIndex, axloc);
         chart.getXYPlot().mapDatasetToRangeAxis(axisIndex, axisIndex);
-        chart.getXYPlot().setRangeCrosshairVisible(true);
+        chart.getXYPlot().setRangeCrosshairVisible(true); 
         
         dAnda[axisIndex].datasetObj=dataset;
         
@@ -584,19 +472,8 @@ class LoggingChart extends ChartPanel{
         dbg("Constructing chart clone: \"" + getChart().getTitle().getText() + "\"..");
         JFreeChart chartClone=getBaselineChart();
         int pointCounter=0;
-        
-        JFrame frame = new ChartDisplay(chartClone);
-        frame.setIconImage(((JFrame)this.getTopLevelAncestor()).getIconImage()); 
 
-        Dimension frameSize = frame.getSize();
-        // Toolkit.getDefaultToolkit().getScreenSize() doesn't work for multi monitor setups (SK)
-        Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
-        frame.setLocation(center.x - frameSize.width / 2, 
-                          center.y - frameSize.height / 2);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-        chartClone.setNotify(false);
+        
         
         //adds XYSeries and maps axis/dataseries as per seriesDefs
         addDataSets(chartClone, true);
@@ -608,12 +485,12 @@ class LoggingChart extends ChartPanel{
             ir=(XYLineAndShapeRenderer)(getChart().getXYPlot().getRenderer(i));
             int seriesCount=chartClone.getXYPlot().getDataset(i).getSeriesCount();
             for (int j=0;j<seriesCount;j++) {
-                // hide the series and don't add data if "hidden" by user through GUI
+                // hide the series if "hidden" by user through GUI
                 if (ir.getSeriesLinesVisible(j)==null) ir.setSeriesLinesVisible(j,true); // because will return null if never defined through API
                 if (!ir.getSeriesLinesVisible(j)) {
                     chartClone.getXYPlot().getRenderer(i).setSeriesVisible(j, false);
                     System.out.println("Excluding series \"" + ir.getLegendItem(i,j).getLabel() + "\"");
-                    continue;
+                    if (!(i==0 && j==0)) continue; //and don't add data if not base dataset (we need it for marker calcs)
                 }
                 // dupe the data
                 seriesClone=((XYSeriesCollection)getChart().getXYPlot().getDataset(i)).getSeries(j);
@@ -647,14 +524,24 @@ class LoggingChart extends ChartPanel{
                 System.out.println("Removing unused axis \"" + chartClone.getXYPlot().getRangeAxis(i).getLabel() + "\"");
             }
         }
-         
+        
+        
+        SpawnChartPanel spawnpanel = new SpawnChartPanel(chartClone);
+//        chartClone.setNotify(false);
+        SpawnChartFrame frame = new SpawnChartFrame(spawnpanel);
+        frame.setIconImage(((JFrame)this.getTopLevelAncestor()).getIconImage()); 
+        
+//        SpawnChartPanel spawnpanel = new SpawnChartPanel(chartClone);
+        if (markerManager.isCommentsVisible()) {
+            // add comment markers
+            spawnpanel.importMarkers(markerManager.cloneMarkers());
+        }
+                
+        // copy the current title        
         chartClone.getTitle().setText(getChart().getTitle().getText());
         frame.setTitle("Chart: " + getChart().getTitle().getText());
         chartClone.getXYPlot().getDomainAxis().setLabel(getChart().getXYPlot().getDomainAxis().getLabel());
-        ((ChartDisplay)frame).getChartPanel().zoomOutBoth(100,100);
-        ((ChartDisplay)frame).getChartPanel().restoreAutoBounds();
         
-        chartClone.setNotify(true);
         dbg("Cloning complete");
         return true;
     }
@@ -688,11 +575,11 @@ class LoggingChart extends ChartPanel{
         }
         // used to disable zoom extent calc when there is no data
         this.emptyChart=true;
-        // remove any markers and clear any comments
-        this.markerManager.markersOff();
+        // remove any measuring markers and clear any comments
+        this.markerManager.measureToolsOff();
         this.markerManager.clearComments();
-        // clear so extents will be calculated for new data
-        yExtents=new Range[RANGE_AXIS_COUNT];
+        // int yExtents so extents will be calculated for new data
+        resetYExtents();
         
         // remove domain def from series def string array
         String[] fields;
@@ -771,10 +658,7 @@ class LoggingChart extends ChartPanel{
             XYSeries xys = new XYSeries(seriesDefs[i].label,true, true);
             xysc.addSeries(xys);
             // assign tooltip generators to each series
-            seriesDefs[i].tooltipGenerator = new StandardXYToolTipGenerator();
-//            System.out.println("TTG assigned: seriesDefs[" + i + "].axisIndex=" + seriesDefs[i].axisIndex + ", .seriesIndex=" + 
-//                seriesDefs[i].seriesIndex + ", name=" + xys.getDescription());
-            chart.getXYPlot().getRenderer(seriesDefs[i].axisIndex).setSeriesToolTipGenerator(seriesDefs[i].seriesIndex, seriesDefs[i].tooltipGenerator);
+            chart.getXYPlot().getRenderer(seriesDefs[i].axisIndex).setSeriesToolTipGenerator(seriesDefs[i].seriesIndex, new StandardXYToolTipGenerator());
             
         }
         
@@ -799,33 +683,7 @@ class LoggingChart extends ChartPanel{
         }
     }
     
-    private void setMouseListener() {
-        class ml extends MouseAdapter{
-            public void mouseClicked(MouseEvent e) {
-                if ((e.getButton()&MouseEvent.BUTTON1)==MouseEvent.BUTTON1) {
-                    // doubleclick zooms extents of data
-                    if (e.getClickCount()==2) {
-                        if (!emptyChart) {
-                            LoggingChart.this.restoreAutoDomainBounds();
-                            // reset [session] historical range zoom extents if CTRL-Doubleleftclick
-                            if (e.isControlDown()) {
-                                LoggingChart.this.restoreAutoRangeBounds();
-                                // effectively resets the Y range zoom extents
-                                yExtents=new Range[RANGE_AXIS_COUNT];
-                            }
-                            // restore calced Y range bounds for all axes
-                            doRangeExtents(true);
-                        }
-                    }
-                }
-            }
-            public void mouseReleased(MouseEvent e) {
-                getChart().setNotify(true);
-            }
-            
-        }
-        this.addMouseListener(new ml());
-    }
+    
     
     /**Add series data to the dataset. Pass a double array of series values that all share the same domain value (element 0). 
      * The number of values must match the header count in setSeries().
@@ -867,7 +725,7 @@ class LoggingChart extends ChartPanel{
         if (this.markerManager==null) return;
         this.markerManager.setCommentsVisible(visible);
     }
-    
+   
     /** Set the domain axis limiting mode. When limited, the domain "width" will not exceed the specified value by dropping the
      * first-most datapoints to meet the threshold defined by <code>limitMode</code> and <code>value</code> as datapoints are added.
      * @param limitMode Mode to use. Default is <code>DAL_UNLIMITED</code>.
