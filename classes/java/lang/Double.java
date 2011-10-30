@@ -212,15 +212,11 @@ public final class Double extends Number implements Comparable<Double>
      */
     public static long doubleToLongBits(double value)
     {
-        long l = doubleToRawLongBits(value);
-        // Collapse any NaN values
-        // Mask out the sign bit for the tests
-        long m = l & 0x7fffffffffffffffL;
-        // and check for being in the NaN range
-        if (m >= 0x7ff0000000000001L && m <= 0x7fffffffffffffffL)
-            l = 0x7ff8000000000000L;
-        
-        return l;
+    	// normalize NaN
+    	if (value != value)
+    		return 0x7ff8000000000000L;
+    	
+        return doubleToRawLongBits(value);
     }
 
 	/**
