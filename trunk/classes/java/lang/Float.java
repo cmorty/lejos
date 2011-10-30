@@ -140,15 +140,11 @@ public final class Float extends Number implements Comparable<Float>
      */
     public static int floatToIntBits(float value)
     {
-        int i = floatToRawIntBits(value);
-        // Collapse any NaN values
-        // Mask out the sign bit for the tests
-        int j = i & 0x7fffffff;
-        // and check for being in the NaN range
-        if (j >= 0x7f800001 && j <= 0x7fffffff)
-            i = 0x7fc00000;
-
-        return i;
+    	// normalize NaN
+    	if (value != value)
+    		return 0x7fc00000;
+    	
+        return floatToRawIntBits(value);
     }
 	/**
 	 * Returns the float value of this Float  object.
