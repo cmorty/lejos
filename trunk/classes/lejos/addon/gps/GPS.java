@@ -2,7 +2,7 @@ package lejos.addon.gps;
 
 import java.io.*;
 import java.util.*;
-
+  
 /**
  * This class manages data received from a GPS Device.
  * GPS Class manages the following NMEA Sentences:
@@ -26,9 +26,7 @@ public class GPS extends SimpleGPS {
 	//Classes which manages GGA, RMC, VTG, GSV, GSA Sentences
 	private RMCSentence rmcSentence;
 	private GSVSentence gsvSentence;
-	private int gsvSentenceNumber = -1;
-	private int gsvSentenceTotal = -1;
-	
+
 	//Date Object with use GGA & RMC Sentence
 	private Date date;
 	
@@ -133,33 +131,14 @@ public class GPS extends SimpleGPS {
 	 */
 	protected void sentenceChooser(String header, String s) {
 		if (header.equals(RMCSentence.HEADER)){
-			rmcSentence.setSentence(s);
+			rmcSentence.parse(s);
 			notifyListeners(this.rmcSentence);
 		}else if (header.equals(GSVSentence.HEADER)){
-			// TODO: I wonder what happens if say 2 of 4 are received and parse is called?
-			// Because 2 would be new data, 2 would be old data.
-			// Can't happen because parse() only called when not null.
-			// BUT what if it is in the middle of parsing and new data comes in? 
-			// Solution: Sync GSVSentence.parse()? checkRefresh() is already synced though.
-			
-			// 0. Get StringTokenizer to read info from NMEASentence:
-			StringTokenizer st = new StringTokenizer(s,",");
-			st.nextToken(); // Skip header $GPGSV
-			// 1.1 Find out how many sentences in sequence.
-			gsvSentenceTotal = Integer.parseInt(st.nextToken());
-			// 1.2 Find out which sentence this is.
-			gsvSentenceNumber = Integer.parseInt(st.nextToken());
-			// 2. Assign sentence to GSVSentence in order.
-			gsvSentence.setSentence(s, gsvSentenceNumber, gsvSentenceTotal);
-			// 3. If last sentence:
-			if(gsvSentenceTotal == gsvSentenceNumber) {
-				// 3a. setSentence() to last one so it is not null
-				gsvSentence.setSentence(s);
-				// 3b. Notify GPSListener
-				notifyListeners(this.gsvSentence);
-			}
-		} else
-			super.sentenceChooser(header, s);  // Check superclass sentences.
+			gsvSentence.parse(s);
+			notifyListeners(this.rmcSentence);
+		} else{
+			super.sentenceChooser(header, s); // Check superclass sentences.
+		}
 	}
 	
 	/* NMEA */

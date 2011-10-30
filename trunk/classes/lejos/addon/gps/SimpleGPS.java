@@ -1,7 +1,10 @@
 package lejos.addon.gps;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * This class manages data received from a GPS Device.
@@ -16,8 +19,11 @@ import java.util.*;
  * class to use for obtaining GPS data is the GPS class.</p>
  * 
  * @author BB
+ * @author Juan Antonio Breña Moral
+ * 
  */
 public class SimpleGPS extends Thread {
+
 
 	/**
 	 * BUFF is the amount of bytes to read from the stream at once.
@@ -31,22 +37,20 @@ public class SimpleGPS extends Thread {
 	private String START_CHAR = "$";
 	
 	private InputStream in;
-		
-	public int errors = 0; // TODO: DELETE ME. Testing purposes only.
-	
+
 	//Classes which manages GGA, VTG, GSA Sentences
 	protected GGASentence ggaSentence;
 	protected VTGSentence vtgSentence;
-	private GSASentence gsaSentence;
+	protected GSASentence gsaSentence;
 	
 	//Data
 	private StringTokenizer tokenizer;
 	
 	// Security
-	private boolean shutdown = false;
+	private boolean close = false;
 	
 	// Listener-notifier
-	static protected Vector<GPSListener> listeners = new Vector<GPSListener>();
+	static private Vector<GPSListener> listeners = new Vector<GPSListener>();
 
 	
 	/**
@@ -60,14 +64,11 @@ public class SimpleGPS extends Thread {
 		ggaSentence = new GGASentence();
 		vtgSentence = new VTGSentence();
 		gsaSentence = new GSASentence();
-				
-		// Juan: Don't comment out the next line. 
-		// This should be a daemon thread so VM exits when user program terminates.
+
 		this.setDaemon(true); // Must be set before thread starts
 		this.start();
 	}
-	
-	/* GETTERS & SETTERS */
+
 
 	/**
 	 * Get Latitude
@@ -250,69 +251,14 @@ public class SimpleGPS extends Thread {
 	 * Included in case programmer wants absolutely clean exit. 
 	 */
 	public void close() throws IOException {
-		this.shutdown = true;
+		this.close = true;
 		in.close();
 	}
 	
-	/**
-	 * Keeps reading sentences from GPS receiver stream and extracting data.
-	 * This is a daemon thread so when program ends it won't keep running.
+	/*
+	 * EVENTS SECTION
+	 * 
 	 */
-	public void run() {
-		String token;
-		String s;
-		
-		while(!shutdown) {
-			
-			s = getNextString();
-			
-			// TODO: This shouldn't be necessary. getNextString() runs through the Checksum:
-			// Check if sentence is valid:
-			if(s.indexOf('*') < 0) { 
-				continue;
-			}
-			if(s.indexOf('$') < 0) {
-				continue;
-			}
-
-			//2008/07/28
-			//Debug checksum validation
-			//Class 19: java.lang.StringIndexOutOfBoundsException
-			// TODO: I suspect we don't need this try-catch block anymore.
-			try{
-				if(NMEASentence.isValid(s)){
-					tokenizer = new StringTokenizer(s);
-					token = tokenizer.nextToken();
-					// Choose which type of sentence to parse:
-					sentenceChooser(token, s); // Method to make subclass more efficient - no redundant code.
-				}
-			}catch(StringIndexOutOfBoundsException e){
-				System.err.println("SimpleGPS.run() error. StringIndexOutOfBounds");
-			}catch(ArrayIndexOutOfBoundsException e2){
-				//Jab
-				//Bug detected: 06/08/2008
-				System.err.println("SimpleGPS.run() error. ArrayIndexOutOfBounds");
-			}		
-		}
-	}
-
-	/**
-	 * Internal helper method to aid in the subclass architecture. Overwritten by subclass.
-	 * @param header
-	 * @param s
-	 */
-	protected void sentenceChooser(String header, String s) {
-		if (header.equals(GGASentence.HEADER)){
-			this.ggaSentence.setSentence(s);
-			notifyListeners(this.ggaSentence);
-		}else if (header.equals(VTGSentence.HEADER)){
-			this.vtgSentence.setSentence(s);
-			notifyListeners(this.vtgSentence);
-		}else if (header.equals(GSASentence.HEADER)){
-			gsaSentence.setSentence(s);
-			notifyListeners(this.gsaSentence);
-		}
-	}
 	
 	static protected void notifyListeners(NMEASentence sen){
 		/* TODO: Problem is ggaSentence is a reused object in this API.
@@ -325,72 +271,6 @@ public class SimpleGPS extends Thread {
 			gpsl.sentenceReceived(sen);
 		}
 	}
-
-	
-	/**
-	 * Pulls the next NMEA sentence as a string
-	 * @return NMEA string, including $ and end checksum 
-	 */
-	private String getNextString() {
-		boolean done = false;
-		String sentence = "";
-		int endIndex = 0;
-
-		do{
-			// Read in buf length of sentence
-			try {
-				// TODO: Does in.read() pause the thread or does this eat up unnecessary
-				// CPU cycles? Maybe add a Thread.sleep here that cuts out CPU waste.
-				// This in.read() method reads in BUFF length of bytes every time.
-				in.read(segment);
-			}catch (IOException e) {
-				// TODO: How to handle error?
-			}catch(Exception e){
-				// TODO: ??
-			}
-			// Append char[] data into currentSentence
-			for(int i=0;i<BUFF;i++)
-				currentSentence.append((char)segment[i]);
-			
-			// Search for $ symbol (indicates start of new sentence)
-			if(currentSentence.indexOf(START_CHAR, 1) >= 0) {
-				done = true;
-			}
-			
-			// TODO: Probably better to throw exception here if GPS disconnects
-			//In case user turns off GPS Device / GPS Device has low batteries / Other disconnect scenarios
-			// There is also the listener of LocationProvider.
-			if(currentSentence.length() >= 500){
-				errors++;
-				//2008/09/06 : JAB
-				//Reset
-				//currentSentence = new StringBuffer();
-				//segment = new byte[BUFF];
-				System.err.println("Bug in SimpleGPS.getNextString() detected. > 500");
-				System.err.println("Sentence: " + currentSentence.toString());
-				
-				//If detect a problem with InputStream
-				//System detect the event and notify the problem with the
-				//Enabling the flag internalError
-				return null;
-			}
-		}while(!done);
-
-		try{
-			endIndex = currentSentence.indexOf(START_CHAR, 1);
-			sentence = currentSentence.substring(0, endIndex);
-			
-			// Crop print current sentence
-			currentSentence.delete(0, endIndex);
-		}catch(Exception e){
-			// TODO: Why catch a runtime exception here?
-			System.err.println("Exception in SimpleGPS.getNextString() " + e.getMessage());
-		}
-		
-		return sentence;
-	}
-	
-	/* EVENTS*/
 
 	/**
 	 * add a listener to manage events with GPS
@@ -411,5 +291,126 @@ public class SimpleGPS extends Thread {
 		listeners.removeElement(listener); 
 	}
 
+	/*
+	 * THREAD SECTION
+	 * 
+	 */
 	
+	/**
+	 * Keeps reading sentences from GPS receiver stream and extracting data.
+	 * This is a daemon thread so when program ends it won't keep running.
+	 */
+	public void run() {
+
+		String token = "";
+		String s = "";
+		
+		while(!close) {
+			
+			s = getNextString();
+
+			// Check if sentence is valid:
+			if(s.indexOf('*') < 0) { 
+				continue;
+			}
+			if(s.indexOf('$') < 0) {
+				continue;
+			}
+			
+			try{
+				tokenizer = new StringTokenizer(s);
+				token = tokenizer.nextToken();
+
+				//System.out.println(token);
+									
+				sentenceChooser(token, s);
+				
+				//System.out.println(s);
+				
+			}catch(NoSuchElementException e){
+				//System.out.println("GPS: NoSuchElementException");				
+			}catch(StringIndexOutOfBoundsException e){
+				//System.out.println("GPS: StringIndexOutOfBoundsException");
+			}catch(ArrayIndexOutOfBoundsException e){
+				//System.out.println("GPS: ArrayIndexOutOfBoundsException");
+			}catch(Exception e){
+				//System.out.println("GPS: Exception");
+			}finally{
+				//Reset
+				token = "";
+				s = "";
+			}
+		}
+	}
+
+	
+	/**
+	 * Pulls the next NMEA sentence as a string
+	 * @return NMEA string, including $ and end checksum 
+	 */
+	private String getNextString() {
+		boolean done = false;
+		String sentence = "";
+		int endIndex = 0;
+
+		do{
+			// Read in buf length of sentence
+			try {
+				in.read(segment);
+			}catch (IOException e) {
+				// How to handle error?
+			}catch(Exception e){
+				// ??
+			}
+			// Append char[] data into currentSentence
+			for(int i=0;i<BUFF;i++)
+				currentSentence.append((char)segment[i]);
+			
+			// Search for $ symbol (indicates start of new sentence)
+			if(currentSentence.indexOf(START_CHAR, 1) >= 0) {
+				done = true;
+			}
+			
+			//JAB
+			//2011/10/30
+			//Latest firmware is better in this kind of scenario to avoid Fatal errors
+			
+			//In case of turn off GPS Device / GPS Device with low batteries / Other scenarios
+			if(currentSentence.length() >= 500){
+
+				return "";
+			}
+		}while(!done);
+
+		try{
+			endIndex = currentSentence.indexOf(START_CHAR, 1);
+			sentence = currentSentence.substring(0, endIndex);
+			
+			// Crop print current sentence
+			currentSentence.delete(0, endIndex);
+		}catch(Exception e){
+			//System.err.println("SimpleGPS: getNextSring / Exception")
+		}
+		
+		return sentence;
+	}
+
+	/**
+	 * Internal helper method to aid in the subclass architecture. Overwritten by subclass.
+	 * @param header
+	 * @param s
+	 */
+	protected void sentenceChooser(String header, String s) {
+		if (header.equals(GGASentence.HEADER)){
+			this.ggaSentence.parse(s);
+			notifyListeners(this.ggaSentence);
+		}else if (header.equals(VTGSentence.HEADER)){
+			this.vtgSentence.parse(s);
+			notifyListeners(this.vtgSentence);
+		}else if (header.equals(GSASentence.HEADER)){
+			gsaSentence.parse(s);
+			notifyListeners(this.gsaSentence);
+		}
+	}
+
 }

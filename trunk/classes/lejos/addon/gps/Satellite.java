@@ -1,6 +1,5 @@
 package lejos.addon.gps;
 
-
 /**
  * This class models data extracted from NMEA GSV Sentence
  * 
