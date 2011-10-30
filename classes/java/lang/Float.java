@@ -6,7 +6,7 @@ package java.lang;
  * @author Lawrie Griffiths
  * @author Sven Köhler
  */
-public final class Float extends Number
+public final class Float extends Number implements Comparable<Float>
 {
 	public static final float POSITIVE_INFINITY = 1.0f / 0.0f;
 	public static final float NEGATIVE_INFINITY = -1.0f / 0.0f;
@@ -24,9 +24,6 @@ public final class Float extends Number
     // of the correct value by the linker, so no need to initialize.
 	public static final Class<?> TYPE = null;
 
-	//MISSING implements Comparable
-	//MISSING public static int compare(float, float)
-	//MISSING public int compareTo(Object)
 	//MISSING public static String toHexString(float)
 
 	private float value;
@@ -54,6 +51,36 @@ public final class Float extends Number
 	public byte byteValue()
 	{
 		return (byte)this.value;
+	}
+	
+	public static int compare(float a, float b)
+	{
+		// normal float compare, NaN should fall through
+		if (a > b)
+			return 1;
+		if (a < b)
+			return -1;
+		
+		// handle NaN
+		if (a != a)
+			return (b != b) ? 0 : 1;
+		if (b != b)
+			return -1;
+		
+		// handle negative and positive zero
+		int ra = Float.floatToRawIntBits(a);
+		int rb = Float.floatToRawIntBits(b);
+		
+		if (ra > rb)
+			return 1;
+		if (ra < rb)
+			return -1;
+		return 0;
+	}
+	
+	public int compareTo(Float other)
+	{
+		return Float.compare(this.value, other.value);
 	}
 	
 	@Override
