@@ -20,16 +20,5 @@ public interface GPSListener extends EventListener{
 	 * Then cast the sentence into the appropriate type. e.g. (GGASentence)sen
 	 */
 	public void sentenceReceived(NMEASentence sen);
-	
-	/*
-	public void ggaSentenceReceived (GPS gpsReceiver, GGASentence ggaSentence);
-	
-	public void rmcSentenceReceived (GPS gpsReceiver, RMCSentence rmcSentence);
 
-	public void vtgSentenceReceived (GPS gpsReceiver, VTGSentence vtgSentence);
-
-	public void gsvSentenceReceived (GPS gpsReceiver, GSVSentence gsvSentence);
-
-	public void gsaSentenceReceived (GPS gpsReceiver, GSASentence gsagSentence);
-	*/
 }

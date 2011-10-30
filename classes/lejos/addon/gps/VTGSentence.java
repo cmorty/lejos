@@ -1,7 +1,7 @@
 package lejos.addon.gps;
 
-
-import java.util.*;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 
 /**
  * VTGSentence is a Class designed to manage VTG Sentences from a NMEA GPS Receiver
@@ -24,85 +24,95 @@ import java.util.*;
  *            A            Mode indicator (A=Autonomous, D=Differential,
  *                         E=Estimated, N=Data not valid)
  * 
- * @author Juan Antonio Brenha Moral (major recoding by BB)
+ * @author Juan Antonio Brenha Moral
+ * 
  */
 public class VTGSentence extends NMEASentence{
 
 	//RMC Sentence
-	// TODO: Convert any of these floats to int?
-	private float speed = 0; // TODO Probably default values should be negative?
-	private float trueCourse = 0;
-	private float magneticCourse = 0;
+	private String nmeaHeader = "";
+	private final float KNOT = 1.852f;
+	private float speed = 0f;
+	private float trueCourse = 0f;
+	private float magneticCourse = 0f;
 
 	//Header
 	public static final String HEADER = "$GPVTG";
-
-	/*
-	 * GETTERS & SETTERS
-	 */
+	
+	//NMEA parts
+	private String part1,part2,part3,part4,part5,part6,part7,part8,part9 = "";
 
 	/**
 	 * Returns the NMEA header for this sentence.
 	 */
+	@Override
 	public String getHeader() {
 		return HEADER;
 	}
-		
-	/**
-	 * Get Speed in Kilometers
-	 * 
-	 * @return the speed in kilometers per ???
-	 */
-	public float getSpeed(){
-		checkRefresh();
-		return speed;  
-	}
-
+	
 	/**
 	 * Get true course, in degrees.
 	 * 
 	 * @return the true course in degrees 0.0 to 360.0
 	 */
 	public float getTrueCourse(){
-		checkRefresh();
 		return trueCourse;
 	}
 	
 	/**
-	 * Get magnetic course, in degrees. Holux-1200 GPS doesn't have a built in magnetic compass so
-	 * this value is blank.
+	 * Get Speed in Kilometers
 	 * 
-	 * @return the magnetic course in degrees 0.0 to 360.0
+	 * @return
 	 */
-	public float getMagneticCourse(){
-		checkRefresh();
-		return magneticCourse;
+	public float getSpeed(){
+		return speed;  
 	}
-	
+
 	/**
 	 * Parase a RMC Sentence
 	 * 
 	 * $GPVTG,054.7,T,034.4,M,005.5,N,010.2,K,A*53
 	 */
-	protected void parse (String sentence){
+	public void parse(String sentence){
+		
 		st = new StringTokenizer(sentence,",");
+
 		try{
-			st.nextToken();//skip header $GPVTG
-			trueCourse = Float.parseFloat(st.nextToken());//True course made good over ground, degrees
-			st.nextToken();//Letter
-			String sTemp = st.nextToken();
-			if(sTemp.length() > 0) // This is blank with Holux-1200	
-				magneticCourse = Float.parseFloat(sTemp);//Magnetic course made good over ground
-			st.nextToken();//Letter
-			st.nextToken();//Ground speed, N=Knots TODO: Could offer this value too.
-			st.nextToken();//Letter
-			speed = Float.parseFloat(st.nextToken());//Ground speed, K=Kilometers per hour
-			//st.nextToken();//Letter
+			
+			//Extracting data from a VTG Sentence
+			
+			part1 = st.nextToken();//NMEA header
+			part2 = st.nextToken();//True course made good over ground, degrees
+			part3 = st.nextToken();//Letter
+			part4 = st.nextToken();//Magnetic course made good over ground
+			part5 = st.nextToken();//Letter
+			part6 = st.nextToken();//Ground speed, N=Knots
+			part7 = st.nextToken();//Letter
+			part8 = st.nextToken();//Speed over the ground in knots
+			part9 = st.nextToken();//Letter
+			
+			st = null;
+			
+			//Processing VTG data
+			
+			nmeaHeader = part1;//$GPVTG
+			
+			if(part8.length() == 0){
+				speed = 0;
+			}else{
+				speed = Float.parseFloat(part8);
+			}
+			
+			System.out.println(speed);
+			
 		}catch(NoSuchElementException e){
-			//Empty
+			//System.err.println("VTGSentence: NoSuchElementException");
 		}catch(NumberFormatException e){
-			//Empty
+			//System.err.println("VTGSentence: NumberFormatException");
+		}catch(Exception e){
+			//System.err.println("VTGSentence: Exception");
 		}
+		
 	}//End Parse
 
 }//End Class

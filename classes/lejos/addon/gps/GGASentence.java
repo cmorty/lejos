@@ -1,7 +1,7 @@
 package lejos.addon.gps;
 
-
-import java.util.*;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 
 /**
  * This class has been designed to manage a GGA Sentence
@@ -33,20 +33,20 @@ import java.util.*;
  *      (empty field) DGPS station ID number
  *      *47          the checksum data, always begins with *
  * 
- * @author BB
+ * @author Juan Antonio Brenha Moral
+ * 
  */
 public class GGASentence extends NMEASentence{
 	
 	//GGA
-	// TODO: Convert all/most of Juan's floats to int.
-	// TODO: Initialize values with -1 or perhaps NaN
-	private float dateTimeOfFix = -1;
-	private double latitude = 0;
-	private char latitudeDirection; // TODO: Delete me? Maybe used briefly in calc.
-	private double longitude = 0;
-	private char longitudeDirection; // ToDO: Delete me?
-	private float quality;
-	private float satellitesTracked = 0;
+	private String nmeaHeader = "";
+	private int dateTimeOfFix = 0;
+	private float latitude = 0;
+	private char latitudeDirection;
+	private float longitude = 0;
+	private char longitudeDirection;
+	private int quality = 0;
+	private int satellitesTracked = 0;
 	private float hdop = 0;
 	private float altitude = 0;
 	private String altitudeUnits;
@@ -56,10 +56,13 @@ public class GGASentence extends NMEASentence{
 	//Header
 	public static final String HEADER = "$GPGGA";
 	
+	//NMEA parts
+	private String part1,part2,part3,part4,part5,part6,part7,part8,part9,part10,part11 = "";
+
 	/*
 	 * GETTERS & SETTERS
 	 */
-
+	
 	/**
 	 * Returns the NMEA header for this sentence.
 	 */
@@ -67,24 +70,21 @@ public class GGASentence extends NMEASentence{
 	public String getHeader() {
 		return HEADER;
 	}
-	
+
 	/**
 	 * Get Latitude
 	 * 
 	 */
-	public double getLatitude() {
-		checkRefresh();
+	public float getLatitude() {
 		return latitude;
 	}
 	
 	/**
 	 * Get Latitude Direction
 	 * 
-	 * @return the latitude direction
+	 * @return
 	 */
-	// TODO: I think this is a useless method because we just use + or - in coordinates.
 	public char getLatitudeDirection(){
-		checkRefresh();
 		return latitudeDirection;
 	}
 	
@@ -92,28 +92,24 @@ public class GGASentence extends NMEASentence{
 	 * Get Longitude
 	 * 
 	 */
-	public double getLongitude() {
-		checkRefresh();
+	public float getLongitude() {
 		return longitude;
 	}
 
 	/**
 	 * Get Longitude Direction
-	 * @return the longitude direction
+	 * @return
 	 */
-	// TODO: I think this is a useless method because we just use + or - in coordinates.
 	public char getLongitudeDirection(){
-		checkRefresh();
 		return longitudeDirection;
 	}
 	
 	/**
 	 * Get Altitude
 	 * 
-	 * @return the altitude
+	 * @return
 	 */
 	public float getAltitude(){
-		checkRefresh();
 		return altitude;
 	}
 
@@ -123,9 +119,7 @@ public class GGASentence extends NMEASentence{
 	 * @return The time as a UTC integer. 123519 = 12:35:19 UTC
 	 */
 	public int getTime(){
-		checkRefresh();
-		// TODO: Why is he using Math.round?
-		return Math.round(dateTimeOfFix);
+		return dateTimeOfFix;
 	}
 	
 	/**
@@ -135,9 +129,7 @@ public class GGASentence extends NMEASentence{
 	 * @return Number of satellites e.g. 8
 	 */
 	public int getSatellitesTracked() {
-		checkRefresh();
-		// TODO: Why is he using Math.round?
-		return Math.round(satellitesTracked);
+		return satellitesTracked;
 	}
 
 	/**
@@ -146,54 +138,60 @@ public class GGASentence extends NMEASentence{
 	 * @return the fix quality
 	 */
 	public int getFixQuality(){
-		checkRefresh();
-		// TODO: Why is he using Math.round?
-		return Math.round(quality);
+		return quality;
 	}
+
 	
 	/**
 	 * Method used to parse a GGA Sentence
 	 */
-	@Override
 	protected void parse(String sentence){
-		//StringTokenizer st = new StringTokenizer(nmeaSentence,",");
-		st = new StringTokenizer(sentence,",");
-		// TODO: What's with all these Strings defined as ""?
-		String q = "";
-		String h = "";
 		
-		// TODO: Should this really be in a try-catch block? Didn't do anything until I added System.err output.
-		try{
-			st.nextToken(); // skip $GPGGA header
-			// TODO: I attempted Integer.parseInt and it threw a NumberFormatException because
-			// UTC looks like 175958.000. Is it wrong to discard decimals? Always seem to be 000.
-			dateTimeOfFix = Float.parseFloat(st.nextToken());//UTC Time
-			latitude = degreesMinToDegrees(st.nextToken());
-			latitudeDirection = st.nextToken().charAt(0);//N
-			longitude = degreesMinToDegrees(st.nextToken());
-			longitudeDirection = st.nextToken().charAt(0);//E
-			q = st.nextToken();
-			if(q.length() == 0){
-				quality = 0;
-			}else{
-				quality = Float.parseFloat(q);//Fix quality
-			}
-			//quality = Float.parseFloat(st.nextToken());//Fix quality
-			satellitesTracked = Float.parseFloat(st.nextToken());//Number of satellites being tracked
-			
-			h = st.nextToken();
-			if(h.length() == 0){
-				hdop = 0;
-			}else{
-				hdop = Float.parseFloat(h);//Horizontal dilution of position
-			}
-			
-			altitude = Float.parseFloat(st.nextToken());
+		st = new StringTokenizer(sentence,",");
 
-			// Geoidal separation is 0 with Holux-1200. If decide to use in future check for 0 length before parse.
-			//this.geoidalSeparation = Float.parseFloat(st.nextToken()); 
+		try{
 			
-			//Improve quality data
+			//Extracting data from a GGA Sentence
+			
+			part1 = st.nextToken();//NMEA header
+			part2 = st.nextToken();//Global Positioning System Fix Data
+			part3 = st.nextToken();//Latitude
+			part4 = st.nextToken();//Latitude Direction
+			part5 = st.nextToken();//Longitude
+			part6 = st.nextToken();//Longitude Direction
+			part7 = st.nextToken();//Quality
+			part8 = st.nextToken();//Satellite Tracked
+			part9 = st.nextToken();//Hdop
+			part10 = st.nextToken();//Altitude
+			
+			st = null;
+			
+			//Processing GGA data
+			
+			nmeaHeader = part1;
+
+			if(part2.length() == 0){
+				dateTimeOfFix = 0;
+			}else{
+				dateTimeOfFix = Math.round(Float.parseFloat(part2));
+			}
+						
+			if(isNumeric(part3)){
+				latitude = degreesMinToDegrees(part3,NMEASentence.LATITUDE);
+			}else{
+				latitude = 0f;
+			}
+			
+			latitudeDirection = part4.charAt(0);
+			
+			if(isNumeric(part5)){
+				longitude = degreesMinToDegrees(part5,NMEASentence.LONGITUDE);
+			}else{
+				longitude = 0f;
+			}
+
+			longitudeDirection = part6.charAt(0);
+			
 			if (longitudeDirection != 'E') {
 				longitude = -longitude;
 			}
@@ -201,12 +199,36 @@ public class GGASentence extends NMEASentence{
 				latitude = -latitude;
 			}
 
+			if(part7.length() == 0){
+				quality = 0;
+			}else{
+				quality = Math.round(Float.parseFloat(part7));//Fix quality
+			}
+
+			if(part8.length() == 0){
+				satellitesTracked = 0;
+			}else{
+				satellitesTracked = Math.round(Float.parseFloat(part8));
+			}
+
+			if(part9.length() == 0){
+				hdop = 0;
+			}else{
+				hdop = Float.parseFloat(part9);//Horizontal dilution of position
+			}
+			
+			if(isNumeric(part10)){
+				altitude = Float.parseFloat(part10);
+			}else{
+				altitude = 0f;
+			}
+			
 		}catch(NoSuchElementException e){
-			//Empty
-			System.err.println("GGASentence.parse() NoSuchElementException thrown: " + e.getMessage());
+			//System.err.println("GGASentence: NoSuchElementException");
 		}catch(NumberFormatException e){
-			//Empty
-			System.err.println("GGASentence.parse() NumberFormatException thrown: " + e.getMessage());
+			//System.err.println("GGASentence: NumberFormatException");
+		}catch(Exception e){
+			//System.err.println("GGASentence: Exception");
 		}
 
 	}//End parse

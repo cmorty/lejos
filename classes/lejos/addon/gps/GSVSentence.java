@@ -1,11 +1,12 @@
 package lejos.addon.gps;
 
-import java.util.*;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 
 /**
  * This class has been designed to manage a GSV Sentence
  * 
- * GPS Satellites in View
+ * GPS Satellites in view
  * 
  * eg. $GPGSV,3,1,11,03,03,111,00,04,15,270,00,06,01,010,00,13,06,292,00*74
  *     $GPGSV,3,2,11,14,25,170,00,16,57,208,39,18,67,296,40,19,40,246,00*74
@@ -25,114 +26,259 @@ import java.util.*;
  * 12-15= Information about third SV, same as field 4-7
  * 16-19= Information about fourth SV, same as field 4-7
  * 
- * @author recoded by BB
- */
-/*
- * DEVELOPER NOTES:
- * This sentence is a little harder to parse because it uses data from multiple sentences
- * and there might be any number from 1 to 4 of them, perhaps more.
+ * @author Juan Antonio Brenha Moral
+ * 
  */
 public class GSVSentence extends NMEASentence{
 	
 	//GGA
+	private String nmeaHeader = "";
 	private int satellitesInView = 0;
-	//public static final int MAXIMUM_SATELLITES = 4;//0,1,2,3
-	private Satellite [] ns;
-	
-	// Globals used for parsing multiple sentences in parse() method.
-	// TODO: Might be able to delete these three:
-	private int currentSentence;
-	private int currentSatellite;
-	private int totalSentences;
-	private String [] sentences;
+	private final int MAXIMUMSATELLITES = 4;
+	private Satellite ns1;
+	private Satellite ns2;
+	private Satellite ns3;
+	private Satellite ns4;
 	
 	//Header
 	public static final String HEADER = "$GPGSV";
+
+	//NMEA parts
+	private String part1,part2,part3,part4,part5,part6,part7,part8,part9,part10,part11,part12,part13,part14,part15,part16,part17,part18,part19 = "";
+
+	/*
+	 * Constructor
+	 */
+	public GSVSentence(){
+		ns1 = new Satellite();
+		ns2 = new Satellite();
+		ns3 = new Satellite();
+		ns4 = new Satellite();
+	}
+	
 	
 	/*
 	 * GETTERS & SETTERS
 	 */
-	
+
 	/**
 	 * Returns the NMEA header for this sentence.
 	 */
+	@Override
 	public String getHeader() {
 		return HEADER;
 	}
-		
+	
 	/**
-	 * Returns the number of satellites currently in view.
+	 * Returns the number of satellites being tracked to
+	 * determine the coordinates.
 	 * 
 	 * @return Number of satellites e.g. 8
 	 */
 	public int getSatellitesInView() {
-		// TODO: Currently this only works in GPSInfo example because it retrieves getSatellite() as soon as a GSV sentence is received.
-		// If you try to get this at any other time it won't work.
-		checkRefresh();
 		return satellitesInView;
 	}
 
 	/**
-	 * Return a NMEA Satellite object.  
+	 * Return a NMEA Satellite object
 	 * 
-	 * @param index the index of the satellite
-	 * @return theNMEASatellite object for the selected satellite
+	 * @param index
+	 * @return
 	 */
 	public Satellite getSatellite(int index){
-		// Must be synchronized so that all 3-4 GSV sentences are read before it tries to give out data.
-		// TODO: Make sure all 4 of 4 sentences are read. Do quick check here. Otherwise array is temporarily filled with 0s, causes output to flicker.
-		// TODO: GPS notifier should only call on LAST of GSV sentences received. Ignore others in sequence until data is present.
-		checkRefresh();
-		
-		return ns[index];
+		Satellite ns = new Satellite();
+		if(index == 0){
+			ns = ns1;
+		}else if(index == 1){
+			ns = ns2;
+		}else if(index == 2){
+			ns = ns3;
+		}else if(index == 3){
+			ns = ns4;
+		}
+		return ns;
 	}
-	
-	protected void setSentence(String sentence, int sentenceNumber, int total) {
-		if(sentenceNumber == 1) sentences = new String[total];
-		sentences[sentenceNumber - 1] = sentence;
-	}
+
 	
 	/**
-	 * Method used to parse a GSV Sentence. Note this ignores 'sentence' and
-	 * instead uses an internal array containing a full set of GSV sentences.
+	 * Method used to parse a GSV Sentence
 	 */
-	protected void parse(String sentence){
-		//StringTokenizer st = new StringTokenizer(nmeaSentence,",");
-		
-		// TODO: I don't see any reason for using try-catch block here.
+	public void parse(String sentence){
+
+		st = new StringTokenizer(sentence,",");
+		int PRN = 0;
+		int elevation = 0;
+		int azimuth = 0;
+		int SNR = 0;
+
 		try{
-			// Loop through all sentences parsing data:
-			for(int i=0;i<sentences.length;i++) {
-				st = new StringTokenizer(sentences[i],",");
-				st.nextToken(); // Skip header $GPGSV
-				totalSentences = Integer.parseInt(st.nextToken());// Total messages
-				currentSentence = Integer.parseInt(st.nextToken());//Message number
-				satellitesInView = Integer.parseInt(st.nextToken());//Number of satellites being tracked
-	
-				if(currentSentence == 1) {
-					ns = new Satellite[satellitesInView];
-					for(int j=0;j<ns.length;j++)
-						ns[j] = new Satellite();
-					currentSatellite = 0;
+			
+			//Extracting data from a GSV Sentence
+			
+			part1 = st.nextToken();//GPS Satellites in view
+			part2 = st.nextToken();//Message number
+			part3 = st.nextToken();//
+			part4 = st.nextToken();//
+			part5 = st.nextToken();//
+			part6 = st.nextToken();//
+			part7 = st.nextToken();//
+			part8 = st.nextToken();//
+			part9 = st.nextToken();//
+			part10 = st.nextToken();//
+			part11 = st.nextToken();//
+			part12 = st.nextToken();//
+			part13 = st.nextToken();//
+			part14 = st.nextToken();//
+			part15 = st.nextToken();//
+			part16 = st.nextToken();//
+			part17 = st.nextToken();//
+			part18 = st.nextToken();//
+			part19 = st.nextToken();//
+			
+			st = null;
+			
+			nmeaHeader = part1;
+			
+			if(part3.length() == 0){
+				satellitesInView = 0;
+			}else{
+				satellitesInView = Math.round(Float.parseFloat(part3));
+			}
+			
+			if(satellitesInView > 0){
+				
+				//SAT 1
+				
+				if(part4.length() == 0){
+					PRN = 0;
+				}else{
+					PRN = Math.round(Float.parseFloat(part4));
 				}
 
-				for(;currentSatellite<(currentSentence * 4);currentSatellite++) {
-				//for(;st.hasMoreTokens();currentSatellite++) {
-					int PRN = Integer.parseInt(st.nextToken());
-					int elevation = Integer.parseInt(st.nextToken());
-					int azimuth = Integer.parseInt(st.nextToken());
-					int SNR = Integer.parseInt(st.nextToken());
-					
-					ns[currentSatellite].setPRN(PRN);
-					ns[currentSatellite].setElevation(elevation);
-					ns[currentSatellite].setAzimuth(azimuth);
-					ns[currentSatellite].setSignalNoiseRatio(SNR);
+				if(part5.length() == 0){
+					elevation = 0;
+				}else{
+					elevation = Math.round(Float.parseFloat(part5));
 				}
+
+				if(part6.length() == 0){
+					azimuth = 0;
+				}else{
+					azimuth = Math.round(Float.parseFloat(part6));
+				}
+
+				if(part7.length() == 0){
+					SNR = 0;
+				}else{
+					SNR = Math.round(Float.parseFloat(part7));
+				}
+
+				ns1.setPRN(PRN);
+				ns1.setElevation(elevation);
+				ns1.setAzimuth(azimuth);
+				ns1.setSignalNoiseRatio(SNR);
+				
+				//SAT 2
+				
+				if(part8.length() == 0){
+					PRN = 0;
+				}else{
+					PRN = Math.round(Float.parseFloat(part8));
+				}
+
+				if(part9.length() == 0){
+					elevation = 0;
+				}else{
+					elevation = Math.round(Float.parseFloat(part9));
+				}
+
+				if(part10.length() == 0){
+					azimuth = 0;
+				}else{
+					azimuth = Math.round(Float.parseFloat(part10));
+				}
+
+				if(part11.length() == 0){
+					SNR = 0;
+				}else{
+					SNR = Math.round(Float.parseFloat(part11));
+				}
+				
+				ns2.setPRN(PRN);
+				ns2.setElevation(elevation);
+				ns2.setAzimuth(azimuth);
+				ns1.setSignalNoiseRatio(SNR);
+				
+				//SAT 3
+
+				if(part12.length() == 0){
+					PRN = 0;
+				}else{
+					PRN = Math.round(Float.parseFloat(part12));
+				}
+
+				if(part13.length() == 0){
+					elevation = 0;
+				}else{
+					elevation = Math.round(Float.parseFloat(part13));
+				}
+
+				if(part14.length() == 0){
+					azimuth = 0;
+				}else{
+					azimuth = Math.round(Float.parseFloat(part14));
+				}
+
+				if(part15.length() == 0){
+					SNR = 0;
+				}else{
+					SNR = Math.round(Float.parseFloat(part15));
+				}
+				
+				ns3.setPRN(PRN);
+				ns3.setElevation(elevation);
+				ns3.setAzimuth(azimuth);
+				ns1.setSignalNoiseRatio(SNR);
+				
+				// SAT 4
+
+				if(part16.length() == 0){
+					PRN = 0;
+				}else{
+					PRN = Math.round(Float.parseFloat(part16));
+				}
+
+				if(part17.length() == 0){
+					elevation = 0;
+				}else{
+					elevation = Math.round(Float.parseFloat(part17));
+				}
+
+				if(part18.length() == 0){
+					azimuth = 0;
+				}else{
+					azimuth = Math.round(Float.parseFloat(part18));
+				}
+
+				if(part19.length() == 0){
+					SNR = 0;
+				}else{
+					SNR = Math.round(Float.parseFloat(part19));
+				}
+				
+				ns4.setPRN(PRN);
+				ns4.setElevation(elevation);
+				ns4.setAzimuth(azimuth);
+				ns1.setSignalNoiseRatio(SNR);				
+				
 			}
+			
 		}catch(NoSuchElementException e){
-			System.err.println("GSVSentence Exception");
+			//System.err.println("GSVSentence: NoSuchElementException");
 		}catch(NumberFormatException e){
-			System.err.println("GSVSentence NFException");
+			//System.err.println("GSVSentence: NumberFormatException");
+		}catch(Exception e){
+			//System.err.println("GSVSentence: Exception");
 		}
 
 	}//End parse

@@ -1,7 +1,7 @@
 package lejos.addon.gps;
 
-
-import java.util.*;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 
 /**
  * RMC is a Class designed to manage RMC Sentences from a NMEA GPS Receiver
@@ -22,28 +22,36 @@ import java.util.*;
  *      003.1,W      Magnetic Variation
  *      *6A          The checksum data, always begins with *
  * 
- * @author Juan Antonio Brenha Moral (major recoding by BB)
+ * @author Juan Antonio Brenha Moral
+ * 
  */
 public class RMCSentence extends NMEASentence{
 
 	//RMC Sentence
-	// TODO: Convert all/most of these floats to int
-	private int dateTimeOfFix = -1;
-	private String warning = "";
-	private double latitude = 0;
-	private String latitudeDirection = ""; // TODO Make char
-	private double longitude = 0;
-	private String longitudeDirection = ""; // TODO Make char
+	private String nmeaHeader = "";
+	private int dateTimeOfFix = 0;
+	private final int DATETIMELENGTH = 6;
+	private String status = "";
+	private final String ACTIVE = "A";
+	private final String VOID = "V";
+	private float latitude = 0;
+	private String latitudeDirection = "";
+	private float longitude = 0;
+	private String longitudeDirection = "";
+	private final float KNOT = 1.852f;
 	private float groundSpeed;//In knots
-	private String courseMadeGood = null;
-	private int dateOfFix = -1;
-	private String magneticVariation = null;
-	//private String magneticVariationLetter = "";
+	private int compassDegrees;
+	private int dateOfFix = 0;
+	private float magneticVariation = 0f;
+	private String magneticVariationLetter = "";
 
 	private float speed;//In Kilometers per hour
 
 	//Header
 	public static final String HEADER = "$GPRMC";
+
+	//NMEA parts
+	private String part1,part2,part3,part4,part5,part6,part7,part8,part9,part10,part11,part12 = "";
 
 	/*
 	 * GETTERS & SETTERS
@@ -52,119 +60,177 @@ public class RMCSentence extends NMEASentence{
 	/**
 	 * Returns the NMEA header for this sentence.
 	 */
+	@Override
 	public String getHeader() {
 		return HEADER;
 	}
-		
+	
+	public String getStatus(){
+		return status;
+	}
+	
 	/**
 	 * Get Latitude
 	 * 
 	 */
-	// TODO: Why is this specified as RAW?
-	public double getLatitudeRAW(){
-		checkRefresh();
+	public float getLatitude(){
 		return latitude;  
 	}
 
 	/**
 	 * Get Longitude
 	 * 
-	 * @return the raw longitude
+	 * @return
 	 */
-	// TODO: Why is this specified as RAW?
-	public double getLongitudeRAW(){
-		checkRefresh();
+	public float getLongitude(){
 		return longitude;
 	}
 
 	/**
 	 * Get Speed in Kilometers
 	 * 
-	 * @return the speed in kilometers per ???
+	 * @return
 	 */
 	public float getSpeed(){
-		checkRefresh();
-		return speed;
+		return speed;  
 	}
 
 	/**
 	 * Get date in integer format
 	 * 
-	 * @return the date in integer format
+	 * @return
 	 */
+	public int getTime(){
+		return dateTimeOfFix;
+	}
+	
 	public int getDate(){
-		checkRefresh();
 		return dateOfFix;
 	}
 
 	/**
 	 * Return compass value from GPS
 	 * 
-	 * @return the compass value in degrees. -1 means it hasn't been obtained yet.
+	 * @return
 	 */
-	public float getCompassDegrees(){
-		checkRefresh();
-		float compassDegrees = -1;
-		if(courseMadeGood != null){
-			compassDegrees = Float.parseFloat(courseMadeGood);
-		}
+	public int getCompassDegrees(){
 		return compassDegrees;
 	}
 	
-	public String getMagneticVariation() {
-		// TODO: Parse data. Should return float, -ve for West, +ve for East. See parse()
-		return magneticVariation;
-	}
-	
 	/**
-	 * Parse RMC Sentence
+	 * Parase a RMC Sentence
 	 * 
 	 * $GPRMC,081836,A,3751.65,S,14507.36,E,000.0,360.0,130998,011.3,E*62
 	 */
-	protected void parse (String sentence){
-		//StringTokenizer st = new StringTokenizer(nmeaSentence,",");
-		st = new StringTokenizer(sentence,",");
-
-		try{
-			st.nextToken(); // skip header $GPRMC
-			// TODO: Maybe leave this as a float for greater accuracy?
-			dateTimeOfFix = (int)Float.parseFloat(st.nextToken());
-			warning = st.nextToken();
-			//latitude = Float.parseFloat(st.nextToken());
-			latitude = degreesMinToDegrees(st.nextToken());
-			latitudeDirection = st.nextToken();
-			//longitude = Float.parseFloat(st.nextToken());
-			longitude = degreesMinToDegrees(st.nextToken());
-			longitudeDirection = st.nextToken();
-			String s = st.nextToken();
-			groundSpeed = s.equals("") ? 0 : Float.parseFloat(s);
-			courseMadeGood = st.nextToken();
-			dateOfFix = Integer.parseInt(st.nextToken());
-			magneticVariation = st.nextToken();//Float.parseFloat((String)st.nextToken());
-			//magneticVariationLetter = (String)st.nextToken();
-		}catch(NoSuchElementException e){
-			System.err.println("Threw a NoSuch exception");
-		}catch(NumberFormatException e){
-			System.err.println("Threw a NumFormat exception");
-		}
+	public void parse (String sentence){
 		
-		//Improve quality data
-		if (!longitudeDirection.equals("E")) {
-			longitude = -longitude;
-		}
-		if (!latitudeDirection.equals("N")) {
-			latitude = -latitude;
-		}
+		st = new StringTokenizer(sentence,",");
+	
+		try{
+			
+			//Extracting data from a GGA Sentence
+			
+			part1 = st.nextToken();//NMEA header
+			part2 = st.nextToken();//Fix taken at 12:35:19 UTC
+			part3 = st.nextToken();//Status A=active or V=Void.
+			part4 = st.nextToken();//Latitude 48 deg 07.038' N
+			part5 = st.nextToken();//Latitude Direction
+			part6 = st.nextToken();//Longitude 11 deg 31.000' E
+			part7 = st.nextToken();//Longitude Direction
+			part8 = st.nextToken();//Speed over the ground in knots
+			part9 = st.nextToken();//Track angle in degrees True
+			part10 = st.nextToken();//Date - 23rd of March 1994
+			part11 = st.nextToken();//Magnetic Variation
+			part12 = st.nextToken();//Magnetic Variation Letter
+			
+			st = null;
+			
+			//Processing RMC data
+			
+			nmeaHeader = part1;//$GPRMC
+		
+			if(part2.length() == 0){
+				dateTimeOfFix = 0;
+			}else{
+				dateTimeOfFix = Math.round(Float.parseFloat(part2));
+			}
+			
+			if(part3.equals(ACTIVE)){
+				status = ACTIVE;
+			}else{
+				status = VOID;
+			}
+			
+			if(isNumeric(part4)){
+				latitude = degreesMinToDegrees(part4,NMEASentence.LATITUDE);
+			}else{
+				latitude = 0f;
+			}
+			
+			latitudeDirection = part5;
+			
+			if(isNumeric(part6)){
+				longitude = degreesMinToDegrees(part6,NMEASentence.LONGITUDE);
+			}else{
+				longitude = 0f;
+			}
 
-		//Speed
-		if (groundSpeed > 0) {
-			// km/h = knots * 1.852
-			speed = (float) ((groundSpeed) * 1.852);
-		}
-		// A negative speed doesn't make sense.
-		// TODO: This seems iffy. Why set it arbitrarily to zero?
-		if (speed < 0) {
-			speed = 0;
+			longitudeDirection = part7;
+			
+			if (longitudeDirection.equals("E") == false) {
+				longitude = -longitude;
+			}
+			if (latitudeDirection.equals("N") == false) {
+				latitude = -latitude;
+			}
+			
+			if(part8.length() == 0){
+				groundSpeed = 0f;
+				speed = 0f;
+			}else{
+				groundSpeed = Float.parseFloat(part8);
+				
+				//Speed
+				if (groundSpeed > 0) {
+					// km/h = knots * 1.852
+					speed = (float) ((groundSpeed) * KNOT);
+				}
+				// A negative speed doesn't make sense.
+				if (speed < 0) {
+					speed = 0f;
+				}
+			}
+			
+			if(part9.length() == 0){
+				compassDegrees = 0;
+			}else{
+				compassDegrees = Math.round(Float.parseFloat(part9));
+			}
+			
+			if(part10.length() == 0){
+				dateOfFix = 0;
+			}else{
+				dateOfFix = Math.round(Float.parseFloat(part10));
+			}
+
+			if(part11.length() == 0){
+				magneticVariation = 0;
+			}else{
+				magneticVariation = Math.round(Float.parseFloat(part11));
+			}
+			
+			if(part12.length() == 0){
+				magneticVariationLetter = "";
+			}else{
+				magneticVariationLetter = part12;
+			}
+
+		}catch(NoSuchElementException e){
+			//System.err.println("RMCSentence: NoSuchElementException");
+		}catch(NumberFormatException e){
+			//System.err.println("RMCSentence: NumberFormatException");
+		}catch(Exception e){
+			//System.err.println("RMCSentence: Exception");
 		}
 
 	}//End Parse
