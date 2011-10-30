@@ -6,7 +6,7 @@ package java.lang;
  * @author bb
  * @author Sven Köhler
  */
-public final class Double extends Number
+public final class Double extends Number implements Comparable<Double>
 {
 	public static final double POSITIVE_INFINITY = 1.0d / 0.0d;
 	public static final double NEGATIVE_INFINITY = -1.0d / 0.0d;
@@ -24,9 +24,6 @@ public final class Double extends Number
     // of the correct value by the linker, so no need to initialize.
 	public static final Class<?> TYPE = null;
 	
-	//MISSING implements Comparable
-	//MISSING public static int compare(double, double)
-	//MISSING public int compareTo(Object)
 	//MISSING public static String toHexString(double)
 	
 	private double value;
@@ -45,6 +42,36 @@ public final class Double extends Number
 	public byte byteValue()
 	{
 		return (byte)this.value;
+	}
+	
+	public static int compare(double a, double b)
+	{
+		// normal float compare, NaN should fall through
+		if (a > b)
+			return 1;
+		if (a < b)
+			return -1;
+		
+		// handle NaN
+		if (a != a)
+			return (b != b) ? 0 : 1;
+		if (b != b)
+			return -1;
+		
+		// handle negative and positive zero
+		long ra = Double.doubleToRawLongBits(a);
+		long rb = Double.doubleToRawLongBits(b);
+		
+		if (ra > rb)
+			return 1;
+		if (ra < rb)
+			return -1;
+		return 0;
+	}
+	
+	public int compareTo(Double other)
+	{
+		return Double.compare(this.value, other.value);
 	}
 	
 	@Override
