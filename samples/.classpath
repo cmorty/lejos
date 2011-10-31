@@ -32,6 +32,7 @@
 	<classpathentry excluding="build.xml" kind="src" path="LineFollower"/>
 	<classpathentry excluding="build.xml" kind="src" path="Listen"/>
 	<classpathentry excluding="build.xml" kind="src" path="LnrActuatorTest"/>
+	<classpathentry kind="src" path="LocationPTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MapTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MatrixTest"/>
 	<classpathentry excluding="build.xml" kind="src" path="MCLTest"/>
