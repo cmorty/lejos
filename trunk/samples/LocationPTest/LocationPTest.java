@@ -1,4 +1,3 @@
-package jab.le.ch7.gps.tests;
 
 import javax.microedition.location.Coordinates;
 import javax.microedition.location.Criteria;
