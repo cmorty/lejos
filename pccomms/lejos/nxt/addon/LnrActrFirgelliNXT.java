@@ -6,8 +6,6 @@ import lejos.nxt.TachoMotorPort;
 import lejos.robotics.EncoderMotor;
 import lejos.robotics.LinearActuator;
 
-import lejos.util.Delay;
-
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
@@ -56,7 +54,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         this.encoderMotor=encoderMotor;
         this.encoderMotor.flt();
         
-        setPower(MIN_POWER); // TODO remive MIN power
+        setPower(30);
         this.actuator = new Thread(new Actuator());
         this.actuator.setDaemon(true);
         this.actuator.start();
