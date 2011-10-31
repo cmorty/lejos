@@ -55,21 +55,18 @@ public final class Float extends Number implements Comparable<Float>
 	
 	public static int compare(float a, float b)
 	{
-		// normal float compare, NaN should fall through
+		// normal float compare, NaN falls through
 		if (a > b)
 			return 1;
 		if (a < b)
 			return -1;
+		// early out for non-zero values, NaN falls through
+		if (a == b && a != 0)
+			return 0;
 		
-		// handle NaN
-		if (a != a)
-			return (b != b) ? 0 : 1;
-		if (b != b)
-			return -1;
-		
-		// handle negative and positive zero
-		int ra = Float.floatToRawIntBits(a);
-		int rb = Float.floatToRawIntBits(b);
+		// handle NaN and negative/positive zero
+		int ra = Float.floatToIntBits(a);
+		int rb = Float.floatToIntBits(b);
 		
 		if (ra > rb)
 			return 1;

@@ -46,21 +46,18 @@ public final class Double extends Number implements Comparable<Double>
 	
 	public static int compare(double a, double b)
 	{
-		// normal float compare, NaN should fall through
+		// normal float compare, NaN falls through
 		if (a > b)
 			return 1;
 		if (a < b)
 			return -1;
+		// early out for non-zero values, NaN falls through
+		if (a == b && a != 0)
+			return 0;
 		
-		// handle NaN
-		if (a != a)
-			return (b != b) ? 0 : 1;
-		if (b != b)
-			return -1;
-		
-		// handle negative and positive zero
-		long ra = Double.doubleToRawLongBits(a);
-		long rb = Double.doubleToRawLongBits(b);
+		// handle NaN and negative/positive zero
+		long ra = Double.doubleToLongBits(a);
+		long rb = Double.doubleToLongBits(b);
 		
 		if (ra > rb)
 			return 1;
