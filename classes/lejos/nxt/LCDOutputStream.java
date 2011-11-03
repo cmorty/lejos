@@ -23,6 +23,9 @@ public class LCDOutputStream extends OutputStream {
 		char x = (char)(c & 0xFF);
 		switch (x)
 		{
+			case '\t':
+				col = col + 8 - col % 8; 
+				break;
 			case '\n': 
 				incLine();
 			case '\r':
