@@ -8,8 +8,8 @@ public abstract class Enum<E extends Enum<E>> implements Comparable<E>
 {
 	//MISSING implements Serializable
 	
-	private int ordinal;
-	private String name;
+	private final int ordinal;
+	private final String name;
 	
 	protected Enum(String name, int ordinal)
 	{
@@ -28,10 +28,13 @@ public abstract class Enum<E extends Enum<E>> implements Comparable<E>
 		if (this.getDeclaringClass() != o.getDeclaringClass())
 			throw new ClassCastException();
 		
-		if (this.ordinal == o.ordinal)
+		// the declaration of tmp is required to build with Oracle JDK 1.7 
+		// when using o.ordinal directly, javac will complain that ordinal is private
+		Enum<E> tmp = o;
+		if (this.ordinal == tmp.ordinal)
 			return 0;
 		
-		return (this.ordinal > o.ordinal) ? 1 : -1;
+		return (this.ordinal > tmp.ordinal) ? 1 : -1;
 	}
 	
 	@Override
