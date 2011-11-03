@@ -170,8 +170,13 @@ public class MMXMotor implements EncoderMotor{
      * 
      */
     public void flt() {
-        mux.sendData(REG_MUX_Command, (byte) COMMAND_Float);
+        if (!_isRunCmd) return;
+        doFlt();
         _isRunCmd = false;
+    }
+    
+    void doFlt(){
+        mux.sendData(REG_MUX_Command, (byte) COMMAND_Float);
     }
     
     /**
@@ -179,12 +184,14 @@ public class MMXMotor implements EncoderMotor{
      * motor doesn't just stop, it will resist any further motion.
      */
     public void stop() {
-        if (_isRunCmd) return;
-        mux.sendData(REG_MUX_Command, (byte)COMMAND_Stop);
+        if (!_isRunCmd) return;
+        doStop();
         _isRunCmd = false;
     }
 
-
+    void doStop(){
+        mux.sendData(REG_MUX_Command, (byte) COMMAND_Stop);
+    }
     
     int getTacho() {
         int i2cTVal;
