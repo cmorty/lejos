@@ -14,19 +14,20 @@ import lejos.util.Delay;
 
 /**
  * Logger class for the NXT that supports real time and deferred (cached) data logging of the primitive datatypes. 
- * <code>boolean</code>, <code>byte</code>, and <code>short</code> are all represented as [a 4 byte] <code>int</code>.
  * <p>
  * This class communicates with 
  * <code>lejos.pc.charting.DataLogger</code> via Bluetooth or USB which is used by the NXT Charting Logger tool.
  * <p>When instantiated, the <code>NXTDataLogger</code> starts out in cached mode (<code>{@link #startCachingLog}</code>) as default.
- * Cache mode uses a growable ring buffer that consumes up to all available memory during a logging run.
+ * Cache mode uses a growable ring buffer that consumes (if needed) up to all available memory during a logging run.
  * <p>Hints for real-time logging efficiency:
  * <ul>
  * <li>Try to keep your datatypes the same across <code>writeLog()</code> method calls to avoid the protocol
  * overhead that is incurred when 
  * switching datatypes. For instance, every time you change between <code>writeLog(int)</code> and <code>writeLog(long)</code>, a 
  * synchronization message must be sent to change the datatype on the receiver (<code>lejos.pc.charting.DataLogger</code>).
- * <li>Use the the <code>writeLog()</code> method with the smallest datatype that fits your data. Less data means better throughput overall.
+ * <li>Use the the <code>writeLog()</code> method with the smallest datatype that fits your data. Less data means better 
+ * throughput overall. Note that this implementation always use 4 bytes for datatypes <code>boolean</code>, <code>short</code>, 
+ * <code>int</code>, and <code>float</code> and 8 bytes for <code>long</code> and <code>double</code>.
  * </ul>
  * @author Kirk P. Thompson
  */
@@ -91,7 +92,8 @@ public class NXTDataLogger implements Logger{
         startCachingLog();
     }
      
-    /** caching dos. uses write(int) override to grab all encoded bytes from DataOutputStream which we cache to "play"
+    /** 
+     * caching dos. uses write(int) override to grab all encoded bytes from DataOutputStream which we cache to "play"
      * to receiver. Signaling protocol bytes are not saved here as they don't need to be since we know the row structure
      * (i.e. datatypes and their position in the row) from setColumns()
      */
@@ -114,7 +116,8 @@ public class NXTDataLogger implements Logger{
             barr=new byte[1024];
         }
         
-        /** Get the next FIFO value from the queue. If it is the last element in the ring buffer, the next call to this method
+        /** 
+         * Get the next FIFO value from the queue. If it is the last element in the ring buffer, the next call to this method
          * will throw an EmptyQueueException to signal we have reached the end (beginning?). Rinse, repeat.
          * @return the next FIFO value
          * @throws EmptyQueueException when end of ringbuffer is reached. 
@@ -152,7 +155,8 @@ public class NXTDataLogger implements Logger{
             return;
         }
 
-        /** expand array by capacity bytes. if OutOfMemoryError, return  false
+        /** 
+         * expand array by capacity bytes. if OutOfMemoryError, return  false
          * @param capacity expand by how many bytes?
          * @return true for success, false if OutOfMemoryError
          */
@@ -198,7 +202,8 @@ public class NXTDataLogger implements Logger{
     
     // Starts realtime logging. Must be called before any writeLog() methods. Resets startCachingLog() state
     // streams must be valid (not null)
-    /** Start a realtime logging session using passed data streams.
+    /** 
+     * Start a realtime logging session using passed data streams.
      * The <code>setColumns()</code>
      * method must be called after this method is called and before the first
      * <code>writeLog()</code> method is called. 
@@ -223,7 +228,8 @@ public class NXTDataLogger implements Logger{
         setColumnsCount=0;
     } 
 
-    /** Start a realtime logging session using passed <code>NXTConnection</code> to retrieve the data streams. The
+    /** 
+     * Start a realtime logging session using passed <code>NXTConnection</code> to retrieve the data streams. The
      * connection must already be established.
      * The <code>setColumns()</code>
      * method must be called after this method is called and before the first
@@ -243,7 +249,8 @@ public class NXTDataLogger implements Logger{
     }
 
     
-    /** Stop the logging session and close down the connection and data streams. After this method is called, you must call
+    /** 
+     * Stop the logging session and close down the connection and data streams. After this method is called, you must call
      * one of the logging mode start methods to begin a new logging session.
      * @see #startRealtimeLog(NXTConnection)
      * @see #startCachingLog
@@ -258,7 +265,8 @@ public class NXTDataLogger implements Logger{
     // Resets startRealtimeLog() state
      // default
 
-    /** Sets caching (deferred) logging. This is the default mode at instantiation. 
+    /** 
+     * Sets caching (deferred) logging. This is the default mode at instantiation. 
      * The <code>setColumns()</code>
      * method must be called after this method is called and before the first
      * <code>writeLog()</code> method is called. 
@@ -279,7 +287,8 @@ public class NXTDataLogger implements Logger{
         setColumnsCount=0;
     }
 
-    /** Sends the log cache. Valid only for caching (deferred) logging using startCachingLog(). 
+    /** 
+     * Sends the log cache. Valid only for caching (deferred) logging using startCachingLog(). 
      * @param out A valid <code>DataOutputStream</code>
      * @param in A valid <code>DataInputStream</code>
      * @throws IOException if the data streams are not valid
@@ -322,7 +331,8 @@ public class NXTDataLogger implements Logger{
         logmodeState=LMSTATE_CACHE;
     }
 
-    /** Sends the log cache using passed <code>NXTConnection</code> to retrieve the data streams. The
+    /** 
+     * Sends the log cache using passed <code>NXTConnection</code> to retrieve the data streams. The
      * connection must already be established.  Valid only for caching (deferred) logging using <code>startCachingLog()</code>.
      * @param connection A connected <code>NXTConnection</code> instance
      * @throws IOException if the data streams are not valid
@@ -348,7 +358,8 @@ public class NXTDataLogger implements Logger{
         sendCommand(command);
     }
     
-    /** Close the current open connection. The data stream is flushed and closed. After calling this method, 
+    /** 
+     * Close the current open connection. The data stream is flushed and closed. After calling this method, 
      *   another connection must be established or data streams re-created.
      */
     private void cleanConnection() {
@@ -373,7 +384,8 @@ public class NXTDataLogger implements Logger{
         this.dos = null;
     }
     
-    /** lower level data sending method
+    /** 
+     * lower level data sending method
      * @param command the bytes[] to send
      */
     private final synchronized void sendCommand(byte[] command){
@@ -420,7 +432,8 @@ public class NXTDataLogger implements Logger{
         this.disableWriteState=false;
     }
 
-    /** Finish the row and start a new one. 
+    /** 
+     * Finish the row and start a new one. 
      * <p>
      * The Column count is set by calling
      * <code>setColumns()</code> and you must ensure that you call the appropriate <code>writeLog()</code> method the same number of 
@@ -461,7 +474,8 @@ public class NXTDataLogger implements Logger{
         this.commentText="";
     }
     
-    /** send the command to set the active datatype
+    /** 
+     * send the command to set the active datatype
      * @param datatype
      */
     private void setDataType(int datatype) {
@@ -478,7 +492,8 @@ public class NXTDataLogger implements Logger{
         sendCommand(command);
     }
     
-    /** Send an ATTENTION request. Commands usually follow. There is no response/handshake mechanism.
+    /** 
+     * Send an ATTENTION request. Commands usually follow. There is no response/handshake mechanism.
      */
     private void sendATTN(){
         // 2 ATTN bytes
@@ -636,7 +651,8 @@ public class NXTDataLogger implements Logger{
         }
     }
 
-    /** Log a comment. Displayed as event marker on domain axis of NXJChartingLogger chart and after the current line in the log. 
+    /** 
+     * Log a text comment. Displayed as event marker on domain axis of NXJChartingLogger chart and after the current line in the log. 
      * Ignored in cache mode.
      * Only one comment per line. (i.e. before <code>finishLine()</code> is called)
     * @param comment The comment
@@ -666,7 +682,8 @@ public class NXTDataLogger implements Logger{
         }
     }
 
-     /** Set the data set header information for the data log and chart series. The first column in the data log 
+     /** 
+      * Set the data set header information for the data log and chart series. The first column in the data log 
       * is always a system timestamp
       * (element 0) so <u>your</u> first <code>writeLog()</code> item would be column 1, element 2 is column 2, so on and so forth. 
       * The items per log row
