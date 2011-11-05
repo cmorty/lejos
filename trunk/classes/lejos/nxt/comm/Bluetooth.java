@@ -1,14 +1,14 @@
 package lejos.nxt.comm;
 
-import java.util.*;
+import java.util.ArrayList;
 
 import javax.bluetooth.DeviceClass;
 import javax.bluetooth.DiscoveryListener;
 import javax.bluetooth.RemoteDevice;
 
+import lejos.nxt.NXTEvent;
 import lejos.nxt.SystemSettings;
 import lejos.util.Delay;
-import lejos.nxt.NXTEvent;
 
 
 /**
@@ -1205,14 +1205,14 @@ public class Bluetooth extends NXTCommDevice
 	 * 
 	 * @return <code>Vector&lt;RemoteDevice&gt;</code> with List of known Devices
 	 */
-	public static Vector<RemoteDevice> getKnownDevicesList() {
+	public static ArrayList<RemoteDevice> getKnownDevicesList() {
 		//1 RConsole.print("getKnownDevicesList\n");
 		synchronized(Bluetooth.sync)
 		{
 			int state = RS_CMD;
 			byte[] device = new byte[ADDRESS_LEN];
 			byte[] name = new byte[NAME_LEN];
-			Vector<RemoteDevice> retVec = new Vector<RemoteDevice>(1);
+			ArrayList<RemoteDevice> retVec = new ArrayList<RemoteDevice>(1);
 			RemoteDevice curDevice;
 			cmdStart();
 			cmdInit(MSG_DUMP_LIST, 1, 0, 0);
@@ -1226,7 +1226,7 @@ public class Bluetooth extends NXTCommDevice
 					int devclass = bytesToIntBE(replyBuf, 25);
 					curDevice = new RemoteDevice(nameToString(name), addressToString(device), devclass);
 					//1 RConsole.print("got name " + curDevice.getFriendlyName() + "\n");
-					retVec.addElement(curDevice);
+					retVec.add(curDevice);
 				}
 				else if (replyBuf[1] == MSG_LIST_DUMP_STOPPED)
 					break;
@@ -1246,10 +1246,10 @@ public class Bluetooth extends NXTCommDevice
 	public static RemoteDevice getKnownDevice(String fName) {
 		RemoteDevice btd = null;
 		//look the name up in List of Known Devices
-		Vector<RemoteDevice> devList = getKnownDevicesList();
+		ArrayList<RemoteDevice> devList = getKnownDevicesList();
 		if (devList.size() > 0) {
 			for (int i = 0; i < devList.size(); i++) {
-				btd = devList.elementAt(i);
+				btd = devList.get(i);
 				if (btd.getFriendlyName(false).equals(fName)) {
 					return btd; 
 				}
@@ -1450,8 +1450,8 @@ public class Bluetooth extends NXTCommDevice
 	 * @param cod the class of device to look for
 	 * @return a vector of all the devices found
 	 */
-	public static Vector<RemoteDevice> inquire(int maxDevices,  int timeout, int cod) {
-		Vector<RemoteDevice> retVec = new Vector<RemoteDevice>();
+	public static ArrayList<RemoteDevice> inquire(int maxDevices,  int timeout, int cod) {
+		ArrayList<RemoteDevice> retVec = new ArrayList<RemoteDevice>();
 		byte[] device = new byte[ADDRESS_LEN];
 		byte[] name = new byte[NAME_LEN];
 		synchronized (Bluetooth.sync)
@@ -1470,14 +1470,14 @@ public class Bluetooth extends NXTCommDevice
                     System.arraycopy(replyBuf, 9, name, 0, NAME_LEN);
 					int retCod = bytesToIntBE(replyBuf, 25);
 					// add the Element to the Vector List
-					retVec.addElement(new RemoteDevice(nameToString(name), addressToString(device), retCod));
+					retVec.add(new RemoteDevice(nameToString(name), addressToString(device), retCod));
 				}
 				else if (replyBuf[1] == MSG_INQUIRY_STOPPED)
 				{
 					cmdComplete();
 					// Fill in the names	
 					for (int i = 0; i < retVec.size(); i++) {
-						RemoteDevice btrd = retVec.elementAt(i);
+						RemoteDevice btrd = retVec.get(i);
 						String s = btrd.getFriendlyName(false);
 						if (s.length() == 0) {
 							String nm = lookupName(btrd.getDeviceAddr());

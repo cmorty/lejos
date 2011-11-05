@@ -1,8 +1,21 @@
 package lejos.nxt.comm;
 
-import java.io.*;
-import lejos.nxt.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import lejos.nxt.Battery;
+import lejos.nxt.Button;
+import lejos.nxt.I2CPort;
+import lejos.nxt.Motor;
+import lejos.nxt.MotorPort;
+import lejos.nxt.NXT;
+import lejos.nxt.NXTRegulatedMotor;
+import lejos.nxt.SensorPort;
+import lejos.nxt.Settings;
+import lejos.nxt.Sound;
+import lejos.nxt.SystemSettings;
 
 /**
  * 
@@ -573,17 +586,18 @@ public class LCP {
 		
 		// MESSAGE READ		
 		if (cmdId == MESSAGE_READ) {
-			Queue<String> inBox = inBoxes[cmd[2]];
-			reply[3] = cmd[3];
-			if (inBox == null || inBox.empty()) {
-				reply[2] = MAILBOX_EMPTY;
-			} else {
-				String msg = (String) (cmd[4] == 0 ? inBox.peek()
-						                           : inBox.pop());
-				int msgLen = msg.length();
-				reply[4] = (byte) (msgLen > 58 ? 58 : msgLen);
-				for(int i=0;i<58 && i<msgLen;i++) {
-					reply[5+i] = (byte) msg.charAt(i);
+			synchronized (LCP.class) {
+				InBox inBox = inBoxes[cmd[2]];
+				reply[3] = cmd[3];
+				if (inBox == null || inBox.isEmpty()) {
+					reply[2] = MAILBOX_EMPTY;
+				} else {
+					String msg = (cmd[4] == 0 ? inBox.get(0) : inBox.remove(0));
+					int msgLen = msg.length();
+					reply[4] = (byte) (msgLen > 58 ? 58 : msgLen);
+					for(int i=0;i<58 && i<msgLen;i++) {
+						reply[5+i] = (byte) msg.charAt(i);
+					}
 				}
 			}
 			len = 64;
@@ -694,10 +708,11 @@ public class LCP {
 	 * @param mailbox the remote inbox
 	 * @param msg the message
 	 */
-	public static void messageWrite(int mailbox, String msg) {
+	public static synchronized void messageWrite(int mailbox, String msg) {
 		if (mailbox < inBoxes.length) {
-			if (inBoxes[mailbox] == null) inBoxes[mailbox] = new InBox();
-			inBoxes[mailbox].push(msg);			
+			if (inBoxes[mailbox] == null)
+				inBoxes[mailbox] = new InBox();
+			inBoxes[mailbox].add(msg);			
 		}
 	}
 	
@@ -707,9 +722,10 @@ public class LCP {
 	 * @param key an initial prefix of the string
 	 * @param msg the new message
 	 */
-	public static void updateMsg(int mailbox, String key, String msg) {		
+	public static synchronized void updateMsg(int mailbox, String key, String msg) {		
 		if (mailbox < inBoxes.length) {
-			if (inBoxes[mailbox] == null) inBoxes[mailbox] = new InBox();
+			if (inBoxes[mailbox] == null)
+				inBoxes[mailbox] = new InBox();
 			inBoxes[mailbox].updateMessage(key, msg);			
 		}
 	}
