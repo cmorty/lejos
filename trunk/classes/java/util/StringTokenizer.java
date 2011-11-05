@@ -5,7 +5,7 @@ package java.util;
  * 
  * @author Juan Antonio Brenha Moral
  */
-public class StringTokenizer implements Enumeration{
+public class StringTokenizer implements Enumeration<Object> {
 	/**
 	 * Delimiter string.
 	 */

@@ -1,6 +1,7 @@
 package lejos.nxt.addon;
 import lejos.robotics.Touch;
 import lejos.nxt.ADSensorPort;
+import lejos.nxt.SensorConstants;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -66,7 +67,7 @@ public class TouchMUX {
     public TouchMUX(ADSensorPort port)
     {
         this.port = port;
-        port.setTypeAndMode(port.TYPE_CUSTOM, port.MODE_RAW);
+        port.setTypeAndMode(SensorConstants.TYPE_CUSTOM, SensorConstants.MODE_RAW);
     }
 
     /**

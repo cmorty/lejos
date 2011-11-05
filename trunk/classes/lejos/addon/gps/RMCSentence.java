@@ -193,7 +193,7 @@ public class RMCSentence extends NMEASentence{
 				//Speed
 				if (groundSpeed > 0) {
 					// km/h = knots * 1.852
-					speed = (float) ((groundSpeed) * KNOT);
+					speed = groundSpeed * KNOT;
 				}
 				// A negative speed doesn't make sense.
 				if (speed < 0) {

@@ -215,7 +215,7 @@ class BTGPSLocationProvider extends LocationProvider implements DiscoveryListene
 				System.err.println("Fail 2");
 			}
 			for(int i=0; i<listeners.size();i++){
-				Object [] array = listeners.elementAt(i);
+				Object [] array = listeners.get(i);
 				ProximityListener pl = (ProximityListener)array[0];
 				Coordinates to = (Coordinates)array[1];
 				Float rad = (Float)array[2];

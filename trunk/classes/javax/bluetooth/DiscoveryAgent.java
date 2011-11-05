@@ -122,14 +122,14 @@ public class DiscoveryAgent {
          *                <code>PREKNOWN</code>
          */
         public RemoteDevice[] retrieveDevices(int option) {
-            Vector v = null;
+            Vector<RemoteDevice> v = null;
             // TODO: For now it doesn't discern between CACHED or PREKNOWN as our
             // leJOS Bluetooth stack doesn't support this?
             // if(option == CACHED|option == PREKNOWN)
             v = Bluetooth.getKnownDevicesList();
             RemoteDevice [] rdlist = new RemoteDevice[v.size()];
             for(int i=0;i<rdlist.length;i++)
-            	rdlist[i] = (RemoteDevice)v.elementAt(i);
+            	rdlist[i] = v.elementAt(i);
         	return rdlist;
         }
 

@@ -61,7 +61,7 @@ abstract public class NMEASentence {
 
 		//1. Count characters until character '.'
 		int dotPosition = DD_MM.indexOf(doubleCharacterSeparator);
-		if(CoordenateType == this.LATITUDE){
+		if(CoordenateType == NMEASentence.LATITUDE){
 			//Latitude Management
 			DDMM = DD_MM.substring(0, dotPosition);
 			if(DDMM.length() == 4){

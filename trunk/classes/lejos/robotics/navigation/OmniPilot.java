@@ -727,6 +727,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 * @deprecated in 0.8, use setTurnSpeed() and setMoveSpeed(). The method was deprecated, as this it requires knowledge
 	 * of the robots physical construction, which this interface should hide!
 	 */
+	@Deprecated
 	public void setSpeed(int speed) {
 	}
 
