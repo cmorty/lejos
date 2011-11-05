@@ -1,7 +1,7 @@
 package lejos.nxt.startup;
 
 import java.io.File;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.bluetooth.RemoteDevice;
 
@@ -518,7 +518,7 @@ public class StartUpText
     private void bluetoothSearch()
     {
         newScreen("Searching");
-        Vector devList; 
+        ArrayList<RemoteDevice> devList; 
         indiBT.incCount();
         try
         {
@@ -536,7 +536,7 @@ public class StartUpText
             String[] names = new String[devList.size()];
             for (int i = 0; i < devList.size(); i++)
             {
-                RemoteDevice btrd = ((RemoteDevice) devList.elementAt(i));
+                RemoteDevice btrd = devList.get(i);
                 names[i] = btrd.getFriendlyName(false);
             }
             TextMenu searchMenu = new TextMenu(names, 1);
@@ -548,7 +548,7 @@ public class StartUpText
                 selected = getSelection(searchMenu, selected);
                 if (selected >= 0)
                 {
-                    RemoteDevice btrd = ((RemoteDevice) devList.elementAt(selected));
+                    RemoteDevice btrd = devList.get(selected);
                     newScreen();
                     LCD.drawString(names[selected], 0, 1);
                     LCD.drawString(btrd.getBluetoothAddress(), 0, 2);
@@ -587,7 +587,7 @@ public class StartUpText
      */
     private void bluetoothDevices()
     {
-        Vector devList = Bluetooth.getKnownDevicesList();
+        ArrayList<RemoteDevice> devList = Bluetooth.getKnownDevicesList();
         newScreen("Devices");
         if (devList.size() <= 0)
             msg("No known devices");
@@ -596,7 +596,7 @@ public class StartUpText
             String[] names = new String[devList.size()];
             for (int i = 0; i < devList.size(); i++)
             {
-                RemoteDevice btrd = ((RemoteDevice) devList.elementAt(i));
+                RemoteDevice btrd = devList.get(i);
                 names[i] = btrd.getFriendlyName(false);
             }
 
@@ -610,7 +610,7 @@ public class StartUpText
                 if (selected >= 0)
                 {
                     newScreen();
-                    RemoteDevice btrd = ((RemoteDevice) devList.elementAt(selected));
+                    RemoteDevice btrd = devList.get(selected);
                     LCD.drawString(btrd.getFriendlyName(false), 0, 2);
                     LCD.drawString(btrd.getBluetoothAddress(), 0, 3);
                     LCD.drawString("0x"+Integer.toHexString(btrd.getDeviceClass()), 0, 4);

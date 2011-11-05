@@ -1,6 +1,6 @@
 package lejos.nxt.comm;
 
-import java.util.Queue;
+import java.util.ArrayList;
 
 /**
  * Represents an LCP Inbox
@@ -8,17 +8,17 @@ import java.util.Queue;
  * @author Lawrie Griffiths
  *
  */
-public class InBox extends Queue<String> {
+public class InBox extends ArrayList<String> {
 	
 	// Allow a message in the queue to be updated, or added 
 	public synchronized void updateMessage(String key, String msg) {
-		for (int i=0;i<elementCount;i++) {
-			String s = elementAt(i);
+		for (int i=0;i<this.size();i++) {
+			String s = this.get(i);
 			if (s.startsWith(key)) {
-				setElementAt(msg, i);
+				this.set(i, msg);
 				return;
 			}
 		}
-		push(msg);
+		this.add(msg);
 	}
 }

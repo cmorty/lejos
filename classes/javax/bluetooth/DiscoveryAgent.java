@@ -1,7 +1,8 @@
 package javax.bluetooth;
 
+import java.util.ArrayList;
+
 import lejos.nxt.comm.Bluetooth;
-import java.util.Vector;
 
 /**
  * The <code>DiscoveryAgent</code> class provides methods to perform device
@@ -122,14 +123,13 @@ public class DiscoveryAgent {
          *                <code>PREKNOWN</code>
          */
         public RemoteDevice[] retrieveDevices(int option) {
-            Vector<RemoteDevice> v = null;
             // TODO: For now it doesn't discern between CACHED or PREKNOWN as our
             // leJOS Bluetooth stack doesn't support this?
             // if(option == CACHED|option == PREKNOWN)
-            v = Bluetooth.getKnownDevicesList();
+        	ArrayList<RemoteDevice> v = Bluetooth.getKnownDevicesList();
             RemoteDevice [] rdlist = new RemoteDevice[v.size()];
             for(int i=0;i<rdlist.length;i++)
-            	rdlist[i] = v.elementAt(i);
+            	rdlist[i] = v.get(i);
         	return rdlist;
         }
 

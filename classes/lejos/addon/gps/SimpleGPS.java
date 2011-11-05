@@ -2,9 +2,9 @@ package lejos.addon.gps;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 /**
  * This class manages data received from a GPS Device.
@@ -50,7 +50,7 @@ public class SimpleGPS extends Thread {
 	private boolean close = false;
 	
 	// Listener-notifier
-	static private Vector<GPSListener> listeners = new Vector<GPSListener>();
+	static private ArrayList<GPSListener> listeners = new ArrayList<GPSListener>();
 
 	
 	/**
@@ -260,14 +260,14 @@ public class SimpleGPS extends Thread {
 	 * 
 	 */
 	
-	static protected void notifyListeners(NMEASentence sen){
+	protected static synchronized void notifyListeners(NMEASentence sen){
 		/* TODO: Problem is ggaSentence is a reused object in this API.
 		 * Should really pass a copy of the NMEASentence to notify (and the copy
 		 * must have all the appropriate GGA data, not just NMEA). However, check
 		 *  if there are any listeners before making unnecessary copy. */
 		
 		for(int i=0; i<listeners.size();i++){
-			GPSListener gpsl = listeners.elementAt(i);
+			GPSListener gpsl = listeners.get(i);
 			gpsl.sentenceReceived(sen);
 		}
 	}
@@ -277,8 +277,8 @@ public class SimpleGPS extends Thread {
 	 * 
 	 * @param listener
 	 */
-	static public void addListener (GPSListener listener){
-		listeners.addElement(listener); 
+	public static synchronized void addListener (GPSListener listener){
+		listeners.add(listener); 
 	}
 
 	/**
@@ -286,9 +286,9 @@ public class SimpleGPS extends Thread {
 	 * 
 	 * @param listener
 	 */
-	static public void removeListener (GPSListener listener)
+	public static synchronized void removeListener (GPSListener listener)
 	{
-		listeners.removeElement(listener); 
+		listeners.remove(listener); 
 	}
 
 	/*

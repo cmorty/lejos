@@ -1,7 +1,7 @@
 package lejos.nxt.startup;
 
 import java.io.File;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.bluetooth.DeviceClass;
 import javax.bluetooth.RemoteDevice;
@@ -564,7 +564,7 @@ public class GraphicStartup {
     private void bluetoothSearch()
     {
         newScreen("Searching");
-        Vector<RemoteDevice> devList; 
+        ArrayList<RemoteDevice> devList; 
         indiBT.incCount();
         try
         {
@@ -585,7 +585,7 @@ public class GraphicStartup {
         String[] icons = new String[devList.size()];
         for (int i = 0; i < devList.size(); i++)
         {
-            RemoteDevice btrd = devList.elementAt(i);
+            RemoteDevice btrd = devList.get(i);
             names[i] = btrd.getFriendlyName(false);
             icons[i] = getDeviceIcon(btrd.getDeviceClass());
         }
@@ -600,7 +600,7 @@ public class GraphicStartup {
             selected = getSelection(searchMenu, selected);
             if (selected >= 0)
             {
-                RemoteDevice btrd = devList.elementAt(selected);
+                RemoteDevice btrd = devList.get(selected);
                 newScreen();
                 LCD.bitBlt(
                 	Utils.stringToBytes8(getDeviceIcon(btrd.getDeviceClass()))
@@ -640,7 +640,7 @@ public class GraphicStartup {
      */
     private void bluetoothDevices()
     {
-        Vector<RemoteDevice> devList = Bluetooth.getKnownDevicesList();
+        ArrayList<RemoteDevice> devList = Bluetooth.getKnownDevicesList();
         if (devList.size() <= 0)
         {
             msg("No known devices");
@@ -652,7 +652,7 @@ public class GraphicStartup {
         String[] icons = new String[devList.size()];
         for (int i = 0; i < devList.size(); i++)
         {
-            RemoteDevice btrd = devList.elementAt(i);
+            RemoteDevice btrd = devList.get(i);
             names[i] = btrd.getFriendlyName(false);
             icons[i] = getDeviceIcon(btrd.getDeviceClass());
         }
@@ -670,7 +670,7 @@ public class GraphicStartup {
             if (selected >= 0)
             {
                 newScreen();
-                RemoteDevice btrd = devList.elementAt(selected);
+                RemoteDevice btrd = devList.get(selected);
                 int devclass = btrd.getDeviceClass();
                 LCD.bitBlt(
                     	Utils.stringToBytes8(getDeviceIcon(devclass))

@@ -1,6 +1,7 @@
 package java.lang;
 import lejos.nxt.NXTEvent;
-import java.util.Vector;
+
+import java.util.ArrayList;
 import lejos.util.Delay;
 
 /**
@@ -22,15 +23,14 @@ class Shutdown
 {
     private final static int SHUTDOWN_EVENT = 1;
     private volatile static ShutdownThread singleton;
+    //TODO running is only partly protected by synchronized(Shutdown.class){}, discuss with Andy 
     private volatile static boolean running = false;
     private static int exitCode = 0;
     private static NXTEvent event = null;
 
     static class ShutdownThread extends Thread
     {
-        // Note we use a Vector, because other leJOS classes (like Bluetooth use Vector, which keeps our
-        // code smaller. Arguably we should switch all of these uses to be an ArrayList
-        private Vector<Thread> hooks = new Vector<Thread>();
+        private ArrayList<Thread> hooks = new ArrayList<Thread>();
         
         private ShutdownThread()
         {
@@ -63,11 +63,11 @@ class Shutdown
             running = true;
             // Call each of the hooks in turn
             for(int i = 0; i < hooks.size(); i++)
-                hooks.elementAt(i).start();
+                hooks.get(i).start();
             // and now wait for them to complete
             for(int i = 0; i < hooks.size(); i++)
                 try {
-                    hooks.elementAt(i).join();
+                    hooks.get(i).join();
                 } catch (InterruptedException e)
                 {
                     // ignore and retry
@@ -130,7 +130,7 @@ class Shutdown
                 throw(new IllegalStateException());
             if (singleton.hooks.indexOf(hook) >= 0)
                 throw(new IllegalArgumentException());
-            singleton.hooks.addElement(hook);            
+            singleton.hooks.add(hook);            
         }
     }
 
@@ -147,7 +147,7 @@ class Shutdown
                 return false;
             if (running)
                 throw(new IllegalStateException());
-            return singleton.hooks.removeElement(hook);
+            return singleton.hooks.remove(hook);
         }
     }
 
