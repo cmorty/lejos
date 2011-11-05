@@ -1,8 +1,8 @@
 package javax.microedition.location;
 
 
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * This is the starting point for applications using the Location API and represents a source of
@@ -32,7 +32,7 @@ public abstract class LocationProvider {
 	 * <li>[2] is the proximityRadius as a Float</li>
 	 * </ul>
 	 */
-	protected static final Vector<Object[]> listeners = new Vector<Object[]>();
+	protected static final ArrayList<Object[]> listeners = new ArrayList<Object[]>();
 	
 	/**
 	 * Empty constructor to help implementations and extensions. This is not intended to be used by applications. Applications should not make subclasses of this class and invoke this constructor from the subclass.
@@ -165,8 +165,9 @@ public abstract class LocationProvider {
 		listenerArray[1] = coordinates;
 		listenerArray[2] = radius;
 
-		listeners.addElement(listenerArray);
-
+		synchronized (listeners) {
+			listeners.add(listenerArray);
+		}
 	}
 	
 	/**
@@ -179,19 +180,13 @@ public abstract class LocationProvider {
 		if (listener == null)
 			throw new NullPointerException();
 
-		// Synchronize because this is temporarily breaking the Enumeration
 		synchronized (listeners) {
-			// can't use Enumeration because we are removing elements
-			Object[] list = new Object[listeners.size()];
-			Enumeration en = listeners.elements();
-			for (int i = 0; en.hasMoreElements(); i++) {
-				list[i] = en.nextElement();
-			}
-			for (int i = 0; i < list.length; i++) {
-				Object[] listenerArray = (Object[]) list[i];
+			Iterator<Object[]> it = listeners.iterator();
+			while (it.hasNext()) {
+				Object[] listenerArray = it.next();
 				// remove every registration of this listener
 				if (listenerArray[0].equals(listener)) {
-					listeners.removeElement(listenerArray);
+					it.remove();
 				}
 			}
 		}
