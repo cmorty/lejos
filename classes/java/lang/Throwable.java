@@ -89,6 +89,15 @@ public class Throwable
         return _cause;
     }
     
+    /**
+     * Currently unimplemented.
+     * @param t
+     */
+    public final void addSuppressed(Throwable t)
+    {
+    	//TODO implement
+    }
+    
 	/**
 	 * Can be overridden, to return localized messages.
 	 * The default implementation returns the same as {@link #getMessage()}.
