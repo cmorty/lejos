@@ -14,7 +14,9 @@ import lejos.util.Delay;
  */
 
 /**
- * Supports Mindsensors NXTMMX motor multiplexer. This device allows you to connect two 
+ * Abstraction to drive a regulated encoder motor with the NXTMMX motor multiplexer. 
+ * The 
+ * NXTMMX motor multiplexer device allows you to connect two 
  * additional motors to your robot using a sensor port. Multiple NXTMMXs can be chained together.
  * <p>
  * Create an instance of this class passing a <code>NXTMMX</code> instance and Motor ID 
@@ -495,7 +497,8 @@ public class MMXRegulatedMotor extends MMXMotor implements RegulatedMotor{
     public void flt(boolean immediateReturn) {
         this.startStalled=false;
         if (!_isRunCmd && !_isRotateCmd) return;
-        mux.sendData(REG_MUX_Command, (byte)COMMAND_Float);
+        // need to not use super.flt() because it messes with _isRunCmd which needs to be un-adulterated for setStopState()
+        super.doFlt();
         if (!immediateReturn) {
             waitComplete(); 
         }
@@ -528,7 +531,8 @@ public class MMXRegulatedMotor extends MMXMotor implements RegulatedMotor{
     final public void stop(boolean immediateReturn) {
         this.startStalled=false;
         if (!_isRunCmd && !_isRotateCmd) return;
-        mux.sendData(REG_MUX_Command, (byte)COMMAND_Stop);
+        // need to not use super.stop() because it messes with _isRunCmd which needs to be un-adulterated for setStopState()
+        super.doStop(); 
         if (!immediateReturn) {
             waitComplete();
         }
