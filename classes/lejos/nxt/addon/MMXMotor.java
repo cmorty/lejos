@@ -175,6 +175,12 @@ public class MMXMotor implements EncoderMotor{
         _isRunCmd = false;
     }
     
+//    public void setKpSpeed(int kp){
+//        final int REG_KP_SPEED = 0x80;
+//        buffer = intToByteArray(kp);
+//        mux.sendData(REG_KP_SPEED, buffer, 2);
+//    }
+    
     void doFlt(){
         mux.sendData(REG_MUX_Command, (byte) COMMAND_Float);
     }

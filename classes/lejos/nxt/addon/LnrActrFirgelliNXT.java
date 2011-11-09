@@ -6,6 +6,7 @@ import lejos.nxt.TachoMotorPort;
 import lejos.robotics.EncoderMotor;
 import lejos.robotics.LinearActuator;
 
+
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
@@ -24,11 +25,10 @@ import lejos.robotics.LinearActuator;
  * 
  */
 public class LnrActrFirgelliNXT implements LinearActuator{
-    private static final int MIN_POWER = 30;
+//    private static final int MIN_POWER = 30;
     
     private EncoderMotor encoderMotor;
-    private volatile int realPower =0;
-    private int userSpecifiedPower =0;
+    private volatile int motorPower =0;
     private volatile int tick_wait; // this is calculated in setPower() to fit the power setting. Variable because lower powers move it slower.
     private volatile boolean isMoveCommand = false;
     private volatile boolean isStalled=false;
@@ -44,17 +44,21 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * allows any motor class that implements the <code>EncoderMotor</code> interface to drive the actuator. You must instantiate
      * the <code>EncoderMotor</code>-type motor before passing it to this constructor.
      * <p>
-     * The default power is 30%.
+     * When an instance of the MMXMotor class is used, the motor power curve is much different that with a NXTMotor (due to 
+     * a different PWM output?) . The speed
+     * peaks out at about 20% power so in effect, the speed control granularity is coarser.
+     * <p>
+     * The default power at instantiation is 100%.
      * @param encoderMotor A motor instance of type <code>EncoderMotor</code> which will drive the actuator
      * @see lejos.nxt.NXTMotor
-     * @see MMXRegulatedMotor
+     * @see MMXMotor
      * @see EncoderMotor
      */
     public LnrActrFirgelliNXT(EncoderMotor encoderMotor) {
         this.encoderMotor=encoderMotor;
         this.encoderMotor.flt();
         
-        setPower(30);
+        setPower(100); 
         this.actuator = new Thread(new Actuator());
         this.actuator.setDaemon(true);
         this.actuator.start();
@@ -64,7 +68,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
     /** Convenience constructor that creates an instance of a <code>NXTMotor</code> using the specified motor port. This instance is then
      * used to drive the actuator motor.
      * <p>
-     * The default power is 30%.
+     * The default power at instantiation is 100%.
      * @param port The motor port that the linear actuator is attached to.
      * @see lejos.nxt.MotorPort
      * @see NXTMotor
@@ -79,30 +83,37 @@ public class LnrActrFirgelliNXT implements LinearActuator{
      * an excessive load may cause a stall and in this case, stall detection will stop the current actuator action and 
      * set the stalled condition flag.
      * <p>
-     * The default power value on instantiation is 30%.
+     * The default power value on instantiation is 100%.
      * @param power power setting: 0-100%
      * @see LinearActuator#move(int,boolean)
      * @see #isStalled
      */
     public void setPower(int power){
         power=Math.abs(power);
-        power = (power>100)?100:power;
-        this.userSpecifiedPower=power;
-        // calc real power with proper ranging
-        this.realPower = Math.round((float)power/100 * (100-MIN_POWER) + MIN_POWER);
-        this.encoderMotor.setPower(this.realPower);
+        this.motorPower = (power>100)?100:power;
+        this.encoderMotor.setPower(this.motorPower);
         
-        // calc encoder tick/ms based on my testing. y=mm/sec, x=power
-        // y=.135 * x -1.5 + 20%  R2=0.989
-         this.tick_wait = (int)(500/(0.135f * this.realPower - 1.5)*1.2) ;
+        // calc encoder tick/ms based on my testing. y=mm/sec, x=power + 10%
+        if (this.encoderMotor instanceof MMXMotor) {
+            this.tick_wait = (int)(500/(0.4396f * this.motorPower + 3.8962f));
+        } else {
+            this.tick_wait = (int)(500/(0.116f * this.motorPower - 0.5605f)) ;
+        }
+        
+        // ~12 mm/s = ~40 ms/encoder tick
+        if (this.tick_wait<40) this.tick_wait = 40;
+        // ~2.5 mm/s = ~200 ms/encoder tick
+        if (this.tick_wait>200) this.tick_wait = 200;
+        // add 10% for unit manufacturing tolerance variance
+        this.tick_wait = (int)(this.tick_wait * 1.1f);
     }
           
     /**
-    * Returns the current actuator motor power setting. The default power at instantiation is 30%.
+    * Returns the current actuator motor power setting. 
     * @return current power 0-100%
     */
     public int getPower() {
-        return this.userSpecifiedPower;
+        return this.motorPower;
     }
  
     /**Returns true if the actuator is in motion.
@@ -173,7 +184,6 @@ public class LnrActrFirgelliNXT implements LinearActuator{
     
     // only called by move()
     private void doAction(boolean immediateReturn){
-        if (this.realPower<=MIN_POWER) return;
         // If we already have an active command, signal it to cease and wait until cleared
         if (this.isMoveCommand) {
             this.killCurrentAction=true;
@@ -243,7 +253,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
         // starts the motor and waits until move is completed or interrupted with the this.killCurrentAction
         // flag which in effect, causes the thread wait/block until next command is issued (this.isMoveCommand set to true)
         private void toExtent() {
-            int power = LnrActrFirgelliNXT.this.realPower;
+            int power = LnrActrFirgelliNXT.this.motorPower;
             int tacho=0;
             int temptacho;
             
@@ -295,8 +305,8 @@ public class LnrActrFirgelliNXT implements LinearActuator{
                 // exit loop if destination is reached
                 if (tacho>=LnrActrFirgelliNXT.this.distanceTicks) break;
                 // if power changed during this run.... (only when immediateReturn=true)
-                if (power!=LnrActrFirgelliNXT.this.realPower) {
-                    power = LnrActrFirgelliNXT.this.realPower;
+                if (power!=LnrActrFirgelliNXT.this.motorPower) {
+                    power = LnrActrFirgelliNXT.this.motorPower;
                     LnrActrFirgelliNXT.this.encoderMotor.setPower(power);
                 }
                 
@@ -311,7 +321,7 @@ public class LnrActrFirgelliNXT implements LinearActuator{
             
             // set the power back (if changed)
             if (LnrActrFirgelliNXT.this.distanceTicks-tacho<=4&&power>80) 
-                LnrActrFirgelliNXT.this.encoderMotor.setPower(LnrActrFirgelliNXT.this.realPower);
+                LnrActrFirgelliNXT.this.encoderMotor.setPower(LnrActrFirgelliNXT.this.motorPower);
         }
     }
     
