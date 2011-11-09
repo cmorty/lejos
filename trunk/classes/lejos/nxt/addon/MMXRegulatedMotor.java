@@ -14,7 +14,9 @@ import lejos.util.Delay;
  */
 
 /**
- * Supports Mindsensors NXTMMX motor multiplexer. This device allows you to connect two 
+ * Abstraction to drive a regulated encoder motor with the NXTMMX motor multiplexer. 
+ * The 
+ * NXTMMX motor multiplexer device allows you to connect two 
  * additional motors to your robot using a sensor port. Multiple NXTMMXs can be chained together.
  * <p>
  * Create an instance of this class passing a <code>NXTMMX</code> instance and Motor ID 
