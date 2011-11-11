@@ -1,9 +1,7 @@
 package lejos.pc.charting;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.io.OutputStream;
 
 import lejos.pc.comm.NXTComm;
@@ -18,7 +16,7 @@ import lejos.pc.comm.NXTInfo;
  * provides an InputStream and OutputStream from/to the <code>NXTDataLogger</code> running on the NXT. 
  * <p>
  * The InputStream flavor used is a <code>CachingInputStream</code> which buffers the byte stream from the NXT to minimize 
- * blocking on the NXT writes. The out 
+ * blocking on the NXT writes. The OutputStream is standard. 
  * <p>
  * The <code>connect()</code> method will attempt to connect via USB first, then Bluetooth via the <code>NXTConnector</code> class.
  * @see lejos.pc.charting.DataLogger
@@ -28,7 +26,8 @@ import lejos.pc.comm.NXTInfo;
  * @author Kirk P. Thompson
  */
 public class LoggerComms {
-    /** Used to get more details from <code>NXTConnector</code> for the Status pane. Notice that the GUI
+    /** 
+     * Used to get more details from <code>NXTConnector</code> for the Status pane. Notice that the GUI
      * forks STDOUT to the Status textarea so using <code>System.out.println()</code> works to put data into
      * the Status textarea.
      */
@@ -62,68 +61,6 @@ public class LoggerComms {
     private void dbg(String msg){
         System.out.println(THISCLASS + "-" + msg);
     }
-    
-    /** Write a byte to the DataOutputStream
-     * @param value The byte to write
-     */
-//    public void writeByte(int value){
-//        try {
-//            this.dos.writeByte(value);
-//            this.dos.flush();
-//        } catch (IOException e) {
-//            // TODO
-//            dbg("!** writeByte() error: " + e.toString());
-//            e.printStackTrace();
-//        }
-//    }
-    
-    /** Write a byte array to the DataOutputStream
-     * @param value The byte array to write
-     *
-     **/
-//    public void write(byte[] value){
-//        try {
-//            this.dos.write(value);
-//            this.dos.flush();
-//        } catch (IOException e) {
-//            // TODO
-//            dbg("!** write() error: " + e.toString());
-//            e.printStackTrace();
-//        }
-//    }
-    
-    /** Write an <code>int</code> to the DataOutputStream
-     * @param value The <code>int</code> value to write
-     *
-     **/
-//    public void writeInt(int value){
-//        try {
-//            this.dos.writeInt(value);
-//            this.dos.flush();
-//        } catch (IOException e) {
-//            // TODO
-//            dbg("!** writeInt() error: " + e.toString());
-//            e.printStackTrace();
-//        }
-//    }
-    
-    /** Write an <code>float</code> to the DataOutputStream
-     * @param value The <code>float</code> value to write
-     *
-     **/
-//    public void writeFloat(float value) {
-//       writeInt(Float.floatToIntBits(value));
-//    }
-    
-    /** Write an <code>long</code> to the DataOutputStream
-     * @param value The <code>long</code> value to write
-     *
-     **/
-//    public void writeLong(long value) {
-//       //writeInt(Long.??? floatToIntBits(value));
-//        writeInt((int)value<<24);
-//    }
-    
    
     /**Connect to a listening NXT. The NXT must be running <code>NXTDataLogger</code> with the <code>waitForConnection()</code>
      * method called. 
@@ -209,7 +146,7 @@ public class LoggerComms {
                 this.in=null;
             }
         } catch (IOException e) {
-            // TODO
+            // TODO how to handle?
             dbg("closeConnection(): this.dis.close() IOException: " + e.toString());
         } catch (NullPointerException e) {
             ; // ignore
@@ -222,7 +159,7 @@ public class LoggerComms {
                 this.out=null;
             }
         } catch (IOException e) {
-            // TODO
+            // TODO how to handle?
             dbg("closeConnection(): dos.close() IOException: " + e.toString());
         } catch (NullPointerException e) {
             ; // ignore
@@ -230,7 +167,7 @@ public class LoggerComms {
         try {
             if (this.conn!=null) this.conn.close();
         } catch (IOException e) {
-            // TODO
+            // TODO how to handle?
             dbg("closeConnection(): this.conn.close() IOException: " + e.toString());
         }
         this.conn=null;

@@ -38,7 +38,6 @@ class SpawnChartFrame extends JFrame {
     
     private void setChartPanel(SpawnChartPanel chartPanel){
         this.chartPanel=chartPanel;
-        chartPanel.setSize(200,200);
         this.getContentPane().add(this.chartPanel, BorderLayout.CENTER);
         this.pack();
         this.chartPanel.setVisible(true);
