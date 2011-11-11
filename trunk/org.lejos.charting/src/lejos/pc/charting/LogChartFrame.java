@@ -86,7 +86,7 @@ class LogChartFrame extends JFrame {
     private CustomChartPanel customChartPanel = new CustomChartPanel();
     private JFreeChart loggingJFreeChart= customChartPanel.getLoggingChartPanel().getChart();
     
-    private DataLogger dataLogger = null;
+    
     private final LoggerComms connectionManager;
     
     private boolean isNXTConnected = false;
@@ -168,7 +168,7 @@ class LogChartFrame extends JFrame {
 
     /**This class is used to provide listener callbacks from DataLogger.
      */
-    private class SelfLogger implements DataLogger.LoggerListener{
+    private class SelfLogger implements LoggerListener{
         private long lastUpdate=0;
         
         public void logCommentReceived(int timestamp, String comment) {
@@ -253,7 +253,7 @@ class LogChartFrame extends JFrame {
             // tell the chart it has some data
             customChartPanel.addDataPoints(parseDataPoints(logDataItems)); 
             // queue text line for log textarea
-            LogChartFrame.this.logDataQueue.add(DataLogger.parseLogData(logDataItems));
+            LogChartFrame.this.logDataQueue.add(LoggerProtocolManager.parseLogData(logDataItems));
             
             if (this.lastUpdate==0) this.lastUpdate=System.currentTimeMillis()-1;
             // variable textarea update timer delay based on update rate
@@ -878,19 +878,29 @@ class LogChartFrame extends JFrame {
         if (isNXTConnected) {
             jTextFieldNXTName.setText(this.connectionManager.getConnectedNXTName());
             new Thread(new Runnable() {
+                private DataLogger dataLogger = null;
+                private LoggerProtocolManager lpm;
+                
                 // Start the logging run with the specifed file
                 public void run() {
+                    try {
+                        lpm= new LoggerProtocolManager(connectionManager.getInputStream(), connectionManager.getOutputStream());
+                        lpm.addLoggerListener(loggerHook);
+                    }
+                    catch (IOException e) {
+                        System.out.println(THISCLASS+" IOException in makeConnection():" + e);
+                        return;
+                    }
+                    dataLogger = new DataLogger(lpm, theLogFile, fileAction==1);
                     // if the log file field is empty, the PC logger will handle it. we need to make sure the title is appropo
                     // start the logger
                     try {
-                        dataLogger = new DataLogger(connectionManager.getInputStream(), theLogFile,fileAction==1);
-                        dataLogger.addLoggerListener(loggerHook);
-                        dataLogger.startLogging(); // will block until logging session ends
+                        
+                        lpm.startListen(); // will block until logging session ends
                     } catch (IOException e) {
                         System.out.println(THISCLASS+" IOException in makeConnection():" + e);
                     }
                     // remove the ref so we can gc()
-                    dataLogger.removeLoggerListener(loggerHook);
                     dataLogger=null;
                     System.gc();
                 }
