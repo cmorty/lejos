@@ -163,9 +163,10 @@ public MCLParticleSet(RangeMap map, int numParticles, Pose initialPose,
    *
    * @param debug true to set debug, false to set it off
    */
-  public    void setDebug(boolean debug) {
-	  this.debug = debug;
-          if(debug)System.out.println("ParticleSet Debug ON ");
+  public static void setDebug(boolean debug) {
+    MCLParticleSet.debug = debug;
+    if(debug)
+      System.out.println("ParticleSet Debug ON ");
   }
 
   /**
