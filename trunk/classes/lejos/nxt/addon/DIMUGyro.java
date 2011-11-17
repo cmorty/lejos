@@ -300,6 +300,7 @@ public class DIMUGyro extends I2CSensor {
 		return I;
 	}
 
+	@Override
 	public String getProductID() {
 		return "dIMU";
 	}
@@ -332,7 +333,6 @@ public class DIMUGyro extends I2CSensor {
 
 	}
 
-	@Override
 	public String getSensorType() {
 		return "L3G4200D";
 	}
