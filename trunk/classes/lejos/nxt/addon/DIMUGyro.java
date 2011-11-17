@@ -300,11 +300,6 @@ public class DIMUGyro extends I2CSensor {
 		return I;
 	}
 
-	@Override
-	public String getProductID() {
-		return "dIMU";
-	}
-	
 	public final Range getRange() {
 		return range;
 	}
@@ -333,9 +328,20 @@ public class DIMUGyro extends I2CSensor {
 
 	}
 
-	public String getSensorType() {
+    @Override
+    public String getVendorID() {
+        return "STMicroelectronics";
+    }
+    
+    @Override
+	public String getProductID() {
 		return "L3G4200D";
 	}
+    
+    @Override
+    public String getVersion() {
+        return "";
+    }
 
 	private byte getStatus() {
 		getData(REG_STATUS, buf, 1);
@@ -344,11 +350,6 @@ public class DIMUGyro extends I2CSensor {
 
 	public TemperatureUnits getTemperatureUnit() {
 		return temperatureUnit;
-	}
-
-	@Override
-	public String getVersion() {
-		return "1.0";
 	}
 
 	/**
