@@ -514,8 +514,8 @@ public class Ballbot extends Thread { // TODO: Thread should be a private inner 
 	 * @param xaxisPower
 	 * @param yaxisPower
 	 */
-	public void wheelDriver(int xaxisPower, int yaxisPower) {
-		threadx.wheelDriver(xaxisPower);
-		thready.wheelDriver(yaxisPower);
+	public void impulseMove(int x_axisPower, int y_axisPower) {
+		threadx.wheelDriver(x_axisPower);
+		thready.wheelDriver(y_axisPower);
 	}	
 }
