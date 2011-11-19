@@ -6,14 +6,24 @@
 	<property file="build.properties" />
 	<property file="${lejos.classes}/build.properties" prefix="vars.classes"/>
 	
+	<path id="lejos.pc">
+		<fileset dir="../jtools/3rdparty">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement location="../jtools/build/jtools.jar"/>
+		<fileset dir="../pccomms/3rdparty">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement location="../pccomms/build/pccomm.jar"/>
+		<fileset dir="../pctools/3rdparty">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement location="../pctools/build/pctools.jar"/>
+	</path>
+	<path id="lejos.nxt">
+		<pathelement location="../classes/build/classes.jar"/>
+	</path>
 
-	<target name="all" depends="link, docs.zip, source.zip" />
-
-	<!-- deletes class files -->
-	<target name="clean" description="clean up all generated files">
-		<delete dir="${build.dir}"/> 
-	</target>
-	
 	<target name="compile" description="compile the source " >
 		<!-- Compile the java code from ${src}	-->
 		<delete dir="${classes.dir}"/>
@@ -29,11 +39,9 @@
     		debug="true"
     		includeAntRuntime="false"
   			includeJavaRuntime="false"
+			bootclasspathref="lejos.nxt"
     		verbose="false"			
 		>
-			<bootclasspath>
-				<pathelement location="${lejos.classes}/${vars.classes.classes.jar}"/>
-			</bootclasspath>
 			<!--
 				Without this, there are some JDK jars in the classpath.
 				Set verbose=true to check that the classpath is really clean.
@@ -48,10 +56,16 @@
 	
 	<target name="link" depends="compile" description="link the binary " >
 		<!-- Link the binary and create a signature file -->
-		<java classname="lejos.pc.tools.NXJLink" failonerror="true"
-			output="${startup.out}" logerror="true">
+		<java
+			classname="lejos.pc.tools.NXJLink"
+			classpathref="lejos.pc"
+			output="${startup.out}"
+			failonerror="true"
+			logerror="true"
+			fork="true"
+		>
 			<arg value="--bootclasspath"/>
-			<arg path="${lejos.classes}/${vars.classes.classes.jar}" /> 
+			<arg pathref="lejos.nxt" /> 
 			<arg value="--classpath"/>
 			<arg path="${classes.dir}" /> 
 			<arg value="--writeorder" />
@@ -62,13 +76,6 @@
 			<arg file="${startup.debug}"/>
 			<arg value="-v"/>
 			<arg value="${startup.class}"/>
-			<classpath>
-				<pathelement location="${lejos.jtools}/lib/jtools.jar"/>
-				<pathelement location="${lejos.jtools}/3rdparty/lib/bcel.jar"/>
-				<pathelement location="${lejos.pccomms}/lib/pccomm.jar"/>
-				<pathelement location="${lejos.pctools}/lib/pctools.jar"/>
-				<pathelement location="${lejos.pctools}/3rdparty/lib/commons-cli.jar"/>
-			</classpath>
 		</java>
 	</target>
 	
@@ -84,15 +91,9 @@
 			locale="en_US"
 			author="true"
 			access="protected"
+			bootclasspathref="lejos.nxt"
 			verbose="false"
 		>
-			<bootclasspath>
-				<pathelement location="${lejos.classes}/${vars.classes.classes.jar}"/>
-			</bootclasspath>
-			<classpath>
-				<pathelement location="${lejos.classes}/${vars.classes.classes.jar}"/>
-			</classpath>
-			
 			<!--
 				Without this, there are some JDK jars in the classpath.
 				Set verbose=true to check that the classpath is really clean.
@@ -132,6 +133,13 @@
     		includes="${dist.include}"
     		excludes="${dist.exclude}"
     	/>
+	</target>
+	
+	<target name="all" depends="link, docs.zip, source.zip" />
+
+	<!-- deletes class files -->
+	<target name="clean" description="clean up all generated files">
+		<delete dir="${build.dir}"/> 
 	</target>
 	
 </project>
