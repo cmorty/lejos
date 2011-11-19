@@ -1,7 +1,6 @@
 package lejos.pc.charting;
 
 import java.awt.event.MouseEvent;
-
 import java.util.Vector;
 
 import org.jfree.chart.ChartPanel;

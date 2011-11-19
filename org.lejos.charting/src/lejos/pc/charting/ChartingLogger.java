@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
