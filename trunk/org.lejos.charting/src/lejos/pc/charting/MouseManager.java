@@ -2,10 +2,10 @@ package lejos.pc.charting;
 
 import java.awt.BasicStroke;
 import java.awt.Cursor;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-
 import java.util.HashMap;
 
 import org.jfree.chart.ChartMouseEvent;
@@ -244,7 +244,7 @@ class MouseManager {
     boolean doMouseDragged(MouseEvent e) {
         if (!e.isShiftDown()) {
             // override to only allow left button to drag
-            if ((e.getModifiersEx()&e.BUTTON1_DOWN_MASK)==e.BUTTON1_DOWN_MASK) return true;
+            if ((e.getModifiersEx()&InputEvent.BUTTON1_DOWN_MASK)==InputEvent.BUTTON1_DOWN_MASK) return true;
         }
         return false;
     }

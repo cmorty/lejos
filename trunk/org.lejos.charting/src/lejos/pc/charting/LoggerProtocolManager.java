@@ -3,9 +3,7 @@ package lejos.pc.charting;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.io.OutputStream;
-
 import java.util.HashSet;
 
 /**
@@ -139,9 +137,6 @@ public class LoggerProtocolManager {
                 getBytes(readBytes,4);
             } catch (EOFException e) {
                 dbg("startLogging(): EOFException in getBytes(4): " + e);
-                break;
-            } catch (IOException e){
-                dbg("startLogging(): IOException in getBytes(4): " + e);
                 break;
             }
             // do we need to pay attention?

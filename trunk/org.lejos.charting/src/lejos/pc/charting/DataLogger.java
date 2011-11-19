@@ -3,7 +3,6 @@ package lejos.pc.charting;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * This class provides the PC side of the <code>lejos.util.NXTDataLogger</code> counterpart running on the NXT. 

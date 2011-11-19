@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-
 import java.util.Vector;
 
 import org.jfree.chart.ChartPanel;

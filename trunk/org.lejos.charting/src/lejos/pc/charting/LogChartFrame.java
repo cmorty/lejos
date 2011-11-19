@@ -16,14 +16,11 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-
 import java.text.SimpleDateFormat;
-
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -1034,13 +1031,16 @@ class LogChartFrame extends JFrame {
         domainDisplayLimitSlider.setEnabled(datasetLimitEnableCheckBox.isSelected());
         domainLimitLabel.setEnabled(datasetLimitEnableCheckBox.isSelected());
         if (datasetLimitEnableCheckBox.isSelected()) {
-            int mode = customChartPanel.getLoggingChartPanel().DAL_TIME;
+            customChartPanel.getLoggingChartPanel();
+			int mode = LoggingChart.DAL_TIME;
             if (useDataPointsRadioButton.isSelected()) {
-                mode=customChartPanel.getLoggingChartPanel().DAL_COUNT;
+                customChartPanel.getLoggingChartPanel();
+				mode=LoggingChart.DAL_COUNT;
             }
             customChartPanel.getLoggingChartPanel().setDomainLimiting(mode, this.domainLimitSliderValue);
         } else {
-            customChartPanel.getLoggingChartPanel().setDomainLimiting(customChartPanel.getLoggingChartPanel().DAL_UNLIMITED, 0);
+            customChartPanel.getLoggingChartPanel();
+			customChartPanel.getLoggingChartPanel().setDomainLimiting(LoggingChart.DAL_UNLIMITED, 0);
         }
     }
 
@@ -1054,11 +1054,13 @@ class LogChartFrame extends JFrame {
         JSlider workingSlider=(JSlider)e.getSource();
         
         String unit="ms";
-        int mode = customChartPanel.getLoggingChartPanel().DAL_TIME;
+        customChartPanel.getLoggingChartPanel();
+		int mode = LoggingChart.DAL_TIME;
         int maxSliderPerMode=MAXDOMAIN_TIME_LIMIT;
         if (useDataPointsRadioButton.isSelected()) {
             unit="datapoints";
-            mode=customChartPanel.getLoggingChartPanel().DAL_COUNT;
+            customChartPanel.getLoggingChartPanel();
+			mode=LoggingChart.DAL_COUNT;
             maxSliderPerMode=MAXDOMAIN_DATAPOINT_LIMIT;
         }
         this.domainLimitSliderValue=workingSlider.getValue();
