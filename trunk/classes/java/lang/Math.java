@@ -104,15 +104,13 @@ public final class Math
 	 */
 	public static float signum(float f)
 	{
-		if (f == 0)
-			return f; // preserve -0.0 and 0.0
-
+		// let NaN, 0.0 and -0.0 fall through
 		if (f > 0)
-			return 1;
+			return 1.0f;
 		if (f < 0)
-			return -1;
+			return -1.0f;
 
-		return Float.NaN;
+		return f;
 	}
 
 	/**
@@ -120,15 +118,13 @@ public final class Math
 	 */
 	public static double signum(double d)
 	{
-		if (d == 0)
-			return d; // preserve -0.0 and 0.0
-
+		// let NaN, 0.0 and -0.0 fall through
 		if (d > 0)
-			return 1;
+			return 1.0;
 		if (d < 0)
-			return -1;
+			return -1.0;
 
-		return Double.NaN;
+		return d;
 	}
 
 	/*========================= min/max functions =========================*/ 
@@ -154,7 +150,21 @@ public final class Math
 	 */
 	public static float min(float a, float b)
 	{
-		return ((a < b) ? a : b);
+		if (a < b)
+			return a;
+		if (a > b)
+			return b;
+		// early out for non-zero values, NaN falls through
+		if (a == b && a != 0)
+			return a;
+		
+		// handle NaN and negative/positive zero
+		int ra = Float.floatToRawIntBits(a);
+		int rb = Float.floatToRawIntBits(b);
+		
+		if (ra > rb)
+			return b;
+		return a;
 	}
 
 	/**
@@ -162,7 +172,21 @@ public final class Math
 	 */
 	public static double min(double a, double b)
 	{
-		return ((a < b) ? a : b);
+		if (a < b)
+			return a;
+		if (a > b)
+			return b;
+		// early out for non-zero values, NaN falls through
+		if (a == b && a != 0)
+			return a;
+		
+		// handle NaN and negative/positive zero
+		long ra = Double.doubleToRawLongBits(a);
+		long rb = Double.doubleToRawLongBits(b);
+		
+		if (ra > rb)
+			return b;
+		return a;
 	}
 
 	/**
@@ -186,7 +210,21 @@ public final class Math
 	 */
 	public static float max(float a, float b)
 	{
-		return ((a > b) ? a : b);
+		if (a > b)
+			return a;
+		if (a < b)
+			return b;
+		// early out for non-zero values, NaN falls through
+		if (a == b && a != 0)
+			return a;
+		
+		// handle NaN and negative/positive zero
+		int ra = Float.floatToRawIntBits(a);
+		int rb = Float.floatToRawIntBits(b);
+		
+		if (ra < rb)
+			return b;
+		return a;
 	}
 
 	/**
@@ -194,7 +232,21 @@ public final class Math
 	 */
 	public static double max(double a, double b)
 	{
-		return ((a > b) ? a : b);
+		if (a < b)
+			return a;
+		if (a > b)
+			return b;
+		// early out for non-zero values, NaN falls through
+		if (a == b && a != 0)
+			return a;
+		
+		// handle NaN and negative/positive zero
+		long ra = Double.doubleToRawLongBits(a);
+		long rb = Double.doubleToRawLongBits(b);
+		
+		if (ra > rb)
+			return b;
+		return a;
 	}
 
 	/*========================= rounding functions =========================*/ 
@@ -205,18 +257,19 @@ public final class Math
 	 */
 	public static double floor(double a)
 	{
-		// no rounding required
+		// no rounding required, otherwise casting to long is safe
 		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
 			return a;
 
 		double b = (long) a;
 
 		// if numbers are equal, there were no decimal places
+		// also handles negative zero
 		if (b == a)
 			return a;
 
 		// round down or strip
-		return (a > 0.0) ? b : b - 1.0;
+		return b > 0.0 ? b : (b - 1.0);
 	}
 
 	/**
@@ -225,22 +278,19 @@ public final class Math
 	 */
 	public static double ceil(double a)
 	{
-		// no rounding required
+		// no rounding required, otherwise casting to long is safe
 		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
 			return a;
 
 		double b = (long) a;
 
 		// if numbers are equal, there were no decimal places
+		// also handles negative zero
 		if (b == a)
 			return a;
 
-		// otherwise, round up 
-		if (a > 0.0)
-			return b + 1.0;
-		
-		// or strip (with special handling of negative zero)
-		return b < 0.0 ? b : -0.0; 
+		// round up or strip
+		return b < 0.0 ? b : (b + 1.0); 
 	}
 
 	/**
@@ -260,6 +310,10 @@ public final class Math
 	 */
 	public static long round(double a)
 	{
+		// no rounding required
+		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
+			return (long) a;
+
 		return (long) Math.floor(a + 0.5);
 	}
 
@@ -300,7 +354,7 @@ public final class Math
 	{
 		// @author Sven Köhler
 		
-		// also catches NaN
+		// catch all x <= 0 and NaN
 		if (!(x > 0))
 			return (x == 0) ? x : Double.NaN;
 		if (x == Double.POSITIVE_INFINITY)
