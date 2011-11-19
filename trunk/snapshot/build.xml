@@ -7,21 +7,20 @@
 
 	<!-- Setting up the global properties for the build -->
 	<property file="build.properties" />
-	<property prefix="vars.classes" file="${project.classes}/build.properties" />
-	<property prefix="vars.scripts" file="${project.scripts}/build.properties" />
-	<property prefix="vars.startup" file="${project.startup}/build.properties" />
-
-	<!-- vars, that will one day be contributed by the subprojects themseves-->
-	<property name="vars.jtools.jtools.jar" value="lib/jtools.jar" />
-	<property name="vars.pctools.pctools.jar" value="lib/pctools.jar" />
-	<property name="vars.pccomms.pccomms.jar" value="lib/pccomm.jar" />
-
+	<property prefix="vars.classes"  file="${project.classes}/build.properties" />
+	<property prefix="vars.jtools"   file="${project.jtools}/build.properties" />
+	<property prefix="vars.pccomms"  file="${project.pccomms}/build.properties" />
+	<property prefix="vars.pctools"  file="${project.pctools}/build.properties" />
+	<property prefix="vars.scripts"  file="${project.scripts}/build.properties" />
+	<property prefix="vars.startup"  file="${project.startup}/build.properties" />
+	<property prefix="vars.charting" file="${project.charting}/build.properties" />
+	
 	<target name="debug-vars">
 		<echoproperties />
 	</target>
 
 	<!-- release leJOS NXJ -->
-	<target name="all" depends="subproject.classes.copy, subproject.jtools.copy, subproject.pccomms.copy, subproject.pctools.copy, subproject.startup.copy, subproject.scripts.copy, subproject.charting.copy" description="build/copy lejos files">
+	<target name="all" depends="subproject.classes.copy, subproject.jtools.copy, subproject.pccomms.copy, subproject.pctools.copy, subproject.charting.copy, subproject.startup.copy, subproject.scripts.copy" description="build/copy lejos files">
 		<echo message="Done." />
 	</target>
 
@@ -50,12 +49,14 @@
 		<ant inheritAll="false" dir="${project.classes}" antfile="build.xml">
 			<target name="clean" />
 			<target name="classes.jar" />
+			<target name="classes.src.zip" />
 		</ant>
 		<echo message="*** leaving classes project" />
 	</target>
 	<target name="subproject.classes.copy" depends="subproject.classes.build">
 		<copy todir="lib/nxt">
 			<fileset file="${project.classes}/${vars.classes.classes.jar}" />
+			<fileset file="${project.classes}/${vars.classes.classes.src.zip}" />
 		</copy>
 	</target>
 
@@ -63,18 +64,20 @@
 		<echo message="*** entering jtools project" />
 		<ant inheritAll="false" dir="${project.jtools}" antfile="build.xml">
 			<target name="clean" />
-			<target name="build" />
+			<target name="classes.jar" />
+			<target name="classes.src.zip" />
 		</ant>
 		<echo message="*** leaving jtools project" />
 	</target>
 	<target name="subproject.jtools.copy" depends="subproject.jtools.build">
 		<copy todir="lib/pc">
-			<fileset file="${project.jtools}/${vars.jtools.jtools.jar}" />
+			<fileset file="${project.jtools}/${vars.jtools.classes.jar}" />
+			<fileset file="${project.jtools}/${vars.jtools.classes.src.zip}" />
 		</copy>
 		<copy todir="lib/pc/3rdparty">
 			<fileset dir="${project.jtools}/3rdparty/lib">
 				<include name="*.jar" />
-				<!-- <include name="*-src.zip" /> -->
+				<include name="*-src.zip" />
 			</fileset>
 		</copy>
 	</target>
@@ -83,18 +86,20 @@
 		<echo message="*** entering pccomms project" />
 		<ant inheritAll="false" dir="${project.pccomms}" antfile="build.xml">
 			<target name="clean" />
-			<target name="build" />
+			<target name="classes.jar" />
+			<target name="classes.src.zip" />
 		</ant>
 		<echo message="*** leaving pccomms project" />
 	</target>
 	<target name="subproject.pccomms.copy" depends="subproject.pccomms.build">
 		<copy todir="lib/pc">
-			<fileset file="${project.pccomms}/${vars.pccomms.pccomms.jar}" />
+			<fileset file="${project.pccomms}/${vars.pccomms.classes.jar}" />
+			<fileset file="${project.pccomms}/${vars.pccomms.classes.src.zip}" />
 		</copy>
 		<copy todir="lib/pc/3rdparty">
 			<fileset dir="${project.pccomms}/3rdparty/lib">
 				<include name="*.jar" />
-				<!-- <include name="*-src.zip" /> -->
+				<include name="*-src.zip" />
 			</fileset>
 		</copy>
 	</target>
@@ -103,18 +108,42 @@
 		<echo message="*** entering pctools project" />
 		<ant inheritAll="false" dir="${project.pctools}" antfile="build.xml">
 			<target name="clean" />
-			<target name="build" />
+			<target name="classes.jar" />
+			<target name="classes.src.zip" />
 		</ant>
 		<echo message="*** leaving pctools project" />
 	</target>
 	<target name="subproject.pctools.copy" depends="subproject.pctools.build">
 		<copy todir="lib/pc">
-			<fileset file="${project.pctools}/${vars.pctools.pctools.jar}" />
+			<fileset file="${project.pctools}/${vars.pctools.classes.jar}" />
+			<fileset file="${project.pctools}/${vars.pctools.classes.src.zip}" />
 		</copy>
 		<copy todir="lib/pc/3rdparty">
 			<fileset dir="${project.pctools}/3rdparty/lib">
 				<include name="*.jar" />
-				<!-- <include name="*-src.zip" /> -->
+				<include name="*-src.zip" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="subproject.charting.build" depends="subproject.pctools.build">
+		<echo message="*** entering charting logger project" />
+		<ant inheritAll="false" dir="${project.charting}" antfile="build.xml">
+			<target name="clean" />
+			<target name="classes.jar" />
+			<target name="classes.src.zip" />
+		</ant>
+		<echo message="*** leaving charting logger project" />
+	</target>
+	<target name="subproject.charting.copy" depends="subproject.charting.build">
+		<copy todir="lib/pc">
+			<fileset file="${project.charting}/${vars.charting.classes.jar}" />
+			<fileset file="${project.charting}/${vars.charting.classes.src.zip}" />
+		</copy>
+		<copy todir="lib/pc/3rdparty">
+			<fileset dir="${project.charting}/3rdparty/lib">
+				<include name="*.jar" />
+				<include name="*-src.zip" />
 			</fileset>
 		</copy>
 	</target>
@@ -131,26 +160,6 @@
 		<copy todir="bin">
 			<fileset file="${project.startup}/${vars.startup.startup.bin}" />
 			<fileset file="${project.startup}/${vars.startup.startup.debug}" />
-		</copy>
-	</target>
-
-	<target name="subproject.charting.build" depends="subproject.pctools.build">
-		<echo message="*** entering charting logger project" />
-		<ant inheritAll="false" dir="${project.charting}" antfile="build.xml">
-			<target name="clean" />
-			<target name="build" />
-		</ant>
-		<echo message="*** leaving charting logger project" />
-	</target>
-	<target name="subproject.charting.copy" depends="subproject.charting.build">
-		<copy todir="lib/pc">
-			<fileset file="${project.charting}/lib/pccharting.jar" />
-		</copy>
-		<copy todir="lib/pc/3rdparty">
-			<fileset dir="${project.charting}/3rdparty/lib">
-				<include name="*.jar" />
-				<!-- <include name="*-src.zip" /> -->
-			</fileset>
 		</copy>
 	</target>
 
