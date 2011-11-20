@@ -25,8 +25,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
-#include "jlibnxt.h"
 #include <usb.h>
+
+#include "jlibnxt.h"
+
+
 #define MAX_DEVS 64
 #define MAX_SERNO 64
 #define MAX_WRITE 64
