@@ -1,461 +1,316 @@
- 
 <!--
   ==================================================
   Buildfile for release of leJOS NXJ
   ==================================================
 -->
 <project name="leJOS NXJ release" default="release" basedir=".">
-	
+
 	<!-- Setting up the global properties for the build -->
-  	<property file="build.properties"/>
-	<property environment="env"/>
-	<property name="lejos.root" value="${basedir}/.."/>
-	<property name="release" value="${basedir}"/>
-	<property name="release.nxj" value="${release}/lejos_nxj"/>
-	<property name="release.bin" value="${release.nxj}/bin"/>
-	<property name="src" value="${lejos.root}"/>
-	<property name="javasrc" value="${src}"/>
-	<property name="javavm.src" value="${src}/nxtvm/javavm"/>
-	<property name="release.build" value="${release.nxj}/build"/>
-	<property name="release.lib" value="${release.nxj}/lib"/>
-	<property name="release.src" value="${release.nxj}/src"/>
-	<property name="release.projects" value="${release.nxj}/projects"/>
-	<property name="release.dist" value="${release}/dist"/>
-	<property name="release.classes.docs" value="${release.nxj}/projects/classes/doc"/>
-	<property name="release.pc.docs" value="${release.nxj}/projects/pccomms/doc"/>
-	<property name="3rdparty.subdir" value="pc/3rdparty"/>
-	<property name="release.3rdparty.libs" value="${release.lib}/${3rdparty.subdir}"/>
-	<property name="release.nxt.libs" value="${release.lib}/nxt"/>
-	<property name="release.pc.libs" value="${release.lib}/pc"/>
-	<property name="plat.unix.src" value="${src}/nxtvm/platform/unix"/>
-	<property name="plat.nxt.src" value="${src}/nxtvm/platform/nxt"/>
-	
-	<!-- cpptasks task & type def -->
-	<taskdef resource="cpptasks.tasks">
-	  <classpath>
-	    <pathelement location="${release.build}/cpptasks.jar"/>
-	  </classpath>
-	</taskdef>
-	<typedef resource="cpptasks.types">
-	  <classpath>
-	    <pathelement location="${release.build}/cpptasks.jar"/>
-	  </classpath>
-	</typedef>
-	
-	<!-- release leJOS NXJ --> 
-	<target name="release" depends ="clean,create.folders,lejos.sources,libs,scripts,example,samples,pcsamples,platform.doc,pc.doc"
-		description="releases leJOS NXJ">
-		<!-- clean distribution -->
-		<delete>
-		    <fileset dir="${release.dist}">
-		    	<include name = "**/*.gz"/>
-		    	<include name = "**/*.zip"/>
-		    </fileset>
-		</delete>
-		<!-- tar/zip os dependent files -->
-		<antcall target="distribution.linux"/>
-		<antcall target="distribution.windows"/>
-		<!-- clean temp files -->
-		<delete>
-		    <fileset dir="${release.dist}">
-		    	<include name = "**/*.tar"/>
-		    </fileset>
-		</delete>
+	<property file="build.properties" />
+	<property prefix="vars.classes" file="${project.classes}/build.properties" />
+	<property prefix="vars.jtools" file="${project.jtools}/build.properties" />
+	<property prefix="vars.pccomms" file="${project.pccomms}/build.properties" />
+	<property prefix="vars.pctools" file="${project.pctools}/build.properties" />
+	<property prefix="vars.scripts" file="${project.scripts}/build.properties" />
+	<property prefix="vars.startup" file="${project.startup}/build.properties" />
+	<property prefix="vars.charting" file="${project.charting}/build.properties" />
+
+	<property name="sup.dir" value="lejos_nxj" />
+	<property name="shared.dir" value="${build.dir}/bin_shared" />
+	<property name="unix.dir" value="${build.dir}/bin_unix" />
+	<property name="windows.dir" value="${build.dir}/bin_windows" />
+	<property name="source.dir" value="${build.dir}/bin_windows" />
+
+	<!-- release leJOS NXJ -->
+	<target name="release" depends="clean,distribution.unix,distribution.windows,distribution.source" description="releases leJOS NXJ">
 		<!-- notify -->
-		<echo message="The packed distribution can be found in ${release.dist} now"/>
+		<echo message="The packed distribution can be found in ${build.dir} now" />
 	</target>
 
-  	<!-- cleans the distribution -->
+	<!-- cleans the distribution -->
 	<target name="clean" description="clean up all generated files">
-	  	<!-- delete transient release folders -->
-		<delete dir="${release.bin}"/>
-		<delete dir="${release.lib}"/>
-	  	<delete dir="${release.src}"/>
-	  	<delete dir="${release.projects}"/>
-  	</target>
-	
-	<!-- build classes -->
-	<target name="subproject.classes.build">
-		<echo message="*** entering classes project"/>
-		<ant inheritAll="false"	dir="${lejos.root}/classes" antfile="build.xml">
-		</ant>
-		<echo message="*** leaving classes project"/>
-	</target>
-	
-	<!-- build pccomms -->
-	<target name="subproject.pccomms.build">
-		<echo message="*** entering pccomms project"/>
-		<ant inheritAll="false"	dir="${lejos.root}/pccomms" antfile="build.xml">
-		</ant>
-		<echo message="*** leaving pccomms project"/>
-	</target>
-	
-	<!-- build pctools -->
-	<target name="subproject.pctools.build">
-		<echo message="*** entering pctools project"/>
-		<ant inheritAll="false"	dir="${lejos.root}/pctools" antfile="build.xml">
-		</ant>
-		<echo message="*** leaving pctools project"/>
-	</target>
-	
-	<!-- build jtools -->
-	<target name="subproject.jtools.build">
-		<echo message="*** entering jtools project"/>
-		<ant inheritAll="false"	dir="${lejos.root}/jtools" antfile="build.xml">
-		</ant>
-		<echo message="*** leaving jtools project"/>
-	</target>
-	
-	<!-- build startup -->
-	<target name="subproject.startup.build">
-		<echo message="*** entering startup project"/>
-		<ant inheritAll="false"	dir="${lejos.root}/startup" antfile="build.xml">
-		</ant>
-		<echo message="*** leaving startup project"/>
-	</target>
-  	
-	<!-- copies the lejos sources -->
-	<target name="lejos.sources" description="copies the lejos sources" 
-		depends="subproject.classes.build,subproject.pccomms.build,subproject.jtools.build,subproject.pctools.build,subproject.startup.build">
-		       <copy todir="${release.projects}">
-		          <fileset dir="${javasrc}">
-		               <include name="classes/**"/> 
-      			<exclude name="classes/**/.svn"/>
-      			<exclude name="classes/.settings/**"/>
-      			<exclude name="classes/build/**"/>
-				<exclude name="classes/bin/**"/>
-      			<exclude name="classes/nbproject/private/**"/>
-				<exclude name="classes/TODO.txt"/>
-        		<include name="jtools/**"/>
-      			<exclude name="jtools/**/.svn"/>
-      			<exclude name="jtools/.settings/**"/>
-      			<exclude name="jtools/.externalToolBuilders/**"/>
-      			<exclude name="jtools/build/**"/>
-				<exclude name="jtools/bin/**"/>
-      			<exclude name="jtools/nbproject/private/**"/>
-				<include name="pctools/**"/>
-      			<exclude name="pctools/**/.svn"/>
-      			<exclude name="pctools/.settings/**"/>
-      			<exclude name="pctools/build/**"/>
-				<exclude name="pctools/bin/**"/>
-      			<exclude name="pctools/nbproject/private/**"/>
-				<include name="pccomms/**"/>
-      			<exclude name="pccomms/**/.svn"/>
-      			<exclude name="pccomms/.settings/**"/>
-      			<exclude name="pccomms/build/**"/>
-				<exclude name="pccomms/bin/**"/>
-      			<exclude name="pccomms/nbproject/private/**"/>
-				<include name="startup/**"/>
-      			<exclude name="startup/**/.svn"/>
-      			<exclude name="startup/.settings/**"/>
-      			<exclude name="startup/build/**"/>
-				<exclude name="startup/bin/**"/>
-      			<exclude name="startup/nbproject/private/**"/>
-				<include name="NXJPlugin/**"/>
-      			<exclude name="NXJPlugin/**/.svn"/>
-      			<exclude name="NXJPlugin/.settings/**"/>
-      			<exclude name="NXJPlugin/build/classes/**"/>
-				<exclude name="NXJPlugin/build/cluster/**"/>
-				<exclude name="NXJPlugin/build/depcache/**"/>
-				<exclude name="NXJPlugin/build/public-package-jars/**"/>
-				<exclude name="NXJPlugin/bin/**"/>
-      			<exclude name="NXJPlugin/nbproject/private/**"/>
-      		</fileset>
-		</copy>
-
-		<copy todir="${release.src}/nxtvm/javavm">
-          	<fileset dir="${javavm.src}">
-            	<include name="**/*.c"/>
-            	<include name="**/*.h"/>
-            	<include name="**/*.db"/>
-            	<include name="**/*.hc"/>
-          	</fileset>
-		</copy>
-		
-		<copy todir="${release.src}/nxtvm/platform/unix">
-          	<fileset dir="${plat.unix.src}">
-            	<include name="**/*.c"/>
-            	<include name="**/*.h"/>
-            	<include name="**/build.xml"/>
-          	</fileset>
-		</copy>
-		
-		<copy todir="${release.src}/nxtvm/platform/nxt">
-          	<fileset dir="${plat.nxt.src}">
-            	<include name="**/*.c"/>
-          		<include name="**/*.s"/>
-            	<include name="**/*.h"/>
-          		<include name="**/*.lds"/>
-          		<include name="**/*.mak"/>
-          		<include name="**/Makefile"/>
-          		<include name="**/README"/>
-          	</fileset>
-		</copy>
-		
-		<copy todir="${release.src}/libnxt">
-          	<fileset dir="${src}/libnxt">
-            	<include name="**/*.c"/>
-            	<include name="**/*.h"/>
-          		<include name="**/build.xml"/>
-          		<include name="build.sh"/>
-          		<include name="**/COPYING"/>
-          		<include name="**/Makefile"/>
-          	</fileset>
-		</copy>
-		
-		<copy todir="${release.src}/jfantom">
-          	<fileset dir="${src}/jfantom">
-            	<include name="**/*.cpp"/>
-            	<include name="**/*.h"/>
-          		<include name="build.sh"/>
-          		<include name="build.bat"/>
-          		<include name="build_OSX.sh"/>
-          		<include name="build_OSX_README.txt"/>
-          	</fileset>
-		</copy>
-		
-		<copy todir="${release.src}/flashwrite">
-          	<fileset dir="${src}/flashwrite">
-            	<include name="**/*.S"/>
-            	<include name="**/*.py"/>
-          		<include name="**/Makefile"/>
-          	</fileset>
-		</copy>
-			
+		<!-- delete transient release folders -->
+		<delete dir="${build.dir}" />
 	</target>
 
-	<!-- makes a timestamp and creates some required folders -->
- 	<target name="create.folders" description="setup build">
-    	<tstamp/>
- 		<mkdir dir="${release.dist}"/>
-    	<mkdir dir="${release.bin}"/>
-    	<mkdir dir="${release.lib}"/>
-    	<mkdir dir="${release.3rdparty.libs}"/>
-    	<mkdir dir="${release.src}"/>
-    	<mkdir dir="${release.projects}"/>
-  	</target>
-	
-	<!-- build scripts -->
-	<target name="subproject.scripts.build">
-		<echo message="*** entering scripts project"/>
-		<ant inheritAll="false"	dir="${lejos.root}/scripts" antfile="build.xml">
+	<target name="subproject.scripts">
+		<echo message="*** entering scripts project" />
+		<ant inheritAll="false" dir="${project.scripts}" antfile="build.xml">
+			<target name="clean" />
+			<target name="all" />
 		</ant>
-		<echo message="*** leaving scripts project"/>
+		<copy todir="${unix.dir}/bin">
+			<fileset dir="${project.scripts}/${vars.scripts.linux.dir}" />
+		</copy>
+		<copy todir="${windows.dir}/bin">
+			<fileset dir="${project.scripts}/${vars.scripts.windows.dir}" />
+		</copy>
+		<echo message="*** leaving scripts project" />
+	</target>
+
+	<target name="subproject.classes">
+		<echo message="*** entering classes project" />
+		<ant inheritAll="false" dir="${project.classes}" antfile="build.xml">
+			<target name="clean" />
+			<target name="classes.jar" />
+			<target name="classes.src.zip" />
+		</ant>
+		<copy todir="${shared.dir}/lib/nxt">
+			<fileset file="${project.classes}/${vars.classes.classes.jar}" />
+			<fileset file="${project.classes}/${vars.classes.classes.src.zip}" />
+		</copy>
+		<echo message="*** leaving classes project" />
+	</target>
+
+	<target name="subproject.jtools">
+		<echo message="*** entering jtools project" />
+		<ant inheritAll="false" dir="${project.jtools}" antfile="build.xml">
+			<target name="clean" />
+			<target name="classes.jar" />
+			<target name="classes.src.zip" />
+		</ant>
+		<copy todir="${shared.dir}/lib/pc">
+			<fileset file="${project.jtools}/${vars.jtools.classes.jar}" />
+			<fileset file="${project.jtools}/${vars.jtools.classes.src.zip}" />
+		</copy>
+		<copy todir="${shared.dir}/lib/pc/3rdparty">
+			<fileset dir="${project.jtools}/3rdparty/lib">
+				<include name="*.jar" />
+				<include name="*-src.zip" />
+			</fileset>
+		</copy>
+		<echo message="*** leaving jtools project" />
+	</target>
+
+	<target name="subproject.pccomms">
+		<echo message="*** entering pccomms project" />
+		<ant inheritAll="false" dir="${project.pccomms}" antfile="build.xml">
+			<target name="clean" />
+			<target name="classes.jar" />
+			<target name="classes.src.zip" />
+		</ant>
+		<copy todir="${shared.dir}/lib/pc">
+			<fileset file="${project.pccomms}/${vars.pccomms.classes.jar}" />
+			<fileset file="${project.pccomms}/${vars.pccomms.classes.src.zip}" />
+		</copy>
+		<copy todir="${shared.dir}/lib/pc/3rdparty">
+			<fileset dir="${project.pccomms}/3rdparty/lib">
+				<include name="*.jar" />
+				<include name="*-src.zip" />
+			</fileset>
+		</copy>
+		<echo message="*** leaving pccomms project" />
+	</target>
+
+	<target name="subproject.pctools" depends="subproject.pccomms, subproject.jtools">
+		<echo message="*** entering pctools project" />
+		<ant inheritAll="false" dir="${project.pctools}" antfile="build.xml">
+			<target name="clean" />
+			<target name="classes.jar" />
+			<target name="classes.src.zip" />
+		</ant>
+		<copy todir="${shared.dir}/lib/pc">
+			<fileset file="${project.pctools}/${vars.pctools.classes.jar}" />
+			<fileset file="${project.pctools}/${vars.pctools.classes.src.zip}" />
+		</copy>
+		<copy todir="${shared.dir}/lib/pc/3rdparty">
+			<fileset dir="${project.pctools}/3rdparty/lib">
+				<include name="*.jar" />
+				<include name="*-src.zip" />
+			</fileset>
+		</copy>
+		<echo message="*** leaving pctools project" />
+	</target>
+
+	<target name="subproject.charting" depends="subproject.pctools">
+		<echo message="*** entering charting logger project" />
+		<ant inheritAll="false" dir="${project.charting}" antfile="build.xml">
+			<target name="clean" />
+			<target name="classes.jar" />
+			<target name="classes.src.zip" />
+		</ant>
+		<copy todir="${shared.dir}/lib/pc">
+			<fileset file="${project.charting}/${vars.charting.classes.jar}" />
+			<fileset file="${project.charting}/${vars.charting.classes.src.zip}" />
+		</copy>
+		<copy todir="${shared.dir}/lib/pc/3rdparty">
+			<fileset dir="${project.charting}/3rdparty/lib">
+				<include name="*.jar" />
+				<include name="*-src.zip" />
+			</fileset>
+		</copy>
+		<echo message="*** leaving charting logger project" />
+	</target>
+
+	<target name="subproject.startup" depends="subproject.classes, subproject.pctools">
+		<echo message="*** entering startup project" />
+		<ant inheritAll="false" dir="${project.startup}" antfile="build.xml">
+			<target name="clean" />
+			<target name="link" />
+		</ant>
+		<copy todir="${shared.dir}/bin">
+			<fileset file="${project.startup}/${vars.startup.startup.bin}" />
+			<fileset file="${project.startup}/${vars.startup.startup.debug}" />
+		</copy>
+		<echo message="*** leaving startup project" />
 	</target>
 
 	<!-- copies the run scripts and other binaries -->
-	<target name="scripts" depends="create.folders,subproject.scripts.build" description="copies the run scripts (nxjc etc.)">
+	<target name="scripts" depends="subproject.scripts" description="copies the run scripts (nxjc etc.)">
 		<copy todir="${release.bin}">
-      		<fileset dir="${lejos.root}/scripts/build/linux">
-        		<include name="*"/>
-      		</fileset>
-      		<fileset dir="${lejos.root}/scripts/build/windows">
-        		<include name="*.bat"/>
-      		</fileset>
-			<fileset dir="${lejos.root}/release/install_scripts">
-        		<include name="*.bat"/>
-      		</fileset>						
-    	</copy>
-		
+			<fileset dir="${projects.root}/scripts/build/linux">
+				<include name="*" />
+			</fileset>
+			<fileset dir="${projects.root}/scripts/build/windows">
+				<include name="*.bat" />
+			</fileset>
+			<fileset dir="${projects.root}/release/install_scripts">
+				<include name="*.bat" />
+			</fileset>
+		</copy>
+
 		<copy todir="${release.bin}">
-      		<fileset dir="${lejos.root}/snapshot/bin">
-      			<include name="lejos_nxt_rom.bin"/>
-      		</fileset>
-    	</copy>
-		
+			<fileset dir="${projects.root}/snapshot/bin">
+				<include name="lejos_nxt_rom.bin" />
+			</fileset>
+		</copy>
+
 		<copy todir="${release.bin}">
-      		<fileset dir="${lejos.root}/startup/build">
-      			<include name="StartUpText.bin"/>
-      			<include name="StartUpText.nxd"/>
-      		</fileset>
-    	</copy>
-			
+			<fileset dir="${projects.root}/startup/build">
+				<include name="StartUpText.bin" />
+				<include name="StartUpText.nxd" />
+			</fileset>
+		</copy>
+
 		<copy todir="${release.pc.libs}">
-      		<fileset dir="${lejos.root}/snapshot/lib/pc">
-      			<include name="native/**/*.dll"/>
-      			<include name="native/**/*.jnilib"/>
-      		</fileset>
-    	</copy>
-	</target>
-	
-	<!-- copies the jar files -->
-	<target name="libs" depends="create.folders,3rdparty.libs" description="copies the jar files">
-		<copy todir="${release.nxt.libs}">
-      		<fileset dir="${lejos.root}/classes/lib">
-        		<include name="*.jar"/>
-      		</fileset>
-    	</copy>
-		<copy todir="${release.pc.libs}">
-      		<fileset dir="${lejos.root}/jtools/lib">
-        		<include name="*.jar"/>
-      		</fileset>
-      		<fileset dir="${lejos.root}/pccomms/lib">
-        		<include name="*.jar"/>
-      		</fileset>
-      		<fileset dir="${lejos.root}/pctools/lib">
-        		<include name="*.jar"/>
-      		</fileset>
-    	</copy>
-	</target>
-	
-	<!-- copies the jar files -->
-	<target name="3rdparty.libs" depends="create.folders" description="copies the jar files">
-		<copy todir="${release.3rdparty.libs}">
-      		<fileset dir="${lejos.root}/jtools/3rdparty/lib">
-        		<include name="*.jar"/>
-        		<include name="*-src.zip"/>
-      		</fileset>
-      		<fileset dir="${lejos.root}/pccomms/3rdparty/lib">
-        		<include name="*.jar"/>
-        		<include name="*-src.zip"/>
-      		</fileset>
-      		<fileset dir="${lejos.root}/pctools/3rdparty/lib">
-        		<include name="*.jar"/>
-				<include name="*-src.zip"/>
-      		</fileset>
+			<fileset dir="${projects.root}/snapshot/lib/pc">
+				<include name="native/**/*.dll" />
+				<include name="native/**/*.jnilib" />
+			</fileset>
 		</copy>
 	</target>
 
 	<!-- copies the samples -->
-	<target name="samples" depends="create.folders" description="copies the samples">
+	<target name="samples" description="copies the samples">
 		<copy todir="${release.projects}/samples">
-      		<fileset dir="${lejos.root}/samples">
-      			<exclude name="**/*.nxj"/>
-      			<exclude name="**/*.class"/>
-      			<exclude name="**/.svn"/>
-      			<exclude name=".settings/**"/>
-      			<exclude name="build/**"/>
-      			<exclude name="bin/**"/>
-      			<exclude name="nbproject/private/**"/>
-      		</fileset>
-    	</copy>
-	</target>
-	
-	<!-- copies the example project -->
-	<target name="example" depends="create.folders" description="copies the example project">
-		<copy todir="${release.projects}/org.lejos.example">
-      		<fileset dir="${lejos.root}/org.lejos.example">
-      			<exclude name="**/*.nxj"/>
-      			<exclude name="**/.svn"/>
-      			<exclude name=".settings/**"/>
-      			<exclude name="build/**"/>
-      			<exclude name="bin/**"/>
-      			<exclude name="nbproject/private/**"/>
-      		</fileset>
-    	</copy>
-	</target>
-	
-	<!-- copies the pc samples -->
-	<target name="pcsamples" depends="create.folders" description="copies the samples">
-		<copy todir="${release.projects}/pcsamples">
-      		<fileset dir="${lejos.root}/pcsamples">
-      			<exclude name="**/.svn"/>
-      			<exclude name=".settings/**"/>
-      			<exclude name=".externalToolBuilders/**"/>
-      			<exclude name="build/**"/>
-      			<exclude name="bin/**"/>
-      			<exclude name="nbproject/private/**"/>
-      		</fileset>
-    	</copy>
+			<fileset dir="${projects.root}/samples">
+				<exclude name="**/*.nxj" />
+				<exclude name="**/*.class" />
+				<exclude name="**/.svn" />
+				<exclude name=".settings/**" />
+				<exclude name="build/**" />
+				<exclude name="bin/**" />
+				<exclude name="nbproject/private/**" />
+			</fileset>
+		</copy>
 	</target>
 
-	<!-- packages the linux distribution -->
-	<target name="distribution.linux" description="packages the linux distribution">
-		<!-- tar & gzip leJOS Unix distribution -->
-		<tar destfile="${release.dist}/${lejos.linux.version}.tar.gz" compression="gzip">
-			<tarfileset dir="${release}" filemode="755">
-			    <include name="lejos_nxj/bin/nxj*"/>
-			 	<exclude name="lejos_nxj/bin/*.bat"/>
-			</tarfileset>
-			<tarfileset dir="${release}" >
-			    <include name="lejos_nxj/RELEASENOTES"/>
-			    <include name="lejos_nxj/README.html"/>
-			    <include name="lejos_nxj/LICENSE"/>
-			    <include name="lejos_nxj/LEGAL"/>
-			    <include name="lejos_nxj/ACKNOWLEDGMENTS"/>
-			    <include name="lejos_nxj/lib/**"/>
-			    <include name="lejos_nxj/src/**"/>
-			    <include name="lejos_nxj/bin/*"/>
-			 	<include name="lejos_nxj/projects/**"/>
-			 	<exclude name="lejos_nxj/bin/nxj*"/>
-			 	<exclude name="lejos_nxj/bin/*.xml"/>
-			 	<exclude name="lejos_nxj/bin/*.exe"/>
-			 	<exclude name="lejos_nxj/bin/*.bat"/>
-			 	<!--
-			 	<exclude name="lejos_nxj/lib/**/*.dll"/>
-			 	-->
-			 	<include name="lejos_nxj/build/*"/>
-			 	<include name="lejos_nxj/docs/**"/>
-			</tarfileset>
-		</tar>
+	<!-- copies the example project -->
+	<target name="example" description="copies the example project">
+		<copy todir="${release.projects}/org.lejos.example">
+			<fileset dir="${projects.root}/org.lejos.example">
+				<exclude name="**/*.nxj" />
+				<exclude name="**/.svn" />
+				<exclude name=".settings/**" />
+				<exclude name="build/**" />
+				<exclude name="bin/**" />
+				<exclude name="nbproject/private/**" />
+			</fileset>
+		</copy>
 	</target>
-	
-	<!-- packages the windows distribution -->
-	<target name="distribution.windows" description="packages the windows distribution">
-		<!-- zip leJOS windows distribution -->
-		<zip destfile="${release.dist}/${lejos.windows.version}.zip">
-			 <fileset dir="${release}" >
-			    <include name="lejos_nxj/RELEASENOTES"/>
-			    <include name="lejos_nxj/README.html"/>
-			 	<include name="lejos_nxj/LICENSE"/>
-			 	<include name="lejos_nxj/LEGAL"/>
-			 	<include name="lejos_nxj/ACKNOWLEDGMENTS"/>
-			    <include name="lejos_nxj/lib/**"/>
-			 	<include name="lejos_nxj/projects/**"/>
-			    <include name="lejos_nxj/src/**"/>
-			 	<exclude name="lejos_nxj/src/libnxt/**"/>
-			    <include name="lejos_nxj/bin/*"/>
-			 	<exclude name="lejos_nxj/bin/*.xml"/>
-			 	<exclude name="lejos_nxj/bin/nxj"/>
-			 	<exclude name="lejos_nxj/bin/nxjlink"/>
-			 	<exclude name="lejos_nxj/bin/nxjc"/>
-			 	<exclude name="lejos_nxj/bin/nxjupload"/>
-			 	<exclude name="lejos_nxj/bin/nxjbrowse"/>
-			 	<exclude name="lejos_nxj/bin/nxjflash"/>
-				<exclude name="lejos_nxj/bin/nxjmonitor"/>
-			 	<exclude name="lejos_nxj/bin/nxjconsole"/>
-			 	<exclude name="lejos_nxj/bin/nxjconsoleviewer"/>
-			 	<exclude name="lejos_nxj/bin/nxjdataviewer"/>
-			 	<exclude name="lejos_nxj/bin/nxjsocketproxy"/>
-			 	<exclude name="lejos_nxj/bin/nxjflashg"/>
-			 	<exclude name="lejos_nxj/bin/nxjflash"/>
-			 	<exclude name="lejos_nxj/bin/nxjpc"/>
-			 	<exclude name="lejos_nxj/bin/nxjpcc"/>
-			 	<exclude name="lejos_nxj/bin/nxjcontrol"/>
-			 	<exclude name="lejos_nxj/bin/nxjimage"/>
-			 	<exclude name="lejos_nxj/bin/nxjdebugtool"/>
-			 	<!--
-			 	<exclude name="lejos_nxj/lib/**/*.so"/>
-			 	<exclude name="lejos_nxj/lib/**/*.jnilib"/>
-			 	<exclude name="lejos_nxj/lib/**/bluecove-gpl.jar"/>
-			 	-->
-			  </fileset>
-		</zip>
+
+	<!-- copies the pc samples -->
+	<target name="pcsamples" description="copies the samples">
+		<copy todir="${release.projects}/pcsamples">
+			<fileset dir="${projects.root}/pcsamples">
+				<exclude name="**/.svn" />
+				<exclude name=".settings/**" />
+				<exclude name=".externalToolBuilders/**" />
+				<exclude name="build/**" />
+				<exclude name="bin/**" />
+				<exclude name="nbproject/private/**" />
+			</fileset>
+		</copy>
 	</target>
 
 	<!-- creates the platform API doc -->
-  <target name="platform.doc" depends="" description="generate the platform API doc">
-    <mkdir dir="${release.classes.docs}"/>
-	<copy todir="${release.classes.docs}">
-  		<fileset dir="${lejos.root}/classes">
-			<include name="doc"/>
-  		</fileset>
-	</copy>
-  </target>
-	
+	<target name="platform.doc" depends="" description="generate the platform API doc">
+		<mkdir dir="${release.classes.docs}" />
+		<copy todir="${release.classes.docs}">
+			<fileset dir="${projects.root}/classes">
+				<include name="doc" />
+			</fileset>
+		</copy>
+	</target>
+
 	<!-- creates the PC API doc -->
-  <target name="pc.doc" depends="" description="generate the platform API doc">
-    <mkdir dir="${release.pc.docs}"/>
-    <javadoc protected="true"
-             windowtitle="leJOS NXJ PC API documentation"
-             author="true"
-             destdir="${release.pc.docs}"
-             source="1.5"
-    	     classpath="${release.3rdparty.libs}/bluecove.jar;${release.3rdparty.libs}/stax-api-1.0.1.jar"
-             defaultexcludes="yes">
-      <fileset dir="${javasrc}/pccomms">
-      		<include name="lejos/**/*.java"/>
-      </fileset>
-    </javadoc>
-  </target>
+	<target name="pc.doc" depends="" description="generate the platform API doc">
+		<mkdir dir="${release.pc.docs}" />
+		<javadoc protected="true" windowtitle="leJOS NXJ PC API documentation" author="true" destdir="${release.pc.docs}" source="1.5" classpath="${release.3rdparty.libs}/bluecove.jar;${release.3rdparty.libs}/stax-api-1.0.1.jar" defaultexcludes="yes">
+			<fileset dir="${projects.root}/pccomms">
+				<include name="lejos/**/*.java" />
+			</fileset>
+		</javadoc>
+	</target>
+	
+	<!-- TODO sample projects -->
+	
+	<target name="shared" depends="subproject.classes, subproject.jtools, subproject.pccomms, subproject.pctools, subproject.charting, subproject.startup, subproject.scripts">
+		<copy todir="${unix.dir}">
+			<fileset dir="${shared.dir}" />
+			<fileset dir="${sup.dir}" />
+		</copy>
+		<copy todir="${windows.dir}">
+			<fileset dir="${shared.dir}" />
+			<fileset dir="${sup.dir}">
+				<exclude name="build/**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- copies the lejos sources -->
+	<target name="distribution.source" description="copies the lejos sources">
+		
+		<!-- TODO copy sources -->
+		
+		<tar destfile="${build.dir}/${lejos.source.version}.tar.gz" compression="gzip">
+			<tarfileset dir="${source.dir}" />
+		</tar>
+	</target>
+	
+	<!-- packages the linux distribution -->
+	<target name="distribution.unix" description="packages the linux distribution" depends="shared">
+		<fixcrlf srcdir="${unix.dir}" eol="lf">
+    		<include name="**/*.bat"/>
+		    <include name="**/*.txt"/>
+		    <include name="**/*.xml"/>
+		    <include name="**/*.htm"/>
+		    <include name="**/*.html"/>
+		</fixcrlf>
+		<!-- tar & gzip leJOS Unix distribution -->
+		<tar destfile="${build.dir}/${lejos.unix.version}.tar.gz" compression="gzip">
+			<tarfileset dir="${unix.dir}" filemode="755">
+				<include name="lejos_nxj/bin/nxj*" />
+			</tarfileset>
+			<tarfileset dir="${unix.dir}">
+				<exclude name="lejos_nxj/bin/nxj*" />
+			</tarfileset>
+		</tar>
+	</target>
+
+	<!-- packages the windows distribution -->
+	<target name="distribution.windows" description="packages the windows distribution" depends="shared">
+		<fixcrlf srcdir="${windows.dir}" eol="crlf">
+    		<include name="**/*.bat"/>
+		    <include name="**/*.txt"/>
+		    <include name="**/*.xml"/>
+		    <include name="**/*.htm"/>
+		    <include name="**/*.html"/>
+		</fixcrlf>
+		<!-- zip leJOS windows distribution -->
+		<zip destfile="${build.dir}/${lejos.windows.version}.zip">
+			<fileset dir="${windows.dir}" />
+		</zip>
+	</target>
+
 </project>
