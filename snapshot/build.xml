@@ -20,7 +20,7 @@
 	</target>
 
 	<!-- release leJOS NXJ -->
-	<target name="all" depends="subproject.classes.copy, subproject.jtools.copy, subproject.pccomms.copy, subproject.pctools.copy, subproject.charting.copy, subproject.startup.copy, subproject.scripts.copy" description="build/copy lejos files">
+	<target name="all" depends="subproject.classes, subproject.jtools, subproject.pccomms, subproject.pctools, subproject.charting, subproject.startup, subproject.scripts" description="build/copy lejos files">
 		<echo message="Done." />
 	</target>
 
@@ -29,47 +29,39 @@
 		<!-- nothing here -->
 	</target>
 
-	<target name="subproject.scripts.build">
+	<target name="subproject.scripts">
 		<echo message="*** entering scripts project" />
 		<ant inheritAll="false" dir="${project.scripts}" antfile="build.xml">
 			<target name="clean" />
 			<target name="all" />
 		</ant>
-		<echo message="*** leaving scripts project" />
-	</target>
-	<target name="subproject.scripts.copy" depends="subproject.scripts.build">
 		<copy todir="bin">
 			<fileset dir="${project.scripts}/${vars.scripts.windows.dir}" />
 		</copy>
+		<echo message="*** leaving scripts project" />
 	</target>
 
-	<!-- creates the platform API doc -->
-	<target name="subproject.classes.build">
+	<target name="subproject.classes">
 		<echo message="*** entering classes project" />
 		<ant inheritAll="false" dir="${project.classes}" antfile="build.xml">
 			<target name="clean" />
 			<target name="classes.jar" />
 			<target name="classes.src.zip" />
 		</ant>
-		<echo message="*** leaving classes project" />
-	</target>
-	<target name="subproject.classes.copy" depends="subproject.classes.build">
 		<copy todir="lib/nxt">
 			<fileset file="${project.classes}/${vars.classes.classes.jar}" />
 			<fileset file="${project.classes}/${vars.classes.classes.src.zip}" />
 		</copy>
+		<echo message="*** leaving classes project" />
 	</target>
 
-	<target name="subproject.jtools.build">
+	<target name="subproject.jtools">
 		<echo message="*** entering jtools project" />
 		<ant inheritAll="false" dir="${project.jtools}" antfile="build.xml">
 			<target name="clean" />
 			<target name="classes.jar" />
 			<target name="classes.src.zip" />
 		</ant>
-		<echo message="*** leaving jtools project" />
-	</target>
-	<target name="subproject.jtools.copy" depends="subproject.jtools.build">
 		<copy todir="lib/pc">
 			<fileset file="${project.jtools}/${vars.jtools.classes.jar}" />
 			<fileset file="${project.jtools}/${vars.jtools.classes.src.zip}" />
@@ -80,18 +72,16 @@
 				<include name="*-src.zip" />
 			</fileset>
 		</copy>
+		<echo message="*** leaving jtools project" />
 	</target>
 
-	<target name="subproject.pccomms.build">
+	<target name="subproject.pccomms">
 		<echo message="*** entering pccomms project" />
 		<ant inheritAll="false" dir="${project.pccomms}" antfile="build.xml">
 			<target name="clean" />
 			<target name="classes.jar" />
 			<target name="classes.src.zip" />
 		</ant>
-		<echo message="*** leaving pccomms project" />
-	</target>
-	<target name="subproject.pccomms.copy" depends="subproject.pccomms.build">
 		<copy todir="lib/pc">
 			<fileset file="${project.pccomms}/${vars.pccomms.classes.jar}" />
 			<fileset file="${project.pccomms}/${vars.pccomms.classes.src.zip}" />
@@ -102,18 +92,16 @@
 				<include name="*-src.zip" />
 			</fileset>
 		</copy>
+		<echo message="*** leaving pccomms project" />
 	</target>
 
-	<target name="subproject.pctools.build" depends="subproject.pccomms.build, subproject.jtools.build">
+	<target name="subproject.pctools" depends="subproject.pccomms, subproject.jtools">
 		<echo message="*** entering pctools project" />
 		<ant inheritAll="false" dir="${project.pctools}" antfile="build.xml">
 			<target name="clean" />
 			<target name="classes.jar" />
 			<target name="classes.src.zip" />
 		</ant>
-		<echo message="*** leaving pctools project" />
-	</target>
-	<target name="subproject.pctools.copy" depends="subproject.pctools.build">
 		<copy todir="lib/pc">
 			<fileset file="${project.pctools}/${vars.pctools.classes.jar}" />
 			<fileset file="${project.pctools}/${vars.pctools.classes.src.zip}" />
@@ -124,18 +112,16 @@
 				<include name="*-src.zip" />
 			</fileset>
 		</copy>
+		<echo message="*** leaving pctools project" />
 	</target>
 
-	<target name="subproject.charting.build" depends="subproject.pctools.build">
+	<target name="subproject.charting" depends="subproject.pctools">
 		<echo message="*** entering charting logger project" />
 		<ant inheritAll="false" dir="${project.charting}" antfile="build.xml">
 			<target name="clean" />
 			<target name="classes.jar" />
 			<target name="classes.src.zip" />
 		</ant>
-		<echo message="*** leaving charting logger project" />
-	</target>
-	<target name="subproject.charting.copy" depends="subproject.charting.build">
 		<copy todir="lib/pc">
 			<fileset file="${project.charting}/${vars.charting.classes.jar}" />
 			<fileset file="${project.charting}/${vars.charting.classes.src.zip}" />
@@ -146,21 +132,20 @@
 				<include name="*-src.zip" />
 			</fileset>
 		</copy>
+		<echo message="*** leaving charting logger project" />
 	</target>
 
-	<target name="subproject.startup.build" depends="subproject.classes.build, subproject.pctools.build">
+	<target name="subproject.startup" depends="subproject.classes, subproject.pctools">
 		<echo message="*** entering startup project" />
 		<ant inheritAll="false" dir="${project.startup}" antfile="build.xml">
 			<target name="clean" />
 			<target name="link" />
 		</ant>
-		<echo message="*** leaving startup project" />
-	</target>
-	<target name="subproject.startup.copy" depends="subproject.startup.build">
 		<copy todir="bin">
 			<fileset file="${project.startup}/${vars.startup.startup.bin}" />
 			<fileset file="${project.startup}/${vars.startup.startup.debug}" />
 		</copy>
+		<echo message="*** leaving startup project" />
 	</target>
 
 </project>
