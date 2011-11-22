@@ -1,11 +1,8 @@
 package lejos.robotics.navigation;
 
-// TODO: Get rid of platform dependencies.
-import lejos.nxt.Sound; // TODO: Visual count-down only, no sound.
-import lejos.nxt.addon.GyroSensor; // TODO: Use Gyroscope interface. Returns degrees/second velocity.
+import lejos.nxt.Sound; // TODO: Visual count-down only, no sound? Or some sort of sound interface and container for Sound class (can't implement interface on static methods)?
 import lejos.robotics.EncoderMotor;
 import lejos.robotics.Gyroscope;
-import lejos.nxt.LCD;
 
 /**
  * <p>This class balances a two-wheeled Segway-like robot. It works with almost any construction 
@@ -197,12 +194,10 @@ public class Segoway extends Thread { // TODO: Thread should be a private inner 
 		double gSum;
 		int  i, gMin, gMax, g;
 
-		LCD.clear();
-		LCD.drawString("leJOS NXJ Segoway",0,1);
-
-		LCD.drawString("Lay robot down", 0, 4);
-		LCD.drawString("flat to get gyro", 0, 5);
-		LCD.drawString("offset.", 0, 6);
+		System.out.println("NXJ Segoway");
+		System.out.println();
+		System.out.println("Lay robot down");
+		System.out.println("to calibrate");
 
 		// Ensure that the motor controller is active since this affects the gyro values.
 		left_motor.flt(); //These methods don't do it for some reason.
@@ -239,17 +234,18 @@ public class Segoway extends Thread { // TODO: Thread should be a private inner 
 	 * Warn user the Segoway is about to start balancing. 
 	 */
 	private void startBeeps() {
-		LCD.clear();
-		LCD.drawString("leJOS NXJ Segoway", 0, 1);
-		LCD.drawString("Balance in", 0, 3);
+		
+		System.out.println();
+		System.out.println("Balance in");
 
 		// Play warning beep sequence to indicate balance about to start
 		for (int c=5; c>=0;c--) {
-			LCD.drawInt(c, 5, 4);
+			System.out.print(c + " ");
 			Sound.playTone(440,100);
 			try { Thread.sleep(1000);
 			} catch (InterruptedException e) {}
 		}
+		System.out.println("GO");
 	}
 
 	/**
@@ -400,10 +396,8 @@ public class Segoway extends Thread { // TODO: Thread should be a private inner 
 		int power;
 		long tMotorPosOK;
 		long cLoop = 0;
-		
-		LCD.clear();
-		LCD.drawString("leJOS NXJ Segoway", 0, 1);
-		LCD.drawString("Balancing", 0, 4);
+				
+		System.out.println("Balancing");
 
 		tMotorPosOK = System.currentTimeMillis();
 
@@ -456,9 +450,9 @@ public class Segoway extends Thread { // TODO: Thread should be a private inner 
 		right_motor.flt();
 
 		Sound.beepSequenceUp();
-		LCD.drawString("Oops... I fell", 0, 4);
-		LCD.drawString("tInt ms:", 0, 8);
-		LCD.drawInt((int)tInterval*1000, 9, 8);
+		System.out.println("Oops... I fell");
+		System.out.println("tInt ms:");
+		System.out.println((int)tInterval*1000);
 	} // END OF BALANCING THREAD CODE
 
 	/**
