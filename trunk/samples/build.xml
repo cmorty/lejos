@@ -8,7 +8,7 @@
   	<target name="build"  description="generate pccomm jar">
   		<delete dir="build"/>
     	<mkdir dir="build"/>
-		<javac srcdir="." destdir="build" fork="yes" optimize="on" debug="on" source="1.5" target="1.5">
+		<javac srcdir="src" destdir="build" debug="on" source="1.5" target="1.5">
 			<bootclasspath location="../classes/build/classes.jar"/>
 		</javac>
   	</target>
