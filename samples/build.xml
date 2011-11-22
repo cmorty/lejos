@@ -5,11 +5,26 @@
 -->
 <project name="samples" default="build" basedir=".">
 	
+	<!-- set properties for this build -->
+	<property environment="env" />
+	<property file="build.properties" />
+
+	<path id="lejos.pc">
+		<fileset dir="${nxj.home}/lib/pc">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<path id="lejos.nxt">
+		<fileset dir="${nxj.home}/lib/nxt">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
   	<target name="build"  description="generate pccomm jar">
   		<delete dir="build"/>
     	<mkdir dir="build"/>
 		<javac srcdir="src" destdir="build" debug="on" source="1.5" target="1.5">
-			<bootclasspath location="../classes/build/classes.jar"/>
+			<bootclasspath refid="lejos.nxt" />
 		</javac>
   	</target>
 	
