@@ -251,7 +251,7 @@ public class Ballbot extends Thread { // TODO: Thread should be a private inner 
 		} while ((gMax - gMin) > 1);   // Reject and sample again if range too large
 
 		//Average the sum of the samples.
-		gOffset = gSum / OFFSET_SAMPLES + 1.0;
+		gOffset = gSum / OFFSET_SAMPLES; // + 1.0; // TODO: Got RID OF THIS +1. Makes Ballbot unstable. OR finely tune it?
 
 		// Even with motor controller active, the initial offset appears to
 		// be off from the actual needed offset to keep robot from wondering.

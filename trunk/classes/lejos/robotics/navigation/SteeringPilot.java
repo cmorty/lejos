@@ -38,10 +38,6 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 	private double minTurnRadius;
 	private double driveWheelDiameter;
 	
-	 // TODO: For both of these would rather just reverse direction of individual motors at the Motor class.
-	private boolean reverseDriveMotor;
-	private boolean reverseSteering; // TODO: This isn't really implemented yet in constructor.
-	
 	private boolean isMoving;
 	private int oldTacho;
 	
@@ -81,20 +77,17 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 	 * 	 * 
 	 * @param driveWheelDiameter The diameter of the wheel(s) used to propel the vehicle.
 	 * @param driveMotor The motor used to propel the vehicle, such as Motor.B
-	 * @param reverseDriveMotor Use true if rotating the drive motor forward causes the vehicle to drive backward. 
 	 * @param steeringMotor The motor used to steer the steering wheels, such as Motor.C
 	 * @param minTurnRadius The smallest turning radius the vehicle can turn. e.g. 41 centimeters
 	 * @param leftTurnTacho The tachometer the steering motor must turn to in order to turn left with the minimum turn radius.
 	 * @param rightTurnTacho The tachometer the steering motor must turn to in order to turn right with the minimum turn radius.
 	 */
-	public SteeringPilot(double driveWheelDiameter, lejos.robotics.RegulatedMotor driveMotor, boolean reverseDriveMotor,
+	public SteeringPilot(double driveWheelDiameter, lejos.robotics.RegulatedMotor driveMotor, 
 			lejos.robotics.RegulatedMotor steeringMotor, double minTurnRadius, int leftTurnTacho, int rightTurnTacho) {
 		this.driveMotor = driveMotor;
 		this.steeringMotor = steeringMotor;
 		this.driveMotor.addListener(this);
 		this.driveWheelDiameter = driveWheelDiameter;
-		this.reverseDriveMotor = reverseDriveMotor;
-		
 		this.minTurnRadius = minTurnRadius;
 		this.minLeft = leftTurnTacho;
 		this.minRight = rightTurnTacho;
@@ -149,8 +142,8 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 		/* System.out.println("LEFT " + l);
 		System.out.println("RIGHT " + r); */
 				
-		minRight = reverseSteering ? l : r;
-		minLeft = reverseSteering ? r : l;
+		minRight = r;
+		minLeft = l;
 		
 		// TODO: I'm not sure if reverse steering works yet with actual SteeringPilot class. 
 		
@@ -245,7 +238,7 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 		
 		// TODO: This if() block is a temporary kludge due to Motor.rotate() bug with Integer.MIN_VALUE:
 		// Remove this if Roger changes Motor.rotate().
-		if((distance == Double.NEGATIVE_INFINITY & !this.reverseDriveMotor) | (distance == Double.POSITIVE_INFINITY & this.reverseDriveMotor)) {
+		if((distance == Double.NEGATIVE_INFINITY) | (distance == Double.POSITIVE_INFINITY)) {
 			driveMotor.backward();
 			//return moveEvent;
 		}
@@ -253,7 +246,6 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 		// 4. Start moving
 		// Convert Float infinity to Integer maximum value.
 		int tachos = (int)((distance * 360) / (driveWheelDiameter * Math.PI));
-		if(this.reverseDriveMotor) tachos = -tachos;
 		driveMotor.rotate(tachos, immediateReturn);
 		
 		//return moveEvent;
@@ -341,7 +333,6 @@ public class SteeringPilot implements ArcMoveController, RegulatedMotorListener 
 		isMoving = false;
 		int tachoTotal = tachoCount - oldTacho ;
 		float distance = (float)((tachoTotal/360f) * Math.PI * driveWheelDiameter);
-		if(reverseDriveMotor) distance = -distance;
 		
 		float angle = Move.convertDistanceToAngle(distance, moveEvent.getArcRadius()); 
 		
