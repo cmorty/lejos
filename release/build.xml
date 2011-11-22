@@ -20,6 +20,57 @@
 	<property name="unix.dir" value="${build.dir}/bin_unix" />
 	<property name="windows.dir" value="${build.dir}/bin_windows" />
 	<property name="source.dir" value="${build.dir}/bin_windows" />
+	
+		
+	<macrodef name="copy-srczip">
+		<attribute name="file"/>
+		<attribute name="todir"/>
+		<sequential>
+			<basename file="@{file}" property="copy-srczip.tmp"/>
+			<zip destfile="@{todir}/${copy-srczip.tmp}">
+				<zipfileset src="@{file}" />
+				<zipfileset file="README-src.txt" fullpath="README.txt" />
+			</zip>
+		</sequential>
+	</macrodef>
+	<macrodef name="copy-project">
+		<attribute name="project"/>
+		<attribute name="todir"/>
+		<sequential>
+			<copy todir="@{todir}">
+				<fileset file="${project.@{project}}/${vars.@{project}.classes.jar}" />
+			</copy>
+			<copy-srczip todir="@{todir}" file="${project.@{project}}/${vars.@{project}.classes.src.zip}" />
+		</sequential>
+	</macrodef>
+	<macrodef name="buildcopy-project">
+		<attribute name="project"/>
+		<attribute name="type"/>
+		<sequential>
+			<echo message="*** entering @{project} project" />
+			<ant inheritAll="false" dir="${project.@{project}}" antfile="build.xml">
+				<target name="clean" />
+				<target name="classes.jar" />
+				<target name="classes.src.zip" />
+			</ant>
+			<echo message="*** copying JARs and sources" />
+			<copy-project project="@{project}" todir="${shared.dir}/lib/@{type}" />
+			<echo message="*** leaving @{project} project" />
+		</sequential>
+	</macrodef>
+	<macrodef name="buildcopy-project2">
+		<attribute name="project"/>
+		<attribute name="type"/>
+		<sequential>
+			<buildcopy-project project="@{project}" type="@{type}" />
+			<copy todir="${shared.dir}/lib/@{type}/3rdparty">
+				<fileset dir="${project.@{project}}/3rdparty/lib">
+					<include name="*.jar" />
+					<include name="*-src.zip" />
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
 
 	<!-- release leJOS NXJ -->
 	<target name="release" depends="clean,distribution.unix,distribution.windows,distribution.source" description="releases leJOS NXJ">
@@ -49,97 +100,23 @@
 	</target>
 
 	<target name="subproject.classes">
-		<echo message="*** entering classes project" />
-		<ant inheritAll="false" dir="${project.classes}" antfile="build.xml">
-			<target name="clean" />
-			<target name="classes.jar" />
-			<target name="classes.src.zip" />
-		</ant>
-		<copy todir="${shared.dir}/lib/nxt">
-			<fileset file="${project.classes}/${vars.classes.classes.jar}" />
-			<fileset file="${project.classes}/${vars.classes.classes.src.zip}" />
-		</copy>
-		<echo message="*** leaving classes project" />
+		<buildcopy-project project="classes" type="nxt"/>
 	</target>
 
 	<target name="subproject.jtools">
-		<echo message="*** entering jtools project" />
-		<ant inheritAll="false" dir="${project.jtools}" antfile="build.xml">
-			<target name="clean" />
-			<target name="classes.jar" />
-			<target name="classes.src.zip" />
-		</ant>
-		<copy todir="${shared.dir}/lib/pc">
-			<fileset file="${project.jtools}/${vars.jtools.classes.jar}" />
-			<fileset file="${project.jtools}/${vars.jtools.classes.src.zip}" />
-		</copy>
-		<copy todir="${shared.dir}/lib/pc/3rdparty">
-			<fileset dir="${project.jtools}/3rdparty/lib">
-				<include name="*.jar" />
-				<include name="*-src.zip" />
-			</fileset>
-		</copy>
-		<echo message="*** leaving jtools project" />
+		<buildcopy-project2 project="jtools" type="pc"/>
 	</target>
 
 	<target name="subproject.pccomms">
-		<echo message="*** entering pccomms project" />
-		<ant inheritAll="false" dir="${project.pccomms}" antfile="build.xml">
-			<target name="clean" />
-			<target name="classes.jar" />
-			<target name="classes.src.zip" />
-		</ant>
-		<copy todir="${shared.dir}/lib/pc">
-			<fileset file="${project.pccomms}/${vars.pccomms.classes.jar}" />
-			<fileset file="${project.pccomms}/${vars.pccomms.classes.src.zip}" />
-		</copy>
-		<copy todir="${shared.dir}/lib/pc/3rdparty">
-			<fileset dir="${project.pccomms}/3rdparty/lib">
-				<include name="*.jar" />
-				<include name="*-src.zip" />
-			</fileset>
-		</copy>
-		<echo message="*** leaving pccomms project" />
+		<buildcopy-project2 project="pccomms" type="pc"/>
 	</target>
 
 	<target name="subproject.pctools" depends="subproject.pccomms, subproject.jtools">
-		<echo message="*** entering pctools project" />
-		<ant inheritAll="false" dir="${project.pctools}" antfile="build.xml">
-			<target name="clean" />
-			<target name="classes.jar" />
-			<target name="classes.src.zip" />
-		</ant>
-		<copy todir="${shared.dir}/lib/pc">
-			<fileset file="${project.pctools}/${vars.pctools.classes.jar}" />
-			<fileset file="${project.pctools}/${vars.pctools.classes.src.zip}" />
-		</copy>
-		<copy todir="${shared.dir}/lib/pc/3rdparty">
-			<fileset dir="${project.pctools}/3rdparty/lib">
-				<include name="*.jar" />
-				<include name="*-src.zip" />
-			</fileset>
-		</copy>
-		<echo message="*** leaving pctools project" />
+		<buildcopy-project2 project="pctools" type="pc"/>
 	</target>
 
 	<target name="subproject.charting" depends="subproject.pctools">
-		<echo message="*** entering charting logger project" />
-		<ant inheritAll="false" dir="${project.charting}" antfile="build.xml">
-			<target name="clean" />
-			<target name="classes.jar" />
-			<target name="classes.src.zip" />
-		</ant>
-		<copy todir="${shared.dir}/lib/pc">
-			<fileset file="${project.charting}/${vars.charting.classes.jar}" />
-			<fileset file="${project.charting}/${vars.charting.classes.src.zip}" />
-		</copy>
-		<copy todir="${shared.dir}/lib/pc/3rdparty">
-			<fileset dir="${project.charting}/3rdparty/lib">
-				<include name="*.jar" />
-				<include name="*-src.zip" />
-			</fileset>
-		</copy>
-		<echo message="*** leaving charting logger project" />
+		<buildcopy-project2 project="charting" type="pc"/>
 	</target>
 
 	<target name="subproject.startup" depends="subproject.classes, subproject.pctools">
@@ -157,13 +134,9 @@
 
 	<!-- copies the run scripts and other binaries -->
 	<target name="scripts" depends="subproject.scripts" description="copies the run scripts (nxjc etc.)">
+		
+		<!-- TODO move to other places -->
 		<copy todir="${release.bin}">
-			<fileset dir="${projects.root}/scripts/build/linux">
-				<include name="*" />
-			</fileset>
-			<fileset dir="${projects.root}/scripts/build/windows">
-				<include name="*.bat" />
-			</fileset>
 			<fileset dir="${projects.root}/release/install_scripts">
 				<include name="*.bat" />
 			</fileset>
@@ -172,13 +145,6 @@
 		<copy todir="${release.bin}">
 			<fileset dir="${projects.root}/snapshot/bin">
 				<include name="lejos_nxt_rom.bin" />
-			</fileset>
-		</copy>
-
-		<copy todir="${release.bin}">
-			<fileset dir="${projects.root}/startup/build">
-				<include name="StartUpText.bin" />
-				<include name="StartUpText.nxd" />
 			</fileset>
 		</copy>
 
@@ -253,8 +219,6 @@
 		</javadoc>
 	</target>
 	
-	<!-- TODO sample projects -->
-	
 	<target name="shared" depends="subproject.classes, subproject.jtools, subproject.pccomms, subproject.pctools, subproject.charting, subproject.startup, subproject.scripts">
 		<copy todir="${unix.dir}">
 			<fileset dir="${shared.dir}" />
@@ -263,6 +227,7 @@
 		<copy todir="${windows.dir}">
 			<fileset dir="${shared.dir}" />
 			<fileset dir="${sup.dir}">
+				<!-- TODO include or not to include? -->
 				<exclude name="build/**" />
 			</fileset>
 		</copy>
