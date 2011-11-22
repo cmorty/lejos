@@ -157,6 +157,9 @@ public class GyroSensor implements SensorConstants, Gyroscope {
      * @see #setOffset(int)
      */
     public void recalibrateOffset() {
+    	// TODO: Potentially replace with calibrate algorithm from Segoway.getGyroOffset(). It has the advantage of waiting
+    	// untilt he robot is still and taking less time to calibrate.
+    	
         // *** seed the initial bias/offset population
         offset=0;
         gsvarianceTotal=0;

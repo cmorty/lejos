@@ -1,8 +1,8 @@
 package lejos.robotics.navigation;
 
 import java.util.ArrayList;
-import lejos.nxt.addon.GyroSensor; // TODO: Purely for constructor. SegowayPilot code doesn't use GyroSensor. Use Gyroscope interface. 
 import lejos.robotics.EncoderMotor;
+import lejos.robotics.Gyroscope;
 
 /* DEVELOPER NOTES:
  * TODO: Currently no option to build Segoway with opposite motor directions. I assume you can just flip the gyro to
@@ -61,7 +61,7 @@ public class SegowayPilot extends Segoway implements ArcRotateMoveController {
 	 * @param wheelDiameter The diameter of the wheel. For convenience, use the WHEEL_SIZE_XXX constants.
 	 * @param trackWidth Distance between the center of the right tire and left tire. Use the same units as wheelDiameter.
 	 */
-	public SegowayPilot(EncoderMotor left, EncoderMotor right, GyroSensor gyro, double wheelDiameter, double trackWidth) {
+	public SegowayPilot(EncoderMotor left, EncoderMotor right, Gyroscope gyro, double wheelDiameter, double trackWidth) {
 		super (left, right, gyro, wheelDiameter);
 
 		// Initialize move target, which keeps the robot stationary when it starts. Ideally these 

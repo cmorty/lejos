@@ -239,6 +239,7 @@ public class DIMUGyro extends I2CSensor {
 		}
 		
 		public float getAngularVelocity() {
+			// TODO: Fancy code to recycle values in temp if another axis requested within xx ms? (xx=I2C time to retrieve data) 
 			float[] temp = {0, 0, 0};
 			fetchAllRate(temp, RateUnits.DPS);
 			return temp[axis_index];
@@ -246,6 +247,7 @@ public class DIMUGyro extends I2CSensor {
 
 		public void recalibrateOffset() {
 			// TODO: Way to calibrate only the one axis? 
+			calculateOffset();
 		}
 	}
 	
