@@ -2,6 +2,8 @@ package lejos.nxt.addon;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
+import lejos.robotics.Accelerometer;
+import lejos.robotics.Gyroscope;
 import lejos.util.Delay;
 import lejos.util.EndianTools;
 
@@ -16,7 +18,7 @@ import lejos.util.EndianTools;
  * @author Daniele Benedettelli, February 2011
  * @version 1.0
  */
-public class CruizcoreGyro extends I2CSensor {
+public class CruizcoreGyro extends I2CSensor implements Gyroscope, Accelerometer {
 
 	/*
 	 * Documentation can be obtained here: http://xgl.minfinity.com/Downloads/Downloads.html
@@ -264,5 +266,28 @@ public class CruizcoreGyro extends I2CSensor {
 		int res = sendData(RESET, (byte)0);
 		Delay.msDelay(750);
 		return res==0;		
+	}
+
+	public float getAngularVelocity() {
+		// Not entirely sure if this is converted to proper units - degrees/second. It works with Segoway.
+		return getRate()/100F;
+	}
+
+	public void recalibrateOffset() {
+		// The Cruizcore gyro calibrates the offset automatically in first second it is turned on according to brochure.
+	}
+
+	public int getXAccel() {
+		// TODO: I'm unsure of the return units for Cruizecore. I think it is in milli-G (1G = 9.8 m/s squared). 
+		// Should be meters/second squared.
+		return getAccel(0); //  * 0.00981f;
+	}
+
+	public int getYAccel() {
+		return getAccel(1);
+	}
+
+	public int getZAccel() {
+		return getAccel(2);
 	}
 }
