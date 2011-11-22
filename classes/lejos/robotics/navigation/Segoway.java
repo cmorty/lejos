@@ -4,6 +4,7 @@ package lejos.robotics.navigation;
 import lejos.nxt.Sound; // TODO: Visual count-down only, no sound.
 import lejos.nxt.addon.GyroSensor; // TODO: Use Gyroscope interface. Returns degrees/second velocity.
 import lejos.robotics.EncoderMotor;
+import lejos.robotics.Gyroscope;
 import lejos.nxt.LCD;
 
 /**
@@ -32,7 +33,8 @@ import lejos.nxt.LCD;
 public class Segoway extends Thread { // TODO: Thread should be a private inner class.
 
 	// Motors and gyro:
-	private GyroSensor gyro; 
+	//private GyroSensor gyro; 
+	private Gyroscope gyro;
 	protected EncoderMotor left_motor;
 	protected EncoderMotor right_motor;
 	
@@ -157,7 +159,8 @@ public class Segoway extends Thread { // TODO: Thread should be a private inner 
 	 * @param gyro A HiTechnic gyro sensor
 	 * @param wheelDiameter diameter of wheel, preferably use cm (printed on side of LEGO tires in mm)
 	 */
-	public Segoway(EncoderMotor left, EncoderMotor right, GyroSensor gyro, double wheelDiameter) {
+	//public Segoway(EncoderMotor left, EncoderMotor right, GyroSensor gyro, double wheelDiameter) {
+	public Segoway(EncoderMotor left, EncoderMotor right, Gyroscope gyro, double wheelDiameter) {
 		this.left_motor = left;
 		this.right_motor = right;
 		// Optional code to accept BasicMotor: this.right_motor = (NXTMotor)right;
@@ -190,6 +193,7 @@ public class Segoway extends Thread { // TODO: Thread should be a private inner 
 	 * gets another set of samples.
 	 */
 	private void getGyroOffset() {
+		// TODO: No need to use this if using Gyroscope! Does it automatically.
 		double gSum;
 		int  i, gMin, gMax, g;
 
@@ -209,8 +213,8 @@ public class Segoway extends Thread { // TODO: Thread should be a private inner 
 			gMin = 1000;
 			gMax = -1000;
 			for (i=0; i<OFFSET_SAMPLES; i++) {
-				g = gyro.readValue();
-
+				//g = gyro.readValue();
+				g = (int) gyro.getAngularVelocity(); 
 				if (g > gMax)
 					gMax = g;
 				if (g < gMin)
@@ -257,7 +261,8 @@ public class Segoway extends Thread { // TODO: Thread should be a private inner 
 	private void updateGyroData() {
 		float gyroRaw;
 
-		gyroRaw = gyro.readValue();
+		//gyroRaw = gyro.readValue();
+		gyroRaw = gyro.getAngularVelocity();
 		gOffset = EMAOFFSET * gyroRaw + (1-EMAOFFSET) * gOffset;
 		gyroSpeed = gyroRaw - gOffset; // Angular velocity (degrees/sec)
 
