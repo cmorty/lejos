@@ -178,11 +178,6 @@ public class Segoway extends Thread { // TODO: Thread should be a private inner 
 	}
 
 	/**
-	 * Number of offset samples to average when calculating gyro offset.
-	 */
-	private static final int OFFSET_SAMPLES = 100;
-
-	/**
 	 * This function returns a suitable initial gyro offset.  It takes
 	 * 100 gyro samples over a time of 1/2 second and averages them to
 	 * get the offset.  It also check the max and min during that time
@@ -190,44 +185,18 @@ public class Segoway extends Thread { // TODO: Thread should be a private inner 
 	 * gets another set of samples.
 	 */
 	private void getGyroOffset() {
-		// TODO: No need to use this if using Gyroscope! Does it automatically.
-		double gSum;
-		int  i, gMin, gMax, g;
-
+		
 		System.out.println("NXJ Segoway");
 		System.out.println();
 		System.out.println("Lay robot down");
 		System.out.println("to calibrate");
-
-		// Ensure that the motor controller is active since this affects the gyro values.
-		left_motor.flt(); //These methods don't do it for some reason.
-		right_motor.flt(); 
+		System.out.println("the gyro");
+		System.out.println();
 		
-		do {
-			gSum = 0.0;
-			gMin = 1000;
-			gMax = -1000;
-			for (i=0; i<OFFSET_SAMPLES; i++) {
-				//g = gyro.readValue();
-				g = (int) gyro.getAngularVelocity(); 
-				if (g > gMax)
-					gMax = g;
-				if (g < gMin)
-					gMin = g;
-
-				gSum += g;
-				try { Thread.sleep(5);
-				} catch (InterruptedException e) {}
-			}
-		} while ((gMax - gMin) > 1);   // Reject and sample again if range too large
-
-		//Average the sum of the samples.
-		gOffset = gSum / OFFSET_SAMPLES + 1.0;
-
-		// Even with motor controller active, the initial offset appears to
-		// be off from the actual needed offset to keep robot from wondering.
-		// This +1 helps keep robot from wondering when it first starts to
-		// balance. NOTE: Maybe running motors @ low power will improve it. -BB
+		//left_motor.flt(); // TODO: This didn't seem to make a bit of difference with GyroSensor calibration.
+		//right_motor.flt();
+		
+		gyro.recalibrateOffset();
 	}
 
 	/**
@@ -235,17 +204,17 @@ public class Segoway extends Thread { // TODO: Thread should be a private inner 
 	 */
 	private void startBeeps() {
 		
-		System.out.println();
 		System.out.println("Balance in");
 
 		// Play warning beep sequence to indicate balance about to start
-		for (int c=5; c>=0;c--) {
+		for (int c=5; c>0;c--) {
 			System.out.print(c + " ");
 			Sound.playTone(440,100);
 			try { Thread.sleep(1000);
 			} catch (InterruptedException e) {}
 		}
 		System.out.println("GO");
+		System.out.println();
 	}
 
 	/**
@@ -255,9 +224,10 @@ public class Segoway extends Thread { // TODO: Thread should be a private inner 
 	 * 
 	 */
 	private void updateGyroData() {
+		// TODO: The GyroSensor class actually rebaselines for drift ever 5 seconds. This not needed? Or is this method better?
+		// Some of this fine tuning may actually interfere with fine-tuning happening in the hardcoded dIMU and GyroScope code.
 		float gyroRaw;
 
-		//gyroRaw = gyro.readValue();
 		gyroRaw = gyro.getAngularVelocity();
 		gOffset = EMAOFFSET * gyroRaw + (1-EMAOFFSET) * gOffset;
 		gyroSpeed = gyroRaw - gOffset; // Angular velocity (degrees/sec)
@@ -398,7 +368,8 @@ public class Segoway extends Thread { // TODO: Thread should be a private inner 
 		long cLoop = 0;
 				
 		System.out.println("Balancing");
-
+		System.out.println();
+		
 		tMotorPosOK = System.currentTimeMillis();
 
 		// Reset the motors to make sure we start at a zero position
