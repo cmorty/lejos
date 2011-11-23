@@ -3,8 +3,8 @@
   Buildfile for building samples
   ==================================================
 -->
-<project name="samples" default="build" basedir=".">
-	
+<project name="samples" default="help" basedir=".">
+
 	<!-- set properties for this build -->
 	<property environment="env" />
 	<property file="build.properties" />
@@ -20,15 +20,67 @@
 		</fileset>
 	</path>
 
-  	<target name="build"  description="generate pccomm jar">
-  		<delete dir="build"/>
-    	<mkdir dir="build"/>
+	<loadfile property="sample.list" srcfile="build.properties">
+		<filterchain>
+			<tokenfilter>
+				<linetokenizer includedelims="true" />
+				<containsregex pattern="^\s*sample\.[^\.]+\.main\s*=" />
+				<replaceregex pattern="^\s*sample\." replace="  " />
+				<replaceregex pattern="\.main\s*=\s*" replace=" = " />
+			</tokenfilter>
+		</filterchain>
+	</loadfile>
+	
+	<target name="help" depends="build">
+		<echo>Conratulations! Everything compiles fine.
+Here's the list of available samples:
+${sample.list}
+
+For the final steps (linking, uploading to the brick) you have to run
+one of the following:
+  ant upload
+  ant uploadandrun
+
+Some samples can also be run on the PC
+  ant runonpc
+
+If you don't want to enter the number of the sample every time, use
+the paraneter -Dsample.id=&lt;XYZ&gt; with ant, e.g.
+  ant -Dsample.id=10 uploadandrun
+  ant -Dsample.id=14 runonpc
+</echo>
+	</target>
+	
+	<target name="sample.chose" unless="sample.id">
+		<echo>This is the list of samples:
+${sample.list}
+
+</echo>
+		<input message="Please enter the number of the sample to build/upload/run: " addproperty="sample.id" />
+	</target>
+	
+	<macrodef name="init-sample">
+		<attribute name="id"/>
+		<sequential>
+			<fail unless="sample.@{id}.main" message="sample with number &quot;@{id}&quot; does not exist." />
+			<property name="main.class" value="${sample.@{id}.main}" />
+		</sequential>
+	</macrodef>
+	
+	<target name="sample.init" depends="build, sample.chose">
+		<init-sample id="${sample.id}" />
+		<echo>Selected sample with id ${sample.id}, main class ${main.class}</echo>
+	</target>
+
+	<target name="build" description="generate pccomm jar">
+		<delete dir="build" />
+		<mkdir dir="build" />
 		<javac srcdir="src" destdir="build" debug="on" source="1.5" target="1.5">
 			<bootclasspath refid="lejos.nxt" />
 		</javac>
-  	</target>
-	
-    <target name="clean" description="cleans the build folder">
-		<delete dir="build"/>
+	</target>
+
+	<target name="clean" description="cleans the build folder">
+		<delete dir="build" />
 	</target>
 </project>
