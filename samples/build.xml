@@ -249,7 +249,8 @@ Exception has been throws, in which method, and in which line.
 		</java>
 	</target>
 	
-	<target name="runonpc" depends="compile">
+	<target name="runonpc" depends="sample.init, compile">
+		<fail unless="main.runonpc" message="Sample cannot be run on PC" />
 		<java classname="${main.class}" fork="true" failonerror="true">
 			<jvmarg value="-Dnxj.home=${nxj.home}" />
 			<jvmarg value="${d32Flag}" />
