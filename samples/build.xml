@@ -102,8 +102,21 @@ main class ${main.class}</echo>
 	
 	<target name="compile" description="generate pccomm jar">
 		<mkdir dir="${classes.dir}" />
-		<javac srcdir="src" destdir="${classes.dir}" debug="on" source="1.5" target="1.5">
+		<javac
+			srcdir="${source.dir}"
+			includes="${source.include}"
+			excludes="${source.exclude}"
+			encoding="${source.encoding}"
+			source="${source.version}"
+			target="${target.version}"
+			destdir="${classes.dir}"
+			debug="true"
+			includeAntRuntime="false"
+			includeJavaRuntime="false"
+ 		>
 			<bootclasspath refid="lejos.nxt" />
+			<!-- enable warnings -->
+			<compilerarg value="-Xlint:${source.warn}" />
 		</javac>
 	</target>
 	
