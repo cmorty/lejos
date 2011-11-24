@@ -1,7 +1,4 @@
 package org.lejos.sample.exceptiontest;
-import lejos.nxt.*;
-import lejos.nxt.comm.*;
-import lejos.util.Delay;
 
 /**
  * Simple test of leJOS exceptions.

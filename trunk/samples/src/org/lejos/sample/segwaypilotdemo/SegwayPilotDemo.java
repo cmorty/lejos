@@ -1,7 +1,6 @@
 package org.lejos.sample.segwaypilotdemo;
 import lejos.nxt.*;
 import lejos.nxt.addon.GyroSensor;
-import lejos.robotics.*;
 import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.MoveListener;
 import lejos.robotics.navigation.MoveProvider;

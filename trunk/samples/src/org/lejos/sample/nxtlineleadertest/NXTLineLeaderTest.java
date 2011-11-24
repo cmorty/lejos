@@ -5,7 +5,6 @@ import lejos.nxt.MotorPort;
 import lejos.nxt.NXTMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.addon.NXTLineLeader;
-import lejos.nxt.addon.NXTLineLeader.LineColor;
 
 /**
  * 

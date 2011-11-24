@@ -133,8 +133,8 @@ public class TestLogger {
         NXTConnection theConnection=null;
         
         final int INIT_TIME = 1500;
-        if (connectionType != this.CONN_BLUETOOTH && 
-            connectionType != this.CONN_USB)
+        if (connectionType != TestLogger.CONN_BLUETOOTH && 
+            connectionType != TestLogger.CONN_USB)
             return theConnection;
         timeout = Math.abs(timeout) + INIT_TIME;
      

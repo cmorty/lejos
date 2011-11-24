@@ -1,5 +1,4 @@
 package org.lejos.sample.kalmantest;
-import java.io.PrintStream;
 import java.util.Random;
 
 import lejos.robotics.RegulatedMotor;
@@ -8,7 +7,6 @@ import lejos.util.KalmanFilter;
 import lejos.util.Matrix;
 import lejos.util.PilotProps;
 import lejos.nxt.*;
-import lejos.nxt.comm.RConsole;
 
 /**
  * Kalman Filter example. 
