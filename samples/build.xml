@@ -77,15 +77,15 @@ ${sample.list}
 				</and>
 			</condition>
 			<!-- evil hack to apply a regexp to ${main.class}, ant sucks! -->
-			<pathconvert property="main.class.short">
+			<!-- <pathconvert property="main.class.short">
 				<path path="${main.class}" />
 				<mapper>
 					<regexpmapper from="([^\.]*)$$" to="\1"/>
 				</mapper>
-			</pathconvert>
-			<property name="output.nxj" value="${build.dir}/${main.class.short}.nxj" />
-			<property name="output.nxd" value="${build.dir}/${main.class.short}.nxd" />
-			<property name="output.txt" value="${build.dir}/${main.class.short}.txt" />
+			</pathconvert> -->
+			<property name="output.nxj" value="${build.dir}/@{id}.nxj" />
+			<property name="output.nxd" value="${build.dir}/@{id}.nxd" />
+			<!-- <property name="output.txt" value="${build.dir}/@{id}.txt" /> -->
 		</sequential>
 	</macrodef>
 	
