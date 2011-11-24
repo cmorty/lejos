@@ -22,17 +22,13 @@
 
 	<target name="build" description="compile PC samples">
 		<mkdir dir="build/classes" />
-		<javac srcdir="." destdir="build/classes" debug="on" source="1.5" target="1.5" includeantruntime="false">
+		<javac srcdir="src" destdir="build/classes" debug="on" source="1.5" target="1.5" includeantruntime="false">
 			<classpath refid="lejos.pc" />
 		</javac>
 	</target>
 
 	<!-- deletes class files -->
 	<target name="clean" description="clean up all generated files">
-		<delete>
-			<fileset dir=".">
-				<include name="**/*.class" />
-			</fileset>
-		</delete>
+		<delete dir="build" />
 	</target>
 </project>
