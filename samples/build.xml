@@ -38,9 +38,8 @@
 	</loadfile>
 
 
-	<target name="help" depends="compile">
-		<echo>Conratulations! Everything compiles fine.
-Here's the list of available samples:
+	<target name="help">
+		<echo>Here's the list of available samples:
 ${sample.list}
 
 For the final steps (linking, uploading to the brick) you have to
@@ -63,7 +62,7 @@ the paraneter -Dsample.id=&lt;XYZ&gt; with ant, e.g.
 ${sample.list}
 
 </echo>
-		<input message="Please enter the number of the sample to build/upload/run: " addproperty="sample.id" />
+		<input message="Please enter the identifier of the sample to build/upload/run: " addproperty="sample.id" />
 	</target>
 	
 	<macrodef name="init-sample">
@@ -234,8 +233,8 @@ the Exception happened. Consider the following example:
    at: 22(9)
 
 In the following, use 28 as the class number, 20 as the method
-number and 11 as the PC value. It will tell you, which
-Exception has been throws, in which method, and in which line.
+number, and 11 as the PC value. It will tell you, which
+Exception has been thrown, in which method, and in which line.
 		</echo>	
 		<input
 			message="Class number:"
