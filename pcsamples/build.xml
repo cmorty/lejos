@@ -3,7 +3,7 @@
   Buildfile for building PC samples
   ==================================================
 -->
-<project name="PC Samples" default="build" basedir=".">
+<project name="PC Samples" default="help" basedir=".">
 
 	<!-- set properties for this build -->
 	<property environment="env" />
@@ -19,8 +19,65 @@
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
+	
+	<condition property="d32Flag" value="-d32" else="-Dblank.dummy.arg=">
+		<and>
+			<os family="mac" />
+		</and>
+	</condition>
 
-	<target name="build" description="compile PC samples">
+	<loadfile property="sample.list" srcfile="build.properties">
+		<filterchain>
+			<tokenfilter>
+				<linetokenizer includedelims="true" />
+				<containsregex pattern="^\s*sample\.[^\.]+\.main\s*=" />
+				<replaceregex pattern="^\s*sample\." replace="  " />
+				<replaceregex pattern="\.main\s*=\s*" replace=" = " />
+			</tokenfilter>
+		</filterchain>
+	</loadfile>
+
+
+	<target name="help">
+		<echo>Here's the list of available samples:
+${sample.list}
+
+For running a sample run the following command:
+  ant run
+
+If you don't want to enter the number of the sample every time, use
+the paraneter -Dsample.id=&lt;XYZ&gt; with ant, e.g.
+  ant -Dsample.id=nav run
+</echo>
+	</target>
+	
+	<target name="sample.chose" unless="sample.id">
+		<echo>This is the list of samples:
+${sample.list}
+
+</echo>
+		<input message="Please enter the identifier of the sample to build/run: " addproperty="sample.id" />
+	</target>
+	
+	<macrodef name="init-sample">
+		<attribute name="id"/>
+		<sequential>
+			<fail unless="sample.@{id}.main" message="sample with number &quot;@{id}&quot; does not exist." />
+			<property name="main.class" value="${sample.@{id}.main}" />
+		</sequential>
+	</macrodef>
+	
+	<target name="sample.init" depends="compile, sample.chose">
+		<init-sample id="${sample.id}" />
+		<echo>Selected sample with id ${sample.id},
+main class ${main.class}</echo>
+	</target>
+
+	<target name="clean" description="cleans the build folder">
+		<delete dir="${build.dir}" />
+	</target>
+	
+	<target name="compile" description="compile PC samples">
 		<mkdir dir="${classes.dir}" />
 		<javac
 			srcdir="${source.dir}"
@@ -38,9 +95,14 @@
 			<compilerarg value="-Xlint:${source.warn}" />
 		</javac>
 	</target>
-
-	<!-- deletes class files -->
-	<target name="clean" description="clean up all generated files">
-		<delete dir="${build.dir}" />
+	
+	<target name="run" depends="sample.init, compile">
+		<echo>Running ${main.class}</echo>
+		<java classname="${main.class}" fork="true">
+			<classpath refid="lejos.pc" />
+			<classpath location="${classes.dir}" />
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
+		</java>
 	</target>
 </project>
