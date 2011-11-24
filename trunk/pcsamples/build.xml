@@ -21,14 +21,26 @@
 	</path>
 
 	<target name="build" description="compile PC samples">
-		<mkdir dir="build/classes" />
-		<javac srcdir="src" destdir="build/classes" debug="on" source="1.5" target="1.5" includeantruntime="false">
+		<mkdir dir="${classes.dir}" />
+		<javac
+			srcdir="${source.dir}"
+			includes="${source.include}"
+			excludes="${source.exclude}"
+			encoding="${source.encoding}"
+			source="${source.version}"
+			target="${target.version}"
+			destdir="${classes.dir}"
+			debug="true"
+			includeAntRuntime="false"
+		>
 			<classpath refid="lejos.pc" />
+			<!-- enable warnings -->
+			<compilerarg value="-Xlint:${source.warn}" />
 		</javac>
 	</target>
 
 	<!-- deletes class files -->
 	<target name="clean" description="clean up all generated files">
-		<delete dir="build" />
+		<delete dir="${build.dir}" />
 	</target>
 </project>
