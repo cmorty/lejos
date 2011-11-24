@@ -1,9 +1,4 @@
 package org.lejos.sample.signaltest;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
 

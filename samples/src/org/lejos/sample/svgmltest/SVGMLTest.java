@@ -53,7 +53,7 @@ public class SVGMLTest {
 		Line[] lines = lm.getLines();
 		
 		for(int i=0; i<lines.length;i++){
-			Line l = (Line) lines[i];
+			Line l = lines[i];
 			System.out.println("Line " + i + ": " + l.getX1() + " " + l.getY1() + " " + l.getX2() + " " + l.getY2());
 		}
 		

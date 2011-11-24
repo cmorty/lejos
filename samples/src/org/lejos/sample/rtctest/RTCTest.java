@@ -3,7 +3,6 @@ import lejos.nxt.*;
 import lejos.util.Delay;
 import java.util.Random;
 import java.io.IOException;
-import lejos.robotics.Clock;
 import lejos.nxt.addon.RealTimeClock;
 
 public class RTCTest {

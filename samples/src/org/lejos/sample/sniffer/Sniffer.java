@@ -3,7 +3,6 @@ import javax.microedition.io.Connector;
 import javax.microedition.sensor.*;
 
 import lejos.nxt.Button;
-import lejos.nxt.comm.RConsole;
 
 /**
  * JSR256 Sniffer example. This example should be run using nxjconsole

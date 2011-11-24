@@ -3,8 +3,6 @@ package org.lejos.sample.rcpilot;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.OutputStream;
-import lejos.nxt.comm.NXTInputStream;
-
 import java.io.IOException;
 
 import lejos.nxt.*;

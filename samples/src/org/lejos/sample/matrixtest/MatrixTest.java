@@ -1,5 +1,4 @@
 package org.lejos.sample.matrixtest;
-import lejos.nxt.Button;
 import lejos.util.*;
 
 /**
@@ -21,8 +20,8 @@ public class MatrixTest{
 		double[][] array = {{1.,2.,3},{4.,5.,6.},{7.,8.,10.}};
 		Matrix a = new Matrix(array);
 		Matrix b = Matrix.random(3,1);
-		dm.echo((int)b.getColumnDimension());
-		dm.echo((int)b.getRowDimension());
+		dm.echo(b.getColumnDimension());
+		dm.echo(b.getRowDimension());
 		
 		dm.echo("Test finished");
 		Thread.sleep(5000);
