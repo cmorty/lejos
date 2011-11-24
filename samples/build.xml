@@ -52,8 +52,8 @@ Some samples can also be run on the PC
 
 If you don't want to enter the number of the sample every time, use
 the paraneter -Dsample.id=&lt;XYZ&gt; with ant, e.g.
-  ant -Dsample.id=10 uploadandrun
-  ant -Dsample.id=14 runonpc
+  ant -Dsample.id=rtc uploadandrun
+  ant -Dsample.id=svgml runonpc
 </echo>
 	</target>
 	
