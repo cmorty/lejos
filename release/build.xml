@@ -20,11 +20,14 @@
 	<property prefix="vars.example"   file="${project.example}/build.properties" />
 	<property prefix="vars.pcexample" file="${project.pcexample}/build.properties" />
 
-	<property name="sup.dir" value="lejos_nxj" />
-	<property name="shared.dir" value="${build.dir}/bin_shared" />
-	<property name="unix.dir" value="${build.dir}/bin_unix" />
-	<property name="windows.dir" value="${build.dir}/bin_windows" />
-	<property name="source.dir" value="${build.dir}/source" />
+	<property prefix="vars.nxtvm"      file="${project.nxtvm}/build.properties" />
+	<property prefix="vars.libnxt"     file="${project.libnxt}/build.properties" />
+	<property prefix="vars.jfantom"    file="${project.jfantom}/build.properties" />
+	<property prefix="vars.flashwrite" file="${project.flashwrite}/build.properties" />
+
+	<!-- for consistency reasons -->
+	<property prefix="vars.release" file="build.properties" />
+	<property name="project.release" location="." />
 
 
 	<macrodef name="copy-srczip">
@@ -105,6 +108,70 @@
 		</sequential>
 	</macrodef>
 	
+	<macrodef name="zip-nxtproject">
+		<attribute name="id"/>
+		<attribute name="zip"/>
+		<sequential>
+			<copyfile-linereplace from="${project.@{id}}/.classpath" to="${build.dir}/@{id}.classpath.xml"
+				replace="&lt;classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/classes.*&gt;"
+				with="&lt;classpathentry kind=&quot;con&quot; path=&quot;org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/nxt&quot;/&gt;"
+				ignore="classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/"
+			/>
+			<copyfile-linereplace from="${project.@{id}}/build.properties" to="${build.dir}/@{id}.build.properties"
+				replace="^\s*nxj.home\s*=.*" with="nxj.home=${env.NXJ_HOME}"
+				ignore="don't match anything please"
+			/>
+			<mkdir dir="${shared.dir}/projects/"/>
+			<zip file="@{zip}">
+				<fileset dir="${project.@{id}}"
+					includes="${vars.@{id}.dist.include}"
+					excludes="build.properties,.classpath,${vars.@{id}.dist.exclude}"
+				/>
+				<zipfileset file="${build.dir}/@{id}.classpath.xml" fullpath=".classpath" />
+				<zipfileset file="${build.dir}/@{id}.build.properties" fullpath="build.properties" />
+			</zip>
+		</sequential>
+	</macrodef>
+	<macrodef name="zip-pcproject">
+		<attribute name="id"/>
+		<attribute name="zip"/>
+		<sequential>
+			<copyfile-linereplace from="${project.@{id}}/.classpath" to="${build.dir}/@{id}.classpath.xml"
+				replace="&lt;classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/pccomms.*&gt;"
+				with="&lt;classpathentry kind=&quot;con&quot; path=&quot;org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/pc&quot;/&gt;"
+				ignore="classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/"
+			/>
+			<copyfile-linereplace from="${project.@{id}}/build.properties" to="${build.dir}/@{id}.build.properties"
+				replace="^\s*nxj.home\s*=.*" with="nxj.home=${env.NXJ_HOME}"
+				ignore="don't match anything please"
+			/>
+			<mkdir dir="${shared.dir}/projects/"/>
+			<zip file="${shared.dir}/projects/@{id}.zip">
+				<fileset dir="${project.@{id}}"
+					includes="${vars.@{id}.dist.include}"
+					excludes="build.properties,.classpath,${vars.@{id}.dist.exclude}"
+				/>
+				<zipfileset file="${build.dir}/@{id}.classpath.xml" fullpath=".classpath" />
+				<zipfileset file="${build.dir}/@{id}.build.properties" fullpath="build.properties" />
+			</zip>
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="copy-project">
+		<attribute name="id" />
+		<attribute name="todir" />
+		<sequential>
+			<basename file="${project.@{id}}" property="tmp.copy-project.@{id}" />
+			<copy todir="@{todir}/${tmp.copy-project.@{id}}">
+				<fileset
+					dir="${project.@{id}}"
+					includes="${vars.@{id}.dist.include}"
+					excludes="${vars.@{id}.dist.exclude}"
+				/>
+			</copy>
+		</sequential>
+	</macrodef>
+
 	<!-- release leJOS NXJ -->
 	<target name="release" depends="clean,dist.unix,dist.win,dist.source" description="releases leJOS NXJ">
 		<!-- notify -->
@@ -173,95 +240,23 @@
 
 	<target name="subproject.nxtvm">
 		<!-- TODO move binary image to nxtvm project -->
-		<copy todir="${shared.dir}/bin">
-			<fileset dir="${project.snapshot}/bin">
-				<include name="lejos_nxt_rom.bin" />
-			</fileset>
-		</copy>
+		<copy file="${project.snapshot}/bin/lejos_nxt_rom.bin" todir="${shared.dir}/bin" />
 	</target>
 	
 	<target name="subproject.samples">
-		<copyfile-linereplace from="${project.samples}/.classpath" to="${build.dir}/samples.classpath.xml"
-			replace="&lt;classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/classes.*&gt;"
-			with="&lt;classpathentry kind=&quot;con&quot; path=&quot;org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/nxt&quot;/&gt;"
-			ignore="classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/"
-		/>
-		<copyfile-linereplace from="${project.samples}/build.properties" to="${build.dir}/samples.build.properties"
-			replace="^\s*nxj.home\s*=.*" with="nxj.home=${env.NXJ_HOME}"
-			ignore="don't match anything please"
-		/>
-		<mkdir dir="${shared.dir}/projects/"/>
-		<zip file="${shared.dir}/projects/samples.zip">
-			<fileset dir="${project.samples}"
-				includes="${vars.samples.dist.include}"
-				excludes="build.properties,.classpath,${vars.samples.dist.exclude}"
-			/>
-			<zipfileset file="${build.dir}/samples.classpath.xml" fullpath=".classpath" />
-			<zipfileset file="${build.dir}/samples.build.properties" fullpath="build.properties" />
-		</zip>
+		<zip-nxtproject id="samples" zip="${shared.dir}/projects/samples.zip" />
 	</target>
 
 	<target name="subproject.example">
-		<copyfile-linereplace from="${project.example}/.classpath" to="${build.dir}/example.classpath.xml"
-			replace="&lt;classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/classes.*&gt;"
-			with="&lt;classpathentry kind=&quot;con&quot; path=&quot;org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/nxt&quot;/&gt;"
-			ignore="classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/"
-		/>
-		<copyfile-linereplace from="${project.example}/build.properties" to="${build.dir}/example.build.properties"
-			replace="^\s*nxj.home\s*=.*" with="nxj.home=${env.NXJ_HOME}"
-			ignore="don't match anything please"
-		/>
-		<mkdir dir="${shared.dir}/projects/"/>
-		<zip file="${shared.dir}/projects/example.zip">
-			<fileset dir="${project.example}"
-				includes="${vars.example.dist.include}"
-				excludes="build.properties,.classpath,${vars.example.dist.exclude}"
-			/>
-			<zipfileset file="${build.dir}/example.classpath.xml" fullpath=".classpath" />
-			<zipfileset file="${build.dir}/example.build.properties" fullpath="build.properties" />
-		</zip>
+		<zip-nxtproject id="example" zip="${shared.dir}/projects/example.zip" />
 	</target>
-
+	
 	<target name="subproject.pcsamples">
-		<copyfile-linereplace from="${project.pcsamples}/.classpath" to="${build.dir}/pcsamples.classpath.xml"
-			replace="&lt;classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/pccomms.*&gt;"
-			with="&lt;classpathentry kind=&quot;con&quot; path=&quot;org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/pc&quot;/&gt;"
-			ignore="classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/"
-		/>
-		<copyfile-linereplace from="${project.pcsamples}/build.properties" to="${build.dir}/pcsamples.build.properties"
-			replace="^\s*nxj.home\s*=.*" with="nxj.home=${env.NXJ_HOME}"
-			ignore="don't match anything please"
-		/>
-		<mkdir dir="${shared.dir}/projects/"/>
-		<zip file="${shared.dir}/projects/pcsamples.zip">
-			<fileset dir="${project.pcsamples}"
-				includes="${vars.pcsamples.dist.include}"
-				excludes="build.properties,.classpath,${vars.pcsamples.dist.exclude}"
-			/>
-			<zipfileset file="${build.dir}/pcsamples.classpath.xml" fullpath=".classpath" />
-			<zipfileset file="${build.dir}/pcsamples.build.properties" fullpath="build.properties" />
-		</zip>
+		<zip-pcproject id="pcsamples" zip="${shared.dir}/projects/pcsamples.zip"/>
 	</target>
 	
 	<target name="subproject.pcexample">
-		<copyfile-linereplace from="${project.pcexample}/.classpath" to="${build.dir}/pcexample.classpath.xml"
-			replace="&lt;classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/pccomms.*&gt;"
-			with="&lt;classpathentry kind=&quot;con&quot; path=&quot;org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/pc&quot;/&gt;"
-			ignore="classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/"
-		/>
-		<copyfile-linereplace from="${project.pcexample}/build.properties" to="${build.dir}/pcexample.build.properties"
-			replace="^\s*nxj.home\s*=.*" with="nxj.home=${env.NXJ_HOME}"
-			ignore="don't match anything please"
-		/>
-		<mkdir dir="${shared.dir}/projects/"/>
-		<zip file="${shared.dir}/projects/pcexample.zip">
-			<fileset dir="${project.pcexample}"
-				includes="${vars.pcexample.dist.include}"
-				excludes="build.properties,.classpath,${vars.pcexample.dist.exclude}"
-			/>
-			<zipfileset file="${build.dir}/pcexample.classpath.xml" fullpath=".classpath" />
-			<zipfileset file="${build.dir}/pcexample.build.properties" fullpath="build.properties" />
-		</zip>
+		<zip-pcproject id="pcexample" zip="${shared.dir}/projects/pcexample.zip"/>
 	</target>
 	
 	<target name="installer-script">
@@ -274,26 +269,22 @@
 	</target>
 
 	<!-- creates the platform API doc -->
-	<target name="platform.doc" depends="" description="generate the platform API doc">
-		<mkdir dir="${release.classes.docs}" />
-		<copy todir="${release.classes.docs}">
-			<fileset dir="${projects.root}/classes">
-				<include name="doc" />
-			</fileset>
-		</copy>
+	<target name="nxt.doc" depends="" description="generate the platform API doc">
+		<mkdir dir="${shared.dir}/docs/nxt" />
+		
+		<!-- TODO generate javadoc -->
+		
 	</target>
 
 	<!-- creates the PC API doc -->
 	<target name="pc.doc" depends="" description="generate the platform API doc">
-		<mkdir dir="${release.pc.docs}" />
-		<javadoc protected="true" windowtitle="leJOS NXJ PC API documentation" author="true" destdir="${release.pc.docs}" source="1.5" classpath="${release.3rdparty.libs}/bluecove.jar;${release.3rdparty.libs}/stax-api-1.0.1.jar" defaultexcludes="yes">
-			<fileset dir="${projects.root}/pccomms">
-				<include name="lejos/**/*.java" />
-			</fileset>
-		</javadoc>
+		<mkdir dir="${shared.dir}/docs/pc" />
+		
+		<!-- TODO generate javadoc -->
+		
 	</target>
 
-	<target name="shared" depends="subproject.classes, subproject.jtools, subproject.pccomms, subproject.pctools, subproject.charting, subproject.startup, subproject.scripts, subproject.samples, subproject.pcsamples, subproject.example, subproject.pcexample, subproject.nxtvm">
+	<target name="shared" depends="subproject.classes, subproject.jtools, subproject.pccomms, subproject.pctools, subproject.charting, subproject.startup, subproject.scripts, subproject.samples, subproject.pcsamples, subproject.example, subproject.pcexample, subproject.nxtvm, nxt.doc, pc.doc">
 		<copy todir="${unix.dir}">
 			<fileset dir="${shared.dir}" />
 			<fileset dir="${sup.dir}" />
@@ -310,8 +301,27 @@
 	<!-- copies the lejos sources -->
 	<target name="dist.source" description="copies the lejos sources">
 
-		<!-- TODO copy sources -->
+		<copy-project todir="${source.dir}" id="classes" />
+		<copy-project todir="${source.dir}" id="jtools" />
+		<copy-project todir="${source.dir}" id="pccomms" />
+		<copy-project todir="${source.dir}" id="pctools" />
+		<copy-project todir="${source.dir}" id="scripts" />
+		<copy-project todir="${source.dir}" id="startup" />
+		<copy-project todir="${source.dir}" id="charting" />
+		
+		<copy-project todir="${source.dir}" id="samples" />
+		<copy-project todir="${source.dir}" id="pcsamples" />
+		<copy-project todir="${source.dir}" id="example" />
+		<copy-project todir="${source.dir}" id="pcexample" />
 
+		<copy-project todir="${source.dir}" id="nxtvm" />
+		<copy-project todir="${source.dir}" id="libnxt" />
+		<copy-project todir="${source.dir}" id="jfantom" />
+		<copy-project todir="${source.dir}" id="flashwrite" />
+		
+		<!-- last but not least -->
+		<copy-project todir="${source.dir}" id="release" />
+		
 		<tar destfile="${build.dir}/${lejos.source.version}.tar.gz" compression="gzip">
 			<tarfileset dir="${source.dir}" />
 		</tar>
