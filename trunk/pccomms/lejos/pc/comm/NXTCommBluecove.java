@@ -108,7 +108,7 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 		}
 		NXTInfo[] nxts = new NXTInfo[nxtInfos.size()];
 		for (int i = 0; i < nxts.length; i++)
-			nxts[i] = (NXTInfo) nxtInfos.elementAt(i);
+			nxts[i] = nxtInfos.elementAt(i);
 		return nxts;
 	}
 

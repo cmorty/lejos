@@ -272,7 +272,7 @@ public class MapPanel extends JPanel {
 	protected void paintFeatures(Graphics2D g2d) {
 		g2d.setColor(colors[FEATURE_COLOR_INDEX]);
 		for(lejos.geom.Point pt:model.getFeatures()) {
-			Ellipse2D c = new Ellipse2D.Float(getX((float) ((pt.x - TARGET_SIZE/2))), getY((float) ((pt.y + TARGET_SIZE/2))), getDistance(TARGET_SIZE), getDistance(TARGET_SIZE));
+			Ellipse2D c = new Ellipse2D.Float(getX((pt.x - TARGET_SIZE/2)), getY((pt.y + TARGET_SIZE/2)), getDistance(TARGET_SIZE), getDistance(TARGET_SIZE));
 			g2d.fill(c);
 		}
 	}
@@ -280,7 +280,7 @@ public class MapPanel extends JPanel {
 	protected void paintWaypoints(Graphics2D g2d) {
 		g2d.setColor(colors[WAYPOINT_COLOR_INDEX]);
 		for(lejos.geom.Point pt:model.getWaypoints()) {
-			Ellipse2D c = new Ellipse2D.Float(getX((float) ((pt.x - TARGET_SIZE/2))), getY((float) ((pt.y + TARGET_SIZE/2))), getDistance(TARGET_SIZE), getDistance(TARGET_SIZE));
+			Ellipse2D c = new Ellipse2D.Float(getX((pt.x - TARGET_SIZE/2)), getY((pt.y + TARGET_SIZE/2)), getDistance(TARGET_SIZE), getDistance(TARGET_SIZE));
 			g2d.fill(c);
 		}
 	}
