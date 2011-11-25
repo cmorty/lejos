@@ -203,6 +203,17 @@
 		</javadoc>
 	</target>
 
+	<!-- zip the project -->
+	<target name="dist.zip" description="generate zip of sources">
+    	<zip
+    		destfile="${dist.zip}"
+    		basedir="${basedir}"
+    		includes="${dist.include}"
+    		excludes="${dist.exclude}"
+    	/>
+	</target>
+	
+
 	<!--  used only for modifying the Netbeans NXJPlugin -->
 	<target name="Zip for Netbeans" description="Zip the application to the sample project">
 		<property name="plugin" location="../NXJPlugin/src/nxjplugin/" />
