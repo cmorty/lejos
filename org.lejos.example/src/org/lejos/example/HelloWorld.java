@@ -1,6 +1,6 @@
 package org.lejos.example;
 
-import lejos.nxt.*;
+import lejos.nxt.Button;
 
 /**
  * Example leJOS Project with an ant build file

@@ -6,11 +6,6 @@
 	<!-- set properties for this build -->
 	<property environment="env" />
 	<property file="build.properties" />
-	<property name="src" location="src" />
-	<property name="build" location="build" />
-	<property name="full.main.class" value="${package}.${main.class}" />
-	<property name="binary" value="${build}/${main.class}.nxj" />
-	<property name="debug" value="${build}/${main.class}.nxd" />
 
 	<path id="lejos.pc">
 		<fileset dir="${nxj.home}/lib/pc">
@@ -31,14 +26,28 @@
 
 	<!-- deletes generated files -->
 	<target name="clean" description="clean up all generated files">
-		<delete dir="${build}" />
+		<delete dir="${build.dir}" />
 	</target>
 
 	<target name="compile" depends="clean" description="compile the source ">
-		<!-- Compile the java code from ${src} to ${build}  -->
-		<mkdir dir="${build}" />
-		<javac srcdir="${src}" destdir="${build}" includeantruntime="false" verbose="false">
+		<!-- Compile the java code from ${source.dir} to ${classes.dir}  -->
+		<mkdir dir="${classes.dir}" />
+		<javac
+			srcdir="${source.dir}"
+			includes="${source.include}"
+			excludes="${source.exclude}"
+			encoding="${source.encoding}"
+			source="${source.version}"
+			target="${target.version}"
+			destdir="${classes.dir}"
+			debug="true"
+			includeAntRuntime="false"
+			includeJavaRuntime="false"
+			verbose="false"
+		>
 			<bootclasspath refid="lejos.nxt" />
+			<!-- enable warnings -->
+			<compilerarg value="-Xlint:${source.warn}" />
 			<!--
 				Without this, there are some JDK jars in the classpath.
 				Set verbose=true to check that the classpath is really clean.
@@ -55,15 +64,15 @@
 			<arg value="--bootclasspath" />
 			<arg pathref="lejos.nxt" />
 			<arg value="--classpath" />
-			<arg path="${build}" />
+			<arg path="${classes.dir}" />
 			<arg value="--writeorder" />
 			<arg value="LE" />
 			<arg value="-o" />
-			<arg file="${binary}" />
+			<arg file="${output.nxj}" />
 			<arg value="-od" />
-			<arg file="${debug}" />
+			<arg file="${output.nxd}" />
 			<arg value="-v" />
-			<arg value="${full.main.class}" />
+			<arg value="${main.class}" />
 		</java>
 	</target>
 	
@@ -74,16 +83,16 @@
 			<arg value="--bootclasspath" />
 			<arg pathref="lejos.nxt" />
 			<arg value="--classpath" />
-			<arg path="${build}" />
+			<arg path="${classes.dir}" />
 			<arg value="--writeorder" />
 			<arg value="LE" />
 			<arg value="-o" />
-			<arg file="${binary}" />
+			<arg file="${output.nxj}" />
 			<arg value="-od" />
-			<arg file="${debug}" />
+			<arg file="${output.nxd}" />
 			<arg value="-gr" />
 			<arg value="-v" />
-			<arg value="${full.main.class}" />
+			<arg value="${main.class}" />
 		</java>
 	</target>
 	
@@ -92,7 +101,7 @@
 			<jvmarg value="-Dnxj.home=${nxj.home}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
-			<arg value="${binary}" />
+			<arg value="${output.nxj}" />
 		</java>
 	</target>
 	
@@ -102,7 +111,7 @@
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-r" />
-			<arg file="${binary}" />
+			<arg file="${output.nxj}" />
 		</java>
 	</target>
 	
@@ -112,7 +121,7 @@
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-r" />
-			<arg file="${binary}" />
+			<arg file="${output.nxj}" />
 		</java>
 	</target>
 	
@@ -123,7 +132,7 @@
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-di" />
-			<arg file="${debug}" />
+			<arg file="${output.nxj}" />
 		</java>
 	</target>
 	
@@ -134,7 +143,7 @@
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-di" />
-			<arg file="${debug}" />
+			<arg file="${output.nxd}" />
 		</java>
 	</target>
 	
@@ -155,7 +164,7 @@
 			<jvmarg value="-Dnxj.home=${nxj.home}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-di" />
-			<arg file="${debug}" />
+			<arg file="${output.nxd}" />
 			<arg value="-c" />
 			<arg value="-m" />
 			<arg value="${class}" />
@@ -166,11 +175,12 @@
 	
 	<!-- generate javadocs -->
 	<target name="docs" description="generate javadocs">
-		<delete dir="${docs}" />
-		
-    	<mkdir dir="${docs}" />
+		<delete dir="${docs.dir}" />
+    	<mkdir dir="${docs.dir}" />
 		<javadoc
-			destdir="${docs}"
+			destdir="${docs.dir}"
+			source="${source.version}"
+			encoding="${source.encoding}"
 			charset="utf-8"
 			locale="en_US"
 			author="true"
@@ -178,12 +188,17 @@
 			windowtitle="Project documentation"
 			verbose="false"
 		>
-			<classpath refid="lejos.nxt" />
-    		<arg value="-extdirs"/>
-			<arg value="-quiet"/>
+			<bootclasspath refid="lejos.nxt" />
+			<!--
+				Without this, there are some JDK jars in the classpath.
+				Set verbose=true to check that the classpath is really clean.
+			-->
+    		<arg value="-extdirs" />
+    		<arg value="" />
 			
-			<packageset
-				dir="${src}"
+			<packageset	dir="${source.dir}"
+				includes="${source.include}"
+				excludes="${source.exclude}"
 			/>
 		</javadoc>
 	</target>
