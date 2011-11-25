@@ -21,7 +21,7 @@ public class SteerNavDemo {
 	public static void main(String [] args) throws InterruptedException {
 		
 		// Make sure the parameters in this constructor match your vehicle.
-		ArcMoveController p = new SteeringPilot(5.6f, Motor.B, false, Motor.C, 41, -33, 40);
+		ArcMoveController p = new SteeringPilot(5.6f, Motor.B, Motor.C, 41, -33, 40);
 		
 		// Alternate code to simulate a steering vehicle of steering radius 40 cm:
 		//ArcMoveController p = new DifferentialPilot(4.32F, 4.32F, 16F, Motor.B, Motor.C, true);
