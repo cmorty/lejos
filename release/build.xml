@@ -364,7 +364,7 @@
 		<copy-source todir="${source.dir}" id="flashwrite" />
 		
 		<!-- last but not least -->
-		<copy-project todir="${source.dir}" id="release" />
+		<copy-source todir="${source.dir}" id="release" />
 		
 		<tar destfile="${build.dir}/${lejos.source.version}.tar.gz" compression="gzip">
 			<tarfileset dir="${source.dir}" />
