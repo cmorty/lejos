@@ -1,4 +1,5 @@
 #include <windows.h>
+
 class SimpleLock
 {
 private:

@@ -21,14 +21,14 @@ all: jfantom.dll
 
 .PHONY: clean
 clean:
-	rm -f jfantom.h jfantom.dll fantom.lib
+	rm -f jfantom.dll fantom.lib #jfantom.h
 
 fantom.lib: fantom.def
 	"$(LEJOS_NXT_WIN32_DLLTOOL)" $(LEJOS_NXT_WIN32_DLLFLAGS) --input-def "$<" --output-lib "$@"
 
 # I think it's safe to use build host's javah
-jfantom.h:
-	"$(LEJOS_NXT_WIN32_JDK)/bin/javah" -o "$@" -classpath ../pccomms/build lejos.pc.comm.NXTCommFantom 
+#jfantom.h:
+#	"$(LEJOS_NXT_WIN32_JDK)/bin/javah" -o "$@" -classpath ../pccomms/build lejos.pc.comm.NXTCommFantom 
 
 jfantom.dll: jfantom.cpp fantom.lib | jfantom.h 
 	"$(LEJOS_NXT_WIN32_GCC)" $(LEJOS_NXT_WIN32_CFLAGS) \
