@@ -2,6 +2,12 @@
   ==================================================
   Buildfile for building samples
   ==================================================
+
+
+  === NOTE ===
+  Dear fellow leJOS user: Don't use this build.xml as a template for your
+  project. Instead, use the org.lejos.example project as a template for
+  your projects.
 -->
 <project name="samples" default="help" basedir=".">
 
@@ -121,6 +127,7 @@ main class ${main.class}</echo>
 	
 	<target name="link" depends="sample.init, compile">
 		<java classname="lejos.pc.tools.NXJLink" failonerror="true" outputproperty="linker.output">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
 			<classpath refid="lejos.pc" />
 			<arg value="--bootclasspath" />
 			<arg pathref="lejos.nxt" />
@@ -141,6 +148,7 @@ main class ${main.class}</echo>
 	
 	<target name="debuglink" depends="sample.init, compile">
 		<java classname="lejos.pc.tools.NXJLink" failonerror="true" outputproperty="linker.output">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
 			<classpath refid="lejos.pc" />
 			<arg value="--bootclasspath" />
 			<arg pathref="lejos.nxt" />
