@@ -4,12 +4,12 @@
 #if (( defined( __GNUG__ ) || defined( __GNUC__ )) && defined( __WIN32__))
 #define _M_I86
 #define _MSC_VER
-#include "fantom/platform.h"
+#include <fantom/platform.h>
 #undef _M_I86
 #undef _MSC_VER
 #endif
-#include "fantom/iNXT.h"
-#include "fantom/iNXTIterator.h"
+#include <fantom/iNXT.h>
+#include <fantom/iNXTIterator.h>
 
 #include <string.h>
 #include <stdio.h>
