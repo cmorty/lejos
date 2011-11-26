@@ -190,13 +190,14 @@
 	<!-- release leJOS NXJ -->
 	<target name="release" depends="clean,dist.unix,dist.win,dist.source" description="releases leJOS NXJ">
 		<!-- notify -->
-		<echo message="The packed distribution can be found in ${build.dir} now" />
+		<echo message="The packed distribution can be found in ${dist.dir} now." />
 	</target>
 
 	<!-- cleans the distribution -->
 	<target name="clean" description="clean up all generated files">
 		<!-- delete transient release folders -->
 		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
 	</target>
 
 	<target name="subproject.scripts">
@@ -366,7 +367,8 @@
 		<!-- last but not least -->
 		<copy-source todir="${source.dir}" id="release" />
 		
-		<tar destfile="${build.dir}/${lejos.source.version}.tar.gz" compression="gzip">
+		<mkdir dir="${dist.dir}" />
+		<tar destfile="${dist.dir}/${lejos.source.version}.tar.gz" compression="gzip">
 			<tarfileset dir="${source.dir}" />
 		</tar>
 	</target>
@@ -381,7 +383,8 @@
 			<include name="**/*.html" />
 		</fixcrlf>
 		<!-- tar & gzip leJOS Unix distribution -->
-		<tar destfile="${build.dir}/${lejos.unix.version}.tar.gz" compression="gzip">
+		<mkdir dir="${dist.dir}" />
+		<tar destfile="${dist.dir}/${lejos.unix.version}.tar.gz" compression="gzip">
 			<tarfileset dir="${unix.dir}" filemode="755">
 				<include name="lejos_nxj/bin/nxj*" />
 			</tarfileset>
@@ -401,7 +404,8 @@
 			<include name="**/*.html" />
 		</fixcrlf>
 		<!-- zip leJOS windows distribution -->
-		<zip destfile="${build.dir}/${lejos.windows.version}.zip">
+		<mkdir dir="${dist.dir}" />
+		<zip destfile="${dist.dir}/${lejos.windows.version}.zip">
 			<fileset dir="${windows.dir}" />
 		</zip>
 	</target>
