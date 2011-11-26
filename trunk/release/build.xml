@@ -45,17 +45,6 @@
 		</fileset>
 	</path>
 
-	<macrodef name="copy-srczip">
-		<attribute name="file" />
-		<attribute name="todir" />
-		<sequential>
-			<basename file="@{file}" property="copy-srczip.tmp" />
-			<zip destfile="@{todir}/${copy-srczip.tmp}">
-				<zipfileset src="@{file}" />
-				<zipfileset file="README-src.txt" fullpath="README.txt" />
-			</zip>
-		</sequential>
-	</macrodef>
 	<macrodef name="copy-project">
 		<attribute name="project" />
 		<attribute name="todir" />
@@ -63,7 +52,11 @@
 			<copy todir="@{todir}">
 				<fileset file="${project.@{project}}/${vars.@{project}.classes.jar}" />
 			</copy>
-			<copy-srczip todir="@{todir}" file="${project.@{project}}/${vars.@{project}.classes.src.zip}" />
+			<basename file="${project.@{project}}/${vars.@{project}.classes.src.zip}" property="tmp.copy-project.@{project}" />
+			<zip destfile="@{todir}/${tmp.copy-project.@{project}}">
+				<zipfileset src="${project.@{project}}/${vars.@{project}.classes.src.zip}" />
+				<zipfileset file="README-src.txt" fullpath="README.txt" />
+			</zip>
 		</sequential>
 	</macrodef>
 	<macrodef name="buildcopy-project">
@@ -101,14 +94,14 @@
 		<attribute name="with" />
 		<attribute name="ignore" />
 		<sequential>
-			<loadfile property="tmp.copyfile" srcfile="@{from}">
+			<loadfile property="tmp.copyfile.@{from}" srcfile="@{from}">
 				<filterchain>
 					<linecontainsregexp>
 						<regexp pattern="@{replace}"/>
 					</linecontainsregexp>	
 				</filterchain>
 			</loadfile>
-			<fail unless="tmp.copyfile" message="File @{from} does not contain given regexp." />
+			<fail unless="tmp.copyfile.@{from}" message="File @{from} does not contain given regexp." />
 			<copy file="@{from}" tofile="@{to}" overwrite="true">
 				<filterchain>
 					<tokenfilter>
@@ -274,14 +267,14 @@
 	</target>
 	
 	<target name="subproject.pcsamples">
-		<copy-nxtproject id="pcsamples" todir="${samples.dir}/pcsamples" />
+		<copy-pcproject id="pcsamples" todir="${samples.dir}/pcsamples" />
 		<zip destfile="${shared.dir}/samples/pcsamples.zip">
 			<fileset dir="${samples.dir}/pcsamples" />
 		</zip>
 	</target>
 	
 	<target name="subproject.pcexample">
-		<copy-nxtproject id="pcexample" todir="${samples.dir}/org.lejos.pcexample" />		
+		<copy-pcproject id="pcexample" todir="${samples.dir}/org.lejos.pcexample" />		
 		<zip destfile="${shared.dir}/samples/org.lejos.pcexample.zip">
 			<fileset dir="${samples.dir}/org.lejos.pcexample" />
 		</zip>
