@@ -163,8 +163,8 @@
 		<attribute name="id" />
 		<attribute name="todir" />
 		<sequential>
-			<basename file="${project.@{id}}" property="tmp.copy-project.@{id}" />
-			<copy todir="@{todir}/${tmp.copy-project.@{id}}">
+			<basename file="${project.@{id}}" property="tmp.copy-source.@{id}" />
+			<copy todir="@{todir}/${tmp.copy-source.@{id}}">
 				<fileset
 					dir="${project.@{id}}"
 					includes="${vars.@{id}.dist.include}"
