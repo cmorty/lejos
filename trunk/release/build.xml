@@ -123,52 +123,46 @@
 		</sequential>
 	</macrodef>
 	
-	<macrodef name="zip-nxtproject">
+	<macrodef name="copy-nxtproject">
 		<attribute name="id"/>
-		<attribute name="zip"/>
+		<attribute name="todir"/>
 		<sequential>
-			<copyfile-linereplace from="${project.@{id}}/.classpath" to="${build.dir}/@{id}.classpath.xml"
+			<copy todir="@{todir}">
+				<fileset dir="${project.@{id}}"
+					includes="${vars.@{id}.dist.include}"
+					excludes="build.properties,.classpath,${vars.@{id}.dist.exclude}"
+				/>
+			</copy>
+			<copyfile-linereplace from="${project.@{id}}/.classpath" to="@{todir}/.classpath"
 				replace="&lt;classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/classes.*&gt;"
 				with="&lt;classpathentry kind=&quot;con&quot; path=&quot;org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/nxt&quot;/&gt;"
 				ignore="classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/"
 			/>
-			<copyfile-linereplace from="${project.@{id}}/build.properties" to="${build.dir}/@{id}.build.properties"
+			<copyfile-linereplace from="${project.@{id}}/build.properties" to="@{todir}/build.properties"
 				replace="^\s*nxj.home\s*=.*" with="nxj.home=${env.NXJ_HOME}"
 				ignore="don't match anything please"
 			/>
-			<mkdir dir="${shared.dir}/projects/"/>
-			<zip file="@{zip}">
+		</sequential>
+	</macrodef>
+	<macrodef name="copy-pcproject">
+		<attribute name="id"/>
+		<attribute name="todir"/>
+		<sequential>
+			<copy todir="@{todir}">
 				<fileset dir="${project.@{id}}"
 					includes="${vars.@{id}.dist.include}"
 					excludes="build.properties,.classpath,${vars.@{id}.dist.exclude}"
 				/>
-				<zipfileset file="${build.dir}/@{id}.classpath.xml" fullpath=".classpath" />
-				<zipfileset file="${build.dir}/@{id}.build.properties" fullpath="build.properties" />
-			</zip>
-		</sequential>
-	</macrodef>
-	<macrodef name="zip-pcproject">
-		<attribute name="id"/>
-		<attribute name="zip"/>
-		<sequential>
-			<copyfile-linereplace from="${project.@{id}}/.classpath" to="${build.dir}/@{id}.classpath.xml"
+			</copy>
+			<copyfile-linereplace from="${project.@{id}}/.classpath" to="@{todir}/.classpath"
 				replace="&lt;classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/pccomms.*&gt;"
 				with="&lt;classpathentry kind=&quot;con&quot; path=&quot;org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/pc&quot;/&gt;"
 				ignore="classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/"
 			/>
-			<copyfile-linereplace from="${project.@{id}}/build.properties" to="${build.dir}/@{id}.build.properties"
+			<copyfile-linereplace from="${project.@{id}}/build.properties" to="@{todir}/build.properties"
 				replace="^\s*nxj.home\s*=.*" with="nxj.home=${env.NXJ_HOME}"
 				ignore="don't match anything please"
 			/>
-			<mkdir dir="${shared.dir}/projects/"/>
-			<zip file="${shared.dir}/projects/@{id}.zip">
-				<fileset dir="${project.@{id}}"
-					includes="${vars.@{id}.dist.include}"
-					excludes="build.properties,.classpath,${vars.@{id}.dist.exclude}"
-				/>
-				<zipfileset file="${build.dir}/@{id}.classpath.xml" fullpath=".classpath" />
-				<zipfileset file="${build.dir}/@{id}.build.properties" fullpath="build.properties" />
-			</zip>
 		</sequential>
 	</macrodef>
 	
@@ -188,7 +182,7 @@
 	</macrodef>
 
 	<!-- release leJOS NXJ -->
-	<target name="release" depends="clean,dist.unix,dist.win,dist.source" description="releases leJOS NXJ">
+	<target name="release" description="releases leJOS NXJ" depends="clean, dist.unix, dist.win, dist.source, dist.samples">
 		<!-- notify -->
 		<echo message="The packed distribution can be found in ${dist.dir} now." />
 	</target>
@@ -266,19 +260,31 @@
 	</target>
 	
 	<target name="subproject.samples">
-		<zip-nxtproject id="samples" zip="${shared.dir}/projects/samples.zip" />
+		<copy-nxtproject id="samples" todir="${samples.dir}/samples" />
+		<zip destfile="${shared.dir}/samples/samples.zip">
+			<fileset dir="${samples.dir}/samples" />
+		</zip>
 	</target>
 
 	<target name="subproject.example">
-		<zip-nxtproject id="example" zip="${shared.dir}/projects/example.zip" />
+		<copy-nxtproject id="example" todir="${samples.dir}/org.lejos.example" />
+		<zip destfile="${shared.dir}/samples/org.lejos.example.zip">
+			<fileset dir="${samples.dir}/org.lejos.example" />
+		</zip>
 	</target>
 	
 	<target name="subproject.pcsamples">
-		<zip-pcproject id="pcsamples" zip="${shared.dir}/projects/pcsamples.zip"/>
+		<copy-nxtproject id="pcsamples" todir="${samples.dir}/pcsamples" />
+		<zip destfile="${shared.dir}/samples/pcsamples.zip">
+			<fileset dir="${samples.dir}/pcsamples" />
+		</zip>
 	</target>
 	
 	<target name="subproject.pcexample">
-		<zip-pcproject id="pcexample" zip="${shared.dir}/projects/pcexample.zip"/>
+		<copy-nxtproject id="pcexample" todir="${samples.dir}/org.lejos.pcexample" />		
+		<zip destfile="${shared.dir}/samples/org.lejos.pcexample.zip">
+			<fileset dir="${samples.dir}/org.lejos.pcexample" />
+		</zip>
 	</target>
 	
 	<!-- TODO why copy this batch file??? 
@@ -370,6 +376,14 @@
 		<mkdir dir="${dist.dir}" />
 		<tar destfile="${dist.dir}/${lejos.source.version}.tar.gz" compression="gzip">
 			<tarfileset dir="${source.dir}" />
+		</tar>
+	</target>
+
+	<!-- copies the lejos sources -->
+	<target name="dist.samples" description="copies the lejos samples" depends="subproject.samples, subproject.pcsamples, subproject.example, subproject.pcexample">
+		<mkdir dir="${dist.dir}" />
+		<tar destfile="${dist.dir}/${lejos.samples.version}.tar.gz" compression="gzip">
+			<tarfileset dir="${samples.dir}" />
 		</tar>
 	</target>
 
