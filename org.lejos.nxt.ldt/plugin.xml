@@ -182,6 +182,19 @@
       </image>
    </extension>
    <extension
+         point="org.eclipse.ui.importWizards">
+      <wizard
+            category="org.eclipse.ui.Basic"
+            class="org.lejos.nxt.ldt.wizard.SampleImport"
+            icon="icons/nxj_16x16.png"
+            id="org.lejos.nxt.ldt.importWizards.ImportWizard"
+            name="leJOS sample and project templates">
+         <description>
+            Import a file from the local file system into the workspace.
+         </description>
+      </wizard>
+   </extension>
+   <extension
          point="org.eclipse.ui.newWizards">
       <category
             id="org.lejos.nxt.ldt.leJOSWizardCategory"
