@@ -375,9 +375,9 @@
 	<!-- copies the lejos sources -->
 	<target name="dist.samples" description="copies the lejos samples" depends="subproject.samples, subproject.pcsamples, subproject.example, subproject.pcexample">
 		<mkdir dir="${dist.dir}" />
-		<tar destfile="${dist.dir}/${lejos.samples.version}.tar.gz" compression="gzip">
-			<tarfileset dir="${samples.dir}" />
-		</tar>
+		<zip destfile="${dist.dir}/${lejos.samples.version}.zip">
+			<fileset dir="${samples.dir}" />
+		</zip>
 	</target>
 
 	<!-- packages the linux distribution -->
