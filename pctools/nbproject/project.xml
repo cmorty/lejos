@@ -70,7 +70,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
                 <package-root>.</package-root>
-                <classpath mode="compile">3rdparty/lib/commons-cli.jar;../pccomms/lib/pccomm.jar;../jtools/lib/jtools.jar</classpath>
+                <classpath mode="compile">3rdparty/lib/commons-cli.jar;../pccomms/build/pccomm.jar;../jtools/build/jtools.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
