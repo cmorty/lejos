@@ -230,7 +230,7 @@
 		<buildcopy-project2 project="pctools" type="pc" />
 	</target>
 
-	<target name="subproject.charting" depends="subproject.pctools">
+	<target name="subproject.charting" depends="subproject.pccomms, subproject.pctools">
 		<buildcopy-project2 project="charting" type="pc" />
 	</target>
 
@@ -254,30 +254,18 @@
 	
 	<target name="subproject.samples">
 		<copy-nxtproject id="samples" todir="${samples.dir}/samples" />
-		<zip destfile="${shared.dir}/samples/samples.zip">
-			<fileset dir="${samples.dir}/samples" />
-		</zip>
 	</target>
 
 	<target name="subproject.example">
 		<copy-nxtproject id="example" todir="${samples.dir}/org.lejos.example" />
-		<zip destfile="${shared.dir}/samples/org.lejos.example.zip">
-			<fileset dir="${samples.dir}/org.lejos.example" />
-		</zip>
 	</target>
 	
 	<target name="subproject.pcsamples">
 		<copy-pcproject id="pcsamples" todir="${samples.dir}/pcsamples" />
-		<zip destfile="${shared.dir}/samples/pcsamples.zip">
-			<fileset dir="${samples.dir}/pcsamples" />
-		</zip>
 	</target>
 	
 	<target name="subproject.pcexample">
 		<copy-pcproject id="pcexample" todir="${samples.dir}/org.lejos.pcexample" />		
-		<zip destfile="${shared.dir}/samples/org.lejos.pcexample.zip">
-			<fileset dir="${samples.dir}/org.lejos.pcexample" />
-		</zip>
 	</target>
 	
 	<!-- TODO why copy this batch file??? 
@@ -329,6 +317,9 @@
 	</target>
 
 	<target name="shared" depends="subproject.classes, subproject.jtools, subproject.pccomms, subproject.pctools, subproject.charting, subproject.startup, subproject.scripts, subproject.samples, subproject.pcsamples, subproject.example, subproject.pcexample, subproject.nxtvm, pc.doc">
+		<zip destfile="${shared.dir}/samples.zip">
+			<fileset dir="${samples.dir}" />
+		</zip>
 		<copy todir="${unix.dir}">
 			<fileset dir="${shared.dir}" />
 			<fileset dir="${sup.dir}" />
