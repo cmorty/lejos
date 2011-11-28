@@ -29,14 +29,16 @@ import lejos.robotics.*;
  * Handling stalls: If a stall is detected,   <code>isStalled()</code> returns <code>
  * true </code>,  <code>isMoving()</code>  returns <code>false</code>, <code>moveStopped()
  * </code> is called, and, if a blocking method is executing, that method exits.
+ * The units of measure for travel distance, speed and acceleration are the units 
+ * used in specifying the wheel diameter and track width. in the constructor. 
  * <br> Example of use of come common methods:
  * <p>
  * <code><pre>
  * DifferentialPilot pilot = new DifferentialPilot(2.1f, 4.4f, Motor.A, Motor.C, true);  // parameters in inches
- * pilot.setRobotSpeed(10);  // inches per second
- * pilot.travel(12);         // inches
+ * pilot.setRobotSpeed(30);  // cm per second
+ * pilot.travel(50);         // cm
  * pilot.rotate(-90);        // degree clockwise
- * pilot.travel(-12,true);
+ * pilot.travel(-50,true);
  * while(pilot.isMoving())Thread.yield();
  * pilot.rotate(-90);
  * pilot.rotateTo(270);
@@ -240,15 +242,16 @@ public class DifferentialPilot implements
   }
 
   /**
-   * Sets the acceleration of both motors.
+   * Sets the acceleration of the robot in distance/second/second  where
+   * distance is in the units of wheel diameter.
    * @param accel
-   * @see lejos.robotics.RegulatedMotor#setAcceleration(int acceleration)
    */
   public void setAcceleration(int accel)
   {
-    _left.setAcceleration(accel);
-    _right.setAcceleration(accel);
-
+    
+   int motorAccel  = (int)Math.round(0.5 * accel * (_leftDegPerDistance + _rightDegPerDistance));
+    _left.setAcceleration(motorAccel);
+    _right.setAcceleration(motorAccel);
   }
 
   public double getMaxTravelSpeed()
