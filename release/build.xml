@@ -316,7 +316,7 @@
 		</javadoc>
 	</target>
 
-	<target name="shared" depends="subproject.classes, subproject.jtools, subproject.pccomms, subproject.pctools, subproject.charting, subproject.startup, subproject.scripts, subproject.samples, subproject.pcsamples, subproject.example, subproject.pcexample, subproject.nxtvm, pc.doc">
+	<target name="shared" depends="subproject.classes, subproject.jtools, subproject.pccomms, subproject.pctools, subproject.charting, subproject.startup, subproject.samples, subproject.pcsamples, subproject.example, subproject.pcexample, subproject.nxtvm, pc.doc">
 		<zip destfile="${shared.dir}/samples.zip">
 			<fileset dir="${samples.dir}" />
 		</zip>
@@ -361,7 +361,7 @@
 	</target>
 
 	<!-- packages the linux distribution -->
-	<target name="dist.unix" description="packages the linux distribution" depends="shared">
+	<target name="dist.unix" description="packages the linux distribution" depends="shared, subproject.scripts">
 		<copy todir="${unix.dir}">
 			<fileset dir="${shared.dir}" />
 			<fileset dir="${sup.dir}" />
@@ -386,7 +386,7 @@
 	</target>
 
 	<!-- packages the windows distribution -->
-	<target name="dist.win" description="packages the windows distribution" depends="shared">
+	<target name="dist.win" description="packages the windows distribution" depends="shared, subproject.scripts">
 		<copy todir="${windows.dir}">
 			<fileset dir="${shared.dir}" />
 			<fileset dir="${sup.dir}">
