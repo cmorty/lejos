@@ -320,17 +320,6 @@
 		<zip destfile="${shared.dir}/samples.zip">
 			<fileset dir="${samples.dir}" />
 		</zip>
-		<copy todir="${unix.dir}">
-			<fileset dir="${shared.dir}" />
-			<fileset dir="${sup.dir}" />
-		</copy>
-		<copy todir="${windows.dir}">
-			<fileset dir="${shared.dir}" />
-			<fileset dir="${sup.dir}">
-				<!-- TODO include or not to include? -->
-				<exclude name="build/**" />
-			</fileset>
-		</copy>
 	</target>
 
 	<!-- copies the lejos sources -->
@@ -373,6 +362,10 @@
 
 	<!-- packages the linux distribution -->
 	<target name="dist.unix" description="packages the linux distribution" depends="shared">
+		<copy todir="${unix.dir}">
+			<fileset dir="${shared.dir}" />
+			<fileset dir="${sup.dir}" />
+		</copy>
 		<fixcrlf srcdir="${unix.dir}" eol="lf">
 			<include name="**/*.bat" />
 			<include name="**/*.txt" />
@@ -394,6 +387,13 @@
 
 	<!-- packages the windows distribution -->
 	<target name="dist.win" description="packages the windows distribution" depends="shared">
+		<copy todir="${windows.dir}">
+			<fileset dir="${shared.dir}" />
+			<fileset dir="${sup.dir}">
+				<!-- TODO include or not to include? -->
+				<exclude name="build/**" />
+			</fileset>
+		</copy>
 		<fixcrlf srcdir="${windows.dir}" eol="crlf">
 			<include name="**/*.bat" />
 			<include name="**/*.txt" />
