@@ -23,13 +23,12 @@
     <packaging>jar</packaging>
 
     <build>
-        <!-- copy to canonical source dir @todo better solution is to move project source folders under a common parent folder, eg: 'src/main/java'.-->
-        <resources>
-            <resource>
-                <directory>js</directory>
-                <targetPath>../../src/main/java/js</targetPath>
-            </resource>
+        <sourceDirectory>src</sourceDirectory>
 
+        <!-- copy DB files from nxtvm project -->
+        <!-- @todo avoid changes to the source tree, instead copy to 'target' folder? (but then packaging is affected).
+         maybe create new project containing only shared *.db files, then this and nxtvm project depend on it. -->
+        <resources>
             <resource>
                 <directory>../nxtvm/javavm</directory>
                 <includes>
@@ -43,18 +42,6 @@
         </resources>
 
         <plugins>
-
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <configuration>
-                    <!-- makes 'clean' phase also delete source/test files that were copied to canonical locations. @todo see todo above. -->
-                    <filesets>
-                        <fileset>
-                            <directory>src</directory>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
 
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
