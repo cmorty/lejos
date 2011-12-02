@@ -226,7 +226,8 @@
     <dependencies>
         <dependency>
             <groupId>lejos</groupId>
-            <artifactId>junit-lejos</artifactId>
+            <!--<artifactId>junit-lejos</artifactId>-->
+            <artifactId>junit</artifactId>
             <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>

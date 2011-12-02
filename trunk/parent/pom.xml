@@ -32,10 +32,14 @@
         <module>../classes</module>
         <!--<module>../classes-common</module>-->
         <module>../leJOSlab/junit</module>
+        <module>../org.lejos.junit</module>
         <module>../classes-test</module>
         <module>../jtools</module>
         <module>../pccomms</module>
         <module>../pctools</module>
+        <module>../org.lejos.charting</module>
+        <module>../samples</module>
+        <module>../pcsamples</module>
     </modules>
 
     <build>
