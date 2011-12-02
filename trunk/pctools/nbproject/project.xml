@@ -11,28 +11,27 @@
             <properties/>
             <folders>
                 <source-folder>
-                    <label>Source Packages</label>
-                    <location>.</location>
+                    <label>src</label>
+                    <type>java</type>
+                    <location>src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>Source Packages</label>
-                    <type>java</type>
+                    <label>pctools</label>
                     <location>.</location>
-                    <includes>lejos/**</includes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
-                    <target>build</target>
+                    <target>classes</target>
                 </action>
                 <action name="clean">
                     <target>clean</target>
                 </action>
                 <action name="rebuild">
                     <target>clean</target>
-                    <target>build</target>
+                    <target>classes</target>
                 </action>
                 <action name="run.single">
                     <script>nbproject/ide-file-targets.xml</script>
@@ -51,9 +50,8 @@
             <view>
                 <items>
                     <source-folder style="packages">
-                        <label>Source Packages</label>
-                        <location>.</location>
-                        <includes>lejos/**</includes>
+                        <label>src</label>
+                        <location>src</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
