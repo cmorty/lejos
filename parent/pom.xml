@@ -41,6 +41,8 @@
         <module>../org.lejos.charting</module>
         <module>../samples</module>
         <module>../pcsamples</module>
+        <module>../org.lejos.example</module>
+        <module>../org.lejos.pcexample</module>
     </modules>
 
     <build>
