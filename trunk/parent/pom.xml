@@ -37,6 +37,7 @@
         <module>../jtools</module>
         <module>../pccomms</module>
         <module>../pctools</module>
+        <module>../startup</module>
         <module>../org.lejos.charting</module>
         <module>../samples</module>
         <module>../pcsamples</module>

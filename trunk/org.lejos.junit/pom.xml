@@ -202,30 +202,6 @@
             <artifactId>classes</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>lejos</groupId>
-            <artifactId>jtools</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>lejos</groupId>
-            <artifactId>pccomms</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>lejos</groupId>
-            <artifactId>pctools</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>lejos</groupId>
-            <artifactId>charting</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
     </dependencies>
 
 </project>
