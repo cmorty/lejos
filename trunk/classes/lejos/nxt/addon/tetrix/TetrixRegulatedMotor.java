@@ -4,7 +4,8 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
 
 public class TetrixRegulatedMotor extends TetrixEncoderMotor implements RegulatedMotor{
-    public TetrixRegulatedMotor() {
+    public TetrixRegulatedMotor(TetrixMotorController mc, int channel) {
+    	super(mc, channel);
     }
 
     public void addListener(RegulatedMotorListener listener) {
