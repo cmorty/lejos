@@ -67,7 +67,7 @@ public class TetrixEncoderMotor extends TetrixMotor implements Encoder{
     /**
      * Disable or Enable internal motor controller speed regulation. Setting this to <code>true</code> will cause 
      * the motor controller firmware to adjust the motor power to compensate for changing loads in order to maintain 
-     * a constant motor speed.
+     * a constant motor speed. Default at instantiation is <code>false</code>.
      * 
      * @param regulate <code>true</code> to enable regulation, <code>false</code> otherwise.
      */

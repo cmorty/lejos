@@ -55,6 +55,7 @@ public class TetrixMotorController extends I2CSensor {
     // common registers
     private static final int REG_ALL_MOTORCONTROL = 0x40;
     private static final int REG_BATTERY = 0x54;
+    private static final int REG_ENCODERSREAD = 0x4C; // used by tachmonitor to read both encoders at once
     // register map for the motor-specific registers
     private static final int REG_IDX_ENCODER_TARGET = 0;
     private static final int REG_IDX_MODE = 1;
@@ -144,6 +145,81 @@ public class TetrixMotorController extends I2CSensor {
                 if (getData(REGISTER_MAP[REG_IDX_MODE][channel], buf, 1)!=0) break; // exit on 12c fault
             }
             motorState[channel]=STATE_STOPPED;
+        }
+    }
+    
+    // used by TetrixRegulatedMotor to monitor/manage tacho-related
+    private class TachoMonitor extends Thread{
+        private static final int POLL_DELAY_MS = 100;
+        
+        private boolean threadDie = false;
+        private int[] TachoCount = new int[CHANNELS];
+        private byte[] buffer = new byte[8];
+        private float[] degpersec = new float[CHANNELS];
+        
+        TachoMonitor(){
+            this.setDaemon(true);
+        }
+        
+        void die() {
+            threadDie=true;
+        }
+        
+        synchronized int getTachoCount(int channel) {
+            return TachoCount[channel];
+        }
+        
+        public void run(){
+            int retVal;
+            int failCount;
+            int[] tachoBegin = new int[CHANNELS];
+            long endTime, beginTime, timeDelta;
+            float[][] samples = new float[CHANNELS][3];
+            int sampleIndex=0;
+            float[] degpersecAccum = new float[CHANNELS];
+            
+            beginTime = System.currentTimeMillis();
+            Main: while (!threadDie){
+                Delay.msDelay(POLL_DELAY_MS);
+                retVal = getData(REG_ENCODERSREAD, buffer, 8);
+                failCount = 0;
+                while (retVal < 0) {
+                    if (++failCount>4) {
+                        continue Main;
+                    }
+                    retVal=getData(REG_ENCODERSREAD, buffer, 8);
+                }
+                
+                // baseline the time after successful I2C transaction
+                endTime = System.currentTimeMillis();
+                timeDelta = endTime - beginTime;
+                beginTime = endTime;
+                
+                // parse the buffer into the counts
+                synchronized (this){
+                    TachoCount[MOTOR_1] = EndianTools.decodeIntBE(buffer, 0);
+                    TachoCount[MOTOR_2] = EndianTools.decodeIntBE(buffer, 4);
+                }
+                
+                // Do velocity calcs (deg per sec) TODO verify functionality with no encoder attached
+                for (int i=0;i<CHANNELS;i++) {
+                    // save a dps sample
+                    samples[i][sampleIndex] = (float)Math.abs(TachoCount[i] - tachoBegin[i]) / timeDelta * 250;
+                    tachoBegin[i] = TachoCount[i];
+                    
+                    // rotate the index if needed
+                    if (i==CHANNELS-1) {
+                        if (++sampleIndex >= samples[i].length) sampleIndex = 0;
+                    }
+                    
+                    // average the samples and the last result (degpersec)
+                    for (int ii=0;ii<samples[i].length;ii++) {
+                        degpersecAccum[i] += samples[i][ii];
+                    }
+                    this.degpersec[i] = degpersecAccum[i] / (samples[i].length + 1);
+                    degpersecAccum[i] = this.degpersec[i];
+                }
+            }
         }
     }
     
