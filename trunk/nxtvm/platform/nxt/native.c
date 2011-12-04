@@ -426,9 +426,9 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case getFirmwareRawVersion_4_5I:
     push_word((STACKWORD) VERSION_NUMBER); 
     break;
-  case hsEnable_4_5V:
+  case hsEnable_4II_5V:
     {
-      if (hs_enable() == 0)
+      if (hs_enable((int)p0, (int)paramBase[1]) == 0)
         return EXEC_RETRY;
     }
     break;
