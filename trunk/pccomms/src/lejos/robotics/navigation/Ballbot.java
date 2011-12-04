@@ -9,6 +9,7 @@ import lejos.nxt.SensorPort;
 import lejos.nxt.Sound; // TODO: Visual count-down only, no sound.
 import lejos.nxt.addon.GyroSensor; // TODO: Use Gyroscope interface. Returns degrees/second velocity.
 import lejos.robotics.EncoderMotor;
+import lejos.robotics.Gyroscope;
 
 /**
  * <p>This class dynamically stabilizes a ballbot type of robot. The ballbot robot uses two motors to drive a ball
@@ -40,7 +41,7 @@ public class Ballbot extends Thread { // TODO: Thread should be a private inner 
 	*/
 	
 	// Motors and gyro:
-	private GyroSensor gyro; 
+	private Gyroscope gyro; 
 	protected EncoderMotor my_motor;
 	//protected EncoderMotor right_motor; // TODO
 	
@@ -164,7 +165,7 @@ public class Ballbot extends Thread { // TODO: Thread should be a private inner 
 	 * @param gyro A HiTechnic gyro sensor
 	 * @param wheelDiameter diameter of wheel, preferably use cm (printed on side of LEGO tires in mm)
 	 */
-	private Ballbot(EncoderMotor motor, GyroSensor gyro, double wheelDiameter) { // TODO: Wheel diam will be unnecessary?
+	private Ballbot(EncoderMotor motor, Gyroscope gyro, double wheelDiameter) { // TODO: Wheel diam will be unnecessary?
 		this.my_motor = motor;
 		
 		this.gyro = gyro;
@@ -184,7 +185,7 @@ public class Ballbot extends Thread { // TODO: Thread should be a private inner 
 	 * @param yGyro The gyro accompanying xMotor. Monitors the y-axis
 	 * @param rollerDiameter The diameter of the motorized rollers. Usually NXT 2.0 wheels (4.32 cm)
 	 */
-	public Ballbot(EncoderMotor xMotor, GyroSensor xGyro, EncoderMotor yMotor, GyroSensor yGyro, double rollerDiameter) {
+	public Ballbot(EncoderMotor xMotor, Gyroscope xGyro, EncoderMotor yMotor, Gyroscope yGyro, double rollerDiameter) {
 		threadx = new Ballbot(xMotor, xGyro, rollerDiameter);
 		thready = new Ballbot(yMotor, yGyro, rollerDiameter);
 		
@@ -216,9 +217,7 @@ public class Ballbot extends Thread { // TODO: Thread should be a private inner 
 	 * gets another set of samples.
 	 */
 	private void getGyroOffset() {
-		double gSum;
-		int  i, gMin, gMax, g;
-
+		
 		LCD.clear();
 		LCD.drawString("NXJ Ballbot",0,1);
 
@@ -226,37 +225,7 @@ public class Ballbot extends Thread { // TODO: Thread should be a private inner 
 		LCD.drawString("flat to get gyro", 0, 5);
 		LCD.drawString("offset.", 0, 6);
 
-		// Ensure that the motor controller is active since this affects the gyro values.
-		// TODO: Could try running the motors at very low power, which is what it normally runs at.
-		//my_motor.flt(); //These methods don't do it for some reason.
-		
-		Motor.A.flt(); // Must use this for it to work for some reason.
-		
-		do {
-			gSum = 0.0;
-			gMin = 1000;
-			gMax = -1000;
-			for (i=0; i<OFFSET_SAMPLES; i++) {
-				g = gyro.readValue();
-
-				if (g > gMax)
-					gMax = g;
-				if (g < gMin)
-					gMin = g;
-
-				gSum += g;
-				try { Thread.sleep(5);
-				} catch (InterruptedException e) {}
-			}
-		} while ((gMax - gMin) > 1);   // Reject and sample again if range too large
-
-		//Average the sum of the samples.
-		gOffset = gSum / OFFSET_SAMPLES + 1.0;
-
-		// Even with motor controller active, the initial offset appears to
-		// be off from the actual needed offset to keep robot from wondering.
-		// This +1 helps keep robot from wondering when it first starts to
-		// balance. NOTE: Maybe running motors @ low power will improve it. -BB
+		gyro.recalibrateOffset();
 	}
 
 	/**
@@ -285,7 +254,7 @@ public class Ballbot extends Thread { // TODO: Thread should be a private inner 
 	private void updateGyroData() {
 		float gyroRaw;
 
-		gyroRaw = gyro.readValue();
+		gyroRaw = gyro.getAngularVelocity();
 		gOffset = EMAOFFSET * gyroRaw + (1-EMAOFFSET) * gOffset;
 		gyroSpeed = gyroRaw - gOffset; // Angular velocity (degrees/sec)
 
@@ -514,8 +483,8 @@ public class Ballbot extends Thread { // TODO: Thread should be a private inner 
 	 * @param xaxisPower
 	 * @param yaxisPower
 	 */
-	public void wheelDriver(int xaxisPower, int yaxisPower) {
-		threadx.wheelDriver(xaxisPower);
-		thready.wheelDriver(yaxisPower);
+	public void impulseMove(int x_axisPower, int y_axisPower) {
+		threadx.wheelDriver(x_axisPower);
+		thready.wheelDriver(y_axisPower);
 	}	
 }

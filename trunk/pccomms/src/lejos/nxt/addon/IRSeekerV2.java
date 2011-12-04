@@ -30,9 +30,8 @@ public class IRSeekerV2 extends I2CSensor
 
    public IRSeekerV2(I2CPort port, Mode mode) 
    { 
-      super(port, I2CPort.STANDARD_MODE); 
+      super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
       setMode(mode); 
-      setAddress(address); 
    } 
 
    /** 
