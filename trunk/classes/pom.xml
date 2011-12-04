@@ -23,35 +23,9 @@
     <packaging>jar</packaging>
 
     <build>
-        <!-- copy to canonical source dir @todo better solution is to move project source folders under a common parent folder, eg: 'src/main/java'. -->
-        <resources>
-            <resource>
-                <directory>java</directory>
-                <targetPath>../../src/main/java/java</targetPath>
-            </resource>
-            <resource>
-                <directory>javax</directory>
-                <targetPath>../../src/main/java/javax</targetPath>
-            </resource>
-            <resource>
-                <directory>lejos</directory>
-                <targetPath>../../src/main/java/lejos</targetPath>
-            </resource>
-        </resources>
+        <sourceDirectory>src</sourceDirectory>
 
         <plugins>
-
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <configuration>
-                    <!-- makes 'clean' phase also delete source/test files that were copied to canonical locations. @todo see todo above. -->
-                    <filesets>
-                        <fileset>
-                            <directory>src</directory>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
 
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
