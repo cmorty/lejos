@@ -3,6 +3,10 @@ package lejos.nxt.addon.tetrix;
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 
+import lejos.nxt.LCD;
+
+import lejos.robotics.RegulatedMotorListener;
+
 import lejos.util.Delay;
 import lejos.util.EndianTools;
 
@@ -45,6 +49,8 @@ public class TetrixMotorController extends I2CSensor {
     static final int CMD_ISMOVING = 11;
     static final int CMD_SETREGULATE = 12;
     static final int CMD_GETTACHO = 13;
+    static final int CMD_GETSPEED = 14;
+    static final int CMD_GETLIMITANGLE = 15;
     
     private int[] motorState = {STATE_STOPPED, STATE_STOPPED};
     private static final int STATE_STOPPED = 0;
@@ -88,11 +94,14 @@ public class TetrixMotorController extends I2CSensor {
     static final int MOTPARAM_OP_FALSE=0;
     
     // motor and monitor instance buckets
-    private TetrixEncoderMotor[] motors= new TetrixEncoderMotor[CHANNELS];
+    private TetrixRegulatedMotor[] motors= new TetrixRegulatedMotor[CHANNELS];
     private BUSYMonitor[] bUSYMonitors = new BUSYMonitor[CHANNELS];
+    private TachoMonitor tachoMonitor;
     
     // I2C buffer
     private byte[] buf = new byte[12];
+    
+    private int limitangle=0;
 
     /**
      * Instantiate a HiTechnic TETRIX Motor Controller connected to the given <code>port</code> and daisy chain position.
@@ -125,13 +134,15 @@ public class TetrixMotorController extends I2CSensor {
                 for (;;){
                     getData(REG_VERSION, buf, 0);
                     Delay.msDelay(KEEPALIVE_PING_INTERVAL);
+                    // let the thread die if we are constantly getting tachocounts as this will keep the contoller active instead
+                    if (tachoMonitorAlive()) break;
                 }
             }
         });
         t1.setDaemon(true);
         t1.start();
     }
-
+    
     // when a rotate is issued, an instance monitors the BUSY bit and sets STATE_STOPPED when the command completes
     private class BUSYMonitor extends Thread {
         int channel;
@@ -141,10 +152,11 @@ public class TetrixMotorController extends I2CSensor {
         public void run(){
             byte buf[] = {(byte)MODEBIT_BUSY};
             while ((buf[0] & MODEBIT_BUSY) == MODEBIT_BUSY) {
-                Delay.msDelay(50);
+                Delay.msDelay(100);
                 if (getData(REGISTER_MAP[REG_IDX_MODE][channel], buf, 1)!=0) break; // exit on 12c fault
             }
             motorState[channel]=STATE_STOPPED;
+            motors[channel].doListenerState(TetrixRegulatedMotor.LISTENERSTATE_STOP);
         }
     }
     
@@ -155,7 +167,9 @@ public class TetrixMotorController extends I2CSensor {
         private boolean threadDie = false;
         private int[] TachoCount = new int[CHANNELS];
         private byte[] buffer = new byte[8];
-        private float[] degpersec = new float[CHANNELS];
+        private volatile float[] degpersec = new float[CHANNELS];
+        private float[][] samples = new float[CHANNELS][3];
+        private int sampleIndex=0;
         
         TachoMonitor(){
             this.setDaemon(true);
@@ -169,13 +183,19 @@ public class TetrixMotorController extends I2CSensor {
             return TachoCount[channel];
         }
         
+        synchronized int getSpeed(int channel) {
+            return (int)(degpersec[channel] * 100);
+        }
+        
+        synchronized boolean isMoving(int channel){
+            return samples[channel][sampleIndex]!=0f;
+        }
+        
         public void run(){
             int retVal;
             int failCount;
             int[] tachoBegin = new int[CHANNELS];
             long endTime, beginTime, timeDelta;
-            float[][] samples = new float[CHANNELS][3];
-            int sampleIndex=0;
             float[] degpersecAccum = new float[CHANNELS];
             
             beginTime = System.currentTimeMillis();
@@ -203,13 +223,14 @@ public class TetrixMotorController extends I2CSensor {
                 
                 // Do velocity calcs (deg per sec) TODO verify functionality with no encoder attached
                 for (int i=0;i<CHANNELS;i++) {
-                    // save a dps sample
-                    samples[i][sampleIndex] = (float)Math.abs(TachoCount[i] - tachoBegin[i]) / timeDelta * 250;
-                    tachoBegin[i] = TachoCount[i];
-                    
-                    // rotate the index if needed
-                    if (i==CHANNELS-1) {
-                        if (++sampleIndex >= samples[i].length) sampleIndex = 0;
+                    synchronized (this){
+                        // rotate the index if needed
+                        if (i==CHANNELS-1) {
+                            if (++sampleIndex >= samples[i].length) sampleIndex = 0;
+                        }
+                        // save a dps sample
+                        samples[i][sampleIndex] = (float)Math.abs(TachoCount[i] - tachoBegin[i]) / timeDelta * 250;
+                        tachoBegin[i] = TachoCount[i];
                     }
                     
                     // average the samples and the last result (degpersec)
@@ -222,6 +243,9 @@ public class TetrixMotorController extends I2CSensor {
             }
         }
     }
+    private boolean tachoMonitorAlive() {
+        return tachoMonitor!=null && tachoMonitor.isAlive();
+    }
     
     /**
      * Get the <code>TetrixMotor</code> instance that is associated with the <code>motorID</code>.
@@ -231,13 +255,15 @@ public class TetrixMotorController extends I2CSensor {
      * @return The <code>TetrixMotor</code> instance 
      * @see lejos.nxt.addon.tetrix.TetrixMotor
      * @see #getEncoderMotor
+     * @see #getRegulatedMotor
      */
     public TetrixMotor getBasicMotor(int motorID) {
-        return getEncoderMotor(motorID);
+        return getRegulatedMotorInstance(motorID, false);
     }
     
     /**
-     * Get the <code>TetrixEncoderMotor</code> instance that is associated with the <code>motorID</code>.
+     * Get the <code>TetrixEncoderMotor</code> instance that is associated with the <code>motorID</code>. The motor must
+     * have an encoder installed for a <code>TetrixEncoderMotor</code> instance to work correctly.
      * 
      * @param motorID The motor ID number. This is indicated on the HiTechnic Motor Controller and is
      * represented using <code> {@link #MOTOR_1}</code> or <code> {@link #MOTOR_2}</code>.
@@ -245,12 +271,38 @@ public class TetrixMotorController extends I2CSensor {
      * @throws IllegalArgumentException if invalid <code>motorID</code>
      * @see lejos.nxt.addon.tetrix.TetrixEncoderMotor
      * @see #getBasicMotor
+     * @see #getRegulatedMotor
      */
     public TetrixEncoderMotor getEncoderMotor(int motorID) {
+        return getRegulatedMotorInstance(motorID, false);
+    }
+    
+    /**
+     * Get the <code>TetrixRegulatedMotor</code> instance that is associated with the <code>motorID</code>. The motor must
+     * have an encoder installed for a <code>TetrixRegulatedMotor</code> instance to work correctly.
+     * 
+     * @param motorID The motor ID number. This is indicated on the HiTechnic Motor Controller and is
+     * represented using <code> {@link #MOTOR_1}</code> or <code> {@link #MOTOR_2}</code>.
+     * @return The <code>TetrixRegulatedMotor</code> instance 
+     * @throws IllegalArgumentException if invalid <code>motorID</code>
+     * @see lejos.nxt.addon.tetrix.TetrixRegulatedMotor
+     * @see #getBasicMotor
+     * @see #getEncoderMotor
+     */
+    public TetrixRegulatedMotor getRegulatedMotor(int motorID) {
+        return getRegulatedMotorInstance(motorID, true);
+    }
+    
+    private TetrixRegulatedMotor getRegulatedMotorInstance(int motorID, boolean startTachoMonitor) {
         if (motorID<MOTOR_1 || motorID>MOTOR_2) {
             throw new IllegalArgumentException("Invalid motor ID");
         }
-        if (motors[motorID]==null) motors[motorID]=new TetrixEncoderMotor(this, motorID);
+        if (startTachoMonitor && tachoMonitor==null) {
+            this.tachoMonitor = new TachoMonitor();
+            this.tachoMonitor.start();
+        }
+        if (motors[motorID]==null) motors[motorID]=new TetrixRegulatedMotor(this, motorID);
+        
         return motors[motorID];
     }
     
@@ -261,8 +313,7 @@ public class TetrixMotorController extends I2CSensor {
 //        System.out.println("");
 //        Button.waitForAnyPress();
 //    }
-
-    
+  
     private int setMode(int channel, boolean resetEncoder) {
 //        int mode=MODEBIT_SEL_POWER | MODEBIT_NTO;
         int mode=MODEBIT_SEL_POWER; 
@@ -291,6 +342,11 @@ public class TetrixMotorController extends I2CSensor {
     }
     
     private int getEncoderValue(int channel) {
+        // use latest tachoMonitor value for the motor if available
+        if (tachoMonitorAlive()) {
+            return tachoMonitor.getTachoCount(channel);
+        }
+        // .. otherwise, query the controller to get it
         getData(REGISTER_MAP[REG_IDX_ENCODER_CURRENT][channel], buf, 4);
         return EndianTools.decodeIntBE(buf, 0);
     }
@@ -305,6 +361,8 @@ public class TetrixMotorController extends I2CSensor {
         } else if(cmd==CMD_ROTATE_TO) {
             value *= 4;
         } else return;
+        
+        this.limitangle = Math.round(value * .25f) ;
         
         // set the encoder position
         EndianTools.encodeIntBE(value, buf, 0);
@@ -325,6 +383,7 @@ public class TetrixMotorController extends I2CSensor {
     
     private void motorGo(int channel, int command) {
         byte workingByte=0;
+        
         motorState[channel]=command + 1; // STATE_RUNNING_FWD, STATE_RUNNING_BKWD assuming command IN(CMD_FORWARD,CMD_BACKWARD)
         motorParams[MOTPARAM_ROTATE][channel]=MOTPARAM_OP_FALSE; //false
         // set the mode
@@ -388,7 +447,7 @@ public class TetrixMotorController extends I2CSensor {
             case CMD_RESETTACHO:
                 // reset encoder/tacho 
                 setMode(channel, true);
-                Delay.msDelay(15); // small delay to allow encoder value reset in controller to happen
+                Delay.msDelay(30); // small delay to allow encoder value reset in controller to happen
                 motorState[channel]=STATE_STOPPED;
                 break;
             case CMD_SETREVERSE:
@@ -398,9 +457,22 @@ public class TetrixMotorController extends I2CSensor {
             case CMD_ISMOVING:
                 commandRetVal=MOTPARAM_OP_TRUE;
                 if (motorState[channel]==STATE_STOPPED) commandRetVal=MOTPARAM_OP_FALSE;
+                // over-ride previous decision if regulated motor and it is moving
+                if (tachoMonitorAlive()) {
+                    commandRetVal = tachoMonitor.isMoving(channel)?MOTPARAM_OP_TRUE:MOTPARAM_OP_FALSE;
+                }
                 break;
             case CMD_SETREGULATE:
                 motorParams[MOTPARAM_REGULATED][channel]=operand; //1=true, 0=false
+                break;
+            case CMD_GETSPEED:
+                commandRetVal = 0;
+                if (tachoMonitorAlive()) {
+                    commandRetVal = tachoMonitor.getSpeed(channel);
+                }
+                break;
+            case CMD_GETLIMITANGLE:
+                commandRetVal = limitangle;
                 break;
             default:
                 throw new IllegalArgumentException("Invalid Command");

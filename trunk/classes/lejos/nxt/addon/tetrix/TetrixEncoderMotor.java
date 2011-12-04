@@ -30,9 +30,9 @@ public class TetrixEncoderMotor extends TetrixMotor implements Encoder{
         mc.doCommand(TetrixMotorController.CMD_RESETTACHO, 0, channel);
     }
    
-    private synchronized void waitRotateComplete() {
+    synchronized void waitRotateComplete() {
         while (isMoving()) {
-            Delay.msDelay(50);
+            Delay.msDelay(100);
         }
     }
     
@@ -45,8 +45,7 @@ public class TetrixEncoderMotor extends TetrixMotor implements Encoder{
      * until the rotation completes.
      */
     public void rotate(int degrees, boolean immediateReturn){
-        int cmd=TetrixMotorController.CMD_ROTATE;
-        mc.doCommand(cmd, degrees, channel);
+        mc.doCommand(TetrixMotorController.CMD_ROTATE, degrees, channel);
         if (!immediateReturn) waitRotateComplete();
     }
     
@@ -59,11 +58,18 @@ public class TetrixEncoderMotor extends TetrixMotor implements Encoder{
      * until the rotation completes.
      */
     public void rotateTo(int limitAngle, boolean immediateReturn){
-        int cmd=TetrixMotorController.CMD_ROTATE_TO;
-        mc.doCommand(cmd, limitAngle, channel);
+        mc.doCommand(TetrixMotorController.CMD_ROTATE_TO, limitAngle, channel);
         if (!immediateReturn) waitRotateComplete();
     }
 
+    /**
+     * Return the last angle that this motor was rotating to via one of the rotate methods.
+     * @return angle in degrees
+     */
+    public int getLimitAngle() {
+        return mc.doCommand(TetrixMotorController.CMD_GETLIMITANGLE, 0, channel);
+    }
+    
     /**
      * Disable or Enable internal motor controller speed regulation. Setting this to <code>true</code> will cause 
      * the motor controller firmware to adjust the motor power to compensate for changing loads in order to maintain 
