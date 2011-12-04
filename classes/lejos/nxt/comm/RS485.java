@@ -68,12 +68,18 @@ public class RS485 extends NXTCommDevice {
     static final int ST_FLAG = 0;
     static final int ST_ESCAPE = 1;
     static final int ST_DATA = 2;
+    
+    static final int OVERRUN = -1;
 
     static final Controller controller = new Controller();
     static volatile RS485Connection listeningCon = null;
 
+    /**
+     * prevent construction of this class
+     */
     private RS485()
 	{
+        // do nothing
 	}
 
 
@@ -146,7 +152,8 @@ public class RS485 extends NXTCommDevice {
                 {
                     // Make sure our address is correct and up to date.
                     setAddress();
-                    RS485.hsEnable();
+                    // enable using default speed and buffering
+                    RS485.hsEnable(0, 0);
                     if (newMode == DS_MASTER)
                     {
                         // Reset the network
@@ -915,8 +922,10 @@ public class RS485 extends NXTCommDevice {
 
     /**
      * Enable the RS485 hardware port.
+     * @param baudRate the baud rate to use in bps, a value of 0 uses the Lego standard rate
+     * @param bufferSize the I/O buffer size in bytes, a value of 0 uses values suitable for BitBus
      */
-    public static native void hsEnable();
+    public static native void hsEnable(int baudRate, int bufferSize);
 
     /**
      * Disable the RS485 hardware port.
@@ -928,7 +937,7 @@ public class RS485 extends NXTCommDevice {
      * @param buf
      * @param offset
      * @param len
-     * @return the number of bytes read
+     * @return the number of bytes read, if a buffer overrun occurs OVERRUN (-1) is returned.
      */
     public static native int hsRead(byte [] buf, int offset, int len);
 
@@ -954,6 +963,7 @@ public class RS485 extends NXTCommDevice {
          * @param mode The I/O mode to use for this connection
          * @return A NXTConnection object for the new connection or null if error.
          */
+        @Override
         public NXTConnection connect(String target, int mode)
         {
             return RS485.connect(target, mode);
@@ -965,6 +975,7 @@ public class RS485 extends NXTCommDevice {
          * @param mode I/O mode to be used for the accepted connection.
          * @return A NXTConnection object for the new connection or null if error.
          */
+        @Override
         public NXTConnection waitForConnection(int timeout, int mode)
         {
             return RS485.waitForConnection(timeout, mode);
@@ -974,6 +985,7 @@ public class RS485 extends NXTCommDevice {
          * Cancel a connection attempt.
          * @return true if the connection attempt has been aborted.
          */
+        @Override
         public boolean cancel()
         {
             return RS485.cancelConnect();

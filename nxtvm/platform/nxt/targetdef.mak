@@ -28,6 +28,7 @@ C_PLATFORM_OBJECTS := \
 	sound.o \
 	bt.o \
 	hs.o \
+	usart.o \
 	printf.o
 
 C_HOOK_OBJECTS := \

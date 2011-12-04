@@ -155,7 +155,7 @@ usbSetSerialNo(Ljava/lang/String;)V
 usbSetName(Ljava/lang/String;)V
 
 #RS485/Hispeed
-hsEnable()V
+hsEnable(II)V
 hsDisable()V
 hsWrite([BII)I
 hsRead([BII)I
