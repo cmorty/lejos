@@ -1,6 +1,7 @@
 package lejos.nxt.addon;
    
 import lejos.nxt.ADSensorPort;
+import lejos.nxt.Motor;
 //import lejos.nxt.LCD;
 import lejos.nxt.SensorConstants;
 import lejos.robotics.Gyroscope;
@@ -107,8 +108,13 @@ public class GyroSensor implements SensorConstants, Gyroscope {
     public float getAngularVelocity() {
         final int REBASELINE_INTERVAL=5000; // time in ms before rebaselining sample populations. Allows for drift to be managed
         final int CONSECUTIVE_REPR_SAMPLS=10; // # of consecutive samples < STDDEV_ENVELOPE to assume static sensor
+        
+        /** NOTE: I don't think this is needed if motor controller started first via Motor.A.flt() - BB */
+        /** NOTE2: It _is_ needed or my continual offset bias correction algorithm breaks. This provides the stdv threshold value
+         *         of non-movement "zero" values for the gyro. - KPT */
         final float STDDEV_ENVELOPE=.55f; // the standard deviation determined to limit the offset/bias population. Assumes 
                                           // initial sample population was done with non-moving sensor
+        
         int gsVal;
         float stdev;
         float gsvarianceTemp;
@@ -157,6 +163,9 @@ public class GyroSensor implements SensorConstants, Gyroscope {
      * @see #setOffset(int)
      */
     public void recalibrateOffset() {
+    	// TODO: Replace with recalibrateOffsetAlt()? It has the advantage of waiting
+    	// until the gyro is still and taking less time to calibrate. Less chance of user error via vibrations.
+    	
         // *** seed the initial bias/offset population
         offset=0;
         gsvarianceTotal=0;
@@ -170,4 +179,57 @@ public class GyroSensor implements SensorConstants, Gyroscope {
         }
         calibrating=false;
     }
+    
+    /**
+	 * Number of offset samples to average when calculating gyro offset.
+	 *<p>
+     * I'd like to comment that the Gyro I built this class with shifted it's zero value radically for up to 4 seconds so that is
+      * why I recalibrate for 5 seconds [with a 5 ms delay... lots of samples] -KPT  
+    */
+	private static final int OFFSET_SAMPLES = 100;
+
+    private double gOffset; // TODO: This previous Segoway variable should be the int offset value at top of GyroSensor code?
+    
+    
+     
+	/**
+	 * This function sets a suitable initial gyro offset.  It takes
+	 * 100 gyro samples over a time of 1/2 second and averages them to
+	 * get the offset.  It also check the max and min during that time
+	 * and if the difference is larger than one it rejects the data and
+	 * gets another set of samples.
+	 */
+	public void recalibrateOffsetAlt() {
+		double gSum;
+		int  i, gMin, gMax, g;
+		
+		// Bit of a hack here. Ensure that the motor controller is active since this affects the gyro values for HiTechnic.
+		// TODO: Only one needed, even if motor not plugged in?
+		Motor.A.flt();
+		Motor.B.flt(); 
+		Motor.C.flt();
+		
+		do {
+			gSum = 0.0;
+			gMin = 1000;
+			gMax = -1000;
+			calibrating=true;
+			for (i=0; i<OFFSET_SAMPLES; i++) {
+				g = readValue();
+				if (g > gMax)
+					gMax = g;
+				if (g < gMin)
+					gMin = g;
+
+				gSum += g;
+				try { Thread.sleep(5);
+				} catch (InterruptedException e) {}
+			}
+			calibrating=false;
+		} while ((gMax - gMin) > 1);   // Reject and sample again if range too large
+
+		//Average the sum of the samples.
+		gOffset = gSum / OFFSET_SAMPLES; // TODO: Used to have +1, which was mainly for stopping Segway wandering.	
+	}
+    
 }

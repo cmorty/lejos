@@ -5,10 +5,15 @@ import lejos.nxt.I2CSensor;
 import lejos.robotics.Gyroscope;
 
 /**
- * This class provides access to the gyro of Dexter Industries IMU sensor
- * Rate data can be fetched using the fetchAllRate method
- * Temperature data can be fetched using the fetchTemperature method
- * A user interface can be started using the runMenu method
+ * <p>This class provides access to the gyro of Dexter Industries IMU sensor.
+ * Rate data can be fetched using the fetchAllRate method.
+ * Temperature data can be fetched using the fetchTemperature method.</p>
+ * 
+ * <p><b>Orientation of Axes:</b> Assuming the flat side of the dIMU sensor is facing you and the sensor port
+ * is at the bottom, the axes are as follows: X axis runs from top to bottom, Y axis runs left to right, Z axis
+ * comes directly out the front of the sensor board.</p>
+ * 
+ * 
  * @author Aswin Bouwmeester
  * @version 1.0
  */
@@ -151,7 +156,7 @@ public class DIMUGyro extends I2CSensor {
 	}
 
 	/**
-	 * Axis units supported by the sensor. Used with the DIMUGyro#getAxis() method.
+	 * Axis units supported by the sensor. Used with the {@link lejos.nxt.addon.DIMUGyro#getAxis(Axis)} method.
 	 * @author BB
 	 *
 	 */
@@ -234,6 +239,7 @@ public class DIMUGyro extends I2CSensor {
 		}
 		
 		public float getAngularVelocity() {
+			// TODO: Fancy code to recycle values in temp if another axis requested within xx ms? (xx=I2C time to retrieve data) 
 			float[] temp = {0, 0, 0};
 			fetchAllRate(temp, RateUnits.DPS);
 			return temp[axis_index];
@@ -241,6 +247,7 @@ public class DIMUGyro extends I2CSensor {
 
 		public void recalibrateOffset() {
 			// TODO: Way to calibrate only the one axis? 
+			calculateOffset();
 		}
 	}
 	
@@ -333,7 +340,9 @@ public class DIMUGyro extends I2CSensor {
 
 	}
 
-	public String getSensorType() {
+	@Override
+	public String getVendorID() {
+		// TODO: Probably "Dexter" would be more appropriate here?
 		return "L3G4200D";
 	}
 
