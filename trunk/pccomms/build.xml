@@ -20,6 +20,10 @@
  	<!-- compiles the classes -->
   	<target name="classes" description="compile classes" depends="prepare">
   		<!--
+  			Grab copied of some classes from the classes project
+  		-->
+  		<ant antfile="copy.xml" target="copy"/>
+  		<!--
   			Ant is NOT suitable for incremental compilation.
   			It doesn't keep track of inlined constants and possibly
   			other things. So we simply delete the output folder.
