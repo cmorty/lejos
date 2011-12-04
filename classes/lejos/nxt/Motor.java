@@ -34,5 +34,8 @@ public class Motor
      * Motor C.
      */
     public static final NXTRegulatedMotor C = new NXTRegulatedMotor(MotorPort.C);
-
+    
+    private Motor() {
+    	// Motor class cannot be instantiated
+    }
 }

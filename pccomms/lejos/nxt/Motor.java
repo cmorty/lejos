@@ -26,4 +26,8 @@ public class Motor {
 	 * Motor C.
 	 */
 	public static final RemoteMotor C = new RemoteMotor (nxtCommand, 2);
+	
+    private Motor() {
+    	// Motor class cannot be instantiated
+    }
 }
