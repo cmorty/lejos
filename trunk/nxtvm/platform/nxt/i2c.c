@@ -208,18 +208,23 @@ pulse_stretch(i2c_port *p)
 {
   // Allow pulse stretching, make clock line float
   *AT91C_PIOA_ODR = p->scl_pin;
-  // Has the pulse been stretched too much? If so report an error
-  if (--p->delay <= 0)
-  {
-    p->state = I2C_FAULT;
-    return 1;
-  }
   // Implement a fast wait routine, to avoid having to wait for an entire
   // clock cycle.
   int i = 0;
   while(!(*AT91C_PIOA_PDSR & p->scl_pin))
     if (i++ >= I2C_CLOCK_RETRY)
+    {
+      // Has the pulse been stretched too much? If so report an error
+      if (--p->delay <= 0)
+      {
+        p->state = I2C_FAULT;
+        *AT91C_PIOA_OER = p->scl_pin;
+      }
       return 1;
+    }
+  // re-enable clock pin
+  *AT91C_PIOA_SODR = p->scl_pin;
+  *AT91C_PIOA_OER = p->scl_pin;
   return 0;
 }
 
@@ -261,7 +266,6 @@ i2c_doio(i2c_port *p)
       if (p->high_speed && pulse_stretch(p))
         break;
       *AT91C_PIOA_SODR = p->scl_pin;
-      *AT91C_PIOA_OER = p->scl_pin;
       p->state = I2C_START2;
       break;
     case I2C_START2:		
@@ -280,39 +284,41 @@ i2c_doio(i2c_port *p)
       *AT91C_PIOA_CODR = p->scl_pin;
       p->delay = I2C_MAX_STRETCH;
       p->state = I2C_TXDATA2;
-      break;
-    case I2C_TXDATA2:
+      p->nbits--;
+      // add extra delay to allow pin to settle (yuk!)
+      { volatile int i; for(i = 0; i < 5; i++);}
       // set the data line
       if(p->bits & 0x80)
         *AT91C_PIOA_SODR = p->sda_pin;
       else
         *AT91C_PIOA_CODR = p->sda_pin;
+      p->bits <<= 1;
       *AT91C_PIOA_OER = p->sda_pin;
+      break;
+    case I2C_TXDATA2:
       if (p->high_speed && pulse_stretch(p))
         break;
-      p->bits <<= 1;
-      p->nbits--;
+      // Take SCL high
+      *AT91C_PIOA_SODR = p->scl_pin;
       if((p->nbits & 7) == 0) 
           p->state = I2C_TXACK1;
         else
           p->state = I2C_TXDATA1;
-      // Take SCL high
-      *AT91C_PIOA_SODR = p->scl_pin;
-      *AT91C_PIOA_OER = p->scl_pin;
       break;
     case I2C_TXACK1:
       // Take SCL low
       *AT91C_PIOA_CODR = p->scl_pin;
       p->state = I2C_TXACK2;
+      p->delay = I2C_MAX_STRETCH;
       // release the data line
       *AT91C_PIOA_ODR = p->sda_pin;
       break;
     case I2C_TXACK2:
       // Take SCL High
+      if (p->high_speed && pulse_stretch(p))
+        break;
       *AT91C_PIOA_SODR = p->scl_pin;
-      if(*AT91C_PIOA_PDSR & p->sda_pin)
-        p->state = I2C_FAULT;
-      else if (p->nbits == 0)
+      if (p->nbits == 0)
       {
         p->current_pt++;
         p->state = p->current_pt->state;
@@ -323,6 +329,8 @@ i2c_doio(i2c_port *p)
         p->bits = *(p->data);
         p->state = I2C_TXDATA1;
       }
+      if(*AT91C_PIOA_PDSR & p->sda_pin)
+        p->state = I2C_FAULT;
       break;
     case I2C_NEWREAD:		
       // Start the read partial transaction
@@ -349,54 +357,61 @@ i2c_doio(i2c_port *p)
         break;
       // Take SCL High
       *AT91C_PIOA_SODR = p->scl_pin;
-      *AT91C_PIOA_OER = p->scl_pin;
       p->state = I2C_RXDATA3;
-      break;
-    case I2C_RXDATA3:
       // Receive a bit.
       p->bits <<= 1;
       if(*AT91C_PIOA_PDSR & p->sda_pin)
         p->bits |= 1;
+      break;
+    case I2C_RXDATA3:
       // Take SCL Low
       *AT91C_PIOA_CODR = p->scl_pin;
+      p->delay = I2C_MAX_STRETCH;
       p->nbits--;
       if((p->nbits & 7) == 0){
         *(p->data) = p->bits;
         if (p->nbits)
+        {
+          *AT91C_PIOA_CODR = p->sda_pin;
           p->state = I2C_RXACK1;
+        }
         else
+        {
+          *AT91C_PIOA_SODR = p->sda_pin;
           p->state = I2C_RXENDACK;
+        }
+        // prepare for the next byte
+        p->data++;
+        p->bits = 0;
+        // set the ack state
+        *AT91C_PIOA_OER = p->sda_pin;
       }
       else
-        p->state = I2C_RXDATA1;
+        p->state = I2C_RXDATA2;
       break;
     case I2C_RXACK1:
-      // take data low
-      *AT91C_PIOA_CODR = p->sda_pin;
-      *AT91C_PIOA_OER = p->sda_pin;
-      // Move on to next byte
-      p->data++;
-      p->bits = 0;
-      p->state = I2C_RXACK2;
-      // Clock high
+      if (p->high_speed && pulse_stretch(p))
+        break;
+      // Take SCL High
       *AT91C_PIOA_SODR = p->scl_pin;
+      p->state = I2C_RXACK2;
       break;
     case I2C_RXACK2:
       // Take SCL Low
       *AT91C_PIOA_CODR = p->scl_pin;
-      p->state = I2C_RXDATA1;
+      p->state = I2C_RXDATA2;
+      p->delay = I2C_MAX_STRETCH;
       // get ready to read
       *AT91C_PIOA_ODR = p->sda_pin;
       break;
     case I2C_RXENDACK:
-      // take data high
-      *AT91C_PIOA_SODR = p->sda_pin;
-      *AT91C_PIOA_OER = p->sda_pin;
+      if (p->high_speed && pulse_stretch(p))
+        break;
+      // Take SCL High
+      *AT91C_PIOA_SODR = p->scl_pin;
       // get ready to move to the next state
       p->current_pt++;
       p->state = p->current_pt->state;
-      // Clock high data is already high
-      *AT91C_PIOA_SODR = p->scl_pin;
       break;
     case I2C_STOP1:
       // Issue a Stop state
@@ -450,7 +465,6 @@ i2c_doio(i2c_port *p)
         break;
       // Take SCL high
       *AT91C_PIOA_SODR = p->scl_pin;
-      *AT91C_PIOA_OER = p->scl_pin;
       p->state = I2C_ENDSTOP3;
       break;  
     case I2C_ENDSTOP3:
