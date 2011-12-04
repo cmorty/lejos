@@ -54,6 +54,7 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 			String[] classpath = this.getClasspath(configuration);
 			IJavaProject project = this.verifyJavaProject(configuration);
 			
+			//TODO for some reason, the debug view fills with launch entries
 			
 			monitor.worked(1);			
 			if (monitor.isCanceled())
@@ -74,6 +75,7 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 			String binaryPath = binary.getLocation().toOSString();
 			String binaryDebugPath = binaryDebug.getLocation().toOSString();
 			
+			monitor.worked(1);			
 			monitor.beginTask("Linking and uploading program to the brick...", IProgressMonitor.UNKNOWN);
 			int r;
 			try
