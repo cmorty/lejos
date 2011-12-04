@@ -110,6 +110,8 @@ public class GyroSensor implements SensorConstants, Gyroscope {
         final int CONSECUTIVE_REPR_SAMPLS=10; // # of consecutive samples < STDDEV_ENVELOPE to assume static sensor
         
         /** NOTE: I don't think this is needed if motor controller started first via Motor.A.flt() - BB */
+        /** NOTE2: It _is_ needed or my continual offset bias correction algorithm breaks. This provides the stdv threshold value
+         *         of non-movement "zero" values for the gyro. - KPT */
         final float STDDEV_ENVELOPE=.55f; // the standard deviation determined to limit the offset/bias population. Assumes 
                                           // initial sample population was done with non-moving sensor
         
@@ -180,11 +182,16 @@ public class GyroSensor implements SensorConstants, Gyroscope {
     
     /**
 	 * Number of offset samples to average when calculating gyro offset.
-	 */
+	 *<p>
+     * I'd like to comment that the Gyro I built this class with shifted it's zero value radically for up to 4 seconds so that is
+      * why I recalibrate for 5 seconds [with a 5 ms delay... lots of samples] -KPT  
+    */
 	private static final int OFFSET_SAMPLES = 100;
 
     private double gOffset; // TODO: This previous Segoway variable should be the int offset value at top of GyroSensor code?
     
+    
+     
 	/**
 	 * This function sets a suitable initial gyro offset.  It takes
 	 * 100 gyro samples over a time of 1/2 second and averages them to
@@ -193,7 +200,6 @@ public class GyroSensor implements SensorConstants, Gyroscope {
 	 * gets another set of samples.
 	 */
 	public void recalibrateOffsetAlt() {
-		
 		double gSum;
 		int  i, gMin, gMax, g;
 		
