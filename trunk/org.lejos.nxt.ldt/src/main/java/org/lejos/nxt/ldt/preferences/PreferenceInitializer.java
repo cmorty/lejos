@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.lejos.nxt.ldt.LeJOSPlugin;
+import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 /**
  * Class used to initialize default preference values.
@@ -40,9 +41,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		if (nxjHome != null)
 			store.put(PreferenceConstants.KEY_NXJ_HOME, nxjHome);
 		
-		String osName = System.getProperty("os.name", "").toLowerCase();
-		store.putBoolean(PreferenceConstants.KEY_SEPARATE_JVM, osName.startsWith("windows ")
-				|| osName.startsWith("mac os x"));
+		store.putBoolean(PreferenceConstants.KEY_SEPARATE_JVM, LeJOSNXJUtil.isWindows()
+				|| LeJOSNXJUtil.isOSX());
 	}
 
 }

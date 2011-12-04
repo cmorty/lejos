@@ -1,6 +1,7 @@
 package org.lejos.nxt.ldt.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Iterator;
@@ -40,6 +41,14 @@ public class LeJOSNXJUtil {
 	public static final String LIBDIR = "lib";
 	public static final String LIBSUBDIR_PC = "pc";
 	public static final String LIBSUBDIR_NXT = "nxt";
+	
+	public static boolean isWindows() {
+		return System.getProperty("os.name", "").toLowerCase().startsWith("windows ");
+	}
+
+	public static boolean isOSX() {
+		return System.getProperty("os.name", "").toLowerCase().startsWith("mac os x");
+	}
 
 	public static boolean getJavaProjectFromSelection(ISelection selection, Collection<IJavaProject> dst) {
 		boolean foundInvalid = false;
@@ -359,4 +368,48 @@ public class LeJOSNXJUtil {
 	public static final String TOOL_FLASHG = "lejos.pc.tools.NXJFlashG";
 	public static final String TOOL_LINK_AND_UPLOAD = "lejos.pc.tools.NXJLinkAndUpload";
 	public static final String TOOL_LINK = "lejos.pc.tools.NXJLink";
+
+	public static Process exec(List<String> args2) throws IOException
+	{
+		if (!isWindows())
+		{
+			String[] args3 = args2.toArray(new String[args2.size()]);
+			return Runtime.getRuntime().exec(args3);
+		}
+		
+		if (args2.isEmpty())
+			throw new IndexOutOfBoundsException("command is an empty list");
+		
+		// Both java.lang.Runtime.exec(String[]) as well as in java.lang.ProcessBuilder
+		// don't escape the arguments that are passed to the program. Also, they fail to
+		// handle the empty string correctly. Hence, we manually escape all arguments.
+		StringBuilder sb = new StringBuilder();
+		for (String t : args2)
+		{
+			sb.append(' ');
+			escapeWindowsArg(t, sb);
+		}
+		
+		return Runtime.getRuntime().exec(sb.substring(1));
+	}
+
+	private static void escapeWindowsArg(String t, StringBuilder sb) {
+		// escaping according to CommandLineToArgvW 
+		// http://msdn.microsoft.com/de-de/site/bb776391
+		int len = t.length();
+		sb.append("\"");
+		for (int i=0; i<len; i++)
+		{
+			char c = t.charAt(i);
+			switch (c)
+			{
+				case '\\':
+				case '"':
+					sb.append('\\');
+				default:
+					sb.append(c);
+			}
+		}
+		sb.append("\"");
+	}
 }
