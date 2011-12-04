@@ -107,7 +107,7 @@ public class PIDController {
     public static final int PID_RAMP_THRESHOLD = 4;
     /**
      * The deadband value ID. Used for output clipping. If MV within +- this range relative to zero, MV of zero is returned.
-     * Set to zero to effectively disable. This is useful to avoid hunting arount the SP when there is a lot
+     * Set to zero to effectively disable. This is useful to avoid hunting around the SP when there is a lot
      * of slop in whatever the controller is controlling i.e. gear & link lash. The value passed to <tt>setPIDParam()</tt>
      *     is cast to an <tt>int</tt>. Using deadband is process actuator/control-specific and by definition, decreases accuracy 
      *     of reaching the <code>SP</code>.
@@ -174,6 +174,13 @@ public class PIDController {
      * accumulator for <code>Ki * error * dt</code>. 
      */
     public static final int PID_I = 11;
+    
+    /** The process variable (<code>PV</code>) value. Read-only.Calling <tt>setPIDParam()</tt> with this is ignored. The <tt>PV</tt> value is the
+     * last value passed to <code>doPID()</code>.
+     * 
+     * @see #doPID
+     */
+    public static final int PID_PV = 12;
 
     // Our default Constants for the PID controller 
     private float Kp=1.0f;          // proportional value determines the reaction to the current error
@@ -199,6 +206,7 @@ public class PIDController {
     private int msdelay;
     private Logger dataLogger=null;
     private int cycleCount=0;
+    private int PV;
     
     /**
      * Construct a PID controller instance using passed setpoint (SP) and millisecond delay (used before returning from a call to
@@ -206,6 +214,7 @@ public class PIDController {
      * @param setpoint The goal of the MV 
      * @param msdelay The delay in milliseconds. Set to 0 to disable any delay.
      * @see #doPID
+     * @see #setDelay
      */
     public PIDController(int setpoint, int msdelay) {
         this.setpoint = setpoint;
@@ -250,20 +259,20 @@ public class PIDController {
             case PIDController.PID_SETPOINT:
                 this.setpoint = (int)value;
                 this.cycleTime = 0;
-                integral = 0;
-                break; 
+                break;
             case PIDController.PID_I_LIMITLOW:
                 this.integralLowLimit = (int)value;
                 this.integralLimited = (this.integralLowLimit!=0);    
-                integral = 0;
                 break; 
             case PIDController.PID_I_LIMITHIGH:
                 this.integralHighLimit = (int)value;
                 this.integralLimited = (this.integralHighLimit!=0);
-                integral = 0;
                 break; 
             default:
+                return;
         }
+        // zero the Ki accumulator
+        integral = 0;
     }
 
     /** Get PID controller parameters.
@@ -310,6 +319,9 @@ public class PIDController {
             case PID_I:
                 retval = this.integral;
                 break;
+            case PID_PV:
+                retval = this.PV;
+                break;
             default:
         }
         return retval;
@@ -321,9 +333,19 @@ public class PIDController {
      * <P>This is one methodology to manage integral windup. This is <tt>false</tt> by default at instantiation.
      * 
      * @param status <tt>true</tt> to freeze, <tt>false</tt> to thaw
+     * @see #isIntegralFrozen
      */
     public void freezeIntegral(boolean status){
         this.disableIntegral = status;
+    }
+
+    /**
+     * 
+     * @return <code>true</code> if the integral accumulation is frozen
+     * @see #freezeIntegral
+     */
+    public boolean isIntegralFrozen() {
+        return this.disableIntegral;
     }
     
     /**
@@ -336,6 +358,7 @@ public class PIDController {
     public int doPID(int processVariable){
         int outputMV;
         int delay=0;
+        this.PV = processVariable;
         
         if (this.cycleTime==0) {
             this.cycleTime = System.currentTimeMillis();
@@ -435,11 +458,24 @@ public class PIDController {
         return (ov<0)?-1*workingOV:workingOV;
     }
 
-    /** Set the desired delay before <code>doPID()</code> returns. Set to zero to effectively disable.
+    /** 
+     * Set the desired delay before <code>doPID()</code> returns. Set to zero to effectively disable.
+     * 
      * @param msdelay Delay in milliseconds
+     * @see #getDelay
      */
     public void setDelay(int msdelay) {
         this.msdelay = msdelay;
+    }
+    
+    /**
+     * Returns the <code>doPID()</code> timing delay. 
+     * 
+     * @return The delay set by <code>setDelay()</code>
+     * @see #setDelay
+     */
+    public int getDelay() {
+        return this.msdelay;
     }
 }
 
