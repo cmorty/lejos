@@ -169,6 +169,7 @@
                                             <arg value="${binary}"/>
                                             <arg value="-od"/>
                                             <arg value="${debug}"/>
+                                            <arg value="-gr" />
                                             <arg value="-v"/>
                                             <arg value="${program}"/>
                                             <classpath>
@@ -238,6 +239,19 @@
             <artifactId>classes</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+
+        <!-- @todo BEGIN: remove these deps when support for maven2 is removed. (included as transitive dep in m3) -->
+        <dependency>
+            <groupId>lejos</groupId>
+            <artifactId>jtools</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>lejos</groupId>
+            <artifactId>pccomms</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <!-- @todo END: remove these deps when support for maven2 is removed. (included as transitive dep in m3) -->
     </dependencies>
 
 </project>
