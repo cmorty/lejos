@@ -30,8 +30,8 @@
                 <!-- @todo maybe move such resource files to canonical 'resource' tree? -->
                 <directory>${project.build.sourceDirectory}</directory>
                 <includes>
-                    <include>lejos/util/jni/*.properties</include>
-                    <include>lejos/pc/comm/*.bin</include>
+                    <include>lejos/**/*.bin</include>
+                    <include>lejos/**/*.properties</include>
                 </includes>
             </resource>
         </resources>

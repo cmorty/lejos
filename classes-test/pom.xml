@@ -148,13 +148,12 @@
                                         <mkdir dir="${project.build.outputDirectory}"/>
                                         
                                         <property name="test_classpath" refid="maven.test.classpath"/>
-                                            
+
                                         <!--<basename property="program" file="."/>-->
                                         <basename property="program" file="AllTests"/>
                                         <property name="binary" value="${project.build.directory}/${program}.nxj" />
                                         <property name="debug" value ="${project.build.directory}/${program}.nxd" />
                                         
-                                        <!-- @todo Fix this call, invoked via: mvn test -Pnxj -->
                                         <!-- Link the binary and create a signature file -->
                                         <java classname="lejos.pc.tools.NXJLink"
                                               fork="true"
@@ -166,17 +165,18 @@
                                             <arg path="${test_classpath}/"/>
                                             <arg value="--writeorder"/>
                                             <arg value="LE"/>
-                                            <arg value="${program}"/>
                                             <arg value="-o"/>
                                             <arg value="${binary}"/>
-                                            <arg value="-v"/>
-                                            <arg value="-gr"/>
+                                            <arg value="-od"/>
                                             <arg value="${debug}"/>
+                                            <arg value="-v"/>
+                                            <arg value="${program}"/>
                                             <classpath>
                                                 <pathelement path="${test_classpath}"/>
                                             </classpath>
                                         </java>
 
+                                        <!-- @todo Fix this call, invoked via: mvn test -Pnxj (from inside 'parent' project)-->
                                         <!-- upload and run the binary -->
                                         <java classname="lejos.pc.tools.NXJUpload"
                                               fork="true"
