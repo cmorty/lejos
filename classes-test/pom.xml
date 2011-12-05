@@ -154,8 +154,9 @@
                                         <property name="binary" value="${project.build.directory}/${program}.nxj" />
                                         <property name="debug" value ="${project.build.directory}/${program}.nxd" />
                                         
+                                        <!-- @todo Fix this call, invoked via: mvn test -Pnxj -->
                                         <!-- Link the binary and create a signature file -->
-                                        <java classname="js.tinyvm.TinyVM"
+                                        <java classname="lejos.pc.tools.NXJLink"
                                               fork="true"
                                               failonerror="true"
                                                 >
@@ -193,7 +194,7 @@
                                         <sleep seconds="4"/>
                                         
                                         <!-- attach a remote console to NXJ -->
-                                        <java classname="lejos.pc.tools.Console"
+                                        <java classname="lejos.pc.tools.NXJConsole"
                                               fork="true"
                                               failonerror="true"
                                                 >
