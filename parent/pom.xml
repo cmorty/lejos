@@ -145,7 +145,8 @@
 
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.0</version>
+                    <!-- NOTE: site-plugin v2.3 or v3.0 breaks site goal with maven2, so stay on v2.2 for maven2 support. -->
+                    <version>2.2</version>
                 </plugin>
 
                 <plugin>
@@ -209,7 +210,8 @@
         <plugins>
             <plugin>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.0</version>
+                <!-- NOTE: site-plugin v2.3 or v3.0 breaks site goal with maven2, so stay on v2.2 for maven2 support. -->
+                <version>2.2</version>
             </plugin>
             <!-- 'maven-project-info-reports-plugin' declaration is only required to keep enforcer happy under maven 2.2.x. -->
             <plugin>
@@ -264,6 +266,7 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-site-plugin</artifactId>
+                        <version>3.0</version>
                         <executions>
                             <execution>
                                 <id>attach-descriptor</id>
