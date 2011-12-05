@@ -11,7 +11,7 @@
 
     <artifactId>pcexample</artifactId>
 
-    <name>${project.artifactId} : Example PC project.</name>
+    <name>PC Example</name>
     <description>Simple example project to be run on the PC.</description>
 
     <scm>

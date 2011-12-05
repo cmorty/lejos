@@ -11,7 +11,7 @@
 
     <artifactId>samples</artifactId>
 
-    <name>${project.artifactId} : Sample projects.</name>
+    <name>Samples</name>
     <description>Samples that can be run on the brick, some of which can also be run on the PC.</description>
 
     <scm>

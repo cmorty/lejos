@@ -11,7 +11,7 @@
 
     <artifactId>example</artifactId>
 
-    <name>${project.artifactId} : Example project.</name>
+    <name>Example</name>
     <description>Simple example project to be run on the brick.</description>
 
     <scm>

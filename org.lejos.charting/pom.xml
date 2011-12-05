@@ -11,7 +11,7 @@
 
     <artifactId>charting</artifactId>
 
-    <name>${project.artifactId} : Charting classes.</name>
+    <name>Charting</name>
     <description>Charting support classes.</description>
 
     <scm>

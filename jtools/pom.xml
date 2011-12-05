@@ -11,7 +11,7 @@
 
     <artifactId>jtools</artifactId>
 
-    <name>${project.artifactId} : Tools to build nxt jvm classes.</name>
+    <name>jvm build tools</name>
     <description>Tools to build nxt jvm classes.</description>
 
     <scm>

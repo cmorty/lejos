@@ -11,7 +11,7 @@
 
     <artifactId>startup</artifactId>
 
-    <name>${project.artifactId} : Startup UI.</name>
+    <name>Startup UI</name>
     <description>The User Interface shown when the brick starts up.</description>
 
     <scm>
