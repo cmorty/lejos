@@ -671,7 +671,7 @@ public class DifferentialPilot implements
   /**
    * Starts the robot moving backward  along a curved path. This method is essentially
    * the same as
-   * {@link #steer(double turn rate )} except that the robot moves backward instead of forward.
+   * {@link #steer(double)} except that the robot moves backward instead of forward.
    * @param turnRate
    */
   public void steerBackward(final double turnRate)

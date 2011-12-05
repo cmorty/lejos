@@ -58,7 +58,7 @@ public class Coordinates{
 	 * 
 	 * <p>The latitude is given in WGS84 datum.</p>
 	 * @return the latitude in degrees
-	 * @see setLatitude(double)
+	 * @see #setLatitude(double)
 	 * 
 	 */
 	public double getLatitude() {
@@ -85,7 +85,7 @@ public class Coordinates{
 	 *  <p>The longitude is given in WGS84 datum.</p>
 	 *  
 	 *  @return the longitude in degrees
-	 *  @see setLongitude(double)
+	 *  @see #setLongitude(double)
 	 */
 	public double getLongitude() {
 		return longitude;
