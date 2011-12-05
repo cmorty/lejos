@@ -63,13 +63,6 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>${source.version}</source>
-                    <target>${target.version}</target>
-
-                    <verbose>true</verbose>
-                    <showWarnings>true</showWarnings>
-                    <showDeprecation>true</showDeprecation>
-
                     <optimize>true</optimize>
                 </configuration>
             </plugin>
