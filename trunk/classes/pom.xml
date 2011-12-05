@@ -11,8 +11,8 @@
 
     <artifactId>classes</artifactId>
 
-    <name>${project.artifactId} : Core java classes for lejos jvm</name>
-    <description>Core java classes for lejos jvm for execution on the NXT hardware.</description>
+    <name>Core JVM classes</name>
+    <description>Core java classes for Lejos JVM for execution on the NXT hardware.</description>
 
     <scm>
         <connection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/${project.artifactId}</connection>

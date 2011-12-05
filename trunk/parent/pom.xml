@@ -6,7 +6,7 @@
     <artifactId>lejos-parent</artifactId>
     <version>0.9-SNAPSHOT</version>
 
-    <name>${project.artifactId} : Lejos parent project</name>
+    <name>Lejos parent pom</name>
     <description>Lejos parent project, containing child modules.</description>
 
     <scm>
@@ -16,6 +16,14 @@
     <url>http://lejos.sourceforge.net/</url>
     
     <packaging>pom</packaging>
+
+    <distributionManagement>
+        <site>
+            <!-- fake url, is required to build fully linked site via: mvn package site site:stage -->
+            <id>dummyForSiteStage</id>
+            <url>dummySiteStageURL</url>
+        </site>
+    </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

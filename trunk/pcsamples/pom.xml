@@ -11,7 +11,7 @@
 
     <artifactId>pcsamples</artifactId>
 
-    <name>${project.artifactId} : PCSample projects.</name>
+    <name>PC Samples</name>
     <description>Samples that can be run on the PC.</description>
 
     <scm>

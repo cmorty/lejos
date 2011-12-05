@@ -11,8 +11,8 @@
 
     <artifactId>junit</artifactId>
 
-    <name>${project.artifactId} : Unit Test library for lejos.</name>
-    <description>Unit Test library for lejos based on junit for running tests on the NXT hardware.</description>
+    <name>Lejos JUnit</name>
+    <description>Unit Test library for Lejos based on JUnit for running tests on the NXT hardware.</description>
 
     <scm>
         <connection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/org.lejos.${project.artifactId}</connection>

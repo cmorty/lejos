@@ -11,8 +11,8 @@
 
     <artifactId>classes-test</artifactId>
 
-    <name>${project.artifactId} : Unit Tests of Core java classes</name>
-    <description>Unit Tests Core java classes for lejos jvm which execute natively on the NXT hardware.</description>
+    <name>Core JVM classes unit tests</name>
+    <description>Unit Tests Core java classes for Lejos JVM which execute on the NXT hardware.</description>
 
     <scm>
         <connection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/${project.artifactId}</connection>

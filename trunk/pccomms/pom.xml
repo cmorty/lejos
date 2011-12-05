@@ -11,7 +11,7 @@
 
     <artifactId>pccomms</artifactId>
 
-    <name>${project.artifactId} : Remote classes that execute on a PC.</name>
+    <name>PC Communications</name>
     <description>Remote classes that execute on a PC and communicate with the lejos jvm NXT hardware.</description>
 
     <scm>
