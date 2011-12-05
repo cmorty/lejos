@@ -99,9 +99,6 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>${source.version}</source>
-                    <target>${target.version}</target>
-
                     <!--
                         All that is need to kick any class from Sun's JDK out of the classpath.
                         Check the search paths using verbose="true" that they really don't contain
@@ -114,10 +111,6 @@
                         <bootclasspath>${nirvana.dir}</bootclasspath>
                         <extdirs>${nirvana.dir}</extdirs>
                     </compilerArguments>
-
-                    <verbose>true</verbose>
-                    <showWarnings>true</showWarnings>
-                    <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
 
