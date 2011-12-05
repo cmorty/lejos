@@ -197,7 +197,7 @@ public class BTConnection extends NXTConnection
 	 * Low level function called by the Bluetooth thread. It basically answers
 	 * the question: Should I switch to this channel and perform I/O? The answer
 	 * to this question can be controlled using the setActiveMode method.
-	 * @ return			true if the channel is interesting!
+	 * @return			true if the channel is interesting!
 	 */
 	synchronized boolean needsAttention()
 	{
