@@ -1,7 +1,7 @@
 package lejos.pc.tools;
 
 /**
- * @deprecated use lejos.pc.tools.NXJLink instead
+ * @deprecated use lejos.pc.tools.NXJConsole instead
  */
 @Deprecated
 public class Console
