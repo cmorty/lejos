@@ -87,6 +87,7 @@
 			author="true"
 			access="protected"
 			windowtitle="leJOS NXJ API documentation"
+			bootclasspath="${nirvana.dir}"
 			verbose="false"
 		>
 			<arg value="-quiet"/>

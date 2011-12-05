@@ -166,7 +166,10 @@ public class Button implements ListenerCaller
 	 * 
 	 * @param timeout The maximum number of milliseconds to wait
 	 * @return the bitmask 
-	 * @see {@link #ID_ENTER}, {@link #ID_LEFT}, {@link #ID_RIGHT}, {@link #ID_ESCAPE}
+	 * @see #ID_ENTER
+	 * @see #ID_LEFT
+	 * @see #ID_RIGHT
+	 * @see #ID_ESCAPE
 	 */
 	public static int waitForAnyEvent(int timeout) {
 		long end = (timeout == 0 ? 0x7fffffffffffffffL : System.currentTimeMillis() + timeout);
