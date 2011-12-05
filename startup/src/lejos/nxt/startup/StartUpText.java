@@ -350,7 +350,7 @@ public class StartUpText
      * 
      * @param digits Number of digits in the PIN.
      * @param title The text to display above the numbers.
-     * @param defaultNumber Start with a default PIN. Array of bytes up to 8 length.
+     * @param number Start with a default PIN. Array of bytes up to 8 length.
      * @return
      */
     private boolean enterNumber(String title, byte[] number, int digits)
