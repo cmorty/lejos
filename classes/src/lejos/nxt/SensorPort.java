@@ -1049,7 +1049,6 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * <i>Low-level API</i> for reading sensor values.
      * Currently always returns the raw ADC value.
      * @param aPortId Port ID (0..4).
-     * @param aRequestType ignored.
      */
     private static native int readSensorValue(int aPortId);
 
@@ -1127,7 +1126,7 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * @param aPortId The Port number for the device
      * @param readBuffer The buffer to be used for read operations
      * @param offset Index of first byte to read
-     * @param numBytes Number of bytes to read
+     * @param readLen Number of bytes to read
      * @return < 0 if the is an error, or number of bytes transferred
      */
     private static native int i2cCompleteById(int aPortId, byte[] readBuffer, int offset, int readLen);

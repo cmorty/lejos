@@ -126,7 +126,7 @@ public class NXTEvent {
     /**
      * Wait for an event to occur using the specified filter
      * or for the specified timeout.
-     * @param filter The type specific filter for this wait.
+     * @param newFilter The type specific filter for this wait.
      * @param timeout the timeout in ms. Note a value of <= 0 will return immediately.
      * @return the event flags or 0 if the event timed out
      */

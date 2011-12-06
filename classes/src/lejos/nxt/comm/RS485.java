@@ -400,7 +400,7 @@ public class RS485 extends NXTCommDevice {
          * Assign an address. Attempt to dynamically assign an address to a slave device.
          * We do this by broadcasting the address and the name of the slave along with the
          * assigned address. Slave must be in disconnected state to respond to this.
-         * @param address
+         * @param addr
          * @param remAddress
          * @param remName
          * @return number of bytes sent
@@ -478,7 +478,7 @@ public class RS485 extends NXTCommDevice {
 
         /**
          * Poll the specified slave device.
-         * @param chan
+         * @param con
          */
         boolean pollSlave(RS485Connection con)
         {
@@ -599,7 +599,6 @@ public class RS485 extends NXTCommDevice {
         /**
          * Handle a request from the master. We respond to messages directed to
          * any one of our open connections or to broadcast requests.
-         * @param con
          */
         void processRequest()
         {

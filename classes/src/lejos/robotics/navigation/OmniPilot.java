@@ -86,8 +86,8 @@ public class OmniPilot implements ArcRotateMoveController, RegulatedMotorListene
 	 * @param wheelDistanceFromCenter the wheel distance from center
 	 * @param wheelDiameter the wheel diameter 
 	 * @param centralMotor the central motor
-	 * @param the motor at 120 degrees clockwise from front
-	 * @param the motor at 120 degrees counter-clockwise from front
+	 * @param CW120degMotor the motor at 120 degrees clockwise from front
+	 * @param CCW120degMotor the motor at 120 degrees counter-clockwise from front
 	 * @param centralWheelFrontal if true, the central wheel frontal else it is facing back
 	 * @param motorReverse if motors are mounted reversed
 	 */
@@ -117,8 +117,8 @@ public class OmniPilot implements ArcRotateMoveController, RegulatedMotorListene
 	 * @param wheelDistanceFromCenter the wheel distance from center
 	 * @param wheelDiameter the wheel diameter 
 	 * @param centralMotor the central motor
-	 * @param the motor at 120 degrees clockwise from front
-	 * @param the motor at 120 degrees counter-clockwise from front
+	 * @param CW120degMotor the motor at 120 degrees clockwise from front
+	 * @param CCW120degMotor the motor at 120 degrees counter-clockwise from front
 	 * @param centralWheelFrontal if true, the central wheel frontal else it is facing back
 	 * @param motorReverse if motors are mounted reversed
 	 * @param gyroPort the gyro port
