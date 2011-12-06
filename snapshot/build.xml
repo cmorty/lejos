@@ -92,6 +92,9 @@
 				<include name="*-src.zip" />
 			</fileset>
 		</copy>
+		<copy todir="lib/pc/native">
+			<fileset dir="${project.pccomms}/native" />
+		</copy>
 		<echo message="*** leaving pccomms project" />
 	</target>
 
