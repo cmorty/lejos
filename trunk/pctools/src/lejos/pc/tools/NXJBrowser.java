@@ -115,9 +115,11 @@ public class NXJBrowser
     frame = new JFrame(title);
 
     WindowListener listener = new WindowAdapter() {
+      @Override
       public void windowClosing(WindowEvent w) {
         try {
-        	nxtCommand.close();
+        	if (nxtCommand != null)
+        		nxtCommand.close();
         } catch (IOException ioe) {}
         System.exit(0);
       }
