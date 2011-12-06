@@ -106,7 +106,7 @@ public final class VM
 
     /**
      * Copy the specified number of bytes from memory into the given object.
-     * @param value Object to copy to
+     * @param obj Object to copy to
      * @param objoffset Offset (in bytes) within the object
      * @param base Base section to copy from
      * @param offset Offset within the section
@@ -116,14 +116,14 @@ public final class VM
 
     /**
      * Return the address of the given objects first data field.
-     * @param value
+     * @param obj
      * @return the required address
      */
     private native static int getDataAddress (Object obj);
 
     /**
      * Return the address of the given object.
-     * @param value
+     * @param obj
      * @return the required address
      */
     private native static int getObjectAddress(Object obj);
@@ -816,7 +816,7 @@ public final class VM
 
     /**
      * Return the class number of the class for the specified object
-     * @param value Object to obtain the class number for.
+     * @param obj Object to obtain the class number for.
      * @return The requested class number
      */
     private int getClassNo(Object obj)
