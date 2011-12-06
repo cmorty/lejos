@@ -42,7 +42,7 @@
 	</condition>
 	<fail unless="jni.sys.dir">OS not recognized</fail>
 	
-	<java outputproperty="osinfo.path" classname="lejos.util.jni.OSInfo" failonerror="true">
+	<java outputproperty="osinfo.path" classname="lejos.internal.jni.OSInfo" failonerror="true">
 		<classpath>
 			<fileset dir="${lejos.dist.lib.pc}">
 				<include name="**/*.jar"/>
