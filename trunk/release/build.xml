@@ -218,9 +218,8 @@
 
 	<target name="subproject.pccomms">
 		<buildcopy-project2 project="pccomms" type="pc" />
-		<!-- TODO move native libs to pccomms project -->
 		<copy todir="${shared.dir}/lib/pc/native">
-			<fileset dir="${project.snapshot}/lib/pc/native">
+			<fileset dir="${project.pccomms}/native">
 				<exclude name="linux/**" />
 			</fileset>
 		</copy>
