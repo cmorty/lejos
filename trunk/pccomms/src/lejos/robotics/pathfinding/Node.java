@@ -145,13 +145,8 @@ public class Node  {
 	}
 	
 	/**
-<<<<<<< .mine
 	 * Method used by A* to calculate search score. The G score is the cumulative distance from the start node to this node.
 	 * @return the search score
-=======
-	 * Method used by A* to calculate search score.
-	 * @return the search score
->>>>>>> .r4377
 	 */
 	protected float getG_Score(){
 		return g_score;
