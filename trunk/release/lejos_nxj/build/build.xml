@@ -5,10 +5,9 @@
 	
 	<!-- Setting up the global properties for the build -->
 	<property name="lejos.dist.root" value="${basedir}/.."/>
-	<property name="lejos.dist.src" value="${lejos.dist.root}/src"/>
-	<property name="lejos.dist.src.jlibnxt" value="${lejos.dist.src}/libnxt"/>
-	<property name="lejos.dist.src.jbluez" value="${lejos.dist.src}/jbluez"/>
+	<property name="lejos.dist.src.jlibnxt" value="${basedir}/libnxt"/>
 	<property name="lejos.dist.lib.pc" value="${lejos.dist.root}/lib/pc"/>
+	<property name="lejos.dist.lib.pc.native" value="${lejos.dist.lib.pc}/native"/>
 	
     <condition property="jni.include.dir" value="${java.home}/../include">
 		<or>
@@ -49,7 +48,7 @@
 			</fileset>
 		</classpath>
 	</java>
-	<property name="lejos.dist.native" value="${lejos.dist.root}/lib/pc/native/${osinfo.path}"/>
+	<property name="lejos.dist.native" value="${lejos.dist.lib.pc.native}/${osinfo.path}"/>
 	
 	<!-- cpptasks task & type def -->
 	<taskdef resource="cpptasks.tasks">

@@ -365,6 +365,7 @@
 			<fileset dir="${shared.dir}" />
 			<fileset dir="${sup.dir}" />
 		</copy>
+		<copy-source id="libnxt" todir="${unix.dir}/build"/>
 		<fixcrlf srcdir="${unix.dir}" eol="lf">
 			<include name="**/*.bat" />
 			<include name="**/*.txt" />
