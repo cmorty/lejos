@@ -1,13 +1,7 @@
 package lejos.robotics.navigation;
 
-import lejos.nxt.Button;
 import lejos.nxt.LCD; // TODO: Use System.out instead. Alt constructor to suppress visual info.
-import lejos.nxt.Motor; // TODO: Andy might be able to make NXTMotor wake up motor controller chip.
-import lejos.nxt.MotorPort;
-import lejos.nxt.NXTMotor;
-import lejos.nxt.SensorPort;
 import lejos.nxt.Sound; // TODO: Visual count-down only, no sound.
-import lejos.nxt.addon.GyroSensor; // TODO: Use Gyroscope interface. Returns degrees/second velocity.
 import lejos.robotics.EncoderMotor;
 import lejos.robotics.Gyroscope;
 
