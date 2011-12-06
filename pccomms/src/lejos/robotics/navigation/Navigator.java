@@ -11,7 +11,7 @@ import lejos.robotics.pathfinding.Path;
  */
 /**
  * This class controls a robot to traverse a Path,  a sequence of  {@link  lejos.robotics.navigation.Waypoint}s.
- * It's default mode is continuous movement(no stopping at waypoints)  but see also {@link #singleStep(boolean). }  To interrupt the path following task,  call stup().
+ * It's default mode is continuous movement(no stopping at waypoints)  but see also {@link #singleStep(boolean)}.  To interrupt the path following task,  call stup().
  *  It uses  an inner class running its own thread to issue movement commands to its
  * {@link lejos.robotics.navigation.MoveController},
  * which can be either a  {@link lejos.robotics.navigation.DifferentialPilot}
@@ -150,7 +150,7 @@ public class Navigator implements WaypointListener
 
    /**
     * Controls whether the robot stops at each Waypoint; applies to the current path only.
-    * The robot will move to the next Waypoint if you call {@link #followPath().}
+    * The robot will move to the next Waypoint if you call {@link #followPath()}.
     * @param yes  if <code>true </code>, the robot stops at each Waypoint.  
     */
    public void singleStep(boolean yes)
