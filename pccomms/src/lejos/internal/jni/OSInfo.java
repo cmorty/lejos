@@ -154,6 +154,10 @@ public class OSInfo
 	@Deprecated
 	public static void main(String[] args) throws IOException
 	{
+		/*
+		 * This method is invoked from inside the build.xml that we provide
+		 * our users with for building the native libs on Linux.
+		 */
 		OSInfo os = new OSInfo();
 		System.out.println(os.getOS()+"/"+os.getArch());
 	}
