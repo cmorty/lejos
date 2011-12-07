@@ -90,7 +90,7 @@ public class DIMUGyro extends I2CSensor {
 		/**
 		 * Converts an array of values in place to specified unit
 		 * 
-		 * @param value
+		 * @param values
 		 *          Array of values to convert.
 		 * @param unit
 		 *          Unit to convert to.

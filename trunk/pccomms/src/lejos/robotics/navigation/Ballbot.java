@@ -1,13 +1,7 @@
 package lejos.robotics.navigation;
 
-import lejos.nxt.Button;
 import lejos.nxt.LCD; // TODO: Use System.out instead. Alt constructor to suppress visual info.
-import lejos.nxt.Motor; // TODO: Andy might be able to make NXTMotor wake up motor controller chip.
-import lejos.nxt.MotorPort;
-import lejos.nxt.NXTMotor;
-import lejos.nxt.SensorPort;
 import lejos.nxt.Sound; // TODO: Visual count-down only, no sound.
-import lejos.nxt.addon.GyroSensor; // TODO: Use Gyroscope interface. Returns degrees/second velocity.
 import lejos.robotics.EncoderMotor;
 import lejos.robotics.Gyroscope;
 
@@ -480,8 +474,8 @@ public class Ballbot extends Thread { // TODO: Thread should be a private inner 
 	 * around 10 or so. A ballbot needs good motors, sensors, a grippy ball/roller and be extremely symmetrical if you 
 	 * want to use higher values. </p>
 	 * 
-	 * @param xaxisPower
-	 * @param yaxisPower
+	 * @param x_axisPower
+	 * @param y_axisPower
 	 */
 	public void impulseMove(int x_axisPower, int y_axisPower) {
 		threadx.wheelDriver(x_axisPower);

@@ -1,12 +1,14 @@
 package lejos.robotics.navigation;
 
+import java.util.ArrayList;
+
 import lejos.geom.Point;
 import lejos.nxt.Battery;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import lejos.nxt.addon.CruizcoreGyro;
 import lejos.robotics.RegulatedMotor;
-import lejos.robotics.localization.PoseProvider;
+import lejos.robotics.RegulatedMotorListener;
 import lejos.robotics.navigation.Pose;
 import lejos.util.Delay;
 import lejos.util.Matrix;
@@ -40,7 +42,7 @@ import lejos.util.Matrix;
  * @author Daniele Benedettelli
  * 
  */
-public class OmniPilot implements PoseProvider {
+public class OmniPilot implements ArcRotateMoveController, RegulatedMotorListener {
     
     private Pose pose = new Pose();
 	private float wheelBase = 7.0f; // units
@@ -65,9 +67,16 @@ public class OmniPilot implements PoseProvider {
 	private float spinAngSpeed = 0; // deg/s
 	private float spinTravelDirection = 0; // deg
 	
+	private double minTurnRadius = 0; // This vehicle can turn withgout moving therefore minimum turn radius = 0
+	
 	public CruizcoreGyro gyro;
 	
 	private boolean gyroEnabled = false;
+	
+	/**
+	 * MoveListeners to notify when a move is started or stopped.
+	 */
+	private ArrayList<MoveListener> listeners= new ArrayList<MoveListener>();
 	
 	/**
 	 * Instantiates a new omnidirectional pilot.
@@ -77,8 +86,8 @@ public class OmniPilot implements PoseProvider {
 	 * @param wheelDistanceFromCenter the wheel distance from center
 	 * @param wheelDiameter the wheel diameter 
 	 * @param centralMotor the central motor
-	 * @param the motor at 120 degrees clockwise from front
-	 * @param the motor at 120 degrees counter-clockwise from front
+	 * @param CW120degMotor the motor at 120 degrees clockwise from front
+	 * @param CCW120degMotor the motor at 120 degrees counter-clockwise from front
 	 * @param centralWheelFrontal if true, the central wheel frontal else it is facing back
 	 * @param motorReverse if motors are mounted reversed
 	 */
@@ -90,6 +99,9 @@ public class OmniPilot implements PoseProvider {
 		this.motor1 = centralMotor;
 		this.motor2 = CCW120degMotor;
 		this.motor3 = CW120degMotor;
+		motor1.addListener(this);
+		motor2.addListener(this);
+		motor3.addListener(this);
 		initMatrices(centralWheelFrontal, motorReverse);
 	    odo.setDaemon(true);
 //	    odo.setPriority(6);
@@ -105,8 +117,8 @@ public class OmniPilot implements PoseProvider {
 	 * @param wheelDistanceFromCenter the wheel distance from center
 	 * @param wheelDiameter the wheel diameter 
 	 * @param centralMotor the central motor
-	 * @param the motor at 120 degrees clockwise from front
-	 * @param the motor at 120 degrees counter-clockwise from front
+	 * @param CW120degMotor the motor at 120 degrees clockwise from front
+	 * @param CCW120degMotor the motor at 120 degrees counter-clockwise from front
 	 * @param centralWheelFrontal if true, the central wheel frontal else it is facing back
 	 * @param motorReverse if motors are mounted reversed
 	 * @param gyroPort the gyro port
@@ -324,7 +336,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 		motor1.stop();
 		motor2.stop();
 		motor3.stop();
-		spinningMode = false;
+		spinningMode = false;		
 	}
 
 	/**
@@ -341,8 +353,8 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 *
 	 * @param speed the new move speed
 	 */
-	public void setMoveSpeed(float speed) {
-		linearSpeed = Math.abs(speed);
+	public void setTravelSpeed(double speed) {
+		linearSpeed = Math.abs((float)speed);
 		reverse = speed<0;
 	}
 
@@ -351,7 +363,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 *
 	 * @return the move speed
 	 */
-	public float getMoveSpeed() {
+	public double getTravelSpeed() {
 		return linearSpeed;
 	}
 	
@@ -378,7 +390,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 *
 	 * @return the move max speed
 	 */
-	public float getMoveMaxSpeed() {
+	public double getMaxTravelSpeed() {
 		// it is generally assumed, that the maximum accurate speed of Motor is
 		// 100 degree/second * Voltage
 		double maxRadSec = Math.toRadians(Battery.getVoltage()*100f);
@@ -395,8 +407,8 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 *
 	 * @param speed the new turning speed
 	 */
-	public void setTurnSpeed(float speed) {
-		angularSpeed = speed;
+	public void setRotateSpeed(double speed) {
+		angularSpeed = (float)speed;
 	}
 	
 	/**
@@ -404,7 +416,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 *
 	 * @return the turning speed
 	 */
-	public float getTurnSpeed() {
+	public double getRotateSpeed() {
 		return angularSpeed;
 	}
 
@@ -413,7 +425,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 *
 	 * @return the turn max speed
 	 */
-	public float getTurnMaxSpeed() {
+	public double getRotateMaxSpeed() {
 		// it is generally assumed, that the maximum accurate speed of Motor is
 		// 100 degree/second * Voltage
 		double maxRadSec = Math.toRadians(Battery.getVoltage()*100f);
@@ -423,6 +435,9 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 		// max degree/second divided by degree/unit = unit/second
 	}
 
+	private Move.MoveType previousMoveType = null;
+	private float previousDistance = 0;
+	private float previousAngle = 0;
 
 	/**
 	 * Move.
@@ -432,7 +447,17 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 * @param angle the angle
 	 * @param immediateReturn the immediate return
 	 */
-	private void move(double distance, double direction, double angle, boolean immediateReturn) {
+	private void move(final double distance, double direction, final double angle, boolean immediateReturn) {
+		// Notify MoveListeners that a new move has begun.
+		
+		if(distance != 0 & angle == 0) previousMoveType = Move.MoveType.TRAVEL;
+		else if(distance == 0 & angle != 0) previousMoveType = Move.MoveType.ROTATE;
+		else if(distance != 0 & angle != 0) previousMoveType = Move.MoveType.ARC;
+		else previousMoveType = Move.MoveType.STOP;
+		
+		for(MoveListener ml:listeners) 
+			ml.moveStarted(new Move(previousMoveType, (float)distance, (float)angle, true), this);
+		
 		spinningMode = false;
 		double[] dsp = {distance*Math.cos(Math.toRadians(direction)), distance*Math.sin(Math.toRadians(direction)), Math.toRadians(angle)};
 		Matrix displacement = new Matrix(dsp, 3);
@@ -457,10 +482,9 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 		motor2.rotate(d2, true);
 		motor3.rotate(d3, immediateReturn);
 
-		if (!immediateReturn) 
-			while (isMoving()) {
+		if (!immediateReturn)
+			while (isMoving())
 				Thread.yield();
-			}
 	}
 	
 	/**
@@ -468,7 +492,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 *
 	 * @param distance the distance
 	 */
-	public void travel(float distance) {
+	public void travel(double distance) {
 		travel(distance, 0, false);
 	}
 
@@ -478,7 +502,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 * @param distance the distance
 	 * @param direction the direction
 	 */
-	public void travel(float distance, float direction) {
+	public void travel(double distance, double direction) {
 		travel(distance, direction, false);
 	}
 	
@@ -488,7 +512,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 * @param distance the distance
 	 * @param immediateReturn if true, returns at once.
 	 */
-	public void travel(float distance, boolean immediateReturn) {
+	public void travel(double distance, boolean immediateReturn) {
 		travel(distance, 0, immediateReturn);
 	}
 	
@@ -499,7 +523,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 * @param direction the direction
 	 * @param immediateReturn the immediate return
 	 */
-	public void travel(float distance, float direction, boolean immediateReturn) {
+	public void travel(double distance, double direction, boolean immediateReturn) {
 		move(distance, direction, 0, immediateReturn);
 	}
 
@@ -508,7 +532,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 *
 	 * @param angle the angle
 	 */
-	public void rotate(float angle) {
+	public void rotate(double angle) {
 		rotate(angle, false);
 	}
 
@@ -518,7 +542,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 * @param angle the angle
 	 * @param immediateReturn the immediate return
 	 */
-	public void rotate(float angle, boolean immediateReturn) {
+	public void rotate(double angle, boolean immediateReturn) {
 		if (angularSpeed==0) angularSpeed = 90;
 		move(0, 0, angle, immediateReturn);
 	}
@@ -567,7 +591,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 * @param turnRate the turn rate
 	 */
 	public void steer(float turnRate) {
-		float angSpeed = turnRate*getTurnMaxSpeed()/200;
+		float angSpeed = (float)(turnRate*getRotateMaxSpeed()/200);
 		float dir = reverse? speedVectorDirection : speedVectorDirection+180;
 		spinningMode = false;
 		setSpeed(linearSpeed, dir, angSpeed);
@@ -595,7 +619,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 * @param immediateReturn the immediate return
 	 */
 	public void steer(float turnRate, float angle, boolean immediateReturn) {
-		angularSpeed = turnRate*getTurnMaxSpeed()/200;
+		angularSpeed = (float)(turnRate*getRotateMaxSpeed()/200);
 //		LCD.drawString("spd "+angularSpeed+" deg/s ", 0, 0);	
 		float radius = (float) (linearSpeed/Math.toRadians(angularSpeed));
 		arc(radius,angle,immediateReturn);
@@ -650,7 +674,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 * @param radius the radius
 	 * @param angle the angle
 	 */
-	public void arc(float radius, float angle) {
+	public void arc(double radius, double angle) {
 		arc(radius, angle, 0, false);
 	}
 	
@@ -685,6 +709,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 * @param immediateReturn the immediate return
 	 */
 	public void arc(double radius, double angle, double direction, boolean immediateReturn) {
+		
 		float angSpeed = (float) Math.toDegrees(linearSpeed/radius);
 		spinningMode = false;
 		setSpeed(linearSpeed, direction, angSpeed);
@@ -704,7 +729,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	/**
 	 * Reset all tacho counts.
 	 */
-	public void reset() {
+	private void reset() {
 		motor1.resetTachoCount();
 		motor2.resetTachoCount();
 		motor3.resetTachoCount();
@@ -957,5 +982,49 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 		pose = aPose;
 	}
 
+	public void arcBackward(double radius) {
+		arc(radius, Double.NEGATIVE_INFINITY, true);
+	}
 
+	public void arcForward(double radius) {
+		arc(radius, Double.POSITIVE_INFINITY, true);
+	}
+
+	public double getMinRadius() {
+		return minTurnRadius;
+	}
+
+	public void setMinRadius(double radius) {
+		minTurnRadius = radius;
+	}
+
+	public void addMoveListener(MoveListener listener) {
+		listeners.add(listener);
+	}
+
+	public Move getMovement() {
+		// Todo: Shoudl probbably normalize angle to between 0-360
+		return new Move(previousMoveType, getTravelDistance() - previousDistance, getAngle() - previousAngle, isMoving());
+	}
+
+	public void rotationStarted(RegulatedMotor motor, int tachoCount, boolean stalled, long timeStamp) {
+		// Do nothing. private move() method handles notifications. 
+	}
+	
+	/**
+	 * Notify the MoveListeners of move made.
+	 */
+	public void rotationStopped(RegulatedMotor motor, int tachoCount, boolean stalled, long timeStamp) {
+		if(!motor1.isMoving() && !motor2.isMoving() && !motor3.isMoving()) {
+			float newDistance = getTravelDistance();
+			float newAngle = getAngle();
+			Move finalMove = new Move(previousMoveType, newDistance - previousDistance, newAngle - previousAngle, isMoving());
+			for(MoveListener ml:listeners) 
+				ml.moveStopped(finalMove, this);
+			
+			//this.reset(); // THIS CAUSES AN EXCEPTION TO BE THROWN. Will subtract previous values instead.
+			previousDistance = newDistance;
+			previousAngle = newAngle;
+		}
+	}
 }
