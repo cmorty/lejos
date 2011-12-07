@@ -234,6 +234,7 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 	}
 	
 	protected void loadProperties() {
+		//FIXME don't store properties file in current working directory!
 		try {
 			FileInputStream fis =new FileInputStream(propsFileName);
 			props.load(fis);
