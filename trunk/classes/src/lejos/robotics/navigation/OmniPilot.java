@@ -579,7 +579,6 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 * @param radius
 	 * @param distance
 	 * @param direction
-	 * @param immediateReturn
 	 */
 	public void travelArc(double radius, double distance, float direction) {
 		travelArc(radius, distance, direction, false);
@@ -612,9 +611,8 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 * 
 	 * <b>NOTE: This method is not part of the MoveController interface.</b>
 	 * @param radius
-	 * @param distance
+	 * @param angle
 	 * @param direction
-	 * @param immediateReturn
 	 */
 	public void arc(double radius, double angle, double direction) {
 		arc(radius, angle, direction, false);
@@ -631,7 +629,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 * 
 	 * <b>NOTE: This method is not part of the MoveController interface.</b>
 	 * @param radius
-	 * @param distance
+	 * @param angle
 	 * @param direction
 	 * @param immediateReturn
 	 */
