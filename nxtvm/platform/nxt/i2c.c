@@ -131,7 +131,6 @@ typedef enum {
   I2C_DISABLED = 0,
   I2C_IDLE,
   I2C_ACTIVEIDLE,
-  I2C_COMPLETE,
   I2C_BEGIN,
   I2C_NEWRESTART,
   I2C_NEWSTART,
@@ -160,6 +159,7 @@ typedef enum {
   I2C_ENDSTOP3,
   I2C_FAULT,
   I2C_RELEASE,
+  I2C_COMPLETE,
 } i2c_port_state;
 
 typedef struct {
@@ -191,7 +191,7 @@ static i2c_port *i2c_ports[I2C_N_PORTS];
 // dynamically as required.
 static i2c_port *i2c_active[2][I2C_N_PORTS+1];
 static i2c_port **active_list = i2c_active[0];
-static U32 i2c_port_busy = 0;
+static volatile U32 i2c_port_busy = 0;
 
 // The I2C state machines are pumped by a timer interrupt
 // running at 2x the bit speed. This state machine has been
@@ -238,7 +238,6 @@ i2c_doio(i2c_port *p)
     case I2C_DISABLED:
     case I2C_IDLE:		// Not in a transaction
     case I2C_ACTIVEIDLE:	// Not in a transaction but active
-    case I2C_COMPLETE:          // Transaction completed
       break;
     case I2C_BEGIN:		
       // Start new transaction
@@ -474,14 +473,22 @@ i2c_doio(i2c_port *p)
       break;
     case I2C_FAULT:
       p->fault = 1;
-      p->state = I2C_ENDSTOP1;
+      p->state = I2C_RELEASE;
       break;
     case I2C_RELEASE:
       // Release whichever lines we can
       *AT91C_PIOA_ODR = p->ready_mask;
-      // All done
-      i2c_port_busy &= ~p->port_bit;
-      p->state = I2C_COMPLETE;
+      // There is a small chance that the clearing of the busy bit
+      // may get lost becuase some other ports bit was in the process
+      // of being set. So we do not exit the RELEASE state until the busy
+      // bit is actually clear...
+      if (i2c_port_busy & p->port_bit)
+        i2c_port_busy &= ~p->port_bit;
+      else
+        // All done
+        p->state = I2C_COMPLETE;
+      break;
+    case I2C_COMPLETE:          // Transaction completed
       break;
     }
 }
@@ -722,6 +729,13 @@ i2c_start(int port,
   // We save the number of bytes to read for completion
   p->read_len = read_len;
   // Start the transaction
+  // Note: There is a potential race condition here. The interrupt handler
+  // also changes this variable and so if an interrupt occurs in the
+  // middle of the following line then changes made by the handler will be
+  // lost. We could fix this by disabling interrupts around this code.
+  // However that may have an impact on other parts of the system.
+  // Instead we add code in the handler to retry the change operation until
+  // it has succeeded... See I2C_RELEASE for details
   i2c_port_busy |= 1 << port;
   p->state = I2C_BEGIN;
   if (!p->always_active)
@@ -735,7 +749,7 @@ i2c_start(int port,
       i2c_doio(p);
       while(!(*AT91C_TC2_SR & AT91C_TC_CPCS)) ;
     }
-    *AT91C_TC2_CCR = AT91C_TC_CLKDIS; /* Enable */
+    *AT91C_TC2_CCR = AT91C_TC_CLKDIS; /* Disable */
   }
   return 0;
 }
