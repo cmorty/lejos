@@ -13,7 +13,7 @@ VM_PREFIX := jvm_
 TARGET := lejos_nxt
 
 C_RAM_OBJECTS := \
-	flashprog.oram
+	flashwrite.oram
 
 C_PLATFORM_OBJECTS := \
 	aic.o \
@@ -29,6 +29,7 @@ C_PLATFORM_OBJECTS := \
 	bt.o \
 	hs.o \
 	usart.o \
+        flashprog.o \
 	printf.o
 
 C_HOOK_OBJECTS := \

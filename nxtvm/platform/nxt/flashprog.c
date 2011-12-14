@@ -5,36 +5,12 @@
 #include "nxt_avr.h"
 #include "display.h"
 #include "sound.h"
+#include "flashwrite.h"
 #include "at91sam7s256.h"
+#include "stdlib.h"
 
 // Timeouts in ms
 #define TWI_TIMEOUT 5
-#define FLASH_TIMEOUT 20
-
-static U32 get_ms()
-{
-  /* Return a timer value in ms that can be used while interrupts are disabled
-   * NOTE: This function must be here (rather then in systick), because it is
-   * called during a flash write and so must be located in ram, not flash rom.
-   */
-  // We use the missed interupt count from the system timer
-  return (*AT91C_PITC_PIIR & AT91C_PITC_PICNT) >> 20;
-}
- 
-static int wait_flash_ready()
-{
-  // Wait for the flash controller to be ready or to timeout. Note although
-  // we implement a timeout operation, it is not clear what to do if we
-  // ever get one. If the system is still trying to write to flash then
-  // it may not be possible to execute code from flash...
-  int status;
-  int timeout = get_ms() + FLASH_TIMEOUT;
-  do {
-    status = *AT91C_MC_FSR;
-    if (status & AT91C_MC_FRDY) return status;
-  } while (get_ms() < timeout);
-  return status;
-}
 
 static int wait_twi_complete()
 {
@@ -48,15 +24,18 @@ static int wait_twi_complete()
 }
     
 /**
- * Write a page to flash memory
+ * Write a page from the supplied flash buffer to flash memory
+ * The flash buffer must have been obtained through a call to
+ * flash_get_page_buffer, before making this call
  * returns > 0 number of bytes written < 0 error
  * Error returns:
  * -1 Timeout waiting for TWI to complete
  * -2 Timeout waiting for flash write to complete
  * -3 Bad page number
+ * -4 bad flash buffer
  */
 int
-flash_write_page(U32 *page, int page_num)
+flash_write_page_buffer(FOURBYTES *page, int page_num)
 {
   /* Write page to flash memory.
    * This function must run out of ram and while it executes no other code
@@ -64,9 +43,10 @@ flash_write_page(U32 *page, int page_num)
    * flash memory is only a single plane and can not be accessed for both read
    * and write at the same time.
    */
-  int i, istate;
+  int istate;
   int status;
   if (page_num + flash_start_page >= FLASH_MAX_PAGES) return -3;
+  if (VINTPTR(page) != &(FLASH_BASE[page_num*FLASH_PAGE_SIZE])) return -4;
   /* We must disbale interrupts. However we need to try and ensure that all
    * current interrupt activity is complete before we do that. We talk to
    * the avr every 1ms and this uses interrupt driven I/O so we try to make
@@ -90,14 +70,8 @@ flash_write_page(U32 *page, int page_num)
   // Now we can turn off all ints
   istate = interrupts_get_and_disable();
 
-  // Write the data to the flash buffer
-  for (i = 0; i < FLASH_PAGE_SIZE; i++)
-    FLASH_BASE[(page_num*FLASH_PAGE_SIZE)+i] = page[i];
-
   // Write the buffer to the selected page
-  FLASH_CMD_REG = (0x5A000001 + (((page_num + flash_start_page) & 0x000003FF) << 8));
-
-  status = wait_flash_ready();
+  status = flash_write(page_num + flash_start_page);
   
   // Turn ints back on
   if (istate) interrupts_enable();
@@ -110,13 +84,46 @@ flash_write_page(U32 *page, int page_num)
 }
 
 /**
+ * return a pointer to a page buffer that can be used to write to the
+ * requested page.
+ * Return NULL if the page is not valid.
+ */
+U32 *
+flash_get_page_buffer(int page)
+{
+  if (page + flash_start_page >= FLASH_MAX_PAGES) return NULL;
+  return (U32 *) (FLASH_BASE + page*FLASH_PAGE_SIZE);
+}
+  
+
+/**
+ * Write a page from a memory buffer to flash memory
+ * returns > 0 number of bytes written < 0 error
+ * Error returns:
+ * -1 Timeout waiting for TWI to complete
+ * -2 Timeout waiting for flash write to complete
+ * -3 Bad page number
+ */
+int
+flash_write_page(FOURBYTES *page, int page_num)
+{
+  int i;
+  FOURBYTES *buf = flash_get_page_buffer(page_num);
+  if (buf == NULL) return -3;
+  // Write the data to the flash buffer
+  for (i = 0; i < FLASH_PAGE_SIZE; i++)
+    buf[i] = page[i];
+  return flash_write_page_buffer(buf, page_num);
+}
+
+/**
  * Read a page from flash memory
  * returns > 0 number of bytes written < 0 error
  * Error returns:
  * -3 Bad page number
  */
 int
-flash_read_page(U32 *page, int page_num)
+flash_read_page(FOURBYTES *page, int page_num)
 {
   int i;
   if (page_num + flash_start_page >= FLASH_MAX_PAGES) return -3;
