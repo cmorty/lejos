@@ -1,13 +1,15 @@
 #ifndef __FLASHPROG_H__
 #  define __FLASHPROG_H__
-#  include "mytypes.h"
+#  include "platform_config.h"
 
-int flash_write_page(U32 *buf, int page_num);
-int flash_read_page(U32 *buf, int page_num);
+int flash_write_page(FOURBYTES *buf, int page_num);
+int flash_read_page(FOURBYTES *buf, int page_num);
+FOURBYTES *flash_get_page_buffer(int page_num);
+int flash_write_page_buffer(FOURBYTES *buf, int page_num);
 
 // First usable page 
-extern const U32 flash_start_page;
-#define VINTPTR(addr) ((volatile unsigned int *)(addr))
+extern const FOURBYTES flash_start_page;
+#define VINTPTR(addr) ((volatile FOURBYTES *)(addr))
 #define VINT(addr) (*(VINTPTR(addr)))
 
 // Page size in WORDS
@@ -18,5 +20,6 @@ extern const U32 flash_start_page;
 #define FLASH_MODE_REG VINT(0xFFFFFF60)
 #define FLASH_CMD_REG VINT(0xFFFFFF64)
 #define FLASH_STATUS_REG VINT(0xFFFFFF68)
+#define FLASH_PAGE(addr) (((FOURBYTES *)(addr) - &FLASH_BASE[0])/FLASH_PAGE_SIZE)
 
 #endif
