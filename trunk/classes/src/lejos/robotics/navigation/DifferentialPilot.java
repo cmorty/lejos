@@ -1,7 +1,7 @@
 package lejos.robotics.navigation;
 
 import java.util.ArrayList;
-import lejos.robotics.*;
+
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
