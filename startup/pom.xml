@@ -22,6 +22,14 @@
     
     <packaging>jar</packaging>
 
+
+    <properties>
+        <!-- keep somewhere under 'target' folder. -->
+        <dir-linker-output>${project.build.directory}/linkerOutput</dir-linker-output>
+        <!--<dir-linker-output>${project.build.directory}</dir-linker-output>-->
+    </properties>
+
+
     <build>
         <sourceDirectory>src</sourceDirectory>
 
@@ -83,6 +91,68 @@
                 </configuration>
             </plugin>
 
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+
+                <!-- @todo Help fix outputFile in exec-maven-plugin.
+                The outputFile arg is broken in exec-maven-plugin v1.2+
+                see: http://jira.codehaus.org/browse/MEXEC-86
+
+                <version>1.2.1</version>
+                -->
+                <version>1.1.1</version>
+
+                <executions>
+                    <execution>
+                        <id>execLinker</id>
+
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+
+                        <phase>process-classes</phase>
+
+                        <configuration>
+                            <outputFile>${dir-linker-output}/StartUpText.txt</outputFile>
+
+                            <!-- @todo Investigate reliable way to invoke java (not requiring it to be on the path).
+                             Maybe use maven-antrun-plugin instead, and call ant 'java' task. -->
+                            <executable>java</executable>
+
+                            <arguments>
+                                <argument>-classpath</argument>
+                                <!-- automatically creates the classpath using all project dependencies,
+                                 also adding the project build directory -->
+                                <classpath/>
+
+                                <argument>lejos.pc.tools.NXJLink</argument>
+
+                                <argument>--bootclasspath</argument>
+                                <classpath>
+                                    <dependency>lejos:classes</dependency>
+                                </classpath>
+
+                                <argument>--classpath</argument>
+                                <argument>${project.build.outputDirectory}</argument>
+
+                                <argument>--writeorder</argument>
+                                <argument>LE</argument>
+
+                                <argument>-o</argument>
+                                <argument>${dir-linker-output}/StartUpText.bin</argument>
+
+                                <argument>-od</argument>
+                                <argument>${dir-linker-output}/StartUpText.nxd</argument>
+
+                                <argument>-v</argument>
+                                <argument>lejos.nxt.startup.GraphicStartup</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         
     </build>
