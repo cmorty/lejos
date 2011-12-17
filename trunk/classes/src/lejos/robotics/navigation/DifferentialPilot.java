@@ -27,13 +27,14 @@ import java.util.ArrayList;
  * It automatically updates a {@link lejos.robotics.localization.OdometryPoseProvider}
  * which has called the
  * <code>addMoveListener</code>  method on this object.<br>
- * Some methods optionally return immediately so the thread that called the
- * method can monitor sensors, get current pose, and call stop() if necessary.<br>
+ * Some methods optionally return immediately so the thread that called it 
+ *  can do things while the robot is moving, such as  monitor sensors and 
+ * call {@link stop()}.<br>
  * Handling stalls: If a stall is detected,   <code>isStalled()</code> returns <code>
  * true </code>,  <code>isMoving()</code>  returns <code>false</code>, <code>moveStopped()
  * </code> is called, and, if a blocking method is executing, that method exits.
  * The units of measure for travel distance, speed and acceleration are the units 
- * used in specifying the wheel diameter and track width. in the constructor. 
+ * used in specifying the wheel diameter and track width in the constructor. 
  * <br> Example of use of come common methods:
  * <p>
  * <code><pre>
@@ -41,12 +42,12 @@ import java.util.ArrayList;
  * pilot.setRobotSpeed(30);  // cm per second
  * pilot.travel(50);         // cm
  * pilot.rotate(-90);        // degree clockwise
- * pilot.travel(-50,true);
+ * pilot.travel(-50,true);  //  move backward for 50 cm
  * while(pilot.isMoving())Thread.yield();
  * pilot.rotate(-90);
  * pilot.rotateTo(270);
  * pilot.steer(-50,180,true); // turn 180 degrees to the right
- * while(pilot.isMoving())Thread.yield();
+ * waitComplete();            // returns when previous method is complete
  * pilot.steer(100);          // turns with left wheel stationary
  * Delay.msDelay(1000;
  * pilot.stop();
@@ -162,6 +163,7 @@ public class DifferentialPilot implements
     _parity = (byte) (reverse ? -1 : 1);
     setTravelSpeed(.8f * getMaxTravelSpeed());
     setRotateSpeed(.8f * getMaxRotateSpeed());
+    setAcceleration((int)(_robotTravelSpeed * 4));
   }
 
   /*
@@ -245,18 +247,27 @@ public class DifferentialPilot implements
   }
 
   /**
-   * Sets the acceleration of the robot in distance/second/second  where
-   * distance is in the units of wheel diameter.
-   * @param accel
+   * Sets the normal acceleration of the robot in distance/second/second  where
+   * distance is in the units of wheel diameter. The default value is 4 times the 
+   * maximum travel speed.  
+   * @param acceleration
    */
-  public void setAcceleration(int accel)
+  public void setAcceleration(int acceleration)
   {
-    
-   int motorAccel  = (int)Math.round(0.5 * accel * (_leftDegPerDistance + _rightDegPerDistance));
-    _left.setAcceleration(motorAccel);
-    _right.setAcceleration(motorAccel);
+   
+  _acceleration = acceleration;
+   setMotorAccel(_acceleration);
   }
-
+ /**
+   * helper method for setAcceleration and quickStop
+   * @param acceleration 
+   */
+  private void setMotorAccel(int acceleration)         
+  {
+       int motorAccel  = (int)Math.round(0.5 * acceleration * (_leftDegPerDistance + _rightDegPerDistance));
+    _left.setAcceleration(motorAccel);
+    _right.setAcceleration(motorAccel); 
+  }
   public double getMaxTravelSpeed()
   {
     return Math.min(_left.getMaxSpeed(), _right.getMaxSpeed()) / Math.max(_leftDegPerDistance, _rightDegPerDistance);
@@ -442,8 +453,19 @@ public class DifferentialPilot implements
     _left.stop(true);
     _right.stop(true);
     waitComplete();                           
+    setMotorAccel(_acceleration);  // restror acceleration value
   }
 
+  /**
+   * Stops the robot almost immediately.   Use this method if the normal {@link stop()}
+   * is too slow;
+   */ 
+  public void quickStop()
+  {
+     setMotorAccel(_quickAcceleration);
+     stop();
+     setMotorAccel(_acceleration);
+  }
   /**
    * Moves the NXT robot a specific distance in an (hopefully) straight line.<br>
    * A positive distance causes forward motion, a negative distance moves
@@ -787,6 +809,7 @@ public class DifferentialPilot implements
     int rotAngle = (int) (angle * _trackWidth * 2 / (_leftWheelDiameter * (1 - _steerRatio)));
     _inside.rotate((int) (_parity * side * rotAngle * _steerRatio), true);
     _outside.rotate(_parity * side * rotAngle, immediateReturn);
+    setMotorAccel(_acceleration);
     if (immediateReturn)
     {
       return;
@@ -821,6 +844,8 @@ public class DifferentialPilot implements
     _outside.setSpeed(_motorSpeed);
     _steerRatio = (float)(1 - rate / 100.0);
     _inside.setSpeed((int) (_motorSpeed * _steerRatio));
+     int insideAccel  = (int)Math.round(0.5 * _acceleration*_steerRatio * (_leftDegPerDistance + _rightDegPerDistance));
+    _inside.setAcceleration(insideAccel) ;
   }
 
 
@@ -1053,5 +1078,7 @@ public class DifferentialPilot implements
     * Angle about to turn - used by movementStopped
     */
    private double _angle;
+  private int _acceleration;
+   private int  _quickAcceleration; // used for quick stop.
 
 }
