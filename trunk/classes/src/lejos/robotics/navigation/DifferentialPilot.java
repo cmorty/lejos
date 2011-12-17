@@ -1,5 +1,8 @@
 package lejos.robotics.navigation;
 
+import lejos.robotics.RegulatedMotor;
+import lejos.robotics.RegulatedMotorListener;
+
 import java.util.ArrayList;
 
 
@@ -55,7 +58,7 @@ import java.util.ArrayList;
  *
  **/
 public class DifferentialPilot implements
-       RegulatedMotorListener, ArcRotateMoveController
+        RegulatedMotorListener, ArcRotateMoveController
 {
 
   /**
