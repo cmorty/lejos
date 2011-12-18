@@ -3,6 +3,7 @@ package org.lejos.nxt.ldt.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -369,28 +370,41 @@ public class LeJOSNXJUtil {
 	public static final String TOOL_LINK_AND_UPLOAD = "lejos.pc.tools.NXJLinkAndUpload";
 	public static final String TOOL_LINK = "lejos.pc.tools.NXJLink";
 
-	public static Process exec(List<String> args2) throws IOException
+	
+	
+	public static ProcessBuilder createProcessBuilder(List<String> args2) throws IOException
 	{
-		if (!isWindows())
+		int len = args2.size();
+		ArrayList<String> args3;
+		if (len <= 1 || !isWindows())
 		{
-			String[] args3 = args2.toArray(new String[args2.size()]);
-			return Runtime.getRuntime().exec(args3);
+			args3 = new ArrayList<String>(len);
+			args3.addAll(args2);
 		}
-		
-		if (args2.isEmpty())
-			throw new IndexOutOfBoundsException("command is an empty list");
-		
-		// Both java.lang.Runtime.exec(String[]) as well as in java.lang.ProcessBuilder
-		// don't escape the arguments that are passed to the program. Also, they fail to
-		// handle the empty string correctly. Hence, we manually escape all arguments.
-		StringBuilder sb = new StringBuilder();
-		for (String t : args2)
+		else
 		{
-			sb.append(' ');
-			escapeWindowsArg(t, sb);
+			args3 = new ArrayList<String>(2);
+			Iterator<String> it = args2.iterator();
+			args3.add(it.next());
+			
+			// Both java.lang.Runtime.exec(String[]) as well as in java.lang.ProcessBuilder
+			// don't escape the arguments that are passed to the program. Also, they fail to
+			// handle the empty string correctly. Hence, we manually escape all arguments.
+			// If the second element of the command list starts and ends with a quote,
+			// then ProcessBuilder won't add more quotes and the string will be passed
+			// to the invoked program without any further processing (not documented, but
+			// the implementation shows that this is the case).
+			StringBuilder sb = new StringBuilder();
+			while (it.hasNext())
+			{
+				sb.append(' ');
+				// the escaping must add quotes around the argument in order to
+				// satisfy the requirements described above.
+				escapeWindowsArg(it.next(), sb);
+			}			
+			args3.add(sb.substring(1));
 		}
-		
-		return Runtime.getRuntime().exec(sb.substring(1));
+		return new ProcessBuilder(args3);
 	}
 
 	private static void escapeWindowsArg(String t, StringBuilder sb) {

@@ -51,7 +51,7 @@ public class ExternalJVMToolStarter implements ToolStarter {
 		args2.addAll(args);
 		
 		try {
-			return LeJOSNXJUtil.exec(args2);
+			return LeJOSNXJUtil.createProcessBuilder(args2).start();
 		} catch (IOException e) {
 			throw new LeJOSNXJException("Failed to start external JVM", e);
 		}
