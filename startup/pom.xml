@@ -79,9 +79,24 @@
                             <target>
                                 <mkdir dir="${dir-linker-output}"/>
 
+                                <!--
+                                'lejos.pc' path is equivalent to the 'pctools' project and it's transtitive deps.
+                                We should make a separate maven-lejos-linker-plugin project that simply depends on 'pctools',
+                                then we can use the linker plugin here.
+                                -->
+                                <dependencyfilesets/>
+                                <path id="lejos.pc">
+                                    <path location="${lejos:pctools:jar}"/>
+                                    <path location="${lejos:jtools:jar}"/>
+                                    <path location="${lejos:pccomms:jar}"/>
+                                    <fileset refid="maven.project.dependencies"/>
+                                </path>
+
+                                <!--<echo>Foo: ${toString:lejos.pc}</echo>-->
+
                                 <java
                                         classname="lejos.pc.tools.NXJLink"
-                                        classpathref="maven.compile.classpath"
+                                        classpathref="lejos.pc"
                                         output="${dir-linker-output}/StartUpText.txt"
                                         failonerror="true"
                                         logerror="true"
@@ -146,6 +161,7 @@
             <groupId>lejos</groupId>
             <artifactId>pctools</artifactId>
             <version>${project.parent.version}</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
