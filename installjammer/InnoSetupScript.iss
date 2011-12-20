@@ -4,7 +4,8 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{9A16F867-DE78-4859-85D7-B993361B255E}
 AppName=leJOS NXJ
-AppVersion=0.9.0
+AppVersion=0.9.0beta
+AppVerName=leJOS NXJ 0.9.0beta
 OutputBaseFilename="leJOS_NXJ_0.9.0beta_win32"
 AppPublisher=The leJOS Team
 AppPublisherURL=http://www.lejos.org/
@@ -15,11 +16,13 @@ DefaultGroupName=leJOS NXJ
 SolidCompression=yes
 Compression=lzma
 OutputDir=.
+ChangesEnvironment=yes
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [CustomMessages]
+LaunchProgram=Flash leJOS Firmware to NXT Brick
 AdditionalStuff=Additional Stuff
 SamplesProjects=Install Sample and Example Projects for leJOS Users
 DeveloperSources=Install Sources for leJOS Developers
@@ -49,8 +52,13 @@ Name: "{group}\NXJ Map Command"; Filename: "{app}\bin\nxjmapcommand"; Flags: clo
 Name: "{group}\NXJ Monitor"; Filename: "{app}\bin\nxjmonitor"; Flags: closeonexit
 Name: "{group}\Uninstall LeJOS"; Filename: "{uninstallexe}"
 
+[Registry]
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "LEJOS_NXT_JAVA_HOME"; ValueData: "{code:JDKSelect_GetSelection}"; Flags: uninsdeletevalue
+
 [Run]
-; Filename: "{app}\MyProg.exe"; Description: "{cm:LaunchProgram,LeJOS NXJ}"; Flags: nowait postinstall skipifsilent
+; We use explorer.exe for starting nxjflashg, since this makes the updated values
+; of the environment variables available to the batch file
+Filename: "{win}\explorer.exe"; Parameters: "{app}\bin\nxjflashg"; Description: "{cm:LaunchProgram}"; Flags: nowait postinstall skipifsilent
 
 [Code]
 var
@@ -58,152 +66,35 @@ var
   JDKSelectButton: TButton;
   JDKSelectTree: TFolderTreeView;
   
-  function GetJDKPath(const Version: String; var Path: String): Boolean;
-  var
-    Tmp: String;
+  #include "JDKSelect.iss"
+  #include "ModPath.iss"
+  
+  function GetPath : String;
   begin
-    RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Development Kit\'
-      + Version, 'JavaHome', Tmp);
-    
-    Result := (Length(Tmp) > 0) and DirExists(Tmp);
-    if Result then Path := Tmp;
+    if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
+      'Path', Result) then
+      RaiseException('Failed to determine old value of Path environment variable');
   end;
-  
-  function DetectJDK(var Path: String): Boolean;
-  var
-    Tmp : String;
+  procedure SetPath(Data : String);
   begin
-    Result := GetJDKPath('1.7', Path);
-    if Result then Exit;
-    Result := GetJDKPath('1.6', Path);
-    if Result then Exit;
-    Result := GetJDKPath('1.5', Path);
-    if Result then Exit;
-    
-    // if everything else fails
-    RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Development Kit', 'CurrentVersion', Tmp);
-    if Length(Tmp) > 0 then Result := GetJDKPath(Tmp, Path)
-    else Result := false;
+    if not RegWriteStringValue(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
+      'Path', Data) then
+      RaiseException('Failed to set value of Path environment variable');
   end;
-  
-  procedure JDKSelect_Activate(Page: TWizardPage);
-  var
-    Tmp: String;
+   
+  procedure CurStepChanged(CurStep: TSetupStep);
   begin
-    if DetectJDK(Tmp) then JDKSelectTree.Directory := Tmp
-    else MsgBox('The installer was uanble to detect a 32 Bit Java Development Kit.'
-      + #10 + 'By default, such a JDK is installed in' + ExpandConstant('{pf32}'),
-      mbInformation, MB_OK);
+    if CurStep = ssPostInstall then
+      SetPath(ModPath_Append(GetPath(), ExpandConstant('{app}\bin')));   
   end;
-  
-  function JDKSelect_ShouldSkipPage(Page: TWizardPage): Boolean;
+  procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
   begin
-    //nothing to do yet
-    Result := False;
+    if CurUninstallStep = usUninstall then
+      SetPath(ModPath_Delete(GetPath(), ExpandConstant('{app}\bin')));   
   end;
-  
-  function JDKSelect_BackButtonClick(Page: TWizardPage): Boolean;
-  begin
-    //nothing to do yet
-    Result := True;
-  end;
-  
-  procedure JDKSelect_OpenDownloadPage(Sender: TObject);
-  var
-    Tmp: String;
-    ErrorCode: Integer;
-  begin
-    Tmp := 'http://www.oracle.com/technetwork/java/javase/downloads/';
-    if not ShellExecAsOriginalUser('', Tmp, '', '', SW_SHOW, ewNoWait, ErrorCode) then
-      MsgBox('Error: was unable to open webpage '+Tmp+' with error code '+IntToStr(ErrorCode),
-        mbError, MB_OK);
-  end;
-  
-  function JDKSelect_NextButtonClick(Page: TWizardPage): Boolean;
-  var
-    Tmp, Error: String;
-  begin
-    Tmp := JDKSelectTree.Directory + '\bin\java.exe';
-    if not FileExists(Tmp) then Error := Error + Tmp + ' does not exist.' + #10;
-    Tmp := JDKSelectTree.Directory + '\bin\javac.exe';
-    if not FileExists(Tmp) then Error := Error + Tmp + ' does not exist.' + #10;
-    Result := Length(Error) <= 0;
-    if (not Result) then
-      MsgBox(Error + 'Please select the root directory of a valid JDK.'
-        + #10 + #10 + 'To download a JDK for manual install click the ''Download JDK'' Button.',
-        mbError, MB_OK);
-  end;
-  
-  procedure JDKSelect_CancelButtonClick(Page: TWizardPage; var Cancel, Confirm: Boolean);
-  begin
-    //nothing to do yet
-  end;
-  
-  function JDKSelect_CreatePage(PreviousPageId: Integer): Integer;
-  var
-    Page: TWizardPage;
-  begin
-    Page := CreateCustomPage(
-      PreviousPageId,
-      ExpandConstant('{cm:JDKSelectCaption}'),
-      ExpandConstant('{cm:JDKSelectDescription}')
-    );
-  
-    { JDKSelectLabel }
-    JDKSelectLabel := TLabel.Create(Page);
-    with JDKSelectLabel do
-    begin
-      Parent := Page.Surface;
-      Left := ScaleX(0);
-      Top := ScaleY(0);
-      Width := ScaleX(297);
-      Height := ScaleY(25);
-      Caption := 'Select the root directory of a 32-Bit Java Development Kit'
-        + #10 + 'for use with leJOS NXJ:';
-    end;
-    
-    { JDKSelectButton }
-    JDKSelectButton := TButton.Create(Page);
-    with JDKSelectButton do
-    begin
-      Parent := Page.Surface;
-      Left := ScaleX(304);
-      Top := ScaleY(0);
-      Width := ScaleX(105);
-      Height := ScaleY(25);
-      Caption := 'Download JDK';
-      TabOrder := 1;
-      OnClick := @JDKSelect_OpenDownloadPage;
-    end;
 
-    { JDKSelectTree }
-    JDKSelectTree := TFolderTreeView.Create(Page);
-    with JDKSelectTree do
-    begin
-      Parent := Page.Surface;
-      Left := ScaleX(0);
-      Top := ScaleY(32);
-      Width := ScaleX(409);
-      Height := ScaleY(193);
-      Cursor := crArrow;
-      TabOrder := 0;
-    end;
-      
-    with Page do
-    begin
-      OnActivate := @JDKSelect_Activate;
-      OnShouldSkipPage := @JDKSelect_ShouldSkipPage;
-      OnBackButtonClick := @JDKSelect_BackButtonClick;
-      OnNextButtonClick := @JDKSelect_NextButtonClick;
-      OnCancelButtonClick := @JDKSelect_CancelButtonClick;
-    end;
-  
-    Result := Page.ID;
-  end;
-  
   procedure InitializeWizard();
   begin
-    JDKSelect_CreatePage(wpWelcome);
+    JDKSelect_CreatePage(wpUserInfo);
   end;
-
-
+  
