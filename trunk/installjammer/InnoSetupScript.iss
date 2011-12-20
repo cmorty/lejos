@@ -76,18 +76,11 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 ; of the environment variables available to the batch file
 Filename: "{win}\explorer.exe"; Parameters: """{app}\bin\nxjflashg.bat"""; Description: "{cm:LaunchProgram}"; Flags: nowait postinstall skipifsilent
 
-[Code]
-var
-  JDKSelectLabel: TLabel;
-  JDKSelectButton: TButton;
-  JDKSelectTree: TFolderTreeView;
-  ExtrasDirPage: TInputDirWizardPage;
+#include "ModPath.iss"
+#include "JDKSelect.iss"
+#include "ExtrasDirPage.iss"
 
-  
-  #include "ModPath.iss"
-  #include "JDKSelect.iss"
-  #include "ExtrasDirPage.iss"
-  
+[Code]
   function GetPath : String;
   begin
     if not RegQueryStringValue(HKLM, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',

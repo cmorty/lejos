@@ -1,3 +1,9 @@
+[Code]
+var
+  JDKSelectLabel: TLabel;
+  JDKSelectButton: TButton;
+  JDKSelectTree: TFolderTreeView;
+
   function GetJDKPath(const Version: String; var Path: String): Boolean;
   var
     Tmp: String;

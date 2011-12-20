@@ -1,3 +1,7 @@
+[Code]
+var
+  ExtrasDirPage: TInputDirWizardPage;
+
   procedure ExtrasDirPage_Activate(Page: TWizardPage);
   var
     Tmp : Boolean;
