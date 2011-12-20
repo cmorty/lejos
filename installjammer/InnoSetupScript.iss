@@ -1,3 +1,8 @@
+;TODO:
+; - preserve selection of JDK when going back and froth
+; - include LEJOS_NXT_JAVA_HOME in JDK detection
+; - initialize folder tree with {pf}\Java or {pf}
+
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
