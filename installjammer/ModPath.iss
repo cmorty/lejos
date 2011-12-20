@@ -1,3 +1,4 @@
+[Code]
   procedure ModPath_PathSplit(Path: String; const List: TStrings);
   var
     i: Integer;
