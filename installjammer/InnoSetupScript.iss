@@ -24,20 +24,28 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [CustomMessages]
 LaunchProgram=Flash leJOS Firmware to NXT Brick
-AdditionalStuff=Additional Stuff
-SamplesProjects=Install Sample and Example Projects for leJOS Users
-DeveloperSources=Install Sources for leJOS Developers
 JDKSelectCaption=Select a Java Development Kit
 JDKSelectDescription=Select a Java Development Kit for use with leJOS NXJ
+
+[Types]
+Name: "compact"; Description: "Compact installation"
+Name: "full"; Description: "Full installation"
+Name: "custom"; Description: "Custom installation"; Flags: iscustom
   
-[Tasks]
-Name: "samples"; Description: "{cm:SamplesProjects}"; GroupDescription: "{cm:AdditionalStuff}"; Flags: unchecked
-Name: "sources"; Description: "{cm:DeveloperSources}"; GroupDescription: "{cm:AdditionalStuff}"; Flags: unchecked
+[Components]
+Name: "main"; Description: "leJOS Development Kit"; Types: full compact custom; Flags: fixed
+Name: "main\apinxt"; Description: "API Documentation (NXT)"; Types: full compact;
+Name: "main\apipc"; Description: "API Documentation (PC)"; Types: full compact;
+Name: "extras"; Description: "Additional Sources"; Types: full;
+Name: "extras\samples"; Description: "Sample and Example Projects"; Types: full;
+Name: "extras\sources"; Description: "Sources of leJOS Development Kit"; Types: full;
 
 [Files]
-Source: "..\release\build\bin_windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\release\build\samples\*"; DestDir: "{userdocs}\LeJOS NXJ Samples"; Flags: ignoreversion recursesubdirs createallsubdirs; Tasks: samples
-Source: "..\release\build\source\*"; DestDir: "{userdocs}\LeJOS NXJ Developer Sources"; Flags: ignoreversion recursesubdirs createallsubdirs; Tasks: sources
+Source: "..\release\build\bin_windows\*"; DestDir: "{app}"; Excludes: "docs"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main
+Source: "..\release\build\bin_windows\docs\pc\*"; DestDir: "{app}\docs\pc"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main\apipc
+Source: "..\release\build\bin_windows\docs\nxt\*"; DestDir: "{app}\docs\nxt"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main\apinxt
+Source: "..\release\build\samples\*"; DestDir: "{userdocs}\LeJOS NXJ Samples"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: extras\samples
+Source: "..\release\build\source\*"; DestDir: "{userdocs}\LeJOS NXJ Developer Sources"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: extras\sources
 
 [Icons]
 Name: "{group}\API Documentation (NXT)"; Filename: "{app}\docs\nxt\index.html"
