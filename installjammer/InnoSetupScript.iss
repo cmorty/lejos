@@ -62,6 +62,8 @@ Name: "{group}\NXJ Monitor"; Filename: "{app}\bin\nxjmonitor.bat"; Flags: closeo
 Name: "{group}\Uninstall LeJOS"; Filename: "{uninstallexe}"
 
 [Registry]
+; Delete LEJOS_NXT_JAVA_HOME value for current user and set new value globally
+Root: HKCU; Subkey: "Environment"; ValueType: none; ValueName: "LEJOS_NXT_JAVA_HOME"; Flags: deletevalue
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "LEJOS_NXT_JAVA_HOME"; ValueData: "{code:JDKSelect_GetSelection}"; Flags: uninsdeletevalue
 
 [Run]
