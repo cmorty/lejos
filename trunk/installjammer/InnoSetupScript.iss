@@ -77,8 +77,9 @@ var
   ExtrasDirPage: TInputDirWizardPage;
 
   
-  #include "JDKSelect.iss"
   #include "ModPath.iss"
+  #include "JDKSelect.iss"
+  #include "ExtrasDirPage.iss"
   
   function GetPath : String;
   begin
@@ -121,11 +122,50 @@ var
     Result := false;
   end;
   
+  procedure DetectOutdatedFantom;
+  var
+    Tmp, Error: String;
+    MS, LS: Cardinal;
+    d: Array[0..3] of Cardinal;
+    e: Array[0..2] of Cardinal;
+  begin
+    // we expect at least version 1.1.3
+    e[0] := 1;
+    e[1] := 1;
+    e[2] := 3;
+  
+    Tmp := ExpandConstant('{syswow64}\fantom.dll');
+    if FileExists(Tmp) and GetVersionNumbers(Tmp, MS, LS) then
+    begin
+      d[0] := MS shr 16;
+      d[1] := MS and $ffff;
+      d[2] := LS shr 16;
+      d[3] := LS and $ffff;
+      if (d[0] < e[0]) or
+        ((d[0] = e[0]) and (d[1] < e[1])) or 
+        ((d[0] = e[0]) and (d[1] = e[1]) and (d[2] < e[2])) then
+        Error := 'The current version of you LEGO NXT Driver is '
+          +IntToStr(d[0])+'.'+IntToStr(d[1])+'.'+IntToStr(d[2])+'.'+IntToStr(d[3])
+          +' which is outdated.'
+    end
+    else
+      Error := Tmp+' was either not found or its version cannot be determined.';
+      
+    if Length(Error) > 0 then
+        MsgBox(Error + #10#10 + 'Please make sure, that you install the latest LEGO '
+          + 'NXT Driver from www.mindstorms.com (at least Version '
+          + IntToStr(e[0])+'.'+IntToStr(e[1])+'.'+IntToStr(e[2])+').',
+          mbInformation, MB_OK);      
+  end;
+  
   function NextButtonClick(curPageID: Integer): Boolean;
   var
     UCommand, UParams : String;
     ResultCode : Integer;
   begin
+    if (curPageID = wpWelcome) then
+      DetectOutdatedFantom;
+      
     if (curPageID = wpReady) and CheckInstallJammer() then
     begin
       // presumably, the install jammer uninstaller starts another process
@@ -136,6 +176,7 @@ var
       Result := false;
       Exit;
     end;
+    
     if (curPageID = wpReady) and GetUninstallCommand(UCommand, UParams) then
     begin
       if MsgBox('A previous was detected and needs to be uninstalled before this setup can proceed.',
@@ -161,34 +202,6 @@ var
       SetPath(ModPath_Delete(GetPath(), ExpandConstant('{app}\bin')));   
   end;
   
-  procedure ExtrasDirPage_Activate(Page: TWizardPage);
-  var
-    Tmp : Boolean;
-  begin
-    Tmp := IsComponentSelected('extras\samples');
-    ExtrasDirPage.Edits[0].Enabled := Tmp;
-    ExtrasDirPage.Buttons[0].Enabled := Tmp;
-    ExtrasDirPage.PromptLabels[0].Enabled := Tmp;
-    Tmp := IsComponentSelected('extras\sources');
-    ExtrasDirPage.Edits[1].Enabled := Tmp;
-    ExtrasDirPage.Buttons[1].Enabled := Tmp;
-    ExtrasDirPage.PromptLabels[1].Enabled := Tmp;
-  end;
-  
-  function ExtrasDirPage_ShouldSkipPage(Page: TWizardPage): Boolean;
-  begin
-    Result := not (IsComponentSelected('extras\samples') or IsComponentSelected('extras\sources'));
-  end;
-  
-  function ExtrasDirPage_GetSamplesFolder(Param: String): String;
-  begin
-    Result := ExtrasDirPage.Values[0];
-  end;
-  
-  function ExtrasDirPage_GetSourcesFolder(Param: String): String;
-  begin
-    Result := ExtrasDirPage.Values[1];
-  end;
   
   procedure InitializeWizard();
   begin
