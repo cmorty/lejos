@@ -11,6 +11,7 @@ AppPublisher=The leJOS Team
 AppPublisherURL=http://www.lejos.org/
 AppSupportURL=http://www.lejos.org/
 AppUpdatesURL=http://www.lejos.org/
+SetupIconFile=../org.lejos.website/htdocs/lejos.ico
 DefaultDirName={pf}\leJOS NXJ
 DefaultGroupName=leJOS NXJ
 SolidCompression=yes
@@ -41,15 +42,15 @@ Source: "..\release\build\source\*"; DestDir: "{userdocs}\LeJOS NXJ Developer So
 [Icons]
 Name: "{group}\API Documentation"; Filename: "{app}\docs\nxt\index.html"
 Name: "{group}\PC API Documentation"; Filename: "{app}\docs\pc\index.html"
-Name: "{group}\NXJ Flash"; Filename: "{app}\bin\nxjflashg"; Flags: closeonexit
-Name: "{group}\NXJ Browse"; Filename: "{app}\bin\nxjbrowse"; Flags: closeonexit
-Name: "{group}\NXJ Charting Logger"; Filename: "{app}\bin\nxjchartinglogger"; Flags: closeonexit
-Name: "{group}\NXJ Control"; Filename: "{app}\bin\nxjcontrol"; Flags: closeonexit
-Name: "{group}\NXJ Console Viewer"; Filename: "{app}\bin\nxjconsoleviewer"; Flags: closeonexit
-Name: "{group}\NXJ Data Viewer"; Filename: "{app}\bin\nxjdataviewer"; Flags: closeonexit
-Name: "{group}\NXJ Image Convertor"; Filename: "{app}\bin\nxjimage"; Flags: closeonexit
-Name: "{group}\NXJ Map Command"; Filename: "{app}\bin\nxjmapcommand"; Flags: closeonexit
-Name: "{group}\NXJ Monitor"; Filename: "{app}\bin\nxjmonitor"; Flags: closeonexit
+Name: "{group}\NXJ Flash"; Filename: "{app}\bin\nxjflashg.bat"; Flags: closeonexit
+Name: "{group}\NXJ Browse"; Filename: "{app}\bin\nxjbrowse.bat"; Flags: closeonexit
+Name: "{group}\NXJ Charting Logger"; Filename: "{app}\bin\nxjchartinglogger.bat"; Flags: closeonexit
+Name: "{group}\NXJ Control"; Filename: "{app}\bin\nxjcontrol.bat"; Flags: closeonexit
+Name: "{group}\NXJ Console Viewer"; Filename: "{app}\bin\nxjconsoleviewer.bat"; Flags: closeonexit
+Name: "{group}\NXJ Data Viewer"; Filename: "{app}\bin\nxjdataviewer.bat"; Flags: closeonexit
+Name: "{group}\NXJ Image Convertor"; Filename: "{app}\bin\nxjimage.bat"; Flags: closeonexit
+Name: "{group}\NXJ Map Command"; Filename: "{app}\bin\nxjmapcommand.bat"; Flags: closeonexit
+Name: "{group}\NXJ Monitor"; Filename: "{app}\bin\nxjmonitor.bat"; Flags: closeonexit
 Name: "{group}\Uninstall LeJOS"; Filename: "{uninstallexe}"
 
 [Registry]
@@ -58,7 +59,7 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 [Run]
 ; We use explorer.exe for starting nxjflashg, since this makes the updated values
 ; of the environment variables available to the batch file
-Filename: "{win}\explorer.exe"; Parameters: "{app}\bin\nxjflashg"; Description: "{cm:LaunchProgram}"; Flags: nowait postinstall skipifsilent
+Filename: "{win}\explorer.exe"; Parameters: """{app}\bin\nxjflashg.bat"""; Description: "{cm:LaunchProgram}"; Flags: nowait postinstall skipifsilent
 
 [Code]
 var
