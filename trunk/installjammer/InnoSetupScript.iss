@@ -36,8 +36,8 @@ Name: "sources"; Description: "{cm:DeveloperSources}"; GroupDescription: "{cm:Ad
 
 [Files]
 Source: "..\release\build\bin_windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-;Source: "..\release\build\samples\*"; DestDir: "{userdocs}\LeJOS NXJ Samples"; Flags: ignoreversion recursesubdirs createallsubdirs; Tasks: samples
-;Source: "..\release\build\source\*"; DestDir: "{userdocs}\LeJOS NXJ Developer Sources"; Flags: ignoreversion recursesubdirs createallsubdirs; Tasks: sources
+Source: "..\release\build\samples\*"; DestDir: "{userdocs}\LeJOS NXJ Samples"; Flags: ignoreversion recursesubdirs createallsubdirs; Tasks: samples
+Source: "..\release\build\source\*"; DestDir: "{userdocs}\LeJOS NXJ Developer Sources"; Flags: ignoreversion recursesubdirs createallsubdirs; Tasks: sources
 
 [Icons]
 Name: "{group}\API Documentation (NXT)"; Filename: "{app}\docs\nxt\index.html"
