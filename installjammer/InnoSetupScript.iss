@@ -38,12 +38,12 @@ Name: "full"; Description: "Full installation"
 Name: "custom"; Description: "Custom installation"; Flags: iscustom
   
 [Components]
-Name: "main"; Description: "leJOS Development Kit"; Types: full compact custom; Flags: fixed
-Name: "main\apinxt"; Description: "API Documentation (NXT)"; Types: full compact;
-Name: "main\apipc"; Description: "API Documentation (PC)"; Types: full compact;
-Name: "extras"; Description: "Additional Sources"; Types: full;
-Name: "extras\samples"; Description: "Sample and Example Projects"; Types: full;
-Name: "extras\sources"; Description: "Sources of leJOS Development Kit"; Types: full;
+Name: "main"; Description: "leJOS Development Kit"; Types: full compact custom; Flags: fixed disablenouninstallwarning
+Name: "main\apinxt"; Description: "API Documentation (NXT)"; Types: full compact; Flags: disablenouninstallwarning
+Name: "main\apipc"; Description: "API Documentation (PC)"; Types: full compact; Flags: disablenouninstallwarning
+Name: "extras"; Description: "Additional Sources"; Types: full; Flags: disablenouninstallwarning
+Name: "extras\samples"; Description: "Sample and Example Projects"; Types: full; Flags: disablenouninstallwarning
+Name: "extras\sources"; Description: "Sources of leJOS Development Kit"; Types: full; Flags: disablenouninstallwarning
 
 [Files]
 Source: "..\release\build\bin_windows\*"; DestDir: "{app}"; Excludes: "docs"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main
