@@ -40,8 +40,8 @@ Source: "..\release\build\samples\*"; DestDir: "{userdocs}\LeJOS NXJ Samples"; F
 Source: "..\release\build\source\*"; DestDir: "{userdocs}\LeJOS NXJ Developer Sources"; Flags: ignoreversion recursesubdirs createallsubdirs; Tasks: sources
 
 [Icons]
-Name: "{group}\API Documentation"; Filename: "{app}\docs\nxt\index.html"
-Name: "{group}\PC API Documentation"; Filename: "{app}\docs\pc\index.html"
+Name: "{group}\API Documentation (NXT)"; Filename: "{app}\docs\nxt\index.html"
+Name: "{group}\API Documentation (PC)"; Filename: "{app}\docs\pc\index.html"
 Name: "{group}\NXJ Flash"; Filename: "{app}\bin\nxjflashg.bat"; Flags: closeonexit
 Name: "{group}\NXJ Browse"; Filename: "{app}\bin\nxjbrowse.bat"; Flags: closeonexit
 Name: "{group}\NXJ Charting Logger"; Filename: "{app}\bin\nxjchartinglogger.bat"; Flags: closeonexit
