@@ -48,8 +48,8 @@ Source: "..\release\build\samples\*"; DestDir: "{code:ExtrasDirPage_GetSamplesFo
 Source: "..\release\build\source\*"; DestDir: "{code:ExtrasDirPage_GetSourcesFolder}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: extras\sources
 
 [Icons]
-Name: "{group}\API Documentation (NXT)"; Filename: "{app}\docs\nxt\index.html"
-Name: "{group}\API Documentation (PC)"; Filename: "{app}\docs\pc\index.html"
+Name: "{group}\API Documentation (PC)"; Filename: "{app}\docs\pc\index.html"; Components: main\apipc
+Name: "{group}\API Documentation (NXT)"; Filename: "{app}\docs\nxt\index.html"; Components: main\apinxt
 Name: "{group}\NXJ Flash"; Filename: "{app}\bin\nxjflashg.bat"; Flags: closeonexit
 Name: "{group}\NXJ Browse"; Filename: "{app}\bin\nxjbrowse.bat"; Flags: closeonexit
 Name: "{group}\NXJ Charting Logger"; Filename: "{app}\bin\nxjchartinglogger.bat"; Flags: closeonexit
