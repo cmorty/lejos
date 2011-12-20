@@ -37,7 +37,7 @@
   begin
     if DetectJDK(Tmp) then JDKSelectTree.Directory := Tmp
     else MsgBox('The installer was uanble to detect a 32 Bit Java Development Kit.'
-      + #10 + 'By default, such a JDK is installed in' + ExpandConstant('{pf32}'),
+      + #10 + 'By default, such a JDK is installed in ' + ExpandConstant('{pf32}\Java'),
       mbInformation, MB_OK);
   end;
   
