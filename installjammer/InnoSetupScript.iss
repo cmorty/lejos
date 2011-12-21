@@ -2,6 +2,7 @@
 ; - preserve selection of JDK when going back and froth
 ; - include LEJOS_NXT_JAVA_HOME in JDK detection
 ; - initialize folder tree with {pf}\Java or {pf}
+; - run install jammer uninstall
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -67,8 +68,10 @@ Name: "{group}\NXJ Monitor"; Filename: "{app}\bin\nxjmonitor.bat"; Flags: closeo
 Name: "{group}\Uninstall LeJOS"; Filename: "{uninstallexe}"
 
 [Registry]
-; Delete LEJOS_NXT_JAVA_HOME value for current user and set new value globally
+; Delete LEJOS_NXT_JAVA_HOME and NXJ_HOME value for current user and set new value globally
+Root: HKCU; Subkey: "Environment"; ValueType: none; ValueName: "NXJ_HOME"; Flags: deletevalue
 Root: HKCU; Subkey: "Environment"; ValueType: none; ValueName: "LEJOS_NXT_JAVA_HOME"; Flags: deletevalue
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "NXJ_HOME"; ValueData: "{app}"; Flags: uninsdeletevalue
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "LEJOS_NXT_JAVA_HOME"; ValueData: "{code:JDKSelect_GetSelection}"; Flags: uninsdeletevalue
 
 [Run]
