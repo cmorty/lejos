@@ -42,7 +42,7 @@ public class JNILoader
 		String scheme = uri.getScheme();
 		if ("file".equals(scheme))
 		{
-			tmp = new File(uri);
+			tmp = new File(uri).getParentFile();
 			for (int i = clname.indexOf('.'); i >= 0; i = clname.indexOf('.', i + 1))
 			{
 				tmp = tmp.getParentFile();
@@ -50,12 +50,11 @@ public class JNILoader
 			/* 
 			 * At this point, tmp is equal to the folder which is part of the classpath
 			 * In order to match the layout of the Eclipse project (bin folder and native
-			 * are on the same level), we call getParentFile() one more.
+			 * are on the same level), we call getParentFile() one more time below.
 			 * Out in the wild, pccomm should only exist as a JAR. We assume that using
-			 * the pccomm classes from within Eclipse is the case, where the classes
+			 * the pccomm classes from within Eclipse is the only case, where the classes
 			 * are located in a folder instead of a JAR.  
 			 */
-			tmp = tmp.getParentFile();
 		}
 		else if ("jar".equalsIgnoreCase(scheme))
 		{
