@@ -2,7 +2,6 @@
 ; - preserve selection of JDK when going back and froth
 ; - include LEJOS_NXT_JAVA_HOME in JDK detection
 ; - initialize folder tree with {pf}\Java or {pf}
-; - run install jammer uninstall
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -10,9 +9,9 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{253252E2-EFAE-4AA8-96B6-0828619E536C}
 AppName=leJOS NXJ
-AppVersion=0.9.0beta
-AppVerName=leJOS NXJ 0.9.0beta
-OutputBaseFilename=leJOS_NXJ_0.9.0beta_win32
+AppVersion=0.9.1beta
+AppVerName=leJOS NXJ 0.9.1beta
+OutputBaseFilename=leJOS_NXJ_0.9.1beta_win32
 AppPublisher=The leJOS Team
 AppPublisherURL=http://www.lejos.org/
 AppSupportURL=http://www.lejos.org/
@@ -79,167 +78,50 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 ; of the environment variables available to the batch file
 Filename: "{win}\explorer.exe"; Parameters: """{app}\bin\nxjflashg.bat"""; Description: "{cm:LaunchProgram}"; Flags: nowait postinstall skipifsilent
 
+#include "Tools.iss"
+#include "Fantom.iss"
 #include "ModPath.iss"
 #include "JDKSelect.iss"
 #include "ExtrasDirPage.iss"
+#include "UnInstall.iss"
 
-[Code]
-  function GetPath : String;
-  begin
-    if not RegQueryStringValue(HKLM, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
-      'Path', Result) then
-      RaiseException('Failed to determine old value of Path environment variable');
-  end;
-  procedure SetPath(Data : String);
-  begin
-    if not RegWriteStringValue(HKLM, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
-      'Path', Data) then
-      RaiseException('Failed to set value of Path environment variable');
-  end;
-  
-  function CheckInstallJammer : Boolean;
-  var
-    Tmp, Command: String;
-  begin
-    // old install jammer appid
-    Tmp := 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\253252E2-EFAE-4AA8-96B6-0828619E536C';
-    Result := RegQueryStringValue(HKLM, Tmp, 'UninstallString', Command) and FileExists(Command);
-  end;
-  
-  function GetUninstallCommand(var Command: String; var Params: String): Boolean;
-  var
-    Tmp: String;
-  begin
-    // new InnoSetup appid
-    Tmp := 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{253252E2-EFAE-4AA8-96B6-0828619E536C}_is1';
-    if RegQueryStringValue(HKLM, Tmp, 'UninstallString', Command) then
-    begin
-      Command := RemoveQuotes(Command);
-      if FileExists(Command) then
-      begin
-        Params := '/SILENT /NOCANCEL /NORESTART';
-        Result := true;
-        Exit;
-      end;
-    end;
-    Result := false;
-  end;
-  
-  function DetectOutdatedFantom : Boolean;
-  var
-    ErrorCode: Integer;
-    Tmp, Error: String;
-    MS, LS: Cardinal;
-    d: Array[0..3] of Cardinal;
-    e: Array[0..2] of Cardinal;
-  begin
-    // we expect at least version 1.1.3
-    e[0] := 1;
-    e[1] := 1;
-    e[2] := 3;
-  
-    Tmp := ExpandConstant('{syswow64}\fantom.dll');
-    if FileExists(Tmp) and GetVersionNumbers(Tmp, MS, LS) then
-    begin
-      d[0] := MS shr 16;
-      d[1] := MS and $ffff;
-      d[2] := LS shr 16;
-      d[3] := LS and $ffff;
-      if (d[0] < e[0]) or
-        ((d[0] = e[0]) and (d[1] < e[1])) or 
-        ((d[0] = e[0]) and (d[1] = e[1]) and (d[2] < e[2])) then
-        Error := 'Currently, version '
-          +IntToStr(d[0])+'.'+IntToStr(d[1])+'.'+IntToStr(d[2])+'.'+IntToStr(d[3])
-          +' of the LEGO NXT Driver is installed. This version is outdated.'
-    end
-    else
-      Error := Tmp+' was either not found or its version cannot be determined.';
-    
-    if Length(Error) > 0 then
-      if MsgBox(Error + #10#10 + 'Please make sure, that you install the latest LEGO '
-        + 'NXT Driver (also called Fantom Driver) from mindstorms.lego.com, at least version '
-        + IntToStr(e[0])+'.'+IntToStr(e[1])+'.'+IntToStr(e[2])+'.'
-        + #10#10 + 'Click OK to open the download page for the driver '
-        + 'or click Cancel to proceed installing leJOS.',
-        mbInformation, MB_OKCANCEL) = IDOK then
-      begin
-        Tmp := 'http://mindstorms.lego.com/en-us/support/files/Driver.aspx';
-        if not ShellExecAsOriginalUser('', Tmp, '', '', SW_SHOW, ewNoWait, ErrorCode) then
-          MsgBox('Error: was unable to open webpage '+Tmp+' with error code '+IntToStr(ErrorCode),
-            mbError, MB_OK);
-        Result := false;
-        Exit;
-      end;
-      
-    Result := true;
-  end;
-  
+[Code]  
   function NextButtonClick(curPageID: Integer): Boolean;
   var
-    UCommand, UParams : String;
-    ResultCode : Integer;
+    ID : String;
   begin
-    if (curPageID = wpWelcome) and not DetectOutdatedFantom then
+    if curPageID = wpWelcome then
     begin
-      Result := false;
-      Exit;
-    end;
-      
-    if (curPageID = wpReady) and CheckInstallJammer() then
-    begin
-      // presumably, the install jammer uninstaller starts another process
-      // and hence terminates immediatly. Hence, this install and the installjammer
-      // uninstaller run in parallel. Hence, the user must uninstall manually.
-      MsgBox('Old leJOS installation detected. Please uninstall manually via the control panel.',
-        mbError, MB_OK);
-      Result := false;
-      Exit;
+      Result := DetectOutdatedFantom;
+      if not Result then Exit;     
     end;
     
-    if (curPageID = wpReady) and GetUninstallCommand(UCommand, UParams) then
+    if curPageID = wpReady then
     begin
-      if MsgBox('A previous was detected and needs to be uninstalled before this setup can proceed.',
-        mbInformation, MB_OKCANCEL) = IDCANCEL then
-        begin
-          Result := false;
-          Exit;
-        end;
-      if not Exec(UCommand, UParams,'', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
-        MsgBox('Unable to execute uninstaller '+UCommand, mbError, MB_OK);
+      ID := '253252E2-EFAE-4AA8-96B6-0828619E536C' 
+      Result := UninstallInstallJammer(ID);
+      if not Result then Exit;     
+      Result := UninstallInnoSetup(ID);
+      if not Result then Exit;     
     end;
+    
     Result := true;
   end;
    
   procedure CurStepChanged(CurStep: TSetupStep);
   begin
     if CurStep = ssPostInstall then
-      SetPath(ModPath_Append(GetPath(), ExpandConstant('{app}\bin')));   
+      SetEnvVar('Path', ModPath_Append(GetEnvVar('Path'), ExpandConstant('{app}\bin')));   
   end;
   procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
   begin
     if CurUninstallStep = usUninstall then
-      SetPath(ModPath_Delete(GetPath(), ExpandConstant('{app}\bin')));   
+      SetEnvVar('Path', ModPath_Delete(GetEnvVar('Path'), ExpandConstant('{app}\bin')));   
   end;
-  
   
   procedure InitializeWizard();
   begin
     JDKSelect_CreatePage(wpUserInfo);
-    
-    ExtrasDirPage := CreateInputDirPage(wpSelectComponents,
-      'Select the Folders for the Additional Sources', 'Where should the additional sources be stored?',
-      'Select the Folders for the Additional Sources:',
-      false, '');
-    
-    with ExtrasDirPage do
-    begin
-      Add('Sample and Example Projects');
-      Add('Sources of leJOS Development Kit');
-      Values[0] := ExpandConstant('{userdocs}\LeJOS NXJ Samples');
-      Values[1] := ExpandConstant('{userdocs}\LeJOS NXJ Development Kit Sources');
-      
-      OnActivate := @ExtrasDirPage_Activate;
-      OnShouldSkipPage := @ExtrasDirPage_ShouldSkipPage;      
-    end;
+    ExtrasDirPage_CreatePage(wpSelectComponents);    
   end;
   
