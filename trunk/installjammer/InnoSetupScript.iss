@@ -122,8 +122,9 @@ Filename: "{win}\explorer.exe"; Parameters: """{app}\bin\nxjflashg.bat"""; Descr
     Result := false;
   end;
   
-  procedure DetectOutdatedFantom;
+  function DetectOutdatedFantom : Boolean;
   var
+    ErrorCode: Integer;
     Tmp, Error: String;
     MS, LS: Cardinal;
     d: Array[0..3] of Cardinal;
@@ -144,18 +145,30 @@ Filename: "{win}\explorer.exe"; Parameters: """{app}\bin\nxjflashg.bat"""; Descr
       if (d[0] < e[0]) or
         ((d[0] = e[0]) and (d[1] < e[1])) or 
         ((d[0] = e[0]) and (d[1] = e[1]) and (d[2] < e[2])) then
-        Error := 'The current version of you LEGO NXT Driver is '
+        Error := 'Currently, version '
           +IntToStr(d[0])+'.'+IntToStr(d[1])+'.'+IntToStr(d[2])+'.'+IntToStr(d[3])
-          +' which is outdated.'
+          +' of the LEGO NXT Driver is installed. This version is outdated.'
     end
     else
       Error := Tmp+' was either not found or its version cannot be determined.';
-      
+    
     if Length(Error) > 0 then
-        MsgBox(Error + #10#10 + 'Please make sure, that you install the latest LEGO '
-          + 'NXT Driver from www.mindstorms.com (at least Version '
-          + IntToStr(e[0])+'.'+IntToStr(e[1])+'.'+IntToStr(e[2])+').',
-          mbInformation, MB_OK);      
+      if MsgBox(Error + #10#10 + 'Please make sure, that you install the latest LEGO '
+        + 'NXT Driver (also called Fantom Driver) from mindstorms.lego.com, at least version '
+        + IntToStr(e[0])+'.'+IntToStr(e[1])+'.'+IntToStr(e[2])+'.'
+        + #10#10 + 'Click OK to open the download page for the driver '
+        + 'or click Cancel to proceed installing leJOS.',
+        mbInformation, MB_OKCANCEL) = IDOK then
+      begin
+        Tmp := 'http://mindstorms.lego.com/en-us/support/files/Driver.aspx';
+        if not ShellExecAsOriginalUser('', Tmp, '', '', SW_SHOW, ewNoWait, ErrorCode) then
+          MsgBox('Error: was unable to open webpage '+Tmp+' with error code '+IntToStr(ErrorCode),
+            mbError, MB_OK);
+        Result := false;
+        Exit;
+      end;
+      
+    Result := true;
   end;
   
   function NextButtonClick(curPageID: Integer): Boolean;
@@ -163,8 +176,11 @@ Filename: "{win}\explorer.exe"; Parameters: """{app}\bin\nxjflashg.bat"""; Descr
     UCommand, UParams : String;
     ResultCode : Integer;
   begin
-    if (curPageID = wpWelcome) then
-      DetectOutdatedFantom;
+    if (curPageID = wpWelcome) and not DetectOutdatedFantom then
+    begin
+      Result := false;
+      Exit;
+    end;
       
     if (curPageID = wpReady) and CheckInstallJammer() then
     begin
