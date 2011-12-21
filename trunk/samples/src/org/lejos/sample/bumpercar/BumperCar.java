@@ -1,5 +1,7 @@
 package org.lejos.sample.bumpercar;
 
+import lejos.robotics.MirrorMotor;
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.subsumption.*;
 import lejos.nxt.*;
 
@@ -16,11 +18,17 @@ import lejos.nxt.*;
  */
 public class BumperCar
 {
-
+  static RegulatedMotor leftMotor = Motor.A;
+  static RegulatedMotor rightMotor = Motor.C;
+  
+  // Use these definitions instead if your motors are inverted
+  //static RegulatedMotor leftMotor = MirrorMotor.invertMotor(Motor.A);
+  //static RegulatedMotor rightMotor = MirrorMotor.invertMotor(Motor.C);
+  
   public static void main(String[] args)
   {
-    Motor.A.setSpeed(400);
-    Motor.C.setSpeed(400);
+    leftMotor.setSpeed(400);
+    rightMotor.setSpeed(400);
     Behavior b1 = new DriveForward();
     Behavior b2 = new DetectWall();
     Behavior[] behaviorList =
@@ -53,14 +61,14 @@ class DriveForward implements Behavior
   public void action()
   {
     _suppressed = false;
-    Motor.A.forward();
-    Motor.C.forward();
+    BumperCar.leftMotor.forward();
+    BumperCar.rightMotor.forward();
     while (!_suppressed)
     {
       Thread.yield(); //don't exit till suppressed
     }
-    Motor.A.stop(); 
-    Motor.C.stop();
+    BumperCar.leftMotor.stop(); 
+    BumperCar.leftMotor.stop();
   }
 }
 
@@ -88,9 +96,10 @@ class DetectWall implements Behavior
 
   public void action()
   {
-    Motor.A.rotate(-180, true);// start Motor.A rotating backward
-    Motor.C.rotate(-360);  // rotate C farther to make the turn
+    BumperCar.leftMotor.rotate(-180, true);// start Motor.A rotating backward
+    BumperCar.rightMotor.rotate(-360);  // rotate C farther to make the turn
   }
+  
   private TouchSensor touch;
   private UltrasonicSensor sonar;
 }
