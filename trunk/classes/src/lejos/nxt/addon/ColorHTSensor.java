@@ -36,19 +36,19 @@ public class ColorHTSensor extends I2CSensor implements ColorDetector {
     /**
      * Returns the color index detected by the sensor. 
      * @return Color index.<br>
-     * <li> 0 = black
-     * <li> 1 = violet
-     * <li> 2 = purple
-     * <li> 3 = blue
-     * <li> 4 = green
-     * <li> 5 = lime
-     * <li> 6 = yellow
-     * <li> 7 = orange
-     * <li> 8 = red
-     * <li> 9 = crimson
-     * <li> 10 = magenta
-     * <li> 11 to 16 = pastels 
-     * <li> 17 = white
+     * <li> 0 = red
+     * <li> 1 = green
+     * <li> 2 = blue
+     * <li> 3 = yellow
+     * <li> 4 = magenta
+     * <li> 5 = orange
+     * <li> 6 = white
+     * <li> 7 = black
+     * <li> 8 = pink
+     * <li> 9 = gray
+     * <li> 10 = light gray
+     * <li> 11 = dark gray 
+     * <li> 12 = cyan
      */
     public int getColorID()
     {
