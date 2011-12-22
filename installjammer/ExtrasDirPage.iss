@@ -2,6 +2,16 @@
 var
   ExtrasDirPage: TInputDirWizardPage;
 
+  function ExtrasDirPage_GetSamplesFolder(Param: String): String;
+  begin
+    Result := ExtrasDirPage.Values[0];
+  end;
+  
+  function ExtrasDirPage_GetSourcesFolder(Param: String): String;
+  begin
+    Result := ExtrasDirPage.Values[1];
+  end;
+ 
   procedure ExtrasDirPage_Activate(Page: TWizardPage);
   var
     Tmp : Boolean;
@@ -21,16 +31,6 @@ var
     Result := not (IsComponentSelected('extras\samples') or IsComponentSelected('extras\sources'));
   end;
   
-  function ExtrasDirPage_GetSamplesFolder(Param: String): String;
-  begin
-    Result := ExtrasDirPage.Values[0];
-  end;
-  
-  function ExtrasDirPage_GetSourcesFolder(Param: String): String;
-  begin
-    Result := ExtrasDirPage.Values[1];
-  end;
- 
   function ExtrasDirPage_CreatePage(PreviousPageId: Integer): Integer;
   begin
     ExtrasDirPage := CreateInputDirPage(PreviousPageId,

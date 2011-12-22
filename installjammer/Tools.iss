@@ -1,4 +1,12 @@
 [Code]
+  function ConcatPath(const Path1, Path2: String): String;
+  begin
+    if Copy(Path1, Length(Path1), 1)='\' then
+      Result := Path1 + Path2
+    else
+      Result := Path1 + '\' + Path2;
+  end;
+
   function GetEnvVar(const Name: String) : String;
   begin
     if not RegQueryStringValue(HKLM,
@@ -6,6 +14,7 @@
       Name, Result) then
       RaiseException('Failed to determine old value of Path environment variable');
   end;
+  
   procedure SetEnvVar(const Name: String; Data : String);
   begin
     if not RegWriteStringValue(HKLM,
