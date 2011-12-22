@@ -1,8 +1,3 @@
-;TODO:
-; - preserve selection of JDK when going back and froth
-; - include LEJOS_NXT_JAVA_HOME in JDK detection
-; - initialize folder tree with {pf}\Java or {pf}
-
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
@@ -89,15 +84,25 @@ Filename: "{win}\explorer.exe"; Parameters: """{app}\bin\nxjflashg.bat"""; Descr
 
 [Code] 
   procedure CurStepChanged(CurStep: TSetupStep);
+  var
+    Data: String;
   begin
     if CurStep = ssPostInstall then
-      SetEnvVar('Path', ModPath_Append(GetEnvVar('Path'), ExpandConstant('{app}\bin')));   
+    begin
+      GetEnvVar('Path', Data);
+      SetEnvVar('Path', ModPath_Append(Data, ExpandConstant('{app}\bin')));
+    end;   
   end;
   
   procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+  var
+    Data: String;
   begin
     if CurUninstallStep = usUninstall then
-      SetEnvVar('Path', ModPath_Delete(GetEnvVar('Path'), ExpandConstant('{app}\bin')));   
+    begin
+      GetEnvVar('Path', Data);
+      SetEnvVar('Path', ModPath_Delete(Data, ExpandConstant('{app}\bin')));
+    end;   
   end;
   
   function NextButtonClick(curPageID: Integer): Boolean;

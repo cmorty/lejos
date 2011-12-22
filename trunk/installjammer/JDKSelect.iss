@@ -27,15 +27,26 @@ var
   var
     Tmp: String;
   begin
-    Result := RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Development Kit\'
-      + Version, 'JavaHome', Tmp) and (Length(Tmp) > 0) and DirExists(Tmp);
+    Result := RegQueryStringValue(HKEY_LOCAL_MACHINE,
+      'SOFTWARE\JavaSoft\Java Development Kit\' + Version,
+      'JavaHome', Tmp) and (Length(Tmp) > 0) and DirExists(Tmp);
     if Result then Path := Tmp;
   end;
   
   function DetectJDK(var Path: String): Boolean;
   var
-    Tmp : String;
+    Tmp, Dummy: String;
   begin
+    GetEnvVar('LEJOS_NXT_JAVA_HOME', Tmp);
+    if Length(Tmp) <= 0 then
+      Tmp := GetEnv('LEJOS_NXT_JAVA_HOME');
+    if (Length(Tmp) > 0) and Is32BitJDK(Tmp, Dummy) then
+    begin
+      Result := true;
+      Path := Tmp;
+      Exit;
+    end;
+  
     Result := GetJDKPath('1.7', Path);
     if Result then Exit;
     Result := GetJDKPath('1.6', Path);
