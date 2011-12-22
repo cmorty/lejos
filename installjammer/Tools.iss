@@ -9,7 +9,7 @@
 
   function GetEnvVar(const Name: String; var Data: String): Boolean;
   begin
-    if not RegValueExists(HKEY_CURRENT_USER,
+    if not RegValueExists(HKLM,
       'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
       Name) then
     begin
