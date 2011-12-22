@@ -72,13 +72,13 @@ public class TetrixRegulatedMotor extends TetrixEncoderMotor implements Regulate
         super.waitRotateComplete();
     }
     
-    private void waitUntilMovement(int timeoutms) {
-        long beginTime = System.currentTimeMillis();
-        do {
-            Delay.msDelay(50);
-            if (this.isMoving()) break;
-        } while((System.currentTimeMillis()-beginTime) < timeoutms);
-    }
+//    private void waitUntilMovement(int timeoutms) {
+//        long beginTime = System.currentTimeMillis();
+//        do {
+//            Delay.msDelay(50);
+//            if (this.isMoving()) break;
+//        } while((System.currentTimeMillis()-beginTime) < timeoutms);
+//    }
     
     /**
      * Rotate by the requested number of degrees while blocking until completion.
@@ -115,14 +115,14 @@ public class TetrixRegulatedMotor extends TetrixEncoderMotor implements Regulate
     public void forward(){
         super.forward();
         doListenerState(LISTENERSTATE_START);
-        waitUntilMovement(1500);
+//        waitUntilMovement(1500);
     }
     
     @Override
     public void backward(){
         super.backward();
         doListenerState(LISTENERSTATE_START);
-        waitUntilMovement(1500);
+//        waitUntilMovement(1500);
     }
     
      /**
@@ -140,7 +140,7 @@ public class TetrixRegulatedMotor extends TetrixEncoderMotor implements Regulate
       */
     public void setSpeed(int speed) {
         // experimental data gives: speed = 9.7802 * power + 0.5553
-        int power = Math.round((speed - 0.5553f) * 0.102247398f);
+        int power = Math.round((Math.abs(speed) - 0.5553f) * 0.102247398f);
         super.setPower(power);
         
     }
