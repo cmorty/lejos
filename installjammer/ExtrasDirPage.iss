@@ -1,6 +1,8 @@
 [Code]
 var
   ExtrasDirPage: TInputDirWizardPage;
+  WarnCaption: TLabel;
+  WarnText: TLabel;
 
   function ExtrasDirPage_GetSamplesFolder(Param: String): String;
   begin
@@ -24,6 +26,8 @@ var
     ExtrasDirPage.Edits[1].Enabled := Tmp;
     ExtrasDirPage.Buttons[1].Enabled := Tmp;
     ExtrasDirPage.PromptLabels[1].Enabled := Tmp;
+    WarnCaption.Visible := Tmp;
+    WarnText.Visible := Tmp;
   end;
   
   function ExtrasDirPage_ShouldSkipPage(Page: TWizardPage): Boolean;
@@ -38,6 +42,37 @@ var
       'Where should the additional sources be stored?',
       'Select the Folders for the Additional Sources:',
       false, '');
+    
+    { WarnCaption }
+    WarnCaption := TLabel.Create(ExtrasDirPage);
+    with WarnCaption do
+    begin
+      Parent := ExtrasDirPage.Surface;
+      Left := ScaleX(0);
+      Top := ScaleY(160);
+      Width := ScaleX(34);
+      Height := ScaleY(17);
+      Caption := 'Note:';
+      Font.Style := [fsBold];
+    end;
+    
+    { WarnText }
+    WarnText := TLabel.Create(ExtrasDirPage);
+    with WarnText do
+    begin
+      Parent := ExtrasDirPage.Surface;
+      Left := ScaleX(0);
+      Top := ScaleY(176);
+      Width := ScaleX(409);
+      Height := ScaleY(57);
+      AutoSize := False;
+      WordWrap := True;
+      Caption := 'You have selected to install the leJOS Development Kit Sources. '
+        + 'They are not required for developing Java programs that run the NXT or '
+        + 'Java programs that remote-control the NXT. Instead, they are intended '
+        + 'for developers who plan to take a look at how leJOS itself works '
+        + 'or plan on modifying parts of leJOS.';
+    end;
     
     with ExtrasDirPage do
     begin
