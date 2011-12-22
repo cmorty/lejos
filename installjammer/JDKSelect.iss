@@ -4,14 +4,30 @@ var
   JDKSelectButton: TButton;
   JDKSelectTree: TFolderTreeView;
 
+  function Is32BitJDK(const Path: String; var Error: String): Boolean;
+  var
+    Tmp: String;
+  begin
+    Error := '';
+    Tmp := Path + '\bin\java.exe';
+    if not FileExists(Tmp) then Error := Error + Tmp + ' does not exist.' + #10;
+    Tmp := Path + '\bin\javac.exe';
+    if not FileExists(Tmp) then Error := Error + Tmp + ' does not exist.' + #10;
+    if Length(Error) <= 0 then
+    begin
+      Tmp := Path + '\jre\lib\i386';
+      if not DirExists(Tmp) then
+        Error := Error + 'Selected JDK is not a 32 Bit version.' + #10;   
+    end;
+    Result := Length(Error) <= 0;
+  end;
+
   function GetJDKPath(const Version: String; var Path: String): Boolean;
   var
     Tmp: String;
   begin
-    RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Development Kit\'
-      + Version, 'JavaHome', Tmp);
-    
-    Result := (Length(Tmp) > 0) and DirExists(Tmp);
+    Result := RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Development Kit\'
+      + Version, 'JavaHome', Tmp) and (Length(Tmp) > 0) and DirExists(Tmp);
     if Result then Path := Tmp;
   end;
   
@@ -27,8 +43,8 @@ var
     if Result then Exit;
     
     // if everything else fails
-    RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Development Kit', 'CurrentVersion', Tmp);
-    if Length(Tmp) > 0 then Result := GetJDKPath(Tmp, Path)
+    if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\JavaSoft\Java Development Kit',
+      'CurrentVersion', Tmp) and (Length(Tmp) > 0) then Result := GetJDKPath(Tmp, Path)
     else Result := false;
   end;
   
@@ -59,38 +75,25 @@ var
     Result := True;
   end;
   
-  procedure JDKSelect_OpenDownloadPage(Sender: TObject);
-  var
-    Tmp: String;
-    ErrorCode: Integer;
-  begin
-    Tmp := 'http://www.oracle.com/technetwork/java/javase/downloads/';
-    if not ShellExecAsOriginalUser('', Tmp, '', '', SW_SHOW, ewNoWait, ErrorCode) then
-      MsgBox('Error: was unable to open webpage '+Tmp+' with error code '+IntToStr(ErrorCode),
-        mbError, MB_OK);
-  end;
-  
   function JDKSelect_NextButtonClick(Page: TWizardPage): Boolean;
   var
-    Tmp, Error: String;
+    Error: String;
   begin
-    Tmp := JDKSelectTree.Directory + '\bin\java.exe';
-    if not FileExists(Tmp) then Error := Error + Tmp + ' does not exist.' + #10;
-    Tmp := JDKSelectTree.Directory + '\bin\javac.exe';
-    if not FileExists(Tmp) then Error := Error + Tmp + ' does not exist.' + #10;
-    Tmp := JDKSelectTree.Directory + '\jre\lib\i386';
-    if (Length(Error) <= 0) and not DirExists(Tmp) then
-      Error := 'Directory ' + Tmp + ' not found. JDK is not a 32 Bit Version.' + #10;
-    Result := Length(Error) <= 0;
+    Result := Is32BitJDK(JDKSelectTree.Directory, Error);
     if (not Result) then
-      MsgBox(Error + 'Please select the root directory of a valid JDK.'
-        + #10 + #10 + 'To download a JDK for manual install click the ''Download JDK'' Button.',
+      MsgBox(Error + 'Please select the root directory of a valid JDK.' + #10#10
+        + 'To download a JDK for manual install click the ''Download JDK'' Button.',
         mbError, MB_OK);
   end;
   
   procedure JDKSelect_CancelButtonClick(Page: TWizardPage; var Cancel, Confirm: Boolean);
   begin
     //nothing to do yet
+  end;
+  
+  procedure JDKSelect_OpenDownloadPage(Sender: TObject);
+  begin
+    OpenWebPage('http://www.oracle.com/technetwork/java/javase/downloads/');
   end;
   
   function JDKSelect_CreatePage(PreviousPageId: Integer): Integer;
