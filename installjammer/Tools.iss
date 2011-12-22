@@ -7,20 +7,30 @@
       Result := Path1 + '\' + Path2;
   end;
 
-  function GetEnvVar(const Name: String) : String;
+  function GetEnvVar(const Name: String; var Data: String): Boolean;
   begin
+    if not RegValueExists(HKEY_CURRENT_USER,
+      'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
+      Name) then
+    begin
+      Result := false;
+      Data := '';
+      Exit;
+    end;
     if not RegQueryStringValue(HKLM,
       'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
-      Name, Result) then
-      RaiseException('Failed to determine old value of Path environment variable');
+      Name, Data) then
+      RaiseException('Failed to determine old value of '
+        + Name + ' environment variable');
+    Result := true;
   end;
   
-  procedure SetEnvVar(const Name: String; Data : String);
+  procedure SetEnvVar(const Name: String; Data: String);
   begin
     if not RegWriteStringValue(HKLM,
       'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
       Name, Data) then
-      RaiseException('Failed to set value of Path environment variable');
+      RaiseException('Failed to set value of '+Name+' environment variable');
   end;
   
   procedure OpenWebPage(const URL: String);
