@@ -111,7 +111,7 @@ Filename: "{win}\explorer.exe"; Parameters: """{app}\bin\nxjflashg.bat"""; Descr
   begin
     if curPageID = wpWelcome then
     begin
-      Result := DetectOutdatedFantom;
+      Result := DetectOutdatedFantom(1, 1, 3);
       if not Result then Exit;     
     end;
     
