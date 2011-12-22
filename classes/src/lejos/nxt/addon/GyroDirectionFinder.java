@@ -1,6 +1,9 @@
 package lejos.nxt.addon;
 
 import lejos.robotics.DirectionFinder;
+import lejos.robotics.Gyroscope;
+
+import lejos.util.Delay;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -24,13 +27,13 @@ public class GyroDirectionFinder implements DirectionFinder
     private float acceleration;
     private boolean calibrating = false;
     private Regulator reg = new Regulator();
-    private GyroSensor gyro;
+    private Gyroscope gyro;
 
     /** Creates and initializes a new <code>GyroDirectionFinder</code> using passed <code>GyroSensor</code> 
      * @param gyro A <code>{@link GyroSensor}</code> instance
      * @see GyroSensor
      */
-    public GyroDirectionFinder(GyroSensor gyro) {
+    public GyroDirectionFinder(Gyroscope gyro) {
         this(gyro, false);
     }
 
@@ -40,7 +43,7 @@ public class GyroDirectionFinder implements DirectionFinder
      * @see GyroSensor#recalibrateOffset()
      * @see #startCalibration
      */
-    public GyroDirectionFinder(GyroSensor gyro, boolean calibrate) {
+    public GyroDirectionFinder(Gyroscope gyro, boolean calibrate) {
         this.gyro = gyro;
         reg.start();
         if(calibrate == false) return;
@@ -109,12 +112,13 @@ public class GyroDirectionFinder implements DirectionFinder
 
     /**
      * Find offset/bias of gyro while at rest (<u>ensure it is at rest</u>). This is done by calling the <code>recalibrateOffset()</code> method of 
-     * the <code>GyroSensor</code> instance passed in the constructor. This takes 5 seconds.
+     * the <code>GyroSensor</code> instance passed in the constructor. This takes 3 seconds.
      * 
      * @see GyroSensor#recalibrateOffset()
      */
     public void startCalibration() {
         calibrating = true;
+        Delay.msDelay(2600);
     }
 
     /**
@@ -136,33 +140,32 @@ public class GyroDirectionFinder implements DirectionFinder
         @Override
         public void run() {
             float lastDegreesPerSecond = 0F;
-            long lastUpdate = System.currentTimeMillis(), now;
             float degreesPerSecond, secondsSinceLastReading;
+            long lastUpdate;
+            long now = System.currentTimeMillis();
             while (true) {
-                Thread.yield();
+                Delay.msDelay(5);
+                lastUpdate = now;
                 now = System.currentTimeMillis();
-                if(now - lastUpdate<5) continue; // was 4
-                degreesPerSecond=gyro.getAngularVelocity();
                 
-                // reduce "perceived" drift since the sensor resolution is 1 deg/sec. This will increase error...
-                // Comment or remove if this behavior is undesired. I don't know if Brent required a wandering value but
-                // doing this presents better to the human observer (no perceived drift). KPT 4/7/11
-                if (Math.abs(degreesPerSecond)<1.0)degreesPerSecond=0.0f;
+                degreesPerSecond=gyro.getAngularVelocity();
 
                 // Calibration flagged...
-                if(calibrating) {
+                if (calibrating) {
                     gyro.recalibrateOffset(); // 5 seconds consumed here
                     calibrating = false;
                 }
+ 
+                // reduce "perceived" drift since the sensor resolution is 1 deg/sec. This will increase error...
+                // Comment or remove if this behavior is undesired. I don't know if Brent required a wandering value but
+                // doing this presents better to the human observer (no perceived drift). KPT 4/7/11
+                if (Math.abs(degreesPerSecond)<1.0f) degreesPerSecond=0.0f; 
 
                 // Integration
-                secondsSinceLastReading = (float)(now - lastUpdate) / 1000F;
+                secondsSinceLastReading = (now - lastUpdate) * .001f;
                 heading += degreesPerSecond * secondsSinceLastReading;
                 acceleration = (degreesPerSecond - lastDegreesPerSecond) / secondsSinceLastReading;
-
-                // Move On
                 lastDegreesPerSecond = degreesPerSecond;
-                lastUpdate = now;
             }
         }
     }
