@@ -37,10 +37,7 @@
         + 'or click Cancel to proceed installing leJOS.',
         mbInformation, MB_OKCANCEL) = IDOK then
       begin
-        Tmp := 'http://mindstorms.lego.com/en-us/support/files/Driver.aspx';
-        if not ShellExecAsOriginalUser('', Tmp, '', '', SW_SHOW, ewNoWait, ErrorCode) then
-          MsgBox('Error: was unable to open webpage '+Tmp+' with error code '+IntToStr(ErrorCode),
-            mbError, MB_OK);
+        OpenWebPage('http://mindstorms.lego.com/en-us/support/files/Driver.aspx');
         Result := false;
         Exit;
       end;

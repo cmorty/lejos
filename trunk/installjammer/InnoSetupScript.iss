@@ -85,7 +85,19 @@ Filename: "{win}\explorer.exe"; Parameters: """{app}\bin\nxjflashg.bat"""; Descr
 #include "ExtrasDirPage.iss"
 #include "UnInstall.iss"
 
-[Code]  
+[Code] 
+  procedure CurStepChanged(CurStep: TSetupStep);
+  begin
+    if CurStep = ssPostInstall then
+      SetEnvVar('Path', ModPath_Append(GetEnvVar('Path'), ExpandConstant('{app}\bin')));   
+  end;
+  
+  procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+  begin
+    if CurUninstallStep = usUninstall then
+      SetEnvVar('Path', ModPath_Delete(GetEnvVar('Path'), ExpandConstant('{app}\bin')));   
+  end;
+  
   function NextButtonClick(curPageID: Integer): Boolean;
   var
     ID : String;
@@ -108,20 +120,31 @@ Filename: "{win}\explorer.exe"; Parameters: """{app}\bin\nxjflashg.bat"""; Descr
     Result := true;
   end;
    
-  procedure CurStepChanged(CurStep: TSetupStep);
+  function UpdateReadyMemo(Space, NewLine, MemoUserInfoInfo, MemoDirInfo, MemoTypeInfo,
+    MemoComponentsInfo, MemoGroupInfo, MemoTasksInfo: String): String;
   begin
-    if CurStep = ssPostInstall then
-      SetEnvVar('Path', ModPath_Append(GetEnvVar('Path'), ExpandConstant('{app}\bin')));   
+    Result := MemoDirInfo + NewLine;
+    if IsComponentSelected('extras\samples') then
+    begin
+      Result := Result + Space + ExtrasDirPage_GetSamplesFolder('') + NewLine;
+    end;
+    if IsComponentSelected('extras\sources') then
+    begin
+      Result := Result + Space + ExtrasDirPage_GetSourcesFolder('') + NewLine;
+    end;
+    Result := Result + NewLine;    
+    Result := Result + MemoGroupInfo + NewLine;
+    Result := Result + NewLine;
+    Result := Result + MemoTypeInfo + NewLine;
+    Result := Result + NewLine;
+    Result := Result + MemoComponentsInfo + NewLine;
+    // Result := Result + NewLine;    
+    // Result := Result + MemoTasksInfo + NewLine;  
   end;
-  procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
-  begin
-    if CurUninstallStep = usUninstall then
-      SetEnvVar('Path', ModPath_Delete(GetEnvVar('Path'), ExpandConstant('{app}\bin')));   
-  end;
-  
+
   procedure InitializeWizard();
   begin
     JDKSelect_CreatePage(wpUserInfo);
     ExtrasDirPage_CreatePage(wpSelectComponents);    
   end;
-  
+
