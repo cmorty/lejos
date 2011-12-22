@@ -3,10 +3,6 @@ package lejos.nxt.addon.tetrix;
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 
-import lejos.nxt.LCD;
-
-import lejos.robotics.RegulatedMotorListener;
-
 import lejos.util.Delay;
 import lejos.util.EndianTools;
 
@@ -130,9 +126,9 @@ public class TetrixMotorController extends I2CSensor {
         // metal robots with sharp slicing attachments. 
         Thread t1 = new Thread(new Runnable(){
             public void run() {
-                byte[] buf = new byte[1];
+                byte[] buf1 = new byte[1];
                 for (;;){
-                    getData(REG_VERSION, buf, 0);
+                    getData(REG_VERSION, buf1, 0);
                     Delay.msDelay(KEEPALIVE_PING_INTERVAL);
                     // let the thread die if we are constantly getting tachocounts as this will keep the contoller active instead
                     if (tachoMonitorAlive()) break;
@@ -149,11 +145,12 @@ public class TetrixMotorController extends I2CSensor {
         BUSYMonitor(int channel){
             this.channel = channel;
         }
-        public void run(){
-            byte buf[] = {(byte)MODEBIT_BUSY};
-            while ((buf[0] & MODEBIT_BUSY) == MODEBIT_BUSY) {
+        @Override
+		public void run(){
+            byte buf1[] = {(byte)MODEBIT_BUSY};
+            while ((buf1[0] & MODEBIT_BUSY) == MODEBIT_BUSY) {
                 Delay.msDelay(100);
-                if (getData(REGISTER_MAP[REG_IDX_MODE][channel], buf, 1)!=0) break; // exit on 12c fault
+                if (getData(REGISTER_MAP[REG_IDX_MODE][channel], buf1, 1)!=0) break; // exit on 12c fault
             }
             motorState[channel]=STATE_STOPPED;
             motors[channel].doListenerState(TetrixRegulatedMotor.LISTENERSTATE_STOP);
@@ -191,7 +188,8 @@ public class TetrixMotorController extends I2CSensor {
             return samples[channel][sampleIndex]!=0f;
         }
         
-        public void run(){
+        @Override
+		public void run(){
             int retVal;
             int failCount;
             int[] tachoBegin = new int[CHANNELS];
@@ -383,6 +381,7 @@ public class TetrixMotorController extends I2CSensor {
     
     private void motorGo(int channel, int command) {
         byte workingByte=0;
+        int retval;
         
         motorState[channel]=command + 1; // STATE_RUNNING_FWD, STATE_RUNNING_BKWD assuming command IN(CMD_FORWARD,CMD_BACKWARD)
         motorParams[MOTPARAM_ROTATE][channel]=MOTPARAM_OP_FALSE; //false
@@ -393,7 +392,8 @@ public class TetrixMotorController extends I2CSensor {
         if (command==CMD_BACKWARD) {
             workingByte*=-1; // negative power runs backwards
         }
-        sendData(REGISTER_MAP[REG_IDX_POWER][channel], workingByte); 
+        retval = sendData(REGISTER_MAP[REG_IDX_POWER][channel], workingByte); 
+        while (retval<0) retval = sendData(REGISTER_MAP[REG_IDX_POWER][channel], workingByte); 
     }
 
     /** 
@@ -410,6 +410,8 @@ public class TetrixMotorController extends I2CSensor {
         switch (command) {
             case CMD_FORWARD:
                 if (motorState[channel]==STATE_RUNNING_FWD) break;
+                motorGo(channel, command);
+                break;
             case CMD_BACKWARD:
                 if (motorState[channel]==STATE_RUNNING_BKWD) break;
                 motorGo(channel, command);
