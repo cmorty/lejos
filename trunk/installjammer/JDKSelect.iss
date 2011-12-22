@@ -3,19 +3,20 @@ var
   JDKSelectLabel: TLabel;
   JDKSelectButton: TButton;
   JDKSelectTree: TFolderTreeView;
-
+  JDKSelectDetection: Boolean;
+  
   function Is32BitJDK(const Path: String; var Error: String): Boolean;
   var
     Tmp: String;
   begin
     Error := '';
-    Tmp := Path + '\bin\java.exe';
+    Tmp := ConcatPath(Path, 'bin\java.exe');
     if not FileExists(Tmp) then Error := Error + Tmp + ' does not exist.' + #10;
-    Tmp := Path + '\bin\javac.exe';
+    Tmp := ConcatPath(Path, 'bin\javac.exe');
     if not FileExists(Tmp) then Error := Error + Tmp + ' does not exist.' + #10;
     if Length(Error) <= 0 then
     begin
-      Tmp := Path + '\jre\lib\i386';
+      Tmp := ConcatPath(Path, 'jre\lib\i386');
       if not DirExists(Tmp) then
         Error := Error + 'Selected JDK is not a 32 Bit version.' + #10;   
     end;
@@ -57,10 +58,27 @@ var
   var
     Tmp: String;
   begin
-    if DetectJDK(Tmp) then JDKSelectTree.Directory := Tmp
-    else MsgBox('The installer was uanble to detect a 32 Bit Java Development Kit.'
-      + #10 + 'By default, such a JDK is installed in ' + ExpandConstant('{pf32}\Java'),
-      mbInformation, MB_OK);
+    if JDKSelectDetection then
+    begin
+      JDKSelectDetection := false;
+    
+      if DetectJDK(Tmp) then JDKSelectTree.Directory := Tmp
+      else
+      begin
+        Tmp := ExpandConstant('{pf32}\Java');
+        MsgBox('The installer was uanble to detect a 32 Bit Java Development Kit.'
+          + #10 + 'By default, such a JDK is installed in ' + Tmp,
+          mbInformation, MB_OK);
+          
+        if DirExists(Tmp) then JDKSelectTree.Directory := Tmp
+        else 
+        begin
+          Tmp := ExpandConstant('{pf32}');
+          if DirExists(Tmp) then JDKSelectTree.Directory := Tmp
+          else JDKSelectTree.Directory := ExpandConstant('{sd}\');
+        end;
+      end;     
+    end;
   end;
   
   function JDKSelect_ShouldSkipPage(Page: TWizardPage): Boolean;
@@ -100,6 +118,8 @@ var
   var
     Page: TWizardPage;
   begin
+    JDKSelectDetection := true;
+  
     Page := CreateCustomPage(
       PreviousPageId,
       ExpandConstant('{cm:JDKSelectCaption}'),

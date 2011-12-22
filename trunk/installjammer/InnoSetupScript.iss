@@ -19,10 +19,12 @@ AppUpdatesURL=http://www.lejos.org/
 SetupIconFile=../org.lejos.website/htdocs/lejos.ico
 DefaultDirName={pf}\leJOS NXJ
 DefaultGroupName=leJOS NXJ
+AllowNoIcons=true
 SolidCompression=yes
 Compression=lzma
 OutputDir=.
 ChangesEnvironment=yes
+MinVersion=0,5.0
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -47,10 +49,10 @@ Name: "extras\sources"; Description: "Sources of leJOS Development Kit"; Types: 
 
 [Files]
 Source: "..\release\build\bin_windows\*"; DestDir: "{app}"; Excludes: "docs"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main
-Source: "..\release\build\bin_windows\docs\pc\*"; DestDir: "{app}\docs\pc"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main\apipc
-Source: "..\release\build\bin_windows\docs\nxt\*"; DestDir: "{app}\docs\nxt"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main\apinxt
-Source: "..\release\build\samples\*"; DestDir: "{code:ExtrasDirPage_GetSamplesFolder}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: extras\samples
-Source: "..\release\build\source\*"; DestDir: "{code:ExtrasDirPage_GetSourcesFolder}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: extras\sources
+;Source: "..\release\build\bin_windows\docs\pc\*"; DestDir: "{app}\docs\pc"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main\apipc
+;Source: "..\release\build\bin_windows\docs\nxt\*"; DestDir: "{app}\docs\nxt"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main\apinxt
+;Source: "..\release\build\samples\*"; DestDir: "{code:ExtrasDirPage_GetSamplesFolder}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: extras\samples
+;Source: "..\release\build\source\*"; DestDir: "{code:ExtrasDirPage_GetSourcesFolder}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: extras\sources
 
 [Icons]
 Name: "{group}\API Documentation (PC)"; Filename: "{app}\docs\pc\index.html"; Components: main\apipc
@@ -132,8 +134,11 @@ Filename: "{win}\explorer.exe"; Parameters: """{app}\bin\nxjflashg.bat"""; Descr
     begin
       Result := Result + Space + ExtrasDirPage_GetSourcesFolder('') + NewLine;
     end;
-    Result := Result + NewLine;    
-    Result := Result + MemoGroupInfo + NewLine;
+    if MemoGroupInfo > '' then
+    begin
+      Result := Result + NewLine;    
+      Result := Result + MemoGroupInfo + NewLine;
+    end;
     Result := Result + NewLine;
     Result := Result + MemoTypeInfo + NewLine;
     Result := Result + NewLine;
