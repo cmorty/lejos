@@ -21,6 +21,7 @@ OutputDir=.
 ChangesEnvironment=yes
 MinVersion=0,5.0
 WizardImageFile=WizardImage.bmp
+WizardSmallImageFile=WizardSmallImage.bmp
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
