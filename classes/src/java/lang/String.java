@@ -341,7 +341,8 @@ public final class String implements CharSequence, Comparable<String>
 	@Override
 	public int hashCode()
 	{
-		// computation has to be compatible with JDK, otherwise Java 7 String-switch-case will fail
+		// computation is compatible with JDK, otherwise Java 7 String-switch-case,
+		// which is based on hashCode, will fail.
 		int h = 0;
 		for (int i = 0; i < this.characters.length; i++)
 		{
