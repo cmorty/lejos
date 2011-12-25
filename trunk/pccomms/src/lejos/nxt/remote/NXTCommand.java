@@ -140,7 +140,8 @@ public class NXTCommand implements NXTProtocol {
 													// apparently
 		byte[] reply = nxtComm.sendRequest(request, 8);
 		FileInfo fileInfo = new FileInfo(fileName);
-		fileInfo.status = reply[2];
+		if (reply[2] != ErrorMessages.SUCCESS)
+			throw new LCPException(reply[2]);
 		if (reply.length == 8) { // Check if all data included in reply
 			fileInfo.fileHandle = reply[3];
 			fileInfo.fileSize = (0xFF & reply[4]) | ((0xFF & reply[5]) << 8)
@@ -171,10 +172,8 @@ public class NXTCommand implements NXTProtocol {
 		byte[] reply = nxtComm.sendRequest(request, 4);
 		if (reply == null || reply.length != 4) {
 			throw new IOException("Invalid return from OPEN WRITE");
-		} else if (reply[2] != 0) {
-			if (reply[2] == (byte) 0xFB) throw new IOException("NXJ Flash Memory Full");
-			else if (reply[2] == (byte) 0xFC) throw new IOException("NXJ Directory Full");
-			else throw new IOException("OPEN WRITE failed");
+		} else if (reply[2] != ErrorMessages.SUCCESS) {
+			throw new LCPException(reply[2]);
 		}
 		return reply[3]; // The handle number
 	}
@@ -227,7 +226,6 @@ public class NXTCommand implements NXTProtocol {
 			if (lastPos < 0 || lastPos > 20) lastPos = 20;
 			name.delete(lastPos, name.length());
 			fileInfo = new FileInfo(name.toString());
-			fileInfo.status = 0;
 			fileInfo.fileHandle = reply[3];
 			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)
 					| ((0xFF & reply[26]) << 16) | ((0xFF & reply[27]) << 24);
@@ -259,7 +257,6 @@ public class NXTCommand implements NXTProtocol {
 			if (lastPos < 0 || lastPos > 20) lastPos = 20;
 			name.delete(lastPos, name.length());
 			fileInfo = new FileInfo(name.toString());
-			fileInfo.status = 0;
 			fileInfo.fileHandle = reply[3];
 			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)
 					| ((0xFF & reply[26]) << 16) | ((0xFF & reply[27]) << 24);
@@ -291,7 +288,6 @@ public class NXTCommand implements NXTProtocol {
 			if (lastPos < 0 || lastPos > 20) lastPos = 20;
 			name.delete(lastPos, name.length());
 			fileInfo = new FileInfo(name.toString());
-			fileInfo.status = 0;
 			fileInfo.fileHandle = reply[3];
 			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)
 					| ((0xFF & reply[26]) << 16) | ((0xFF & reply[27]) << 24);
@@ -322,7 +318,6 @@ public class NXTCommand implements NXTProtocol {
 			if (lastPos < 0 || lastPos > 20) lastPos = 20;
 			name.delete(lastPos, name.length());
 			fileInfo = new FileInfo(name.toString());
-			fileInfo.status = 0;
 			fileInfo.fileHandle = reply[3];
 			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)
 					| ((0xFF & reply[26]) << 16) | ((0xFF & reply[27]) << 24);

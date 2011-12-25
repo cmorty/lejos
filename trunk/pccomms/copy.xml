@@ -3,7 +3,7 @@
   Buildfile for copying common classes from the classes project
   =============================================================
 -->
-<project name="copy" default="copy" basedir=".">
+<project name="leJOS pccomm copy" default="copy" basedir=".">
   	<target name="copy"  description="Copy source of common classes">
   		<mkdir dir="src/lejos/geom"/>
   		<delete dir="src/lejos/geom" includes="*.java, package.html"/>
@@ -45,8 +45,9 @@
   				<include name="lejos/nxt/remote/ErrorMessages.java"/>
   				<include name="lejos/nxt/remote/FileInfo.java"/>
   				<include name="lejos/nxt/remote/FirmwareInfo.java"/>
-  				<include name="lejos/nxt/remote/NXJFirmwareInfo.java"/>
   				<include name="lejos/nxt/remote/InputValues.java"/>
+  				<include name="lejos/nxt/remote/LCPException.java"/>
+  				<include name="lejos/nxt/remote/NXJFirmwareInfo.java"/>
   				<include name="lejos/nxt/remote/NXTCommand.java"/>
   				<include name="lejos/nxt/remote/NXTCommRequest.java"/>
   				<include name="lejos/nxt/remote/NXTProtocol.java"/>

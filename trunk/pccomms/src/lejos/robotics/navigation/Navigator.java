@@ -171,6 +171,15 @@ public class Navigator implements WaypointListener
       _singleStep = false;
       _sequenceNr = 0;
       followPath(_path);
+      
+      // Block until done
+      while(isMoving()) {
+    	  try {
+			Thread.sleep(5);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+      }
    }
 
    /**
@@ -198,6 +207,25 @@ public class Navigator implements WaypointListener
       goTo(new Waypoint(x, y, heading));
    }
 
+   /**
+    * Rotates the robot to a new absolute heading. For example, rotateTo(0) will line the robot with the 
+    * x-axis, while rotateTo(90) lines it with the y-axis. If the robot is currently on the move to a
+    * coordinate, this method will not attempt to rotate and it will return false.
+    * @param angle The absolute heading to rotate the robot to. Value is 0 to 360.
+    * @return true if the rotation happened, false if the robot was moving while this method was called.
+    */
+   public boolean rotateTo(double angle) {
+	   float head = getPoseProvider().getPose().getHeading();
+	   double diff = angle - head;
+	   while(diff > 180) diff = diff - 360;
+	   while(diff < -180) diff = diff + 360;
+	   if(isMoving()) return false;
+	   if(_pilot instanceof RotateMoveController)
+		   ((RotateMoveController) _pilot).rotate(diff);
+	   return true;
+	   
+   }
+   
    /**
     * Adds a  Waypoint  to the end of the path. 
     * @param aWaypoint  to be added
@@ -309,7 +337,7 @@ public class Navigator implements WaypointListener
    */
   private class Nav extends Thread
   {
-    boolean more = true;
+	boolean more = true;
 
     @Override
 	public void run()
