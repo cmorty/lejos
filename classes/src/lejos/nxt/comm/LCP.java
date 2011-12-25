@@ -102,8 +102,6 @@ public class LCP {
 	public static final byte POLL_LENGTH = (byte)0xA1;
 	public static final byte POLL = (byte)0xA2;
 	
-	public static final byte NXJ_FIND_FIRST = (byte)0xB6;
-	public static final byte NXJ_FIND_NEXT = (byte)0xB7;
 	public static final byte NXJ_PACKET_MODE = (byte)0xff;
 	
 	// System settings
@@ -467,11 +465,10 @@ public class LCP {
 		}
 
 		// FIND FIRST
-		if (cmdId == FIND_FIRST || cmdId == NXJ_FIND_FIRST)
+		if (cmdId == FIND_FIRST)
 		{
 			initFiles();
-			if (cmdId == FIND_FIRST) len = 28;
-			else len = 32;
+			len = 28;
 			if (numFiles == 0)
 			{
 				reply[2] = ErrorMessages.FILE_NOT_FOUND;
@@ -482,30 +479,19 @@ public class LCP {
 				fileIdx = 1;
             	int size = (int) files[0].length();
             	setReplyInt(size,reply,24);
-    			
-    			if (cmdId == NXJ_FIND_FIRST) {
-    				int startPage = files[0].getPage();
-    				setReplyInt(startPage,reply,28);   				
-    			}
 			}
 		}
 		
 		// FIND NEXT
-		if (cmdId == FIND_NEXT || cmdId == NXJ_FIND_NEXT)
+		if (cmdId == FIND_NEXT)
 		{
-			if (cmdId == FIND_NEXT) len = 28;
-			else len = 32;
+			len = 28;
 			if (fileNames == null || fileIdx >= fileNames.length) reply[2] = ErrorMessages.FILE_NOT_FOUND;
 			else
 			{
 				for(int i=0;i<fileNames[fileIdx].length();i++) reply[4+i] = (byte) fileNames[fileIdx].charAt(i);
             	int size = (int) files[fileIdx].length();
             	setReplyInt(size,reply,24);   			
-    			if (cmdId == NXJ_FIND_NEXT) {
-    				int startPage = files[fileIdx].getPage();
-    				setReplyInt(startPage,reply,28);  				
-    			}
-    			
 				fileIdx++;
 			}
 		}
