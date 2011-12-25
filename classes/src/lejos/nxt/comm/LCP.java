@@ -16,6 +16,7 @@ import lejos.nxt.SensorPort;
 import lejos.nxt.Settings;
 import lejos.nxt.Sound;
 import lejos.nxt.SystemSettings;
+import lejos.nxt.remote.ErrorMessages;
 
 /**
  * 
@@ -105,15 +106,6 @@ public class LCP {
 	public static final byte NXJ_FIND_NEXT = (byte)0xB7;
 	public static final byte NXJ_PACKET_MODE = (byte)0xff;
 	
-	// Error codes
-	
-	public static final byte MAILBOX_EMPTY = (byte)0x40;
-	public static final byte FILE_NOT_FOUND = (byte)0x86;
-	public static final byte INSUFFICIENT_MEMORY = (byte) 0xFB;
-	public static final byte DIRECTORY_FULL = (byte) 0xFC;
-	public static final byte UNDEFINED_ERROR = (byte) 0x8A;
-	public static final byte NOT_IMPLEMENTED = (byte) 0xFD;
-
 	// System settings
 	
 	private static final String defaultProgramProperty = "lejos.default_program";
@@ -406,7 +398,7 @@ public class LCP {
             	int size = (int) file.length();
             	setReplyInt(size,reply,4);         	
             } catch (Exception e) {
-            	reply[2] = FILE_NOT_FOUND;
+            	reply[2] = ErrorMessages.FILE_NOT_FOUND;
             }
 			len = 8;
 		}	
@@ -419,7 +411,7 @@ public class LCP {
 			
 			// If insufficient flash memory, report an error			
 			if (size > File.freeMemory()) {
-				reply[2] = INSUFFICIENT_MEMORY;
+				reply[2] = ErrorMessages.INSUFFICIENT_MEMORY_AVAILABLE;
 			} else {	
 				try {
 					file = new File(getFile(cmd,2));
@@ -437,7 +429,7 @@ public class LCP {
 					files = null;
 					File.reset(); // force read from file table
 					initFiles();
-					reply[2] = DIRECTORY_FULL;
+					reply[2] = ErrorMessages.DIRECTORY_FULL;
 				}
 			}
 			len = 4;
@@ -446,21 +438,21 @@ public class LCP {
 		// OPEN WRITE LINEAR
 		if (cmdId == OPEN_WRITE_LINEAR)
 		{
-			reply[2] = NOT_IMPLEMENTED;
+			reply[2] = ErrorMessages.NOT_IMPLEMENTED;
 			len = 4;
 		}
 		
 		// OPEN WRITE DATA
 		if (cmdId == OPEN_WRITE_DATA)
 		{
-			reply[2] = NOT_IMPLEMENTED;
+			reply[2] = ErrorMessages.NOT_IMPLEMENTED;
 			len = 4;
 		}
 		
 		// OPEN APPEND  DATA
 		if (cmdId == OPEN_APPEND_DATA)
 		{
-			reply[2] = FILE_NOT_FOUND;
+			reply[2] = ErrorMessages.FILE_NOT_FOUND;
 			len = 8;
 		}
 		
@@ -482,7 +474,7 @@ public class LCP {
 			else len = 32;
 			if (numFiles == 0)
 			{
-				reply[2] = FILE_NOT_FOUND;
+				reply[2] = ErrorMessages.FILE_NOT_FOUND;
 			}
 			else
 			{
@@ -503,7 +495,7 @@ public class LCP {
 		{
 			if (cmdId == FIND_NEXT) len = 28;
 			else len = 32;
-			if (fileNames == null || fileIdx >= fileNames.length) reply[2] = FILE_NOT_FOUND;
+			if (fileNames == null || fileIdx >= fileNames.length) reply[2] = ErrorMessages.FILE_NOT_FOUND;
 			else
 			{
 				for(int i=0;i<fileNames[fileIdx].length();i++) reply[4+i] = (byte) fileNames[fileIdx].charAt(i);
@@ -528,7 +520,7 @@ public class LCP {
             	bytesRead = in.read(reply, 6, numBytes);
             	setReplyShortInt(bytesRead, reply, 4);
             } catch (IOException ioe) {
-            	reply[2] = UNDEFINED_ERROR;
+            	reply[2] = ErrorMessages.UNDEFINED_ERROR;
             }
 
 			len = bytesRead + 6;
@@ -542,7 +534,7 @@ public class LCP {
 				out.write(cmd,3,dataLen);
 				setReplyShortInt(dataLen, reply, 4);
 			} catch (Exception ioe) {
-				reply[2] = UNDEFINED_ERROR;
+				reply[2] = ErrorMessages.UNDEFINED_ERROR;
 			}						
 
 			len = 6;
@@ -566,7 +558,7 @@ public class LCP {
 					}
 				}
 			}
-			if (!deleted) reply[2] = FILE_NOT_FOUND;
+			if (!deleted) reply[2] = ErrorMessages.FILE_NOT_FOUND;
 		}
 		
 		// CLOSE
@@ -577,7 +569,7 @@ public class LCP {
 					out.flush();
 					out.close();
 				} catch (Exception ioe) {
-					reply[2] = UNDEFINED_ERROR;
+					reply[2] = ErrorMessages.UNDEFINED_ERROR;
 				}
 				out = null;
 			}
@@ -590,7 +582,7 @@ public class LCP {
 				InBox inBox = inBoxes[cmd[2]];
 				reply[3] = cmd[3];
 				if (inBox == null || inBox.isEmpty()) {
-					reply[2] = MAILBOX_EMPTY;
+					reply[2] = ErrorMessages.SPECIFIED_MAILBOX_QUEUE_IS_EMPTY;
 				} else {
 					String msg = (cmd[4] == 0 ? inBox.get(0) : inBox.remove(0));
 					int msgLen = msg.length();
