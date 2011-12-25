@@ -15,6 +15,11 @@ import lejos.robotics.RegulatedMotorListener;
  * constructor that doesn't use leftTacho and rightTacho values but calls auto calibrate method.
  */
 
+// TODO: Wikipedia article on Homotopy principle has some ideas about calculating position and steering of vehicle:
+// http://en.wikipedia.org/wiki/Homotopy_principle#A_car_in_the_plane
+// EQUATION: x sin A = y cos A 
+// where angle A describes orientation of the car  
+
 /**
  * <p>Vehicles that are controlled by the SteeringPilot class use a similar steering mechanism to a car, in which the 
  * front wheels pivot from side to side to control direction.</p>

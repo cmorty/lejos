@@ -56,11 +56,6 @@ public class FileSystem {
 		
 		try {
 			FileInfo finfo = nxtCommand.openRead(fileName);
-			if(finfo.status != 0) { // Return error message
-				data = new byte[1];
-				data[0] = finfo.status;
-				return data;
-			}
 			data = nxtCommand.readFile(finfo.fileHandle, finfo.fileSize);
 			nxtCommand.closeFile(finfo.fileHandle);
 		} catch (IOException ioe) {

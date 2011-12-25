@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import lejos.geom.Point;
 import lejos.nxt.Battery;
-import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import lejos.nxt.addon.CruizcoreGyro;
 import lejos.robotics.RegulatedMotor;
@@ -12,7 +11,6 @@ import lejos.robotics.RegulatedMotorListener;
 import lejos.robotics.navigation.Pose;
 import lejos.util.Delay;
 import lejos.util.Matrix;
-
 
 /*
  *          
@@ -44,7 +42,7 @@ import lejos.util.Matrix;
  */
 public class OmniPilot implements ArcRotateMoveController, RegulatedMotorListener {
     
-    private Pose pose = new Pose();
+    private Pose pose = new Pose(); // TODO: Technically this variable should be removed. Navigator handles Pose.
 	private float wheelBase = 7.0f; // units
 	private float wheelDiameter = 4.6f; // units
 	private double[][] ikPars;
@@ -55,9 +53,9 @@ public class OmniPilot implements ArcRotateMoveController, RegulatedMotorListene
 	private boolean reverse = false; // true when linearSpeed is negative
 	private float speedVectorDirection = 0;
 	private float angularSpeed = 0; // deg/s
-	protected final RegulatedMotor motor1; // central motor
-	protected final RegulatedMotor motor2; // left motor
-	protected final RegulatedMotor motor3; // right motor
+	private final RegulatedMotor motor1; // central motor
+	private final RegulatedMotor motor2; // left motor
+	private final RegulatedMotor motor3; // right motor
 	private int motor1Speed = 0; //deg/s
 	private int motor2Speed = 0; //deg/s
 	private int motor3Speed = 0; //deg/s
@@ -69,7 +67,7 @@ public class OmniPilot implements ArcRotateMoveController, RegulatedMotorListene
 	
 	private double minTurnRadius = 0; // This vehicle can turn withgout moving therefore minimum turn radius = 0
 	
-	public CruizcoreGyro gyro;
+	private CruizcoreGyro gyro;
 	
 	private boolean gyroEnabled = false;
 	
@@ -273,27 +271,21 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	}
 	
 	/**
-	 * Coast.
+	 * Coast. TODO: Probably delete this method?
 	 */
-	public synchronized void coast() {
+	private synchronized void coast() {
 		motor1.flt();
 		motor2.flt();
 		motor3.flt();
 		spinningMode = false;
 	}
 	
-	/**
-	 * Forward.
-	 */
 	public synchronized void forward() {
 		spinningMode = false;
 		setSpeed(linearSpeed, 0, angularSpeed);
 		startMotors();
 	}
 
-	/**
-	 * Backward.
-	 */
 	public synchronized void backward() {
 		spinningMode = false;
 		setSpeed(linearSpeed, 180, angularSpeed);
@@ -301,10 +293,10 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	}
 	
 	/**
-	 * Move straight.
+	 * This method causes the robot to move in a direction while keeping the front of the robot pointed in the current direction it is facing. 
 	 *
 	 * @param linSpeed the lin speed
-	 * @param direction the direction
+	 * @param direction the direction relative to the current direction the robot is facing
 	 */
 	public synchronized void moveStraight(float linSpeed, int direction) {
 //		float dir = linSpeed>0? direction : direction+180;
@@ -314,7 +306,8 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	}
 	
 	/**
-	 * Spinning move.
+	 * Causes the robot to spin while moving along a linear path. This method is similar to {@link OmniPilot#moveStraight(float, int)}
+	 * except the robot will spin instead of holding the robot in the current direction.
 	 *
 	 * @param linSpeed the linear speed [units/s]
 	 * @param angSpeed the angular speed [deg/s]
@@ -329,46 +322,28 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 //		startMotors();
 	}
 	
-	/**
-	 * Stop.
-	 */
 	public synchronized void stop() {
 		motor1.stop();
 		motor2.stop();
 		motor3.stop();
-		spinningMode = false;		
+		spinningMode = false;
 	}
 
-	/**
-	 * Checks if is moving.
-	 *
-	 * @return true, if is moving
-	 */
 	public boolean isMoving() {
 		return motor1.isMoving() || motor2.isMoving() || motor3.isMoving();
 	}
 
-	/**
-	 * Sets the move speed.
-	 *
-	 * @param speed the new move speed
-	 */
 	public void setTravelSpeed(double speed) {
 		linearSpeed = Math.abs((float)speed);
 		reverse = speed<0;
 	}
 
-	/**
-	 * Gets the move speed.
-	 *
-	 * @return the move speed
-	 */
 	public double getTravelSpeed() {
 		return linearSpeed;
 	}
 	
 	/**
-	 * Sets the move direction.
+	 * Sets the move direction. This value is then used by subsequent calls to {@link OmniPilot#steer(float)} (all three overloaded methods).
 	 *
 	 * @param dir the new move direction
 	 */
@@ -385,11 +360,6 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 		return speedVectorDirection;
 	}
 
-	/**
-	 * Gets the move max speed in units/s.
-	 *
-	 * @return the move max speed
-	 */
 	public double getMaxTravelSpeed() {
 		// it is generally assumed, that the maximum accurate speed of Motor is
 		// 100 degree/second * Voltage
@@ -402,29 +372,14 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 		// max degree/second divided by degree/unit = unit/second
 	}
 
-	/**
-	 * Sets the turning speed in deg/s
-	 *
-	 * @param speed the new turning speed
-	 */
 	public void setRotateSpeed(double speed) {
 		angularSpeed = (float)speed;
 	}
 	
-	/**
-	 * Gets the turning speed in deg/s 
-	 *
-	 * @return the turning speed
-	 */
 	public double getRotateSpeed() {
 		return angularSpeed;
 	}
 
-	/**
-	 * Gets the max turning speed.
-	 *
-	 * @return the turn max speed
-	 */
 	public double getRotateMaxSpeed() {
 		// it is generally assumed, that the maximum accurate speed of Motor is
 		// 100 degree/second * Voltage
@@ -487,61 +442,43 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 				Thread.yield();
 	}
 	
-	/**
-	 * Travel.
-	 *
-	 * @param distance the distance
-	 */
 	public void travel(double distance) {
 		travel(distance, 0, false);
 	}
 
 	/**
-	 * Travel.
-	 *
-	 * @param distance the distance
-	 * @param direction the direction
+	 * This method causes the robot to travel in a linear path, similar to other travel() methods, except you can specify
+	 * which direction to move (relative to the current robot heading).
+	 *  
+	 * <b>NOTE: This method is not part of the MoveController interface.</b>
+	 * @param distance
+	 * @param direction
 	 */
 	public void travel(double distance, double direction) {
 		travel(distance, direction, false);
 	}
 	
-	/**
-	 * Travel.
-	 *
-	 * @param distance the distance
-	 * @param immediateReturn if true, returns at once.
-	 */
 	public void travel(double distance, boolean immediateReturn) {
 		travel(distance, 0, immediateReturn);
 	}
 	
 	/**
-	 * Travel.
-	 *
-	 * @param distance the distance
-	 * @param direction the direction
-	 * @param immediateReturn the immediate return
+	 * This method causes the robot to travel in a linear path, similar to other travel() methods, except you can specify
+	 * which direction to move (relative to the current robot heading).
+	 * 
+	 * <b>NOTE: This method is not part of the MoveController interface.</b>
+	 * @param distance
+	 * @param direction
+	 * @param immediateReturn
 	 */
 	public void travel(double distance, double direction, boolean immediateReturn) {
 		move(distance, direction, 0, immediateReturn);
 	}
 
-	/**
-	 * Rotate in place and return when finished.
-	 *
-	 * @param angle the angle
-	 */
 	public void rotate(double angle) {
 		rotate(angle, false);
 	}
 
-	/**
-	 * Rotate in place and return immediately
-	 *
-	 * @param angle the angle
-	 * @param immediateReturn the immediate return
-	 */
 	public void rotate(double angle, boolean immediateReturn) {
 		if (angularSpeed==0) angularSpeed = 90;
 		move(0, 0, angle, immediateReturn);
@@ -553,7 +490,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 *
 	 * @return the angle
 	 */
-	public float getAngle() {
+	private float getAngle() {
 //		Sound.playTone(2000, 10);
 		int t1 = motor1.getTachoCount();
 		int t2 = motor2.getTachoCount();
@@ -572,7 +509,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	 *
 	 * @return the travel distance
 	 */
-	public float getTravelDistance() {
+	private float getTravelDistance() {
 		int t1 = motor1.getTachoCount();
 		int t2 = motor2.getTachoCount();
 		int t3 = motor3.getTachoCount();
@@ -625,88 +562,76 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 		arc(radius,angle,immediateReturn);
 	}
 	
-	/**
-	 * Travel arc.
-	 *
-	 * @param radius the radius
-	 * @param distance the distance
-	 */
 	public void travelArc(double radius, double distance) {
 		travelArc(radius, distance, false);
 	}
 
-	/**
-	 * Travel arc.
-	 *
-	 * @param radius the radius
-	 * @param distance the distance
-	 * @param immediateReturn the immediate return
-	 */
 	public void travelArc(double radius, double distance, boolean immediateReturn) {
 		travelArc(radius, distance, 0, false);
 	}
 	
 	/**
-	 * Travel arc.
-	 *
-	 * @param radius the radius
-	 * @param distance the distance
-	 * @param direction the direction
-	 * @param immediateReturn the immediate return
+	 * This method moves the robot in an arc, similar to the other {@link OmniPilot#travelArc(double, double)} methods,
+	 * except you can choose any of the 360 degree directions relative to the current heading (0) of the robot, while keeping
+	 * the heading of the robot pointed in the same direction during the move. 
+	 * 
+	 * <b>NOTE: This method is not part of the MoveController interface.</b>
+	 * @param radius
+	 * @param distance
+	 * @param direction
+	 */
+	public void travelArc(double radius, double distance, float direction) {
+		travelArc(radius, distance, direction, false);
+	}
+	
+	/**
+	 * This method moves the robot in an arc, similar to the other {@link OmniPilot#travelArc(double, double)} methods,
+	 * except you can choose any of the 360 degree directions relative to the current heading (0) of the robot, while keeping
+	 * the heading of the robot pointed in the same direction during the move. 
+	 * 
+	 * <b>NOTE: This method is not part of the MoveController interface.</b>
+	 * @param radius
+	 * @param distance
+	 * @param direction
+	 * @param immediateReturn
 	 */
 	public void travelArc(double radius, double distance, float direction,  boolean immediateReturn) {
 		float angle = (float) ((distance * 180) / (Math.PI * radius));
 		arc(radius, angle, direction, immediateReturn);
 	}
 
-	/**
-	 * Arc.
-	 *
-	 * @param radius the radius
-	 */
-	public void arc(double radius) {
-		arc(radius, Float.POSITIVE_INFINITY, 0, true);
-	}
-
-	/**
-	 * Arc.
-	 *
-	 * @param radius the radius
-	 * @param angle the angle
-	 */
 	public void arc(double radius, double angle) {
 		arc(radius, angle, 0, false);
 	}
 	
 	/**
-	 * Arc.
-	 *
-	 * @param radius the radius
-	 * @param angle the angle
-	 * @param direction the direction
+	 * This method moves the robot in an arc, similar to the other {@link OmniPilot#arc(double, double)} methods,
+	 * except you can choose any of the 360 degree directions relative to the current heading (0) of the robot, while keeping
+	 * the heading of the robot pointed in the same direction during the move. 
+	 * 
+	 * <b>NOTE: This method is not part of the MoveController interface.</b>
+	 * @param radius
+	 * @param angle
+	 * @param direction
 	 */
 	public void arc(double radius, double angle, double direction) {
-		arc(radius,angle,direction, false);
-	}	
-	
-	/**
-	 * Arc.
-	 *
-	 * @param radius the radius
-	 * @param angle the angle
-	 * @param immediateReturn the immediate return
-	 */
+		arc(radius, angle, direction, false);
+	}
+		
 	public void arc(double radius, double angle, boolean immediateReturn) {
 		arc(radius,angle,0,immediateReturn);
 	}
 	
 	/**
-	 * Arc.
-	 *
-	 * @param radius the radius
-	 * @param angle the angle
-	 * @param direction the direction
-	 * @param immediateReturn the immediate return
+	 * This method moves the robot in an arc, similar to the other {@link OmniPilot#arc(double, double)} methods,
+	 * except you can choose any of the 360 degree directions relative to the current heading (0) of the robot, while keeping
+	 * the heading of the robot pointed in the same direction during the move. 
+	 * 
+	 * <b>NOTE: This method is not part of the MoveController interface.</b>
+	 * @param radius
+	 * @param angle
+	 * @param direction
+	 * @param immediateReturn
 	 */
 	public void arc(double radius, double angle, double direction, boolean immediateReturn) {
 		
@@ -727,151 +652,28 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 
 
 	/**
-	 * Reset all tacho counts.
+	 * Reset all tacho counts. TODO: Delete this method? Unused by any other method or class.
 	 */
-	private void reset() {
+	public void reset() {
 		motor1.resetTachoCount();
 		motor2.resetTachoCount();
 		motor3.resetTachoCount();
 		odo.reset();
-	}
-	
-	/**
-	 * Check if the motors are stalled.
-	 *
-	 * @return true, if any is stalled
-	 */
-	public boolean stalled() {
-		return (0 == motor1.getRotationSpeed()) || (0 == motor2.getRotationSpeed()) || (0 == motor3.getRotationSpeed());
 	}
 
 	/**
 	 * Sets drive motor speed.
 	 *
 	 * @param speed the new speed
-	 * @deprecated in 0.8, use setTurnSpeed() and setMoveSpeed(). The method was deprecated, as this it requires knowledge
+	 * @deprecated in 0.8, use setRotateSpeed() and setTravelSpeed(). The method was deprecated, as this it requires knowledge
 	 * of the robots physical construction, which this interface should hide!
 	 */
 	@Deprecated
 	public void setSpeed(int speed) {
+		setTravelSpeed(speed);
 	}
 
-	/**
-	 * gets the current value of the X coordinate.
-	 *
-	 * @return current x
-	 */
-	public float getX()
-	{
-		return pose.getX();
-	}
-	
-	/**
-	 * gets the current value of the Y coordinate.
-	 *
-	 * @return current Y
-	 */
-	public float getY()
-	{
-		return pose.getY();
-	}
-	
-	/**
-	 * gets the current value of the robot heading.
-	 *
-	 * @return current heading
-	 */
-	public float getHeading()
-	{
-		return pose.getHeading();
-	}
-
-	/**
-	 * Rotates the NXT robot to point in a specific direction, using the smallest
-	 * rotation necessary.
-	 *
-	 * @param angle The angle to rotate to, in degrees.
-	 */
-	public void rotateTo(float angle)
-	{
-		rotateTo(angle, false);
-	}
-
-	/**
-	 * Rotates the NXT robot to point in a specific direction relative to the x axis.  It make the smallest
-	 * rotation  necessary .
-	 * If immediateReturn is true, method returns immidiately
-	 * @param angle The angle to rotate to, in degrees.
-	 * @param immediateReturn if true,  method returns immediately
-	 */
-	public void rotateTo(float angle, boolean immediateReturn)
-	{
-		float turnAngle = angle - pose.getHeading();
-		while (turnAngle < -180)turnAngle += 360;
-		while (turnAngle > 180) turnAngle -= 360;
-		rotate(turnAngle, immediateReturn);
-	}
-	/**
-	 * Robot moves to grid coordinates x,y maintaining the orientation. Returns when arrived to point.
-	 * @param x destination X coordinate
-	 * @param y destination Y coordinate
-	 * 
-	 */
-	public void goTo(float x, float y)
-	{
-		goTo(x, y, false);
-	}
-	
-	/**
-	 * Robot moves to grid coordinates x,y maintaining the orientation.
-	 *
-	 * @param x destination X coordinate
-	 * @param y destination Y coordinate
-	 * @param immediateReturn if true, returns immediately
-	 */
-	public void goTo(float x, float y, boolean immediateReturn)
-	{
-		float turnAngle = angleTo(x, y) - pose.getHeading();
-		while (turnAngle < -180)turnAngle += 360;
-		while (turnAngle > 180) turnAngle -= 360;
-		travel(distanceTo(x, y), turnAngle, immediateReturn);
-	}
-	
-	/**
-	 * Returns the distance from robot current location to the point with coordinates x,y.
-	 *
-	 * @param x coordinate of destination
-	 * @param y coordinate of destination
-	 * @return the distance
-	 */
-	public float distanceTo(float x, float y)
-	{
-		return pose.distanceTo(new Point(x, y));
-	}
-	
-	/**
-	 * Returns the angle from robot current location to the point with coordinates x,y.
-	 *
-	 * @param x coordinate of destination
-	 * @param y coordinate of destination
-	 * @return angle
-	 */
-	public float angleTo(float x, float y)
-	{
-		return pose.angleTo(new Point(x, y));
-	}
-	
-	/**
-	 * Show pose.
-	 *
-	 * @param show if true shows the current odometric pose
-	 * @param lcdLine the lcd line where to start displaying the pose (3 lines are needed)
-	 */
-	public void showPose(boolean show, int lcdLine) {
-		odo.showPose(show, lcdLine);
-	}
-
-	public class Odometer extends Thread {
+	private class Odometer extends Thread {
 		
 		private int t1old = 0;
 		
@@ -883,9 +685,9 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 		
 		private int period = 10; //ms
 		
-		private boolean displayPose = false;
+		//private boolean displayPose = false;
 		
-		private int displayLine = 0;
+		//private int displayLine = 0;
 		
 		/**
 		 * Stop the odometry thread.
@@ -894,19 +696,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 			keepRunning = false;
 		}
 		
-		/**
-		 * Show pose.
-		 *
-		 * @param show if true shows the current odometric pose
-		 * @param lcdLine the lcd line where to start displaying the pose (3 lines are needed)
-		 */
-		public void showPose(boolean show, int lcdLine) {
-			displayPose = show;
-			if (lcdLine>4) lcdLine = 4;
-			displayLine = lcdLine;
-		}
-		
-
+		@Override
 		public void run() {
 			long tick = period + System.currentTimeMillis(); 
 			while(keepRunning) {
@@ -914,12 +704,12 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
                   tick += period;
                   updatePose();
                   if (gyroEnabled) {
-                	  pose.setHeading((float)(gyro.getAngle())/100.0f);
+                	  pose.setHeading(gyro.getAngle()/100.0f);
                   }
                   if (spinningMode) {
                 	  setSpeed(spinLinSpeed, spinTravelDirection-pose.getHeading(), spinAngSpeed);
                 	  startMotors();
-                	  LCD.drawString("t:"+tick, 0, 0);
+                	  //LCD.drawString("t:"+tick, 0, 0);
                   } 
                } else {
             	   Delay.msDelay(5);
@@ -960,28 +750,16 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 		    t1old = t1;
 		    t2old = t2;
 		    t3old = t3;
+		    /*
 		    if (displayPose) {
 		    	LCD.drawString("X: "+ Math.round(pose.getX()*1000f)/1000f+ "      ", 0, displayLine);
 		    	LCD.drawString("Y: "+ Math.round(pose.getY()*1000f)/1000f+ "      ", 0, displayLine+1);
 		    	LCD.drawString("H: "+ Math.round(pose.getHeading()*1000f)/1000f+ " deg     ", 0, displayLine+2);
-		    }
+		    }*/
 		}
 	}
 
-	/** 
-	 * @see lejos.robotics.localization.PoseProvider#getPose()
-	 */
-	public Pose getPose() {
-		return pose;
-	}
-
-	/**
-	 * @see lejos.robotics.localization.PoseProvider#setPose(lejos.robotics.navigation.Pose)
-	 */
-	public void setPose(Pose aPose) {
-		pose = aPose;
-	}
-
+	
 	public void arcBackward(double radius) {
 		arc(radius, Double.NEGATIVE_INFINITY, true);
 	}
@@ -1003,7 +781,6 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	}
 
 	public Move getMovement() {
-		// Todo: Shoudl probbably normalize angle to between 0-360
 		return new Move(previousMoveType, getTravelDistance() - previousDistance, getAngle() - previousAngle, isMoving());
 	}
 
@@ -1012,7 +789,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 	}
 	
 	/**
-	 * Notify the MoveListeners of move made.
+	 * Notify the MoveListeners when a move is completed.
 	 */
 	public void rotationStopped(RegulatedMotor motor, int tachoCount, boolean stalled, long timeStamp) {
 		if(!motor1.isMoving() && !motor2.isMoving() && !motor3.isMoving()) {
@@ -1022,7 +799,7 @@ private void initMatrices(boolean centralWheelForward, boolean motorReverse) {
 			for(MoveListener ml:listeners) 
 				ml.moveStopped(finalMove, this);
 			
-			//this.reset(); // THIS CAUSES AN EXCEPTION TO BE THROWN. Will subtract previous values instead.
+			//this.reset(); // THIS CAUSES AN EXCEPTION. Will subtract previous values instead.
 			previousDistance = newDistance;
 			previousAngle = newAngle;
 		}
