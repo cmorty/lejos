@@ -1,6 +1,9 @@
 package lejos.nxt.remote;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -205,38 +208,6 @@ public class NXTCommand implements NXTProtocol {
 	}
 
 	/**
-	 * Find the first file on the NXT. This is a NXJ-specific version that returns the
-	 * start page number as well as the other FileInfo data
-	 * 
-	 * @param wildCard
-	 *            [filename].[extension], *.[extension], [filename].*, *.*
-	 * @return fileInfo object giving details of the file
-	 */
-	public FileInfo findFirstNXJ(String wildCard) throws IOException {
-
-		byte[] request = { SYSTEM_COMMAND_REPLY, NXJ_FIND_FIRST };
-		request = appendString(request, wildCard);
-
-		byte[] reply = nxtComm.sendRequest(request, 32);
-		FileInfo fileInfo = null;
-		if (reply[2] == 0 && reply.length == 32) {
-			StringBuffer name = new StringBuffer(new String(reply))
-					.delete(0, 4);
-			int lastPos = name.indexOf("\0");
-			if (lastPos < 0 || lastPos > 20) lastPos = 20;
-			name.delete(lastPos, name.length());
-			fileInfo = new FileInfo(name.toString());
-			fileInfo.fileHandle = reply[3];
-			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)
-					| ((0xFF & reply[26]) << 16) | ((0xFF & reply[27]) << 24);
-			fileInfo.startPage = (0xFF & reply[28]) | ((0xFF & reply[29]) << 8)
-					| ((0xFF & reply[30]) << 16) | ((0xFF & reply[31]) << 24);
-
-		}
-		return fileInfo;
-	}
-	
-	/**
 	 * Find the first file on the NXT.
 	 * 
 	 * @param wildCard
@@ -260,43 +231,10 @@ public class NXTCommand implements NXTProtocol {
 			fileInfo.fileHandle = reply[3];
 			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)
 					| ((0xFF & reply[26]) << 16) | ((0xFF & reply[27]) << 24);
-			fileInfo.startPage = -1;
-
 		}
 		return fileInfo;
 	}
 
-	/**
-	 * Find the next file on the NXT. This is a NXJ-specific version that returns the
-	 * start page number as well as the other FileInfo data
-	 * 
-	 * @param handle
-	 *            Handle number from the previous found file or from the Find
-	 *            First command.
-	 * @return fileInfo object giving details of the file
-	 */
-	public FileInfo findNextNXJ(byte handle) throws IOException {
-
-		byte[] request = { SYSTEM_COMMAND_REPLY, NXJ_FIND_NEXT, handle };
-
-		byte[] reply = nxtComm.sendRequest(request, 32);
-		FileInfo fileInfo = null;
-		if (reply[2] == 0 && reply.length == 32) {
-			StringBuffer name = new StringBuffer(new String(reply))
-					.delete(0, 4);
-			int lastPos = name.indexOf("\0");
-			if (lastPos < 0 || lastPos > 20) lastPos = 20;
-			name.delete(lastPos, name.length());
-			fileInfo = new FileInfo(name.toString());
-			fileInfo.fileHandle = reply[3];
-			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)
-					| ((0xFF & reply[26]) << 16) | ((0xFF & reply[27]) << 24);
-			fileInfo.startPage = (0xFF & reply[28]) | ((0xFF & reply[29]) << 8)
-					| ((0xFF & reply[30]) << 16) | ((0xFF & reply[31]) << 24);
-		}
-		return fileInfo;
-	}
-	
 	/**
 	 * Find the next file on the NXT
 	 * 
@@ -321,7 +259,6 @@ public class NXTCommand implements NXTProtocol {
 			fileInfo.fileHandle = reply[3];
 			fileInfo.fileSize = (0xFF & reply[24]) | ((0xFF & reply[25]) << 8)
 					| ((0xFF & reply[26]) << 16) | ((0xFF & reply[27]) << 24);
-			fileInfo.startPage = -1;
 		}
 		return fileInfo;
 	}

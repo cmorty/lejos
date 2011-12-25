@@ -26,11 +26,6 @@ public class FileInfo {
 	 */
 	public int fileSize;
 	
-	/**
-	 * The start page of the file in flash memory.
-	 */
-	public int startPage;
-	
 	public FileInfo(String fileName) {
 		this.fileName = fileName;
 	}	

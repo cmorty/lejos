@@ -241,14 +241,16 @@ public class PCNavigationModel extends NavigationModel {
 	 * Get information for a file on the NXTon
 	 */
 	private FileInfo getFile(String name) throws IOException {
-		FileInfo info = nxtCommand.findFirstNXJ(name);
-		if (info == null) return null;
-		if (info.fileName.equals(name)) return info;
-		do {
-			info = nxtCommand.findNextNXJ((byte) 0);
-			if (info != null && info.fileName.equals(name)) return info;
-		} while (info != null);
-		return null;
+		FileInfo info = nxtCommand.findFirst(name);
+		while (info != null) {
+			if (info.fileName.equals(name))
+			{
+				nxtCommand.closeFile(info.fileHandle);
+				break;
+			}
+			info = nxtCommand.findNext(info.fileHandle);
+		}
+		return info;
 	}
 	
 	/**

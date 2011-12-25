@@ -142,8 +142,9 @@ public class FileSystem {
 			do {
 				names.add(f.fileName);
 				if(f != null)
+					// TODO this close is executed after every findFirst/Next which is likely to be wrong!
 					nxtCommand.closeFile(f.fileHandle); // According to protocol, must be closed when done with it.
-					f = nxtCommand.findNext(f.fileHandle);
+				f = nxtCommand.findNext(f.fileHandle);
 			} while (f != null);
 			
 			String [] returnArray = new String [1];
