@@ -1,8 +1,13 @@
 package lejos.nxt.remote;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import lejos.nxt.comm.*;
+
+import lejos.nxt.comm.NXTCommConnector;
+import lejos.nxt.comm.NXTConnection;
 
 /**
  * Provides an API similar to the leJOS API for accessing
@@ -11,6 +16,9 @@ import lejos.nxt.comm.*;
  *
  */
 public class RemoteNXT {
+	
+	//TODO this class is somewhat similar to lejos.nxt.FileSystem, merge
+	
 	private NXTCommand nxtCommand;
 	private NXTComm nxtComm;
 	
