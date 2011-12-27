@@ -1,9 +1,14 @@
 package lejos.nxt;
 
-import lejos.pc.comm.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import lejos.nxt.remote.*;
+
+import lejos.nxt.remote.FileInfo;
+import lejos.nxt.remote.NXTCommand;
+import lejos.pc.comm.NXTCommandConnector;
 
 /**
  * Support for remote file operations
