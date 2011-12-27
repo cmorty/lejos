@@ -35,15 +35,14 @@ public class LCP {
     private static FileInputStream in = null;
     private static int numFiles;	
 	private static char[] charBuffer = new char[20];
-	@SuppressWarnings("unchecked")
 	public static InBox[] inBoxes = new InBox[20];
     
 	// Command types constants. Indicates type of packet being sent or received.
-	public static byte DIRECT_COMMAND_REPLY = 0x00;
-	public static byte SYSTEM_COMMAND_REPLY = 0x01;
-	public static byte REPLY_COMMAND = 0x02;
-	public static byte DIRECT_COMMAND_NOREPLY = (byte)0x80; // Avoids ~100ms latency
-	public static byte SYSTEM_COMMAND_NOREPLY = (byte)0x81; // Avoids ~100ms latency
+	public static final byte DIRECT_COMMAND_REPLY = 0x00;
+	public static final byte SYSTEM_COMMAND_REPLY = 0x01;
+	public static final byte REPLY_COMMAND = 0x02;
+	public static final byte DIRECT_COMMAND_NOREPLY = (byte)0x80; // Avoids ~100ms latency
+	public static final byte SYSTEM_COMMAND_NOREPLY = (byte)0x81; // Avoids ~100ms latency
 
 	// Direct Commands
 	public static final byte START_PROGRAM = 0x00;
@@ -67,19 +66,19 @@ public class LCP {
 	public static final byte MESSAGE_READ = 0x13;
 	
 	// NXJ additions
-	public static byte NXJ_DISCONNECT = 0x20; 
-	public static byte NXJ_DEFRAG = 0x21;
-	public static byte NXJ_SET_DEFAULT_PROGRAM = 0x22;
-	public static byte NXJ_SET_SLEEP_TIME = 0x23;
-	public static byte NXJ_SET_VOLUME = 0x24;
-	public static byte NXJ_SET_KEY_CLICK_VOLUME = 0x25;
-	public static byte NXJ_SET_AUTO_RUN = 0x26;
-	public static byte NXJ_GET_VERSION = 0x27;
-	public static byte NXJ_GET_DEFAULT_PROGRAM = 0x28;
-	public static byte NXJ_GET_SLEEP_TIME = 0x29;
-	public static byte NXJ_GET_VOLUME = 0x2A;
-	public static byte NXJ_GET_KEY_CLICK_VOLUME = 0x2B;
-	public static byte NXJ_GET_AUTO_RUN = 0x2C;
+	public static final byte NXJ_DISCONNECT = 0x20; 
+	public static final byte NXJ_DEFRAG = 0x21;
+	public static final byte NXJ_SET_DEFAULT_PROGRAM = 0x22;
+	public static final byte NXJ_SET_SLEEP_TIME = 0x23;
+	public static final byte NXJ_SET_VOLUME = 0x24;
+	public static final byte NXJ_SET_KEY_CLICK_VOLUME = 0x25;
+	public static final byte NXJ_SET_AUTO_RUN = 0x26;
+	public static final byte NXJ_GET_VERSION = 0x27;
+	public static final byte NXJ_GET_DEFAULT_PROGRAM = 0x28;
+	public static final byte NXJ_GET_SLEEP_TIME = 0x29;
+	public static final byte NXJ_GET_VOLUME = 0x2A;
+	public static final byte NXJ_GET_KEY_CLICK_VOLUME = 0x2B;
+	public static final byte NXJ_GET_AUTO_RUN = 0x2C;
 		
 	// System Commands:
 	public static final byte OPEN_READ = (byte)0x80;
@@ -147,10 +146,11 @@ public class LCP {
 		reply[0] = REPLY_COMMAND;
 		reply[1] = cmd[1];
 		
-		byte cmdId = cmd[1];
+		final byte cmdId = cmd[1];
 		
-		// START PROGRAM
-		if (cmdId == START_PROGRAM) {
+		switch (cmdId)
+		{
+		case START_PROGRAM: {
 			initFiles();
 			currentProgram = getFile(cmd,2);
 			if (fileNames != null) {
@@ -160,73 +160,59 @@ public class LCP {
 					}
 				}
 			}
+			break;
 		}
-		
-		// GET CURRENT PROGRAM NAME
-		
-		if (cmdId == GET_CURRENT_PROGRAM_NAME) {
+		case GET_CURRENT_PROGRAM_NAME: {
 			if (currentProgram != null) {
 				for(int i=0;i<currentProgram.length() && i < 19;i++) 
 					reply[3+i] = (byte) currentProgram.charAt(i); 
 			}
 			len = 23;
+			break;
 		}
-		
-		// GET BATTERY LEVEL
-		if (cmdId == GET_BATTERY_LEVEL) {
+		case GET_BATTERY_LEVEL: {
 			setReplyShortInt(Battery.getVoltageMilliVolt(), reply, 3);
 			len = 5;									
+			break;
 		}
-		
-		// PLAY SOUND FILE
-		if (cmdId == PLAY_SOUND_FILE)
-		{
+		case PLAY_SOUND_FILE: {
 			initFiles();
 			String soundFile = getFile(cmd,3);
 			File f = new File(soundFile);
 			Sound.playSample(f, 50);
+			break;
 		}
-		
-		// PLAYTONE
-		if (cmdId == PLAY_TONE)
-		{
+		case PLAY_TONE: {
 			Sound.playTone(getShortInt(cmd,2), getShortInt(cmd,4));
+			break;
 		}
-		
-		// GET FIRMWARE VERSION
-		if (cmdId == GET_FIRMWARE_VERSION) 
-		{
+		case GET_FIRMWARE_VERSION: {
 			reply[3] = 2;
 			reply[4] = 1;
 			reply[5] = 3;
 			reply[6] = 1;			
 			len = 7;
+			break;
 		}
-		
-		// GET DEVICE INFO
-		if (cmdId == GET_DEVICE_INFO) 
-		{
-            byte []name = Bluetooth.stringToName(Bluetooth.getFriendlyName());
+		case GET_DEVICE_INFO: {
+            byte []name = NXTCommDevice.stringToName(Bluetooth.getFriendlyName());
             // Note this is very odd. The set commmand allows for 16 characters
             // but the get command only allows for 15!
             for(int i=0;i<15;i++) reply[3+i] = name[i];
-            byte [] address = Bluetooth.stringToAddress(Bluetooth.getLocalAddress());
-            for(int i=0;i<Bluetooth.ADDRESS_LEN;i++) reply[18+i] = address[i];
+            byte [] address = NXTCommDevice.stringToAddress(Bluetooth.getLocalAddress());
+            for(int i=0;i<NXTCommDevice.ADDRESS_LEN;i++) reply[18+i] = address[i];
             setReplyInt(File.freeMemory(),reply,29);
 			len = 33;
+			break;
 		}	
-		
-		// SET BRICK NAME
-		if (cmdId == SET_BRICK_NAME) 
-		{
+		case SET_BRICK_NAME: {
             byte [] name = new byte[16];
-            for(int i=0;i<Bluetooth.NAME_LEN;i++) name[i] = cmd[i+2];
-            Bluetooth.setFriendlyName(Bluetooth.nameToString(name));
+            for(int i=0;i<NXTCommDevice.NAME_LEN;i++) name[i] = cmd[i+2];
+            Bluetooth.setFriendlyName(NXTCommDevice.nameToString(name));
 			len = 4;
+			break;
 		}	
-		
-		// GETOUTPUTSTATE 
-		if (cmdId == GET_OUTPUT_STATE) {
+		case GET_OUTPUT_STATE: {
 			byte port = cmd[2]; 
 			NXTRegulatedMotor m;
 			if(port == 0)
@@ -266,10 +252,9 @@ public class LCP {
 			setReplyInt(tacho,reply,21);
 			
 			len = 25;						
+			break;
 		}
-		
-		// GETINPUTVALUES
-		if (cmdId == GET_INPUT_VALUES) {
+		case GET_INPUT_VALUES: {
 			byte port = cmd[2];
 			SensorPort p = SensorPort.getInstance(port);
 			int raw = p.readRawValue();
@@ -285,33 +270,31 @@ public class LCP {
 			setReplyShortInt(norm, reply, 10);
 			setReplyShortInt(scaled, reply, 12);
 			setReplyShortInt(scaled, reply, 14); // Set calibrated to scaled
-			len = 16;						
+			len = 16;
+			break;
 		}
-		
-		// SETINPUTMODE
-		if (cmdId == SET_INPUT_MODE) {
+		case SET_INPUT_MODE: {
 			byte port = cmd[2];
 			int sensorType = (cmd[3] & 0xFF);
 			int sensorMode = (cmd[4] & 0xFF);
 			SensorPort.getInstance(port).setTypeAndMode(sensorType, sensorMode);
+			break;
 		}
-		
-		// SETOUTPUTSTATE
-		if(cmdId == SET_OUTPUT_STATE) {
+		case SET_OUTPUT_STATE: {
 			byte motorid = cmd[2];
 			byte power = cmd[3];
 			int speed = (Math.abs(power) * 900) / 100;
 			byte mode = cmd[4];
-			byte regMode = cmd[5];
-			byte turnRatio = cmd[6];
-			byte runState = cmd[7];
+			// byte regMode = cmd[5];
+			// byte turnRatio = cmd[6];
+			// byte runState = cmd[7];
 			int tacholimit = getInt(cmd, 8);
 					
-			// Initialize motor:
-			NXTRegulatedMotor m = null;
-		
 			for(int i=0;i<3;i++) 
 			{			
+				// Initialize motor:
+				NXTRegulatedMotor m = null;
+			
 				if(motorid == 0 || (motorid < 0 && i == 0))
 					m = Motor.A;
 				else if (motorid == 1 || (motorid < 0 && i == 1))
@@ -337,26 +320,20 @@ public class LCP {
 				
 				if (motorid >= 0) break;
 			}
+			break;
 		}
-		
-		// RESETMOTORPOSITION
-		if (cmdId == RESET_MOTOR_POSITION)
-		{
+		case RESET_MOTOR_POSITION: {
 			// Check if boolean value (cmd[3]) is false. If so,
 			// reset TachoCount (i.e. RotationCount in LEGO FW terminology)
 			if(cmd[3] == 0)
-				MotorPort.getInstance(cmd[2]).resetTachoCount();				
+				MotorPort.getInstance(cmd[2]).resetTachoCount();
+			break;
 		}
-		
-		// KEEPALIVE
-		if (cmdId == KEEP_ALIVE)
-		{
+		case KEEP_ALIVE: {
 			len = 7;
+			break;
 		}
-		
-		// LSWRITE
-		if (cmdId == LS_WRITE)
-		{
+		case LS_WRITE: {
 			byte port = cmd[2];
 			byte txLen = cmd[3];
 			byte rxLen = cmd[4];
@@ -364,31 +341,25 @@ public class LCP {
 			p.i2cEnable(I2CPort.LEGO_MODE);
 			p.i2cStart(cmd[5], cmd, 6, txLen-1, rxLen);
             p.i2cWaitIOComplete();
+            break;
 		}
-		
-		// LSREAD
-		if (cmdId == LS_READ)
-		{
+		case LS_READ: {
 			byte port = cmd[2];
 			SensorPort p = SensorPort.getInstance(port);
             int ret = p.i2cComplete(i2cBuffer, 0, i2cBuffer.length);
 			reply[3] = (byte) ret;
             if (ret > 0) System.arraycopy(i2cBuffer, 0, reply, 4, ret);
 			len = 20;
+			break;
 		}
-		
-		// LSGETSTATUS
-		if (cmdId == LS_GET_STATUS)
-		{
+		case LS_GET_STATUS: {
 			byte port = cmd[2];
 			SensorPort p = SensorPort.getInstance(port);
 			reply[3] = (byte) (p.i2cStatus() == 0 ? 0 : 1);
 			len = 4;
+			break;
 		}
-		
-		// OPEN READ
-		if (cmdId == OPEN_READ)
-		{
+		case OPEN_READ: {
 			initFiles();
 			file = new File(getFile(cmd,2));
             try {
@@ -399,11 +370,9 @@ public class LCP {
             	reply[2] = ErrorMessages.FILE_NOT_FOUND;
             }
 			len = 8;
+			break;
 		}	
-		
-		// OPEN WRITE
-		if (cmdId == OPEN_WRITE)
-		{
+		case OPEN_WRITE: {
 			int size = getInt(cmd, 22);
 			initFiles();
 			
@@ -413,7 +382,7 @@ public class LCP {
 			} else {	
 				try {
 					file = new File(getFile(cmd,2));
-				
+					//TODO lego firmware reports error in case file exists
 					if (file.exists()) {
 						file.delete();
 						numFiles--;
@@ -431,42 +400,32 @@ public class LCP {
 				}
 			}
 			len = 4;
+			break;
 		}
-		
-		// OPEN WRITE LINEAR
-		if (cmdId == OPEN_WRITE_LINEAR)
-		{
+		case OPEN_WRITE_LINEAR: {
 			reply[2] = ErrorMessages.NOT_IMPLEMENTED;
 			len = 4;
+			break;
 		}
-		
-		// OPEN WRITE DATA
-		if (cmdId == OPEN_WRITE_DATA)
-		{
+		case OPEN_WRITE_DATA: {
 			reply[2] = ErrorMessages.NOT_IMPLEMENTED;
 			len = 4;
+			break;
 		}
-		
-		// OPEN APPEND  DATA
-		if (cmdId == OPEN_APPEND_DATA)
-		{
+		case OPEN_APPEND_DATA: {
 			reply[2] = ErrorMessages.FILE_NOT_FOUND;
 			len = 8;
+			break;
 		}
-		
-		// DEFRAG
-		if (cmdId == NXJ_DEFRAG)
-		{
+		case NXJ_DEFRAG: {
 			try {
 				File.defrag();
 			}catch (IOException ioe) {
 				// Ignore exception
 			}
+			break;
 		}
-
-		// FIND FIRST
-		if (cmdId == FIND_FIRST)
-		{
+		case FIND_FIRST: {
 			initFiles();
 			len = 28;
 			if (numFiles == 0)
@@ -480,11 +439,9 @@ public class LCP {
             	int size = (int) files[0].length();
             	setReplyInt(size,reply,24);
 			}
+			break;
 		}
-		
-		// FIND NEXT
-		if (cmdId == FIND_NEXT)
-		{
+		case FIND_NEXT: {
 			len = 28;
 			if (fileNames == null || fileIdx >= fileNames.length) reply[2] = ErrorMessages.FILE_NOT_FOUND;
 			else
@@ -494,11 +451,9 @@ public class LCP {
             	setReplyInt(size,reply,24);   			
 				fileIdx++;
 			}
+			break;
 		}
-		
-		// READ
-		if (cmdId == READ)
-		{
+		case READ: {
             int numBytes = getShortInt(cmd,3);
             int bytesRead = 0;
             
@@ -510,11 +465,9 @@ public class LCP {
             }
 
 			len = bytesRead + 6;
+			break;
 		}
-		
-		// WRITE
-		if (cmdId == WRITE)
-		{
+		case WRITE: {
 			int dataLen = cmdLen - 3;
 			try {
 				out.write(cmd,3,dataLen);
@@ -524,11 +477,9 @@ public class LCP {
 			}						
 
 			len = 6;
+			break;
 		}
-		
-		// DELETE
-		if (cmdId == DELETE)
-		{
+		case DELETE: {
 			boolean deleted = false;
 			len = 23;
 			String fileName = getFile(cmd,2);
@@ -545,11 +496,9 @@ public class LCP {
 				}
 			}
 			if (!deleted) reply[2] = ErrorMessages.FILE_NOT_FOUND;
+			break;
 		}
-		
-		// CLOSE
-		if (cmdId == CLOSE)
-		{
+		case CLOSE: {
 			if (out != null) {
 				try {
 					out.flush();
@@ -560,10 +509,9 @@ public class LCP {
 				out = null;
 			}
 			len = 4;
+			break;
 		}
-		
-		// MESSAGE READ		
-		if (cmdId == MESSAGE_READ) {
+		case MESSAGE_READ: {
 			synchronized (LCP.class) {
 				InBox inBox = inBoxes[cmd[2]];
 				reply[3] = cmd[3];
@@ -579,60 +527,52 @@ public class LCP {
 				}
 			}
 			len = 64;
+			break;
 		}
-		
-		// MESSAGE_WRITE
-		if (cmdId == MESSAGE_WRITE) {
+		case MESSAGE_WRITE: {
 			if (listener != null) {
 				listener.messageReceived(cmd[2], new String(cmd,4,cmd[3]));
-			}	
+			}
+			break;
 		}
-		
-		// DELETE USE FLASH
-		if (cmdId == DELETE_USER_FLASH) {
+		case DELETE_USER_FLASH: {
 			File.format();
 			files = null;
 			numFiles = 0;
+			break;
 		}
-		
-		// NXJ SET DEFAULT PROGRAM
-		if (cmdId == NXJ_SET_DEFAULT_PROGRAM) {
+		case NXJ_SET_DEFAULT_PROGRAM: {
 			String fileName = getFile(cmd, 2);
 			initFiles();
 			File f = new File(fileName);
 			if (f.exists()) Settings.setProperty(defaultProgramProperty, fileName);
+			break;
 		}
-		
-		// NXJ SET SLEEP TIME	
-		if (cmdId == NXJ_SET_SLEEP_TIME) {
+		case NXJ_SET_SLEEP_TIME: {
 			Settings.setProperty(sleepTimeProperty, String.valueOf(cmd[2]));
+			break;
 		}
-		
-		// NXJ SET AUTO RUN	
-		if (cmdId == NXJ_SET_AUTO_RUN) {
+		case NXJ_SET_AUTO_RUN: {
 			Settings.setProperty(defaultProgramAutoRunProperty, cmd[2] == 0 ? "OFF" : "ON");
+			break;
 		}
-		
-		// NXJ SET VOLUME
-		if (cmdId == NXJ_SET_VOLUME) {
+		case NXJ_SET_VOLUME: {
 			int volume = cmd[2];
 			if (volume >= 0 && volume <= 100) {
 				Sound.setVolume(volume);
 				Settings.setProperty(Sound.VOL_SETTING, String.valueOf(volume));
 			}
+			break;
 		}
-		
-		// NXJ SET KEY CLICK VOLUME
-		if (cmdId == NXJ_SET_KEY_CLICK_VOLUME) {
+		case NXJ_SET_KEY_CLICK_VOLUME: {
 			int volume = cmd[2];
 			if (volume >= 0 && volume <= 100) {
 				Button.setKeyClickVolume(volume);
 				Settings.setProperty(Button.VOL_SETTING, String.valueOf(volume));
 			}
+			break;
 		}
-		
-		// NXJ GET VERSION
-		if (cmdId == NXJ_GET_VERSION) {
+		case NXJ_GET_VERSION: {
 			reply[3] =  (byte) NXT.getFirmwareMajorVersion();
 			reply[4] = (byte) NXT.getFirmwareMinorVersion();
 			reply[5] = (byte) NXT.getFirmwarePatchLevel();
@@ -641,43 +581,38 @@ public class LCP {
 			reply[11] = menuMinorVersion;
 			reply[12] = menuPatchLevel;
 			setReplyInt(menuRevision, reply, 13);
-			
 			len = 17;
+			break;
 		}
-		
-		// NXJ GET VOLUME
-		if (cmdId == NXJ_GET_VOLUME) {
+		case NXJ_GET_VOLUME: {
 			reply[3] = (byte) Sound.getVolume();
 			len = 4;
+			break;
 		}
-		
-		// NXJ GET KEY CLICK VOLUME
-		if (cmdId == NXJ_GET_KEY_CLICK_VOLUME) {
+		case NXJ_GET_KEY_CLICK_VOLUME: {
 			reply[3] = (byte) Button.getKeyClickVolume();
 			len = 4;
+			break;
 		}
-		
-		// NXJ GET SLEEP TIME
-		if (cmdId == NXJ_GET_SLEEP_TIME) {
+		case NXJ_GET_SLEEP_TIME: {
 			reply[3] = (byte) SystemSettings.getIntSetting(sleepTimeProperty, defaultSleepTime);
 			len = 4;
+			break;
 		}
-		
-		// NXJ GET AUTO RUN
-		if (cmdId == NXJ_GET_AUTO_RUN) {
+		case NXJ_GET_AUTO_RUN: {
 			String autoRun = SystemSettings.getStringSetting(defaultProgramAutoRunProperty, "OFF");
 			reply[3] = (byte) (autoRun.equals("ON") ? 1 : 0);
 			len = 4;
+			break;
 		}	
-		
-		// NXJ GET DEFAULT PROGRAM
-		if (cmdId == NXJ_GET_DEFAULT_PROGRAM) {
+		case NXJ_GET_DEFAULT_PROGRAM: {
 			String name = SystemSettings.getStringSetting(defaultProgramProperty, "");
 			for(int i=0;i<name.length() && i < 20;i++) 
 				reply[3+i] = (byte) name.charAt(i);
 			len = 23;
+			break;
 		}
-		
+		}
 		return len;
 	}
 	
