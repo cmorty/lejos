@@ -12,6 +12,9 @@ import lejos.nxt.remote.*;
  *
  */
 public class FileSystem {
+	
+	//TODO this class is somewhat similar to lejos.nxt.remote.RemoteNXT, merge
+	
 	private static final NXTCommand nxtCommand = NXTCommandConnector.getSingletonOpen();
 		
 	// Make sure no one tries to instantiate this.
