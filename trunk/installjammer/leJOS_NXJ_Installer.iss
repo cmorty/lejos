@@ -21,6 +21,8 @@ OutputDir=.
 ChangesEnvironment=yes
 MinVersion=0,5.0
 WizardImageFile=img\WizardImage.bmp
+WizardImageStretch=no
+WizardImageBackColor=clWhite
 WizardSmallImageFile=img\WizardSmallImage.bmp
 
 [Languages]
