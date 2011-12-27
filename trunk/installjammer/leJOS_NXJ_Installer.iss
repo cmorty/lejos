@@ -20,8 +20,8 @@ Compression=lzma
 OutputDir=.
 ChangesEnvironment=yes
 MinVersion=0,5.0
-WizardImageFile=WizardImage.bmp
-WizardSmallImageFile=WizardSmallImage.bmp
+WizardImageFile=img\WizardImage.bmp
+WizardSmallImageFile=img\WizardSmallImage.bmp
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -77,12 +77,12 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 ; of the environment variables available to the batch file
 Filename: "{win}\explorer.exe"; Parameters: """{app}\bin\nxjflashg.bat"""; Description: "{cm:LaunchProgram}"; Flags: nowait postinstall skipifsilent
 
-#include "Tools.iss"
-#include "Fantom.iss"
-#include "ModPath.iss"
-#include "JDKSelect.iss"
-#include "ExtrasDirPage.iss"
-#include "UnInstall.iss"
+#include "include\Tools.iss"
+#include "include\Fantom.iss"
+#include "include\ModPath.iss"
+#include "include\JDKSelect.iss"
+#include "include\ExtrasDirPage.iss"
+#include "include\UnInstall.iss"
 
 [Code] 
   procedure CurStepChanged(CurStep: TSetupStep);
