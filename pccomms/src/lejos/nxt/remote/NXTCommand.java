@@ -360,19 +360,21 @@ public class NXTCommand implements NXTProtocol {
      * 
      * @throws IOException
      */
-	public byte writeFile(byte handle, byte[] data) throws IOException {
-		byte[] command = { SYSTEM_COMMAND_NOREPLY, WRITE, handle };		
-		int remaining = data.length;
-		int chunkStart = 0;
+	public byte writeFile(byte handle, byte[] data, int offset, int length) throws IOException {
+		byte[] command = { SYSTEM_COMMAND_NOREPLY, WRITE, handle };
+		int remaining = length;
+		int chunkStart = offset;
 		while (remaining > 0) {
 			int chunkLen = MAX_BUFFER_SIZE;
-			if (remaining < chunkLen) chunkLen = remaining;
+			if (remaining < chunkLen)
+				chunkLen = remaining;
 			byte [] request = new byte[chunkLen + 3];
 			System.arraycopy(command, 0, request, 0, command.length);
 			System.arraycopy(data, chunkStart, request, 3, chunkLen);
 
 			byte status = sendSystemRequest(request, 6);
-			if (status != 0) return status;
+			if (status != 0)
+				return status;
 			remaining -= chunkLen;
 			chunkStart += chunkLen;
 		}
@@ -394,20 +396,11 @@ public class NXTCommand implements NXTProtocol {
 	    try
 	    {
 			byte handle = openWrite(nxtFileName, (int) file.length());
-			try
+			byte[] data = new byte[MAX_BUFFER_SIZE];
+			int len;
+			while ((len = in.read(data)) > 0)
 			{
-				byte[] data = new byte[MAX_BUFFER_SIZE];
-				int len;
-				while ((len = in.read(data)) > 0)
-				{
-					byte[] sendData = new byte[len];
-					System.arraycopy(data, 0, sendData, 0, len);
-					writeFile(handle, sendData);
-				}
-			}
-			catch (IOException ioe)
-			{
-				throw new IOException("Failed to upload");
+				writeFile(handle, data, 0, len);
 			}
 			setVerify(true);
 			closeFile(handle);
@@ -423,30 +416,28 @@ public class NXTCommand implements NXTProtocol {
 	 * Returns requested number of bytes from a file. File must first be opened
 	 * using the openRead() command.
 	 * 
-	 * @param handle
-	 *            File handle number (from openRead method)
-	 * @param length
-	 *            Number of bytes to read.
-	 * @return the bytes requested
+	 * @param handle File handle number (from openRead method)
+	 * @param data Buffer to which data is written
+	 * @param offset Index of first byte to be overwritten
+	 * @param length Number of bytes to read
+	 * @return number of bytes read
 	 */
-	public byte[] readFile(byte handle, int length) throws IOException {
+	public int readFile(byte handle, byte[] data, int offset, int length) throws IOException {
 		int remaining = length;
-		int chunkStart = 0;
-		byte[] reply = new byte[length];
+		int chunkStart = offset;
 		while (remaining > 0) {
 			int chunkLen = MAX_BUFFER_SIZE;
-			if (chunkLen > remaining) chunkLen = remaining;
+			if (chunkLen > remaining)
+				chunkLen = remaining;
 			byte[] request = { SYSTEM_COMMAND_REPLY, READ, handle, (byte) chunkLen,
 					(byte) (chunkLen >>> 8) };
 			byte[] reply1 = nxtComm.sendRequest(request, chunkLen + 6);
-			int dataLen = (reply1[4] & 0xFF) + ((reply1[5] << 8) & 0xFF);
-			for (int i = 0; i < dataLen; i++)
-				reply[chunkStart+i] = reply1[i + 6];
+			int dataLen = (reply1[4] & 0xFF) + ((reply1[5] & 0xFF) << 8);
+			System.arraycopy(reply1, 6, data, chunkStart, dataLen);
 			chunkStart += chunkLen;
 			remaining -= chunkLen;
 		}
-
-		return reply;
+		return length;
 	}
 
 	/**
