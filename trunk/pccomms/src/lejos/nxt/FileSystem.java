@@ -24,7 +24,9 @@ public class FileSystem {
 		byte success;
 		try {
 			FileInputStream in = new FileInputStream(localSource);
+			//TODO don't load file into memory
 			data = new byte[(int) localSource.length()];
+			//TODO respect InputStream semantics or use DataInputStream.readFully()
 			in.read(data);
 			in.close();
 		} catch (IOException ioe) {
@@ -35,7 +37,7 @@ public class FileSystem {
 		// Now send the data to the NXT
 		try {
 			byte handle = nxtCommand.openWrite(localSource.getName(), data.length);
-			success = nxtCommand.writeFile(handle, data);
+			success = nxtCommand.writeFile(handle, data, 0, data.length);
 			nxtCommand.closeFile(handle);
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
@@ -56,7 +58,8 @@ public class FileSystem {
 		
 		try {
 			FileInfo finfo = nxtCommand.openRead(fileName);
-			data = nxtCommand.readFile(finfo.fileHandle, finfo.fileSize);
+			data = new byte[finfo.fileSize];
+			nxtCommand.readFile(finfo.fileHandle, data, 0, finfo.fileSize);
 			nxtCommand.closeFile(finfo.fileHandle);
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());

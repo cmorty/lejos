@@ -302,7 +302,9 @@ public class RemoteNXT {
 		File localSource = new File(fileName);
 		try {
 			FileInputStream in = new FileInputStream(localSource);
+			//TODO do not load complete file into memory
 			data = new byte[(int) localSource.length()];
+			//TODO respect InputStream semantics or use DataInputStream.readFully()
 			in.read(data);
 			in.close();
 		} catch (IOException ioe) {
@@ -312,7 +314,7 @@ public class RemoteNXT {
 		// Now send the data to the NXT
 		try {
 			byte handle = nxtCommand.openWrite(localSource.getName(), data.length);
-			success = nxtCommand.writeFile(handle, data);
+			success = nxtCommand.writeFile(handle, data, 0, data.length);
 			nxtCommand.closeFile(handle);
 		} catch (IOException ioe) {
 			return -1;
@@ -333,7 +335,8 @@ public class RemoteNXT {
 		
 		try {
 			FileInfo finfo = nxtCommand.openRead(fileName);
-			data = nxtCommand.readFile(finfo.fileHandle, finfo.fileSize);
+			data = new byte[finfo.fileSize];
+			nxtCommand.readFile(finfo.fileHandle, data, 0, finfo.fileSize);
 			nxtCommand.closeFile(finfo.fileHandle);
 		} catch (IOException ioe) {
 			return null;

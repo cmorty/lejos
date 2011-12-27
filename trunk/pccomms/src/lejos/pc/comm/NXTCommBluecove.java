@@ -1,5 +1,6 @@
 package lejos.pc.comm;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -159,53 +160,39 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
 	public synchronized byte[] sendRequest(byte[] message, int replyLen)
 			throws IOException {
 
-		// length of packet (Least and Most significant byte)
-		// * NOTE: Bluetooth only. 
-		int LSB = message.length;
-		int MSB = message.length >>> 8;
-
 		if (os == null)
 			return new byte[0];
 
-		// Send length of packet:
-		os.write((byte) LSB);
-		os.write((byte) MSB);
-
-		os.write(message);
-		os.flush();
-
-		if (replyLen == 0)
+		this.write(message);
+		
+		if (replyLen == 0 || is == null)
 			return new byte[0];
 
-		byte[] reply = null;
-		int length = -1;
-
-		if (is == null)
-			return new byte[0];
-
-		length = is.read(); // First byte specifies length of packet.
-		if (length < 0) throw new IOException("End of stream");
-
-		int lengthMSB = is.read(); // Most Significant Byte value
-		length = (0xFF & length) | ((0xFF & lengthMSB) << 8);
-		reply = new byte[length];
-		int len = is.read(reply);
-		if (len != replyLen) throw new IOException("Unexpected reply length");
-
-		return (reply == null) ? new byte[0] : reply;
+		return this.read();
 	}
 
 	public byte[] read() throws IOException {
 
-        int lsb = is.read();
-		if (lsb < 0) return null;
-		int msb = is.read();
-        if (msb < 0) return null;
-        int len = lsb | (msb << 8);
-		byte[] bb = new byte[len];
-		for (int i=0;i<len;i++) bb[i] = (byte) is.read();
+		int lengthLSB = is.read(); // First byte specifies length of packet.
+		int lengthMSB = is.read(); // Most Significant Byte value
+		if (lengthLSB < 0 || lengthMSB < 0)
+			throw new EOFException("unable to read reply packet length");
+		
+		int offset = 0;
+		int length = (0xFF & lengthLSB) | ((0xFF & lengthMSB) << 8);
+		byte[] reply = new byte[length];
 
-		return bb;
+		while (length > 0)
+		{
+			int len = is.read(reply, offset, length);
+			if (len < 0)
+				throw new EOFException("premature end of reply");
+			
+			offset += len;
+			length -= len;
+		}
+		
+		return reply;
 	}
 	
     public int available() throws IOException {
@@ -213,8 +200,10 @@ public class NXTCommBluecove implements NXTComm, DiscoveryListener {
     }
 
 	public void write(byte[] data) throws IOException {
-        os.write((byte)(data.length & 0xff));
-        os.write((byte)((data.length >> 8) & 0xff));
+		// Send length of packet (Least and Most significant byte)
+		// * NOTE: Bluetooth only. 
+        os.write((byte)data.length);
+        os.write((byte)(data.length >>> 8));
 		os.write(data);
 		os.flush();
 	}

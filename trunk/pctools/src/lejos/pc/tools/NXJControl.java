@@ -1177,16 +1177,19 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 
 		try {
 			out = new FileOutputStream(file);
-		} catch (FileNotFoundException e) {}
+		} catch (FileNotFoundException e) {
+			//TODO don't swallow exception
+		}
+		byte[] data = new byte[51];
 
 		try {
 			FileInfo fi = nxtCommand.openRead(fileName);
 			do {
-				byte[] data = nxtCommand.readFile((byte) 0,
+				int len = nxtCommand.readFile(fi.fileHandle, data, 0,
 						(size - received < 51 ? size - received : 51));
-				received += data.length;
+				received += len;
 
-				out.write(data);
+				out.write(data, 0, len);
 			} while (received < size);
 
 			nxtCommand.closeFile(fi.fileHandle);

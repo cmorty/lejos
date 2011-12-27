@@ -22,6 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableColumnModel;
 
+import lejos.nxt.remote.FileInfo;
 import lejos.nxt.remote.NXTCommand;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
@@ -254,22 +255,25 @@ public class NXJBrowser
 
     try {
       out = new FileOutputStream(file);
-    } catch (FileNotFoundException e) {}
+    } catch (FileNotFoundException e) {
+    	//TODO don't swallow exception
+    }
+    byte[] data = new byte[51];
 
     try {  	
-      nxtCommand.openRead(fileName);
+      FileInfo info = nxtCommand.openRead(fileName);
       do
       {
-        byte [] data = nxtCommand.readFile((byte) 0,(size-received < 51 ? size-received : 51));
+        int len = nxtCommand.readFile(info.fileHandle, data, 0, (size-received < 51 ? size-received : 51));
         //System.out.println("Received " + data.length + " bytes");
-        received += data.length;
+        received += len;
       
-        out.write(data);
+        out.write(data, 0, len);
 
       } while (received < size);
 
       //System.out.println("Received " + received + " bytes");
-      nxtCommand.closeFile((byte) 0);
+      nxtCommand.closeFile(info.fileHandle);
       out.close();
     } catch (IOException ioe) {
     	showMessage("IOException downloading file");
