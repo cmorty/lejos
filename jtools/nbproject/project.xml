@@ -11,27 +11,27 @@
             <properties/>
             <folders>
                 <source-folder>
+                    <label>jtools</label>
+                    <location>.</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>src</label>
                     <type>java</type>
                     <location>src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
-                <source-folder>
-                    <label>jtools</label>
-                    <location>.</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
-                    <target>classes</target>
+                    <target>classes.jar</target>
                 </action>
                 <action name="clean">
                     <target>clean</target>
                 </action>
                 <action name="rebuild">
                     <target>clean</target>
-                    <target>classes</target>
+                    <target>classes.jar</target>
                 </action>
             </ide-actions>
             <view>
