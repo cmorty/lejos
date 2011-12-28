@@ -502,6 +502,7 @@ public abstract class NXTCommUSB implements NXTComm {
         byte[] ret = new byte[replyLen];
         int len = devRead(nxtPtr, ret, 0, replyLen);
         if (len <= 0) throw new IOException("Failed to read reply");
+        //TODO return actual length of packet, not expected length of packet
         return ret; 
     }
 	
