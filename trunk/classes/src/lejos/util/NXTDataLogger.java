@@ -46,6 +46,7 @@ public class NXTDataLogger implements Logger{
     private static final byte COMMAND_SETHEADERS   = 2;  
     private static final byte COMMAND_FLUSH        = 3;    
     private static final byte COMMAND_COMMENT      = 4;    
+    private static final byte COMMAND_PASSTHROUGH  = 5;   // TODO future implementation to allow passthrough messages to a different listener type
     private static final int XORMASK = 0xff;
     private static final int FLUSH_THRESHOLD_MS = 200;
     private static final int BYTEBUF_CAPCITY_INCREMENT = 256;
