@@ -11,15 +11,14 @@
             <properties/>
             <folders>
                 <source-folder>
-                    <label>Source Packages</label>
-                    <location>.</location>
+                    <label>src</label>
+                    <type>java</type>
+                    <location>src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>Source Packages</label>
-                    <type>java</type>
+                    <label>pccomms</label>
                     <location>.</location>
-                    <includes>lejos/**</includes>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -38,9 +37,8 @@
             <view>
                 <items>
                     <source-folder style="packages">
-                        <label>Source Packages</label>
-                        <location>.</location>
-                        <includes>lejos/**</includes>
+                        <label>src</label>
+                        <location>src</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
@@ -56,8 +54,7 @@
         </general-data>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
-                <package-root>.</package-root>
-                <classpath mode="compile">3rdparty/lib/bluecove.jar</classpath>
+                <package-root>src</package-root>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
