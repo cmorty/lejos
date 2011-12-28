@@ -42,8 +42,6 @@ public interface NXTProtocol {
 	public static final byte POLL_LENGTH = (byte)0xA1;
 	public static final byte POLL = (byte)0xA2;
 	
-	public static final byte NXJ_FIND_FIRST = (byte)0xB6;
-	public static final byte NXJ_FIND_NEXT = (byte)0xB7;
     public static final byte NXJ_PACKET_MODE = (byte)0xff;
 	
 	// Poll constants:
