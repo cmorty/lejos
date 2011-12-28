@@ -139,15 +139,14 @@ public class LCP {
 	 */
 	public static int emulateCommand(byte[] cmd, int cmdLen, byte[] reply)
 	{
-	    int len = 3;
-	    
-	    for(int i=0;i<reply.length;i++)reply[i] = 0;
-	    
-		reply[0] = REPLY_COMMAND;
-		reply[1] = cmd[1];
-		
 		final byte cmdId = cmd[1];
 		
+		reply[0] = REPLY_COMMAND;
+		reply[1] = cmdId;
+	    for(int i=2; i<reply.length; i++)
+	    	reply[i] = 0;
+	    		
+		int len = 3;
 		switch (cmdId)
 		{
 		case START_PROGRAM: {
@@ -612,6 +611,8 @@ public class LCP {
 			len = 23;
 			break;
 		}
+		default:
+			reply[2] = ErrorMessages.NOT_IMPLEMENTED;
 		}
 		return len;
 	}
