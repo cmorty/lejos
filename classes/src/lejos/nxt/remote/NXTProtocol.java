@@ -42,8 +42,6 @@ public interface NXTProtocol {
 	public static final byte POLL_LENGTH = (byte)0xA1;
 	public static final byte POLL = (byte)0xA2;
 	
-    public static final byte NXJ_PACKET_MODE = (byte)0xff;
-	
 	// Poll constants:
 	public static final byte POLL_BUFFER = (byte)0x00;
 	public static final byte HIGH_SPEED_BUFFER = (byte)0x01;
@@ -72,6 +70,14 @@ public interface NXTProtocol {
 	// public static final byte POSSIBLY_MORE_HIDDEN = 0x14; // ????
 	
 	// NXJ additions
+	// TODO NXJ commands should be direct commands.
+	// At the moment, the NXJ commands are system commands. However, the LEGO firmware
+	// does not respond with an error code to unknown system commands. Instead, it seems to
+	// return the reply of the last successful command or something similar.
+	// Hence, the NXJ opcodes should be declared as direct commands. The LEGO firmware will
+	// reply with error 0xBE (Unknown command opcode) for all direct command
+	// opcodes from 0x22 to 0xff (tested with Firmware 1.31). I suggest the usage of
+	// opcodes >= 0x80.
 	public static final byte NXJ_DISCONNECT = 0x20; 
 	public static final byte NXJ_DEFRAG = 0x21;
 	public static final byte NXJ_SET_DEFAULT_PROGRAM = 0x22;
@@ -85,7 +91,8 @@ public interface NXTProtocol {
 	public static final byte NXJ_GET_VOLUME = 0x2A;
 	public static final byte NXJ_GET_KEY_CLICK_VOLUME = 0x2B;
 	public static final byte NXJ_GET_AUTO_RUN = 0x2C;
-	
+    public static final byte NXJ_PACKET_MODE = (byte)0xff;
+		
 	// Output state constants 
 	// "Mode":
 	/** Turn on the specified motor */
