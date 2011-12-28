@@ -11,27 +11,27 @@
             <properties/>
             <folders>
                 <source-folder>
+                    <label>pccomms</label>
+                    <location>.</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>src</label>
                     <type>java</type>
                     <location>src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
-                <source-folder>
-                    <label>pccomms</label>
-                    <location>.</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
-                    <target>classes</target>
+                    <target>classes.jar</target>
                 </action>
                 <action name="clean">
                     <target>clean</target>
                 </action>
                 <action name="rebuild">
                     <target>clean</target>
-                    <target>classes</target>
+                    <target>classes.jar</target>
                 </action>
             </ide-actions>
             <view>
@@ -55,6 +55,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
                 <package-root>src</package-root>
+                <classpath mode="compile">3rdparty/lib/bluecove.jar;3rdparty/lib/bluecove-gpl.jar;3rdparty/lib/stax-api-1.0.1.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
