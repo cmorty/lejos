@@ -7,6 +7,7 @@ package java.util;
  * @author Juan Antonio Brenha Moral, Sven Köhler
  */
 public class Arrays {
+	//TODO use faster algorithm like quicksort
 
 	private Arrays() {
 		// class cannot be instantiated
