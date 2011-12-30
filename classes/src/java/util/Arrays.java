@@ -8,12 +8,11 @@ package java.util;
  */
 public class Arrays {
 	//TODO use faster algorithm like quicksort
-
+	//TODO checks whether from/toIndex are valid etc.
+	
 	private Arrays() {
 		// class cannot be instantiated
 	}
-	
-	//TODO checks whether from/toIndex are valid etc.
 	
 	/****************** BINARY SEARCH ******************/
 	
