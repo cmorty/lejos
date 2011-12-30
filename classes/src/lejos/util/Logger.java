@@ -6,7 +6,10 @@ import java.io.IOException;
 
 import lejos.nxt.comm.NXTConnection;
 
-/** Defines the [minimum] required functionality for a data logger implementation.
+/** 
+ * Defines the [minimum] required functionality for a data logger implementation.
+ * 
+ * @author Kirk P. Thompson
  */
 public interface Logger {
     // Starts realtime logging. Must be called before any writeLog() methods. Resets startCachingLog() state
