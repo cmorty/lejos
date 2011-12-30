@@ -1,5 +1,98 @@
+leJOS NXJ 0.9.1 beta
+--------------------
+Kirk Thompson contributed a new major leJOS tool for logging data
+on the NXT and charting it on the PC.
+??? MapCommand has been added? Great changes by Lawrie?
+
+
+Andy Shaw:
+- I2C fixes
+- Fixes for VM class
+- Enhancements to RS485 code and added cleanup of UART code 
+- less RAM usage by moving some firmware code from RAM to ROM
+- Added support for InterruptedException to event code
+- New exception handler and shutdown hook code
+- Power consumption of NXT reduced when idle
+- Fixed bug in stall detection
+- Added I2C clock stretching support in high speed mode
+
+Sven Koehler:
+- New installer (Windows only)
+- Windows batch files and UNIX shell scripts check NXJ_HOME, LEJOS_NXJ_JAVA_HOME, and JAVA_HOME for errors
+- Added source attachments to each library for development/debugging
+- Moved sources of individual projects into src subfolder
+- removed NXJ_FIND* LCP commands
+- Various changes to the Ant-based build system
+- Ant-based menu for building the samples on the command line
+- Added org.lejos.pcexample project as a template for PC-side leJOS projects
+- Added import for leJOS sample/example projects to Eclipse plug-in
+- Bug fixes for the Eclipse plug-in
+- Support for Java 7 try-with-resource statement
+- Fixed various leaks of OS handles in pccomms
+- Performance enhancement for NXTInputStream
+- Added java.io.BufferedReader
+- Deleted get getDataInput/OutputStream methods from NXTConnector and Socket
+- lejos.nxt.Button: deprecated isPressed, added isDown
+- lejos.nxt.Button: added methods for waiting for certain events
+- Added support for some control characters to LCDOutputStream 
+- Fixed Coordinates convertsion to String
+- First bits of java.util.Arrays
+
+Lawrie Griffiths:
+- Added driver for HiTechnic magnetic sensor
+- Added new package for kinematics
+- Added new tool: nxjmapcommand
+- commits 5538 to 5523
+- commits 5435 to 5414
+- commits 5360 to 5335
+- commits 5316 to 5306
+- Implemented javax.xml.stream XML API for reading/write XML
+- Added loader for SVG files
+- Added LightScanner
+- Added Button and LCD emulation to pccomms
+- Support for NXT system settings in nxjcontrol
+- Added leJOS specific LCP commands for modifying NXT settings
+
+Brian Bagnall:
+- Added rotateTo() method to Navigator
+- ??? Omnipilot
+- New Ballbot class
+- Added drivers for dIMU sensors 
+- Support für dGPS sensor in javax.microedition.location
+
+Roger Glassey:
+- Added quickStop method for DifferentialPilot
+- Fixed synchronization issues in OdometryPoseProvider
+- Bug fixes in Navigator class
+
+Juan Antonio Breña Moral:
+- fixes for GPS package
+- new sample: LocationPTest
+- Added loader for SVG files
+- Added bubblesort implementation (used in Arrays.sort)
+
+Kirk Thompson:
+- New Logger and Charting Application and NXTDataLogger logging infrastructure
+- Added TETRIX Servo and Motor controller support
+- A lot of Javadoc "enhancements" to lots of existing classes
+- Experimental support for Firgelli linear actuators in NXTMMX class
+- Added stall detection to Firgelli linear actuators driver
+
+Dan Rollo:
+- Improvements to Maven POM files 
+
+Daniele Benedettelli:
+- Added driver for Mindsensors SumoEyes
+- Added OmniPilot for robots with omni wheels
+
+Michael Mirwaldt:
+- Driver for LEGO temperature sensor
+- Added method for retrieving the line number map of DebugData
+- Additions to java.util (LinkedList, HashSet, Set, HashMap, Map)
+
+
 leJOS NXJ 0.9.0 beta
--------------------
+--------------------
 Lawrie Griffiths, Roger Glassey and Brian Bagnall have made some major revisions
 to the leJOS Robotics API and class structure. These changes provide a more generic
 interface and allow greater flexibility in the way the classes may be
