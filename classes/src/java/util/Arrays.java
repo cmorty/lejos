@@ -30,8 +30,8 @@ public class Arrays {
 	/**
 	 * Binary search for element in sorted array.
 	 * @param a the sorted array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to consider
+	 * @param toIndex index of last element (exclusive) to consider
 	 * @param key the value to search for
 	 * @return the index at which the element was found, or otherwise <code>(-index -1)</code> where <code>index</code>
 	 * 	denotes the index at which the element should be inserted
@@ -64,8 +64,8 @@ public class Arrays {
 	/**
 	 * Binary search for element in sorted array.
 	 * @param a the sorted array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to consider
+	 * @param toIndex index of last element (exclusive) to consider
 	 * @param key the value to search for
 	 * @return the index at which the element was found, or otherwise <code>(-index -1)</code> where <code>index</code>
 	 * 	denotes the index at which the element should be inserted
@@ -98,8 +98,8 @@ public class Arrays {
 	/**
 	 * Binary search for element in sorted array.
 	 * @param a the sorted array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to consider
+	 * @param toIndex index of last element (exclusive) to consider
 	 * @param key the value to search for
 	 * @return the index at which the element was found, or otherwise <code>(-index -1)</code> where <code>index</code>
 	 * 	denotes the index at which the element should be inserted
@@ -132,8 +132,8 @@ public class Arrays {
 	/**
 	 * Binary search for element in sorted array.
 	 * @param a the sorted array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to consider
+	 * @param toIndex index of last element (exclusive) to consider
 	 * @param key the value to search for
 	 * @return the index at which the element was found, or otherwise <code>(-index -1)</code> where <code>index</code>
 	 * 	denotes the index at which the element should be inserted
@@ -166,8 +166,8 @@ public class Arrays {
 	/**
 	 * Binary search for element in sorted array.
 	 * @param a the sorted array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to consider
+	 * @param toIndex index of last element (exclusive) to consider
 	 * @param key the value to search for
 	 * @return the index at which the element was found, or otherwise <code>(-index -1)</code> where <code>index</code>
 	 * 	denotes the index at which the element should be inserted
@@ -200,8 +200,8 @@ public class Arrays {
 	/**
 	 * Binary search for element in sorted array.
 	 * @param a the sorted array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to consider
+	 * @param toIndex index of last element (exclusive) to consider
 	 * @param key the value to search for
 	 * @return the index at which the element was found, or otherwise <code>(-index -1)</code> where <code>index</code>
 	 * 	denotes the index at which the element should be inserted
@@ -234,8 +234,8 @@ public class Arrays {
 	/**
 	 * Binary search for element in sorted array.
 	 * @param a the sorted array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to consider
+	 * @param toIndex index of last element (exclusive) to consider
 	 * @param key the value to search for
 	 * @return the index at which the element was found, or otherwise <code>(-index -1)</code> where <code>index</code>
 	 * 	denotes the index at which the element should be inserted
@@ -268,8 +268,8 @@ public class Arrays {
 	/**
 	 * Binary search for element in sorted array.
 	 * @param a the sorted array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to consider
+	 * @param toIndex index of last element (exclusive) to consider
 	 * @param key the value to search for
 	 * @return the index at which the element was found, or otherwise <code>(-index -1)</code> where <code>index</code>
 	 * 	denotes the index at which the element should be inserted
@@ -304,8 +304,8 @@ public class Arrays {
 	/**
 	 * Set array elements to given value.
 	 * @param a the array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to set
+	 * @param toIndex index of last element (exclusive) to set
 	 * @param val the value
 	 */
 	public static void fill(boolean[] a, int fromIndex, int toIndex, boolean val) {
@@ -326,8 +326,8 @@ public class Arrays {
 	/**
 	 * Set array elements to given value.
 	 * @param a the array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to set
+	 * @param toIndex index of last element (exclusive) to set
 	 * @param val the value
 	 */
 	public static void fill(byte[] a, int fromIndex, int toIndex, byte val) {
@@ -348,8 +348,8 @@ public class Arrays {
 	/**
 	 * Set array elements to given value.
 	 * @param a the array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to set
+	 * @param toIndex index of last element (exclusive) to set
 	 * @param val the value
 	 */
 	public static void fill(short[] a, int fromIndex, int toIndex, short val) {
@@ -370,8 +370,8 @@ public class Arrays {
 	/**
 	 * Set array elements to given value.
 	 * @param a the array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to set
+	 * @param toIndex index of last element (exclusive) to set
 	 * @param val the value
 	 */
 	public static void fill(char[] a, int fromIndex, int toIndex, char val) {
@@ -392,8 +392,8 @@ public class Arrays {
 	/**
 	 * Set array elements to given value.
 	 * @param a the array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to set
+	 * @param toIndex index of last element (exclusive) to set
 	 * @param val the value
 	 */
 	public static void fill(int[] a, int fromIndex, int toIndex, int val) {
@@ -414,8 +414,8 @@ public class Arrays {
 	/**
 	 * Set array elements to given value.
 	 * @param a the array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to set
+	 * @param toIndex index of last element (exclusive) to set
 	 * @param val the value
 	 */
 	public static void fill(long[] a, int fromIndex, int toIndex, long val) {
@@ -436,8 +436,8 @@ public class Arrays {
 	/**
 	 * Set array elements to given value.
 	 * @param a the array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to set
+	 * @param toIndex index of last element (exclusive) to set
 	 * @param val the value
 	 */
 	public static void fill(float[] a, int fromIndex, int toIndex, float val) {
@@ -458,8 +458,8 @@ public class Arrays {
 	/**
 	 * Set array elements to given value.
 	 * @param a the array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to set
+	 * @param toIndex index of last element (exclusive) to set
 	 * @param val the value
 	 */
 	public static void fill(double[] a, int fromIndex, int toIndex, double val) {
@@ -480,8 +480,8 @@ public class Arrays {
 	/**
 	 * Set array elements to given value.
 	 * @param a the array
-	 * @param fromIndex index of first element (inclusive) to sort
-	 * @param toIndex index of last element (exclusive) to sort
+	 * @param fromIndex index of first element (inclusive) to set
+	 * @param toIndex index of last element (exclusive) to set
 	 * @param val the value
 	 */
 	public static void fill(Object[] a, int fromIndex, int toIndex, Object val) {
