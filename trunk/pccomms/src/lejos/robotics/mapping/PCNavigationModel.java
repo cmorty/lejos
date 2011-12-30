@@ -1,16 +1,33 @@
 package lejos.robotics.mapping;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+
 import lejos.geom.Point;
 import lejos.nxt.remote.FileInfo;
 import lejos.nxt.remote.NXTCommand;
-import lejos.pc.comm.*;
-import lejos.robotics.*;
-import lejos.robotics.navigation.*;
-import lejos.robotics.pathfinding.*;
-import lejos.robotics.localization.*;
+import lejos.pc.comm.NXTComm;
+import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTConnector;
+import lejos.robotics.RangeReading;
+import lejos.robotics.RangeReadings;
+import lejos.robotics.localization.MCLPoseProvider;
+import lejos.robotics.navigation.DestinationUnreachableException;
+import lejos.robotics.navigation.Move;
+import lejos.robotics.navigation.Pose;
+import lejos.robotics.navigation.Waypoint;
+import lejos.robotics.pathfinding.AstarSearchAlgorithm;
+import lejos.robotics.pathfinding.FourWayGridMesh;
+import lejos.robotics.pathfinding.Node;
+import lejos.robotics.pathfinding.NodePathFinder;
+import lejos.robotics.pathfinding.PathFinder;
+import lejos.robotics.pathfinding.RandomPathFinder;
+import lejos.robotics.pathfinding.ShortestPathFinder;
 
 /**
  * The PCNavigationModel holds all the navigation data that is transmitted as events,
@@ -463,6 +480,10 @@ public class PCNavigationModel extends NavigationModel {
 	 */
 	public LineMap loadMap(String mapFileName, int finder) {
 		try {
+			if (mapFileName.length() == 0) {
+				panel.error("Please specify a filename");
+				return null;
+			}
 			File mapFile = new File(mapFileName);
 			if (!mapFile.exists()) {
 				String abs = mapFile.getAbsolutePath();

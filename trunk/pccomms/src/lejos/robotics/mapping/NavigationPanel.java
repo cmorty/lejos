@@ -1,7 +1,19 @@
 package lejos.robotics.mapping;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,9 +21,35 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Properties;
+
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.Spring;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.mapping.NavigationModel.NavEvent;
@@ -227,31 +265,50 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 	protected JDialog configureMCL;
 	
 	protected Properties props = new Properties();
-	protected String propsFileName = "nav.props";
 	
 	public NavigationPanel() {	
 		loadProperties();
 	}
 	
+	private static String getPropsFileName() {
+		String userHome = System.getProperty("user.home");
+		if (userHome == null)
+			return null;
+		
+		return userHome + File.separatorChar + "nav.props";
+	}
+	
 	protected void loadProperties() {
 		//FIXME don't store properties file in current working directory!
-		try {
-			FileInputStream fis =new FileInputStream(propsFileName);
-			props.load(fis);
-		} catch (IOException ioe) {
-			log("Error loading properties file: " + ioe.getMessage());
-		}  
+		String propsFileName = getPropsFileName();
+		if (propsFileName != null) {
+			try {
+				FileInputStream fis =new FileInputStream(propsFileName);
+				try {
+					props.load(fis);
+				} finally {
+					fis.close();
+				}
+			} catch (IOException ioe) {
+				log("Error loading properties file: " + ioe.getMessage());
+			}
+		}
 	}
 	
 	protected void saveProperties() {
 		mapPanel.saveColors(props);
-		FileOutputStream out; 
-		try {
-			out = new FileOutputStream(propsFileName);
-			props.store(out, "Automatic save");
-			out.close();
-		} catch (IOException ioe) {
-			log("Failed to store properties");
+		String propsFileName = getPropsFileName();
+		if (propsFileName != null) {
+			try {
+				FileOutputStream out = new FileOutputStream(propsFileName);
+				try {
+					props.store(out, "Automatic save");					
+				} finally {
+					out.close();
+				}
+			} catch (IOException ioe) {
+				log("Failed to store properties");
+			}
 		}
 	}
 	
@@ -833,7 +890,7 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		viewGrid = new JCheckBoxMenuItem("Grid");
 		viewGrid.setSelected(showGrid);
 		viewGrid.addActionListener(this);
-		viewMenu.add(viewGrid);;
+		viewMenu.add(viewGrid);
 		viewMesh = new JCheckBoxMenuItem("Mesh");
 		viewMesh.setSelected(showMesh);
 		viewMesh.addActionListener(this);
@@ -1075,7 +1132,8 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		content.frame = frame;
 		
     	frame.addWindowListener(new WindowAdapter() {
-    		public void windowClosing(WindowEvent event) {
+    		@Override
+			public void windowClosing(WindowEvent event) {
     			System.exit(0);
     		}
     	});
