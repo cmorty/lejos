@@ -10,6 +10,18 @@ public class Arrays {
 	//TODO use faster algorithm like quicksort
 	//TODO checks whether from/toIndex are valid etc.
 	
+	//MISSING public static <T> List<T> asList(T... a)
+	//MISSING public static <T> T[] copyOf(T[] original, int newLength)
+	//MISSING public static <T,U> T[] copyOf(U[] original, int newLength, Class<? extends T[]> newType)
+	//MISSING public static <T> T[] copyOfRange(T[] original, int from, int to)
+	//MISSING public static <T,U> T[] copyOfRange(U[] original, int from, int to, Class<? extends T[]> newType)
+	//MISSING public static int hashCode*
+	//MISSING public static int deepHashCode(Object[] a)
+	//MISSING public static String deepToString(Object[] a)
+	//MISSING public static boolean deepEquals(Object[] a1, Object[] a2)
+	//MISSING public static String toString*
+
+	
 	private Arrays() {
 		// class cannot be instantiated
 	}
@@ -290,6 +302,351 @@ public class Arrays {
 		return -1 - fromIndex;
 	}
 		
+	/****************** COPYOF ******************/
+
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * @param a the array to copy
+	 * @param newLength length of the copy
+	 * @return the copy of the array
+	 */
+	public static boolean[] copyOf(boolean[] a, int newLength) {
+		int copyLength = (newLength > a.length) ? a.length : newLength;
+		boolean[] b = new boolean[newLength];
+		System.arraycopy(a, 0, b, 0, copyLength);
+		return b;
+	}
+	
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * @param a the array to copy
+	 * @param newLength length of the copy
+	 * @return the copy of the array
+	 */
+	public static byte[] copyOf(byte[] a, int newLength) {
+		int copyLength = (newLength > a.length) ? a.length : newLength;
+		byte[] b = new byte[newLength];
+		System.arraycopy(a, 0, b, 0, copyLength);
+		return b;
+	}
+	
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * @param a the array to copy
+	 * @param newLength length of the copy
+	 * @return the copy of the array
+	 */
+	public static short[] copyOf(short[] a, int newLength) {
+		int copyLength = (newLength > a.length) ? a.length : newLength;
+		short[] b = new short[newLength];
+		System.arraycopy(a, 0, b, 0, copyLength);
+		return b;
+	}
+	
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * @param a the array to copy
+	 * @param newLength length of the copy
+	 * @return the copy of the array
+	 */
+	public static char[] copyOf(char[] a, int newLength) {
+		int copyLength = (newLength > a.length) ? a.length : newLength;
+		char[] b = new char[newLength];
+		System.arraycopy(a, 0, b, 0, copyLength);
+		return b;
+	}
+	
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * @param a the array to copy
+	 * @param newLength length of the copy
+	 * @return the copy of the array
+	 */
+	public static int[] copyOf(int[] a, int newLength) {
+		int copyLength = (newLength > a.length) ? a.length : newLength;
+		int[] b = new int[newLength];
+		System.arraycopy(a, 0, b, 0, copyLength);
+		return b;
+	}
+	
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * @param a the array to copy
+	 * @param newLength length of the copy
+	 * @return the copy of the array
+	 */
+	public static long[] copyOf(long[] a, int newLength) {
+		int copyLength = (newLength > a.length) ? a.length : newLength;
+		long[] b = new long[newLength];
+		System.arraycopy(a, 0, b, 0, copyLength);
+		return b;
+	}
+	
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * @param a the array to copy
+	 * @param newLength length of the copy
+	 * @return the copy of the array
+	 */
+	public static float[] copyOf(float[] a, int newLength) {
+		int copyLength = (newLength > a.length) ? a.length : newLength;
+		float[] b = new float[newLength];
+		System.arraycopy(a, 0, b, 0, copyLength);
+		return b;
+	}
+	
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * @param a the array to copy
+	 * @param newLength length of the copy
+	 * @return the copy of the array
+	 */
+	public static double[] copyOf(double[] a, int newLength) {
+		int copyLength = (newLength > a.length) ? a.length : newLength;
+		double[] b = new double[newLength];
+		System.arraycopy(a, 0, b, 0, copyLength);
+		return b;
+	}
+	
+	/****************** COPYOFRANGE ******************/
+
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * Note that <code>toIndex</code> may be larger then <code>a.length</code>.
+	 * @param a the array to copy
+	 * @param fromIndex index of first element (inclusive) to copy
+	 * @param toIndex index of last element (exclusive) to copy
+	 * @return the copy of the array
+	 */
+	public static boolean[] copyOfRange(boolean[] a, int fromIndex, int toIndex) {
+		int copyLength = ((toIndex > a.length) ? a.length : toIndex) - fromIndex;
+		boolean[] b = new boolean[toIndex - fromIndex];
+		System.arraycopy(a, fromIndex, b, 0, copyLength);
+		return b;
+	}
+	
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * Note that <code>toIndex</code> may be larger then <code>a.length</code>.
+	 * @param a the array to copy
+	 * @param fromIndex index of first element (inclusive) to copy
+	 * @param toIndex index of last element (exclusive) to copy
+	 * @return the copy of the array
+	 */
+	public static byte[] copyOfRange(byte[] a, int fromIndex, int toIndex) {
+		int copyLength = ((toIndex > a.length) ? a.length : toIndex) - fromIndex;
+		byte[] b = new byte[toIndex - fromIndex];
+		System.arraycopy(a, fromIndex, b, 0, copyLength);
+		return b;
+	}
+	
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * Note that <code>toIndex</code> may be larger then <code>a.length</code>.
+	 * @param a the array to copy
+	 * @param fromIndex index of first element (inclusive) to copy
+	 * @param toIndex index of last element (exclusive) to copy
+	 * @return the copy of the array
+	 */
+	public static short[] copyOfRange(short[] a, int fromIndex, int toIndex) {
+		int copyLength = ((toIndex > a.length) ? a.length : toIndex) - fromIndex;
+		short[] b = new short[toIndex - fromIndex];
+		System.arraycopy(a, fromIndex, b, 0, copyLength);
+		return b;
+	}
+	
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * Note that <code>toIndex</code> may be larger then <code>a.length</code>.
+	 * @param a the array to copy
+	 * @param fromIndex index of first element (inclusive) to copy
+	 * @param toIndex index of last element (exclusive) to copy
+	 * @return the copy of the array
+	 */
+	public static char[] copyOfRange(char[] a, int fromIndex, int toIndex) {
+		int copyLength = ((toIndex > a.length) ? a.length : toIndex) - fromIndex;
+		char[] b = new char[toIndex - fromIndex];
+		System.arraycopy(a, fromIndex, b, 0, copyLength);
+		return b;
+	}
+	
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * Note that <code>toIndex</code> may be larger then <code>a.length</code>.
+	 * @param a the array to copy
+	 * @param fromIndex index of first element (inclusive) to copy
+	 * @param toIndex index of last element (exclusive) to copy
+	 * @return the copy of the array
+	 */
+	public static int[] copyOfRange(int[] a, int fromIndex, int toIndex) {
+		int copyLength = ((toIndex > a.length) ? a.length : toIndex) - fromIndex;
+		int[] b = new int[toIndex - fromIndex];
+		System.arraycopy(a, fromIndex, b, 0, copyLength);
+		return b;
+	}
+	
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * Note that <code>toIndex</code> may be larger then <code>a.length</code>.
+	 * @param a the array to copy
+	 * @param fromIndex index of first element (inclusive) to copy
+	 * @param toIndex index of last element (exclusive) to copy
+	 * @return the copy of the array
+	 */
+	public static long[] copyOfRange(long[] a, int fromIndex, int toIndex) {
+		int copyLength = ((toIndex > a.length) ? a.length : toIndex) - fromIndex;
+		long[] b = new long[toIndex - fromIndex];
+		System.arraycopy(a, fromIndex, b, 0, copyLength);
+		return b;
+	}
+	
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * Note that <code>toIndex</code> may be larger then <code>a.length</code>.
+	 * @param a the array to copy
+	 * @param fromIndex index of first element (inclusive) to copy
+	 * @param toIndex index of last element (exclusive) to copy
+	 * @return the copy of the array
+	 */
+	public static float[] copyOfRange(float[] a, int fromIndex, int toIndex) {
+		int copyLength = ((toIndex > a.length) ? a.length : toIndex) - fromIndex;
+		float[] b = new float[toIndex - fromIndex];
+		System.arraycopy(a, fromIndex, b, 0, copyLength);
+		return b;
+	}
+	
+	/**
+	 * Creates a copy with a given length of an array.
+	 * The data is truncated/padded to the given length as necessary. 
+	 * Note that <code>toIndex</code> may be larger then <code>a.length</code>.
+	 * @param a the array to copy
+	 * @param fromIndex index of first element (inclusive) to copy
+	 * @param toIndex index of last element (exclusive) to copy
+	 * @return the copy of the array
+	 */
+	public static double[] copyOfRange(double[] a, int fromIndex, int toIndex) {
+		int copyLength = ((toIndex > a.length) ? a.length : toIndex) - fromIndex;
+		double[] b = new double[toIndex - fromIndex];
+		System.arraycopy(a, fromIndex, b, 0, copyLength);
+		return b;
+	}
+	
+	/****************** EQUALS ******************/
+	
+	public static boolean equals(boolean[] a, boolean[] b) {
+		if (a != b) {
+			if (a.length != b.length)
+				return false;
+			for (int i=0; i<a.length; i++)
+				if (a[i] != b[i])
+					return false;
+		}
+		return true;
+	}
+	
+	public static boolean equals(byte[] a, byte[] b) {
+		if (a != b) {
+			if (a.length != b.length)
+				return false;
+			for (int i=0; i<a.length; i++)
+				if (a[i] != b[i])
+					return false;
+		}
+		return true;
+	}
+	
+	public static boolean equals(short[] a, short[] b) {
+		if (a != b) {
+			if (a.length != b.length)
+				return false;
+			for (int i=0; i<a.length; i++)
+				if (a[i] != b[i])
+					return false;
+		}
+		return true;
+	}
+	
+	public static boolean equals(char[] a, char[] b) {
+		if (a != b) {
+			if (a.length != b.length)
+				return false;
+			for (int i=0; i<a.length; i++)
+				if (a[i] != b[i])
+					return false;
+		}
+		return true;
+	}
+	
+	public static boolean equals(int[] a, int[] b) {
+		if (a != b) {
+			if (a.length != b.length)
+				return false;
+			for (int i=0; i<a.length; i++)
+				if (a[i] != b[i])
+					return false;
+		}
+		return true;
+	}
+	
+	public static boolean equals(long[] a, long[] b) {
+		if (a != b) {
+			if (a.length != b.length)
+				return false;
+			for (int i=0; i<a.length; i++)
+				if (a[i] != b[i])
+					return false;
+		}
+		return true;
+	}
+	
+	public static boolean equals(float[] a, float[] b) {
+		if (a != b) {
+			if (a.length != b.length)
+				return false;
+			for (int i=0; i<a.length; i++)
+				if (Float.compare(a[i], b[i]) != 0)
+					return false;
+		}
+		return true;
+	}
+	
+	public static boolean equals(double[] a, double[] b) {
+		if (a != b) {
+			if (a.length != b.length)
+				return false;
+			for (int i=0; i<a.length; i++)
+				if (Double.compare(a[i], b[i]) != 0)
+					return false;
+		}
+		return true;
+	}
+	
+	public static boolean equals(Object[] a, Object[] b) {
+		if (a != b) {
+			if (a.length != b.length)
+				return false;
+			for (int i=0; i<a.length; i++)
+				if (a[i] == null ? b[i] != null : !a[i].equals(b[i]))
+					return false;
+		}
+		return true;
+	}
+	
 	/****************** FILL ******************/
 	
 	/**
