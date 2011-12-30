@@ -5,7 +5,7 @@ import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.pathfinding.Path;
 
-import lejos.nxt.comm.RConsole;
+//import lejos.nxt.comm.RConsole;
 
 
 /*
@@ -148,7 +148,7 @@ public class Navigator implements WaypointListener
          return;
       _interrupted = false;
       _keepGoing = true;
-      RConsole.println("navigator followPath called");
+//      RConsole.println("navigator followPath called");
    }
 
    /**
@@ -364,7 +364,7 @@ public class Navigator implements WaypointListener
         { 
           _destination = _path.get(0);
           _pose = poseProvider.getPose();
-          RConsole.println("NAV loop begin "+_destination);         
+//          RConsole.println("NAV loop begin "+_destination);         
           float destinationRelativeBearing = _pose.relativeBearing(_destination);
           if(!_keepGoing) break;
           if(_radius == 0)  // differential pilot used
@@ -419,15 +419,17 @@ public class Navigator implements WaypointListener
           }         
           
           if (_keepGoing && ! _path.isEmpty()) 
-          { RConsole.println("NAV keep going "+_keepGoing+" pathlength  "+_path.size());
+          { 
+//        	  RConsole.println("NAV keep going "+_keepGoing+" pathlength  "+_path.size());
              if(!_interrupted)  //presumably at waypoint     
-             { RConsole.println("NAV at waypoint??");
+             { 
+//            	 RConsole.println("NAV at waypoint??");
                 _path.remove(0);
                 _sequenceNr++; 
              }
              _keepGoing = ! _path.isEmpty();
              if(_singleStep)_keepGoing = false;
-             RConsole.println("NAV calling Listeners");
+//             RConsole.println("NAV calling Listeners");
              callListeners(); 
              
           }
