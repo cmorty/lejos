@@ -5,6 +5,7 @@ package lejos.util;
  * 
  * @see Logger#setColumns
  * @see NXTDataLogger
+ * @author Kirk P. Thompson
  */
 public class LogColumn {
     public static final int    DT_BOOLEAN = 0;
