@@ -74,7 +74,9 @@ public class Object
 	public final native void notifyAll();
 	
 	public String toString()
-	{
+	{	
+		//TODO it should be:
+		// return this.getClass().getName() + '@' + Integer.toHexString(this.hashCode());
 		int hash = System.identityHashCode(this);
 		return "Object@"+Integer.toHexString(hash);
 	}
