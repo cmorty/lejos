@@ -20,7 +20,6 @@ Sven Koehler:
 - New installer (Windows only)
 - Windows batch files and UNIX shell scripts check NXJ_HOME, LEJOS_NXJ_JAVA_HOME, and JAVA_HOME for errors
 - Added source attachments to each library for development/debugging
-- Moved sources of individual projects into src subfolder
 - removed NXJ_FIND* LCP commands
 - Various changes to the Ant-based build system
 - Ant-based menu for building the samples on the command line
@@ -36,7 +35,7 @@ Sven Koehler:
 - lejos.nxt.Button: added methods for waiting for certain events
 - Added support for some control characters to LCDOutputStream 
 - Fixed Coordinates convertsion to String
-- First bits of java.util.Arrays
+- fill and binarySearch methods for java.util.Arrays
 
 Lawrie Griffiths:
 - Added driver for HiTechnic magnetic sensor
@@ -66,15 +65,15 @@ Roger Glassey:
 - Bug fixes in Navigator class
 
 Juan Antonio Breña Moral:
-- fixes for GPS package
-- new sample: LocationPTest
+- Fixes for GPS package
+- New sample: LocationPTest
 - Added loader for SVG files
-- Added bubblesort implementation (used in Arrays.sort)
+- Added bubblesort implementation (later used for java.util.Arrays.sort)
 
 Kirk Thompson:
 - New data logging and charting application (%NXJ_HOME%\bin\nxjchartinglogger.bat and lejos.util.NXTDataLogger) logging infrastructure
 - New TETRIX Servo and Motor controller support
-- General Javadoc "enhancements" to existing classes
+- General Javadoc enhancements to existing classes
 - Experimental support for Firgelli linear actuators driven by NXTMMX
 - Bug fixes and enhancements for LnrActrFirgelliNXT, MMXRegulatedMotor, PIDController
 
