@@ -72,11 +72,11 @@ Juan Antonio Breña Moral:
 - Added bubblesort implementation (used in Arrays.sort)
 
 Kirk Thompson:
-- New Logger and Charting Application and NXTDataLogger logging infrastructure
-- Added TETRIX Servo and Motor controller support
-- A lot of Javadoc "enhancements" to lots of existing classes
-- Experimental support for Firgelli linear actuators in NXTMMX class
-- Added stall detection to Firgelli linear actuators driver
+- New data logging and charting application (%NXJ_HOME%\bin\nxjchartinglogger.bat and lejos.util.NXTDataLogger) logging infrastructure
+- New TETRIX Servo and Motor controller support
+- General Javadoc "enhancements" to existing classes
+- Experimental support for Firgelli linear actuators driven by NXTMMX
+- Bug fixes and enhancements for LnrActrFirgelliNXT, MMXRegulatedMotor, PIDController
 
 Dan Rollo:
 - Improvements to Maven POM files 
