@@ -47,7 +47,9 @@ Name: "extras\samples"; Description: "Sample and Example Projects"; Types: full;
 Name: "extras\sources"; Description: "Sources of leJOS Development Kit"; Types: full; Flags: disablenouninstallwarning
 
 [Files]
-Source: "scripts\startNxjFlash.bat"; DestDir: "{tmp}"; Flags: deleteafterinstall
+;Extract helper script to {app}, since {tmp} refers to the temp folder of the admin, and might
+; not even be accessible by the original user when using postinstall/runasoriginaluser in [Run]
+Source: "scripts\startNxjFlash.bat"; DestDir: "{app}"; Flags: deleteafterinstall
 Source: "..\release\build\bin_windows\*"; DestDir: "{app}"; Excludes: "docs"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main
 Source: "..\release\build\bin_windows\docs\pc\*"; DestDir: "{app}\docs\pc"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main\apipc
 Source: "..\release\build\bin_windows\docs\nxt\*"; DestDir: "{app}\docs\nxt"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main\apinxt
@@ -78,7 +80,7 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 [Run]
 ; We use explorer.exe for starting nxjflashg, since this makes the updated values
 ; of the environment variables available to the batch file
-WorkingDir: "{app}\bin"; Filename: "{tmp}\startNxjFlash.bat"; Parameters: "{code:JDKSelect_GetSelectionQuoted}"; Description: "{cm:LaunchProgram}"; Flags: postinstall skipifsilent runhidden
+WorkingDir: "{app}\bin"; Filename: "{app}\startNxjFlash.bat"; Parameters: "{code:JDKSelect_GetSelectionQuoted}"; Description: "{cm:LaunchProgram}"; Flags: postinstall skipifsilent runhidden
 
 #include "include\Tools.iss"
 #include "include\Fantom.iss"
