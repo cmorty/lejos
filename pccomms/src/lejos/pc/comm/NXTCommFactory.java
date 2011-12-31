@@ -112,13 +112,12 @@ public class NXTCommFactory {
 	private static String getCacheFile() {
 		if (isAndroid())
 			return "sdcard/leJOS/nxj.cache";
-		else {
-			String userHome = System.getProperty("user.home");
-			if (userHome == null)
-				return null;
-			
-			return userHome + File.separatorChar + "nxj.cache";
-		}
+		
+		String userHome = System.getProperty("user.home");
+		if (userHome == null)
+			return null;
+		
+		return userHome + File.separatorChar + "nxj.cache";
 	}
 
 	/**
