@@ -142,7 +142,7 @@ public abstract class NXTCommUSB implements NXTComm {
 	
     /**
      * Helper function. Open the specified nxt, get its name and close it.
-     * @param nxt the device to obtain the name for
+     * @param dev the device to obtain the name for
      * @return the nxt name.
      */
     private String getName(NXTInfo dev)
@@ -229,7 +229,7 @@ public abstract class NXTCommUSB implements NXTComm {
      * USB device with an optional timeout timeout.
      * @param buf output buffer
      * @param offset offset into the buffer
-     * @param number of bytes to write
+     * @param len of bytes to write
      * @param wait true if the call should block
      * @return date or null if the read times out
      */
@@ -416,11 +416,10 @@ public abstract class NXTCommUSB implements NXTComm {
 	        {
 		        // Now try and switch to packet mode for normal read/writes
 				byte[] request = { NXTProtocol.SYSTEM_COMMAND_REPLY, NXTProtocol.NXJ_PACKET_MODE };
-		        byte [] ret = null;
+		        byte [] ret;
 		        try {
 		            ret = sendRequest(request, USB_BUFSZ);
-		        } catch(IOException e)
-		        {
+		        } catch(IOException e) {
 		            ret = null;
 		        }
 		        // Check the response. We are looking for a non standard response of

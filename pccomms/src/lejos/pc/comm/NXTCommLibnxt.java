@@ -21,37 +21,43 @@ public class NXTCommLibnxt extends NXTCommUSB implements JNIClass {
 	private native int jlibnxt_send_data(long nxt, byte [] message, int offset, int len);
 	private native int jlibnxt_read_data(long nxt, byte [] data, int offset, int len);
 
-    Vector<NXTInfo> devFind()
+    @Override
+	Vector<NXTInfo> devFind()
     {
         // Address is in standard format so we can use the helper function
         // to do all the hard work.
 		return find(jlibnxt_find());
     }
     
+	@Override
 	long devOpen(NXTInfo nxt)
     {
         if (nxt.btResourceString == null) return 0;
         return jlibnxt_open(nxt.btResourceString);
     }
     
+	@Override
 	void devClose(long nxt)
     {
 		// Attention: is called from NXTCommUSB.finalize
         jlibnxt_close(nxt);
     }
     
+	@Override
 	int devWrite(long nxt, byte [] message, int offset, int len)
     {
         return jlibnxt_send_data(nxt, message, offset, len);
     }
     
+	@Override
 	int devRead(long nxt, byte[] data, int offset, int len)
     {
         return jlibnxt_read_data(nxt, data, offset, len);
     }
     
     
-    boolean devIsValid(NXTInfo nxt)
+    @Override
+	boolean devIsValid(NXTInfo nxt)
     {
         return (nxt.btResourceString != null);
     }

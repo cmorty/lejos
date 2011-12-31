@@ -35,6 +35,7 @@ public class NXTCommFantom extends NXTCommUSB implements JNIClass {
 	private native int jfantom_send_data(long nxt, byte [] message, int offset, int len);
 	private native int jfantom_read_data(long nxt, byte[] data, int offset, int len);
 
+	@Override
 	Vector<NXTInfo> devFind()
     {
         // Address is in standard format so we can use the helper function
@@ -42,23 +43,27 @@ public class NXTCommFantom extends NXTCommUSB implements JNIClass {
 		return find(jfantom_find());
     }
     
+	@Override
 	long devOpen(NXTInfo nxt)
     {
         if (nxt.btResourceString == null) return 0;
         return jfantom_open(nxt.btResourceString);
     }
     
+	@Override
 	void devClose(long nxt)
     {
 		// Attention: is called from NXTCommUSB.finalize
         jfantom_close(nxt);
     }
     
+	@Override
 	int devWrite(long nxt, byte [] message, int offset, int len)
     {
         return jfantom_send_data(nxt, message, offset, len);
     }
     
+	@Override
 	int devRead(long nxt, byte[] data, int offset, int len)
     {
         int ret;
@@ -78,7 +83,8 @@ public class NXTCommFantom extends NXTCommUSB implements JNIClass {
     }
     
     
-    boolean devIsValid(NXTInfo nxt)
+    @Override
+	boolean devIsValid(NXTInfo nxt)
     {
         return (nxt.btResourceString != null);
     }
