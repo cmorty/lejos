@@ -181,11 +181,11 @@ public abstract class NXTCommUSB implements NXTComm {
      */
     private void fillBuffer() throws IOException
     {
-        int len;
         inCnt = 0;
         inOffset = 0;
-        len = rawRead(inBuf, 0, inBuf.length, true);
-        if (len <= 0) throw new IOException("Error in read");
+        int len = rawRead(inBuf, 0, inBuf.length, true);
+        if (len <= 0)
+        	throw new IOException("Error in read");
         inCnt = len;
     }
 
@@ -196,7 +196,8 @@ public abstract class NXTCommUSB implements NXTComm {
      */
     private int readByte() throws IOException
     {
-        if (inOffset >= inCnt) fillBuffer();
+        if (inOffset >= inCnt)
+        	fillBuffer();
         return inBuf[inOffset++] & 0xff;
     }
 
@@ -416,7 +417,7 @@ public abstract class NXTCommUSB implements NXTComm {
 	        {
 		        // Now try and switch to packet mode for normal read/writes
 				byte[] request = { NXTProtocol.SYSTEM_COMMAND_REPLY, NXTProtocol.NXJ_PACKET_MODE };
-		        byte [] ret;
+		        byte[] ret;
 		        try {
 		            ret = sendRequest(request, USB_BUFSZ);
 		        } catch(IOException e) {
@@ -491,18 +492,12 @@ public abstract class NXTCommUSB implements NXTComm {
      * @return The optional reply, or null
      * @throws java.io.IOException Thrown on errors.
      */
-    public byte[] sendRequest(byte [] data, int replyLen) throws IOException {
-    	if (nxtPtr == 0)
-    		throw new IOException("NXTComm is closed");
-    	
-        int written = devWrite(nxtPtr, data, 0, data.length);
-        if (written <= 0) throw new IOException("Failed to send data");
-        if (replyLen == 0) return new byte [0];
-        byte[] ret = new byte[replyLen];
-        int len = devRead(nxtPtr, ret, 0, replyLen);
-        if (len <= 0) throw new IOException("Failed to read reply");
-        //TODO return actual length of packet, not expected length of packet
-        return ret; 
+    public byte[] sendRequest(byte[] data, int replyLen) throws IOException {
+    	this.write(data);
+        if (replyLen == 0)
+        	return new byte [0];
+        
+        return this.read(); 
     }
 	
     /**
@@ -511,25 +506,26 @@ public abstract class NXTCommUSB implements NXTComm {
      * @throws java.io.IOException
      */
 	public byte [] read() throws IOException {
-        if (EOF) return null;
+        if (EOF)
+        	return null;
+        
         int len;
-        if (packetMode)
-        {
+        if (packetMode) {
             // read header
-            len = readByte();
-            len = len | (readByte() << 8);
+        	int lenLSB = readByte();
+        	int lenMSB = readByte();
+            len = lenLSB | (lenMSB << 8);
             if (len == 0)
             {
                 EOF = true;
                 return null;
             }
-        }
-        else
-        {
-            if (inOffset >= inCnt) fillBuffer();
+        } else {
+            if (inOffset >= inCnt)
+            	fillBuffer();
             len = inCnt - inOffset;
         }
-        byte [] ret = new byte[len];
+        byte[] ret = new byte[len];
         for(int i = 0; i < len; i++)
             ret[i] = (byte)readByte();
         return ret;
@@ -549,7 +545,7 @@ public abstract class NXTCommUSB implements NXTComm {
      * @param data Data to be written.
      * @throws java.io.IOException
      */
-	public void write(byte [] data) throws IOException {
+	public void write(byte[] data) throws IOException {
         if (packetMode)
         {
             writeByte((byte) data.length);
