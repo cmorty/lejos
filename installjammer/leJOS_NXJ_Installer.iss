@@ -80,7 +80,7 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 [Run]
 ; We use explorer.exe for starting nxjflashg, since this makes the updated values
 ; of the environment variables available to the batch file
-WorkingDir: "{app}\bin"; Filename: "{app}\startNxjFlash.bat"; Parameters: "{code:JDKSelect_GetSelectionQuoted}"; Description: "{cm:LaunchProgram}"; Flags: postinstall skipifsilent runhidden
+WorkingDir: "{app}"; Filename: "{app}\startNxjFlash.bat"; Parameters: "{code:JDKSelect_GetSelectionQuoted}"; Description: "{cm:LaunchProgram}"; Flags: postinstall skipifsilent runhidden
 
 #include "include\Tools.iss"
 #include "include\Fantom.iss"
