@@ -39,6 +39,6 @@
   begin
     if not ShellExecAsOriginalUser('', URL, '', '', SW_SHOW, ewNoWait, ErrorCode) then
       MsgBox('Error: was unable to open webpage '+URL+', error code '
-        +IntToStr(ErrorCode)+'.', mbError, MB_OK);
+        +IntToStr(ErrorCode)+': '+SysErrorMessage(ErrorCode), mbError, MB_OK);
   end;
 
