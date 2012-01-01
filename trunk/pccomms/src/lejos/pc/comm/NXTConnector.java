@@ -112,7 +112,6 @@ public class NXTConnector extends NXTCommLoggable
 			try {
 				nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
 			} catch (NXTCommException e) {
-				nxtComm = null;
 				logException("Error: Failed to load Bluetooth comms driver.", e);
 				return nxtInfos;
 			}
