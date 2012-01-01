@@ -29,7 +29,7 @@ import java.util.ArrayList;
  * <code>addMoveListener</code>  method on this object.<br>
  * Some methods optionally return immediately so the thread that called it 
  *  can do things while the robot is moving, such as  monitor sensors and 
- * call {@link stop()}.<br>
+ * call {@link #stop()}.<br>
  * Handling stalls: If a stall is detected,   <code>isStalled()</code> returns <code>
  * true </code>,  <code>isMoving()</code>  returns <code>false</code>, <code>moveStopped()
  * </code> is called, and, if a blocking method is executing, that method exits.
@@ -457,7 +457,7 @@ public class DifferentialPilot implements
   }
 
   /**
-   * Stops the robot almost immediately.   Use this method if the normal {@link stop()}
+   * Stops the robot almost immediately.   Use this method if the normal {@link #stop()}
    * is too slow;
    */ 
   public void quickStop()
