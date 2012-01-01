@@ -6,6 +6,14 @@ import org.ros.node.Node;
 import org.ros.node.NodeMain;
 import org.ros.node.topic.Subscriber;
 
+/**
+ * 
+ * This example explain the way to create a ROS node to use data from
+ * topics to process
+ * 
+ * @author jabrena
+ *
+ */
 public class NXTStatusListener implements NodeMain{
 
 	@Override
