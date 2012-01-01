@@ -5,8 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -132,11 +131,11 @@ public class NXTConnector extends NXTCommLoggable
 								
 				// Create an array of NXTInfos from the properties
 				if (props.size() > 0 && !(nxt != null && nxt.equals("*"))) {	
-					Hashtable<String,String> nxtNames = new Hashtable<String,String>();
+					HashMap<String,String> nxtNames = new HashMap<String,String>();
 					
 					debug("Searching cache file for known Bluetooth devices");
 					
-					// Populate hashTable from NXT_<name> entries, filtering by name, if supplied
+					// Populate hashTable from NXT_<addr>=<name> entries, filtering by name, if supplied
 					for (Map.Entry<?, ?> e : props.entrySet()) {
 				        // Get property name						
 				        String propName = (String)e.getKey();
@@ -147,7 +146,7 @@ public class NXTConnector extends NXTCommLoggable
 					        
 				        	if (isAddress(nxtAddr) && (searchParam == null || nxtName.equals(nxt))) {
 				        		debug("Found " + nxtName + " " + nxtAddr + " in cache file");
-				        		nxtNames.put(nxtName, nxtAddr);
+				        		nxtNames.put(nxtAddr, nxtName);
 				        	}				        	
 				        }				    
 				    }
@@ -158,11 +157,9 @@ public class NXTConnector extends NXTCommLoggable
 				    if (nxtNames.size() > 0) {					    
 						nxtInfos = new NXTInfo[nxtNames.size()];
 						
-						Enumeration<?> enNXTs = nxtNames.keys();
 						int i=0;
-					    for (; enNXTs.hasMoreElements(); ) {
-					    	String ne = (String)enNXTs.nextElement();
-					    	nxtInfos[i++] = new NXTInfo(NXTCommFactory.BLUETOOTH, ne, nxtNames.get(ne));			    							
+					    for (Map.Entry<String, String> e : nxtNames.entrySet()) {
+					    	nxtInfos[i++] = new NXTInfo(NXTCommFactory.BLUETOOTH, e.getValue(), e.getKey());			    							
 					    }				    	
 				    }
 				} else {
