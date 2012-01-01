@@ -346,8 +346,8 @@
 		<copy-source todir="${source.dir}" id="release" />
 		
 		<mkdir dir="${dist.dir}" />
-		<tar destfile="${dist.dir}/${lejos.source.version}.tar.gz" compression="gzip">
-			<tarfileset dir="${source.dir}" />
+		<tar destfile="${dist.dir}/${lejos.source.version}.tar.gz" compression="gzip" longfile="gnu">
+			<tarfileset dir="${source.dir}" prefix="${lejos.source.version}" />
 		</tar>
 	</target>
 
@@ -375,11 +375,11 @@
 		</fixcrlf>
 		<!-- tar & gzip leJOS Unix distribution -->
 		<mkdir dir="${dist.dir}" />
-		<tar destfile="${dist.dir}/${lejos.unix.version}.tar.gz" compression="gzip">
-			<tarfileset dir="${unix.dir}" filemode="755">
+		<tar destfile="${dist.dir}/${lejos.unix.version}.tar.gz" compression="gzip" longfile="gnu">
+			<tarfileset dir="${unix.dir}" prefix="${lejos.unix.version}" filemode="755">
 				<include name="lejos_nxj/bin/nxj*" />
 			</tarfileset>
-			<tarfileset dir="${unix.dir}">
+			<tarfileset dir="${unix.dir}" prefix="${lejos.unix.version}">
 				<exclude name="lejos_nxj/bin/nxj*" />
 			</tarfileset>
 		</tar>
