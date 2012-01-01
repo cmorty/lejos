@@ -10,6 +10,14 @@ import org.ros.node.topic.Publisher;
 
 import com.google.common.base.Preconditions;
 
+/**
+ * This class explain the way to publish data on ROS.
+ * Topics are data to be used by other nodes.
+ * In this example, the node NXTStatus create a topic with the name "battery"
+ *  
+ * @author jabrena
+ *
+ */
 public class NXTStatus implements NodeMain{
 
 	private Node node;
@@ -41,6 +49,7 @@ public class NXTStatus implements NodeMain{
 		    	int voltage = 0;		    	
 				voltage = Battery.getVoltageMilliVolt();
 		    	
+				//TODO: Change the type of the topic. voltage is a Integer
 		        Publisher<org.ros.message.std_msgs.String> publisher =
 		            node.newPublisher("battery", "std_msgs/String");
 		        int seq = 0;
