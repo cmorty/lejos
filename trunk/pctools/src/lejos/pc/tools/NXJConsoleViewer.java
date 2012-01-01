@@ -1,6 +1,7 @@
 package lejos.pc.tools;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -24,12 +25,12 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 
 /**
- * Downloads  data from the RConsole running on a NXT <br>
- * Uses USB by default, or Bluetooth  if selected from buttons.
+ * Downloads data from the RConsole running on a NXT.<br>
+ * Uses USB by default, or Bluetooth if selected from buttons.
  * If using Bluetooth, you can get a quicker connection entering the name or address
- * of you NXT.<br>
+ * of your NXT.<br>
  * Do NOT click "connect" unless the NXT displays the correct "Console" message.
- * status field shows messages
+ * Status field shows messages.
  *
  * @author Roger Glassey 6.1.2008
  *
@@ -38,9 +39,10 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
 {
     private static final int LCD_WIDTH = 100;
     private static final int LCD_HEIGHT = 64;
-
+    private static final String S_CONNECT = "Connect";    
     private static final long serialVersionUID = -4789857573625988062L;
-    private JButton connectButton = new JButton("Connect");
+    
+    private JButton connectButton = new JButton(S_CONNECT);
     private JRadioButton usbButton = new JRadioButton("USB");
     private JRadioButton btButton = new JRadioButton("BlueTooth");
     private JCheckBox doLcd = new JCheckBox("show remote LCD screen", true);
@@ -126,7 +128,17 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
         statusField.setText(USING_USB);
 
     }
-
+	
+	// set the various component's cursor
+	private void setTheCursor(int cursor){
+		Cursor c1 = Cursor.getPredefinedCursor(cursor);
+		this.setCursor(c1);
+		if (cursor== Cursor.DEFAULT_CURSOR) c1=Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
+		theLog.setCursor(c1);
+		nameField.setCursor(c1);
+		addrField.setCursor(c1);
+	}
+	
     /**
      * Required by action listener. Used by Connect button
      */
@@ -134,40 +146,67 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
     {
         if (e.getSource() == connectButton)
         {
-        	statusField.setText("Connecting");
-            theLog.setText("");
-            lcd.clear();
-            String name = nameField.getText();
-            String address = addrField.getText();
-            boolean _useUSB = usbButton.isSelected();
-            if (comm.connectTo(name, address, _useUSB, doLcd.isSelected()))
-            {
-//            	usbButton.setEnabled(false);
-//            	btButton.setEnabled(false);
-//            	connectButton.setEnabled(false);
-//            	doLcd.setEnabled(false);
-            }
-            else
-            {
-            	statusField.setText("Connection Failed");
-                if (_useUSB)
-                {
-                    JOptionPane.showMessageDialog(this, "Sorry... USB did not connect.\n" +
-                            "You might want to check:\n " +
-                            " Is the NXT turned on and connected? \n " +
-                            " Does it display  'USB Console...'? ", "We have a connection problem.",
-                            JOptionPane.PLAIN_MESSAGE);
-                } else
-                {
-                    JOptionPane.showMessageDialog(this, "Sorry... Bluetooth did not connect. \n" +
-                            "You might want to check:\n" +
-                            " Is the dongle plugged in?\n" +
-                            " Is the NXT turned on?\n" +
-                            " Does it display  'BT Console....'? ",
-                            "We have a connection problem.",
-                            JOptionPane.PLAIN_MESSAGE);
-                }
-            }
+            final String name = nameField.getText();
+            final String address = addrField.getText();
+            final boolean _useUSB = usbButton.isSelected();
+            
+            // the thread is so that the GUI will update the button label, etc. while the
+            // connection is being established.
+            Thread connectWorker = new Thread(new Runnable() {
+				public void run() {
+					setTheCursor(Cursor.WAIT_CURSOR);
+	
+					// try to establish a connection
+					if (comm.connectTo(name, address, _useUSB, doLcd.isSelected())) {
+						connectButton.setText("Dis" + S_CONNECT.toLowerCase());
+		            	connectButton.setEnabled(true);
+		            	theLog.setText("");
+		                lcd.clear();
+		                NXJConsoleViewer.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		                setTheCursor(Cursor.DEFAULT_CURSOR);
+					} else {
+						statusField.setText(S_CONNECT + "ion Failed!");
+						connectButton.setText(statusField.getText());
+		                if (_useUSB)
+		                {
+		                    JOptionPane.showMessageDialog(NXJConsoleViewer.this, "Sorry... USB did not connect.\n" +
+		                            "You might want to check:\n " +
+		                            " Is the NXT turned on and connected? \n " +
+		                            " Does it display  'USB Console...'? ", "We have a connection problem.",
+		                            JOptionPane.PLAIN_MESSAGE);
+		                } else
+		                {
+		                    JOptionPane.showMessageDialog(NXJConsoleViewer.this, "Sorry... Bluetooth did not connect. \n" +
+		                            "You might want to check:\n" +
+		                            " Is the dongle plugged in?\n" +
+		                            " Is the NXT turned on?\n" +
+		                            " Does it display  'BT Console....'? ",
+		                            "We have a connection problem.",
+		                            JOptionPane.PLAIN_MESSAGE);
+		                }
+		                // reset state
+		                connectButton.setText(S_CONNECT);
+		            	connectButton.setEnabled(true);
+		            	setTheCursor(Cursor.DEFAULT_CURSOR);
+					}
+				}
+            });
+            
+            if (connectButton.getText().equals(S_CONNECT)) {
+            	// try to make a connection
+            	statusField.setText(S_CONNECT + "ing...");
+            	connectButton.setText(statusField.getText());
+            	connectButton.setEnabled(false);
+            	connectWorker.start();
+        	} else {
+        		// assume the button is "Disconnect" so lets do so
+        		setTheCursor(Cursor.WAIT_CURSOR);
+        		comm.close();
+        		// reset state
+        		connectButton.setText(S_CONNECT);
+            	connectButton.setEnabled(true);
+            	setTheCursor(Cursor.DEFAULT_CURSOR);
+        	}
         }
     }
 
@@ -232,7 +271,7 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
     {
         nameField.setText(name);
         addrField.setText(address);
-        statusField.setText("Connected to " + name);
+        statusField.setText(S_CONNECT + "ed to " + name);
     }
 
     public void append(String s)
