@@ -5,6 +5,13 @@ import org.ros.node.NodeMain;
 
 import com.google.common.base.Preconditions;
 
+/**
+ * This is the first example to understand the technology ROS using ROSJava and
+ * LeJOS project
+ * 
+ * @author jabrena
+ *
+ */
 public class HelloWorld implements NodeMain{
 
 	private Node node;
