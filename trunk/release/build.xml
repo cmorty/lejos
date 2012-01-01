@@ -355,7 +355,7 @@
 	<target name="dist.samples" description="copies the lejos samples" depends="subproject.samples, subproject.pcsamples, subproject.example, subproject.pcexample">
 		<mkdir dir="${dist.dir}" />
 		<zip destfile="${dist.dir}/${lejos.samples.version}.zip">
-			<fileset dir="${samples.dir}" />
+			<zipfileset dir="${samples.dir}" prefix="${lejos.samples.version}" />
 		</zip>
 	</target>
 
@@ -404,7 +404,7 @@
 		<!-- zip leJOS windows distribution -->
 		<mkdir dir="${dist.dir}" />
 		<zip destfile="${dist.dir}/${lejos.windows.version}.zip">
-			<fileset dir="${windows.dir}" />
+			<zipfileset dir="${windows.dir}" prefix="${lejos.windows.version}" />
 		</zip>
 	</target>
 
