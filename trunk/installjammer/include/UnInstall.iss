@@ -56,7 +56,8 @@
           end;
         if not Exec(Command, '/SILENT /NOCANCEL /NORESTART', '', SW_SHOW,
             ewWaitUntilTerminated, ResultCode) then
-          MsgBox('Unable to execute uninstaller '+Command, mbError, MB_OK);
+          MsgBox('Unable to execute uninstaller '+Command+', error code '
+            +IntToStr(ResultCode)+': '+SysErrorMessage(ResultCode), mbError, MB_OK);
       end;
     end;
     Result := true;
