@@ -377,10 +377,10 @@
 		<mkdir dir="${dist.dir}" />
 		<tar destfile="${dist.dir}/${lejos.unix.version}.tar.gz" compression="gzip" longfile="gnu">
 			<tarfileset dir="${unix.dir}" prefix="${lejos.unix.version}" filemode="755">
-				<include name="lejos_nxj/bin/nxj*" />
+				<include name="bin/nxj*" />
 			</tarfileset>
 			<tarfileset dir="${unix.dir}" prefix="${lejos.unix.version}">
-				<exclude name="lejos_nxj/bin/nxj*" />
+				<exclude name="bin/nxj*" />
 			</tarfileset>
 		</tar>
 	</target>
