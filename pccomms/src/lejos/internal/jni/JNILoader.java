@@ -113,15 +113,18 @@ public class JNILoader
 				}
 				catch (Exception e)
 				{
-					throw new JNIException("cannot load library " + libpath2, e);
+					throw new JNIException("cannot load library " + libpath2
+							+ ", architecture " + os + "/" + arch, e);
 				}
 				catch (UnsatisfiedLinkError e)
 				{
-					throw new JNIException("cannot load library " + libpath2, e);
+					throw new JNIException("cannot load library " + libpath2
+							+ ", architecture " + os + "/" + arch, e);
 				}
 			}
 			folder = folder.getParentFile();
 		}
-		throw new JNIException("library " + libfile + " (" + os + "/" + arch + ") was not found in " + basefolder);
+		throw new JNIException("library " + libfile + " was not found in " + basefolder
+				+ ", architecture " + os + "/" + arch);
 	}
 }
