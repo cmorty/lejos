@@ -1,12 +1,26 @@
-[Setup]
+#preproc ispp
+#if VER < EncodeVer(5,4,3)
+  #error Use Inno Setup 5.4.3(unicode) or newer
+#endif
+#ifndef UNICODE
+  #error Use the unicode build of Inno Setup
+#endif
+
+#ifndef MyAppVersion
+  #define MyAppVersion "0.9.1beta"
+#endif
+#define MinFantomVersion "1,1,3"
+
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
-; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{253252E2-EFAE-4AA8-96B6-0828619E536C}
+#define MyAppID "253252E2-EFAE-4AA8-96B6-0828619E536C"
+
+[Setup]
+AppId={{{#MyAppID}}
 AppName=leJOS NXJ
-AppVersion=0.9.1beta
-AppVerName=leJOS NXJ 0.9.1beta
-OutputBaseFilename=leJOS_NXJ_0.9.1beta_win32
+AppVersion={#MyAppVersion}
+AppVerName=leJOS NXJ {#MyAppVersion}
+OutputBaseFilename=leJOS_NXJ_{#MyAppVersion}_win32
 AppPublisher=The leJOS Team
 AppPublisherURL=http://www.lejos.org/
 AppSupportURL=http://www.lejos.org/
@@ -123,13 +137,13 @@ WorkingDir: "{app}"; Filename: "{app}\startNxjFlash.bat"; Parameters: "{code:JDK
   begin
     if curPageID = wpWelcome then
     begin
-      Result := DetectOutdatedFantom(1, 1, 3);
+      Result := DetectOutdatedFantom({#MinFantomVersion});
       if not Result then Exit;     
     end;
     
     if curPageID = wpReady then
     begin
-      ID := '253252E2-EFAE-4AA8-96B6-0828619E536C' 
+      ID := '{#MyAppID}' 
       Result := UninstallInstallJammer(ID);
       if not Result then Exit;     
       Result := UninstallInnoSetup(ID);
@@ -170,3 +184,4 @@ WorkingDir: "{app}"; Filename: "{app}\startNxjFlash.bat"; Parameters: "{code:JDK
     ExtrasDirPage_CreatePage(wpSelectComponents);    
   end;
 
+//#expr SaveToFile("debug.iss")
