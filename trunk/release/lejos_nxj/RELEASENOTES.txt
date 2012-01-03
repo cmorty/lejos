@@ -7,7 +7,6 @@ Lawrie Griffiths and Juan Antonio Brenha Moral:
 - Added support for loading line maps from SVG files
  
 Lawrie Griffiths:
-
 - Support for Dexter Industries pressure sensors
 - Made Socket and ServerSocket constructors standard
 - Added LCP commands for remote setting of menu settings
@@ -40,7 +39,8 @@ Andy Shaw:
 
 Sven Koehler:
 - New installer (Windows only)
-- Windows batch files and UNIX shell scripts check NXJ_HOME, LEJOS_NXJ_JAVA_HOME, and JAVA_HOME for errors
+- Windows batch and UNIX shell scripts ignore NXJ_HOME 
+- Windows batch and UNIX shell scripts check LEJOS_NXJ_JAVA_HOME or JAVA_HOME
 - Added source attachments to each library for development/debugging
 - removed NXJ_FIND* LCP commands
 - Various changes to the Ant-based build system
@@ -66,7 +66,7 @@ Brian Bagnall:
 - Added Aswin's drivers for dIMU sensors 
 - Support for dGPS sensor in javax.microedition.location
 
-Aswin Bouwmeester
+Aswin Bouwmeester:
 - Contributed drivers for dIMU sensors
       
 Roger Glassey:
