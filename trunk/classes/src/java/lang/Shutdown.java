@@ -26,17 +26,17 @@ class Shutdown
     //TODO running is only partly protected by synchronized(Shutdown.class){}, discuss with Andy 
     private volatile static boolean running = false;
     private static int exitCode = 0;
-    private static NXTEvent event = null;
 
     static class ShutdownThread extends Thread
     {
+        private final NXTEvent event;
         private ArrayList<Thread> hooks = new ArrayList<Thread>();
         
         private ShutdownThread()
         {
-            setPriority(Thread.MAX_PRIORITY-1);
+            this.setPriority(Thread.MAX_PRIORITY-1);
             event = NXTEvent.allocate(NXTEvent.SYSTEM, SHUTDOWN_EVENT, 1000);
-            setDaemon(true);
+            this.setDaemon(true);
             this.start();
         }
 
