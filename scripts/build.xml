@@ -32,7 +32,7 @@
 		<attribute name="class"/>
 		<sequential>
 			<linux-run file="@{file}">
-				"$JAVA" $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -DCOMMAND_NAME="$NXJ_COMMAND" -classpath "$NXJ_CP_PC" @{class} @{args} "$@"
+				"$JAVA" $NXJ_FORCE32 "-Dnxj.home=$NXJ_HOME" "-DCOMMAND_NAME=$NXJ_COMMAND" -classpath "$NXJ_CP_PC" @{class} @{args} "$@"
 			</linux-run>
 		</sequential>
 	</macrodef>
@@ -71,7 +71,7 @@ ${template.linux.parser}
 		<attribute name="class"/>
 		<sequential>
 			<win-run file="@{file}">
-				"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="@{file}" -classpath "%NXJ_CP_PC%" @{class} @{args} %*
+				"%JAVA%" "-Dnxj.home=%NXJ_HOME%" "-DCOMMAND_NAME=%NXJ_COMMAND%" -classpath "%NXJ_CP_PC%" @{class} @{args} %*
 			</win-run>
 		</sequential>
 	</macrodef>
