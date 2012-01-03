@@ -19,6 +19,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.apache.commons.cli.CommandLine;
@@ -152,7 +153,7 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
             
             // the thread is so that the GUI will update the button label, etc. while the
             // connection is being established.
-            Thread connectWorker = new Thread(new Runnable() {
+            Runnable connectWorker = new Runnable() {
 				public void run() {
 					setTheCursor(Cursor.WAIT_CURSOR);
 	
@@ -190,14 +191,14 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
 		            	setTheCursor(Cursor.DEFAULT_CURSOR);
 					}
 				}
-            });
+            };
             
             if (connectButton.getText().equals(S_CONNECT)) {
             	// try to make a connection
             	statusField.setText(S_CONNECT + "ing...");
             	connectButton.setText(statusField.getText());
             	connectButton.setEnabled(false);
-            	connectWorker.start();
+            	SwingUtilities.invokeLater(connectWorker);
         	} else {
         		// assume the button is "Disconnect" so lets do so
         		setTheCursor(Cursor.WAIT_CURSOR);
