@@ -13,20 +13,19 @@ function my_resolve() {
 	fi
 }
 function my_readlink() {
-	local TMP1="$(dirname -- "$1")"
-	local TMP2="$(readlink -- "$1")"
+	local TMP1=$(dirname -- "$1")
+	local TMP2=$(readlink -- "$1")
 	my_resolve "$TMP1" "$TMP2"
 }
 function my_build_cp() {
 	local DIR="$1"
 	if [ ! -d "$DIR" ]; then
-		echo "The variable NXJ_HOME seems to be set to wrong path." 1>&2
-		echo "The following directory does not exist does not exist:" 1>&2
+		echo "Internal error. The following directory does not exist:" 1>&2
 		echo "  \"$DIR\""1>&2
 		return;
 	fi
 
-	local TMP_CP="$(find "$DIR" -name "*.jar" -print0 | tr "\0" "$SEP")"
+	local TMP_CP=$(find "$DIR" -name "*.jar" -print0 | tr "\0" "$SEP")
 	# remove last $SEP 
 	printf "%s" ${TMP_CP%?}
 }
@@ -47,18 +46,13 @@ function set_java_and_javac() {
 	fi
 }
 
-NXJ_COMMAND="$(basename -- "$0")"
-if [ -n "$NXJ_HOME" ]; then
-	NXJ_BIN="$NXJ_HOME/bin"
-else
-	NXJ_BIN="$0"
-	while [ -L "$NXJ_BIN" ]; do
-		NXJ_BIN="$(my_readlink "$NXJ_BIN")"
-	done
-	NXJ_BIN="$(dirname -- "$NXJ_BIN")"
-	NXJ_BIN="$(my_resolve "$(pwd)" "$NXJ_BIN")"
-	NXJ_HOME="$NXJ_BIN/.."
-fi
+NXJ_COMMAND=$(basename -- "$0")
+NXJ_HOME="$0"
+while [ -L "$NXJ_HOME" ]; do
+	NXJ_HOME=$(my_readlink "$NXJ_HOME")
+done
+NXJ_HOME=$(dirname -- "$NXJ_HOME")
+NXJ_HOME=$(my_resolve "$(pwd)" "$NXJ_HOME")/..
 
 if [ -n "$LEJOS_NXT_JAVA_HOME" ]; then
 	set_java_and_javac LEJOS_NXT_JAVA_HOME
@@ -71,13 +65,11 @@ fi
 
 SEP=":"
 NXJ_FORCE32=""
-OS_KERNEL="$(uname -s)"
 
-if [ "${OS_KERNEL:0:6}" == "CYGWIN" ]; then
-	SEP=";"
-elif [ "${OS_KERNEL}" == "Darwin" ]; then
-    NXJ_FORCE32="-d32"
-fi
+case $(uname -s) in
+	CYGWIN*) SEP=";";;
+	Darwin) NXJ_FORCE32="-d32";;
+esac
 
 NXJ_CP_PC="$(my_build_cp "$NXJ_HOME/lib/pc")"
 NXJ_CP_NXT="$(my_build_cp "$NXJ_HOME/lib/nxt")"

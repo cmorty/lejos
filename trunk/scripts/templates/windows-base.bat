@@ -12,8 +12,7 @@ if "%OS%" == "Windows_NT" goto :winnt
 
 :build_classpath
 	if not exist "%~2" (
-		echo Your NXJ_HOME variable seems to be incorrect.
-		echo The following folder does not exist:
+		echo Internal error. The following directory does not exist:
 		echo   "%~2"
 		exit /B 1
 	)
@@ -23,10 +22,6 @@ if "%OS%" == "Windows_NT" goto :winnt
 		call :append_jar "%%i"
 	)
 	set "%~1=%TMP_CP:~1%"
-	goto :eof
-
-:normalize_path
-	set "%~1=%~f2"
 	goto :eof
 
 :set_java_and_javac
@@ -46,12 +41,8 @@ if "%OS%" == "Windows_NT" goto :winnt
 
 :winnt
 	setlocal
-	if not "%NXJ_HOME%" == "" (
-		set "NXJ_BIN=%NXJ_HOME%\bin"
-	) else (
-		call :normalize_path NXJ_BIN "%~dp0\."
-		call :normalize_path NXJ_HOME "%~dp0\.."
-	)
+	set "NXJ_COMMAND=%~n0"
+	set "NXJ_HOME=%~dp0\.."
 
 	call :build_classpath NXJ_CP_PC "%NXJ_HOME%\lib\pc"
 	call :build_classpath NXJ_CP_NXT "%NXJ_HOME%\lib\nxt"
