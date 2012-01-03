@@ -1,9 +1,31 @@
 leJOS NXJ 0.9.1 beta
 --------------------
-Kirk Thompson contributed a new major leJOS tool for logging data
-on the NXT and charting it on the PC.
-??? MapCommand has been added? Great changes by Lawrie?
+Kirk Thompson:
+- Added a new major leJOS tool for logging data on the NXT and charting it on the PC.
 
+Lawrie Griffiths and Juan Antonio Brenha Moral:
+- Added support for loading line maps from SVG files
+ 
+Lawrie Griffiths:
+
+- Support for Dexter Industries pressure sensors
+- Made Socket and ServerSocket constructors standard
+- Added LCP commands for remote setting of menu settings
+- Support for NXT system settings in nxjcontrol
+- Added support for LCP messageWrite command (as used by the Enchanting project)
+- Removed singleton from NXTCommand and added NXTComm object on the constructor.
+- Added partial support for XML Streams (javax.xml.stream and javax.xml.stream.events).
+- Added NXTNavigationModel and related classes to support transmitting navigation events to 
+  and from mapping applications on the PC. 
+- Added PCNavigationModel, NavigationPanel, MapPanel and related classes to pccomms to support
+  mapping applications.
+- Tidied up the navigation classes and fixed various bugs
+- Added a new tool, NXJMapCommand, that allows maps to be loaded and remote execution of navigation
+  methods, including path finding, localization, etc.
+- Added various mapping applications to pcsamples
+- Added MapCommand and MCLCommand samples which are used by NXJMapCommand and PC-based map applications.
+- Added support for HiTechnic Magnetic sensor.
+- Added Button and LCD emulation to pccomms
 
 Andy Shaw:
 - I2C fixes
@@ -37,21 +59,6 @@ Sven Koehler:
 - Fixed Coordinates conversion to String
 - fill and binarySearch methods for java.util.Arrays
 
-Lawrie Griffiths:
-- Added driver for HiTechnic magnetic sensor
-- Added new package for kinematics
-- Added new tool: nxjmapcommand
-- commits 5538 to 5523
-- commits 5435 to 5414
-- commits 5360 to 5335
-- commits 5316 to 5306
-- Implemented javax.xml.stream XML API for reading/write XML
-- Added loader for SVG files
-- Added LightScanner
-- Added Button and LCD emulation to pccomms
-- Support for NXT system settings in nxjcontrol
-- Added leJOS specific LCP commands for modifying NXT settings
-
 Brian Bagnall:
 - Added rotateTo() method to Navigator
 - ??? Omnipilot
@@ -66,11 +73,11 @@ Roger Glassey:
 - Added quickStop method for DifferentialPilot
 - Fixed synchronization issues in OdometryPoseProvider
 - Bug fixes in Navigator class
+- Added LightScanner
 
 Juan Antonio Breña Moral:
 - Fixes for GPS package
 - New sample: LocationPTest
-- Added loader for SVG files
 - Added bubblesort implementation (later used for java.util.Arrays.sort)
 
 Kirk Thompson:
