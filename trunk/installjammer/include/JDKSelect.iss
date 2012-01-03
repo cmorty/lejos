@@ -110,7 +110,8 @@ var
   begin
     Result := Is32BitJDK(JDKSelectTree.Directory, Error);
     if (not Result) then
-      MsgBox(Error + 'Please select the root directory of a valid JDK.' + #10#10
+      MsgBox(Error + 'Please select the root directory of a valid JDK. '
+        + 'This is required to continue.' + #10#10
         + 'To download a JDK for manual install click the ''Download JDK'' Button.',
         mbError, MB_OK);
   end;
