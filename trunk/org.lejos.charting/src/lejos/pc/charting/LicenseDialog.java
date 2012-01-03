@@ -182,7 +182,7 @@ class LicenseDialog extends JDialog {
         "that what they have is not the original version, so that the original\n" + 
         "author's reputation will not be affected by problems that might be\n" + 
         "introduced by others.\n" + 
-        "\n" + 
+        "\n" + 
         "  Finally, software patents pose a constant threat to the existence of\n" + 
         "any free program.  We wish to make sure that a company cannot\n" + 
         "effectively restrict the users of a free program by obtaining a\n" + 
@@ -238,7 +238,7 @@ class LicenseDialog extends JDialog {
         "\"work based on the library\" and a \"work that uses the library\".  The\n" + 
         "former contains code derived from the library, whereas the latter must\n" + 
         "be combined with the library in order to run.\n" + 
-        "\n" + 
+        "\n" + 
         "		  GNU LESSER GENERAL PUBLIC LICENSE\n" + 
         "   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION\n" + 
         "\n" + 
@@ -285,7 +285,7 @@ class LicenseDialog extends JDialog {
         "  You may charge a fee for the physical act of transferring a copy,\n" + 
         "and you may at your option offer warranty protection in exchange for a\n" + 
         "fee.\n" + 
-        "\n" + 
+        "\n" + 
         "  2. You may modify your copy or copies of the Library or any portion\n" + 
         "of it, thus forming a work based on the Library, and copy and\n" + 
         "distribute such modifications or work under the terms of Section 1\n" + 
@@ -343,7 +343,7 @@ class LicenseDialog extends JDialog {
         "ordinary GNU General Public License has appeared, then you can specify\n" + 
         "that version instead if you wish.)  Do not make any other change in\n" + 
         "these notices.\n" + 
-        "\n" + 
+        "\n" + 
         "  Once this change is made in a given copy, it is irreversible for\n" + 
         "that copy, so the ordinary GNU General Public License applies to all\n" + 
         "subsequent copies and derivative works made from that copy.\n" + 
@@ -394,7 +394,7 @@ class LicenseDialog extends JDialog {
         "distribute the object code for the work under the terms of Section 6.\n" + 
         "Any executables containing that work also fall under Section 6,\n" + 
         "whether or not they are linked directly with the Library itself.\n" + 
-        "\n" + 
+        "\n" + 
         "  6. As an exception to the Sections above, you may also combine or\n" + 
         "link a \"work that uses the Library\" with the Library to produce a\n" + 
         "work containing portions of the Library, and distribute that work\n" + 
@@ -456,7 +456,7 @@ class LicenseDialog extends JDialog {
         "accompany the operating system.  Such a contradiction means you cannot\n" + 
         "use both them and the Library together in an executable that you\n" + 
         "distribute.\n" + 
-        "\n" + 
+        "\n" + 
         "  7. You may place library facilities that are a work based on the\n" + 
         "Library side-by-side in a single library together with other library\n" + 
         "facilities not covered by this License, and distribute such a combined\n" + 
@@ -497,7 +497,7 @@ class LicenseDialog extends JDialog {
         "restrictions on the recipients' exercise of the rights granted herein.\n" + 
         "You are not responsible for enforcing compliance by third parties with\n" + 
         "this License.\n" + 
-        "\n" + 
+        "\n" + 
         "  11. If, as a consequence of a court judgment or allegation of patent\n" + 
         "infringement or for any other reason (not limited to patent issues),\n" + 
         "conditions are imposed on you (whether by court order, agreement or\n" + 
@@ -549,7 +549,7 @@ class LicenseDialog extends JDialog {
         "the Free Software Foundation.  If the Library does not specify a\n" + 
         "license version number, you may choose any version ever published by\n" + 
         "the Free Software Foundation.\n" + 
-        "\n" + 
+        "\n" + 
         "  14. If you wish to incorporate parts of the Library into other free\n" + 
         "programs whose distribution conditions are incompatible with these,\n" + 
         "write to the author to ask for permission.  For software which is\n" + 
