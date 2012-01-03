@@ -43,7 +43,7 @@ WizardSmallImageFile=img\WizardSmallImage.bmp
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [CustomMessages]
-LaunchProgram=Flash leJOS Firmware to NXT Brick
+LaunchProgram=Launch NXJ Flash utility
 JDKSelectCaption=Select a Java Development Kit
 JDKSelectDescription=Select a Java Development Kit for use with leJOS NXJ
 
