@@ -1,8 +1,5 @@
 leJOS NXJ 0.9.1 beta
 --------------------
-Kirk Thompson:
-- Added a new major leJOS tool for logging data on the NXT and charting it on the PC.
-
 Lawrie Griffiths and Juan Antonio Brenha Moral:
 - Added support for loading line maps from SVG files
  
@@ -81,7 +78,7 @@ Juan Antonio Breña Moral:
 - Added bubblesort implementation (later used for java.util.Arrays.sort)
 
 Kirk Thompson:
-- New data logging and charting application (%NXJ_HOME%\bin\nxjchartinglogger.bat and lejos.util.NXTDataLogger) logging infrastructure
+- Added a new major leJOS tool for logging data from the NXT and dynamically charting it on the PC. (%NXJ_HOME%\bin\nxjchartinglogger.bat and lejos.util.NXTDataLogger)
 - New TETRIX Servo and Motor controller support
 - General Javadoc additions/edits to existing classes
 - Experimental support for Firgelli linear actuators driven by NXTMMX
