@@ -61,7 +61,7 @@ Sven Koehler:
 
 Brian Bagnall:
 - Added rotateTo() method to Navigator
-- ??? Omnipilot
+- Enhancements of OmniPilot implementation
 - New Ballbot class
 - Added Aswin's drivers for dIMU sensors 
 - Support for dGPS sensor in javax.microedition.location
