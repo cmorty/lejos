@@ -1,4 +1,8 @@
 [Code]
+const
+  CRLF = #13#10;
+  CRLF2 = #13#10#13#10;
+
   function ConcatPath(const Path1, Path2: String): String;
   begin
     if Copy(Path1, Length(Path1), 1)='\' then

@@ -2,10 +2,10 @@
   function UninstallWarn : Integer;
   begin
     Result := MsgBox('A previous installation was detected and needs to be uninstalled '
-            +'before this setup can proceed.' +#10#10
-            +'WARNING:'+#10
-            +'This may delete any previously installed samples or sources. Make sure to '
-            +'make a backup of your changes before you continue.',
+            + 'before this setup can proceed.' + CRLF2
+            + 'WARNING:' + CRLF
+            + 'This may delete any previously installed samples or sources. Make sure to '
+            + 'make a backup of your changes before you continue.',
             mbInformation, MB_OKCANCEL)
   end;
 

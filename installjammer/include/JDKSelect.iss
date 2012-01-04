@@ -11,14 +11,14 @@ var
   begin
     Error := '';
     Tmp := ConcatPath(Path, 'bin\java.exe');
-    if not FileExists(Tmp) then Error := Error + Tmp + ' does not exist.' + #10;
+    if not FileExists(Tmp) then Error := Error + Tmp + ' does not exist.' + CRLF;
     Tmp := ConcatPath(Path, 'bin\javac.exe');
-    if not FileExists(Tmp) then Error := Error + Tmp + ' does not exist.' + #10;
+    if not FileExists(Tmp) then Error := Error + Tmp + ' does not exist.' + CRLF;
     if Length(Error) <= 0 then
     begin
       Tmp := ConcatPath(Path, 'jre\lib\i386');
       if not DirExists(Tmp) then
-        Error := Error + 'Selected JDK is not a 32 Bit version.' + #10;   
+        Error := Error + 'Selected JDK is not a 32 Bit version.' + CRLF;   
     end;
     Result := Length(Error) <= 0;
   end;
@@ -78,7 +78,7 @@ var
       begin
         Tmp := ExpandConstant('{pf32}\Java');
         MsgBox('The installer was uanble to detect a 32 Bit Java Development Kit.'
-          + #10 + 'By default, such a JDK is installed in ' + Tmp,
+          + CRLF + 'By default, such a JDK is installed in ' + Tmp,
           mbInformation, MB_OK);
           
         if DirExists(Tmp) then JDKSelectTree.Directory := Tmp
@@ -111,7 +111,7 @@ var
     Result := Is32BitJDK(JDKSelectTree.Directory, Error);
     if (not Result) then
       MsgBox(Error + 'Please select the root directory of a valid JDK. '
-        + 'This is required to continue.' + #10#10
+        + 'This is required to continue.' + CRLF2
         + 'To download a JDK for manual install click the ''Download JDK'' Button.',
         mbError, MB_OK);
   end;
@@ -148,7 +148,7 @@ var
       Width := ScaleX(297);
       Height := ScaleY(25);
       Caption := 'Select the root directory of a 32-Bit Java Development Kit'
-        + #10 + 'for use with leJOS NXJ:';
+        + CRLF + 'for use with leJOS NXJ:';
     end;
     
     { JDKSelectButton }
