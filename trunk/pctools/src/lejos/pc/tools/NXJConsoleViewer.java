@@ -160,47 +160,54 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
             final String name = nameField.getText();
             final String address = addrField.getText();
             final boolean _useUSB = usbButton.isSelected();
+            final boolean updateLCD = doLcd.isSelected();
             
             // the thread is so that the GUI will update the button label, etc. while the
             // connection is being established.
             Runnable connectWorker = new Runnable() {
             	public void run() {
-					setTheCursor(Cursor.WAIT_CURSOR);
-	
-					// try to establish a connection
-					if (comm.connectTo(name, address, _useUSB, doLcd.isSelected())) {
-						connectButtonState("Dis" + S_CONNECT.toLowerCase(), true);
-		            	theLog.setText("");
-		                lcd.clear();
-		                setTheCursor(Cursor.DEFAULT_CURSOR);
-					} else {
-						statusField.setText(S_CONNECT + "ion Failed!");
-						connectButtonState(statusField.getText(), false);
-		                if (_useUSB)
-		                {
-		                    JOptionPane.showMessageDialog(NXJConsoleViewer.this, "Sorry... USB did not connect.\n" +
-		                            "You might want to check:\n " +
-		                            " Is the NXT turned on and connected? \n " +
-		                            " Does it display  'USB Console...'? ", "We have a connection problem.",
-		                            JOptionPane.PLAIN_MESSAGE);
-		                } else
-		                {
-		                    JOptionPane.showMessageDialog(NXJConsoleViewer.this, "Sorry... Bluetooth did not connect. \n" +
-		                            "You might want to check:\n" +
-		                            " Is the dongle plugged in?\n" +
-		                            " Is the NXT turned on?\n" +
-		                            " Does it display  'BT Console....'? ",
-		                            "We have a connection problem.",
-		                            JOptionPane.PLAIN_MESSAGE);
-		                }
-		                // reset state
-		            	connectButtonState(S_CONNECT, true);
-		            	setTheCursor(Cursor.DEFAULT_CURSOR);
-					}
-				}
+                    // try to establish a connection
+            	    final boolean result = comm.connectTo(name, address, _useUSB, updateLCD);
+            	    
+            	    Runnable guiWorker = new Runnable() {
+            	        public void run() {
+        					if (result) {
+        						connectButtonState("Dis" + S_CONNECT.toLowerCase(), true);
+        		            	theLog.setText("");
+        		                lcd.clear();
+                                setTheCursor(Cursor.DEFAULT_CURSOR);
+        					} else {
+        						statusField.setText(S_CONNECT + "ion Failed!");
+        						connectButtonState(statusField.getText(), false);
+        		                if (_useUSB)
+        		                {
+        		                    JOptionPane.showMessageDialog(NXJConsoleViewer.this, "Sorry... USB did not connect.\n" +
+        		                            "You might want to check:\n " +
+        		                            " Is the NXT turned on and connected? \n " +
+        		                            " Does it display  'USB Console...'? ", "We have a connection problem.",
+        		                            JOptionPane.PLAIN_MESSAGE);
+        		                } else
+        		                {
+        		                    JOptionPane.showMessageDialog(NXJConsoleViewer.this, "Sorry... Bluetooth did not connect. \n" +
+        		                            "You might want to check:\n" +
+        		                            " Is the dongle plugged in?\n" +
+        		                            " Is the NXT turned on?\n" +
+        		                            " Does it display  'BT Console....'? ",
+        		                            "We have a connection problem.",
+        		                            JOptionPane.PLAIN_MESSAGE);
+        		                }
+        		                // reset state
+        		            	connectButtonState(S_CONNECT, true);
+        		            	setTheCursor(Cursor.DEFAULT_CURSOR);
+        					}
+            	        }
+            	    };
+            	    SwingUtilities.invokeLater(guiWorker);
+            	}
             };
             
             if (connectButton.getText().equals(S_CONNECT)) {
+                setTheCursor(Cursor.WAIT_CURSOR);                
             	// try to make a connection
             	statusField.setText(S_CONNECT + "ing...");
             	connectButton.setText(statusField.getText());
