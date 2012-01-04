@@ -23,10 +23,10 @@
       Error := Tmp+' was either not found or its version cannot be determined.';
     
     if Length(Error) > 0 then
-      if MsgBox(Error + #10#10 + 'Please make sure, that the latest version of the LEGO '
+      if MsgBox(Error + CRLF2 + 'Please make sure, that the latest version of the LEGO '
         + 'NXT Driver (also called Fantom Driver) from mindstorms.lego.com is installed, at least version '
         + IntToStr(e0)+'.'+IntToStr(e1)+'.'+IntToStr(e2)+'.'
-        + #10#10 + 'Click OK to open the download page for the driver '
+        + CRLF2 + 'Click OK to open the download page for the driver '
         + 'or click Cancel to proceed installing leJOS.',
         mbInformation, MB_OKCANCEL) = IDOK then
       begin
