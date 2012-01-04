@@ -141,13 +141,8 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
 	}
 	
 	private void connectButtonState(final String label, final boolean enabled){
-		Runnable worker = new Runnable() {
-			public void run() {
-				connectButton.setText(label);
-		    	connectButton.setEnabled(enabled);
-			}
-		};
-		SwingUtilities.invokeLater(worker);
+		connectButton.setText(label);
+		connectButton.setEnabled(enabled);
 	}
 	
     /**
