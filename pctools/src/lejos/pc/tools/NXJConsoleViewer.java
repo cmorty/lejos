@@ -140,7 +140,7 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
 		addrField.setCursor(c1);
 	}
 	
-	private synchronized void connectButtonState(final String label, final boolean enabled){
+	private void connectButtonState(final String label, final boolean enabled){
 		connectButton.setText(label);
 		connectButton.setEnabled(enabled);
 	}
