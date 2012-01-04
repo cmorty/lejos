@@ -1,7 +1,10 @@
 package org.lejos.ros.nodes.nxtstatus;
 
 import lejos.nxt.Battery;
+import lejos.nxt.remote.NXTCommand;
+import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommLogListener;
+import lejos.pc.comm.NXTCommandConnector;
 import lejos.pc.comm.NXTConnector;
 
 import org.ros.node.Node;
@@ -39,8 +42,10 @@ public class NXTStatus implements NodeMain{
 	    
 	    System.out.println("Running your first node");
 	    
+	    String brickName = "dog";
+	    
 	    boolean connetionStatus = false;
-		connetionStatus = connect();
+		connetionStatus = connectBT(brickName);
 
 		if(connetionStatus){
 			
@@ -74,6 +79,11 @@ public class NXTStatus implements NodeMain{
 
 	 }
 
+	/**
+	 * This method connect with a NXT brick using a USB connection
+	 * 
+	 * @return
+	 */
 	private boolean connect(){
 		boolean connectionStatus = false;
 		
@@ -100,5 +110,39 @@ public class NXTStatus implements NodeMain{
 		}
 		
 		return connectionStatus;
+	}
+	
+	/**
+	 * This example connect with a NXT brick using a Bluetooth connection.
+	 * It is necessary to be paired the NXT brick in your system.
+	 * Besides it is necessary to know the name of the brick.
+	 * 
+	 * @param brickName
+	 * @return
+	 */
+	private boolean connectBT(String brickName){
+		boolean connectionStatus = false;
+		
+		NXTConnector conn = new NXTConnector();
+		conn.addLogListener(new NXTCommLogListener() {
+			public void logEvent(String message) {
+				System.out.println(message);				
+			}
+
+			public void logEvent(Throwable throwable) {
+				System.err.println(throwable.getMessage());			
+			}			
+		});
+		conn.setDebug(true);
+		if (!conn.connectTo("btspp://"+brickName, NXTComm.PACKET)) {
+			System.err.println("Failed to connect");
+			//System.exit(1);
+		}else{
+			NXTCommandConnector.setNXTCommand(new NXTCommand(conn.getNXTComm()));			
+			connectionStatus = true;
+		}
+		
+		return connectionStatus;
+	
 	}
 }

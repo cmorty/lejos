@@ -9,11 +9,14 @@
 
 	<depend package="rosjava" />
 	<depend package="std_msgs" />
+	<depend package="sensor_msgs" />
 
 	<export>
     	<rosjava-src location="src" /> 
     	<rosjava-pathelement location="target/" groupId="org.lejos.ros" artifactId="org.lejos.ros.nodes.nxtstatus" version="0.0.1" built="true" />
     	<rosjava-pathelement location="/usr/local/lejos/lib/pc/pccomm.jar" />
+    	<rosjava-pathelement location="/home/jabrena/ros3/workspace/nxtstatus/lib-bt/bluecove-gpl.jar" />
+    	<rosjava-pathelement location="/home/jabrena/ros3/workspace/nxtstatus/lib-bt/bluecove.jar" />
 	</export>
 
 </package>
