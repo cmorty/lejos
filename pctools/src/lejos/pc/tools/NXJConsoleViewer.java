@@ -140,6 +140,16 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
 		addrField.setCursor(c1);
 	}
 	
+	private void connectButtonState(final String label, final boolean enabled){
+		Runnable worker = new Runnable() {
+			public void run() {
+				connectButton.setText(label);
+		    	connectButton.setEnabled(enabled);
+			}
+		};
+		SwingUtilities.invokeLater(worker);
+	}
+	
     /**
      * Required by action listener. Used by Connect button
      */
@@ -154,20 +164,18 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
             // the thread is so that the GUI will update the button label, etc. while the
             // connection is being established.
             Runnable connectWorker = new Runnable() {
-				public void run() {
+            	public void run() {
 					setTheCursor(Cursor.WAIT_CURSOR);
 	
 					// try to establish a connection
 					if (comm.connectTo(name, address, _useUSB, doLcd.isSelected())) {
-						connectButton.setText("Dis" + S_CONNECT.toLowerCase());
-		            	connectButton.setEnabled(true);
+						connectButtonState("Dis" + S_CONNECT.toLowerCase(), true);
 		            	theLog.setText("");
 		                lcd.clear();
-		                NXJConsoleViewer.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		                setTheCursor(Cursor.DEFAULT_CURSOR);
 					} else {
 						statusField.setText(S_CONNECT + "ion Failed!");
-						connectButton.setText(statusField.getText());
+						connectButtonState(statusField.getText(), false);
 		                if (_useUSB)
 		                {
 		                    JOptionPane.showMessageDialog(NXJConsoleViewer.this, "Sorry... USB did not connect.\n" +
@@ -186,8 +194,7 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
 		                            JOptionPane.PLAIN_MESSAGE);
 		                }
 		                // reset state
-		                connectButton.setText(S_CONNECT);
-		            	connectButton.setEnabled(true);
+		            	connectButtonState(S_CONNECT, true);
 		            	setTheCursor(Cursor.DEFAULT_CURSOR);
 					}
 				}
@@ -198,7 +205,7 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
             	statusField.setText(S_CONNECT + "ing...");
             	connectButton.setText(statusField.getText());
             	connectButton.setEnabled(false);
-            	SwingUtilities.invokeLater(connectWorker);
+            	new Thread(connectWorker).start();
         	} else {
         		// assume the button is "Disconnect" so lets do so
         		setTheCursor(Cursor.WAIT_CURSOR);
