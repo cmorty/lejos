@@ -38,6 +38,7 @@ WizardImageFile=img\WizardImage.bmp
 WizardImageStretch=no
 WizardImageBackColor=clWhite
 WizardSmallImageFile=img\WizardSmallImage.bmp
+; UninstallFilesDir={app}\uninst
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -61,7 +62,7 @@ Name: "extras\samples"; Description: "Sample and Example Projects"; Types: full;
 Name: "extras\sources"; Description: "Sources of leJOS Development Kit"; Types: full; Flags: disablenouninstallwarning
 
 [Files]
-;Extract helper script to {app}, since {tmp} refers to the temp folder of the admin, and might
+; Extract helper script to {app}, since {tmp} refers to the temp folder of the admin, and might
 ; not even be accessible by the original user when using postinstall/runasoriginaluser in [Run]
 Source: "scripts\startNxjFlash.bat"; DestDir: "{app}"; Flags: deleteafterinstall
 Source: "..\release\build\bin_windows\*"; DestDir: "{app}"; Excludes: "docs"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main
@@ -92,8 +93,8 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "LEJOS_NXT_JAVA_HOME"; ValueData: "{code:JDKSelect_GetSelection}"; Flags: uninsdeletevalue
 
 [Run]
-;startNxjFlash.bat will terminate immediately, and hence we don't use the nowait flag.
-;Not using the nowait flag also makes sure that the batch file can be deleted successfully.
+; startNxjFlash.bat will terminate immediately, and hence we don't use the nowait flag.
+; Not using the nowait flag also makes sure that the batch file can be deleted successfully.
 WorkingDir: "{app}"; Filename: "{app}\startNxjFlash.bat"; Parameters: "{code:JDKSelect_GetSelectionQuoted}"; Description: "{cm:LaunchProgram}"; Flags: postinstall skipifsilent runhidden
 
 #include "include\Tools.iss"
