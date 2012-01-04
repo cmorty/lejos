@@ -140,7 +140,7 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
 		addrField.setCursor(c1);
 	}
 	
-	private void connectButtonState(final String label, final boolean enabled){
+	private synchronized void connectButtonState(final String label, final boolean enabled){
 		connectButton.setText(label);
 		connectButton.setEnabled(enabled);
 	}
@@ -205,16 +205,14 @@ public class NXJConsoleViewer extends JFrame implements ActionListener, ChangeLi
                 setTheCursor(Cursor.WAIT_CURSOR);                
             	// try to make a connection
             	statusField.setText(S_CONNECT + "ing...");
-            	connectButton.setText(statusField.getText());
-            	connectButton.setEnabled(false);
+            	connectButtonState(statusField.getText(), false);
             	new Thread(connectWorker).start();
         	} else {
         		// assume the button is "Disconnect" so lets do so
         		setTheCursor(Cursor.WAIT_CURSOR);
         		comm.close();
         		// reset state
-        		connectButton.setText(S_CONNECT);
-            	connectButton.setEnabled(true);
+            	connectButtonState(S_CONNECT, true);
             	setTheCursor(Cursor.DEFAULT_CURSOR);
         	}
         }
