@@ -1,6 +1,7 @@
 package org.lejos.ros.nodes.nxtstatus;
 
 import lejos.nxt.Battery;
+import lejos.nxt.Sound;
 import lejos.nxt.remote.NXTCommand;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommLogListener;
@@ -62,9 +63,12 @@ public class NXTStatus implements NodeMain{
 		          org.ros.message.std_msgs.String str = new org.ros.message.std_msgs.String();
 		          str.data = "" + voltage;
 		          publisher.publish(str);
+		          
+		          Sound.playTone(1000, 1000);
+		          
 		          node.getLog().info(seq + " NXT Battery: " + voltage);
 		          seq++;
-		          Thread.sleep(1000);
+		          Thread.sleep(5000);
 		        }
 		    } catch (Exception e) {
 		    	if (node != null) {
