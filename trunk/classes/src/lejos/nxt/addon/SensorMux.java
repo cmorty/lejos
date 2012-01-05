@@ -23,7 +23,7 @@ public class SensorMux extends I2CSensor {
 	 * @param port the port
 	 */
 	public SensorMux(I2CPort port) {
-		super(port, 0x08, I2CPort.LEGO_MODE, TYPE_LOWSPEED_9V);
+		super(port, 0x10, I2CPort.LEGO_MODE, TYPE_LOWSPEED_9V);
 	}
    
    /**
