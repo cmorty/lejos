@@ -47,7 +47,6 @@ public class StartUpText
     static final int maxSleepTime = 10;
     
     static final String REVISION = "$Revision$";
-    static final int VERSION = 0x000900;
 
     private int timeout;
     private boolean btPowerOn;
@@ -960,7 +959,7 @@ public class StartUpText
         LCD.drawString(Utils.versionToString(NXT.getFirmwareRawVersion()) + "(rev." +
                 NXT.getFirmwareRevision() + ")", 1, 3);
         LCD.drawString("Menu version", 0, 4);
-        LCD.drawString(Utils.versionToString(VERSION) + "(rev." +
+        LCD.drawString(Utils.versionToString(Config.VERSION) + "(rev." +
                 REVISION.substring(11, REVISION.length() - 2) + ")", 1, 5);
         getButtonPress();
     }
@@ -1053,7 +1052,7 @@ public class StartUpText
         LCD.setContrast(0);
         
         byte[] logo_data = Utils.stringToBytes8(Config.LOGO_DATA);
-    	byte[] text_data = Utils.textToBytes("leJOS "+Utils.versionToString(VERSION));
+    	byte[] text_data = Utils.textToBytes("leJOS "+Utils.versionToString(Config.VERSION));
     	byte[] display = LCD.getDisplay();
     	
     	int logo_x = (LCD.SCREEN_WIDTH - Config.LOGO_WIDTH)/2;
