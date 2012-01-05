@@ -267,16 +267,6 @@
 		<copy-pcproject id="pcexample" todir="${samples.dir}/org.lejos.pcexample" />		
 	</target>
 	
-	<!-- TODO why copy this batch file??? 
-	<target name="installer-script">
-		<copy todir="${release.bin}">
-			<fileset dir="${projects.root}/release/install_scripts">
-				<include name="*.bat" />
-			</fileset>
-		</copy>
-	</target>
-	-->
-
 	<!-- creates the PC API doc -->
 	<target name="pc.doc" depends="" description="generate the platform API doc">
 		<mkdir dir="${shared.dir}/docs/pc" />
