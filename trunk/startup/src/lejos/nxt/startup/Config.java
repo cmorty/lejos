@@ -4,6 +4,8 @@ import lejos.nxt.LCD;
 
 public class Config
 {
+    public static final int VERSION = 0x000901;
+    
 	public static final int MIN_CONTRAST = 20;
 	public static final int MAX_CONTRAST = 0x60;
 	
