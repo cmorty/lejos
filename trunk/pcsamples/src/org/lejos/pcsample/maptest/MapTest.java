@@ -1,10 +1,19 @@
 package org.lejos.pcsample.maptest;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import lejos.robotics.navigation.*;
-import lejos.robotics.mapping.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.SystemColor;
+import java.awt.event.ActionListener;
+
+import javax.swing.JPopupMenu;
+import javax.swing.JSlider;
+
+import lejos.robotics.mapping.MenuAction;
+import lejos.robotics.mapping.NavigationModel;
 import lejos.robotics.mapping.NavigationModel.NavEvent;
+import lejos.robotics.mapping.NavigationPanel;
+import lejos.robotics.mapping.SliderPanel;
+import lejos.robotics.navigation.Pose;
 
 /**
  * Use with the MapTest sample running on the NXT.

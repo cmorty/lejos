@@ -1,5 +1,9 @@
 package org.lejos.pcsample.sensortest;
-import lejos.nxt.*;
+import lejos.nxt.LightSensor;
+import lejos.nxt.SensorPort;
+import lejos.nxt.SoundSensor;
+import lejos.nxt.TouchSensor;
+import lejos.nxt.UltrasonicSensor;
 
 /**
  * This is a test of remote reading of sensors from the PC

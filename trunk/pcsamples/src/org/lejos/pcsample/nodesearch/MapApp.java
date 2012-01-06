@@ -1,16 +1,40 @@
 package org.lejos.pcsample.nodesearch;
-import javax.swing.*;
-import java.awt.*;   
-import java.awt.event.*;
-import java.awt.geom.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Panel;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.geom.Ellipse2D;
+import java.util.Collection;
+import java.util.Iterator;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import lejos.geom.Line;
 import lejos.geom.Rectangle;
-import lejos.robotics.navigation.Pose;
 import lejos.robotics.mapping.LineMap;
-import lejos.robotics.navigation.*;
-import lejos.robotics.pathfinding.*;
+import lejos.robotics.navigation.DestinationUnreachableException;
+import lejos.robotics.navigation.Pose;
+import lejos.robotics.navigation.Waypoint;
+import lejos.robotics.pathfinding.AstarSearchAlgorithm;
+import lejos.robotics.pathfinding.FourWayGridMesh;
+import lejos.robotics.pathfinding.Node;
+import lejos.robotics.pathfinding.NodePathFinder;
+import lejos.robotics.pathfinding.PathFinder;
 
 public class MapApp extends JPanel implements WindowListener, ActionListener, MouseListener {
 	

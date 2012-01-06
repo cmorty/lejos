@@ -3,12 +3,17 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+
+import lejos.robotics.localization.MCLPoseProvider;
 import lejos.robotics.mapping.MenuAction;
-import lejos.robotics.mapping.NavigationPanel;
 import lejos.robotics.mapping.NavigationModel.NavEvent;
-import lejos.robotics.localization.*;
+import lejos.robotics.mapping.NavigationPanel;
 
 /**
  * Test of the Monte Carlo Localization algorithm for global localization.

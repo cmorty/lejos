@@ -3,13 +3,15 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.SystemColor;
+
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+
 import lejos.robotics.mapping.MenuAction;
 import lejos.robotics.mapping.NavigationModel;
+import lejos.robotics.mapping.NavigationModel.NavEvent;
 import lejos.robotics.mapping.NavigationPanel;
 import lejos.robotics.mapping.SliderPanel;
-import lejos.robotics.mapping.NavigationModel.NavEvent;
 
 /**
  * MapCommand shows a mapped area and allow navigation commands to be sent to the NXT.

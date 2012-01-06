@@ -3,8 +3,10 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.SystemColor;
+
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
+
 import lejos.robotics.mapping.MenuAction;
 import lejos.robotics.mapping.NavigationModel;
 import lejos.robotics.mapping.NavigationPanel;
