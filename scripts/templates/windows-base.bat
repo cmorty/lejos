@@ -24,6 +24,26 @@ if "%OS%" == "Windows_NT" goto :winnt
 	set "%~1=%TMP_CP:~1%"
 	goto :eof
 
+:search_path
+	set "%~1=%~f$PATH:2"
+	goto :eof
+
+:find_java_and_javac
+	call :search_path JAVA java.exe
+	call :search_path JAVAC javac.exe
+	if "%JAVA%" == "" (
+		echo java.exe was not found in the default search path.
+		echo Install a JDK and set the variable LEJOS_NXT_JAVA_HOME
+		echo to the root directory of the JDK.
+		exit /B 1
+	) else if "%JAVAC%" == "" (
+		echo javac.exe was not found in the default search path.
+		echo Consider setting the variable LEJOS_NXT_JAVA_HOME to
+		echo the root directory of a JDK. Otherwise,
+		echo some tools might not work.
+	)
+	goto :eof
+
 :set_java_and_javac
 	set "JAVA=%~2\bin\java.exe"
 	set "JAVAC=%~2\bin\javac.exe"
@@ -52,6 +72,5 @@ if "%OS%" == "Windows_NT" goto :winnt
 	) else if not "%JAVA_HOME%" == "" (
 		call :set_java_and_javac JAVA_HOME "%JAVA_HOME%" 
 	) else (
-		set "JAVA=java.exe"
-		set "JAVAC=javac.exe"
+		call :find_java_and_javac
 	)
