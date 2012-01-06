@@ -92,7 +92,7 @@ Daniele Benedettelli:
 - Added OmniPilot for holonomic robots with omni wheels
 
 Michael Mirwaldt:
-- Driver for LEGO temperature sensor
+- Contributed driver for LEGO temperature sensor
 - Added method for retrieving the line number map of DebugData
 - Additions to java.util (LinkedList, HashSet, Set, HashMap, Map)
 
