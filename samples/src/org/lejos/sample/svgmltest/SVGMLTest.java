@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 
 import lejos.geom.Line;
 import lejos.geom.Rectangle;
+import lejos.nxt.Button;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.mapping.SVGMapLoader;
 
@@ -56,6 +57,8 @@ public class SVGMLTest {
 			Line l = lines[i];
 			System.out.println("Line " + i + ": " + l.getX1() + " " + l.getY1() + " " + l.getX2() + " " + l.getY2());
 		}
+		
+		Button.waitForAnyPress();
 		
 		//Once you have loaded the map, robot is able to navigate 
 		//with that map or try lo localize using MCL
