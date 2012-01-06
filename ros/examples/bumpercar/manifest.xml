@@ -1,0 +1,24 @@
+<package>
+	<description brief="nxtstatus">
+		NXTStatus
+	</description>
+	<author>Juan Antonio Brenha Moral</author>
+	<license>BSD</license>
+	<review status="unreviewed" notes=""/>
+	<url>http://ros.org/wiki/roslejos</url>
+
+	<depend package="rosjava" />
+	<depend package="std_msgs" />
+	<depend package="sensor_msgs" />
+
+	<export>
+    	<rosjava-src location="src" /> 
+    	<rosjava-pathelement location="target/" groupId="org.lejos.ros" artifactId="org.lejos.ros.nodes.bumpercar" version="0.0.1" built="true" />
+    	<rosjava-pathelement location="/usr/local/lejos/lib/pc/pccomm.jar" />
+    	<rosjava-pathelement location="/usr/local/lejos/lib/pc/3rdparty/bluecove-gpl.jar" />
+    	<rosjava-pathelement location="/usr/local/lejos/lib/pc/3rdparty/bluecove.jar" />
+	</export>
+
+</package>
+
+
