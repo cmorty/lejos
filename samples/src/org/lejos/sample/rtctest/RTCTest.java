@@ -16,7 +16,7 @@ public class RTCTest {
 		Random r = new Random();
 		int i;
 		lejos.robotics.Clock clock = new RealTimeClock(SensorPort.S1);
-		//Clock clock = new DummyClock();
+		//lejos.robotics.Clock clock  = new DummyClock();
 		int cur = 0;
 
 		try {
