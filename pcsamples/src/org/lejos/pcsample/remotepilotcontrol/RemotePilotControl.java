@@ -2,10 +2,12 @@ package org.lejos.pcsample.remotepilotcontrol;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.OutputStream;
-import java.io.InputStream;
 import java.io.IOException;
-import lejos.pc.comm.*;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTConnector;
 
 
 /**

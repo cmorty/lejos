@@ -1,6 +1,10 @@
 package org.lejos.pcsample.btsend;
-import lejos.pc.comm.*;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+import lejos.pc.comm.NXTCommLogListener;
+import lejos.pc.comm.NXTConnector;
 
 /**
  * This is a PC sample. It connects to the NXT, and then

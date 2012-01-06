@@ -6,7 +6,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import lejos.pc.comm.*;
+
+import lejos.pc.comm.NXTCommFactory;
+import lejos.pc.comm.NXTConnector;
 
 /**
  * Provides  Bluetooth communications services to RCNavitationControl:<br>

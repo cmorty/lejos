@@ -1,7 +1,15 @@
 package org.lejos.pcsample.pathtest;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import lejos.robotics.mapping.MapPanel;
 import lejos.robotics.mapping.MenuAction;

@@ -1,7 +1,10 @@
 package org.lejos.pcsample.usbsend;
-import lejos.pc.comm.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-import java.io.*;
+import lejos.pc.comm.NXTCommLogListener;
+import lejos.pc.comm.NXTConnector;
  
 /**
  * This is a PC sample. It connects to the NXT, and then

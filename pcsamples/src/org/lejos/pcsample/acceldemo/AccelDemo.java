@@ -1,6 +1,6 @@
 package org.lejos.pcsample.acceldemo;
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
+import lejos.nxt.SensorPort;
+import lejos.nxt.addon.AccelMindSensor;
 
 /**
  * Test of remote access to Acceleration (Tilt) sensor using
