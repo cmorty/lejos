@@ -1,13 +1,5 @@
 package org.lejos.ros.nodes.bumpercar;
 
-import lejos.nxt.Battery;
-import lejos.nxt.Sound;
-import lejos.nxt.remote.NXTCommand;
-import lejos.pc.comm.NXTComm;
-import lejos.pc.comm.NXTCommLogListener;
-import lejos.pc.comm.NXTCommandConnector;
-import lejos.pc.comm.NXTConnector;
-
 import org.ros.message.MessageListener;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;

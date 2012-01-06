@@ -1,8 +1,5 @@
 package org.lejos.ros.pccomm.tests;
 
-
-import java.awt.Toolkit;
-
 import org.lejos.pccomm.utils.SimpleConnector;
 
 import lejos.nxt.Battery;
