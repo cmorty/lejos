@@ -123,7 +123,7 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 			return event;
 		}
 		
-		StringBuffer s = new StringBuffer();
+		StringBuilder s = new StringBuilder();
 		text = null;
 		namespaceCount = 0;
 		char lastC = 0;
@@ -188,18 +188,18 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 				if (c == ' ' && !quoted) {
 					if (!gotLocalName) {
 						localName = s.toString();
-						s = new StringBuffer();
+						s = new StringBuilder();
 						gotLocalName = true;
 					}
 				} else if (c == '=' && !quoted) {
 					attrName = s.toString();
-					s = new StringBuffer();
+					s = new StringBuilder();
 					quote = getChar();
 					quoted = true;
 				} else if (c == quote) {
 					quoted = false;
 					attrValue = s.toString();
-					s = new StringBuffer();
+					s = new StringBuilder();
 					if (!attrName.startsWith("xmlns")) {
 						attributes.put(attrName, attrValue);
 						attrNames.add(attrName);
@@ -414,7 +414,7 @@ public class NXJXMLStreamReader implements XMLStreamReader {
 					"parser must be on START_ELEMENT to read next text", getLocation());
 		}
 		int eventType = next();
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		while(eventType != XMLStreamConstants.END_ELEMENT ) {
 			if(eventType == XMLStreamConstants.CHARACTERS
 				 || eventType == XMLStreamConstants.CDATA
