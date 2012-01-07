@@ -3,7 +3,6 @@ package lejos.internal.xml.stream;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
 
 public class NXJXMLEventReader implements XMLEventReader, XMLStreamConstants {
