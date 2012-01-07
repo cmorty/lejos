@@ -19,7 +19,6 @@ public class Arrays {
 	//MISSING public static int deepHashCode(Object[] a)
 	//MISSING public static String deepToString(Object[] a)
 	//MISSING public static boolean deepEquals(Object[] a1, Object[] a2)
-	//MISSING public static String toString*
 
 	
 	private Arrays() {
@@ -1084,5 +1083,169 @@ public class Arrays {
 				}
 			}
 		}
+	}
+	
+	/****************** TOSTRING ******************/ 
+
+	/**
+	 * Returns a String representation of the array.
+	 * @param a the array to convert
+	 */
+	public static String toString(boolean[] a) {
+		if (a == null)
+			return "null";
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		if (a.length > 0) {
+			sb.append(a[0]);
+			for (int i=1; i<a.length; i++)
+				sb.append(", ").append(a[i]);
+		}
+		return sb.append(']').toString();
+	}
+
+	/**
+	 * Returns a String representation of the array.
+	 * @param a the array to convert
+	 */
+	public static String toString(byte[] a) {
+		if (a == null)
+			return "null";
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		if (a.length > 0) {
+			sb.append(a[0]);
+			for (int i=1; i<a.length; i++)
+				sb.append(", ").append(a[i]);
+		}
+		return sb.append(']').toString();
+	}
+
+	/**
+	 * Returns a String representation of the array.
+	 * @param a the array to convert
+	 */
+	public static String toString(short[] a) {
+		if (a == null)
+			return "null";
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		if (a.length > 0) {
+			sb.append(a[0]);
+			for (int i=1; i<a.length; i++)
+				sb.append(", ").append(a[i]);
+		}
+		return sb.append(']').toString();
+	}
+
+	/**
+	 * Returns a String representation of the array.
+	 * @param a the array to convert
+	 */
+	public static String toString(char[] a) {
+		if (a == null)
+			return "null";
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		if (a.length > 0) {
+			sb.append(a[0]);
+			for (int i=1; i<a.length; i++)
+				sb.append(", ").append(a[i]);
+		}
+		return sb.append(']').toString();
+	}
+
+	/**
+	 * Returns a String representation of the array.
+	 * @param a the array to convert
+	 */
+	public static String toString(int[] a) {
+		if (a == null)
+			return "null";
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		if (a.length > 0) {
+			sb.append(a[0]);
+			for (int i=1; i<a.length; i++)
+				sb.append(", ").append(a[i]);
+		}
+		return sb.append(']').toString();
+	}
+
+	/**
+	 * Returns a String representation of the array.
+	 * @param a the array to convert
+	 */
+	public static String toString(long[] a) {
+		if (a == null)
+			return "null";
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		if (a.length > 0) {
+			sb.append(a[0]);
+			for (int i=1; i<a.length; i++)
+				sb.append(", ").append(a[i]);
+		}
+		return sb.append(']').toString();
+	}
+
+	/**
+	 * Returns a String representation of the array.
+	 * @param a the array to convert
+	 */
+	public static String toString(float[] a) {
+		if (a == null)
+			return "null";
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		if (a.length > 0) {
+			sb.append(a[0]);
+			for (int i=1; i<a.length; i++)
+				sb.append(", ").append(a[i]);
+		}
+		return sb.append(']').toString();
+	}
+
+	/**
+	 * Returns a String representation of the array.
+	 * @param a the array to convert
+	 */
+	public static String toString(double[] a) {
+		if (a == null)
+			return "null";
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		if (a.length > 0) {
+			sb.append(a[0]);
+			for (int i=1; i<a.length; i++)
+				sb.append(", ").append(a[i]);
+		}
+		return sb.append(']').toString();
+	}
+
+	/**
+	 * Returns a String representation of the array.
+	 * @param a the array to convert
+	 */
+	public static String toString(Object[] a) {
+		if (a == null)
+			return "null";
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append('[');
+		if (a.length > 0) {
+			sb.append(a[0]);
+			for (int i=1; i<a.length; i++)
+				sb.append(", ").append(a[i]);
+		}
+		return sb.append(']').toString();
 	}
 }
