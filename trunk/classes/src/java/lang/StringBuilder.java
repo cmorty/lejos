@@ -15,6 +15,20 @@ public class StringBuilder implements CharSequence
 	private static final int CAPACITY_INCREMENT_NUM = 3;	//numerator of the increment factor
 	private static final int CAPACITY_INCREMENT_DEN = 2;	//denominator of the increment factor
 	
+	//MISSING append(StringBuffer)
+	//MISSING appendCodePoint(int)
+	//MISSING capacity()
+	//MISSING codePointAt(int)
+	//MISSING codePointBefore(int)
+	//MISSING codePointCount(int, int)
+	//MISSING deleteCharAt(int)
+	//MISSING insert*
+	//MISSING offsetByCodePoints(int, int)
+	//MISSING replace(int, int, String)
+	//MISSING reverse()
+	//MISSING setLength()
+	//MISSING trimToSize()
+	
 	private char[] characters;
 	private int curLen = 0;
 	
@@ -38,10 +52,13 @@ public class StringBuilder implements CharSequence
     characters = new char[INITIAL_CAPACITY];
   }
   
-  public StringBuilder (String aString)
+  public StringBuilder (CharSequence seq)
   {
-    characters = aString.toCharArray();
-    curLen = aString.length();
+	  int len = seq.length();
+	  curLen = len;
+	  characters = new char[len];
+	  for (int i=0; i<len; i++)
+		  characters[i] = seq.charAt(i);
   }
 
   public StringBuilder (int length)
@@ -50,6 +67,12 @@ public class StringBuilder implements CharSequence
     	throw new NegativeArraySizeException("length is negative");
     
     characters = new char[length];
+  }
+
+  public StringBuilder (String aString)
+  {
+    characters = aString.toCharArray();
+    curLen = characters.length;
   }
 
   public StringBuilder delete(int start, int end)
@@ -233,13 +256,13 @@ public class StringBuilder implements CharSequence
   }
 
   /**
-  * Retrieves the contents of the StringBuilder in the form of an array of characters.
-  */
-  public char[] getChars()
+   * Retrieves the contents of the StringBuilder in the form of an array of characters.
+   */
+  public void getChars(int start, int end, char[] dst, int dstStart)
   {
-    char[] r = new char[curLen];
-    System.arraycopy(characters, 0, r, 0, curLen);
-    return r;
+	  if (end > curLen)
+		  throw new StringIndexOutOfBoundsException(end);
+	  System.arraycopy(characters, start, dst, dstStart, end-start);
   }
   
   public String substring(int start) {
