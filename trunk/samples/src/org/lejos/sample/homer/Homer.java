@@ -91,7 +91,7 @@ public class Homer {
             pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftMotor, rightMotor, reverse);
         } catch (IOException e) {  }
         UltrasonicSensor sonar = new UltrasonicSensor(SensorPort.S3);
-        scanner = scanner = new FixedRangeScanner(pilot,sonar);
+        scanner = new FixedRangeScanner(pilot,sonar);
         float[] angles = {-RANGE_READING_ANGLE, 0, RANGE_READING_ANGLE};
         scanner.setAngles(angles);
         mcl = new MCLPoseProvider(pilot, scanner, map, NUM_PARTICLES, BORDER);
