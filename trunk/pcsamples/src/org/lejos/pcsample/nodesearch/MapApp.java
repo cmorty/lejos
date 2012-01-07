@@ -213,14 +213,14 @@ public class MapApp extends JPanel implements WindowListener, ActionListener, Mo
 		lines [0] = new Line(50, 125, 275, 125);
 		lines [1] = new Line(350, 250, 125, 250);
 		lines [2] = new Line(235, 165, 195, 210);
-		lejos.geom.Rectangle bounds = new Rectangle(50, 60, 300, 300);
+		Rectangle bounds = new Rectangle(50, 60, 300, 300);
 		LineMap myMap = new LineMap(lines, bounds);
 		
 		FourWayGridMesh grid = new FourWayGridMesh(myMap, 39, 10);
 		AstarSearchAlgorithm alg = new AstarSearchAlgorithm();
 		NodePathFinder pf = new NodePathFinder(alg, grid);
 		
-		MapApp mt = new MapApp(myMap, grid, pf);
+		new MapApp(myMap, grid, pf);
 	}
 	
 	public void windowActivated(WindowEvent arg0) {}
@@ -236,6 +236,7 @@ public class MapApp extends JPanel implements WindowListener, ActionListener, Mo
 	public void actionPerformed(ActionEvent action) {
 		if(action.getActionCommand().equals(CALC_TEXT)) {
 			mesh.regenerate(); // TODO: Without this here it crashes with null pointer for some reason. Don't want this here!
+			//TODO ask user to select nodes when startNode and goalNode are null 
 			Pose startPose = new Pose(startNode.x, startNode.y, 0); // Todo: Start is always a Pose?
 			Waypoint goalWP = new Waypoint(goalNode.x, goalNode.y);
 			

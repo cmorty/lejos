@@ -154,7 +154,7 @@ public class OffScreenDrawingM extends javax.swing.JPanel implements ActionListe
 		osGraphics.setColor(Color.green); // Set the line color
 		
 		int xmax = orig+32*gridSpacing;// pixels
-		int ymax = orig+15*gridSpacing;// pixels
+//		int ymax = orig+15*gridSpacing;// pixels
 //		for(int y = 0; y < 16; y ++) osGraphics.drawLine(orig,orig+gridSpacing*y,xmax,orig+gridSpacing*y);
 		for(float y = 0; y <8; y +=0.5f) 
 		  osGraphics.drawLine(xpixel(-8),ypixel(y),xpixel(8),ypixel(y));
