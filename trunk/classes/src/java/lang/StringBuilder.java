@@ -15,18 +15,13 @@ public class StringBuilder implements CharSequence
 	private static final int CAPACITY_INCREMENT_NUM = 3;	//numerator of the increment factor
 	private static final int CAPACITY_INCREMENT_DEN = 2;	//denominator of the increment factor
 	
-	//MISSING append(StringBuffer)
-	//MISSING appendCodePoint(int)
-	//MISSING capacity()
 	//MISSING codePointAt(int)
 	//MISSING codePointBefore(int)
 	//MISSING codePointCount(int, int)
-	//MISSING deleteCharAt(int)
 	//MISSING insert*
 	//MISSING offsetByCodePoints(int, int)
 	//MISSING replace(int, int, String)
 	//MISSING reverse()
-	//MISSING trimToSize()
 	
 	private char[] characters;
 	private int curLen = 0;
@@ -89,6 +84,11 @@ public class StringBuilder implements CharSequence
       return this;
   }
 
+  public StringBuilder deleteCharAt(int index)
+  {
+      return this.delete(index, index+1);
+  }
+
   public StringBuilder append (String s)
   {
 	  return this.appendInternal(s);
@@ -135,6 +135,14 @@ public class StringBuilder implements CharSequence
 	public StringBuilder append(CharSequence cs)
 	{
 		return this.append(cs, 0, cs.length());
+	}
+	
+	public StringBuilder append(StringBuffer sb)
+	{
+		int len = sb.length();
+		this.ensureCapacity(curLen + len);
+		sb.getChars(0, len, characters, curLen);
+		return this;
 	}
 	
 	public StringBuilder append(CharSequence cs, int start, int end)
@@ -187,6 +195,13 @@ public class StringBuilder implements CharSequence
 		curLen = StringUtils.getDoubleChars(aDouble, characters, curLen);
     	return this;
 	}
+	
+	public StringBuilder appendCodePoint(int cp)
+	{
+		ensureCapacity(curLen + 2);
+		curLen += Character.toChars(cp, characters, curLen);
+		return this;
+	}
   
   /**
    * Appends a string with no null checking
@@ -206,6 +221,10 @@ public class StringBuilder implements CharSequence
     curLen = newlen;
     
     return this;
+  }
+  
+  public int capacity() {
+	  return characters.length;
   }
   
   public int indexOf(String str) {
@@ -294,6 +313,13 @@ public class StringBuilder implements CharSequence
   public CharSequence subSequence(int start, int end)
   {
 	  return substring(start, end);
+  }
+  
+  public void trimToSize()
+  {
+	  char[] tmp = new char[curLen];
+	  System.arraycopy(characters, 0, tmp, 0, curLen);
+	  characters = tmp;
   }
 }
 
