@@ -26,7 +26,6 @@ public class StringBuilder implements CharSequence
 	//MISSING offsetByCodePoints(int, int)
 	//MISSING replace(int, int, String)
 	//MISSING reverse()
-	//MISSING setLength()
 	//MISSING trimToSize()
 	
 	private char[] characters;
@@ -248,6 +247,17 @@ public class StringBuilder implements CharSequence
 		  throw new StringIndexOutOfBoundsException(i);
 	  
         characters[i] = ch;
+  }
+  
+  public void setLength(int newLen)
+  {
+	  if (newLen < 0)
+		  throw new IndexOutOfBoundsException();
+	  
+	  ensureCapacity(newLen);
+	  for (int i=curLen; i<newLen; i++)
+		  characters[i] = 0;
+	  curLen = newLen;
   }
   
   public int length()
