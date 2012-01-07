@@ -186,23 +186,19 @@ public class NavMapControl extends JFrame implements ActionListener, RemoteContr
    
    public void readAngle()
    {     
-      boolean error = false;
       try {_angle = Float.parseFloat(angleField.getText());}
       catch(Exception e)
       {
          message = "Problem  with angle  field";
-         error =true;
          System.out.println(e);
       }
    }
      public void readDistance()
    {     
-      boolean error = false;
       try {_distance = Float.parseFloat(distanceField.getText());}
       catch(Exception e)
       {
          message = "Problem  with distance  field";
-         error =true;
          System.out.println(e);
       }
    }
@@ -258,13 +254,10 @@ public class NavMapControl extends JFrame implements ActionListener, RemoteContr
    }
    public void readHeading()
            {
-      boolean error = false;
-    
       try {_heading = Float.parseFloat(headingField.getText());	}
       catch(Exception e)
       { 
          message = "Problem with Heading field";
-         error =true;
          System.out.println(e);
       }
    }
