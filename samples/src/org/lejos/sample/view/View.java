@@ -143,7 +143,7 @@ public class View {
 					
 					while (!Button.ESCAPE.isDown())
 					{
-						LCD.drawInt(light.readValue(), 3, 7, 4);
+						LCD.drawInt(light.getLightValue(), 3, 7, 4);
 						
 						LCD.refresh();
 						Thread.sleep(100);
