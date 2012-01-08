@@ -243,6 +243,7 @@ public class File {
 	 * If the file is a binary executable, begins running it.
 	 *
 	 */
+	// TODO: This isn't a standard Java API method and should not be public. Should be replaced by Runtime.exec()
 	public void exec() {
 		Flash.exec(page_location, file_length);
 	}
@@ -704,5 +705,10 @@ public class File {
 	// TODO: This isn't a standard Java API method and should not be public. Used by LCP. - BB
 	public static void reset() {
 		files = null;
+	}
+	
+	@Override
+	public String toString() {
+		return file_name;
 	}
 }
