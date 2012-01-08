@@ -20,7 +20,7 @@ public class FileInputStream extends InputStream
 	public FileInputStream(File f) throws FileNotFoundException
 	{
 		if (!f.exists())
-			throw new FileNotFoundException();
+			throw new FileNotFoundException(f+" does not exist");
 		
 		this.buff = new byte[Flash.BYTES_PER_PAGE];
 		
