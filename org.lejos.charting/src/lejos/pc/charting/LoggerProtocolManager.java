@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.util.HashSet;
 
 /**
@@ -290,26 +291,27 @@ public class LoggerProtocolManager {
         notifyISEOF();
     }
     
-    private static String getDataTypeFormat(int datatype){
+    private static final DecimalFormat integerFormat = new DecimalFormat("0");
+    private static final DecimalFormat floatFormat = new DecimalFormat("0.0############E0");
+    private static final DecimalFormat doubleFormat = new DecimalFormat("0.0########################E0");
+    
+    private static String formatByTypeFormat(int datatype, Object value){
         switch (datatype) {
             case DT_BOOLEAN:
-                return "1d";
+            	return ((Boolean)value).booleanValue() ? "true" : "false";
             case DT_BYTE:
-                return "-3d";
             case DT_SHORT:
-                return "-5d";
             case DT_INTEGER:
-                return "-16d";
             case DT_LONG:
-                return "-24d";
+                return integerFormat.format(((Number)value).longValue());
             case DT_FLOAT:
-                return "-16.8e";
+                return floatFormat.format(((Number)value).floatValue());
             case DT_DOUBLE:
-                return "-24.16e";
+                return doubleFormat.format(((Number)value).doubleValue());
             case DT_STRING:
-                return "s";
+                return String.valueOf(value);
             default:
-                return "-1d";
+                throw new RuntimeException("unknown data type "+datatype);
         }
     }
 
@@ -323,7 +325,8 @@ public class LoggerProtocolManager {
         StringBuilder logLineBuilder = new StringBuilder();
         for (int i = 0; i < logDataItems.length; i++) {
             if (logDataItems[i]==null) continue;
-            logLineBuilder.append(String.format("%1$" + getDataTypeFormat(logDataItems[i].datatype), logDataItems[i].value).toString().trim());
+            String value = formatByTypeFormat(logDataItems[i].datatype, logDataItems[i].value).trim();
+            logLineBuilder.append(value);
             if (i < logDataItems.length - 1)
                 logLineBuilder.append("\t");
         }
