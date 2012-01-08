@@ -15,7 +15,7 @@ import lejos.nxt.addon.NXTLineLeader;
  * @author Eric Pascual
  *
  */
-public class NXTLineLeaderTest {
+public class LineLeaderTest {
 	NXTLineLeader ll = new NXTLineLeader(SensorPort.S1);
     NXTMotor MA = new NXTMotor(MotorPort.A);
     NXTMotor MC = new NXTMotor(MotorPort.C);
@@ -81,7 +81,7 @@ public class NXTLineLeaderTest {
 	}
 
 	public static void main(String[] args) {
-		new NXTLineLeaderTest().go();
+		new LineLeaderTest().go();
 	}
 }
 
