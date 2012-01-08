@@ -172,6 +172,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 			new SensorPanel("Sensor Port 4") };
 	private JFormattedTextField txData = new JFormattedTextField();
 	private JFormattedTextField rxDataLength = new JFormattedTextField(new Integer(1));
+	private JFormattedTextField address;
 	private JLabel rxData = new JLabel();
 	private Border etchedBorder = BorderFactory.createEtchedBorder();
 	private JButton soundButton = new JButton("Play Sound File");
@@ -844,7 +845,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 		sensorSelectPanel.add(sensorLabel);
 		sensorSelectPanel.add(sensorList);
 		JLabel addressLabel = new JLabel("Address:");
-		JFormattedTextField address = new JFormattedTextField(new Integer(1));
+		address = new JFormattedTextField(new Integer(2));
 		address.setColumns(2);
 		sensorSelectPanel.add(addressLabel);
 		sensorSelectPanel.add(address);
@@ -1784,15 +1785,15 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	 * Send I2C request
 	 */
 	private void i2cSend() {
-		byte[] address = new byte[1];
-		address[0] = 2; // default I2C address
+		byte[] addr = new byte[1];
+		addr[0] = ((Number)address.getValue()).byteValue(); // default I2C address
 		
 		if (nxtCommand == null)	return;
 		try {
 			nxtCommand.LSWrite(
 					(byte) sensorList.getSelectedIndex(),
-					appendBytes(address, fromHex(txData.getText())),
-					((Integer) rxDataLength.getValue()).byteValue());
+					appendBytes(addr, fromHex(txData.getText())),
+					((Number) rxDataLength.getValue()).byteValue());
 		} catch (IOException ioe) {
 			showMessage("IO Exception sending txData");
 		}
