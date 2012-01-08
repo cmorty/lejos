@@ -295,10 +295,10 @@ public class LoggerProtocolManager {
     private static final DecimalFormat floatFormat = new DecimalFormat("0.0############E0");
     private static final DecimalFormat doubleFormat = new DecimalFormat("0.0########################E0");
     
-    private static String formatByTypeFormat(int datatype, Object value){
+    private static String formatByDataType(int datatype, Object value){
         switch (datatype) {
             case DT_BOOLEAN:
-            	return ((Boolean)value).booleanValue() ? "true" : "false";
+            	return ((Number)value).intValue() == 0 ? "false" : "true";
             case DT_BYTE:
             case DT_SHORT:
             case DT_INTEGER:
@@ -325,7 +325,7 @@ public class LoggerProtocolManager {
         StringBuilder logLineBuilder = new StringBuilder();
         for (int i = 0; i < logDataItems.length; i++) {
             if (logDataItems[i]==null) continue;
-            String value = formatByTypeFormat(logDataItems[i].datatype, logDataItems[i].value).trim();
+            String value = formatByDataType(logDataItems[i].datatype, logDataItems[i].value).trim();
             logLineBuilder.append(value);
             if (i < logDataItems.length - 1)
                 logLineBuilder.append("\t");
