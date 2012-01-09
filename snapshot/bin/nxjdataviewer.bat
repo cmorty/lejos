@@ -12,8 +12,7 @@ if "%OS%" == "Windows_NT" goto :winnt
 
 :build_classpath
 	if not exist "%~2" (
-		echo Your NXJ_HOME variable seems to be incorrect.
-		echo The following folder does not exist:
+		echo Internal error. The following directory does not exist:
 		echo   "%~2"
 		exit /B 1
 	)
@@ -25,8 +24,24 @@ if "%OS%" == "Windows_NT" goto :winnt
 	set "%~1=%TMP_CP:~1%"
 	goto :eof
 
-:normalize_path
-	set "%~1=%~f2"
+:search_path
+	set "%~1=%~f$PATH:2"
+	goto :eof
+
+:find_java_and_javac
+	call :search_path JAVA java.exe
+	call :search_path JAVAC javac.exe
+	if "%JAVA%" == "" (
+		echo java.exe was not found in the default search path.
+		echo Install a JDK and set the variable LEJOS_NXT_JAVA_HOME
+		echo to the root directory of the JDK.
+		exit /B 1
+	) else if "%JAVAC%" == "" (
+		echo javac.exe was not found in the default search path.
+		echo Consider setting the variable LEJOS_NXT_JAVA_HOME to
+		echo the root directory of a JDK. Otherwise,
+		echo some tools might not work.
+	)
 	goto :eof
 
 :set_java_and_javac
@@ -46,12 +61,8 @@ if "%OS%" == "Windows_NT" goto :winnt
 
 :winnt
 	setlocal
-	if not "%NXJ_HOME%" == "" (
-		set "NXJ_BIN=%NXJ_HOME%\bin"
-	) else (
-		call :normalize_path NXJ_BIN "%~dp0\."
-		call :normalize_path NXJ_HOME "%~dp0\.."
-	)
+	set "NXJ_COMMAND=%~n0"
+	set "NXJ_HOME=%~dp0\.."
 
 	call :build_classpath NXJ_CP_PC "%NXJ_HOME%\lib\pc"
 	call :build_classpath NXJ_CP_NXT "%NXJ_HOME%\lib\nxt"
@@ -61,10 +72,9 @@ if "%OS%" == "Windows_NT" goto :winnt
 	) else if not "%JAVA_HOME%" == "" (
 		call :set_java_and_javac JAVA_HOME "%JAVA_HOME%" 
 	) else (
-		set "JAVA=java.exe"
-		set "JAVAC=javac.exe"
+		call :find_java_and_javac
 	)
 
 
-"%JAVA%" -Dnxj.home="%NXJ_HOME%" -DCOMMAND_NAME="nxjdataviewer" -classpath "%NXJ_CP_PC%" lejos.pc.tools.NXJDataViewer  %*
+"%JAVA%" "-Dnxj.home=%NXJ_HOME%" "-DCOMMAND_NAME=%NXJ_COMMAND%" -classpath "%NXJ_CP_PC%" lejos.pc.tools.NXJDataViewer  %*
 :eof
