@@ -94,10 +94,10 @@
                         elementary moves:  rotate in place, travel in a straight line,
                         or travel in an arc. At the next level, the NavPathController uses
                         a DifferentialPilot to
-                        move the robot through a complicated path in a plane.  To do navigate,
+                        move the robot through a complicated path in a plane.  To navigate,
                         the path controller  needs  the robot location
                         and the direction it is heading.
-                        It uses a OdometeryPoseProvider to keep this information up to date.
+                        It uses a OdometryPoseProvider to keep this information up to date.
                         The relationships among
                         these classes is shown in the in the table. </p>
 
@@ -140,13 +140,13 @@
                         to its destination. </p>
                     <p>
                         This flow of information uses the listener and event model.
-                        The pilot registers as a listener to with motors, which inform it
+                        The pilot registers as a listener with the motors, which inform it
                         when a motor rotation is  started or completed.  The pose provider
                         registers as a listener with the pilot, which  informs it of the
                         start and completion of every movement.  This event driven information
-                        flow automatic.
-                        The  path controller can also requests a pose estimate whenever it needs to,
-                        even while the robot is moving,
+                        flows automatically.
+                        The  path controller can also request a pose estimate whenever it needs to,
+                        even while the robot is moving.
 
                     </p>
 
@@ -166,7 +166,7 @@
 			it has rotated. Obviously, both parameters must be in the same
 			units, but they can be anything you wish. With proper adjustment
 			of these parameters, errors in distance traveled and angle of
-			rotation can be held do 2% or perhaps less. This information is
+			rotation can be held to 2% or perhaps less. This information is
 			passed to the pilot constructor. DifferentialPilot is in the 
 			lejos.robotics.navigation package.
                         The documentation for this class is
@@ -184,7 +184,7 @@
                                 Motor leftMotor, Motor rightMotor, boolean
 				reverse)<br/>Use this constructor if you need to set the
                                 <i>reverse</i> boolean to <b>true</b> . Then the motors
-                               will rotate backward to make the robot move forward,
+                               will rotate backward to make the robot move forward.
                                
                             </p></li>
                     </ul>
@@ -195,7 +195,7 @@
                     <p>To control the robot	moving in a straight line, use:</p>
                     <ul class="BlueArrows">
                         <li><p>void setTravelSpeed(double travelSpeed)
-                                <br/>sets the speed of the motors in distance (wheel diameter)units per second</p></li>
+                                <br/>sets the speed of the motors in distance (wheel diameter) units per second</p></li>
                         <li><p>void forward()<br/>starts the robot moving forward</p></li>
                         <li><p>void backward()</p></li>
                         <li><p>void stop()</p></li>
@@ -261,11 +261,11 @@ public class TravelTest {
                     <h5>Program SquareTracer2</h5>
 
                     <p>Write a program that traces 2 squares with increasing angle at the corners, then retraces the
-			same path in the opposite direction.. Modify the traceSquare
+			same path in the opposite direction. Modify the traceSquare
 			method of program DifferentialPilot 1 so it can trace a square in either
 			direction, and use it in this program. This is stringent test of
 			the accuracy of the wheel diameter and track width constants you
-			use in you pilot. </p>
+			use in your pilot. </p>
 
                     <p><a href="SquareTracer2.html" target="_blank">Solution</a></p>
 
@@ -280,7 +280,7 @@ public class TravelTest {
                             <p>If <i><b>angle </b></i>is positive, the
 				robot turns to the left. The <i><b>immediateReturn</b></i>
 				parameter works as in the Motor methods &ndash;allowing the
-				calling thread to do other work while the rotation task in
+				calling thread to do other work while the rotation task is in
 				progress. 
                             </p></li>
                     </ul>
@@ -328,7 +328,7 @@ public class TravelTest {
                     <h5> Communicating with OdometryPoseProvider </h5>
                     <p> The OdometryPoseProvider keeps track of the robot position and heading.
                        To do this, it
-                        needs to know about every move made by the DifferetnialPilot. So the pilot needs to
+                        needs to know about every move made by the DifferentialPilot. So the pilot needs to
                         register as a listener with the pose provider by calling the <code>
                             addListener</code> method.  After the pilot  does this,it  will automatically
                         call the <code>moveStarted</code> method on the pose provider
@@ -350,7 +350,7 @@ public class TravelTest {
 				immediateReturn parameter and need to know if the task is still
 				in progress.
                             </p></li>
-                        <li><p>boolean stalled()<br/>returns true if
+                        <li><p>boolean stalled()<br/>Returns true if
 				either motor actual speed is zero. Remember, the actual speed is
 				calculated every 100ms. So stalled() will return <i><b>true</b></i>
 				for the first 100ms after the robot begins its move.
@@ -384,9 +384,9 @@ public class TravelTest {
                     <p/>
                     <ul class="BlueArrows">
                         <li><p>CompassPilot(SensorPort compassPort, float wheelDiameter,
-                                float trackWidth,Motor leftMotor, Motor rightMotor)</p></li>
+                                float trackWidth, Motor leftMotor, Motor rightMotor)</p></li>
                         <li><p>CompassPilot(SensorPort compassPort, float wheelDiameter,
-                                float trackWidth,Motor leftMotor, Motor rightMotor, boolean reverse)</p></li>
+                                float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse)</p></li>
                     </ul>
 
                     <a name="11"></a>
@@ -394,12 +394,12 @@ public class TravelTest {
 
                     <p/>
                     <ul class="BlueArrows">
-                        <li><p>void calibrate()<br/>calibrate the compass sensor;
+                        <li><p>void calibrate()<br/>Calibrate the compass sensor;
                                 rotates the robot slowly through 360 degreees.</p></li>
-                        <li><p>setHeading(int angle)<br/>set the desired robot heading, in degrees in Cartesian coordinates (a left turn
+                        <li><p>setHeading(int angle)<br/>Set the desired robot heading, in degrees in Cartesian coordinates (a left turn
 				increases the heading)</p></li>
-                        <li><p>int getHeading()<br/>return the desired robot heading</p></li>
-                        <li><p>int getAngle()<br/>return the compass Cartesian angle. Also the actual robot heading assuming the
+                        <li><p>int getHeading()<br/>Return the desired robot heading</p></li>
+                        <li><p>int getAngle()<br/>Return the compass Cartesian angle. Also the actual robot heading assuming the
 				compass sensor points forward.</p></li>
                     </ul>
 
@@ -430,13 +430,13 @@ public class TravelTest {
                         estimate of the robot location and the direction in which it is
                         heading. This information is stored in a Pose object. The
                         API for  Pose is
-                        <a href =  "http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation//Pose.html"> here.</a>
+                        <a href =  "http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/Pose.html"> here.</a>
                         For the OdometryPoseProvider  documentation
                     <a href ="http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/localization/OdometryPoseProvider.html ">
                         click here.</a>
                         <br/>The  only constructor for this class is: </p>
                     <ul class="BlueArrows">
-                        <li>OdometryPoseProvider(MoveProvider mp) )<br/>It
+                        <li>OdometryPoseProvider(MoveProvider mp)<br/>It
                             registers the new pose provider  object as a listener with
                             the MoveProvider.
                         </li>
@@ -487,7 +487,7 @@ public class TravelTest {
                     <ul class="BlueArrows">
                         <li><p>NavPathController(MoveControlle aPilot)<br/>
                                 To use this constructor, you must construct a pilot
-				and use it as the parameter.  The consttructor
+				and use it as the parameter.  The constructor
                                 will create its own OdometryPoseProvider </p></li>
                         <li><p>NavPathController(MoveController pilot, PoseProvider poseProvider
                                 <br/> Use this if you want to use another PoseProvider class
@@ -563,7 +563,7 @@ public class TravelTest {
                              They both use a Pose as the starting point,  which might be
                              returned returned by the a pose provider,  and a WayPoint
                              as the destination. The both will throw the DestinationUnreachableException
-                             if  no route cab be found.
+                             if  no route can be found.
                          </p>
                     <ul class="BlueArrows">
                         <li><p> findRoute(Pose start,WayPoint finish)
@@ -587,7 +587,7 @@ public class TravelTest {
                          A simpler scheme is to extends all the lines on
                         the original map so that a corner now is represented by two points,
                         each some distance from the corner.   To make this modification of
-                        the map,use the method : 
+                        the map,use the method: 
                     </p>
                     <ul class = "BlueArrows"> <li > lengthenLines(float delta)</li></ul>
                     <p>which adds a segment of length delta to each line on the map.
