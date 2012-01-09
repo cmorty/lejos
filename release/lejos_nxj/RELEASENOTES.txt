@@ -54,7 +54,8 @@ Sven Koehler:
 - lejos.nxt.Button: added methods for waiting for certain events
 - Added support for some control characters to LCDOutputStream 
 - Fixed Coordinates conversion to String
-- fill and binarySearch methods for java.util.Arrays
+- Additions to java.lang.StringBuffer/Builder
+- Most parts of java.util.Arrays
 
 Brian Bagnall:
 - Added rotateTo() method to Navigator
