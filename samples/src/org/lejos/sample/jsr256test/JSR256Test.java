@@ -1,4 +1,5 @@
 package org.lejos.sample.jsr256test;
+
 import java.io.IOException;
 import javax.microedition.io.Connector;
 import javax.microedition.sensor.Channel;
@@ -23,6 +24,8 @@ import lejos.util.PilotProps;
  * sets the parameters of the Pilot to the dimensions
  * and motor connections for your robot.
  * 
+ * Uses a limit condition to stop the robot when it gets close to an obstacle or wall.
+ * 
  * @author Lawrie Griffiths
  *
  */
@@ -36,8 +39,8 @@ public class JSR256Test implements ConditionListener {
 	}
 
 	public void run() throws InterruptedException {
-		RConsole.openBluetooth(0);	
-		System.setOut(RConsole.getPrintStream());
+		//RConsole.openBluetooth(0);	
+		//System.setOut(RConsole.getPrintStream());
 		SensorConnection sonic = null;
 		try {
 			sonic =(SensorConnection)Connector.open("sensor:proximity");
@@ -60,8 +63,6 @@ public class JSR256Test implements ConditionListener {
 		
 
 		while (pilot.isMoving()) {
-			//System.out.println("Vendor: " + sonicInfo.getProperty(SensorInfo.PROP_VENDOR));
-			//System.out.println("Version: " + sonicInfo.getProperty(SensorInfo.PROP_VERSION));
 			try {
 				Data[] data = sonic.getData(1);
 				System.out.println("Range = " + data[0].getIntValues()[0]);
