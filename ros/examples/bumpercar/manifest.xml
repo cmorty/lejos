@@ -10,6 +10,7 @@
 	<depend package="rosjava" />
 	<depend package="std_msgs" />
 	<depend package="sensor_msgs" />
+	<depend package="nxt_msgs" />
 
 	<export>
     	<rosjava-src location="src" /> 
