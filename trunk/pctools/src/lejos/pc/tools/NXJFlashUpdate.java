@@ -130,6 +130,8 @@ public class NXJFlashUpdate {
 			vmName = new File(home, "bin" + File.separator + VM);
 		if (menuName == null)
 			menuName = new File(home, "bin" + File.separator + MENU);
+		vmName = vmName.getCanonicalFile();
+		menuName = menuName.getCanonicalFile();
 		ui.message("VM file: " + vmName);
 		ui.message("Menu file: " + menuName);
 		int vmLen = readWholeFile(vmName, memoryImage, 0, memoryImage.length);
