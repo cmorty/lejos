@@ -13,14 +13,14 @@ import javax.bluetooth.*;
  * Connects to another NXT, sends 100 ints, and receives the 
  * replies. Then closes the connection and shuts down.
  * 
- * Works with the BTReceive sample running on the slave NXT.
+ * Works with the BTReceive or NXTReceive sample running on the slave NXT.
  * 
  * Change the name string to the name of your slave NXT, and make sure
  * it is in the known devices list of the master NXT. To do this, turn
  * on the slave NXT and make sure Bluetooth is on and the device
  * is visible. Use the Bluetooth menu on the slave for this. Then,
- * on the master, select the Bluetooth menu and then select Search.
- * The name of the slave NXT should appear. Select Add to add
+ * on the master, select the Bluetooth menu and then select Search and Pair.
+ * The name of the slave NXT should appear. Select Pair to add
  * it to the known devices of the master. You can check this has
  * been done by selecting Devices from the Bluetooth menu on the
  * master.
