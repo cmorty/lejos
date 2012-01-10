@@ -36,8 +36,15 @@
 			<target name="all" />
 		</ant>
 		<copy todir="bin">
+			<fileset dir="${project.scripts}/${vars.scripts.linux.dir}" />
 			<fileset dir="${project.scripts}/${vars.scripts.windows.dir}" />
 		</copy>
+		<chmod perm="a+x">
+			<fileset dir="bin">
+				<include name="nxj*" />
+				<exclude name="*.bat" />
+			</fileset>
+		</chmod>
 		<echo message="*** leaving scripts project" />
 	</target>
 
