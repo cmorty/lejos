@@ -76,27 +76,11 @@ public class LoggerComms {
         this.conn.addLogListener(new ll());
 
         dbg("connect() to: " + NXT + ", NXTConnector this.conn=" + this.conn.toString());
-        NXTInfo[] theNXTInfo=null;
         this.isConnConnected = false;
-        tryBlock1:
-        try {
-            // connect to NXT over USB or BT
-            theNXTInfo = this.conn.search(NXT,null,NXTCommFactory.ALL_PROTOCOLS);
-            if (theNXTInfo.length==0) {
-                dbg("No NXT found. Returning false.");
-                break tryBlock1;
-            }
-            this.isConnConnected = this.conn.connectTo(theNXTInfo[0], NXTComm.PACKET);
-            dbg("isConnConnected=" + this.isConnConnected);
-        } catch (Error e) {
-            dbg("!** Problem with establishing connection. Error: " + e.toString());
-            
-        } catch (Exception e) {
-            dbg("!** Problem with establishing connection. Exception: " + e.toString());
-        }
+        isConnConnected = conn.connectTo(NXT, null, NXTCommFactory.ALL_PROTOCOLS);
         // ref the DIS/DOS to class vars
         if (this.isConnConnected) {
-            this.connectedNXTName=theNXTInfo[0].name;
+        	this.connectedNXTName = conn.getNXTInfo().name;
             this.in = new CachingInputStream(this.conn.getInputStream(), 100000); 
             this.out = this.conn.getOutputStream();
             this.isEOF=false; // used to flag EOF
