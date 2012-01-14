@@ -170,10 +170,10 @@ public class TouchPanel extends I2CSensor {
 		  }
 		  X /= READINGS;
 		  Y /= READINGS;
-		  sendData((int)TP_REG_CAL_XD1, (byte)10);
-		  sendData((int)TP_REG_CAL_YD1, (byte)10);
-		  sendData((int)TP_REG_CAL_XT1, (byte)(X&0xFF));
-		  sendData((int)TP_REG_CAL_YT1, (byte)(Y&0xFF));		  
+		  sendData(TP_REG_CAL_XD1, (byte)10);
+		  sendData(TP_REG_CAL_YD1, (byte)10);
+		  sendData(TP_REG_CAL_XT1, (byte)X);
+		  sendData(TP_REG_CAL_YT1, (byte)Y);		  
 
 		  LCD.clear();
 		  LCD.drawString("X: "+X+" Y: "+Y+"   ", 0, 6);
@@ -204,10 +204,10 @@ public class TouchPanel extends I2CSensor {
 		  }
 		  X /= READINGS;
 		  Y /= READINGS;
-		  sendData((int)TP_REG_CAL_XD2, (byte)90);
-		  sendData((int)TP_REG_CAL_YD2, (byte)60);
-		  sendData((int)TP_REG_CAL_XT2, (byte)(X&0xFF));
-		  sendData((int)TP_REG_CAL_YT2, (byte)(Y&0xFF));
+		  sendData(TP_REG_CAL_XD2, (byte)90);
+		  sendData(TP_REG_CAL_YD2, (byte)60);
+		  sendData(TP_REG_CAL_XT2, (byte)X);
+		  sendData(TP_REG_CAL_YT2, (byte)Y);
 
 		  LCD.drawString("X: "+X+" Y: "+Y+"   ", 0, 6);
 		  LCD.drawString("Calibrating.....", 0,7);
@@ -435,6 +435,7 @@ public class TouchPanel extends I2CSensor {
 			while(isDown()) Delay.msDelay(10);
 		}
 		
+		@Override
 		public String toString() {
 			switch(iCode) {
 				case 0: return "L4";
