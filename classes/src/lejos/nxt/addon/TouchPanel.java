@@ -412,7 +412,7 @@ public class TouchPanel extends I2CSensor {
 	/**
 	 * The inner class VirtualButton is used to read the touch panel 8 virtual buttons.
 	 */
-	class VirtualButton {
+	public class VirtualButton {
 		
 		private final byte iCode;
 		private final TouchPanel myTP;

@@ -1,3 +1,5 @@
+package org.lejos.sample.TouchPanelTest;
+
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -5,6 +7,7 @@ import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import lejos.nxt.Sound;
+import lejos.nxt.addon.TouchPanel;
 import lejos.util.Delay;
 
 public class TouchPanelTest {
