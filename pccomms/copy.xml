@@ -65,6 +65,7 @@
   				<include name="lejos/nxt/addon/*.java"/>
   				<exclude name="lejos/nxt/addon/RealTimeClock.java"/>
   				<exclude name="lejos/nxt/addon/DSwitch.java"/>
+  				<exclude name="lejos/nxt/addon/TouchPanel.java"/>
   				<include name="lejos/nxt/addon/package.html"/>
   			</fileset>
   		</copy>
