@@ -78,7 +78,7 @@ public interface RegulatedMotor extends BaseMotor, Tachometer {
   /**
    * Causes motor to rotate to limitAngle;  <br>
    * Then getTachoCount should be within +- 2 degrees of the limit angle when the method returns
-   * @param  limitAngle to which the motor will rotate, and then stop (in degrees). Includes any positive or negative int, even values > 360.
+   * @param  limitAngle to which the motor will rotate, and then stop (in degrees). Includes any positive or negative int, even values &gt; 360.
    */
   public void rotateTo(int limitAngle);
   
@@ -88,7 +88,7 @@ public interface RegulatedMotor extends BaseMotor, Tachometer {
    * and getTachoCount should be within +- 2 degrees if the limit angle
    * If any motor method is called before the limit is reached, the rotation is canceled. 
    * When the angle is reached, the method isMoving() returns false;<br>
-   * @param  limitAngle to which the motor will rotate, and then stop (in degrees). Includes any positive or negative int, even values > 360. 
+   * @param  limitAngle to which the motor will rotate, and then stop (in degrees). Includes any positive or negative int, even values &gt; 360. 
    * @param immediateReturn iff true, method returns immediately, thus allowing monitoring of sensors in the calling thread.
    */
   public void rotateTo(int limitAngle,boolean immediateReturn);  
