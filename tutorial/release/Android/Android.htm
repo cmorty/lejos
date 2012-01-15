@@ -196,44 +196,37 @@
 			those examples create. The reasons will be discussed in the next
 			section on threading.</p>
 			<p>Example -- LeJOSDroid connection method:</p>
-			<div class="CodeBox"><pre><code>
-      
-
-    private final static String TAG = "LeJOSDroid";   			
-    &lt;--- used to label the logging
+			<pre class="CodeBox">private final static String TAG = "LeJOSDroid";
+&lt;--- used to label the logging
       
  
-     
-    public static NXTConnector connect(final CONN_TYPE connection_type) {	
+public static NXTConnector connect(final CONN_TYPE connection_type) {
     &lt;--- method to return connection
-	Log.d(TAG, " about to add LEJOS listener ");
-
-	NXTConnector conn = new NXTConnector();
-	conn.setDebug(true);
-	conn.addLogListener(new NXTCommLogListener() {
-
-	    public void logEvent(String arg0) {
-		Log.e(TAG + " NXJ log:", arg0);
-	    }
-
-	    public void logEvent(Throwable arg0) {
-		Log.e(TAG + " NXJ log:", arg0.getMessage(), arg0);
-	    }
-	});
-
-	switch (connection_type) {   	&lt;--- specifies the connection type i.e. LCP or packet
-	case LEGO_LCP:
-	    conn.connectTo("btspp://NXT", NXTComm.LCP);
-	    break;
-	case LEJOS_PACKET:
-	    conn.connectTo("btspp://");
-	    break;
-	}
+    Log.d(TAG, " about to add LEJOS listener ");
 	
-	return conn;
-
+    NXTConnector conn = new NXTConnector();
+    conn.setDebug(true);
+    conn.addLogListener(new NXTCommLogListener() {
+        public void logEvent(String arg0) {
+            Log.e(TAG + " NXJ log:", arg0);
+        }
+    
+        public void logEvent(Throwable arg0) {
+            Log.e(TAG + " NXJ log:", arg0.getMessage(), arg0);
+        }
+    });
+    
+    switch (connection_type) {      &lt;--- specifies the connection type i.e. LCP or packet
+    case LEGO_LCP:
+        conn.connectTo("btspp://NXT", NXTComm.LCP);
+        break;
+    case LEJOS_PACKET:
+        conn.connectTo("btspp://");
+        break;
     }
-      </code></pre></div>
+    
+    return conn;
+}</pre>
 			<p><a href="#top">Back to top</a></p>
 			<a id="3.2" name="3.2"></a>
 			<h5>Threading</h5>
@@ -288,91 +281,79 @@
 			class is created while passing in the <code>RCNavigationControl</code>
 			instance in the constructor, and the instance is used to update the
 			UI.</p>
-			<div class="CodeBox"><pre><code>
-      public class RCNavigationControl extends javax.swing.JFrame{  //example for PC or MAC
-         ...
-           private RCNavComms communicator = new RCNavComms(this);   
-           &lt;------ This (using an instance to update the UI thread) is dangerous in 
-           Android with potential memory leaks and unpredictable behavior
- }
-  </code></pre></div>
-			<div class="CodeBox"><pre><code>
- public class RCNavComms { //example for PC or MAC
-     RCNavigationControl control;
+			<pre class="CodeBox">public class RCNavigationControl extends javax.swing.JFrame{  //example for PC or MAC
+    ...
+    private RCNavComms communicator = new RCNavComms(this);   
+    &lt;------ This (using an instance to update the UI thread) is dangerous in 
+    Android with potential memory leaks and unpredictable behavior
+}</pre>
+			<pre class="CodeBox">public class RCNavComms { //example for PC or MAC
+    RCNavigationControl control;
 
-     public RCNavComms(RCNavigationControl control)
-     {
-         this.control = control;
-     }
+    public RCNavComms(RCNavigationControl control){
+        this.control = control;
+    }
   
     class Reader extends Thread{
-       ...
-         public void run(){
+        ...
+        public void run(){
             ...
             control.showtRobotPosition(x, y, h);   
             &lt;------ This (using an instance to update the UI thread) is dangerous in 
             Android with potential memory leaks and unpredictable behavior
-            
-         }
+        }
     }     
-}         
-      </code></pre></div>
+}</pre>
 
 			<p>In comparision, the RCNavComms class for the Android example
 			uses a Handler that was passed in through the constructor (instead of
 			the RCNavigationControl instance).</p>
-			<div class="CodeBox"><pre><code>
- public class RCNavComms{ //example for Android
-     Handler mUIMessageHandler;
+			<pre class="CodeBox">public class RCNavComms{ //example for Android
+    Handler mUIMessageHandler;
 
-     public RCNavComms(Handler mUIMessageHandler){
-         this.mUIMessageHandler=mUIMessageHandler;
+    public RCNavComms(Handler mUIMessageHandler){
+        this.mUIMessageHandler=mUIMessageHandler;
     }
      
     public void sendPosToUIThread(float x, float y, float h) {
-  	     float[] pos= {x,y,h};
-  	     Bundle b = new Bundle();
-  	     b.putFloatArray(RCNavigationControl.ROBOT_POS, pos);
-  	     Message message_holder = new Message();
-		 message_holder.setData(b);
-		 mUIMessageHandler.sendMessage(message_holder);
-	}
+        float[] pos= {x,y,h};
+        Bundle b = new Bundle();
+        b.putFloatArray(RCNavigationControl.ROBOT_POS, pos);
+        Message message_holder = new Message();
+        message_holder.setData(b);
+        mUIMessageHandler.sendMessage(message_holder);
+    }
   
     class Reader extends Thread{
-       ...
-         public void run(){
-         ...
+        ...
+        public void run(){
+            ...
             sendPosToUIThread(x, y, h);  &lt;------ Sends a message via a Handler
-            
-         }
+        }
     }     
-}         
-      </code></pre></div>
-			<div class="CodeBox"><pre><code>
-      
-       public class RCNavigationControl extends TabActivity{ //example for Android
-       ...
-      	class UIMessageHandler extends Handler {
-		float[] pos;
+}</pre>
+			<pre class="CodeBox">public class RCNavigationControl extends TabActivity{ //example for Android
+    ...
+    class UIMessageHandler extends Handler {
+        float[] pos;
 
-		@Override
-		public void handleMessage(Message msg) {
-			//Log.d(TAG, "handleMessage");
-			switch (msg.what) {
+        @Override
+        public void handleMessage(Message msg) {
+            //Log.d(TAG, "handleMessage");
+            switch (msg.what) {
 
-				case LeJOSDroid.MESSAGE:
-					//Log.d(TAG, (String) msg.getData().get(LeJOSDroid.MESSAGE_CONTENT));
-					mMessage.setText((String) msg.getData().get(LeJOSDroid.MESSAGE_CONTENT));
-					break;
+                case LeJOSDroid.MESSAGE:
+                    //Log.d(TAG, (String) msg.getData().get(LeJOSDroid.MESSAGE_CONTENT));
+                    mMessage.setText((String) msg.getData().get(LeJOSDroid.MESSAGE_CONTENT));
+                    break;
 
-				default:
-					pos = msg.getData().getFloatArray(ROBOT_POS);
-					showtRobotPosition(pos[0], pos[1], pos[2]);
-			}
-
-		}
-	}
-      </code></pre></div>
+                default:
+                    pos = msg.getData().getFloatArray(ROBOT_POS);
+                    showtRobotPosition(pos[0], pos[1], pos[2]);
+            }
+        }
+    }
+}</pre>
 			<p>Please see the documentation to learn <a
 				href=">http://developer.android.com/reference/android/os/Handler.html"
 				target="_blank">more about Handlers</a>. While the
@@ -400,14 +381,12 @@
 			is to enable correct functioning when the application resumes from <code>onPause()</code>.
 
 			</p>
-			<div class="CodeBox"><pre><code> 
-       	@Override
-	    protected void onResume() {
-		    super.onResume();
-		    mUIMessageHandler = new UIMessageHandler();
-		    communicator = new RCNavComms(mUIMessageHandler);
-	}
-	</code></pre></div>
+			<pre class="CodeBox">    @Override
+    protected void onResume() {
+        super.onResume();
+        mUIMessageHandler = new UIMessageHandler();
+        communicator = new RCNavComms(mUIMessageHandler);
+    }</pre>
 			<p><a href="#top">Back to top</a></p>
 			<div class="NavBit">
 				<a target="_top" href="../Behaviors/BehaviorProgramming.htm">&#171;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;

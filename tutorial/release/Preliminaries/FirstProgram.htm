@@ -40,59 +40,45 @@
       <h4>The HelloWorld program</h4>
       <p> Let us start with a simple &#8220;Hello World&#8221; program. We will
       create a HelloWorld class in the default java package: </p>
-      <div class="CodeBox">
-      <pre><code>
-      public class HelloWorld
-      {
-      }
-      </code></pre>
-      </div>
+      <pre class="CodeBox">public class HelloWorld
+{
+
+}</pre>
       <p> leJOS requires the standard main method for the program entry point: </p>
-      <div class="CodeBox">
-      <pre><code>
-      public class HelloWorld {
-        public static void main (String[] args) {
-        }
-      }
-      </code></pre>
-      </div>
+      <pre class="CodeBox">public class HelloWorld {
+  public static void main (String[] args) {
+  
+  }
+}</pre>
       <p> leJOS NXJ supports the standard java System.out.println method and scroll the output on the NXT LCD screen. </p>
-      <div class="CodeBox">
-      <pre><code>
-      public class HelloWorld {
-        public static void main (String[] args) {
-          System.out.println("Hello World");
-        }
-      }
-      </code></pre>
-      </div>
+      <pre class="CodeBox">public class HelloWorld {
+  public static void main (String[] args) {
+    System.out.println("Hello World");
+  }
+}</pre>
       <p>If you run this program as it is, it will display Hello World&#8221;
       and then immediately return to the menu, so you will not be able to see
       what is displayed (unless you are very quick). </p>
       <p>We either need the program to sleep for a while to allow the
       text to be read, or to wait for a button to be pressed. Let us wait for
-      a button to be pressed. To do this we need to include the leJOS NXJ
-      Button class in the program. Button is in the lejos.nxt package. We can
-      either include lejos.nxt.Button or lejos.nxt.* to allow any of the
-      standard lejos.nxt classes to be used in the program. The Button class
-      has a method waitForPress() that waits for any button to be pressed.
-      You can find out what methods a class supports by looking at the <a href="http://lejos.sourceforge.net/nxt/nxj/api/index.html" target="_blank">API
-      documentation</a>. </p>
+      a button to be pressed. In order to do this, we can call the 
+      waitForAnyPress() method of the Button class which is provided by leJOS.
+      But first, we need to import the leJOS NXJ Button class in the program.
+      Button is in the lejos.nxt package, so its full name is lejos.nxt.Button.
+      You can find out what methods a class supports by looking at the
+      <a href="http://lejos.sourceforge.net/nxt/nxj/api/index.html" target="_blank">API
+      documentation</a>.</p>
       <p>The API documentation is on the leJOS web site here and
-      included in the leJOS download in the docs folder of the classes project. </p>
+      included in the leJOS download in the docs/nxt subfolder. </p>
       <p>The complete HelloWorld program is: </p>
-      <div class="CodeBox">
-      <pre><code>
-      import lejos.nxt.*;
-      
-      public class HelloWorld {
-        public static void main (String[] args) {
-          System.out.println("Hello World");
-          Button.waitForPress();
-        }
-      }
-      </code></pre>
-      </div>
+      <pre class="CodeBox">import lejos.nxt.Button;
+
+public class HelloWorld {
+  public static void main (String[] args) {
+    System.out.println("Hello World");
+    Button.waitForAnyPress();
+  }
+}</pre>
       
       <p>Read the next section to learn how to compile and run this program</p>
       <p> <a href="#top">Back to top</a> </p>

@@ -86,14 +86,12 @@
 			<p>The following ExceptionTest example demonstrates what happens for an exception that is not caught &#8211; in this case an
 			ArrayIndexOutOfBounds exception.</p>
 			
-			<div class="CodeBox">
-			<pre><code>
-public class ExceptionTest {
+			<pre class="CodeBox">public class ExceptionTest {
     static void m1()
     {
-		int test[] = new int[2];
+        int test[] = new int[2];
         // Force an exception
-		test[0] = test[1] + test[2]; // This is line 6
+        test[0] = test[1] + test[2]; // This is line 6
     }
 
     static void m2()
@@ -101,25 +99,19 @@ public class ExceptionTest {
         m1();
     }
 
-	public static void main (String[] aArg) throws Exception
-	{
+    public static void main (String[] aArg) throws Exception
+    {
         System.out.println("Running");
         m2();
-	}
-}
-			</code></pre>
-			</div>
+    }
+}</pre>
             <p>
                 When this code is run the NXT will display the uncaught exception screen. Which looks something like this:
             </p>
-			<div class="CodeBox">
-			<pre><code>
-Exception: 28
+			<pre class="CodeBox">Exception: 28
   at:  20(11)
   at:  21(1)
-  at:  22(9)
-			</code></pre>
-			</div>
+  at:  22(9)</pre>
             <p>
                 But what are these numbers telling us? The first line tells us the number of the exception class that
                 has been thrown, in this case class 28. The following lines show us a mini stack trace, one for each method
@@ -130,9 +122,7 @@ Exception: 28
                 So we now understand what the numbers are, but how do we relate them to our program? Well one way is to use
                 the verbose output from the linker, an abbreviated version of which looks like this:
             </p>
-			<div class="CodeBox">
-			<pre><code>
-Class 0: java.lang.Object
+			<pre class="CodeBox">Class 0: java.lang.Object
 Class 1: java.lang.Throwable
 Class 2: java.lang.Error
 Class 3: java.lang.OutOfMemoryError
@@ -194,9 +184,7 @@ Method 23: lejos.nxt.VM.&lt;clinit&gt; PC 2304 Signature id 3
 Method 24: lejos.nxt.VM.&lt;init&gt;() PC 2323 Signature id 2
 Method 25: lejos.nxt.VM.getVM() PC 2358 Signature id 177
 Method 26: lejos.nxt.VM.memPeek(int, int, int) Native id 103
-.... other methods omitted
-			</code></pre>
-			</div>
+.... other methods omitted</pre>
             <p>
                 We can use the class table to look up the exception class, in this
                 case class 28 is java.lang.ArrayIndexOutOfBoundsException so we know we have an array out of bounds
@@ -210,23 +198,18 @@ Method 26: lejos.nxt.VM.memPeek(int, int, int) Native id 103
                 require an additional linker option -od which tells the linker to output extra debug information to the 
                 specified file. Once we have this file we can use the NXJDebugTool to decode the exception data as shown below:
             </p>
-			<div class="CodeBox">
-			<pre><code>
-C:\samples\ExceptionTest&gt;nxjc ExceptionTest.java
+			<pre class="CodeBox">C:\samples\ExceptionTest&gt;nxjc ExceptionTest.java
 C:\samples\ExceptionTest&gt;nxjlink -o ExceptionTest.nxj -od ExceptionTest.nxd ExceptionTest
 C:\samples\ExceptionTest&gt;nxjdebugtool -di ExceptionTest.nxd -c -m 28 20 11
 
 The class number 28 refers to:
   java.lang.ArrayIndexOutOfBoundsException (ArrayIndexOutOfBoundsException.java)
 
-
 The method number 20 refers to:
   ExceptionTest.m1()V (ExceptionTest.java)
 
 PC 11 refers to:
-  line 6 in ExceptionTest.java
-			</code></pre>
-			</div>
+  line 6 in ExceptionTest.java</pre>
             <p>Which as you can see tells you exactly which line in the source code the exception was thrown on.</p>
             <p>The final option is to make use of the leJOS remote console application (see below for more details).
             again we need some extra linker options, this time -od to create the debug information and -gr to add
@@ -236,9 +219,7 @@ PC 11 refers to:
             (in this case "Running") and finally
             the exception information will be displayed by the remote console in an easy to understand form. See below
             for an example of this:</p>
-			<div class="CodeBox">
-			<pre><code>
-C:\samples\ExceptionTest&gt;nxjc ExceptionTest.java
+			<pre class="CodeBox">C:\samples\ExceptionTest&gt;nxjc ExceptionTest.java
 C:\samples\ExceptionTest&gt;nxjlink -gr -o ExceptionTest.nxj -od ExceptionTest.nxd ExceptionTest
 C:\samples\ExceptionTest&gt;nxjupload -r ExceptionTest.nxj
 Found NXT: nxt2 001653015066
@@ -255,9 +236,7 @@ Exception: java.lang.ArrayIndexOutOfBoundsException
  at: ExceptionTest.m1(ExceptionTest.java:6)
  at: ExceptionTest.m2(ExceptionTest.java:12)
  at: ExceptionTest.main(ExceptionTest.java:18)
-Console closed
-			</code></pre>
-			</div>
+Console closed</pre>
 			<a name="2"></a>
 			<h4>Data Aborts</h4>
 			<p>If the leJOS firmware crashes you will normally a Data Abort. The screen shows the PC value
@@ -323,12 +302,12 @@ Console closed
 			<p>This closes the USB or Bluetooth connection. </p>
 			<p>Example:</p>
 			
-			<div class="CodeBox">
-			<pre><code>
-import lejos.nxt.*;
+			<pre class="CodeBox">import lejos.nxt.*;
 import lejos.nxt.comm.*;
 
-/** * example using RConsole*/
+/**
+ * example using RConsole
+ */
 public class TestRConsole {  
   public static void main(String[] args) {
     RConsole.open();
@@ -341,9 +320,7 @@ public class TestRConsole {
     RConsole.close();
     Button.waitForPress();
   }
-}
-			</code></pre>
-			</div>
+}</pre>
 
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 			<p>

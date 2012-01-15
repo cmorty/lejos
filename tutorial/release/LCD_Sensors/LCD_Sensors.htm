@@ -108,9 +108,7 @@
 			
 			<p>Example:</p>
 			
-		    <div class="CodeBox">
-			<pre><code>
-import lejos.nxt.*;
+		    <pre class="CodeBox">import lejos.nxt.*;
 import java.io.*;
 
 public class LCDTest {
@@ -119,8 +117,7 @@ public class LCDTest {
     LCD.drawInt((int) System.getRuntime().freeMemory(), 6, 9, 0);
     Thread.sleep(2000);
   }
-}			</code></pre>
-			</div>
+}</pre>
 			
 			<p>Note that you can also write to the LCD display with System.out.println(String str). This scrolls the display up one line
 			and writes to the bottom line of the screen.</p>
@@ -146,9 +143,7 @@ public class LCDTest {
 			
 			<p>Example:</p>
 			
-			<div class="CodeBox">
-			<pre><code>
-import javax.microedition.lcdui.Graphics;
+			<pre class="CodeBox">import javax.microedition.lcdui.Graphics;
 
 public class GraphicsSample {
 	
@@ -158,9 +153,7 @@ public class GraphicsSample {
     g.drawRect(62, 10, 25, 35);
     Thread.sleep(2000);
   }
-}			
-			</code></pre>
-			</div>
+}</pre>
 			
 			<p><a href="#top">Back to top</a></p>
 			
@@ -179,9 +172,7 @@ public class GraphicsSample {
 				<li><p>boolean isPressed()</p></li>
 			</ul>
 			<p>Example:</p>
-			<div class="CodeBox">
-			<pre><code>
-import lejos.nxt.*;
+			<pre class="CodeBox">import lejos.nxt.*;
 
 public class ButtonPresses {
   public static void main(String[] args) throws Exception {
@@ -193,9 +184,7 @@ public class ButtonPresses {
       if (Button.RIGHT.isPressed()) LCD.drawString("RIGHT", 0, 0);
     }
   }
-}
-			</code></pre>
-			</div>
+}</pre>
 			
 			<p>To wait for a specific button to be pressed and released, you use:</p>
 			<ul class="BlueArrows">
@@ -203,9 +192,7 @@ public class ButtonPresses {
 			</ul>
 			
 			<p>Example:</p>
-			<div class="CodeBox">
-			<pre><code>
-import lejos.nxt.*;
+			<pre class="CodeBox">import lejos.nxt.*;
 
 public class ButtonTest
 {
@@ -216,8 +203,7 @@ public class ButtonTest
 		LCD.drawString("Finished", 3, 4);
 		Thread.sleep(2000);
 	}
-}
-			</code></pre></div>
+}</pre>
 
 			<p>To wait for any button to be pressed, you use:</p>
 			<ul class="BlueArrows">
@@ -254,25 +240,23 @@ public class ButtonTest
 			</ul>
 			
 			<p>Example:</p>
-			<div class="CodeBox">
-			<pre><code>
-import lejos.nxt.*;
+			<pre class="CodeBox">import lejos.nxt.*;
 
 public class PlayTones {
 
-     private static final short [] note = {2349,115, 0,5, 1760,165, 0,35};
+	private static final short[] note = {2349,115, 0,5, 1760,165, 0,35};
 
-     public static void main(String [] args) throws Exception {
-        for(int i=0;i &lt;note.length; i+=2) {
-           short w = note[i+1];
-           int n = note[i];
-           if (n != 0) Sound.playTone(n, w*10);
-           Thread.sleep(w*10);
-        }
-     }
-  }
-			</code></pre>
-			</div>
+	public static void main(String [] args) throws Exception {
+		for(int i=0;i &lt;note.length; i+=2) {
+			short w = note[i+1];
+			int n = note[i];
+			if (n != 0) {
+				Sound.playTone(n, w*10);
+			}
+			Thread.sleep(w*10);
+		}
+	}
+}</pre>
 			<p>There are two ways to play system sounds. One is:</p>
 			<ul class="BlueArrows">
 				<li><p>void	systemSound (boolean aQueued, int aCode)</p>
@@ -332,18 +316,14 @@ public class PlayTones {
 			</ul>
 			
 			<p>Example:</p>
-			<div class="CodeBox">
-			<pre><code>
-import lejos.nxt.*;
+			<pre class="CodeBox">import lejos.nxt.*;
 
 public class BatteryTest {
   public static void main(String[] args) throws Exception {
     LCD.drawString("Battery: " + Battery.getVoltage(), 0, 0);
     Thread.sleep(2000);
   }
-}
-			</code></pre>
-			</div>			
+}</pre>			
 			
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 			<p/>
@@ -375,9 +355,7 @@ public class BatteryTest {
 			</ul>
 			
 			<p>Example:</p>
-			<div class="CodeBox">
-			<pre><code>
-import lejos.nxt.*;
+			<pre class="CodeBox">import lejos.nxt.*;
 
 public class TouchTest {
   public static void main(String[] args) throws Exception {
@@ -386,10 +364,7 @@ public class TouchTest {
     while (!touch.isPressed() ;
     LCD.drawString("Finished", 3, 4);
   }
-}
-
-			</code></pre>
-			</div>			
+}</pre>			
 			
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 			<p/>
@@ -404,9 +379,7 @@ public class TouchTest {
 			</ul>
 
 			<p>Example:</p>
-			<div class="CodeBox">
-			<pre><code>
-import lejos.nxt.*;
+			<pre class="CodeBox">import lejos.nxt.*;
 
 public class LightTest {
   public static void main(String[] args) throws Exception {
@@ -419,9 +392,7 @@ public class LightTest {
       LCD.drawInt(SensorPort.S1.readValue(), 4, 0, 3);
     }
   }
-}			
-			</code></pre>
-			</div>			
+}</pre>			
 			
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 			<p><a href="#top">Back to top</a></p>
@@ -447,9 +418,7 @@ public class LightTest {
 			<p>Example using DB mode only:</p>
 			<p>The above example gives a graphical display of the way the sound reading varies over a two-second period.</p>
 			
-			<div class="CodeBox">
-			<pre><code>
-import lejos.nxt.*;
+			<pre class="CodeBox">import lejos.nxt.*;
 
 public class SoundScope {
   public static void main(String[] args) throws Exception {
@@ -463,9 +432,7 @@ public class SoundScope {
       }
     }
   }
-}
-			</code></pre>
-			</div>			
+}</pre>			
 			
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 			<p/>
@@ -489,9 +456,7 @@ public class SoundScope {
 			
 								
 			<p>Example:</p>
-			<div class="CodeBox">
-			<pre><code>
-import lejos.nxt.*;
+			<pre class="CodeBox">import lejos.nxt.*;
 
 public class SonicTest {
   public static void main(String[] args) throws Exception {
@@ -505,9 +470,7 @@ public class SonicTest {
       LCD.drawInt(sonic.getDistance(), 0, 3);
     }
   }
-}			
-			</code></pre>
-			</div>
+}</pre>
 			<p>When in ping	mode, a ping is sent only when a call is made to</p>
 			<ul class="BlueArrows">
 				<li><p>void ping()</p><p>This sets the sensor in ping mode and sends a
