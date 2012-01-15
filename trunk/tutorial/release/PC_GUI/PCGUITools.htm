@@ -199,13 +199,9 @@
 				<p>The program being monitored should
 				include the following code in its start-up sequence:</p>
 				
-				<div class="CodeBox">
-				<pre><code>
-LCPBTResponder lcpThread = new LCPBTResponder();
+				<pre class="CodeBox">LCPBTResponder lcpThread = new LCPBTResponder();
 lcpThread.setDaemon(true);
-lcpThread.start();
-				</code></pre>
-				</div>
+lcpThread.start();</pre>
 			
 				<p>On the PC, the NXJ Monitor tool
 				should be run. NXJ Monitor lists the NXTs available over Bluetooth

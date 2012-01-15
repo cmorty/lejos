@@ -242,9 +242,7 @@
 				This behavior  remains active as long as the motors are turning. 
 				The method code is:</p>
 				
-				<div class="CodeBox">
-				<pre><code>
-public void action() {
+				<pre class="CodeBox">public void action() {
     suppressed = false;  // standard first line of action
     Motor.A.forward();
     Motor.C.forward();
@@ -252,21 +250,15 @@ public void action() {
         Thread.yield(); // wait for  suppressed to be called
     Motor.A.stop(); // clean up 
     Motor.C.stop();
-   }
-				</code></pre>
-				</div>
+}</pre>
    
 				<p>That was easy enough! Now the
 				standard suppress() method will stop this action when it is called:
 				</p>
 				
-				<div class="CodeBox">
-				<pre><code>
-public void suppress() {
+				<pre class="CodeBox">public void suppress() {
     suppressed = true;
-    }
-</code></pre>
-				</div>
+}</pre>
 
 				<p>So far, so good. Now we need to
 				implement a method to tell Arbitrator when this behavior should
@@ -278,29 +270,20 @@ public void suppress() {
 				rest assured that higher level behaviors will be able to cut in on
 				this behavior when the need arises. The method appears as follows:</p>
 				
-				<div class="CodeBox">
-
-				<pre><code>
-public boolean takeControl() {
+				<pre class="CodeBox">public boolean takeControl() {
     return true;
-    }
-				</code></pre>
-				</div>
+}</pre>
 
 				<p>That's all it takes to define our
 				first behavior to drive the robot forward. The complete code
 				listing for this class is as follows:</p>
 				
-				<div class="CodeBox">
-				<pre><code>
-import lejos.subsumption.*;
+				<pre class="CodeBox">import lejos.subsumption.*;
 import lejos.nxt.*;
 
 public class DriveForward  implements Behavior {
 
    private boolean suppressed = false;
-
-
 
    public boolean takeControl() {
       return true;
@@ -318,10 +301,8 @@ public class DriveForward  implements Behavior {
      while( !suppressed ) Thread.yield();
      Motor.A.stop(); // clean up
      Motor.C.stop();
-
-}
-				</code></pre>
-				</div>
+   }
+}</pre>
 
 				
 				<p>The second behavior is a little
@@ -333,13 +314,9 @@ public class DriveForward  implements Behavior {
 				that does it: 
 				</p>
 				
-				<div class="CodeBox">
-				<pre><code>
-public boolean takeControl() {
+				<pre class="CodeBox">public boolean takeControl() {
   return touch.isPressed() || sonar.getDistance() &#60; 25;
-}
-				</code></pre>
-				</div>
+}</pre>
 				
 				<p> This assumes that a TouchSensor object has been created in an instance variable called <i>touch</i>
 				and a new  UltraSonicSensor object has been assigned to the variable <i>sonar</i>.</p>
@@ -348,9 +325,7 @@ public boolean takeControl() {
 				and rotate when it detects  an object, so we will define the
 				action() method as follows:</p>
 				
-				<div class="CodeBox">
-				<pre><code>
-public void action()
+				<pre class="CodeBox">public void action()
 {
     suppressed = false;
     Motor.A.rotate(-180, true);
@@ -362,67 +337,54 @@ public void action()
         Motor.A.stop();
         Motor.C.stop();
     }
-}
-
-				</code></pre>
-				</div>
+}</pre>
 				
 				<p> We use the standard suppress() method here too.</p>
 				
-				<div class="CodeBox">
-
-				<pre><code>
-public void suppress {
+				<pre class="CodeBox">public void suppress {
   suppressed = true;
-}
-				</code></pre>
-				</div>
+}</pre>
 
 				<p>The complete listing for this behavior is as follows:</p>
 				
-				<div class="CodeBox">
-				<pre><code>
-import lejos.subsumption.*;
-
+				<pre class="CodeBox">import lejos.subsumption.*;
 import lejos.nxt.*;
 
 public class HitWall implements Behavior {
-    public HitWall(SensorPort port )
-    {
-        sonar = new UltrasonicSensor( port );
-    }
     private boolean suppressed = false;
     private TouchSensor touch;
     private UltrasonicSensor sonar;
     private boolean suppressed = false;
+    
+    public HitWall(SensorPort port )
+    {
+       sonar = new UltrasonicSensor( port );
+    }
 
-   public boolean takeControl() {
-      return touch.isPressed() || sonar.getDistance() &#60; 25;
-   }
+    public boolean takeControl() {
+       return touch.isPressed() || sonar.getDistance() &#60; 25;
+    }
 
-   public void suppress() {
-      suppressed = true;
-   }
+    public void suppress() {
+       suppressed = true;
+    }
 
+    public void action() {
 
-public void action() {
+       // Back up  and turn
 
-   // Back up  and turn
+       suppressed = false;
 
-   suppressed = false;
+       Motor.A.rotate(-180, true);
+       Motor.C.rotate(-360, true);
 
-   Motor.A.rotate(-180, true);
-   Motor.C.rotate(-360, true);
-
-   while( Motor.C.isRotating() &amp; !suppressed )
+       while( Motor.C.isRotating() &amp; !suppressed )
          Thread.yield();
 
-   Motor.A.stop();
-   Motor.C.stop();
-
-  }  
-				</code></pre>
-				</div>
+       Motor.A.stop();
+       Motor.C.stop();
+    }
+}</pre>
 
 				<p>We now have our two behaviors
 				defined, and it's a simple matter to make a class with a main()
@@ -430,9 +392,7 @@ public void action() {
 				of our behavior objects, and instantiate and start the Arbitrator
 				as shown in the following code listing:</p>
 				
-				<div class="CodeBox">
-				<pre><code>
-import lejos.subsumption.*;
+				<pre class="CodeBox">import lejos.subsumption.*;
 
 public class BumperCar {
    public static void main(String [] args) {
@@ -442,9 +402,7 @@ public class BumperCar {
       Arbitrator arby = new Arbitrator(bArray);
       arby.start();
    }
-}
-				</code></pre>
-				</div>
+}</pre>
 
 				<p>The above code is fairly easy to
 				understand. The first two lines in the main() method create
@@ -466,9 +424,7 @@ public class BumperCar {
 				Examine the completed Behavior:</p>
 
 				
-				<div class="CodeBox">
-				<pre><code>
-import lejos.subsumption.*;
+				<pre class="CodeBox">import lejos.subsumption.*;
 import lejos.nxt.*;
 
 public class BatteryLow implements Behavior {
@@ -511,9 +467,7 @@ public class BatteryLow implements Behavior {
          if (suppressed) return; // exit this method if suppress is called
       }
    }
-}
-				</code></pre>
-				</div>	
+}</pre>	
 							
 				<p>The complete tune is stored in the
 				note array at line 6 and the method to play the notes is at line
@@ -533,10 +487,7 @@ public class BatteryLow implements Behavior {
 				scheme is a trivial task. We simply alter the code of our main
 				class as follows:</p>
 				
-				<div class="CodeBox">
-
-				<pre><code>
-import lejos.subsumption.*;
+				<pre class="CodeBox">import lejos.subsumption.*;
 
 public class BumperCar {
    public static void main(String [] args) {
@@ -547,9 +498,7 @@ public class BumperCar {
       Arbitrator arby = new Arbitrator(bArray);
       arby.start();
    }
-}
-				</code></pre>
-				</div>
+}</pre>
 
 				<p>Note: The voltage level of the NXT
 				at rest is different from the voltage when in action. The voltage

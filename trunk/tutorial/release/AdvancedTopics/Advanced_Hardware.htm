@@ -229,11 +229,7 @@
 				
 				<p>Example:</p>
 				
-				<div class="CodeBox">
-				<pre><code>
-NXTMotor m1 = new NXTMotor(MotorPort.A);				
-				</code></pre>
-				</div>
+				<pre class="CodeBox">NXTMotor m1 = new NXTMotor(MotorPort.A);</pre>
 						
 				<a name="2.3"></a>
 				<h5>RCXMotor</h5>	
@@ -256,11 +252,7 @@ NXTMotor m1 = new NXTMotor(MotorPort.A);
 				
 				<p>Example:</p>
 				
-				<div class="CodeBox">
-				<pre><code>
-RCXMotor rcxMotor = new RCXMotor(MotorPort.A);				
-				</code></pre>
-				</div>
+				<pre class="CodeBox">RCXMotor rcxMotor = new RCXMotor(MotorPort.A);</pre>
 				
 				<p>You can use RCX Motors with leJOS NXJ by connecting them with the conversion cables that can be purchased from 
 				LEGO (and are bundled with the LEGO MINDSTORMS NXT educational kits). You can also use the RCXMotor class to control
@@ -460,9 +452,7 @@ RCXMotor rcxMotor = new RCXMotor(MotorPort.A);
 				</p>
 				
 				<p>The types of sensors are:</p>
-				<div class="CodeBox">
-				<pre><code>       
-TYPE_NO_SENSOR = 0
+				<pre class="CodeBox">TYPE_NO_SENSOR = 0
 TYPE_SWITCH = 1
 TYPE_TEMPERATURE = 2
 TYPE_REFLECTION = 3
@@ -479,23 +469,17 @@ TYPE_COLORFULL = 13
 TYPE_COLORRED = 14
 TYPE_COLORGREEN = 15
 TYPE_COLORBLUE = 16
-TYPE_COLORNONE = 17
-				</code></pre>
-				</div>
+TYPE_COLORNONE = 17</pre>
 
 				<p>and the modes are:</p>
-				<div class="CodeBox">
-				<pre><code>       
-MODE_RAW = 0x00
+				<pre class="CodeBox">MODE_RAW = 0x00
 MODE_BOOLEAN = 0x20
 MODE_TRANSITIONCNT = 0x40
 MODE_PERIODCOUNTER = 0x60
 MODE_PCTFULLSCALE = 0x80
 MODE_CELSIUS = 0xA0
 MODE_FARENHEIT = 0xC0
-MODE_ANGLESTEP = 0xE0
-				</code></pre>
-				</div>
+MODE_ANGLESTEP = 0xE0</pre>
 				
 
 				<p>The BasicSensorPort interface
@@ -1067,11 +1051,7 @@ MODE_ANGLESTEP = 0xE0
 				
 				<p>For example:</p>
 				
-				<div class="CodeBox">
-				<pre><code>
-RCXLightSensor light = new RCXLightSensor(SensorPort.S1);
-				</code></pre>
-				</div>
+				<pre class="CodeBox">RCXLightSensor light = new RCXLightSensor(SensorPort.S1);</pre>
 				
 				<p>The RCX light sensor is automatically activated, so current is applied to it and the LED
 				comes on. It can be passivated and activated explicitly.</p>
@@ -1188,15 +1168,11 @@ RCXLightSensor light = new RCXLightSensor(SensorPort.S1);
                 <p>To use a port with I2C it must be enabled. When I2C operation is no longer required it should
                     be disabled. The enable method also sets the operating
                    mode of the port. The available operating modes are:</p>
-				<div class="CodeBox">
-				<pre><code>
-STANDARD_MODE = 0
+				<pre class="CodeBox">STANDARD_MODE = 0
 LEGO_MODE = 1
 ALWAYS_ACTIVE = 2
 NO_RELEASE = 4
-HIGH_SPEED = 8
-				</code></pre>
-				</div>
+HIGH_SPEED = 8</pre>
                 <p>The mode normally used is <b>LEGO_MODE</b>. This offers compatibility with the standard
                    Lego firmware. The bus will operate at 9.6Kbps and will add delays to be
                    compatible with the Lego Ultrasonic sensor. This mode will normally work with all NXT compatible devices.
