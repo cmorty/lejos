@@ -1413,6 +1413,8 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	private String toHex(byte[] b) {
 		StringBuilder output = new StringBuilder();
 		for (int i = 0; i < b.length; i++) {
+			if (i > 0)
+				output.append(' ');
 			byte j = b[i];
 			output.append(Character.forDigit((j >> 4) & 0xF, 16));
 			output.append(Character.forDigit(j & 0xF, 16));
