@@ -647,7 +647,7 @@
 		motor power to maintain constant speed between adjustments. To use an unregulated 
 	    Motor you must create an instance of the class NXTMotor. For example: </p>
 	    
-	   <pre class="CodeBox">NXTMotor m1 = new NXTMotor(MotorPort.A);</pre>
+	   <pre class="CodeBox"><code>NXTMotor m1 = new NXTMotor(MotorPort.A);</code></pre>
 	   
 	   <p>NXTMotor has many of the methods of NXTRegulatedMotor, but instead of the setSpeed method, it has a setPower method,
 	      and, as it has no regulation thread, it does not support any of the rotate methods.</p>

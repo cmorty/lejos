@@ -196,7 +196,7 @@
 			those examples create. The reasons will be discussed in the next
 			section on threading.</p>
 			<p>Example -- LeJOSDroid connection method:</p>
-			<pre class="CodeBox">private final static String TAG = "LeJOSDroid";
+			<pre class="CodeBox"><code>private final static String TAG = "LeJOSDroid";
 &lt;--- used to label the logging
       
  
@@ -226,7 +226,7 @@ public static NXTConnector connect(final CONN_TYPE connection_type) {
     }
     
     return conn;
-}</pre>
+}</code></pre>
 			<p><a href="#top">Back to top</a></p>
 			<a id="3.2" name="3.2"></a>
 			<h5>Threading</h5>
@@ -281,13 +281,13 @@ public static NXTConnector connect(final CONN_TYPE connection_type) {
 			class is created while passing in the <code>RCNavigationControl</code>
 			instance in the constructor, and the instance is used to update the
 			UI.</p>
-			<pre class="CodeBox">public class RCNavigationControl extends javax.swing.JFrame{  //example for PC or MAC
+			<pre class="CodeBox"><code>public class RCNavigationControl extends javax.swing.JFrame{  //example for PC or MAC
     ...
     private RCNavComms communicator = new RCNavComms(this);   
     &lt;------ This (using an instance to update the UI thread) is dangerous in 
     Android with potential memory leaks and unpredictable behavior
-}</pre>
-			<pre class="CodeBox">public class RCNavComms { //example for PC or MAC
+}</code></pre>
+			<pre class="CodeBox"><code>public class RCNavComms { //example for PC or MAC
     RCNavigationControl control;
 
     public RCNavComms(RCNavigationControl control){
@@ -303,12 +303,12 @@ public static NXTConnector connect(final CONN_TYPE connection_type) {
             Android with potential memory leaks and unpredictable behavior
         }
     }     
-}</pre>
+}</code></pre>
 
 			<p>In comparision, the RCNavComms class for the Android example
 			uses a Handler that was passed in through the constructor (instead of
 			the RCNavigationControl instance).</p>
-			<pre class="CodeBox">public class RCNavComms{ //example for Android
+			<pre class="CodeBox"><code>public class RCNavComms{ //example for Android
     Handler mUIMessageHandler;
 
     public RCNavComms(Handler mUIMessageHandler){
@@ -331,8 +331,8 @@ public static NXTConnector connect(final CONN_TYPE connection_type) {
             sendPosToUIThread(x, y, h);  &lt;------ Sends a message via a Handler
         }
     }     
-}</pre>
-			<pre class="CodeBox">public class RCNavigationControl extends TabActivity{ //example for Android
+}</code></pre>
+			<pre class="CodeBox"><code>public class RCNavigationControl extends TabActivity{ //example for Android
     ...
     class UIMessageHandler extends Handler {
         float[] pos;
@@ -353,7 +353,7 @@ public static NXTConnector connect(final CONN_TYPE connection_type) {
             }
         }
     }
-}</pre>
+}</code></pre>
 			<p>Please see the documentation to learn <a
 				href=">http://developer.android.com/reference/android/os/Handler.html"
 				target="_blank">more about Handlers</a>. While the
@@ -381,12 +381,12 @@ public static NXTConnector connect(final CONN_TYPE connection_type) {
 			is to enable correct functioning when the application resumes from <code>onPause()</code>.
 
 			</p>
-			<pre class="CodeBox">    @Override
+			<pre class="CodeBox"><code>    @Override
     protected void onResume() {
         super.onResume();
         mUIMessageHandler = new UIMessageHandler();
         communicator = new RCNavComms(mUIMessageHandler);
-    }</pre>
+    }</code></pre>
 			<p><a href="#top">Back to top</a></p>
 			<div class="NavBit">
 				<a target="_top" href="../Behaviors/BehaviorProgramming.htm">&#171;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;

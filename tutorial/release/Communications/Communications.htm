@@ -129,20 +129,20 @@
 			to an reference variable that implements that interface. </p>
 			
       		<p>Bluetooth Example:</p>
-      		<pre class="CodeBox">NXTConnection connection = Bluetooth.waitForConnection();</pre>
+      		<pre class="CodeBox"><code>NXTConnection connection = Bluetooth.waitForConnection();</code></pre>
 
       		<p>You need to ensure that Bluetooth power and
 			visibility are on before calling this method. The leJOS NXJ start-up
 			menu can be used to do this.</p>
 			
       		<p>USB Example:</p>
-      		<pre class="CodeBox">NXTConnection connection = USB.waitForConnection();</pre>
+      		<pre class="CodeBox"><code>NXTConnection connection = USB.waitForConnection();</code></pre>
 
       		<p>You need to ensure that the USB cable is connected before calling this method.</p>
       
       		<p>Here is an example program that selects between USB and Bluetooth at run time:</p>
       	
-      	    <pre class="CodeBox">import lejos.nxt.*;
+      	    <pre class="CodeBox"><code>import lejos.nxt.*;
 import lejos.nxt.comm.*;
 import java.io.*;
 
@@ -170,7 +170,7 @@ public class CommTest
       System.out.println(" write error "+e); 
     }
   }   
-}</pre>
+}</code></pre>
       		
        		<p><a href="#top">Back to top</a></p>
        		
@@ -265,12 +265,12 @@ public class CommTest
       		<p>Example of reading and writing integers using data streams (<code>dis</code> and 
       		<code>dos</code> are a DataInputStream and DataOutputStream that has been opened):</p>
       		
-      		<pre class="CodeBox">for(int i=0;i &lt;100;i++) {
+      		<pre class="CodeBox"><code>for(int i=0;i &lt;100;i++) {
   int n = dis.readInt();
   LCD.drawInt(n,7,0,1);
   dos.writeInt(-n); 
   dos.flush();
-}</pre>
+}</code></pre>
       		
        		<p><b>Be aware: </b>you must flush the output stream to be sure the data is actually transmitted.
 			Furthermore, it is possible for transmission to fail without throwing an exception. </p>
@@ -279,7 +279,7 @@ public class CommTest
 
       		<p>The full example using Bluetooth is:</p>
       		
-      		<pre class="CodeBox">public class BTReceive {
+      		<pre class="CodeBox"><code>public class BTReceive {
   public static void main(String [] args) throws Exception {
     String connected = "Connected";
     String waiting = "Waiting...";
@@ -310,7 +310,7 @@ public class CommTest
       LCD.clear();
     }
   }
-}</pre>
+}</code></pre>
       		
       		<p>To modify this example to work with USB, you only have to change Bluetooth.waitForConnection() to USB.waitForconnection()</p>
 
@@ -331,7 +331,7 @@ public class CommTest
       		
       		<p>You can then create a BTRemoteDevice class on the initiator NXT:</p>
       		<p>Example:</p>
-      		<pre class="CodeBox">BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);</pre>
+      		<pre class="CodeBox"><code>BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);</code></pre>
 
       		<p>You can connect to the remote device by its address, which you can get by:</p>
       		<ul class="BlueArrows">
@@ -358,7 +358,7 @@ public class CommTest
       		</ul>
       		
       		<p>Example:</p>
-      		<pre class="CodeBox">BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);
+      		<pre class="CodeBox"><code>BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);
 
 if (btrd == null) {
   LCD.clear();
@@ -374,14 +374,14 @@ if (btc == null) {
   LCD.drawString("Connect fail", 0, 0);
   Button.waitForPress();
   System.exit(1);
-}</pre>
+}</code></pre>
       		
       		<p>Having got a BTconnection object you can open the data input and output streams and read data as in the
 			receiver example above.</p>
 			
       		<p>The complete BTConnectTest example, which works as the initiator program for the BTReceive receiver program, is:</p>
       		
-      		<pre class="CodeBox">public class BTConnectTest {
+      		<pre class="CodeBox"><code>public class BTConnectTest {
   public static void main(String[] args) throws Exception {
     String name = "NXT";
     LCD.drawString("Connecting...", 0, 0);
@@ -437,7 +437,7 @@ if (btc == null) {
     LCD.drawString("Finished",3, 4);
     Button.waitForPress();
   }
-}</pre>
+}</code></pre>
       		
        		<p><a href="#top">Back to top</a></p>
 
@@ -461,7 +461,7 @@ if (btc == null) {
 
       		<p>A NXTComm object to connect via Bluetooth can be obtained by:</p>
       		
-      		<pre class="CodeBox">NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);</pre>
+      		<pre class="CodeBox"><code>NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);</code></pre>
       		
       		<p>The reason for using a factory method is that there are several implementations of comms drivers for
 			Bluetooth and USB on the PC and the one that is used depends on what
@@ -479,11 +479,11 @@ if (btc == null) {
       		</ul>
       		
       		<p>Example:</p>
-			<pre class="CodeBox">NXTInfo nxtInfo = new NXTInfo("NXT", "00:16:53:00:78:48");</pre>
+			<pre class="CodeBox"><code>NXTInfo nxtInfo = new NXTInfo("NXT", "00:16:53:00:78:48");</code></pre>
       		      		
       		<p>To find the available NXTs doing a Bluetooth inquiry, you do:</p>
       		
-      		<pre class="CodeBox">NXTInfo[] nxtInfo = nxtComm.search("NXT",NXTCommFactory.BLUETOOTH)</pre>
+      		<pre class="CodeBox"><code>NXTInfo[] nxtInfo = nxtComm.search("NXT",NXTCommFactory.BLUETOOTH)</code></pre>
 
       		<p><a href="#top">Back to top</a></p>
       		
@@ -493,11 +493,11 @@ if (btc == null) {
       		<p>The initiator sequence using USB is almost the same as for Bluetooth; You just have to use USB instead
 				of Bluetooth.in your code. While USB cannot use a device address , but you can use the NXT name. </p>
       		
-      		<pre class="CodeBox">NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);</pre>
+      		<pre class="CodeBox"><code>NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);</code></pre>
       						
        		<p>To find the available NXT , you do:</p>
        		
-       		<pre class="CodeBox">nxtComm.search("MYNXT", NXTCommFactory.BLUETOOTH);</pre>
+       		<pre class="CodeBox"><code>nxtComm.search("MYNXT", NXTCommFactory.BLUETOOTH);</code></pre>
 
       		<p>If there is only one NXT connected, you can use a null name parameter in the search() method. </p>
 
@@ -562,7 +562,7 @@ if (btc == null) {
       		
       		<p>Example: </p>
       		
-      		<pre class="CodeBox">try {
+      		<pre class="CodeBox"><code>try {
   LCD.drawString("Connecting...",0,0);
   nxt = new RemoteNXT("NXT");
 
@@ -573,7 +573,7 @@ if (btc == null) {
   LCD.drawString("Conn Failed",0,0);
   Button.waitForPress();
   System.exit(1);
-}</pre>
+}</code></pre>
       
       		<p>The name of the remote NXT must have already been added to the known devices of the initiating NXT by
 			do a Bluetooth search followed by &#8220;Add&#8221; fron the leJOS NXJ Bluetooth menu.</p>
@@ -602,10 +602,10 @@ if (btc == null) {
       		
       		<p>Example:</p>
       		
-      		<pre class="CodeBox">LCD.drawString(nxt.getBrickName(), 0, 6);
+      		<pre class="CodeBox"><code>LCD.drawString(nxt.getBrickName(), 0, 6);
 LCD.drawString(nxt.getFirmwareVersion(), 0, 7);
 LCD.drawString(nxt.getProtocolVersion(), 4, 7);
-LCD.drawInt(nxt.getFlashMemory(), 6, 8, 7);</pre>
+LCD.drawInt(nxt.getFlashMemory(), 6, 8, 7);</code></pre>
       		    		
       		<p>There are also methods that act on the remote NXT:</p>
       
@@ -619,7 +619,7 @@ LCD.drawInt(nxt.getFlashMemory(), 6, 8, 7);</pre>
       
       		<p>Example:</p>
  
-      		<pre class="CodeBox">LCD.drawString( "Battery: " + nxt.Battery.getVoltageMilliVolt() 0,4);</pre>
+      		<pre class="CodeBox"><code>LCD.drawString( "Battery: " + nxt.Battery.getVoltageMilliVolt() 0,4);</code></pre>
       		      		
       		<p>Objects are also created for the sensor ports of the remote NXT. These are accessed as S1, S2, S3 and S4.</p>
       		
@@ -627,17 +627,17 @@ LCD.drawInt(nxt.getFlashMemory(), 6, 8, 7);</pre>
       		
       		<p>Example:</p>
 
-      		<pre class="CodeBox">LightSensor light = new LightSensor(nxt.S1);
-LCD.drawString("Light: " + light.readValue(),0,5);</pre>
+      		<pre class="CodeBox"><code>LightSensor light = new LightSensor(nxt.S1);
+LCD.drawString("Light: " + light.readValue(),0,5);</code></pre>
       		
        		<p>Motor objects are created for the remote motors. They are named A, B and C.</p>
        		
       		<p>These can be used in the normal way, e.g: </p>
       		
-      		<pre class="CodeBox">nxt.A.setSpeed(360);
+      		<pre class="CodeBox"><code>nxt.A.setSpeed(360);
 nxt.A.forward();
 nxt.A.stop();
-nxt.A.backward();</pre>
+nxt.A.backward();</code></pre>
 
       		<p><a href="#top">Back to top</a></p>
 
@@ -660,7 +660,7 @@ nxt.A.backward();</pre>
       
       		<p>To connect to a GPS device, you do:</p>
       		
-      		<pre class="CodeBox">final byte[] pin = {(byte) '0', (byte) '0', (byte) '0', (byte) '0'};
+      		<pre class="CodeBox"><code>final byte[] pin = {(byte) '0', (byte) '0', (byte) '0', (byte) '0'};
 BTRemoteDevice btGPS = Bluetooth.getKnownDevice(name); 
 
 if (btrd == null) {
@@ -690,7 +690,7 @@ try {
   LCD.drawString("GPS Connect Fail", 0, 6);
   Button.waitForPress();
   System.exit(1);
-}</pre>  
+}</code></pre>  
       		    		
        		<p>As you see from this example, the GPS constructor takes the input stream from the Bluetooth connection as a parameter:</p>
        		
@@ -742,7 +742,7 @@ try {
       		</ul>
       		
      		<p>For example: </p>
-      		<pre class="CodeBox">RCXLink link = new RCXLink(SensorPort.S1);</pre>
+      		<pre class="CodeBox"><code>RCXLink link = new RCXLink(SensorPort.S1);</code></pre>
 
       		<p>The NRLink-Nx supports a set of macros in ROM and EEPROM that can be used to send messages to the RCX using the LEGO
 			RCX IR protocol. The EEPROM macos can be overwritten allowing the user

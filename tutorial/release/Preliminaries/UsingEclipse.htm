@@ -174,8 +174,7 @@
 
 		<p>You should see output like the following in the Console window:</p>
 
-		<pre>
-Buildfile: C:\Users\Lawrie\leJOSProjects\samples\BlueStats\build.xml
+		<pre>Buildfile: C:\Users\Lawrie\leJOSProjects\samples\BlueStats\build.xml
 clean:
 compile:
     [javac] Compiling 1 source file to C:\Users\Lawrie\leJOSProjects\samples\BlueStats
@@ -215,8 +214,7 @@ uploadandrun:
      [java] Found nxt name NOISY address 001653007848
      [java] leJOS NXJ&gt; Upload successful in 1974 milliseconds
 BUILD SUCCESSFUL
-Total time: 4 seconds
-</pre>
+Total time: 4 seconds</pre>
 		<p>This verbose output from the leJOS linker tells you all the
 		classes and methods that have been included in your program. It is
 		very useful for debugging your programs.</p>
@@ -352,7 +350,7 @@ Total time: 4 seconds
 		static void main(String[] args)" option. You should now have a
 		HelloWorld.java program containing:</p>
 
-		<pre class="CodeBox">package org.me.mypackage;
+		<pre class="CodeBox"><code>package org.me.mypackage;
 
 public class HelloWorld {
 
@@ -362,11 +360,11 @@ public class HelloWorld {
     public static void main(String[] args) {
         // TODO Auto-generated method stub
     }
-}</pre>
+}</code></pre>
 
 		<p>Edit the source so it reads:</p>
 
-		<pre class="CodeBox">package org.me.mypackage;
+		<pre class="CodeBox"><code>package org.me.mypackage;
 
 import lejos.nxt.*;
 
@@ -376,7 +374,7 @@ public class HelloWorld {
         System.out.println("Hello World");
         Button.waitForPress();
     }
-}</pre>
+}</code></pre>
 
 		<p>You will now need to build your project. One way to do this is
 		to use an ant build file in the same way that the org.lejos.example

@@ -122,17 +122,17 @@
     $ open ~/.profile
     </code></pre> 
     <p>Example:</p>
-    <pre class="CodeBox">export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home
+    <pre class="CodeBox"><code>export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home
 export NXJ_HOME=/Users/me/lejos_nxj
 export DYLD_LIBRARY_PATH=$NXJ_HOME/bin
-export PATH=$PATH:$JAVA_HOME/bin:$NXJ_HOME/bin</pre>
+export PATH=$PATH:$JAVA_HOME/bin:$NXJ_HOME/bin</code></pre>
       
     <h5>Set Up for All Users</h5>
     
     <p>Same as for Current User set up except use:</p>
     <pre><code>/etc/profile</code></pre>
     <p>Example:</p>
-    <pre class="CodeBox"># System-wide .profile for sh(1)
+    <pre class="CodeBox"><code># System-wide .profile for sh(1)
 
 if [ -x /usr/libexec/path_helper ]; then
    eval `/usr/libexec/path_helper -s`
@@ -152,7 +152,7 @@ then
   export PATH
 fi
 ## Do not remove the next line
-## setloginpath added /usr/local/bin end at Fri Nov  2 18:44:47 EDT 2007</pre>
+## setloginpath added /usr/local/bin end at Fri Nov  2 18:44:47 EDT 2007</code></pre>
     <p> <a href="#top">Back to top</a> </p>
      <a id="7" name="7"></a>
       <h4>Setting Permissions</h4>

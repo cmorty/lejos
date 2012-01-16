@@ -93,7 +93,7 @@
 			up to date, by reading its value every second, and to indicate when the
 			menu is uploading files or doing other communication from the PC:</p>
 
-  			<pre class="CodeBox">import lejos.nxt.LCD;
+  			<pre class="CodeBox"><code>import lejos.nxt.LCD;
 
 class Indicators extends Thread {
   private boolean io = false;
@@ -126,12 +126,12 @@ class Indicators extends Thread {
       }
     }
   }
-}</pre>
+}</code></pre>
 
       		<p>The main method starts this thread by:</p>
-      		<pre class="CodeBox">Indicators ind = new Indicators();
+      		<pre class="CodeBox"><code>Indicators ind = new Indicators();
 ind.setDaemon(true);	
-ind.start();</pre>
+ind.start();</code></pre>
       
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 			<p/>
@@ -148,7 +148,7 @@ ind.start();</pre>
       		<p>Button listeners are used to detect when a button is pressed, whatever your program is doing at the time.</p>
       		<p>To listen for a press of a specific button, you register as listener for that button.</p>
       		<p>Example:</p>
-      		<pre class="CodeBox">import lejos.nxt.*;
+      		<pre class="CodeBox"><code>import lejos.nxt.*;
 
 public class ListenForButtons {
   public static void main(String[] args) throws Exception {
@@ -164,7 +164,7 @@ public class ListenForButtons {
 
     Button.ESCAPE.waitForPressAndRelease();
   }
-}</pre>
+}</code></pre>
 		
 			<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 			<p/>
