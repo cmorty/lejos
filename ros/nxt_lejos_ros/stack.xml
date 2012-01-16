@@ -1,0 +1,12 @@
+<stack>
+  <description brief="nxt_lejos_ros">nxt_lejos_ros</description>
+  <author>Maintained by Juan Antonio Brenha Moral</author>
+  <license>BSD</license>  
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/nxt_lejos_ros</url>
+  <depend stack="common_msgs" /> <!-- nav_msgs, sensor_msgs, geometry_msgs -->
+  <depend stack="geometry" /> <!-- kdl, tf, tf_conversions -->
+  <depend stack="ros" /> <!-- rospy, std_msgs, roscpp -->
+  <depend stack="visualization" /> <!-- rviz -->
+
+</stack>
