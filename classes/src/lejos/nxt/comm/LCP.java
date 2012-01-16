@@ -346,7 +346,14 @@ public class LCP {
 			byte port = cmd[2];
 			SensorPort p = SensorPort.getInstance(port);
             int ret = p.i2cComplete(i2cBuffer, 0, i2cBuffer.length);
-			reply[3] = (byte) ret;
+            if (ret < 0) {
+            	// not sure whether that is correct
+            	reply[2] = ErrorMessages.COMMUNICATION_BUS_ERROR;
+            	reply[3] = 0;
+            } else {
+            	reply[2] = ErrorMessages.SUCCESS;
+    			reply[3] = (byte) ret;
+            }
             if (ret > 0) System.arraycopy(i2cBuffer, 0, reply, 4, ret);
 			len = 20;
 			break;
@@ -354,7 +361,9 @@ public class LCP {
 		case LS_GET_STATUS: {
 			byte port = cmd[2];
 			SensorPort p = SensorPort.getInstance(port);
-			reply[3] = (byte) (p.i2cStatus() == 0 ? 0 : 1);
+			// TODO which status code to return? 0 and 1 seem to arbitrary choices
+			reply[2] = (byte)(p.i2cStatus() == 0 ? 0 : 1);
+			// TODO reply[3] = number of bytes ready to read
 			len = 4;
 			break;
 		}

@@ -99,24 +99,23 @@ public class I2CSensor implements SensorConstants {
 			System.out.println(ioe.getMessage());
 		}
 		
-		byte [] status = null;
-		do {
-			try {
-				status = nxtCommand.LSGetStatus(port);
-			} catch (IOException ioe) {
-				System.out.println(ioe.getMessage());
-				return -1;
-			}
-		} while(status[0] == ErrorMessages.PENDING_COMMUNICATION_TRANSACTION_IN_PROGRESS|status[0] == ErrorMessages.SPECIFIED_CHANNEL_CONNECTION_NOT_CONFIGURED_OR_BUSY);
-				
 		try {
+			byte[] status;
+			do {
+				status = nxtCommand.LSGetStatus(port);
+			} while(status[0] == ErrorMessages.PENDING_COMMUNICATION_TRANSACTION_IN_PROGRESS
+				|| status[0] == ErrorMessages.SPECIFIED_CHANNEL_CONNECTION_NOT_CONFIGURED_OR_BUSY);
+					
 			byte [] ret = nxtCommand.LSRead(port);
-			if (ret != null) System.arraycopy(ret, 0,buf, offset, ret.length);
+			if (ret == null)
+				return -1;
+			
+			System.arraycopy(ret, 0, buf, offset, ret.length);
+			return 0;
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
 			return -1;
 		}
-		return status[0];
 	}
 
 	
