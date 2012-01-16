@@ -157,13 +157,13 @@ gray buttons (ENTER + ESCAPE) together. If your NXT freezes at any time, remove 
 
 <ul>
   <li>Create a file called <em>HelloWorld.java</em> with the following content:<br/>
-  	<code style="white-space:pre">import lejos.nxt.Button;
+  	<pre><code>import lejos.nxt.Button;
 public class HelloWorld {
 	public static void main(String[] args) {
 		System.out.println("Hello World");
 		Button.waitForAnyPress();
 	}
-}</code></li>
+}</code></pre></li>
   <li>Open a command window</li>
   <li>Change working directory to the folder containing <em>HelloWorld.java</em> 
   <li>Use the command <code>nxjc HelloWorld.java</code> to compile <em>HelloWorld.java</em></li>
@@ -198,7 +198,7 @@ Also, the Eclipse plug-in offers an import wizard to import the sample projects 
 	Note, that the sample projects are not a template for your own project.
 </ul>
  
-<p>If you are not using any IDE like Eclipse, we recommend ant to run and build the samples.
+<p>If you are not using any IDE like Eclipse, we recommend using Ant to run and build the samples.
 Change the current workdir to the samples or pcsamples folder, and run the <code>ant</code>
 command. It is also possible to run the samples using the leJOS Eclipse plug-in.
 There is more information on this in the
