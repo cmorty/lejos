@@ -1,0 +1,9 @@
+<stack>
+  <description brief="nxt_lejos_apps">nxt_lejos_apps</description>
+  <author>Maintained by Juan Antonio Brenha Moral</author>
+  <license>BSD</license>  
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/nxt_lejos_apps</url>
+  <depend stack="ros" />
+
+</stack>
