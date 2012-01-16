@@ -608,7 +608,7 @@ public class NXTCommand implements NXTProtocol {
 		byte [] request = {DIRECT_COMMAND_REPLY, LS_READ, port};
 		byte [] reply = nxtComm.sendRequest(request, 20);
 		
-		byte rxLength = reply[3];
+		int rxLength = reply[3] & 0xFF;
 		if(reply[2] == 0 && rxLength >= 0) {
             byte [] rxData = new byte[rxLength];
 			System.arraycopy(reply, 4, rxData, 0, rxLength);
