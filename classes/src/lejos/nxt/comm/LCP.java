@@ -353,8 +353,8 @@ public class LCP {
             } else {
             	reply[2] = ErrorMessages.SUCCESS;
     			reply[3] = (byte) ret;
+    			System.arraycopy(i2cBuffer, 0, reply, 4, ret);
             }
-            if (ret > 0) System.arraycopy(i2cBuffer, 0, reply, 4, ret);
 			len = 20;
 			break;
 		}
