@@ -1,0 +1,26 @@
+<package>
+	<description brief="NXTLoader">
+		NXTLoader
+	</description>
+	<author>Juan Antonio Brenha Moral</author>
+	<license>BSD</license>
+	<review status="unreviewed" notes=""/>
+	<url>http://ros.org/wiki/nxt_lejos_ros</url>
+
+	<depend package="rosjava" />
+	<depend package="std_msgs" />
+	<depend package="sensor_msgs" />
+	<depend package="nxt_msgs" />
+
+	<export>
+    	<rosjava-src location="src" /> 
+    	<rosjava-pathelement location="target/" groupId="org.lejos.ros" artifactId="org.lejos.ros.nodes.NXTLoader" version="0.0.1" built="true" />
+    	<rosjava-pathelement location="/usr/local/lejos/lib/pc/pccomm.jar" />
+    	<rosjava-pathelement location="/usr/local/lejos/lib/pc/3rdparty/bluecove-gpl.jar" />
+    	<rosjava-pathelement location="/usr/local/lejos/lib/pc/3rdparty/bluecove.jar" />
+    	<rosjava-pathelement location="/home/jabrena/ros3/workspace/nxt_lejos_ros/NXTLoader/lib/yamlbeans-1.06.jar" />
+	</export>
+
+</package>
+
+
