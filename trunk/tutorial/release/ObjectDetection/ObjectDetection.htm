@@ -99,16 +99,16 @@
 					maximum range you want it to report findings for, and the time between performing scans. 
 					Construct a simple RangeFeatureDetector as follows:</p>
 					
-			<pre class="CodeBox">int MAX_DISTANCE = 50; // In centimeters
+			<pre class="CodeBox"><code>int MAX_DISTANCE = 50; // In centimeters
 int PERIOD = 500; // In milliseconds
 UltrasonicSensor us = new UltrasonicSensor(SensorPort.S4);
-FeatureDetector fd = new RangeFeatureDetector(us, MAX_DISTANCE, PERIOD);</pre>
+FeatureDetector fd = new RangeFeatureDetector(us, MAX_DISTANCE, PERIOD);</code></pre>
 					
 					<p>Once you have a FeatureDetector instantiated, you can perform a scan on it to retrieve data:</p>
 					
-			<pre class="CodeBox">Feature result = fd.scan();
+			<pre class="CodeBox"><code>Feature result = fd.scan();
 if(result != null)
-	System.out.println("Range: " + result.getRangeReading().getRange());</pre>
+	System.out.println("Range: " + result.getRangeReading().getRange());</code></pre>
 					
 					<p><i>Warning: Make sure to check for a null object before trying to read data from the returned Feature 
 					object, otherwise your code will throw a null pointer exception.</i></p>
@@ -127,7 +127,7 @@ if(result != null)
 					code shows how to use a FeatureListener:
 					</p>
 					
-			<pre class="CodeBox">import lejos.nxt.*;
+			<pre class="CodeBox"><code>import lejos.nxt.*;
 import lejos.robotics.objectdetection.*;
 
 public class ObjectDetect implements FeatureListener {
@@ -148,7 +148,7 @@ public class ObjectDetect implements FeatureListener {
 		Sound.playTone(1200 - (range * 10), 100);
 		System.out.println("Range:" + range);
 	}
-}</pre>
+}</code></pre>
 					
 					<a name="3"></a>
 					<h4>Feature data</h4>
@@ -187,7 +187,7 @@ public class ObjectDetect implements FeatureListener {
 					fuse many FeatureDetectors looks like this:
 					</p>
 					
-			<pre class="CodeBox">UltrasonicSensor us = new UltrasonicSensor(SensorPort.S4);
+			<pre class="CodeBox"><code>UltrasonicSensor us = new UltrasonicSensor(SensorPort.S4);
 FeatureDetector detector1 = new RangeFeatureDetector(us, MAX_DETECT,RANGE_READING_DELAY);
 
 Touch leftBump = new TouchSensor(SensorPort.S2);
@@ -201,7 +201,7 @@ fusion.addDetector(detector1);
 fusion.addDetector(detector2);
 fusion.addDetector(detector3);
 
-fusion.addListener(myFeatureListener);</pre>
+fusion.addListener(myFeatureListener);</code></pre>
 					
 					<!-- WEB TOOL TO GO TO TOP OF THE DOCUMENT -->
 					<p>

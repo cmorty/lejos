@@ -40,22 +40,22 @@
       <h4>The HelloWorld program</h4>
       <p> Let us start with a simple &#8220;Hello World&#8221; program. We will
       create a HelloWorld class in the default java package: </p>
-      <pre class="CodeBox">public class HelloWorld
+      <pre class="CodeBox"><code>public class HelloWorld
 {
 
-}</pre>
+}</code></pre>
       <p> leJOS requires the standard main method for the program entry point: </p>
-      <pre class="CodeBox">public class HelloWorld {
+      <pre class="CodeBox"><code>public class HelloWorld {
   public static void main (String[] args) {
   
   }
-}</pre>
+}</code></pre>
       <p> leJOS NXJ supports the standard java System.out.println method and scroll the output on the NXT LCD screen. </p>
-      <pre class="CodeBox">public class HelloWorld {
+      <pre class="CodeBox"><code>public class HelloWorld {
   public static void main (String[] args) {
     System.out.println("Hello World");
   }
-}</pre>
+}</code></pre>
       <p>If you run this program as it is, it will display Hello World&#8221;
       and then immediately return to the menu, so you will not be able to see
       what is displayed (unless you are very quick). </p>
@@ -71,14 +71,14 @@
       <p>The API documentation is on the leJOS web site here and
       included in the leJOS download in the docs/nxt subfolder. </p>
       <p>The complete HelloWorld program is: </p>
-      <pre class="CodeBox">import lejos.nxt.Button;
+      <pre class="CodeBox"><code>import lejos.nxt.Button;
 
 public class HelloWorld {
   public static void main (String[] args) {
     System.out.println("Hello World");
     Button.waitForAnyPress();
   }
-}</pre>
+}</code></pre>
       
       <p>Read the next section to learn how to compile and run this program</p>
       <p> <a href="#top">Back to top</a> </p>
