@@ -1,8 +1,9 @@
 package lejos.nxt.addon;
 
-import lejos.nxt.I2CSensor;
 import lejos.nxt.I2CPort;
-import lejos.robotics.*;
+import lejos.nxt.I2CSensor;
+import lejos.robotics.Color;
+import lejos.robotics.ColorDetector;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -12,11 +13,16 @@ import lejos.robotics.*;
 /**
  * HiTechnic color sensor.<br>
  * www.hitechnic.com
+ * 
+ * This class does support HiTechnic Color Sensor V2.
  *
  *@author BB extended by A.T.Brask
  * 
  */
 public class ColorHTSensor extends I2CSensor implements ColorDetector {
+	//TODO create another class with support for ColorHTSensor
+	//TODO make methods to get all three channels (RGB) at once 
+	
     byte[] buf = new byte[2];
 
     // TODO: Problem: The following table ignores pastels and other subtle colors HiTechnic can detect.
