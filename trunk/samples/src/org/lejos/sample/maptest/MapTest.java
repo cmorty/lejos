@@ -39,6 +39,7 @@ public class MapTest implements NavEventListener {
 	
 	public void run() throws Exception {
     	model = new NXTNavigationModel();
+    	model.addListener(this);
     	model.setDebug(true);
     	model.setSendMoveStart(true);
 
