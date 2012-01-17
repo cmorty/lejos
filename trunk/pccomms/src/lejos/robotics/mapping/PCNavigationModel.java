@@ -241,7 +241,7 @@ public class PCNavigationModel extends NavigationModel {
 			return false;
 		}
 		if (info == null) {
-			panel.log("File not found");
+			panel.log(f.getAbsolutePath() + " not found");
 			return false;
 		}
 		

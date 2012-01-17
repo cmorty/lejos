@@ -153,7 +153,7 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 	protected Point initialViewStart = new Point(0,0);
 	protected String title;
 	protected String description = "";
-	protected String program = "../samples/MapTest/MapTest.nxj";
+	protected String program = "../samples/MapTest.nxj";
 	
 	//Menu
 	protected JMenuBar menuBar = new JMenuBar();
