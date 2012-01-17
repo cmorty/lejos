@@ -1,7 +1,5 @@
 package lejos.pc.comm;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -286,8 +284,8 @@ public class NXTConnector extends NXTCommLoggable
 			}
 			try
 			{
-				this.input = new DataInputStream(nxtComm.getInputStream());
-				this.output = new DataOutputStream(nxtComm.getOutputStream());
+				this.input = nxtComm.getInputStream();
+				this.output = nxtComm.getOutputStream();
 				this.nxtInfo = nxtInfo;
 				this.nxtComm = nxtComm;
 				success = true;
