@@ -46,6 +46,7 @@ public class WaypointNav
 		nav.addWaypoint(new Waypoint(20,0));
 		nav.addWaypoint(new Waypoint(0,20));
 		nav.addWaypoint(new Waypoint(0,0));
+		nav.followPath();
 		System.out.println("Any button to halt");
 		Button.waitForAnyPress();
 	}
