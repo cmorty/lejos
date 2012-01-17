@@ -194,7 +194,7 @@ public class MCLCommand extends NavigationPanel {
 	 */
 	public void run() throws Exception {
 		// Set the NXT program to MCLTest
-		program = "../samples/MCLTest/MCLTest.nxj";
+		program = "../samples/MCLTest.nxj";
 		
 		// Set debugging on the model
 		model.setDebug(true);
