@@ -13,12 +13,24 @@
 	<depend package="nxt_msgs" />
 
 	<export>
-    	<rosjava-src location="src" /> 
-    	<rosjava-pathelement location="target/" groupId="org.lejos.ros" artifactId="org.lejos.ros.nodes.NXTLoader" version="0.0.1" built="true" />
-    	<rosjava-pathelement location="/usr/local/lejos/lib/pc/pccomm.jar" />
-    	<rosjava-pathelement location="/usr/local/lejos/lib/pc/3rdparty/bluecove-gpl.jar" />
-    	<rosjava-pathelement location="/usr/local/lejos/lib/pc/3rdparty/bluecove.jar" />
-    	<rosjava-pathelement location="/home/jabrena/ros3/workspace/nxt_lejos_ros/NXTLoader/lib/yamlbeans-1.06.jar" />
+	    	<rosjava-src location="src" /> 
+	    	<rosjava-pathelement location="target/" groupId="org.lejos.ros" artifactId="org.lejos.ros.nodes.NXTLoader" version="0.0.1" built="true" />
+
+			<!-- EXTERNAL LIBRARIES -->
+			<!-- 
+			README:
+			It is necessary to define the absolute path where 
+			you have installed the following libraries:
+			
+			+ pccomm
+			+ bluecove-gpl
+			+ bluecove
+			+ yamlbeans
+			 -->
+	    	<rosjava-pathelement location="<ABSOLUTE PATH>/pccomm.jar" />
+	    	<rosjava-pathelement location="<ABSOLUTE PATH>/bluecove-gpl.jar" />
+	    	<rosjava-pathelement location="<ABSOLUTE PATH>/bluecove.jar" />
+	    	<rosjava-pathelement location="<ABSOLUTE PATH>/yamlbeans-1.06.jar" />
 	</export>
 
 </package>

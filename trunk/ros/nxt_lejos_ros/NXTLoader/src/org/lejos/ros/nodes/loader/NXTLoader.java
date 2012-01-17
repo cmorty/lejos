@@ -1,6 +1,8 @@
 package org.lejos.ros.nodes.loader;
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,26 +16,22 @@ import org.lejos.ros.nxt.sensors.BatterySensor;
 import org.lejos.ros.nxt.sensors.UltrasonicSensor;
 
 import org.ros.message.MessageListener;
-import org.ros.message.nxt_msgs.Range;
 import org.ros.node.Node;
-import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.google.common.base.Preconditions;
 
+/**
+ * 
+ * 
+ * @author jabrena
+ *
+ */
 public class NXTLoader extends LEJOSNode{
-
-	//NXT Connection
 	
-    //TODO: It is necessary to pass a parameter to node. 
-    //Maybe using properties in a easy evolution, but betterh using roslaunch
-    
-    //final String BRICK_NAME = "ROSBRICK1";
-    final String BRICK_NAME = "dog";
-    final String path = "/home/jabrena/ros3/workspace/nxt_lejos_ros/NXTLoader/src/test/resources/nxt/";
-    //String RobotDescriptor = "robot.yaml";
-    final String RobotDescriptor = "TurtleNXT_V1.yaml";
+    String BRICK_NAME = "";
+	String YAMLPath = "";
 	
     //Topic Management    
     ArrayList<NXTServoMotor> motorList = new ArrayList();
@@ -48,7 +46,23 @@ public class NXTLoader extends LEJOSNode{
 	public void onStart(final Node node) {
 	    Preconditions.checkState(this.node == null);
 	    this.node = node;
+
+	    System.out.println("Running NXTLoader");
 	    
+	    BRICK_NAME = getNodeName();
+	    System.out.println("NXT Brick: " + BRICK_NAME);
+	    System.out.println("ROS Node: " + node.getName().toString());
+
+	    //Get ROS Path
+		try {
+
+			YAMLPath = new File(".").getCanonicalPath();
+			System.out.println("ROS Path: " + YAMLPath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	    //1. Connect with NXT Brick
 	    boolean connetionStatus = false;
 		connetionStatus = SimpleConnector.connectByBT(BRICK_NAME);
@@ -73,13 +87,33 @@ public class NXTLoader extends LEJOSNode{
 			System.exit(0);
 		}
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	private String getNodeName(){
 		
+		//Get the name given by .launch file
+		String brickName = node.getName().toString();
+		//Remove "/"
+		brickName = brickName.substring(1, brickName.length());
+		return brickName;
+	}
+	
+	/**
+	 * 
+	 */
 	private void processYAML(){
 	    		
 		try{
 		
+			String path = YAMLPath+"/"+BRICK_NAME+".yaml";
+			
+			System.out.println("YAML Path: " + path);
+			
 			//Read a YAML File
-	        YamlReader reader = new YamlReader(new FileReader(path+RobotDescriptor));
+	        YamlReader reader = new YamlReader(new FileReader(path));
 	        Object object = reader.read();
 	        Map map = (Map)object;
 	        //System.out.println(map.size());
@@ -183,6 +217,9 @@ public class NXTLoader extends LEJOSNode{
 		
 	}
 	
+	/**
+	 * 
+	 */
 	private void processSubscriptions(){
 		
     	System.out.println("Enabling subscriptions");
@@ -214,6 +251,9 @@ public class NXTLoader extends LEJOSNode{
 
 	}
 	
+	/**
+	 * 
+	 */
 	private void updateTopics(){
 
         //Publish data
