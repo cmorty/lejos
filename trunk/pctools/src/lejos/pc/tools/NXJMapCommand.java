@@ -3,8 +3,13 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.SystemColor;
+import java.io.File;
+import java.io.IOException;
+
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+
+import lejos.pc.comm.SystemContext;
 import lejos.robotics.mapping.MenuAction;
 import lejos.robotics.mapping.NavigationModel;
 import lejos.robotics.mapping.NavigationPanel;
@@ -137,9 +142,19 @@ public class NXJMapCommand extends NavigationPanel {
 	    menu.add(new MenuAction(NavigationModel.NavEvent.SET_TARGET, "Set target", p, model, this));
 	}
   
-	public int run(){
+	public int run() {
 		// Set debugging on to get information of events being processed
 		model.setDebug(true);
+		
+		// Use MapTest.nxj from the bin directory as the NXJ program
+		String home = SystemContext.getNxjHome();
+		File progFile = new File(home, "bin" + File.separator + "MapTest.nxj");
+		try {
+			program = progFile.getCanonicalPath();
+		} catch (IOException e) {
+			// leave as is
+		}
+
 	
 		// Open the panel in a frame
 		openInJFrame(this, FRAME_WIDTH, FRAME_HEIGHT, FRAME_TITLE, SystemColor.controlShadow, menuBar);
