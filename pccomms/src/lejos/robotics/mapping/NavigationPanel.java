@@ -17,6 +17,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -749,7 +750,13 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		connectButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				if (uploadBox.isSelected()) model.connectAndUpload(nxtName.getText(), new File(program));
+				if (uploadBox.isSelected()) {
+					try {
+						model.connectAndUpload(nxtName.getText(), new File(program));
+					} catch (FileNotFoundException e) {
+						return;
+					}
+				}
 				model.connect(nxtName.getText());
 				props.setProperty(KEY_DEFAULT_NXT, nxtName.getText());
 				saveProperties();
@@ -1316,7 +1323,11 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
                     null,
                     "");
 			if (nxtName != null) {
-				model.connectAndUpload(nxtName, new File(program));
+				try {
+					model.connectAndUpload(nxtName, new File(program));
+				} catch (FileNotFoundException e1) {
+					return;
+				}
 				model.connect(nxtName);
 			}
 		} else if (e.getSource() == gridColor) {

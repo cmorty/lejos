@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -211,7 +212,11 @@ public class PCNavigationModel extends NavigationModel {
 	 * @param nxtName the name of the NXT
 	 * @param file the name of the program file
 	 */
-	public void connectAndUpload(String nxtName, File file) {
+	public void connectAndUpload(String nxtName, File file) throws FileNotFoundException {
+		if (!file.exists()) {
+			panel.error(file.getAbsolutePath() + " not found");
+			throw(new FileNotFoundException());
+		}
 		boolean open = lcpConnect(nxtName);
 		if (open) {
 			if (!checkFile(file)) uploadFile(file);
@@ -241,7 +246,7 @@ public class PCNavigationModel extends NavigationModel {
 			return false;
 		}
 		if (info == null) {
-			panel.log(f.getAbsolutePath() + " not found");
+			panel.log(f.getName() + " not found on the NXT");
 			return false;
 		}
 		
