@@ -1,5 +1,8 @@
 leJOS NXJ 0.9.1 beta
 --------------------
+Starting with 0.9.1, the Netbeans plug-in is not shipped with leJOS anymore.
+We now focus on the leJOS plug-in for Eclipse.
+
 Lawrie Griffiths and Juan Antonio Brenha Moral:
 - Added support for loading line maps from SVG files
  
