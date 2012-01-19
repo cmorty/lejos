@@ -15,7 +15,7 @@ if "%OS%" == "Windows_NT" goto :winnt
 
 	set "TMP_CP="
 	for /R "%~2" %%i in (*.jar) do (
-        set "TMP_JAR=%%i"
+		set "TMP_JAR=%%i"
 		call set "TMP_CP=%%TMP_CP%%;%%TMP_JAR%%"
 	)
 	set "%~1=%TMP_CP:~1%"
