@@ -6,10 +6,6 @@ if "%OS%" == "Windows_NT" goto :winnt
 	echo Please upgrade to Windows 2000 or later.
 	goto :eof
 
-:append_jar
-	set "TMP_CP=%TMP_CP%;%~1"
-	goto :eof
-
 :build_classpath
 	if not exist "%~2" (
 		echo Internal error. The following directory does not exist:
@@ -19,7 +15,8 @@ if "%OS%" == "Windows_NT" goto :winnt
 
 	set "TMP_CP="
 	for /R "%~2" %%i in (*.jar) do (
-		call :append_jar "%%i"
+        set "TMP_JAR=%%i"
+		call set "TMP_CP=%%TMP_CP%%;%%TMP_JAR%%"
 	)
 	set "%~1=%TMP_CP:~1%"
 	goto :eof
@@ -45,8 +42,8 @@ if "%OS%" == "Windows_NT" goto :winnt
 	goto :eof
 
 :set_java_and_javac
-	set "JAVA=%~2\bin\java.exe"
-	set "JAVAC=%~2\bin\javac.exe"
+	call set "JAVA=%%%~1%%\bin\java.exe"
+	call set "JAVAC=%%%~1%%\bin\javac.exe"
 	if not exist "%JAVA%" (
 		echo The variable %~1 does not point to the root directory of
 		echo a JRE or JDK. The following executable does not exist:
@@ -64,13 +61,13 @@ if "%OS%" == "Windows_NT" goto :winnt
 	set "NXJ_COMMAND=%~n0"
 	set "NXJ_HOME=%~dp0\.."
 
-	call :build_classpath NXJ_CP_PC "%NXJ_HOME%\lib\pc"
-	call :build_classpath NXJ_CP_NXT "%NXJ_HOME%\lib\nxt"
+	call :build_classpath NXJ_CP_PC "%%NXJ_HOME%%\lib\pc"
+	call :build_classpath NXJ_CP_NXT "%%NXJ_HOME%%\lib\nxt"
 
 	if not "%LEJOS_NXT_JAVA_HOME%" == "" (
-		call :set_java_and_javac LEJOS_NXT_JAVA_HOME "%LEJOS_NXT_JAVA_HOME%" 
+		call :set_java_and_javac LEJOS_NXT_JAVA_HOME 
 	) else if not "%JAVA_HOME%" == "" (
-		call :set_java_and_javac JAVA_HOME "%JAVA_HOME%" 
+		call :set_java_and_javac JAVA_HOME 
 	) else (
 		call :find_java_and_javac
 	)
