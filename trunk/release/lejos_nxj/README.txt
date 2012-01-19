@@ -8,8 +8,8 @@ leJOS NXJ allows you to program your LEGO Mindstorms NXT robotics system in Java
 replace the LEGO supplied firmware, with the leJOS NXJ firmware, which includes a Java Virtual machine (JVM).
 
 leJOS NXJ comes with many tools for building, uploading and debugging Java programs. They are usually
-used from a Java Integrated Development Environment (IDE). lEJOS NXJ includes plug-ins for
-the Eclipse and Netbeans IDEs, but can also be used from other IDEs. If you prefer, you can just
+used from a Java Integrated Development Environment (IDE). lEJOS NXJ includes a plug-in for
+the Eclipse IDE, but can also be used from other IDEs. If you prefer, you can just
 use a Programmer's editor and command line tools.
 
 What is the correct download for my system?
@@ -35,8 +35,6 @@ in the lejos_nxj/build directory.
 New users should read the tutorial at http://lejos.sourceforge.net/nxt/nxj/tutorial/.
 
 Eclipse users should install the plugin from the update site http:/lejos.sourceforge.net/tools/eclipse/plugin/nxj
-
-Netbeans uses should look at the Netbeans page in the tutorial to see how to use leJOS in Netbeans.
 
 
 What is new in this release
