@@ -24,7 +24,7 @@ public class SteerNavDemo {
 		ArcMoveController p = new SteeringPilot(5.6f, Motor.B, Motor.C, 41, -33, 40);
 		
 		// Alternate code to simulate a steering vehicle of steering radius 40 cm:
-		//ArcMoveController p = new DifferentialPilot(4.32F, 4.32F, 16F, Motor.B, Motor.C, true);
+		//ArcMoveController p = new DifferentialPilot(4.32F, 4.32F, 16F, Motor.B, Motor.C, false);
 		//p.setMinRadius(40);
 		
 		Navigator c = new Navigator(p);
@@ -34,6 +34,7 @@ public class SteerNavDemo {
 		System.out.println("x=" + pose.getX() + " y=" + pose.getY() + " H=" + pose.getHeading());
 		
 		c.goTo(new Waypoint(0, 50, 0));
+		c.waitForStop();
 		Sound.beep();
 		Thread.sleep(1000);
 		
@@ -41,6 +42,7 @@ public class SteerNavDemo {
 		System.out.println("x=" + pose.getX() + " y=" + pose.getY() + " H=" + pose.getHeading());
 		
 		c.goTo(new Waypoint(50, 50, 90));
+		c.waitForStop();
 		Sound.beep();
 		Thread.sleep(1000);
 				
@@ -49,6 +51,7 @@ public class SteerNavDemo {
 		
 		Waypoint dest = new Waypoint(-50, 50, 270);
 		c.goTo(dest);
+		c.waitForStop();
 		Sound.beep();
 		Thread.sleep(1000);
 		
@@ -57,6 +60,7 @@ public class SteerNavDemo {
 		
 		dest = new Waypoint(0, 0, 0);
 		c.goTo(dest);
+		c.waitForStop();
 		Sound.beep();
 		Thread.sleep(1000);
 		
