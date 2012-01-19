@@ -1,4 +1,4 @@
-package org.lejos.sample.TouchPanelTest;
+package org.lejos.sample.touchpaneltest;
 
 import java.awt.Point;
 import java.util.ArrayList;
