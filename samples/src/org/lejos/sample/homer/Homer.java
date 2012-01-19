@@ -74,7 +74,7 @@ public class Homer {
   public static void main(String[] args)throws IOException  {
        
     Homer simpson = new Homer();
-    debug = true;
+    debug = false;
     simpson.run();
   }
   
@@ -103,9 +103,9 @@ public class Homer {
   
   
   public void run() {  
-        mcl.setDebug(debug);
+     mcl.setDebug(debug);
      if(debug){
-         RConsole.openBluetooth(0);
+        RConsole.openBluetooth(0);
         System.out.println("Homer  wants console ");
         System.setOut(RConsole.getPrintStream());
       }
