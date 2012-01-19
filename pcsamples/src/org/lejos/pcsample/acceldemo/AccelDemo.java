@@ -1,6 +1,7 @@
 package org.lejos.pcsample.acceldemo;
 import lejos.nxt.SensorPort;
-import lejos.nxt.addon.AccelMindSensor;
+import lejos.nxt.addon.SensorSelector;
+import lejos.robotics.Accelerometer;
 
 /**
  * Test of remote access to Acceleration (Tilt) sensor using
@@ -11,16 +12,10 @@ import lejos.nxt.addon.AccelMindSensor;
  */
 public class AccelDemo {
 	public static void main(String [] args) throws Exception {
-		AccelMindSensor a = new AccelMindSensor(SensorPort.S1);
-		//AccelHTSensor a = new AccelHTSensor(SensorPort.S1);
+		Accelerometer a = SensorSelector.createAccelerometer(SensorPort.S1);
 		
-		System.out.println("Prod ID " + a.getProductID());
-		System.out.println("Vendor ID " + a.getVendorID());
-		System.out.println("Version " + a.getVersion());
-				
 		for(;;) {
-			System.out.println("TILT: x " + a.getXTilt() + "  y " + a.getYTilt() + " z " + a.getZTilt());
-			System.out.println("ACCEL: x " + a.getXAccel() + "  y " + a.getYAccel() + " z " + a.getZAccel());
+			System.out.println("ACCEL: x=" + a.getXAccel() + "  y=" + a.getYAccel() + " z=" + a.getZAccel());
 		}
 	}
 }
