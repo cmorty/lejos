@@ -49,8 +49,7 @@
 		<td class="n2t1r1c1"><!-- LEFT NAVIGATION SYSTEM -->
 		<div class="nolinkLESSON">Using a Java IDE</div>
 		<div class="linkAHEAD"><a href="#1">Eclipse</a></div>
-		<div class="linkAHEAD"><a href="#2">Netbeans</a></div>
-		<div class="linkAHEAD"><a href="#3">Other IDEs</a></div>
+		<div class="linkAHEAD"><a href="#2">Other IDEs</a></div>
 		</td>
 		<td><!-- BREADCRUMBS -->
 		<div id="BreadCrumbs"><a href="../index.htm" target="_top">Home
@@ -73,38 +72,29 @@
 		leJOS.</p> 
 		
 		<a name="2"></a>
-		<h4>Netbeans</h4>
-
-		<p>At the moment, Netbeans is less well supported than Eclipse. We provide a plug-in, however,
-		it not as mature as the plug-in for Netbeans. Also, the support for leJOS is mostly based on
-		Netbeans support for running Ant build scripts. Hence, the restrictions of
-		most other IDEs also apply to Netbeans (<a href="#3">see below</a>).
-		Continue <a href="UsingNetbeans.htm">here</a> to read how to use Netbeans with leJOS.</p> 
+		<h4>Neatbeans and other Java IDEs</h4>
 		
-		<a name="3"></a>
-		<h4>Other IDEs</h4>
-		
-		<p>Besides Eclipse and Netbeans, there are many other Java IDEs. Most of them will probably
+		<p>Besides Eclipse, there are many other Java IDEs. Most of them will probably
 		offer support for Ant and it recommended to compile and run your programs using Ant
 		build scripts. We provide Ant build scripts as part of your sample and example projects.
 		The example projects
 		are a good starting point for structuring your own project and their Ant files
 		<em>build.xml</em> and <em>build.properties</em> are a good template for your own
 		project's Ant build scripts.</p>
-		<p>However, modern IDEs are based on the assumption, that a fully fledged Java Runtime
+		
+		<p>However, most of the IDEs we are aware of are based on the assumption, that a fully fledged Java Runtime
 		is used. For those Java programs that run on the NXT, leJOS provides a re-implementation
 		of a Java Runtime in form of the file <em>classes.jar</em>. But the
-		leJOS Java Runtime only implements a subset of the standard Java Runtime as provided
-		by Oracle. Also, some classes have additional methods that would not exist in a standard
+		leJOS Java Runtime only implements a subset of the standard Java Runtime.
+		Also, some classes in the leJOS Java Runtime have additional methods that would not exist in a standard
 		Java Runtime. Therefore, even after configuring your IDE by adding the <em>classes.jar</em>
 		to the classpath of your project, the IDE might claim during the editing of your Java source
 		code that some methods (e.g. <code>java.io.File.exec()</code>) do not exist,
 		even though the project compiles fine using Ant. Also, during auto-completion, the
 		IDE may suggest classes or methods that actually do not exist in the leJOS Java Runtime
 		which might result in unexpected errors during the compilation process.</p>
-		<p>Hence it is recommended to use to one of the supported IDEs.
-		<a href="UsingEclipse.htm">Eclipse</a> is probably the best choice, as far as leJOS
-		support is concerned.</p>
+		<p>Hence it is recommended to use <a href="UsingEclipse.htm">Eclipse</a>, which
+		is probably the best choice at the moment, as far as leJOS support is concerned.</p>
 		<p>Java programs that run on the PC and remote control the NXT Brick via USB or Bluetooth
 		should be possible with most IDEs without problems. The IDE should be configured to include
 		the JAR files from <em>lib/pc</em> directory of the leJOS distribution in the classpath.
