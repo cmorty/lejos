@@ -95,7 +95,7 @@ public class ShortestPathFinder implements PathFinder
       _count++;
       // get temporary destination from candidate list
       dest = _candidate.get(_index);
-       if(_debug) System.out.println("dest " +dest.getX()+" , "+dest.getY()+" index "+_index);
+       if(_debug) System.out.println("dest " +dest+" index "+_index);
       from = getBest(dest);  //best predecessor in _reached set
       float distance = from.getDistance(dest);// straight line distance
            if(_debug) System.out.println(" best possible node in reached  "+from +" distance "+distance);
@@ -103,7 +103,23 @@ public class ShortestPathFinder implements PathFinder
       {
           if(_debug) System.out.println("dest already blocked  ");
         _index++; // try another temporary destination node, next farther from destination
-        failed = _index == _candidate.size(); // tried all camdidates
+        failed = _index == _candidate.size(); // tried all candidates
+        if(failed) 
+        {
+        	if(dest != _destination)
+        	{
+        		dest.unreachable();
+        		_candidate.remove(dest);
+        		if(_debug) System.out.println("UNREACHABLE "+dest);
+        		failed = false;
+        		_index = 0;
+        	}
+        	else 
+        		{
+        		System.out.println("Destinatin unreachable");
+        		throw new DestinationUnreachableException();       		
+        		}
+        }
       } else  // is temp dest reachable from the best reached node?
       {
         if (segmentBlocked(from, dest)) //line between from and dest intersects a map line
@@ -182,7 +198,7 @@ public class ShortestPathFinder implements PathFinder
 //                +n1.getSourceDistance());
       }
        n2 = new Node((float)p2.getX(),(float)p2.getY());
-       if(!inReachedSet(n2) && !inCandidateSet(n2))
+       if(!inReachedSet(n2) && !inCandidateSet(n2) && n2.isReachable())
       {
         n2.setSourceDistance(from.getSourceDistance() + from.getDistance(n2));
 //        _candidate.add(n2);
@@ -214,7 +230,8 @@ public class ShortestPathFinder implements PathFinder
           }
       }
        if(indx == -1) _candidate.add(n);
-      System.out.println(n+" added to candidate index " + _candidate.indexOf(n)
+       if(indx > 0 && _index > indx) _index = indx;
+     if(_debug) System.out.println(n+" added to candidate index " + _candidate.indexOf(n)
               + " destination distance "+distance);
       return _candidate.indexOf(n);
 
@@ -452,6 +469,7 @@ public class ShortestPathFinder implements PathFinder
   private float getDistance(Node aNode)
   {
     if(_blocked.indexOf(aNode) > -1) return BIG;
+    if(!aNode.isReachable()) return BIG;
     return getDistance(aNode.getLocation());
   }
 
@@ -497,12 +515,16 @@ public class ShortestPathFinder implements PathFinder
    */
   private float getY(){return (float)_p.getY();}
   
+  public void unreachable(){ _reachable = false;}
+  public boolean isReachable(){return _reachable;}
+  
   @Override
   public  String toString(){return " "+getX()+" , "+getY()+" ";}
   
   private  Point _p;
   private float _sourceDistance;
   private Node _predecessor;
+  private boolean _reachable = true;
   
   public ArrayList<Node> _blocked = new ArrayList<Node>();
  }
