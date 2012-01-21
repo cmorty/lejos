@@ -18,3 +18,7 @@ nxt_robot:
   - type: battery
     name: battery_sensor
     desired_frequency: 10.0
+  - type: differential_actuator_system
+    name: differential_actuator_system
+    port: PORT_AC
+    desired_frequency: 10.0

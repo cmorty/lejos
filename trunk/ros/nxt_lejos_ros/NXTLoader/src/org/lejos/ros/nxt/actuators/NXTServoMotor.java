@@ -3,7 +3,7 @@ package org.lejos.ros.nxt.actuators;
 import java.util.ArrayList;
 
 import lejos.nxt.Motor;
-import lejos.nxt.remote.RemoteMotor;
+import lejos.robotics.RegulatedMotor;
 
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
@@ -22,7 +22,7 @@ public class NXTServoMotor extends NXTDevice implements INXTDevice{
 
 	//NXT data
 	private String port;
-	private RemoteMotor motor;
+	private RegulatedMotor motor;
 	
 	public NXTServoMotor(final String port){
 		
