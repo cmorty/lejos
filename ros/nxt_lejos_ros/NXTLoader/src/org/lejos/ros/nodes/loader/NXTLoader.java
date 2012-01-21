@@ -1,11 +1,14 @@
 package org.lejos.ros.nodes.loader;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 //NXT_LEJOS_ROS
 import org.lejos.pccomm.utils.SimpleConnector;
@@ -30,8 +33,17 @@ import com.google.common.base.Preconditions;
  */
 public class NXTLoader extends LEJOSNode{
 	
-    String BRICK_NAME = "";
-	String YAMLPath = "";
+	//Path
+	String ROSNodePath = "";
+	
+	//Parameters
+	String BRICK_NAME = "";
+    String CONNECTION_TYPE = "";
+	String YAML = "";
+	
+    final String USB_CONNECTION = "USB";
+    final String BLUETOOTH_CONNECTION = "BLUETOOTH";
+
 	
     //Topic Management    
     ArrayList<NXTServoMotor> motorList = new ArrayList();
@@ -47,28 +59,34 @@ public class NXTLoader extends LEJOSNode{
 	    Preconditions.checkState(this.node == null);
 	    this.node = node;
 
-	    System.out.println("Running NXTLoader");
+	    //Show information about header
+	    showHeader();
 	    
-	    BRICK_NAME = getNodeName();
-	    System.out.println("NXT Brick: " + BRICK_NAME);
-	    System.out.println("ROS Node: " + node.getName().toString());
-
 	    //Get ROS Path
 		try {
-
-			YAMLPath = new File(".").getCanonicalPath();
-			System.out.println("ROS Path: " + YAMLPath);
+		    ROSNodePath = new File(".").getCanonicalPath() + "/"; 
+			System.out.println("ROS Node Path: " + ROSNodePath );
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-	    //1. Connect with NXT Brick
-	    boolean connetionStatus = false;
-		connetionStatus = SimpleConnector.connectByBT(BRICK_NAME);
 		
-		if(connetionStatus){
-			System.out.println("ROS Node connected with NXT brick");
+	    //Load properties
+		readProperties();
+		
+	    //1. Connect with NXT Brick
+		System.out.println("* Connecting with a NXT brick");
+		
+	    boolean connectionStatus = false;
+	    
+	    if(CONNECTION_TYPE.equals(BLUETOOTH_CONNECTION)){
+			connectionStatus = SimpleConnector.connectByBT(BRICK_NAME);	    	
+	    }else{
+	    	connectionStatus = SimpleConnector.connectByUSB();
+	    }
+		
+		if(connectionStatus){
+			System.out.println("ROS Node connected with a NXT brick");
 			
 			//2. Process YAML file
 			processYAML();
@@ -88,6 +106,44 @@ public class NXTLoader extends LEJOSNode{
 		}
 	}
 	
+	private void readProperties(){
+		
+		Properties prop = new Properties();
+
+		System.out.println("* Reading property file");
+		
+		String nodeName = this.getNodeName();
+		String file = nodeName + ".properties";
+		String path = ROSNodePath + file;
+		System.out.println("Path: " + path);
+		
+		//load a properties file
+		try {
+			prop.load(new FileInputStream(path));
+			
+			BRICK_NAME = prop.getProperty("NXT-BRICK");
+			CONNECTION_TYPE = prop.getProperty("CONNECTION-TYPE");
+			YAML = prop.getProperty("YAML-ROBOT-DESCRIPTOR");
+			
+            //get the property value and print it out
+            System.out.println("BRICK-NAME: " + BRICK_NAME);
+    		System.out.println("CONNECTION: " + CONNECTION_TYPE);
+    		System.out.println("YAML: " + YAML);
+			
+		} catch (FileNotFoundException e) {
+			
+			System.err.println("File not found");	
+			e.printStackTrace();
+			System.exit(0);
+			
+		} catch (IOException e) {
+			System.err.println("IO Error");
+			e.printStackTrace();
+			System.exit(0);
+		}
+
+	}
+	
 	/**
 	 * 
 	 * @return
@@ -95,20 +151,22 @@ public class NXTLoader extends LEJOSNode{
 	private String getNodeName(){
 		
 		//Get the name given by .launch file
-		String brickName = node.getName().toString();
+		String nodeName = node.getName().toString();
 		//Remove "/"
-		brickName = brickName.substring(1, brickName.length());
-		return brickName;
+		nodeName = nodeName.substring(1, nodeName.length());
+		return nodeName;
 	}
 	
 	/**
 	 * 
 	 */
 	private void processYAML(){
-	    		
+	    
+		System.out.println("* Processing YAML file");
+		
 		try{
 		
-			String path = YAMLPath+"/"+BRICK_NAME+".yaml";
+			String path = ROSNodePath + YAML;
 			
 			System.out.println("YAML Path: " + path);
 			
@@ -222,7 +280,7 @@ public class NXTLoader extends LEJOSNode{
 	 */
 	private void processSubscriptions(){
 		
-    	System.out.println("Enabling subscriptions");
+    	System.out.println("* Enabling subscriptions");
     	
 		//Subscription to joint_command
         Subscriber<org.ros.message.nxt_msgs.JointCommand> subscriberMotorA =
@@ -256,6 +314,8 @@ public class NXTLoader extends LEJOSNode{
 	 */
 	private void updateTopics(){
 
+		System.out.println("* Updating Topics");
+		
         //Publish data
         int seq = 0;
 		while(true){
@@ -283,6 +343,15 @@ public class NXTLoader extends LEJOSNode{
 
 			seq++;
 		}
+	}
+	
+	private void showHeader(){
+		
+		System.out.println("");
+		System.out.println("*********************");
+	    System.out.println("* Running NXTLoader *");
+		System.out.println("*********************");
+		System.out.println("");
 	}
 	
 }
