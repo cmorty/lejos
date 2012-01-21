@@ -1,0 +1,16 @@
+<package>
+  <description brief="nxt_lejos_ros_msgs">
+
+     nxt_lejos_ros_msgs
+
+  </description>
+  <author>Juan Antonio Brenha Moral</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/nxt_lejos_ros_msgs</url>
+  <depend package="std_msgs"/>
+  <depend package="geometry_msgs"/>
+
+</package>
+
+
