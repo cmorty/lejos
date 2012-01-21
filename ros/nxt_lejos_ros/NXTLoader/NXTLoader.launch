@@ -2,16 +2,12 @@
 NXTLoader is a ROS package included in the stack nxt_lejos_ros which 
 allow ROS developers and LeJOS developers to manage your NXT brick
 from a ROS Environment.
-
-To use this file, it is necessary to update the attribute name, with
-the name of your NXT Brick. This name will be used to load a YAML file
-stored in the path: ~/.ros/<YOUR_NXT_BRICK_NAME>.yaml
 -->
 <launch>
 	<node pkg="rosjava_bootstrap" 
 	type="run.py" 
 	args="NXTLoader org.lejos.ros.nodes.loader.NXTLoader" 
-	name="<YOUR_NXT_BRICK_NAME>" 
+	name="NXTLoader" 
 	output="screen" />     
 </launch>
 
