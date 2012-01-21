@@ -4,7 +4,7 @@
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		
-  <title>Writing your first leJOS NXJ Program</title>
+  <title>Writing and Running your first leJOS NXJ Program</title>
   <!-- CSS -->
   <link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" /><!-- ICONO -->
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
@@ -25,8 +25,10 @@
   <tbody>
     <tr>
       <td class="n2t1r1c1">
-      <div class="nolinkLESSON">Writing your first leJOS NXJ program</div>
+      <div class="nolinkLESSON">Writing and Running your first leJOS NXJ program</div>
       <div class="linkAHEAD"><a href="#1">The HelloWorld program</a></div>
+      <div class="linkAHEAD"><a href="#2">Compiling and linking the program</a></div>
+      <div class="linkAHEAD"><a href="#3">Uploading and running the program</a></div>
       </td>
       <td>
         <div id="BreadCrumbs">
@@ -35,7 +37,7 @@
         </div>
       <div class="NavBit"> <a target="_top" href="../Preliminaries/GettingStarted.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
       href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/CompileAndRun.htm">Next&nbsp;»</a> </div>
-      <div id="PageTitle">Writing your first leJOS NXJ program</div>
+      <div id="PageTitle">Writing and Running your first leJOS NXJ program</div>
      <a id="1" name="1"></a>
       <h4>The HelloWorld program</h4>
       <p> Let us start with a simple &#8220;Hello World&#8221; program. We will
@@ -79,9 +81,50 @@ public class HelloWorld {
     Button.waitForAnyPress();
   }
 }</code></pre>
+     <p> <a href="#top">Back to top</a> </p>
+
+     <a id="2" name="2"></a>
+     <h4>Compiling and linking the program</h4>
+     
+     <p>Create a file called <code>HelloWorld.java</code> with the source code shown
+     above. Then open a command prompt and execute the following command in the
+     directory in which you created HelloWorld.java:</p>
+     
+     <pre class="CodeBox"><code>nxjc HelloWorld.java</code></pre>
+     
+     <p>This will the file called <em>HelloWorld.class</em>, which contains the result
+     of the compilation of HelloWorld.java. Unlike a real Java virtual machine, the
+     leJOS firmware does not execute *.class files directly. The HelloWorld program
+     needs to be linked, using the leJOS linker. This is done with the following command:</p>
+     
+     <pre class="CodeBox"><code>nxjlink -o HelloWorld.nxj HelloWorld</code></pre>
+     
+     <p>This will load the class HelloWorld (from HelloWorld.class) and all dependencies.
+     The classes are then merged together into a single file, namely <em>HelloWorld.nxj</em>.
+     However, before that file can be executed, it needs to be uploaded to the NXT brick.</p>
+     
+     <p> <a href="#top">Back to top</a> </p>
       
-      <p>Read the next section to learn how to compile and run this program</p>
-      <p> <a href="#top">Back to top</a> </p>
+     <a id="3" name="3"></a>
+     <h4>Uploading and running the program</h4>
+     
+     <p>Using the commands above, you obtain the HelloWorld.nxj file. You can
+     now upload it to the NXT brick to execute it. To do that, use the following command:</p>
+     
+     <pre class="CodeBox"><code>nxjupload -r HelloWorld.nxj</code></pre>
+     
+     <p>The parameter <code>-r</code> means, that the program will be executed after
+     it has been uploaded to the NXT. By omitting the parameter, nxjupload will just upload
+     the file and it will not executed automatically. You can then execute HelloWorld.nxj
+     manually via the menu shown on the NXT brick.</p>
+     
+     <p>Also, there is the possibility of the linking a program and uploading the result
+     with one single command. The following command has the same effect as the
+     nxjlink and nxjupload commands above:</p>
+     
+     <pre class="CodeBox"><code>nxj -r -o HelloWorld.nxj HelloWorld</code></pre>
+     
+      <p><a href="#top">Back to top</a> </p>
       <div class="NavBit"> <a target="_top" href="../Preliminaries/GettingStarted.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
       <a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/CompileAndRun.htm">Next&nbsp;»</a> </div>
       <br />
