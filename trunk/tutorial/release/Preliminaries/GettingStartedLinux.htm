@@ -28,11 +28,10 @@
       <div class="nolinkLESSON">Getting Started on Linux</div>
       <div class="linkAHEAD"><a href="#1">Prerequisites</a></div>
       <div class="linkAHEAD2"><a href="#2">Java Development Kit</a></div>
-      <div class="linkAHEAD2"><a href="#3">USB</a></div>
+      <div class="linkAHEAD2"><a href="#3">USB Driver</a></div>
       <div class="linkAHEAD2"><a href="#6">Bluetooth</a></div>
-      <div class="linkAHEAD"><a href="#7">Downloading the software</a></div>
-      <div class="linkAHEAD"><a href="#8">Installing the software</a></div>
-      <div class="linkAHEAD2"><a href="#9">Unpacking the release</a></div>
+      <div class="linkAHEAD"><a href="#7">Installing the software</a></div>
+      <div class="linkAHEAD2"><a href="#8">Downloading the software</a></div>
       <div class="linkAHEAD2"><a href="#10">Setting up environment variables</a></div>
       <div class="linkAHEAD2"><a href="#11">Building the release</a></div>
       <div class="linkAHEAD2"><a href="#12">Flashing the firmware</a></div>
@@ -71,7 +70,7 @@
       section below.</p>
  
       <a name="3"></a>
-      <h5>USB communication</h5>  
+      <h5>USB Driver</h5>  
       
       <p>In order to use a USB connection to your NXT brick on Linux, libusb must be installed.
       It can be obtained from <a href="http://libusb.sourceforge.net" target="_blank">http://libusb.sourceforge.net</a>.
@@ -97,7 +96,7 @@
 		systems. To use <em>udev rules</em>, set up a file such as <em>/etc/udev/rules.d/70-lego.rules</em>
 		and populate it with the following lines:</p>
 
-		<pre><code># Lego NXT brick in normal mode
+		<pre class="CodeBox"><code># Lego NXT brick in normal mode
 SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="0694", ATTRS{idProduct}=="0002", GROUP="lego", MODE="0660"
 # Lego NXT brick in firmware update mode (Atmel SAM-BA mode)
 SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", GROUP="lego", MODE="0660"</code></pre>
@@ -110,26 +109,23 @@ SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="612
 
       <a name="6"></a>
       <h5>Bluetooth</h5> 
-      <p> If you want to communicate with the NXT over Bluetooth, you will need a Linux supported
+      <p>If you want to communicate with the NXT over Bluetooth, you will need a Linux supported
       Bluetooth dongle or built-in support on your PC. leJOS uses the Bluecove libraries which are
       included in the distribution. You can use leJOS NXJ without Bluetooth.</p>
       
       <p> <a href="#top">Back to top</a> </p>
       
       <a name="7"></a>
-      <h4>Downloading the software</h4> 
-      <p>You can download the leJOS NXJ software from <a href="http://lejos.sourceforge.net/nxj-downloads.php"
-      target="_blank">The leJOS NXJ download page</a>.</p>
-      <p>The Linux edition of leJOS is distributed as a .tar.gz file.</p>
-      
-      <p> <a href="#top">Back to top</a> </p>
-      
-      <a name="8"></a>
       <h4>Installing leJOS</h4>
       
-      <a name="9"></a>
-      <h5>Unpacking the release</h5>
-      <p>Unpack the release into a directory of your choice, e.g. /opt/lejos/</p>
+      <a name="8"></a>
+      <h5>Downloading the software</h5> 
+      <p>You can download the leJOS NXJ software from <a href="http://lejos.sourceforge.net/nxj-downloads.php"
+      target="_blank">The leJOS NXJ download page</a>.</p>
+      <p>The Linux edition of leJOS is distributed as a .tar.gz file.
+      Untar the archive to a location of your choice, e.g. /opt/leJOS_NXJ</p>
+      
+      <p> <a href="#top">Back to top</a> </p>
       
       <a name="10"></a>
       <h5>Setting up environment variables</h5>
@@ -139,6 +135,10 @@ SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="612
       or (2) set the <em>LEJOS_NXT_JAVA_HOME</em> environment variable to the directory of an installed JDK.
       Note that you can use <em>JAVA_HOME</em> instead of LEJOS_NXT_JAVA_HOME, however setting JAVA_HOME might
       intefere with other applications.</p>
+      <p>Furthermore, the <em>NXJ_HOME</em> variable should be set to the directory where leJOS NXJ
+      is installed. It allows other applications, e.g. the Ant scripts, to locate the leJOS
+      Development Kit. Also, for easy exececution of the leJOS commands on the command line,
+      the bin folder of the leJOS distribution should be added to the <em>PATH</em> variable.</p>
       <p>Examples:</p>
       <table border="1">
         <tbody>
@@ -150,28 +150,28 @@ SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="612
           <tr>
             <td>NXJ_HOME</td>
             <td>The folder you installed leJOS NXJ into</td>
-            <td>/opt/leJOS_NXJ_0.9.1beta</td>
+            <td>/opt/leJOS_NXJ</td>
           </tr>
           <tr>
             <td>LEJOS_NXT_JAVA_HOME</td>
-            <td>The folder where you installed the JDK </td>
+            <td>The folder where the JDK is installed</td>
             <td>/opt/sun-jdk-1.6.0.30<br/>
             /usr/lib/jvm/java-6-sun-1.6.0.06</td>
           </tr>
           <tr>
             <td>PATH</td>
             <td>Prepend the bin of the leJOS Development Kit</td>
-            <td>/opt/leJOS_NXJ_0.9.1beta/bin:$PATH</td>
+            <td>/opt/leJOS_NXJ/bin:$PATH</td>
           </tr>
         </tbody>
       </table>
-      <p>The bin directory for the JDK may already be on your PATH. In that case, it is unnessary
+      <p>The bin directory for the JDK may already be on your PATH. In that case, it is unnecessary
       to set LEJOS_NXT_JAVA_HOME or JAVA_HOME, unless you want to have multiple JDKs on your system
       and want to select a specific JDK for use with leJOS.</p>
       <p>With most Linux distributions, you can set these environment variables for the current user
       in .bash_profile or for all users in /etc/profile.</p>
       
-      <a name="13"></a>
+      <a name="11"></a>
       <h5>Building the release</h5>
       
       <p>In order to use USB communications, you have to build the java native library first.
@@ -188,9 +188,9 @@ SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="612
       <p>Note that the 0.9 release changes the amount of flash memory reserved for the firmware
       and the startup menu, so when you first flash the 0.9 firmware any existing files will be lost</p>
       
-      <p>Make sure your NXT is attached to the PC via USB cable and switch it on by pressing the orange button.
-      Open a command line prompt (as described above) and either type the command
-      <code>nxjflash</code> or <code>nxjflashg</code>. The latter starts the GUI version of nxjflash.</p> 
+      <p>Make sure your NXT is attached to the PC via USB cable and switch it on by pressing the
+      orange button. Open a command line prompt and either type the command <code>nxjflash</code>
+      or <code>nxjflashg</code>. The latter starts the GUI version of nxjflash.</p> 
       
       <p>If you chose <code>nxjflash</code> to flash the leJOS NXJ firmware, you will see
       some messages on your command window.

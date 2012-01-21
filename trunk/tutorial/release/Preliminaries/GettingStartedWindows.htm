@@ -70,7 +70,7 @@
       If you have installed the standard LEGO Mindstorms NXT-G software, a suitable driver (the so-called Fantom driver) is already installed. 
       If you do not wish to install the LEGO software on your PC or if you want to update the Fantom driver to the latest version,
       you can get an installer from <a href="http://mindstorms.lego.com/en-us/support/files/Driver.aspx" target="_blank">The LEGO Mindstorms site</a>.
-      </p>
+      It is strongly recommended to update to the latest version (1.1.3 at the time of writing).</p>
       <p>It has come to our attention, that NXT-G as well as the Fantom driver don't install under Windows 7 Starter Edition.
       This can be worked around by adding a line to the setup.ini file.
       <a href="http://digital.ni.com/public.nsf/allkb/1817F501D7BA67F28625768F0000B260">Here</a> you find the official instructions
@@ -189,9 +189,7 @@
       <a id="8" name="8"></a>
       <h5>Downloading and Unzipping</h5>
       <p>Download the file called <code>leJOS_NXJ_0.9.1beta_win32.zip</code> and unzip it to a location of
-      your choice such as c:\lejos. The zip file includes a directory called leJOS_NXJ_0.9.1beta_win32,
-      the leJOS Development Kit will reside inside the folder C:\lejos\leJOS_NXJ_0.9.1beta_win32.
-      This will be the value for the NXJ_HOME environment variable (see below).</p>
+      your choice, e.g. C:\leJOS_NXJ.</p>
       
       <a id="9" name="9"></a>
       <h5>Setting up environment variables</h5>
@@ -201,6 +199,10 @@
       or (2) set the <em>LEJOS_NXT_JAVA_HOME</em> environment variable to the directory of an installed JDK.
       Note that you can use <em>JAVA_HOME</em> instead of LEJOS_NXT_JAVA_HOME, however setting JAVA_HOME might
       intefere with other applications.</p>
+      <p>Furthermore, the <em>NXJ_HOME</em> variable should be set to the directory where leJOS NXJ
+      is installed. It allows other applications, e.g. the Ant scripts, to locate the leJOS
+      Development Kit. Also, for easy exececution of the leJOS commands on the command line,
+      the bin folder of the leJOS distribution should be added to the <em>PATH</em> variable.</p>
       
       <p>Examples:</p>
       <table border="1">
@@ -213,7 +215,7 @@
           <tr>
             <td>NXJ_HOME</td>
             <td>The folder you installed leJOS NXJ into</td>
-            <td>C:\lejos\leJOS_NXJ_0.9.1beta_win32</td>
+            <td>C:\leJOS_NXJ</td>
           </tr>
           <tr>
             <td>LEJOS_NXT_JAVA_HOME</td>
@@ -224,7 +226,7 @@
           <tr>
             <td>PATH</td>
             <td>Prepend the bin of the leJOS Development Kit</td>
-            <td>C:\lejos\leJOS_NXJ_0.9.1beta_win32\bin;%PATH%</td>
+            <td>C:\leJOS_NXJ\bin;%PATH%</td>
           </tr>
         </tbody>
       </table>
