@@ -137,7 +137,7 @@ public class TinyVMType
    /**
     * Get tiny vm type from bcel signature.
     * 
-    * @param type bcel signature
+    * @param signature bcel signature
     * @return tiny vm type
     */
    public static TinyVMType tinyVMTypeFromSignature (String signature)

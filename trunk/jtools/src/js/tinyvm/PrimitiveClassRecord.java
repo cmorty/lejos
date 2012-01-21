@@ -1,14 +1,12 @@
 package js.tinyvm;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
-import java.util.ArrayList;
+import js.tinyvm.util.HashVector;
 
 import org.apache.bcel.generic.Type;
-
-
-import js.tinyvm.util.HashVector;
 
 
 

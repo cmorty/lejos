@@ -1,28 +1,19 @@
 package js.tinyvm;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.io.WriteAbortedException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
 import java.util.logging.Logger;
 
 import js.tinyvm.io.IByteWriter;
 import js.tinyvm.io.IOUtilities;
 
 import org.apache.bcel.classfile.Constant;
+import org.apache.bcel.classfile.ConstantClass;
 import org.apache.bcel.classfile.ConstantDouble;
 import org.apache.bcel.classfile.ConstantFloat;
 import org.apache.bcel.classfile.ConstantInteger;
 import org.apache.bcel.classfile.ConstantLong;
 import org.apache.bcel.classfile.ConstantPool;
 import org.apache.bcel.classfile.ConstantString;
-import org.apache.bcel.classfile.ConstantClass;
 
 
 /**

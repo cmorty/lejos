@@ -2,7 +2,6 @@ package js.tinyvm;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;

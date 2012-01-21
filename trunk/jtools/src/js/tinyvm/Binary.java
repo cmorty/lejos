@@ -1,17 +1,14 @@
 package js.tinyvm;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import js.common.ToolProgressMonitor;
 import js.tinyvm.io.IByteWriter;
 import js.tinyvm.util.HashVector;
-
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 
 import org.apache.bcel.Constants;
 import org.apache.bcel.generic.Type;
@@ -93,7 +90,7 @@ public class Binary
     * Dump debug data.
     *
     * @param fos FileOutputStream
-    * @throws TinyVMException
+    * @throws IOException
     */
    public void dumpDebug (OutputStream fos) throws IOException
    {

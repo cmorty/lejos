@@ -3,10 +3,10 @@ package js.tinyvm;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.ArrayList;
 
 import js.tinyvm.io.IByteWriter;
 import js.tinyvm.io.IOUtilities;

@@ -14,8 +14,6 @@ public class AbstractTool
 
    /**
     * Constructor.
-    * 
-    * @param listener tool progress listener
     */
    public AbstractTool ()
    {
