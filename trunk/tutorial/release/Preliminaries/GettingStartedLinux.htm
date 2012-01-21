@@ -83,41 +83,44 @@
       <em>libusb-devel</em>.  
       Note that either libusb-0.1 or libusb-compat is required. The newer libusb-1.0 will not work.</p>
       
-      <p>If you are running leJOS NXJ from a non-root user, you will need to ensure that you have read and write access the NXT USB device in /dev/bus/usb.
-		If you can identify the device in /dev/bus/usb, you can do this by:</p>
+		<p>If you are running leJOS NXJ from a non-root user, you will need to ensure that you have
+		read and write access the NXT USB device in /dev/bus/usb. You can temporary allow access to
+		certain USB decives using the following command:</p>
 
-		<p><em>sudo chmod a+w /dev/bus/usb/xxx/yyy</em></p>
+		<p><code>sudo chmod a+w /dev/bus/usb/xxx/yyy</code></p>
 
-		<p>However, the yyy number will count up each time the NXT is disconnected and reconnected.</p>
+		<p>The <code>xxx</code> and <code>yyy</code> numbers need for you NXT to be determined
+		beforehand. The number will change each time the NXT is disconnected and reconnected
+		or turned off and on again.</p>
 
-		<p>A better solution is to use <em>udev rules</em>. How to do this may vary with different Linux systems.</p>
-
-		<p>To use <em>udev rules</em>, set up a file such as  <em>/etc/udev/rules.d/70-lego.rules</em> and populate it with the following lines:</p>
+		<p>A better solution is to use <em>udev rules</em>. How to do this may vary with different Linux
+		systems. To use <em>udev rules</em>, set up a file such as <em>/etc/udev/rules.d/70-lego.rules</em>
+		and populate it with the following lines:</p>
 
 		<pre><code># Lego NXT brick in normal mode
 SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="0694", ATTRS{idProduct}=="0002", GROUP="lego", MODE="0660"
 # Lego NXT brick in firmware update mode (Atmel SAM-BA mode)
 SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", GROUP="lego", MODE="0660"</code></pre>
 
-		<p>This relies on the username you are using being in the <em>lego</em> group. You can modify the file to your
-		requirements. The two vendors are LEGO and Atmel (for the samba driver used in firmware update mode).
-		You may need to reload the rules or restart udev. On some Linux systems, the command to reload the rules is <em>udevadm control --reload-rules</em>.</p>
-                 
+		<p>These rules rely on your username being in the <em>lego</em> usergroup. You may have to create
+		this usergroup via <code>sudo groupadd lego</code> and then add your username to the group via
+		<code>sudo gpasswd -a &lt;username&gt; lego</code>. You can also modify the file to your requirements.
+		On recent Linux system, the rules are reloaded automatically by udev.
+		The rules can be reloaded manually using the command <code>sudo udevadm control --reload-rules</code>.</p>
+
       <a name="6"></a>
       <h5>Bluetooth</h5> 
-      <p> If you want to communicate with the NXT over Bluetooth, you will need a Linux supported Bluetooth dongle or built-in support on your PC. 
-      leJOS uses the Bluecove libraries which are included in the distribution.
-       </p>
-       
-      <p> You can use leJOS NXJ without Bluetooth.</p>
+      <p> If you want to communicate with the NXT over Bluetooth, you will need a Linux supported
+      Bluetooth dongle or built-in support on your PC. leJOS uses the Bluecove libraries which are
+      included in the distribution. You can use leJOS NXJ without Bluetooth.</p>
       
       <p> <a href="#top">Back to top</a> </p>
       
       <a name="7"></a>
       <h4>Downloading the software</h4> 
-      <p>You can download the leJOS NXJ software from <a href="http://lejos.sourceforge.net/nxj-downloads.php" target="_blank">
-      The leJOS NXJ download page</a>.</p>
-      <p>On Linux, leJOS is distributed as a .tar.gz file.</p>
+      <p>You can download the leJOS NXJ software from <a href="http://lejos.sourceforge.net/nxj-downloads.php"
+      target="_blank">The leJOS NXJ download page</a>.</p>
+      <p>The Linux edition of leJOS is distributed as a .tar.gz file.</p>
       
       <p> <a href="#top">Back to top</a> </p>
       
