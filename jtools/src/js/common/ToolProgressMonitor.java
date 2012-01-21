@@ -22,7 +22,7 @@ public interface ToolProgressMonitor
    /**
     * Notification about progress.
     * 
-    * @param int progress progress (0-1000)
+    * @param progress progress (0-1000)
     */
    public void progress (int progress);
 
