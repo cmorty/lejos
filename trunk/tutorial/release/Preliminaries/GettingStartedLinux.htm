@@ -28,9 +28,7 @@
       <div class="nolinkLESSON">Getting Started on Linux</div>
       <div class="linkAHEAD"><a href="#1">Prerequisites</a></div>
       <div class="linkAHEAD2"><a href="#2">Java Development Kit</a></div>
-      <div class="linkAHEAD2"><a href="#3">libusb</a></div>
-      <div class="linkAHEAD2"><a href="#4">Package dependencies</a></div>
-      <div class="linkAHEAD2"><a href="#5">Accessing USB Devices</a></div>
+      <div class="linkAHEAD2"><a href="#3">USB</a></div>
       <div class="linkAHEAD2"><a href="#6">Bluetooth</a></div>
       <div class="linkAHEAD"><a href="#7">Downloading the software</a></div>
       <div class="linkAHEAD"><a href="#8">Installing the software</a></div>
@@ -39,7 +37,6 @@
       <div class="linkAHEAD2"><a href="#11">Building the release</a></div>
       <div class="linkAHEAD2"><a href="#12">Flashing the firmware</a></div>
       <div class="linkAHEAD"><a href="#13">Testing your Installation</a></div>
-      <div class="linkAHEAD2"><a href="#14">Compiling and running your first program</a></div>
       </td>
       <td>
         <div id="BreadCrumbs">
@@ -55,35 +52,36 @@
       
       <a name="2"></a>
       <h5>Java Development Kit</h5>     
+      
       <p>You will also need a Java Development Kit (JDK) on your PC. 
       Note that a Java Runtime Environment (JRE) is not sufficient 
       as it does not allow you to compile Java programs. You can download
-      the latest JDK from <a href="http://www.oracle.com/technetwork/java/index.html" target="_blank">http://www.oracle.com/technetwork/java/index.html</a>.
+      the latest JDK from <a href="http://www.oracle.com/technetwork/java/javase/downloads/" target="_blank">http://www.oracle.com/technetwork/java/javase/downloads/</a>.
       Follow the instructions for installing it. leJOS NXJ works has been
-      tested with JDK versions 1.5 and 1.6, but will not work with earlier
-      versions. JDK 1.6 is recommended as some PC samples do not work with JDK 1.5. Note that leJOS has only
+      tested with JDK versions 1.5, 1.6, and 1.7, and will not work with earlier
+      versions. JDK 1.6 or 1.7 is recommended. Note that leJOS has only
       been tested with the official Oracle JDK. It is likely to work with the Open JDK, but not with gcj.</p>
-      <p>You will need to add the JDK bin directory to your system or user PATH,
-       so that commands such as <code>javac</code> and <code>java</code> can be called from a command prompt. If you do not know how to do this, 
-       see <a href="#11">Setting up environment variables</a> below.</p>
-       <p> You should set the environment variable JAVA_HOME to the folder where you installed the JDK. If you have multiple JDKs installed and do
-       not want to have JAVA_HOME, you can set LEJOS_NXT_JAVA_HOME instead.</p>
+      
+      <p>leJOS NXJ needs to know the locations of java.exe and javac.exe. There are several possibilities
+      to achieve that: (1) add the bin directory of the JDK to your <em>PATH</em> environment variable
+      so that commands such as <code>java</code> and <code>javac</code> can be called from a command prompt
+      or (2) set the <em>LEJOS_NXT_JAVA_HOME</em> environment variable to the directory of an installed JDK.
+      The <em>JAVA_HOME</em> environment variable can also be used instead of LEJOS_NXT_JAVA_HOME.
+      If you do not know how to modify environment variables, read the "Setting up environment variables"
+      section below.</p>
  
       <a name="3"></a>
-      <h5>libusb</h5>  
+      <h5>USB communication</h5>  
       
-      <p>In order to use a USB connection to your NXT brick on Linux, you will need libusb installed on your sysyem. 
-      leJOS requires the legacy 0.1.12 release. On most Linux distributions the 0.1.12 version of the libusb package will normally be installed, but the libusb development package may not be.. You can get more information from <a href="http://libusb.sourceforge.net" target="_blank">http://libusb.sourceforge.net</a></p>
+      <p>In order to use a USB connection to your NXT brick on Linux, libusb must be installed.
+      It can be obtained from <a href="http://libusb.sourceforge.net" target="_blank">http://libusb.sourceforge.net</a>.
+      It is pre-installed with many Linux distributions, or is available as an optional package.</p>
                
-      <a name="4"></a>
-      <h5>Package Dependencies</h5> 
-      
-       <p>You  will need to ensure that the packages that leJOS NXJ is dependent on are on your system. 
-       	To build the jlibnxt JNI library, which is used for USB access, you need the <em>Development files for libusb (libusb-devel)</em>.  
-       	Note that leJOS NXJ uses libusb (legacy release 0.1.12), not libusb1.</p>
-         
-      <a name="5"></a>
-      <h5>Accessing USB devices</h5>
+      <p>You will need to ensure that the packages that leJOS NXJ is dependent on are on your system. 
+      To build the jlibnxt JNI library, which is used for USB access, you need the
+      <em>Development files for libusb</em>. The package is usally called something like
+      <em>libusb-devel</em>.  
+      Note that either libusb-0.1 or libusb-compat is required. The newer libusb-1.0 will not work.</p>
       
       <p>If you are running leJOS NXJ from a non-root user, you will need to ensure that you have read and write access the NXT USB device in /dev/bus/usb.
 		If you can identify the device in /dev/bus/usb, you can do this by:</p>
@@ -96,10 +94,10 @@
 
 		<p>To use <em>udev rules</em>, set up a file such as  <em>/etc/udev/rules.d/70-lego.rules</em> and populate it with the following lines:</p>
 
-		<code># Lego NXT brick in normal mode<br/>
-		SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="0694", ATTRS{idProduct}=="0002", GROUP="lego", MODE="0660"<br/>
-		# Lego NXT brick in firmware update mode (Atmel SAM-BA mode)<br/>
-		SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", GROUP="lego", MODE="0660"</code>
+		<pre><code># Lego NXT brick in normal mode
+SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="0694", ATTRS{idProduct}=="0002", GROUP="lego", MODE="0660"
+# Lego NXT brick in firmware update mode (Atmel SAM-BA mode)
+SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", GROUP="lego", MODE="0660"</code></pre>
 
 		<p>This relies on the username you are using being in the <em>lego</em> group. You can modify the file to your
 		requirements. The two vendors are LEGO and Atmel (for the samba driver used in firmware update mode).
@@ -132,97 +130,91 @@
       
       <a name="10"></a>
       <h5>Setting up environment variables</h5>
-      <p>You need to set:</p>
+      <p>leJOS NXJ needs to know the locations of java.exe and javac.exe. There are several possibilities
+      to achieve that: (1) add the bin directory of the JDK to your <em>PATH</em> environment variable
+      so that commands such as <code>java</code> and <code>javac</code> can be called from a command prompt
+      or (2) set the <em>LEJOS_NXT_JAVA_HOME</em> environment variable to the directory of an installed JDK.
+      Note that you can use <em>JAVA_HOME</em> instead of LEJOS_NXT_JAVA_HOME, however setting JAVA_HOME might
+      intefere with other applications.</p>
+      <p>Examples:</p>
       <table border="1">
         <tbody>
           <tr>
             <td><b>Variable</b></td>
             <td><b>Value</b></td>
-            <td><b>Example</b></td>
+            <td><b>Examples</b></td>
           </tr>
           <tr>
             <td>NXJ_HOME</td>
             <td>The folder you installed leJOS NXJ into</td>
-            <td>/opt/lejos_nxj</td>
+            <td>/opt/leJOS_NXJ_0.9.1beta</td>
           </tr>
           <tr>
-            <td>JAVA_HOME</td>
-            <td>The folder  where you installed the JDK </td>
-            <td>/usr/java/</td>
+            <td>LEJOS_NXT_JAVA_HOME</td>
+            <td>The folder where you installed the JDK </td>
+            <td>/opt/sun-jdk-1.6.0.30<br/>
+            /usr/lib/jvm/java-6-sun-1.6.0.06</td>
           </tr>
           <tr>
             <td>PATH</td>
-            <td>Add the bin folders for the JDK and leJOS</td>
-            <td>$PATH:$JAVA_HOME/bin:$NXJ_HOME/bin</td>
+            <td>Prepend the bin of the leJOS Development Kit</td>
+            <td>/opt/leJOS_NXJ_0.9.1beta/bin:$PATH</td>
           </tr>
         </tbody>
       </table>
-      <p>Note that you can set LEJOS_NXT_JAVA_HOME if you prefer. The bin directory for the JDK may already be on your PATH.</p>
-      <p>With most Linux distributions, you can set these environment variables for the current user in .bash_profile or for all users in /etc/profile.
-      </p>
+      <p>The bin directory for the JDK may already be on your PATH. In that case, it is unnessary
+      to set LEJOS_NXT_JAVA_HOME or JAVA_HOME, unless you want to have multiple JDKs on your system
+      and want to select a specific JDK for use with leJOS.</p>
+      <p>With most Linux distributions, you can set these environment variables for the current user
+      in .bash_profile or for all users in /etc/profile.</p>
       
-      <p>You should check that the contents of the $NXJ_HOME/bin directory to check that all the files have execute permission, and set it if if it is not set.</p>
- 
-       <a name="13"></a>     
+      <a name="13"></a>
       <h5>Building the release</h5>
       
-      <p>To build the release, change directory to lejos_nxj/build and type <code>ant</code>. If you have the dependent packages installed
-      the release should build without errors.</p>
+      <p>In order to use USB communications, you have to build the java native library first.
+      In order to do that, change directory to $NXJ_HOME/build and type <code>ant</code>.
+      If you have the dependent packages installed the release should build without errors.</p>
          
       <a name="12"></a>     
       <h5>Flashing the Firmware</h5>
       
       <p>As leJOS NXJ is a firmware replacement, you will need to flash the firmware to your NXT. 
-      Note that this will overwrite any existing firmware. If you have the standard LEGO firmware or other third-party firmware on your NXT, existing files will be lost.
-      </p>
+      Note that this will overwrite any existing firmware. If you have the standard LEGO firmware
+      or other third-party firmware on your NXT, existing files will be lost.</p>
       
-      <p>Note that the 0.9 release changes the amount of flash memory reserved for the firmware and the startup menu, so when you 
-      first flash the 0.9 firmware any existing files will be lost </p>
+      <p>Note that the 0.9 release changes the amount of flash memory reserved for the firmware
+      and the startup menu, so when you first flash the 0.9 firmware any existing files will be lost</p>
       
-      <p>Make sure your NXT is attached to the PC by its USB cable, and switch it on by pressing the orange button.</p>
+      <p>Make sure your NXT is attached to the PC via USB cable and switch it on by pressing the orange button.
+      Open a command line prompt (as described above) and either type the command
+      <code>nxjflash</code> or <code>nxjflashg</code>. The latter starts the GUI version of nxjflash.</p> 
       
-      <p>You can either use the command line <b>nxjflash</b> command or the <b>nxjflashg</b> GUI program.</p>
+      <p>If you chose <code>nxjflash</code> to flash the leJOS NXJ firmware, you will see
+      some messages on your command window.
+      If the NXT brick is already in firmware update mode (it makes a ticking noise), then
+      the firmware will be uploaded immediately. Otherwise, if your NXT has a previous version of
+      the leJOS or LEGO firmware on it, a list of the NXTs connected to the USB will be shown 
+      and you will be asked to input the number in the list of the NXT you want updated - this will
+      be 1 if a single NXT is connected to your PC. After the flashing procedure has finished, you
+      should see the leJOS logo on your NXT and hear the leJOS startup sound.
+      If your NXT has other firmware on it, or if <code>nxjflash</code> fails, you must manually
+      put your NXT into firmware update mode. Press the reset button (at the back of the NXT,
+      hidden in the hole near the USB port) for more than 4 seconds. A straightened paper clip could
+      be useful for this. Your NXT will audibly tick when it is firmware update mode. 
+      Then try <code>nxjflash</code> again.</p>
       
-      <p>Using the command line:</p>
-      
-      <p>Type <code>nxjflash</code> to flash the leJOS NXJ firmware.  
-      You will see some messages on your command window.
-      If your NXT has a previous version of the leJOS or LEGO firmware on it, a list of the NXTs connected to the USB will be shown, 
-      and you will be asked to input the number in the list of the NXT you want updated - this will be 1 if a single NXT is connected to your PC. 
-      If your NXT has other firmware on it, or if <b>nxjflash</b> fails, you must put your NXT into firmware update mode. 
-      Press the reset button (at the back of the NXT , upper left corner) for more than 4 seconds. 
-      A straightened paper clip could be useful for this. Your NXT will audibly tick when it is firmware update mode. 
-      Then try <b>nxjflash</b> again. When flashing is successful, your NXT will reboot with the 0.9 version of the menu.
-      </p>
-      
-      <p>Using the GUI version:</p>
-      
-      <p>To run the GUI version type <code>nxjflashg</code>. When the
-      program window opens, click on Start Program and follow the instructions. 
-      A more complete explanation is in the <a href="../PC_GUI/PCGUITools.htm">PC GUI Tools</a> tutorial page.
-      </p>
+      <p>If you chose <code>nxjflashg</code>, the GUI version of nxjflash will start.
+      When the program window opens, click on Start Program and follow the instructions. 
+      A more complete explanation is in the <a href="../PC_GUI/PCGUITools.htm">PC GUI Tools</a>
+      tutorial page.</p>
       
       <p> <a href="#top">Back to top</a> </p>
       
       <a name="13"></a>
       <h4>Testing your Installation</h4>
-      <p> You can check that you have successfully installed leJOS NXJ on your PC and your NXT by compiling and running your first program.</p>
-      
-      <a name="14"></a>
-      <h5>Compiling and running your first program</h5>
-      <p> Java programs need to be compiled to class files before they
-      can be run. For leJOS NXJ, all the class files that are to be run on
-      the NXT needed to be linked to produce a binary file (with the
-      extension .nxj) and this must then be uploaded to the NXT. 
-      </p>
-      <p> To run a sample program, such as the View.java sample, follow these steps: </p>
-       Start a shell session, and change directory to the lejos_nxj/projects/samples/View folder: 
-      <p> Compile the program with the nxjc command: </p>
-      <pre><code> nxjc View.java </code></pre>
-      <p> Then link, upload and run it with the nxj command: </p>
-      <pre><code> nxj -r View </code></pre>
-      <p> You should see the menu of the View sample on your NXT. </p>
-      
+      <p>You can test your installation by following the steps for writing your first leJOS Program
+      which are the <a href="../Preliminaries/FirstProgram.htm">next part</a> of this tutorial.</p>
+            
       <p> <a href="#top">Back to top</a> </p>
       
       <div class="NavBit"> <a target="_top" href="../Preliminaries/Intro.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
