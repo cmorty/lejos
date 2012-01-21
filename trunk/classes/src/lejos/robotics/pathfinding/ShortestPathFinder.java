@@ -145,11 +145,7 @@ public class ShortestPathFinder implements PathFinder
         } // end else  dest not blocked  snf id now in _reached
       } // end else dest not previously blocked
     }// end while
-    if (failed)
-    {
-      throw new DestinationUnreachableException();
-//      return null;
-    }
+
     System.out.println("DONE");
 
     return getRoute(_destination);
@@ -188,7 +184,7 @@ public class ShortestPathFinder implements PathFinder
       Point p1 =  line.getP1();
       Point  p2 = line.getP2();
       n1 = new Node((float)p1.getX(),(float)p1.getY());
-      if(!inReachedSet(n1) &&!inCandidateSet(n1))
+      if(!inReachedSet(n1) &&!inCandidateSet(n1)  && n1.isReachable())
       {
         n1.setSourceDistance(from.getSourceDistance() + from.getDistance(n1));
 //        _candidate.add(n1);
