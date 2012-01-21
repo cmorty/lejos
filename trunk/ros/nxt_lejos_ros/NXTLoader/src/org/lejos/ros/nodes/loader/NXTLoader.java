@@ -17,7 +17,7 @@ import org.lejos.ros.nxt.NXTDevice;
 import org.lejos.ros.nxt.actuators.NXTServoMotor;
 import org.lejos.ros.nxt.sensors.BatterySensor;
 import org.lejos.ros.nxt.sensors.UltrasonicSensor;
-import org.lejos.ros.nxt.systems.DifferentialActuatorSystem;
+import org.lejos.ros.nxt.systems.DifferentialNavigationSystem;
 
 import org.ros.message.MessageListener;
 import org.ros.node.Node;
@@ -347,7 +347,7 @@ public class NXTLoader extends LEJOSNode{
 	        		//System.out.println(motorPortLetter1);
 	        		//System.out.println(motorPortLetter2);
 	        		
-	        		DifferentialActuatorSystem df = new DifferentialActuatorSystem(motorPortLetter1, motorPortLetter2,WHEEL_DIAMETER, TRACK_WIDTH, REVERSE);
+	        		DifferentialNavigationSystem df = new DifferentialNavigationSystem(motorPortLetter1, motorPortLetter2,WHEEL_DIAMETER, TRACK_WIDTH, REVERSE);
         			df.setName(name);
         			df.setDesiredFrequency(desiredFrequency);
 	        		df.publishTopic(node);
@@ -474,7 +474,7 @@ public class NXTLoader extends LEJOSNode{
 	        //Actuator Systems
 	        for (NXTDevice device : actuatorSystemsList){
 
-        		DifferentialActuatorSystem das = (org.lejos.ros.nxt.systems.DifferentialActuatorSystem) device;
+        		DifferentialNavigationSystem das = (org.lejos.ros.nxt.systems.DifferentialNavigationSystem) device;
         		das.updateTopic();
 	       	
 	        }

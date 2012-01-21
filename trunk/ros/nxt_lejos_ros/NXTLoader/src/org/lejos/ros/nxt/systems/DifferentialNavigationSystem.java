@@ -11,7 +11,7 @@ import org.lejos.ros.nxt.NXTDevice;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 
-public class DifferentialActuatorSystem extends NXTDevice implements INXTDevice{
+public class DifferentialNavigationSystem extends NXTDevice implements INXTDevice{
 
 	//ROS
 	
@@ -29,7 +29,7 @@ public class DifferentialActuatorSystem extends NXTDevice implements INXTDevice{
 	
 	private DifferentialPilot df;
 	
-	public DifferentialActuatorSystem(String port1, String port2, float _wheelDiameter, float _trackWidth, boolean _reverse){
+	public DifferentialNavigationSystem(String port1, String port2, float _wheelDiameter, float _trackWidth, boolean _reverse){
 		
 		//TODO: Exception if letters are the same
 		
