@@ -111,14 +111,7 @@ public class NXJLinkAndUpload extends NXTCommLoggable
 			}
 			finally
 			{
-				try
-				{
-					stream.close();
-				}
-				catch (IOException e)
-				{
-					// ignore
-				}
+				stream.close();
 			}
 
 			// upload
