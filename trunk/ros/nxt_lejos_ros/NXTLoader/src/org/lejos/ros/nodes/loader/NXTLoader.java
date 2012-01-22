@@ -18,7 +18,7 @@ import org.lejos.ros.nxt.actuators.NXTServoMotor;
 import org.lejos.ros.nxt.sensors.BatterySensor;
 import org.lejos.ros.nxt.sensors.GPS;
 import org.lejos.ros.nxt.sensors.UltrasonicSensor;
-import org.lejos.ros.nxt.systems.DifferentialNavigationSystem;
+import org.lejos.ros.nxt.navigation.DifferentialNavigationSystem;
 
 import org.ros.message.MessageListener;
 import org.ros.node.Node;
@@ -441,12 +441,12 @@ public class NXTLoader extends LEJOSNode{
             subscriberDifferentialActuatorSystem.addMessageListener(new MessageListener<org.ros.message.nxt_lejos_ros_msgs.DNSCommand>() {
     	    	@Override
     	    	public void onNewMessage(org.ros.message.nxt_lejos_ros_msgs.DNSCommand message) {
-    	    		
+    	    		 
     	    		String cmd = message.type;
     	    		Double value = message.value;
     	    		System.err.println(cmd);
     	    		
-	        		DifferentialNavigationSystem df = (org.lejos.ros.nxt.systems.DifferentialNavigationSystem) actuatorSystemsList.get(0);
+	        		DifferentialNavigationSystem df = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) actuatorSystemsList.get(0);
     	    		//node.getLog().info("State: \"" + cmd + " " + value + "\"");
     	    		df.updateActuatorSystem(message);
 	    		
@@ -501,7 +501,7 @@ public class NXTLoader extends LEJOSNode{
 	        //Actuator Systems
 	        for (NXTDevice device : actuatorSystemsList){
 
-        		DifferentialNavigationSystem das = (org.lejos.ros.nxt.systems.DifferentialNavigationSystem) device;
+        		DifferentialNavigationSystem das = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) device;
         		das.updateTopic();
 	       	
 	        }
