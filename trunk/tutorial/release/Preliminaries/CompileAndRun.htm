@@ -78,10 +78,10 @@
 				<p>You can produce leJOS NXJ programs with any Java IDE. This tutorial currently has sections on how to use two of the most popular Jave IDEs: Eclipse and Netbeans.
 				leJOS NXJ supports plugins for these two IDEs which makes writing and testing your programs even simpler.</p>
 				
-				<p>To learn how to create, compile and run your programs from an Integrated Development Environment, go to one of the following sections:</p>
+				<p>To learn how to create, compile and run your programs from an Integrated Development Environment,
+				go to one of the following page:</p>
 				<ul class="BlueArrows">
-					<li><a href="UsingEclipse.htm">Eclipse</a></li>
-					<li><a href="UsingNetbeans.htm">Netbeans</a></li>
+					<li><a href="UsingIDEs.htm">Using a Java IDE with leJOS</a></li>
 				</ul>	
 				
 				<p>This section of the tutorial will teach you how to use the command line tools. If you decide to use the command
@@ -94,7 +94,7 @@
 				To run ant build scripts you just change directory to the directory containing the build.xml file and type <em>ant</em>.
 				</p>
 				
-				<p>The scripts described in the following sections are Windows .cmd or .bat files or Unix shell scripts, depending on
+				<p>The scripts described in the following sections are Windows .bat files or Unix shell scripts, depending on
 				which operating system you are using. They set up the class path, library path and boot class path needed by leJOS NXJ
 				and then call a Java class that does all the work. The exception to this is <em>nxjc</em> which just calls <em>javac</em>.
 				Note that ant build scripts use the same underlying Java classes, but do not use the scripts.</p>
@@ -131,7 +131,7 @@
 				<p>Compiles one or more java files.</p>
 				<p>Usage: nxjc &lt;java-files&gt;</p>
 				<p>Example: </p>
-				<code>nxjc View.java</code>
+				<code>nxjc HelloWorld.java</code>
 				<p>nxjc calls javac with parameters:</p>
 				<ul class="BlueArrows">
 					<li>-bootclasspath &lt;path to classes.jar&gt;</li>
@@ -150,7 +150,7 @@
 				                   [-ec|--enablechecks]
 				                   [-od|--outputdebug &lt;debug-file&gt; ] -o &lt;binary&gt; main-class</p>
 				<p>Example:</p>
-				<code>nxjlink -v Tune -o Tune.nxj</code>
+				<code>nxjlink -v -o HelloWorld.nxj HelloWorld</code>
 				<p>Links the specified main class with any
 						classes that it references in the current directory and with the
 						standard leJOS classes from classes.jar to produce a binary NXJ
@@ -186,7 +186,7 @@
 				<h5>nxjupload &#8211; upload a program</h5>
 				<p>Usage: nxjupload [-b|--bluetooth] [-u|--usb] [-d|--address address] [-n|--name name]  [-r|--run]	&lt;binary&gt;</p>
 				<p>Example:</p>
-				<p>nxjupload  Tune.nxj</p>
+				<p>nxjupload HelloWorld.nxj</p>
 				<p>Uploads the binary (.nxj) file. By default USB is tried first and then Bluetooth. If the --bluetooth
 					flag is specified, only Bluetooth is tried. If --usb is specified, only USB
 					is tried.</p>
@@ -206,8 +206,9 @@
 				<h5>nxj &#8211; link, upload and run a program</h5>
 				<p>Usage: nxj [options] main-class</p>
 				<p >Example:	</p>
-				<code>nxj -r Tune</code>
-				<p> The nxj command links and uploads a leJOS NXJ program. It is the equivalent of nxjlink followed by nxjupload.</p>
+				<code>nxj -r HelloWorld</code>
+				<p> The nxj command links and uploads a leJOS NXJ program.
+				It is the equivalent of nxjlink followed by nxjupload.</p>
 			
 				<p>Any of the options for <code>nxjlink</code> and <code>nxjupload</code> can be specified.</p>
 				<p>The default binary name is &lt;main-class&gt;.nxj, e.g. Tune.nxj.</p>
