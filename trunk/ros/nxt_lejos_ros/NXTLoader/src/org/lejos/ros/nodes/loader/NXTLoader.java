@@ -16,6 +16,7 @@ import org.lejos.ros.nodes.LEJOSNode;
 import org.lejos.ros.nxt.NXTDevice;
 import org.lejos.ros.nxt.actuators.NXTServoMotor;
 import org.lejos.ros.nxt.sensors.BatterySensor;
+import org.lejos.ros.nxt.sensors.GPS;
 import org.lejos.ros.nxt.sensors.UltrasonicSensor;
 import org.lejos.ros.nxt.systems.DifferentialNavigationSystem;
 
@@ -322,7 +323,24 @@ public class NXTLoader extends LEJOSNode{
         			us.publishTopic(node);
         			sensorList.add(us);		        			
 	        	
-	        	}else if(type.equals("differential_actuator_system")){
+	        	}else if(type.equals("gps")){
+		        	//}else{
+		        		System.out.println("I found a sensor description");
+		        		
+		        		name = map2.get("name").toString().trim();
+		        		port = map2.get("port").toString().trim();
+		        		desiredFrequency = Float.parseFloat(map2.get("desired_frequency").toString().trim());
+		        				        		
+		        		System.out.println(name);
+		        		System.out.println(port);
+		        		System.out.println(desiredFrequency);
+		        		
+	        			GPS gps = new GPS(port);
+	        			gps.setDesiredFrequency(desiredFrequency);
+	        			gps.publishTopic(node);
+	        			sensorList.add(gps);	
+        			
+	        	}else if(type.equals("differential_navigation_system")){
         		
 	        		System.out.println("I found a differential actuator system");
 	        		
@@ -389,9 +407,9 @@ public class NXTLoader extends LEJOSNode{
     	if(motorList.size()>0){
 
     		//Subscription to joint_command
-            Subscriber<org.ros.message.nxt_msgs.JointCommand> subscriberMotorA =
+            Subscriber<org.ros.message.nxt_msgs.JointCommand> subscriberMotor =
     	        node.newSubscriber("joint_command", "nxt_msgs/JointCommand");
-            subscriberMotorA.addMessageListener(new MessageListener<org.ros.message.nxt_msgs.JointCommand>() {
+            subscriberMotor.addMessageListener(new MessageListener<org.ros.message.nxt_msgs.JointCommand>() {
     	    	@Override
     	    	public void onNewMessage(org.ros.message.nxt_msgs.JointCommand message) {
     	    		
@@ -418,14 +436,19 @@ public class NXTLoader extends LEJOSNode{
     	if(actuatorSystemsList.size() > 0){
     		
     		//Subscription to joint_command
-            Subscriber<org.ros.message.std_msgs.String> subscriberDifferentialActuatorSystem =
-    	        node.newSubscriber("das_command", "std_msgs/String");
-            subscriberDifferentialActuatorSystem.addMessageListener(new MessageListener<org.ros.message.std_msgs.String>() {
+            Subscriber<org.ros.message.nxt_lejos_ros_msgs.DNSCommand> subscriberDifferentialActuatorSystem =
+    	        node.newSubscriber("cmd_vel", "nxt_lejos_ros_msgs/DNSCommand");
+            subscriberDifferentialActuatorSystem.addMessageListener(new MessageListener<org.ros.message.nxt_lejos_ros_msgs.DNSCommand>() {
     	    	@Override
-    	    	public void onNewMessage(org.ros.message.std_msgs.String message) {
+    	    	public void onNewMessage(org.ros.message.nxt_lejos_ros_msgs.DNSCommand message) {
     	    		
-    	    		String cmd = message.data;
+    	    		String cmd = message.type;
+    	    		Double value = message.value;
     	    		System.err.println(cmd);
+    	    		
+	        		DifferentialNavigationSystem df = (org.lejos.ros.nxt.systems.DifferentialNavigationSystem) actuatorSystemsList.get(0);
+    	    		//node.getLog().info("State: \"" + cmd + " " + value + "\"");
+    	    		df.updateActuatorSystem(message);
 	    		
     	    	}
     	    });
@@ -468,6 +491,10 @@ public class NXTLoader extends LEJOSNode{
 	        		//System.out.println("UltrasonicSensor");
 	        		UltrasonicSensor us = (org.lejos.ros.nxt.sensors.UltrasonicSensor) device;
 	        		us.updateTopic();
+	        	}else if(device instanceof org.lejos.ros.nxt.sensors.GPS){
+	        		//System.out.println("UltrasonicSensor");
+	        		GPS gps = (org.lejos.ros.nxt.sensors.GPS) device;
+	        		gps.updateTopic();
 	        	}
 	        }
 
