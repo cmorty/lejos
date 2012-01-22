@@ -148,7 +148,9 @@ ind.start();</code></pre>
       		<p>Button listeners are used to detect when a button is pressed, whatever your program is doing at the time.</p>
       		<p>To listen for a press of a specific button, you register as listener for that button.</p>
       		<p>Example:</p>
-      		<pre class="CodeBox"><code>import lejos.nxt.*;
+      		<pre class="CodeBox"><code>import lejos.nxt.Button;
+import lejos.nxt.ButtonListener;
+import lejos.nxt.LCD;
 
 public class ListenForButtons {
   public static void main(String[] args) throws Exception {
