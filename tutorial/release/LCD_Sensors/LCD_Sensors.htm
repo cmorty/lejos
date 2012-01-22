@@ -108,8 +108,7 @@
 			
 			<p>Example:</p>
 			
-		    <pre class="CodeBox"><code>import lejos.nxt.*;
-import java.io.*;
+		    <pre class="CodeBox"><code>import lejos.nxt.LCD;
 
 public class LCDTest {
   public static void main(String[] args) throws Exception {
@@ -169,19 +168,20 @@ public class GraphicsSample {
 			</ul>
 			<p>To test if a	button is pressed, you use:</p>
 			<ul class="BlueArrows">
-				<li><p>boolean isPressed()</p></li>
+				<li><p>boolean isDown()</p></li>
 			</ul>
 			<p>Example:</p>
-			<pre class="CodeBox"><code>import lejos.nxt.*;
+			<pre class="CodeBox"><code>import lejos.nxt.Button;
+import lejos.nxt.LCD;
 
 public class ButtonPresses {
   public static void main(String[] args) throws Exception {
     while (true) {
       LCD.clear();
-      if (Button.ENTER.isPressed()) LCD.drawString("ENTER", 0, 0);
-      if (Button.ESCAPE.isPressed()) LCD.drawString("ESCAPE", 0, 0);
-      if (Button.LEFT.isPressed()) LCD.drawString("LEFT", 0, 0);
-      if (Button.RIGHT.isPressed()) LCD.drawString("RIGHT", 0, 0);
+      if (Button.ENTER.isDown()) LCD.drawString("ENTER", 0, 0);
+      if (Button.ESCAPE.isDown()) LCD.drawString("ESCAPE", 0, 0);
+      if (Button.LEFT.isDown()) LCD.drawString("LEFT", 0, 0);
+      if (Button.RIGHT.isDown()) LCD.drawString("RIGHT", 0, 0);
     }
   }
 }</code></pre>
@@ -192,7 +192,8 @@ public class ButtonPresses {
 			</ul>
 			
 			<p>Example:</p>
-			<pre class="CodeBox"><code>import lejos.nxt.*;
+			<pre class="CodeBox"><code>import lejos.nxt.Button;
+import lejos.nxt.LCD;
 
 public class ButtonTest
 {
@@ -240,7 +241,7 @@ public class ButtonTest
 			</ul>
 			
 			<p>Example:</p>
-			<pre class="CodeBox"><code>import lejos.nxt.*;
+			<pre class="CodeBox"><code>import lejos.nxt.Sound;
 
 public class PlayTones {
 
@@ -316,7 +317,8 @@ public class PlayTones {
 			</ul>
 			
 			<p>Example:</p>
-			<pre class="CodeBox"><code>import lejos.nxt.*;
+			<pre class="CodeBox"><code>import lejos.nxt.Battery;
+import lejos.nxt.LCD;
 
 public class BatteryTest {
   public static void main(String[] args) throws Exception {
@@ -355,13 +357,16 @@ public class BatteryTest {
 			</ul>
 			
 			<p>Example:</p>
-			<pre class="CodeBox"><code>import lejos.nxt.*;
+			<pre class="CodeBox"><code>import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.TouchSensor;
 
 public class TouchTest {
   public static void main(String[] args) throws Exception {
     TouchSensor touch = new TouchSensor(SensorPort.S1);
-
-    while (!touch.isPressed() ;
+    while (!touch.isPressed()) {
+    	// try again
+    }
     LCD.drawString("Finished", 3, 4);
   }
 }</code></pre>			
@@ -379,7 +384,9 @@ public class TouchTest {
 			</ul>
 
 			<p>Example:</p>
-			<pre class="CodeBox"><code>import lejos.nxt.*;
+			<pre class="CodeBox"><code>import lejos.nxt.LCD;
+import lejos.nxt.LightSensor;
+import lejos.nxt.SensorPort;
 
 public class LightTest {
   public static void main(String[] args) throws Exception {
@@ -424,7 +431,7 @@ public class SoundScope {
   public static void main(String[] args) throws Exception {
     SoundSensor sound = new SoundSensor(SensorPort.S1);
 
-    while (!Button.ESCAPE.isPressed()) {
+    while (!Button.ESCAPE.isDown()) {
       LCD.clear();
       for (int i = 0; i &#60; 100; i++) {
         LCD.setPixel(1, i, 60 - (sound.readValue() / 2));
@@ -462,11 +469,11 @@ public class SonicTest {
   public static void main(String[] args) throws Exception {
     UltrasonicSensor sonic = new UltrasonicSensor(SensorPort.S1);
 
-    while (!Button.ESCAPE.isPressed()) {
+    while (!Button.ESCAPE.isDown()) {
       LCD.clear();
-      LCD.drawString(sonic.getVersion(), 0, 0);
+      LCD.drawString(sonic.getVendorID(), 0, 0);
       LCD.drawString(sonic.getProductID(), 0, 1);
-      LCD.drawString(sonic.getSensorType(), 0, 2);
+      LCD.drawString(sonic.getVersion(), 0, 2);
       LCD.drawInt(sonic.getDistance(), 0, 3);
     }
   }
@@ -496,7 +503,7 @@ public class SonicTest {
 				the four columns of results, then wait for a button press.
 				Exit if the ESCAPE button was pressed. </p>
 
-			<a href="USPingTest.htm" target="_blank">Solution</a>
+			<a href="USPingTest.java" target="_blank">Solution</a>
 
 			<p><a href="#top">Back to top</a></p>
 
