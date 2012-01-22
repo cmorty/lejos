@@ -1,12 +1,4 @@
 nxt_robot:
-  - type: motor
-    name: l_motor_joint
-    port: PORT_A
-    desired_frequency: 10.0
-  - type: motor
-    name: r_motor_joint
-    port: PORT_C
-    desired_frequency: 10.0
   - type: ultrasonic
     frame_id: r_ultrasonic_link
     name: ultrasonic_sensor

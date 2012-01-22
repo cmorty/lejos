@@ -10,7 +10,9 @@
 	<depend package="rosjava" />
 	<depend package="std_msgs" />
 	<depend package="sensor_msgs" />
+	<depend package="nav_msgs" />
 	<depend package="nxt_msgs" />
+	<depend package="nxt_lejos_ros_msgs" />
 
 	<export>
 	    	<rosjava-src location="src" /> 
@@ -27,10 +29,10 @@
 			+ bluecove
 			+ yamlbeans
 			 -->
-	    	<rosjava-pathelement location="<ABSOLUTE PATH>/pccomm.jar" />
-	    	<rosjava-pathelement location="<ABSOLUTE PATH>/bluecove-gpl.jar" />
-	    	<rosjava-pathelement location="<ABSOLUTE PATH>/bluecove.jar" />
-	    	<rosjava-pathelement location="<ABSOLUTE PATH>/yamlbeans-1.06.jar" />
+	    	<rosjava-pathelement location="/usr/local/lejos/lib/pc/pccomm.jar" />
+	    	<rosjava-pathelement location="/usr/local/lejos/lib/pc/3rdparty/bluecove-gpl.jar" />
+	    	<rosjava-pathelement location="/usr/local/lejos/lib/pc/3rdparty/bluecove.jar" />
+	    	<rosjava-pathelement location="/home/jabrena/ros3/workspace/nxt_lejos_ros/NXTLoader/lib/yamlbeans-1.06.jar" />
 	</export>
 
 </package>
