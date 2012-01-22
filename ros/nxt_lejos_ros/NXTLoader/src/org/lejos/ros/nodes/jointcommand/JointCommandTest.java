@@ -1,5 +1,7 @@
 package org.lejos.ros.nodes.jointcommand;
 
+import java.util.Random;
+
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
 import org.ros.node.topic.Publisher;
@@ -43,10 +45,21 @@ public class JointCommandTest implements NodeMain{
 	            node.newPublisher("joint_command", "nxt_msgs/JointCommand");
 	        int seq = 0;
 	        
+	        Random randomGenerator = new Random();
+	          int randomInt = 0;
+	          
+	        
 	        while (true) {
+	        	randomInt = randomGenerator.nextInt(100);
 	        	
 	        	org.ros.message.nxt_msgs.JointCommand message = new org.ros.message.nxt_msgs.JointCommand();
-	        	message.name = "l_motor_joint";
+	        	
+	        	if(randomInt > 50){
+		        	message.name = "l_motor_joint";	        		
+	        	}else{
+		        	message.name = "r_motor_joint";
+	        	}
+
 	        	message.effort = 360.0f;
 	        	publisher.publish(message);
 	          
