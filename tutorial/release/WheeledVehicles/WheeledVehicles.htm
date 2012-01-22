@@ -213,8 +213,11 @@
          
 
                     <p>Example:</p>
-<pre class="CodeBox"><code>import lejos.nxt.*;
-import lejos.navigation.Pilot;
+<pre class="CodeBox"><code>import lejos.nxt.Button;
+import lejos.nxt.Motor;
+import lejos.nxt.SensorPort;
+import lejos.nxt.TouchSensor;
+import lejos.robotics.navigation.DifferentialPilot;
 
 /**
  * Robot that stops if it hits something before it completes its travel.
@@ -229,12 +232,12 @@ public class TravelTest {
       if (bump.isPressed()) pilot.stop();
     }
     System.out.println(" "+pilot.getMovement().getDistanceTraveled());
-    Button.waitForPress();
+    Button.waitForAnyPress();
   }
 
   public static void main(String[] args) {
     TravelTest traveler = new TravelTest();
-    traveler.pilot = new DifferentialPilot(2.25f, 5.5f, Motor.A, Motor,C);
+    traveler.pilot = new DifferentialPilot(2.25f, 5.5f, Motor.A, Motor.C);
     traveler.go();
   }
 }</code></pre>
@@ -251,7 +254,7 @@ public class TravelTest {
 
                     <p>Write a program that	uses a DifferentialPilot to trace out a square, using the travel and rotate	methods.</p>
 
-                    <p><a href="SquareTracer.html" target="_blank">Solution</a></p>
+                    <p><a href="SquareTracer.java" target="_blank">Solution</a></p>
 
                     <a name="5"></a>
                     <h5>Program SquareTracer2</h5>
@@ -263,7 +266,7 @@ public class TravelTest {
 			the accuracy of the wheel diameter and track width constants you
 			use in your pilot. </p>
 
-                    <p><a href="SquareTracer2.html" target="_blank">Solution</a></p>
+                    <p><a href="SquareTracer2.java" target="_blank">Solution</a></p>
 
                     <a name="6"></a>
                     <h5>Movement along a curved path</h5>
@@ -319,7 +322,7 @@ public class TravelTest {
 			different values of these parameters to control the robot path. 
                     </p>
 
-                    <p><a href="SteerTest.html" target="_blank">Solution</a></p>
+                    <p><a href="SteerTest.java" target="_blank">Solution</a></p>
                     <a name="7.1"></a>
                     <h5> Communicating with OdometryPoseProvider </h5>
                     <p> The OdometryPoseProvider keeps track of the robot position and heading.
@@ -367,7 +370,7 @@ public class TravelTest {
                     <h4>Compass Pilot</h4>
 
                     <p>The CompassPilot is an extension of the DifferentialPilot class. It implements the same methods, but uses a
-                        <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/api/lejos/nxt/CompassSensor.html">Compass Sensor</a>
+                        <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/DirectionFinder.html">Compass Sensor</a>
 			 to ensure that the pilot does not deviate from the correct angle of robot heading.</p>
 
                     <p>It needs a HiTechnic or Mindsensors compass sensor plugged in to one of the sensor ports. Its
@@ -461,7 +464,8 @@ public class TravelTest {
                         </li>
                     </ul>
 
-                    <a href="#top">Back	to top</a>
+                    <p><a href="#top">Back	to top</a></p>
+                    
                     <a name="14"></a>
                     <h4>NavPathController</h4>
 
