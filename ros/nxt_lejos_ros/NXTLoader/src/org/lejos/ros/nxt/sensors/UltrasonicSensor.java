@@ -22,6 +22,7 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 	
     final org.ros.message.nxt_msgs.Range message = new org.ros.message.nxt_msgs.Range(); 
     Publisher<org.ros.message.nxt_msgs.Range> topic = null;
+    String messageType = "nxt_msgs/Range";
 	
     //NXT Brick
 	private lejos.nxt.UltrasonicSensor usSensor;
@@ -40,7 +41,6 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 	
 	public void activate(){
 
-		
 	}
 
 	public void setPort(final String _port){
@@ -100,7 +100,7 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 	}
 
 	public void publishTopic(Node node) {
-		topic = node.newPublisher("" + super.getName(), "nxt_msgs/Range");
+		topic = node.newPublisher("" + super.getName(), messageType);
 	}
 
 	public void updateTopic() {
