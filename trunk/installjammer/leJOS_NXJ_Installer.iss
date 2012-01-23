@@ -38,7 +38,7 @@ WizardImageFile=img\WizardImage.bmp
 WizardImageStretch=no
 WizardImageBackColor=clWhite
 WizardSmallImageFile=img\WizardSmallImage.bmp
-; UninstallFilesDir={app}\uninst
+UninstallFilesDir={app}\uninst
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
