@@ -142,20 +142,20 @@
       
       		<p>Here is an example program that selects between USB and Bluetooth at run time:</p>
       	
-      	    <pre class="CodeBox"><code>import lejos.nxt.*;
+      	    <pre class="CodeBox"><code>import java.io.*;
+import lejos.nxt.*;
 import lejos.nxt.comm.*;
-import java.io.*;
 
 /**
  * sample of selecting channel at run time
  */
 public class CommTest 
 {
-  public static void main( String[] args) { 
+  public static void main(String[] args) { 
     LCD.drawString("right BT",0, 0);
     NXTConnection connection = null;
 
-    if(Button.waitForPress() == 4){
+    if(Button.waitForAnyPress() == Button.ID_RIGHT){
       LCD.drawString("waiting for BT", 0,1 );
       connection = Bluetooth.waitForConnection();
     } else {
@@ -279,7 +279,11 @@ public class CommTest
 
       		<p>The full example using Bluetooth is:</p>
       		
-      		<pre class="CodeBox"><code>public class BTReceive {
+      		<pre class="CodeBox"><code>import java.io.*;
+import lejos.nxt.*;
+import lejos.nxt.comm.*;
+
+public class BTReceive {
   public static void main(String [] args) throws Exception {
     String connected = "Connected";
     String waiting = "Waiting...";
@@ -294,7 +298,7 @@ public class CommTest
       DataInputStream dis = connection.openDataInputStream();
       DataOutputStream dos = connection.openDataOutputStream();
 
-      for(int i=0;i&lt;100;i++) {
+      for(int i=0;i<100;i++) {
         int n = dis.readInt();
         LCD.drawInt(n,7,0,1);
         dos.writeInt(-n);
@@ -306,7 +310,7 @@ public class CommTest
       LCD.clear();
       LCD.drawString(closing,0,0);
 
-      btc.close();
+      connection.close();
       LCD.clear();
     }
   }
@@ -329,9 +333,9 @@ public class CommTest
 			
       		<p>To check it is in the Devices list, you can select &#8220;Devices&#8221; from the Bluetooth menu of the initiator NXT.</p>
       		
-      		<p>You can then create a BTRemoteDevice class on the initiator NXT:</p>
+      		<p>You can then create a RemoteDevice class on the initiator NXT:</p>
       		<p>Example:</p>
-      		<pre class="CodeBox"><code>BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);</code></pre>
+      		<pre class="CodeBox"><code>RemoteDevice btrd = Bluetooth.getKnownDevice(name);</code></pre>
 
       		<p>You can connect to the remote device by its address, which you can get by:</p>
       		<ul class="BlueArrows">
@@ -344,7 +348,7 @@ public class CommTest
       		
       		<ul class="BlueArrows">
         		<li>
-          			<p>BTConnection connect(BTRemoteDevice remoteDevice)</p>
+          			<p>BTConnection connect(RemoteDevice remoteDevice)</p>
         		</li>
       		</ul>
       		
@@ -358,12 +362,12 @@ public class CommTest
       		</ul>
       		
       		<p>Example:</p>
-      		<pre class="CodeBox"><code>BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);
+      		<pre class="CodeBox"><code>RemoteDevice btrd = Bluetooth.getKnownDevice(name);
 
 if (btrd == null) {
   LCD.clear();
   LCD.drawString("No such device", 0, 0);
-  Button.waitForPress();
+  Button.waitForAnyPress();
   System.exit(1);
 }
 
@@ -372,7 +376,7 @@ BTConnection btc = Bluetooth.connect(btrd);
 if (btc == null) {
   LCD.clear();
   LCD.drawString("Connect fail", 0, 0);
-  Button.waitForPress();
+  Button.waitForAnyPress();
   System.exit(1);
 }</code></pre>
       		
@@ -381,16 +385,21 @@ if (btc == null) {
 			
       		<p>The complete BTConnectTest example, which works as the initiator program for the BTReceive receiver program, is:</p>
       		
-      		<pre class="CodeBox"><code>public class BTConnectTest {
+      		<pre class="CodeBox"><code>import java.io.*;
+import javax.bluetooth.*;
+import lejos.nxt.*;
+import lejos.nxt.comm.*;
+
+public class BTConnectTest {
   public static void main(String[] args) throws Exception {
     String name = "NXT";
     LCD.drawString("Connecting...", 0, 0);
-    BTRemoteDevice btrd = Bluetooth.getKnownDevice(name);
+    RemoteDevice btrd = Bluetooth.getKnownDevice(name);
 
     if (btrd == null) {
       LCD.clear();
       LCD.drawString("No such device", 0, 0);
-      Button.waitForPress();
+      Button.waitForAnyPress();
       System.exit(1);
     }
 
@@ -399,7 +408,7 @@ if (btc == null) {
     if (btc == null) {
       LCD.clear();
       LCD.drawString("Connect fail", 0, 0);
-      Button.waitForPress();
+      Button.waitForAnyPress();
       System.exit(1);
     }
   
@@ -409,7 +418,7 @@ if (btc == null) {
     DataInputStream dis = btc.openDataInputStream();
     DataOutputStream dos = btc.openDataOutputStream();
 
-    for(int i=0;i&lt;100;i++) {
+    for(int i=0;i<100;i++) {
       try { 
         LCD.drawInt(i*30000, 8, 0, 2);
         dos.writeInt(i*30000);
@@ -435,7 +444,7 @@ if (btc == null) {
     }
   
     LCD.drawString("Finished",3, 4);
-    Button.waitForPress();
+    Button.waitForAnyPress();
   }
 }</code></pre>
       		
@@ -474,16 +483,16 @@ if (btc == null) {
       		
       		<ul class="BlueArrows">
         		<li>
-          			<p>public NXTInfo(String name, String address)</p>
+          			<p>public NXTInfo(int protocol, String name, String address)</p>
         		</li>
       		</ul>
       		
       		<p>Example:</p>
-			<pre class="CodeBox"><code>NXTInfo nxtInfo = new NXTInfo("NXT", "00:16:53:00:78:48");</code></pre>
+			<pre class="CodeBox"><code>NXTInfo nxtInfo = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT", "00:16:53:00:78:48");</code></pre>
       		      		
       		<p>To find the available NXTs doing a Bluetooth inquiry, you do:</p>
       		
-      		<pre class="CodeBox"><code>NXTInfo[] nxtInfo = nxtComm.search("NXT",NXTCommFactory.BLUETOOTH)</code></pre>
+      		<pre class="CodeBox"><code>NXTInfo[] nxtInfo = nxtComm.search("NXT");</code></pre>
 
       		<p><a href="#top">Back to top</a></p>
       		
@@ -497,7 +506,7 @@ if (btc == null) {
       						
        		<p>To find the available NXT , you do:</p>
        		
-       		<pre class="CodeBox"><code>nxtComm.search("MYNXT", NXTCommFactory.BLUETOOTH);</code></pre>
+       		<pre class="CodeBox"><code>nxtComm.search("MYNXT");</code></pre>
 
       		<p>If there is only one NXT connected, you can use a null name parameter in the search() method. </p>
 
@@ -563,15 +572,15 @@ if (btc == null) {
       		<p>Example: </p>
       		
       		<pre class="CodeBox"><code>try {
-  LCD.drawString("Connecting...",0,0);
-  nxt = new RemoteNXT("NXT");
-
+  LCD.drawString("Connecting...", 0, 0);
+  NXTCommConnector connector = Bluetooth.getConnector();
+  RemoteNXT nxt = new RemoteNXT("NXT", connector);
   LCD.clear();
-  LCD.drawString("Connected",0,0);
+  LCD.drawString("Connected", 0, 0);
 } catch (IOException ioe) {
   LCD.clear();
-  LCD.drawString("Conn Failed",0,0);
-  Button.waitForPress();
+  LCD.drawString("Conn Failed", 0, 0);
+  Button.waitForAnyPress();
   System.exit(1);
 }</code></pre>
       
@@ -619,7 +628,7 @@ LCD.drawInt(nxt.getFlashMemory(), 6, 8, 7);</code></pre>
       
       		<p>Example:</p>
  
-      		<pre class="CodeBox"><code>LCD.drawString( "Battery: " + nxt.Battery.getVoltageMilliVolt() 0,4);</code></pre>
+      		<pre class="CodeBox"><code>LCD.drawString("Battery: " + nxt.Battery.getVoltageMilliVolt(), 0, 4);</code></pre>
       		      		
       		<p>Objects are also created for the sensor ports of the remote NXT. These are accessed as S1, S2, S3 and S4.</p>
       		
@@ -661,19 +670,19 @@ nxt.A.backward();</code></pre>
       		<p>To connect to a GPS device, you do:</p>
       		
       		<pre class="CodeBox"><code>final byte[] pin = {(byte) '0', (byte) '0', (byte) '0', (byte) '0'};
-BTRemoteDevice btGPS = Bluetooth.getKnownDevice(name); 
+RemoteDevice btGPS = Bluetooth.getKnownDevice(name); 
 
 if (btrd == null) {
   LCD.drawString("No such device", 0, 0);
-  Button.waitForPress();
+  Button.waitForAnyPress();
   System.exit(1);
 }
-
+<!-- TODO this is broken -->
 btGPS = Bluetooth.connect(btrd.getDeviceAddr(), pin);
 
 if(btGPS == null)
   LCD.drawString("No Connection", 0, 1);
-  Button.waitForPress();
+  Button.waitForAnyPress();
   System.exit(1)
 }
 
@@ -688,7 +697,7 @@ try {
   LCD.drawString("GPS Online", 0, 6);
 } catch(Exception e) {
   LCD.drawString("GPS Connect Fail", 0, 6);
-  Button.waitForPress();
+  Button.waitForAnyPress();
   System.exit(1);
 }</code></pre>  
       		    		
