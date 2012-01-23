@@ -243,13 +243,13 @@
 				The method code is:</p>
 				
 				<pre class="CodeBox"><code>public void action() {
-    suppressed = false;  // standard first line of action
-    Motor.A.forward();
-    Motor.C.forward();
-    while( !suppressed )
-        Thread.yield(); // wait for  suppressed to be called
-    Motor.A.stop(); // clean up 
-    Motor.C.stop();
+   suppressed = false;
+   Motor.A.forward();
+   Motor.C.forward();
+   while( !suppressed )
+      Thread.yield();
+   Motor.A.stop(); // clean up
+   Motor.C.stop();
 }</code></pre>
    
 				<p>That was easy enough! Now the
@@ -257,7 +257,7 @@
 				</p>
 				
 				<pre class="CodeBox"><code>public void suppress() {
-    suppressed = true;
+   suppressed = true;
 }</code></pre>
 
 				<p>So far, so good. Now we need to
@@ -271,20 +271,19 @@
 				this behavior when the need arises. The method appears as follows:</p>
 				
 				<pre class="CodeBox"><code>public boolean takeControl() {
-    return true;
+   return true;
 }</code></pre>
 
 				<p>That's all it takes to define our
 				first behavior to drive the robot forward. The complete code
 				listing for this class is as follows:</p>
 				
-				<pre class="CodeBox"><code>import lejos.subsumption.*;
-import lejos.nxt.*;
+				<pre class="CodeBox"><code>import lejos.nxt.*;
+import lejos.robotics.subsumption.*;
 
 public class DriveForward  implements Behavior {
-
    private boolean suppressed = false;
-
+   
    public boolean takeControl() {
       return true;
    }
@@ -294,11 +293,11 @@ public class DriveForward  implements Behavior {
    }
 
    public void action() {
-
      suppressed = false;
      Motor.A.forward();
      Motor.C.forward();
-     while( !suppressed ) Thread.yield();
+     while( !suppressed )
+        Thread.yield();
      Motor.A.stop(); // clean up
      Motor.C.stop();
    }
@@ -327,31 +326,30 @@ public class DriveForward  implements Behavior {
 				
 				<pre class="CodeBox"><code>public void action()
 {
+    // Back up and turn
     suppressed = false;
     Motor.A.rotate(-180, true);
     Motor.C.rotate(-360, true);
 
     while(Motor.C.isRotating() &amp;&amp; !suppressed)
         Thread.yield();  // wait till turn is complete or suppressed is called
-    if( suppressed ){
-        Motor.A.stop();
-        Motor.C.stop();
-    }
+    
+    Motor.A.stop();
+    Motor.C.stop();
 }</code></pre>
 				
 				<p> We use the standard suppress() method here too.</p>
 				
 				<pre class="CodeBox"><code>public void suppress {
-  suppressed = true;
+    suppressed = true;
 }</code></pre>
 
 				<p>The complete listing for this behavior is as follows:</p>
 				
-				<pre class="CodeBox"><code>import lejos.subsumption.*;
-import lejos.nxt.*;
+				<pre class="CodeBox"><code>import lejos.nxt.*;
+import lejos.robotics.subsumption.*;
 
 public class HitWall implements Behavior {
-    private boolean suppressed = false;
     private TouchSensor touch;
     private UltrasonicSensor sonar;
     private boolean suppressed = false;
@@ -362,7 +360,7 @@ public class HitWall implements Behavior {
     }
 
     public boolean takeControl() {
-       return touch.isPressed() || sonar.getDistance() &#60; 25;
+       return touch.isPressed() || sonar.getDistance() < 25;
     }
 
     public void suppress() {
@@ -370,15 +368,11 @@ public class HitWall implements Behavior {
     }
 
     public void action() {
-
-       // Back up  and turn
-
        suppressed = false;
-
        Motor.A.rotate(-180, true);
        Motor.C.rotate(-360, true);
 
-       while( Motor.C.isRotating() &amp; !suppressed )
+       while( Motor.C.isMoving() & !suppressed )
          Thread.yield();
 
        Motor.A.stop();
@@ -392,7 +386,9 @@ public class HitWall implements Behavior {
 				of our behavior objects, and instantiate and start the Arbitrator
 				as shown in the following code listing:</p>
 				
-				<pre class="CodeBox"><code>import lejos.subsumption.*;
+				<pre class="CodeBox"><code>import lejos.nxt.SensorPort;
+import lejos.robotics.subsumption.Arbitrator;
+import lejos.robotics.subsumption.Behavior;
 
 public class BumperCar {
    public static void main(String [] args) {
@@ -424,8 +420,9 @@ public class BumperCar {
 				Examine the completed Behavior:</p>
 
 				
-				<pre class="CodeBox"><code>import lejos.subsumption.*;
-import lejos.nxt.*;
+				<pre class="CodeBox"><code>import lejos.nxt.Battery;
+import lejos.nxt.Sound;
+import lejos.robotics.subsumption.Behavior;
 
 public class BatteryLow implements Behavior {
    private float LOW_LEVEL;
@@ -446,7 +443,7 @@ public class BatteryLow implements Behavior {
       float voltLevel = Battery.getVoltage();
       System.out.println("Voltage " + voltLevel);
 
-      return voltLevel &#60; LOW_LEVEL;
+      return voltLevel < LOW_LEVEL;
    }
 
    public void suppress() {
@@ -459,12 +456,13 @@ public class BatteryLow implements Behavior {
       System.exit(0);
    }
 
-   public static void play() {
-      for(int i=0;i &lt;note.length; ; i+=2) {
+   public void play() {
+      for(int i=0; i&lt;note.length; i+=2) {
          final short w = note[i+1];
          Sound.playTone(note[i], w);
          Sound.pause(w*10);
-         if (suppressed) return; // exit this method if suppress is called
+         if (suppressed)
+        	 return; // exit this method if suppress is called
       }
    }
 }</code></pre>	
@@ -487,13 +485,15 @@ public class BatteryLow implements Behavior {
 				scheme is a trivial task. We simply alter the code of our main
 				class as follows:</p>
 				
-				<pre class="CodeBox"><code>import lejos.subsumption.*;
+				<pre class="CodeBox"><code>import lejos.nxt.SensorPort;
+import lejos.robotics.subsumption.Arbitrator;
+import lejos.robotics.subsumption.Behavior;
 
 public class BumperCar {
    public static void main(String [] args) {
       Behavior b1 = new DriveForward();
       Behavior b2 = new BatteryLow(6.5f);
-      Behavior b3 = new HitWall();
+      Behavior b3 = new HitWall(SensorPort.S2);
       Behavior [] bArray = {b1, b2, b3};
       Arbitrator arby = new Arbitrator(bArray);
       arby.start();
