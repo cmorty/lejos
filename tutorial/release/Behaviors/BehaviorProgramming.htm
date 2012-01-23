@@ -360,7 +360,7 @@ public class HitWall implements Behavior {
     }
 
     public boolean takeControl() {
-       return touch.isPressed() || sonar.getDistance() < 25;
+       return touch.isPressed() || sonar.getDistance() &lt; 25;
     }
 
     public void suppress() {
@@ -372,7 +372,7 @@ public class HitWall implements Behavior {
        Motor.A.rotate(-180, true);
        Motor.C.rotate(-360, true);
 
-       while( Motor.C.isMoving() & !suppressed )
+       while( Motor.C.isMoving() &amp;&amp; !suppressed )
          Thread.yield();
 
        Motor.A.stop();
@@ -443,7 +443,7 @@ public class BatteryLow implements Behavior {
       float voltLevel = Battery.getVoltage();
       System.out.println("Voltage " + voltLevel);
 
-      return voltLevel < LOW_LEVEL;
+      return voltLevel &lt; LOW_LEVEL;
    }
 
    public void suppress() {
