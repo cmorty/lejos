@@ -252,7 +252,19 @@
 	</target>
 	
 	<target name="subproject.samples">
+		<echo message="*** entering samples project" />
+		<ant inheritAll="false" dir="${project.samples}" antfile="build.xml">
+			<property name="nxj.home" location="${shared.dir}"/>
+			<property name="sample.id" value="map"/>
+			<target name="clean" />
+			<target name="link" />
+		</ant>
+		<copy file="${project.samples}/${vars.samples.build.dir}/map.nxj"
+			tofile="${shared.dir}/bin/MapTest.nxj" />
+		<copy file="${project.samples}/${vars.samples.build.dir}/map.nxd"
+			tofile="${shared.dir}/bin/MapTest.nxd" />
 		<copy-nxtproject id="samples" todir="${samples.dir}/samples" />
+		<echo message="*** leaving samples project" />
 	</target>
 
 	<target name="subproject.example">
