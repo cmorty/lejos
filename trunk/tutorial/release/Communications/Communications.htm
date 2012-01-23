@@ -672,18 +672,18 @@ nxt.A.backward();</code></pre>
       		<pre class="CodeBox"><code>final byte[] pin = {(byte) '0', (byte) '0', (byte) '0', (byte) '0'};
 RemoteDevice btGPS = Bluetooth.getKnownDevice(name); 
 
-if (btrd == null) {
+if (btGPS == null) {
   LCD.drawString("No such device", 0, 0);
   Button.waitForAnyPress();
   System.exit(1);
 }
-<!-- TODO this is broken -->
-btGPS = Bluetooth.connect(btrd.getDeviceAddr(), pin);
 
-if(btGPS == null)
+BTConnection btCon = Bluetooth.connect(btGPS.getDeviceAddr(), NXTConnection.RAW, pin);
+
+if(btCon == null) {
   LCD.drawString("No Connection", 0, 1);
   Button.waitForAnyPress();
-  System.exit(1)
+  System.exit(1);
 }
 
 LCD.drawString("Connected!", 0, 1);
@@ -692,7 +692,7 @@ GPS gps = null;
 InputStream in;
 
 try {
-  in = btGPS.openInputStream();
+  in = btCon.openInputStream();
   gps = new GPS(in);
   LCD.drawString("GPS Online", 0, 6);
 } catch(Exception e) {
