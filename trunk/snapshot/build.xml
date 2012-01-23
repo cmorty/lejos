@@ -14,13 +14,14 @@
 	<property prefix="vars.scripts"  file="${project.scripts}/build.properties" />
 	<property prefix="vars.startup"  file="${project.startup}/build.properties" />
 	<property prefix="vars.charting" file="${project.charting}/build.properties" />
+	<property prefix="vars.samples"  file="${project.samples}/build.properties" />
 	
 	<target name="debug-vars">
 		<echoproperties />
 	</target>
 
 	<!-- release leJOS NXJ -->
-	<target name="all" depends="subproject.classes, subproject.jtools, subproject.pccomms, subproject.pctools, subproject.charting, subproject.startup, subproject.scripts" description="build/copy lejos files">
+	<target name="all" depends="subproject.classes, subproject.jtools, subproject.pccomms, subproject.pctools, subproject.charting, subproject.startup, subproject.samples, subproject.scripts" description="build/copy lejos files">
 		<echo message="Done." />
 	</target>
 
@@ -156,6 +157,21 @@
 			<fileset file="${project.startup}/${vars.startup.startup.debug}" />
 		</copy>
 		<echo message="*** leaving startup project" />
+	</target>
+
+	<target name="subproject.samples" depends="subproject.classes, subproject.pctools">
+		<echo message="*** entering samples project" />
+		<ant inheritAll="false" dir="${project.samples}" antfile="build.xml">
+			<property name="nxj.home" location="."/>
+			<property name="sample.id" value="mcl"/>
+			<target name="clean" />
+			<target name="link" />
+		</ant>
+		<copy file="${project.samples}/${vars.samples.build.dir}/mcl.nxj"
+			tofile="bin/MCLTest.nxj" />
+		<copy file="${project.samples}/${vars.samples.build.dir}/mcl.nxd"
+			tofile="bin/MCLTest.nxd" />
+		<echo message="*** leaving samples project" />
 	</target>
 
 </project>
