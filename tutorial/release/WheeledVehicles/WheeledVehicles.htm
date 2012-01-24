@@ -375,16 +375,16 @@ public class TravelTest {
 
                     <p>It needs a HiTechnic or Mindsensors compass sensor plugged in to one of the sensor ports. Its
 			constructors are similar those of DifferentialPilot, but with the additional
-			information of the compass sensor port.</p>
+			parameter of the compass sensor.</p>
 
                     <a name="10"></a>
                     <h5>Constructors:</h5>
 
                     <p/>
                     <ul class="BlueArrows">
-                        <li><p>CompassPilot(SensorPort compassPort, float wheelDiameter,
+                        <li><p>CompassPilot(DirectionFinder compass, float wheelDiameter,
                                 float trackWidth, Motor leftMotor, Motor rightMotor)</p></li>
-                        <li><p>CompassPilot(SensorPort compassPort, float wheelDiameter,
+                        <li><p>CompassPilot(DirectionFinder compass, float wheelDiameter,
                                 float trackWidth, Motor leftMotor, Motor rightMotor, boolean reverse)</p></li>
                     </ul>
 
@@ -398,7 +398,7 @@ public class TravelTest {
                         <li><p>setHeading(int angle)<br/>Set the desired robot heading, in degrees in Cartesian coordinates (a left turn
 				increases the heading)</p></li>
                         <li><p>int getHeading()<br/>Return the desired robot heading</p></li>
-                        <li><p>int getAngle()<br/>Return the compass Cartesian angle. Also the actual robot heading assuming the
+                        <li><p>int getCompassHeading()<br/>Return the compass Cartesian angle. Also the actual robot heading assuming the
 				compass sensor points forward.</p></li>
                     </ul>
 
@@ -408,7 +408,7 @@ public class TravelTest {
                     <p>Write a program that	does these steps:</p>
                     <ol>
                         <li><p>Calibrate the compass.</p></li>
-                        <li><p>Rotate the robot to a heading or 90 degrees</p></li>
+                        <li><p>Rotate the robot to a heading of 90 degrees</p></li>
                         <li><p>Reset the Cartesian zero of the compass sensor to correspond the current heading.</p></li>
                         <li><p>Move the robot a fixed distance forward.</p></li>
                         <li><p>Rotate 90 degrees to the left.</p></li>
@@ -418,7 +418,7 @@ public class TravelTest {
 
                     <p>Suggestion: while the robot is moving, nudge it off course and watch it steer back to the correct heading.</p>
 
-                    <p><a href="CompassPilotTst.html" target="_blank">Solution</a></p>
+                    <p><a href="CompassPilotTst.java" target="_blank">Solution</a></p>
 
                     <p/><a href="#top">Back	to top</a>
 
