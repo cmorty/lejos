@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+<title>MotorTutor1.java</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+pre {color: #000000; background-color: #ffffff; font-family: Monospaced}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.ST0 {color: #969696; font-family: Monospaced; font-weight: bold}
+.comment {color: #969696}
+.line-number {background-color: #e9e8e2}
+.character {color: #ce7b00}
+.keyword-directive {color: #0000e6}
+-->
+</style>
+</head>
+<body>
+<pre>
+<span class="line-number"> 1</span> 
+<span class="line-number"> 2</span> <span class="keyword-directive">import</span> lejos.nxt.Button;
+<span class="line-number"> 3</span> <span class="keyword-directive">import</span> lejos.nxt.LCD;
+<span class="line-number"> 4</span> <span class="keyword-directive">import</span> lejos.nxt.Motor;
+<span class="line-number"> 5</span> 
+<span class="line-number"> 6</span> 
+<span class="line-number"> 7</span> <span class="comment">/**</span>
+<span class="line-number"> 8</span> <span class="comment"> * </span><span class="comment">Simplest</span><span class="comment"> 3 </span><span class="comment">motor</span> <span class="comment">commands</span>
+<span class="line-number"> 9</span> <span class="comment"> * </span><span class="ST0">@author</span> <span class="comment">owner</span><span class="comment">.</span><span class="comment">GLASSEY</span>
+<span class="line-number">10</span> <span class="comment"> *</span>
+<span class="line-number">11</span>  <span class="comment">*/</span>
+<span class="line-number">12</span> <span class="keyword-directive">public</span> <span class="keyword-directive">class</span> MotorTutor1
+<span class="line-number">13</span> {
+<span class="line-number">14</span>      <span class="comment">/**</span>
+<span class="line-number">15</span>      <span class="comment"> * </span><span class="ST0">@param</span> <span class="comment">args</span>
+<span class="line-number">16</span>       <span class="comment">*/</span>
+<span class="line-number">17</span>      <span class="keyword-directive">public</span> <span class="keyword-directive">static</span> <span class="keyword-directive">void</span> main(String[] args)
+<span class="line-number">18</span>      {
+<span class="line-number">19</span>           LCD.drawString(<span class="character">&quot;</span><span class="character">Program 1</span><span class="character">&quot;</span>, 0, 0);
+<span class="line-number">20</span>           Button.waitForAnyPress();
+<span class="line-number">21</span>           LCD.clear();
+<span class="line-number">22</span>           Motor.A.forward();
+<span class="line-number">23</span>           LCD.drawString(<span class="character">&quot;</span><span class="character">FORWARD</span><span class="character">&quot;</span>,0,0);
+<span class="line-number">24</span>           Button.waitForAnyPress();
+<span class="line-number">25</span>           LCD.drawString(<span class="character">&quot;</span><span class="character">BACKWARD</span><span class="character">&quot;</span>,0,0);
+<span class="line-number">26</span>           Motor.A.backward();
+<span class="line-number">27</span>           Button.waitForAnyPress();
+<span class="line-number">28</span>           Motor.A.stop();     
+<span class="line-number">29</span>      }
+<span class="line-number">30</span> }
+<span class="line-number">31</span> 
+<span class="line-number">32</span> 
+</pre></body>
+</html>
