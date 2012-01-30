@@ -48,7 +48,7 @@ public class TetrixMotorController extends I2CSensor {
     static final int CMD_GETSPEED = 14;
     static final int CMD_GETLIMITANGLE = 15;
     
-    private int[] motorState = {STATE_STOPPED, STATE_STOPPED};
+    int[] motorState = {STATE_STOPPED, STATE_STOPPED};
     private static final int STATE_STOPPED = 0;
     private static final int STATE_RUNNING_FWD = 1;
     private static final int STATE_RUNNING_BKWD = 2;
@@ -63,7 +63,7 @@ public class TetrixMotorController extends I2CSensor {
     private static final int REG_IDX_MODE = 1;
     private static final int REG_IDX_POWER = 2;
     private static final int REG_IDX_ENCODER_CURRENT = 3;
-    private static final int[][] REGISTER_MAP = // [REG_IDX_xxx][channel]
+    static final int[][] REGISTER_MAP = // [REG_IDX_xxx][channel]
         {{0x40, 0x48}, // Encoder Target (write)
          {0x44, 0x47}, // Mode
          {0x45, 0x46}, // Power
@@ -90,7 +90,7 @@ public class TetrixMotorController extends I2CSensor {
     static final int MOTPARAM_OP_FALSE=0;
     
     // motor and monitor instance buckets
-    private TetrixRegulatedMotor[] motors= new TetrixRegulatedMotor[CHANNELS];
+    TetrixRegulatedMotor[] motors= new TetrixRegulatedMotor[CHANNELS];
     private BUSYMonitor[] bUSYMonitors = new BUSYMonitor[CHANNELS];
     private TachoMonitor tachoMonitor;
     
@@ -172,10 +172,6 @@ public class TetrixMotorController extends I2CSensor {
             this.setDaemon(true);
         }
         
-        void die() {
-            threadDie=true;
-        }
-        
         synchronized int getTachoCount(int channel) {
             return TachoCount[channel];
         }
@@ -241,7 +237,7 @@ public class TetrixMotorController extends I2CSensor {
             }
         }
     }
-    private boolean tachoMonitorAlive() {
+    boolean tachoMonitorAlive() {
         return tachoMonitor!=null && tachoMonitor.isAlive();
     }
     
@@ -509,7 +505,7 @@ public class TetrixMotorController extends I2CSensor {
         retVal = getData(REG_BATTERY, buf, 2);
         retVal=(buf[0] & 0xff)<<2;
         retVal=retVal | (buf[1] & 0x03);
-        return (float)retVal * .02f;
+        return retVal * .02f;
     }
 }
 
