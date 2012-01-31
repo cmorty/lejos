@@ -8,11 +8,14 @@
 	<!-- METADATA -->
 	<meta name="title" content="Controlling the Motors" />
 	<meta name="DC.Title" content="Controlling the Motors" />
+	<meta http-equiv="title" content="Controlling the Motors" />
 		
 	<meta name="description" content="Controlling the Motors" />
-	<meta name="DC.Description" content="Controlling the Motors" />
+	<meta http-equiv="description" content="Controlling the Motors" />
+	<meta http-equiv="DC.Description" content="Controlling the Motors" />
 
 	<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
 	<meta name='VW96.objecttype' content='Document' />
 	<meta http-equiv='content-language' content='en' />
 	<meta name='DC.Language' scheme='RFC1766' content='English' />
@@ -29,7 +32,7 @@
   	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css"/>
 	
 	<!-- ICON -->
-  	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+  	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
 </head>
 <body>
 	<a id="top" name="top"></a>
@@ -58,7 +61,7 @@
 		<td>
 			<!-- BREADCRUMBS -->
 			<div id="BreadCrumbs">
-				<a href="../index.htm" target="_top">Home Page</a> &gt;
+				<a href="../index.htm" target="_top">Home Page</a>&gt;
 			    <a href="#">Controlling the Motors</a>
 			</div>
 			<!-- NAVIGATION TOOL -->
@@ -539,7 +542,11 @@
 		motor power to maintain constant speed between adjustments. To use an unregulated 
 	    Motor you must create an instance of the class NXTMotor. For example: </p>
 	    
-	   <pre class="CodeBox"><code>NXTMotor m1 = new NXTMotor(MotorPort.A);</code></pre>
+	   <div class="CodeBox">
+	   <pre><code>
+	   NXTMotor m1 = new NXTMotor(MotorPort.A);
+	   </code></pre>
+	   </div>
 	   
 	   <p>NXTMotor has many of the methods of NXTRegulatedMotor, but instead of the setSpeed method, it has a setPower method,
 	      and, as it has no regulation thread, it does not support any of the rotate methods.</p>
@@ -560,9 +567,9 @@
 
       	<a name="7"></a>
 		<h4> Some Other Motor Methods</h4>
-
+	
       <h5>Finding out what the motor is doing</h5>
-      <p/>
+  
       <ul class="BlueArrows">
         <li>
           <p>boolean isMoving();</p><p>
@@ -587,7 +594,7 @@
       </ul>
 
       <h5>Various other motor methods</h5>
-      <p/>
+  
       <ul class="BlueArrows">
         <li>
           <p>resetTachoCount()</p><p>
@@ -614,10 +621,11 @@
       <p><a href="#top">Back to top</a></p>
       
       <h5>NXTMotor methods</h5>
-      <p/>
+    
       <ul class="BlueArrows">
         <li>
-          <p>setPower(int aPower)</p><p>
+        setPower(int aPower)
+            <p>
 			Used to control motor power directly. Use a value between 0 and 100.
 			Don&#8217;t call this method if speed regulation is turned on because then
 			the regulator thread is continuously adjusting the power. </p>
