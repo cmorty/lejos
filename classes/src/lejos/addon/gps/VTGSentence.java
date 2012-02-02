@@ -103,7 +103,7 @@ public class VTGSentence extends NMEASentence{
 				speed = Float.parseFloat(part8);
 			}
 			
-			System.out.println(speed);
+			//System.out.println(speed);
 			
 		}catch(NoSuchElementException e){
 			//System.err.println("VTGSentence: NoSuchElementException");
