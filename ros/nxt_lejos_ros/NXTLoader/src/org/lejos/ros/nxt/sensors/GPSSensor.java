@@ -2,7 +2,7 @@ package org.lejos.ros.nxt.sensors;
 
 import lejos.nxt.SensorPort;
 import lejos.nxt.Sound;
-import lejos.nxt.addon.GPSSensor;
+//import lejos.nxt.addon.GPSSensor;
 
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
@@ -11,7 +11,7 @@ import org.ros.message.sensor_msgs.NavSatStatus;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 
-public class GPS extends NXTDevice implements INXTDevice {
+public class GPSSensor extends NXTDevice implements INXTDevice {
 
 	//NXT data
 	private String port;
@@ -26,18 +26,18 @@ public class GPS extends NXTDevice implements INXTDevice {
     final String topicName = "navSatFix";
 
     //LeJOS
-	private GPSSensor gps;
+	private lejos.nxt.addon.GPSSensor gps;
 	
-	public GPS(String port){
+	public GPSSensor(String port){
 
 		if(port.equals("PORT_1")){
-			gps = new GPSSensor(SensorPort.S1);
+			gps = new lejos.nxt.addon.GPSSensor(SensorPort.S1);
 		}else if(port.equals("PORT_2")){
-			gps = new GPSSensor(SensorPort.S2);
+			gps = new lejos.nxt.addon.GPSSensor(SensorPort.S2);
 		}else if(port.equals("PORT_3")){
-			gps = new GPSSensor(SensorPort.S3);
+			gps = new lejos.nxt.addon.GPSSensor(SensorPort.S3);
 		}else if(port.equals("PORT_4")){
-			gps = new GPSSensor(SensorPort.S4);
+			gps = new lejos.nxt.addon.GPSSensor(SensorPort.S4);
 		}
 		
 		navSatStatus.service = NavSatStatus.SERVICE_GPS;
