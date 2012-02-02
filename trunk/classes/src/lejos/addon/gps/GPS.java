@@ -151,10 +151,9 @@ public class GPS extends SimpleGPS {
 		int timeStamp = ggaSentence.getTime();
 		
 		if(timeStamp >0) {
-			String rt = Integer.toString(timeStamp);
-			int hh = Integer.parseInt(rt.substring(0, rt.length() - 4));
-			int mm = Integer.parseInt(rt.substring(rt.length() - 4, rt.length()-2));
-			int ss = Integer.parseInt(rt.substring(rt.length()-2, rt.length()));
+			int hh = timeStamp / 10000;
+			int mm = (timeStamp / 100) % 100;
+			int ss = timeStamp % 100;
 		
 			date.setHours(hh);
 			date.setMinutes(mm);
@@ -169,10 +168,9 @@ public class GPS extends SimpleGPS {
 		int dateStamp = rmcSentence.getDate();
 		
 		if(dateStamp > 0) {
-			String rd = Integer.toString(dateStamp);
-			int dd = Integer.parseInt(rd.substring(0, rd.length() - 4));
-			int mm = Integer.parseInt(rd.substring(rd.length() - 4, rd.length()-2));
-			int yy = Integer.parseInt(rd.substring(rd.length()-2, rd.length()));
+			int dd = dateStamp / 10000;
+			int mm = (dateStamp / 100) % 100;
+			int yy = dateStamp % 100;
 			
 			date.setDay(dd);
 			date.setMonth(mm);
