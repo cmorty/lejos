@@ -16,7 +16,7 @@ import org.lejos.ros.nodes.LEJOSNode;
 import org.lejos.ros.nxt.NXTDevice;
 import org.lejos.ros.nxt.actuators.NXTServoMotor;
 import org.lejos.ros.nxt.sensors.BatterySensor;
-import org.lejos.ros.nxt.sensors.GPS;
+import org.lejos.ros.nxt.sensors.GPSSensor;
 import org.lejos.ros.nxt.sensors.UltrasonicSensor;
 import org.lejos.ros.nxt.navigation.DifferentialNavigationSystem;
 
@@ -335,7 +335,7 @@ public class NXTLoader extends LEJOSNode{
 		        		System.out.println(port);
 		        		System.out.println(desiredFrequency);
 		        		
-	        			GPS gps = new GPS(port);
+	        			GPSSensor gps = new GPSSensor(port);
 	        			gps.setDesiredFrequency(desiredFrequency);
 	        			gps.publishTopic(node);
 	        			sensorList.add(gps);	
@@ -491,9 +491,9 @@ public class NXTLoader extends LEJOSNode{
 	        		//System.out.println("UltrasonicSensor");
 	        		UltrasonicSensor us = (org.lejos.ros.nxt.sensors.UltrasonicSensor) device;
 	        		us.updateTopic();
-	        	}else if(device instanceof org.lejos.ros.nxt.sensors.GPS){
+	        	}else if(device instanceof org.lejos.ros.nxt.sensors.GPSSensor){
 	        		//System.out.println("UltrasonicSensor");
-	        		GPS gps = (org.lejos.ros.nxt.sensors.GPS) device;
+	        		GPSSensor gps = (org.lejos.ros.nxt.sensors.GPSSensor) device;
 	        		gps.updateTopic();
 	        	}
 	        }
