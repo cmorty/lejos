@@ -5,8 +5,6 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.DifferentialPilot;
-import lejos.util.Delay;
-import lejos.util.PilotProps;
 
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
@@ -72,7 +70,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		trackWidth = _trackWidth;
 		reverse = _reverse;
 		
-    	DifferentialPilot df = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
+    	df = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
     	posep = new OdometryPoseProvider(df);
 	}
 	
@@ -92,19 +90,18 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	}
 	
 	public void updateActuatorSystem(DNSCommand cmd){
+		String type = cmd.type;
+		double value = cmd.value;
 		
-    	/*
-        df.setAcceleration(4000);
-		df.setTravelSpeed(20); // cm/sec
-		df.setRotateSpeed(180); // deg/sec
-		df.forward();
-		Delay.msDelay(5000);
-		df.stop();
-    	*/
-
-		df.forward();
-		Delay.msDelay(5000);
-		df.stop();
+		System.out.println("DNS cmd = " + type + " " + value);
+		
+		if (type.equals("forward")) df.forward();
+		else if (type.equals("backward")) df.backward();
+		else if (type.equals("stop")) df.stop();
+		else if (type.equals("rotateLeft")) df.rotateLeft();
+		else if (type.equals("rotateRight")) df.rotateRight();
+		else if (type.equals("travel")) df.travel(value);
+		else if (type.equals("rotate")) df.rotate(value);
 	}
 
 }
