@@ -2,6 +2,7 @@ package org.lejos.ros.nodes.jointcommand;
 
 import java.util.Random;
 
+import org.ros.namespace.GraphName;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
 import org.ros.node.topic.Publisher;
@@ -76,5 +77,11 @@ public class JointCommandTest implements NodeMain{
 	    	}
 	    }
 	 }
+
+	@Override
+	public GraphName getDefaultNodeName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
