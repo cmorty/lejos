@@ -29,16 +29,22 @@ public class NXTCommFactory {
      */
 	public static final int ALL_PROTOCOLS = USB | BLUETOOTH;
 
-	private static final OSInfo osinfo;
-	private static final JNILoader jniloader;
+	// initialized lazy, use methods below
+	private static OSInfo osinfo;
+	private static JNILoader jniloader;
 	
-	static {
-		try {
+	private static synchronized OSInfo getOSInfo() throws IOException
+	{
+		if (osinfo == null)
 			osinfo = new OSInfo();
-			jniloader = new JNILoader("native", osinfo);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}		
+		return osinfo;
+	}
+	private static synchronized JNILoader getJNILoader() throws IOException
+	{ 
+		OSInfo osi = getOSInfo();
+		if (jniloader == null)
+			jniloader = new JNILoader("native", osi);
+		return jniloader;
 	}
 
 	/**
@@ -53,12 +59,20 @@ public class NXTCommFactory {
 	public static NXTComm createNXTComm(int protocol) throws NXTCommException {
 		Properties props = getNXJProperties();
 		
+		JNILoader jnil;
+		try	{
+			jnil = getJNILoader();
+		} catch (IOException e) {
+			throw new NXTCommException(e);
+		}
+		OSInfo osi = jnil.getOSInfo();
+		
 		String nxtCommName;
 		switch (protocol)
 		{
 			case NXTCommFactory.USB:
 			{
-				boolean fantom = osinfo.isOS(OSInfo.OS_WINDOWS) || osinfo.isOS(OSInfo.OS_MACOSX);
+				boolean fantom = osi.isOS(OSInfo.OS_WINDOWS) || osi.isOS(OSInfo.OS_MACOSX);
 				String defaultName = fantom ? "lejos.pc.comm.NXTCommFantom" : "lejos.pc.comm.NXTCommLibnxt";
 				nxtCommName = props.getProperty("NXTCommUSB", defaultName);				
 				break;
@@ -66,7 +80,7 @@ public class NXTCommFactory {
 			case NXTCommFactory.BLUETOOTH:
 			{
 				// Look for a Bluetooth one
-				String defaultName = isAndroid() ? "lejos.pc.comm.NXTCommAndroid" : "lejos.pc.comm.NXTCommBluecove";
+				String defaultName = isAndroid(osi) ? "lejos.pc.comm.NXTCommAndroid" : "lejos.pc.comm.NXTCommBluecove";
 				nxtCommName = props.getProperty("NXTCommBluetooth", defaultName);
 				break;
 			}
@@ -74,10 +88,10 @@ public class NXTCommFactory {
 				throw new NXTCommException("unknown protocol");
 		}
 
-		return newNXTCommInstance(nxtCommName);
+		return newNXTCommInstance(nxtCommName, jnil);
 	}
 	
-	private static NXTComm newNXTCommInstance(String classname) throws NXTCommException
+	private static NXTComm newNXTCommInstance(String classname, JNILoader jnil) throws NXTCommException
 	{
 		try
 		{
@@ -86,7 +100,7 @@ public class NXTCommFactory {
 			
 			if (o instanceof JNIClass)
 			{
-				((JNIClass) o).initialize(jniloader);
+				((JNIClass) o).initialize(jnil);
 			}
 			
 			return (NXTComm) o;
@@ -110,7 +124,14 @@ public class NXTCommFactory {
 	}
 
 	private static String getCacheFile() {
-		if (isAndroid())
+		OSInfo osi;
+		try	{
+			osi = getOSInfo();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		
+		if (isAndroid(osi))
 			return "sdcard/leJOS/nxj.cache";
 		
 		String userHome = System.getProperty("user.home");
@@ -223,9 +244,9 @@ public class NXTCommFactory {
 		}
 	}
 
-	private static boolean isAndroid() {
+	private static boolean isAndroid(OSInfo osi) {
 		String javaRuntimeName = System.getProperty("java.runtime.name");
-		return osinfo.isOS(OSInfo.OS_LINUX) && javaRuntimeName != null &&
+		return osi.isOS(OSInfo.OS_LINUX) && javaRuntimeName != null &&
 			javaRuntimeName.toLowerCase().indexOf("android runtime") != -1;
 	}
 }
