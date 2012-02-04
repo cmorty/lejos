@@ -112,7 +112,7 @@ main class ${main.class}</echo>
 	<target name="run" depends="sample.init, compile">
 		<echo>Running ${main.class}</echo>
 		<java classname="${main.class}" fork="true">
-			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<sysproperty key="nxj.home" value="${nxj.home}"/>
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<classpath location="${classes.dir}" />
