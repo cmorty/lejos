@@ -15,6 +15,7 @@ import org.lejos.ros.nxt.sensors.GyroSensor;
 import org.lejos.ros.nxt.navigation.DifferentialNavigationSystem;
 import org.lejos.ros.nxt.sensors.CompassSensor;
 import org.lejos.ros.nxt.sensors.GPS;
+import org.lejos.ros.nxt.sensors.TouchSensor;
 import org.lejos.ros.nxt.sensors.UltrasonicSensor;
 
 import org.lejos.pccomm.utils.SimpleConnector;
@@ -311,6 +312,23 @@ public class LCPProxy implements NodeMain {
         			compass.setDesiredFrequency(desiredFrequency);
         			compass.publishTopic(node);
         			sensorList.add(compass);		        			
+	        	
+	        	} else if(type.equals("touch")) {
+	        		System.out.println("I found a touch sensor description");
+	        		
+	        		name = map2.get("name").toString().trim();
+	        		port = map2.get("port").toString().trim();
+	        		desiredFrequency = Float.parseFloat(map2.get("desired_frequency").toString().trim());
+	        				        		
+	        		System.out.println(name);
+	        		System.out.println(port);
+	        		System.out.println(desiredFrequency);
+        			
+        			TouchSensor touch = new TouchSensor(port);
+        			touch.setName(name);
+        			touch.setDesiredFrequency(desiredFrequency);
+        			touch.publishTopic(node);
+        			sensorList.add(touch);		        			
 	        	
 	        	} else if(type.equals("gyro")) {
 	        		System.out.println("I found a gyro sensor description");

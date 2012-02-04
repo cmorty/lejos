@@ -2,7 +2,10 @@ package org.lejos.ros.nxt.navigation;
 
 import lejos.nxt.Motor;
 import lejos.robotics.RegulatedMotor;
+import lejos.robotics.localization.OdometryPoseProvider;
+import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.DifferentialPilot;
+import lejos.robotics.navigation.Pose;
 import lejos.util.Delay;
 
 import org.lejos.ros.nxt.INXTDevice;
@@ -10,6 +13,7 @@ import org.lejos.ros.nxt.NXTDevice;
 import org.ros.message.nxt_lejos_ros_msgs.DNSCommand;
 import org.ros.message.turtlesim.Velocity;
 import org.ros.node.Node;
+import org.ros.node.topic.Publisher;
 
 public class DifferentialNavigationSystem extends NXTDevice implements INXTDevice{
 	
@@ -21,6 +25,11 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	private boolean reverse;
 	
 	private DifferentialPilot df;
+	private PoseProvider posep;
+	
+    final org.ros.message.geometry_msgs.Pose2D message = new org.ros.message.geometry_msgs.Pose2D(); 
+    Publisher<org.ros.message.geometry_msgs.Pose2D> topic = null;
+    String messageType = "geometry_msgs/Pose2D";
 	
 	public DifferentialNavigationSystem(String port1, String port2, float _wheelDiameter, float _trackWidth, boolean _reverse){		
 		//TODO: Exception if letters are the same
@@ -46,12 +55,20 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		reverse = _reverse;
 		
     	df = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
+    	posep = new OdometryPoseProvider(df);
+    	
 	}
 	
 	public void publishTopic(Node node) {
+		topic = node.newPublisher("pose", messageType);
 	}
 
-	public void updateTopic() {		
+	public void updateTopic() {
+		Pose p = posep.getPose();
+		message.theta = p.getHeading();
+		message.x = p.getX();
+		message.y = p.getY();
+		topic.publish(message);
 	}
 	
 	public void updateActuatorSystem(DNSCommand cmd){
