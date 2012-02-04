@@ -10,9 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.lejos.ros.nxt.sensors.ColorSensor;
+
 import org.lejos.ros.nxt.sensors.GyroSensor;
 
 import org.lejos.ros.nxt.navigation.DifferentialNavigationSystem;
+import org.lejos.ros.nxt.sensors.AccelerationSensor;
 import org.lejos.ros.nxt.sensors.CompassSensor;
 import org.lejos.ros.nxt.sensors.GPS;
 import org.lejos.ros.nxt.sensors.TouchSensor;
@@ -295,6 +298,40 @@ public class LCPProxy implements NodeMain {
         			us.setDesiredFrequency(desiredFrequency);
         			us.publishTopic(node);
         			sensorList.add(us);		        			
+	        	
+	        	} else if(type.equals("color")) {
+	        		System.out.println("I found a color sensor description");
+	        		
+	        		name = map2.get("name").toString().trim();
+	        		port = map2.get("port").toString().trim();
+	        		desiredFrequency = Float.parseFloat(map2.get("desired_frequency").toString().trim());
+	        				        		
+	        		System.out.println(name);
+	        		System.out.println(port);
+	        		System.out.println(desiredFrequency);
+        			
+        			ColorSensor color = new ColorSensor(port);
+        			color.setName(name);
+        			color.setDesiredFrequency(desiredFrequency);
+        			color.publishTopic(node);
+        			sensorList.add(color);		        			
+	        	
+	        	} else if(type.equals("acceleration")) {
+	        		System.out.println("I found an acceleration  sensor description");
+	        		
+	        		name = map2.get("name").toString().trim();
+	        		port = map2.get("port").toString().trim();
+	        		desiredFrequency = Float.parseFloat(map2.get("desired_frequency").toString().trim());
+	        				        		
+	        		System.out.println(name);
+	        		System.out.println(port);
+	        		System.out.println(desiredFrequency);
+        			
+        			AccelerationSensor accel = new AccelerationSensor(port);
+        			accel.setName(name);
+        			accel.setDesiredFrequency(desiredFrequency);
+        			accel.publishTopic(node);
+        			sensorList.add(accel);		        			
 	        	
 	        	} else if(type.equals("compass")) {
 	        		System.out.println("I found a compass sensor description");
