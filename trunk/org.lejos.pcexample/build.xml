@@ -60,7 +60,7 @@
 
 	<target name="run" description="run the debug tool" depends="compile">
 		<java classname="${main.class}" fork="true" failonerror="true">
-			<sysproperty key="nxj.home" value="${nxj.home}"/>
+			<sysproperty key="nxj.home" file="${nxj.home}"/>
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<classpath location="${classes.dir}" />
