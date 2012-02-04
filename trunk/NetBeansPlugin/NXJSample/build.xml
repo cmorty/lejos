@@ -93,7 +93,7 @@
     <echo> uploading ${class} </echo>
 	<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
 		<jvmarg value="-Djava.library.path=${nxj.library.path}" />
-		<jvmarg value="-Dnxj.home=${nxj.home}" />
+		<sysproperty key="nxj.home" file="${nxj.home}" />
 		<classpath refid="lejos.pc" />
 		<arg value="${build}/${binary}" />
 	</java>
@@ -119,7 +119,7 @@
         description="upload and run the binary" >
 <java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
 			<jvmarg value="-Djava.library.path=${nxj.library.path}" />
-			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-r" />
 			<arg value="${build}/${binary}" />
