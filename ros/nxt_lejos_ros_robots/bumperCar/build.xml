@@ -11,6 +11,7 @@
 
   <path id="classpath">
     <pathelement path="${ros.compile.classpath}" />
+  	<pathelement path="/home/lawrie/workspace/snapshot/lib/pc/pccomm.jar" />
   </path>
 	
   <echo message="${toString:classpath}" />
