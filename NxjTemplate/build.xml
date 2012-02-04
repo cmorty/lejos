@@ -95,7 +95,7 @@
 	<target name="upload" depends="link" description="upload the binary">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
 			<jvmarg value="-Djava.library.path=${nxj.library.path}" />
-			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home}" />
 			<classpath refid="lejos.pc" />
 			<arg value="${binary}" />
 		</java>
@@ -119,7 +119,7 @@
 	<target name="uploadandrun" depends="link" description="upload and run the binary">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
 			<jvmarg value="-Djava.library.path=${nxj.library.path}" />
-			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home}" />
 			<classpath refid="lejos.pc" />
 			<arg value="${binary}" />
 			<arg value="-r" />

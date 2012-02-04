@@ -89,7 +89,7 @@
 	
 	<target name="upload" depends="link" description="upload the binary">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
-			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="${binary}" />
@@ -98,7 +98,7 @@
 	
 	<target name="uploadandrun" depends="link" description="upload and run the binary">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
-			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-r" />
@@ -108,7 +108,7 @@
 	
 	<target name="debuguploadandrun" depends="debuglink" description="upload and run the binary">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
-			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-r" />
@@ -119,7 +119,7 @@
 	<target name="console" depends="debuguploadandrun" description="run a console">
 		<sleep seconds="4" />
 		<java classname="lejos.pc.tools.NXJConsole" fork="true" failonerror="true">
-			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-di" />
@@ -130,7 +130,7 @@
 	<target name="consoleviewer" depends="debuguploadandrun" description="run the GUI Console Viewer">
 		<sleep seconds="4" />
 		<java classname="lejos.pc.tools.NXJConsoleViewer" fork="true" failonerror="true">
-			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-di" />
@@ -152,7 +152,7 @@
 		    addproperty="pc"
 		  />
 		<java classname="lejos.pc.tools.NXJDebugTool" fork="true" failonerror="true">
-			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-di" />
 			<arg file="${debug}" />
