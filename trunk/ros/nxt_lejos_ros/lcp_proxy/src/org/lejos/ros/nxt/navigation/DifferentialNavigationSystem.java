@@ -84,6 +84,9 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		else if (type.equals("rotateRight")) df.rotateRight();
 		else if (type.equals("travel")) df.travel(value);
 		else if (type.equals("rotate")) df.rotate(value);
+		else if (type.equals("setTravelSpeed")) df.setTravelSpeed(value);
+		else if (type.equals("setRotateSpeed")) df.setRotateSpeed(value);
+		else if (type.equals("setAcceleration")) df.setAcceleration((int) value);
 	}
 	
 	public void updateVelocity(Velocity v) {	
