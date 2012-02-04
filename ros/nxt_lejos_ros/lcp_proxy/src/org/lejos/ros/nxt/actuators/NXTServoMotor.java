@@ -64,6 +64,9 @@ public class NXTServoMotor extends NXTDevice implements INXTDevice{
 	
 	public void updateJoint(double effort){
 		System.out.println("JOINTCommanD: effort = " + effort);
+		
+		motor.setSpeed((int) effort * 9);
+		if (effort > 0) motor.forward();
+		else motor.backward();
 	}
-
 }
