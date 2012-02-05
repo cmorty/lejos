@@ -5,6 +5,7 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.DifferentialPilot;
+import lejos.robotics.navigation.Move;
 import lejos.robotics.navigation.Pose;
 import lejos.util.Delay;
 import org.lejos.ros.nxt.INXTDevice;
@@ -202,9 +203,11 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	    
 	    od.twist.twist.angular.x = 0;
 	    od.twist.twist.angular.y = 0;
-	    od.twist.twist.angular.z = (df.isMoving() && df.getAngleIncrement() > 0 ? df.getRotateSpeed() : 0);
+	    System.out.println("Move type is " + df.getMovement().getMoveType());
 	    
-	    od.twist.twist.linear.x = (df.isMoving() && df.getMovementIncrement() > 0 ? df.getTravelSpeed() : 0);
+	    od.twist.twist.angular.z = (df.isMoving() && df.getMovement().getMoveType() == Move.MoveType.ROTATE ? df.getRotateSpeed() : 0);
+	    
+	    od.twist.twist.linear.x = (df.isMoving() && df.getMovement().getMoveType() == Move.MoveType.TRAVEL  ? df.getTravelSpeed() : 0);
 	    od.twist.twist.linear.y = 0;
 	    od.twist.twist.linear.z = 0;	   
 	}
