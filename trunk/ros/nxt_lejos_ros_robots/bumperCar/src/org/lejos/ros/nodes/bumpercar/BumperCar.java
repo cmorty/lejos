@@ -33,11 +33,11 @@ public class BumperCar implements NodeMain {
 	public void onStart(Node node) {
 		
 		//Subscription to ultrasonic message
-        Subscriber<org.ros.message.nxt_msgs.Range> subscriberMotor =
-	        node.newSubscriber("ultrasonic_sensor", "nxt_msgs/Range");
-        subscriberMotor.addMessageListener(new MessageListener<org.ros.message.nxt_msgs.Range>() {
+        Subscriber<org.ros.message.sensor_msgs.Range> subscriberMotor =
+	        node.newSubscriber("ultrasonic_sensor", "sensor_msgs/Range");
+        subscriberMotor.addMessageListener(new MessageListener<org.ros.message.sensor_msgs.Range>() {
 	    	@Override
-	    	public void onNewMessage(org.ros.message.nxt_msgs.Range msg) {
+	    	public void onNewMessage(org.ros.message.sensor_msgs.Range msg) {
 	    		range = (float)  msg.range;
 	    		System.out.println("Range is " + range);
 				if (range < 50) {
