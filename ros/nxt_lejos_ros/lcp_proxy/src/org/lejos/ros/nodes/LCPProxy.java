@@ -541,16 +541,28 @@ public class LCPProxy implements NodeMain {
 	        for (NXTDevice device : sensorList) {
 	        	if (device instanceof org.lejos.ros.nxt.sensors.BatterySensor) {
 	        		BatterySensor battery = (org.lejos.ros.nxt.sensors.BatterySensor) device;
-	        		battery.updateTopic();
-	        		
+	        		battery.updateTopic();      		
 	        	} else if (device instanceof org.lejos.ros.nxt.sensors.UltrasonicSensor) {
-	        		//System.out.println("UltrasonicSensor");
 	        		UltrasonicSensor us = (org.lejos.ros.nxt.sensors.UltrasonicSensor) device;
 	        		us.updateTopic();
 	        	} else if (device instanceof org.lejos.ros.nxt.sensors.GPS) {
-	        		//System.out.println("UltrasonicSensor");
 	        		GPS gps = (org.lejos.ros.nxt.sensors.GPS) device;
 	        		gps.updateTopic();
+	        	} else if (device instanceof org.lejos.ros.nxt.sensors.CompassSensor) {
+	        		CompassSensor compass = (org.lejos.ros.nxt.sensors.CompassSensor) device;
+	        		compass.updateTopic();
+	        	} else if (device instanceof org.lejos.ros.nxt.sensors.TouchSensor) {
+	        		TouchSensor touch = (org.lejos.ros.nxt.sensors.TouchSensor) device;
+	        		touch.updateTopic();
+	        	} else if (device instanceof org.lejos.ros.nxt.sensors.GyroSensor) {
+	        		GyroSensor gyro = (org.lejos.ros.nxt.sensors.GyroSensor) device;
+	        		gyro.updateTopic();
+	        	} else if (device instanceof org.lejos.ros.nxt.sensors.ColorSensor) {
+	        		ColorSensor color = (org.lejos.ros.nxt.sensors.ColorSensor) device;
+	        		color.updateTopic();
+	        	} else if (device instanceof org.lejos.ros.nxt.sensors.AccelerationSensor) {
+	        		AccelerationSensor accel = (org.lejos.ros.nxt.sensors.AccelerationSensor) device;
+	        		accel.updateTopic();
 	        	}
 	        }
 
