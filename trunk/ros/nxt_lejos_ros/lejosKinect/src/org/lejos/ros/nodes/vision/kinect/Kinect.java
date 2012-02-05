@@ -12,7 +12,6 @@ import static com.googlecode.javacv.cpp.opencv_highgui.cvSaveImage;
 
 import com.googlecode.javacv.CanvasFrame;
 import com.googlecode.javacv.FrameGrabber;
-import com.googlecode.javacv.FrameGrabber.ColorMode;
 import com.googlecode.javacv.OpenCVFrameGrabber;
 import com.googlecode.javacv.OpenKinectFrameGrabber;
 import com.googlecode.javacv.cpp.freenect;
