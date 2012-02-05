@@ -16,18 +16,21 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 	private String frame_id;
 	private String stamp;
 	private float range;
-	private float spread_angle;
-	private float range_min;
-	private float range_max;
+	private float spread_angle = 0.5f;
+	private float range_min = 0.05f;
+	private float range_max = 2.0f;
 	
-    final org.ros.message.nxt_msgs.Range message = new org.ros.message.nxt_msgs.Range(); 
-    Publisher<org.ros.message.nxt_msgs.Range> topic = null;
-    String messageType = "nxt_msgs/Range";
+    final org.ros.message.sensor_msgs.Range message = new org.ros.message.sensor_msgs.Range(); 
+    Publisher<org.ros.message.sensor_msgs.Range> topic = null;
+    String messageType = "sensor_msgs/Range";
+    
+    Node node;
 	
     //NXT Brick
 	private lejos.nxt.UltrasonicSensor usSensor;
     
-	public UltrasonicSensor(String port){
+	public UltrasonicSensor(Node node, String port){
+		this.node = node;
 		if(port.equals("PORT_1")){
 			usSensor = new lejos.nxt.UltrasonicSensor(SensorPort.S1);
 		}else if(port.equals("PORT_2")){
@@ -106,12 +109,13 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 	public void updateTopic() {
 		usSensor.ping();
 		range = usSensor.getDistance();
-		//message.header.frame_id = frame_id;
-		message.range_max = range_max;
-		message.range_min = range_min;
-		message.spread_angle = spread_angle;
+		message.header.stamp = node.getCurrentTime();
+		message.header.frame_id = "/world";
+		message.max_range= range_max;
+		message.min_range = range_min;
+		message.field_of_view = spread_angle;
 		message.range = range;
+		message.radiation_type = 0; // Ultrasonic
 		topic.publish(message);		
 	}
-
 }

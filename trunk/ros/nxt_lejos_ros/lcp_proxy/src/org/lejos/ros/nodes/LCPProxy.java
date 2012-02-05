@@ -294,7 +294,7 @@ public class LCPProxy implements NodeMain {
 	        		System.out.println(port);
 	        		System.out.println(desiredFrequency);
         			
-        			UltrasonicSensor us = new UltrasonicSensor(port);
+        			UltrasonicSensor us = new UltrasonicSensor(node, port);
         			us.setName(name);
         			us.setDesiredFrequency(desiredFrequency);
         			us.publishTopic(node);

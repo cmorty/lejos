@@ -210,7 +210,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	    
 	    od.twist.twist.angular.x = 0;
 	    od.twist.twist.angular.y = 0;
-	    System.out.println("Move type is " + df.getMovement().getMoveType());
+	    //System.out.println("Move type is " + df.getMovement().getMoveType());
 	    
 	    od.twist.twist.angular.z = (df.isMoving() && df.getMovement().getMoveType() == Move.MoveType.ROTATE ? df.getRotateSpeed() : 0);
 	    
