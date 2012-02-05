@@ -16,6 +16,7 @@ import org.ros.message.geometry_msgs.Twist;
 import org.ros.message.nav_msgs.Odometry;
 import org.ros.message.nxt_lejos_ros_msgs.DNSCommand;
 import org.ros.message.std_msgs.Time;
+import org.ros.message.tf.tfMessage;
 import org.ros.message.turtlesim.Velocity;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
@@ -33,13 +34,15 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	private PoseProvider posep;
 	
 	// ROS
-	private TransformStamped tr = new TransformStamped();	
+	private TransformStamped tr = new TransformStamped();
+	private tfMessage tf = new tfMessage();
+
     private final org.ros.message.geometry_msgs.Pose2D message = new org.ros.message.geometry_msgs.Pose2D(); 
     private Publisher<org.ros.message.geometry_msgs.Pose2D> topic = null;
     private String messageType = "geometry_msgs/Pose2D";
      
-    private Publisher<TransformStamped> tfTopic = null;
-    private String tfMessageType = "geometry_msgs/TransformStamped";
+    private Publisher<tfMessage> tfTopic = null;
+    private String tfMessageType = "tf/tfMessage";
     private Node node;
 	
 	public DifferentialNavigationSystem(Node node, String port1, String port2, float _wheelDiameter, float _trackWidth, boolean _reverse){		
@@ -84,7 +87,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		message.y = p.getY();
 		topic.publish(message);
 		poseToTransform(p);
-		tfTopic.publish(tr);
+		tfTopic.publish(tf);
 	}
 	
 	public void updateActuatorSystem(DNSCommand cmd){
@@ -175,6 +178,8 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	    tr.transform.rotation.w =c1c2*c3 - s1s2*s3;
 	    tr.transform.rotation.x =c1c2*s3 + s1s2*c3;
 	    tr.transform.rotation.y =s1*c2*c3 + c1*s2*s3;
-	    tr.transform.rotation.z =c1*s2*c3 - s1*c2*s3;	
+	    tr.transform.rotation.z =c1*s2*c3 - s1*c2*s3;
+	    
+	    tf.transforms.add(tr);
 	}
 }

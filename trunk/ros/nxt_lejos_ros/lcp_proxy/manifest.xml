@@ -17,6 +17,7 @@
   <depend package="nxt_msgs" />
   <depend package="nxt_lejos_ros_msgs" />
   <depend package="turtlesim" />
+  <depend package="tf" />
 
   <export>
 	    <rosjava-src location="src" /> 
