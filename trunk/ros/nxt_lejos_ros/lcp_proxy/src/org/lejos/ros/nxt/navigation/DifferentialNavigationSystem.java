@@ -7,15 +7,12 @@ import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.Pose;
 import lejos.util.Delay;
-
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
-import org.ros.message.geometry_msgs.Transform;
 import org.ros.message.geometry_msgs.TransformStamped;
 import org.ros.message.geometry_msgs.Twist;
 import org.ros.message.nav_msgs.Odometry;
 import org.ros.message.nxt_lejos_ros_msgs.DNSCommand;
-import org.ros.message.std_msgs.Time;
 import org.ros.message.tf.tfMessage;
 import org.ros.message.turtlesim.Velocity;
 import org.ros.node.Node;
@@ -44,6 +41,11 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
     private Publisher<tfMessage> tfTopic = null;
     private String tfMessageType = "tf/tfMessage";
     private Node node;
+    
+    private Odometry od = new Odometry();
+    
+    private Publisher<Odometry> odomTopic = null;
+    private String odomMessageType = "nav_msgs/Odometry";
 	
 	public DifferentialNavigationSystem(Node node, String port1, String port2, float _wheelDiameter, float _trackWidth, boolean _reverse){		
 		this.node = node;
@@ -78,6 +80,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	public void publishTopic(Node node) {
 		topic = node.newPublisher("pose", messageType);
 		tfTopic = node.newPublisher("tf", tfMessageType);
+		odomTopic = node.newPublisher("odom", odomMessageType);
 	}
 
 	public void updateTopic() {
@@ -88,6 +91,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		topic.publish(message);
 		poseToTransform(p);
 		tfTopic.publish(tf);
+		odomTopic.publish(od);
 	}
 	
 	public void updateActuatorSystem(DNSCommand cmd){
@@ -181,5 +185,27 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	    tr.transform.rotation.z =c1*s2*c3 - s1*c2*s3;
 	    
 	    tf.transforms.add(tr);
+	    
+	    od.header.seq = seq;
+	    od.header.stamp = node.getCurrentTime();
+	    od.header.frame_id = "world";
+	    od.child_frame_id = "robot";
+	    
+	    od.pose.pose.position.x = p.getX();
+	    od.pose.pose.position.y = p.getY();
+	    od.pose.pose.position.z = 0;
+	    
+	    od.pose.pose.orientation.w =c1c2*c3 - s1s2*s3;
+	    od.pose.pose.orientation.x =c1c2*s3 + s1s2*c3;
+	    od.pose.pose.orientation.y =s1*c2*c3 + c1*s2*s3;
+	    od.pose.pose.orientation.z =c1*s2*c3 - s1*c2*s3;
+	    
+	    od.twist.twist.angular.x = 0;
+	    od.twist.twist.angular.y = 0;
+	    od.twist.twist.angular.z = (df.isMoving() && df.getAngleIncrement() > 0 ? df.getRotateSpeed() : 0);
+	    
+	    od.twist.twist.linear.x = (df.isMoving() && df.getMovementIncrement() > 0 ? df.getTravelSpeed() : 0);
+	    od.twist.twist.linear.y = 0;
+	    od.twist.twist.linear.z = 0;	   
 	}
 }
