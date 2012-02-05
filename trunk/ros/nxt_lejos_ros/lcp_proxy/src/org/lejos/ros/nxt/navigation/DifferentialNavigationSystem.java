@@ -10,15 +10,19 @@ import lejos.util.Delay;
 
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
+import org.ros.message.geometry_msgs.Transform;
+import org.ros.message.geometry_msgs.TransformStamped;
 import org.ros.message.geometry_msgs.Twist;
+import org.ros.message.nav_msgs.Odometry;
 import org.ros.message.nxt_lejos_ros_msgs.DNSCommand;
+import org.ros.message.std_msgs.Time;
 import org.ros.message.turtlesim.Velocity;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 
 public class DifferentialNavigationSystem extends NXTDevice implements INXTDevice{
 	
-	//LeJOS
+	// leJOS
 	private RegulatedMotor leftMotor;
 	private RegulatedMotor rightMotor;
 	private float wheelDiameter;
@@ -28,11 +32,19 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	private DifferentialPilot df;
 	private PoseProvider posep;
 	
-    final org.ros.message.geometry_msgs.Pose2D message = new org.ros.message.geometry_msgs.Pose2D(); 
-    Publisher<org.ros.message.geometry_msgs.Pose2D> topic = null;
-    String messageType = "geometry_msgs/Pose2D";
+	// ROS
+	private TransformStamped tr = new TransformStamped();	
+    private final org.ros.message.geometry_msgs.Pose2D message = new org.ros.message.geometry_msgs.Pose2D(); 
+    private Publisher<org.ros.message.geometry_msgs.Pose2D> topic = null;
+    private String messageType = "geometry_msgs/Pose2D";
+     
+    private Publisher<TransformStamped> tfTopic = null;
+    private String tfMessageType = "geometry_msgs/TransformStamped";
+    private Node node;
 	
-	public DifferentialNavigationSystem(String port1, String port2, float _wheelDiameter, float _trackWidth, boolean _reverse){		
+	public DifferentialNavigationSystem(Node node, String port1, String port2, float _wheelDiameter, float _trackWidth, boolean _reverse){		
+		this.node = node;
+		
 		//TODO: Exception if letters are the same
 		
 		if (port1.equals("A")){ 
@@ -62,6 +74,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	
 	public void publishTopic(Node node) {
 		topic = node.newPublisher("pose", messageType);
+		tfTopic = node.newPublisher("tf", tfMessageType);
 	}
 
 	public void updateTopic() {
@@ -70,6 +83,8 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		message.x = p.getX();
 		message.y = p.getY();
 		topic.publish(message);
+		poseToTransform(p);
+		tfTopic.publish(tr);
 	}
 	
 	public void updateActuatorSystem(DNSCommand cmd){
@@ -128,5 +143,38 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		
 		Delay.msDelay(1000);	
 		df.stop();	
+	}
+	
+	private long seq = 0;
+	
+	/*
+	 * Convert a leJOS pose into a world to robot transform
+	 */
+	private void poseToTransform(Pose p) {
+		double attitude = 0;
+		double bank = 0;
+		double heading = Math.toRadians(p.getHeading());
+	    double c1 = Math.cos(heading/2);
+	    double s1 = Math.sin(heading/2);
+	    double c2 = Math.cos(attitude/2);
+	    double s2 = Math.sin(attitude/2);
+	    double c3 = Math.cos(bank/2);
+	    double s3 = Math.sin(bank/2);
+	    double c1c2 = c1*c2;
+	    double s1s2 = s1*s2;
+	    
+	    tr.header.frame_id = "world"; 
+	    tr.header.stamp = node.getCurrentTime();
+	    tr.header.seq = seq++;
+	    tr.child_frame_id = "robot";
+	    
+		tr.transform.translation.x = p.getX();
+		tr.transform.translation.y = p.getY();
+		tr.transform.translation.z = 0;
+		
+	    tr.transform.rotation.w =c1c2*c3 - s1s2*s3;
+	    tr.transform.rotation.x =c1c2*s3 + s1s2*c3;
+	    tr.transform.rotation.y =s1*c2*c3 + c1*s2*s3;
+	    tr.transform.rotation.z =c1*s2*c3 - s1*c2*s3;	
 	}
 }

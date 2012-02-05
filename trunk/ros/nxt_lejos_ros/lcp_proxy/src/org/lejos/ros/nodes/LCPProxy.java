@@ -421,7 +421,7 @@ public class LCPProxy implements NodeMain {
 	        		String motorPortLetter1 = port.substring(pattern.length(), port.length()-1);
 	        		String motorPortLetter2 = port.substring(pattern.length()+1, port.length());
 	        		
-	        		DifferentialNavigationSystem df = new DifferentialNavigationSystem(motorPortLetter1, motorPortLetter2, WHEEL_DIAMETER, TRACK_WIDTH, REVERSE);
+	        		DifferentialNavigationSystem df = new DifferentialNavigationSystem(node, motorPortLetter1, motorPortLetter2, WHEEL_DIAMETER, TRACK_WIDTH, REVERSE);
         			df.setName(name);
         			df.setDesiredFrequency(desiredFrequency);
 	        		df.publishTopic(node);
