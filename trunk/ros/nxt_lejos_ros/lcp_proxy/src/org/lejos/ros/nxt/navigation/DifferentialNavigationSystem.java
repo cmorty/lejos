@@ -10,6 +10,7 @@ import lejos.robotics.navigation.Pose;
 import lejos.util.Delay;
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
+import org.ros.message.geometry_msgs.PoseStamped;
 import org.ros.message.geometry_msgs.TransformStamped;
 import org.ros.message.geometry_msgs.Twist;
 import org.ros.message.nav_msgs.Odometry;
@@ -47,6 +48,10 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
     
     private Publisher<Odometry> odomTopic = null;
     private String odomMessageType = "nav_msgs/Odometry";
+    
+    private PoseStamped poseStamped = new PoseStamped();
+    private Publisher<PoseStamped> psTopic = null;
+    private String psMessageType = "geometry_msgs/PoseStamped";
 	
 	public DifferentialNavigationSystem(Node node, String port1, String port2, float _wheelDiameter, float _trackWidth, boolean _reverse){		
 		this.node = node;
@@ -82,6 +87,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		topic = node.newPublisher("pose", messageType);
 		tfTopic = node.newPublisher("tf", tfMessageType);
 		odomTopic = node.newPublisher("odom", odomMessageType);
+		psTopic = node.newPublisher("pose3D", psMessageType);
 	}
 
 	public void updateTopic() {
@@ -93,6 +99,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		poseToTransform(p);
 		tfTopic.publish(tf);
 		odomTopic.publish(od);
+		psTopic.publish(poseStamped);
 	}
 	
 	public void updateActuatorSystem(DNSCommand cmd){
@@ -209,6 +216,14 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	    
 	    od.twist.twist.linear.x = (df.isMoving() && df.getMovement().getMoveType() == Move.MoveType.TRAVEL  ? df.getTravelSpeed() : 0);
 	    od.twist.twist.linear.y = 0;
-	    od.twist.twist.linear.z = 0;	   
+	    od.twist.twist.linear.z = 0;
+	    
+	    poseStamped.header.seq = seq;
+	    poseStamped.header.stamp = node.getCurrentTime();
+	    
+	    poseStamped.header.frame_id = "world";
+	    
+	    poseStamped.pose.position.x = p.getX();
+	    poseStamped.pose.position.y = p.getY();
 	}
 }
