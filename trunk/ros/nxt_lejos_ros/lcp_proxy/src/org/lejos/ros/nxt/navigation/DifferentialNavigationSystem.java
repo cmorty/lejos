@@ -10,6 +10,7 @@ import lejos.util.Delay;
 
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
+import org.ros.message.geometry_msgs.Twist;
 import org.ros.message.nxt_lejos_ros_msgs.DNSCommand;
 import org.ros.message.turtlesim.Velocity;
 import org.ros.node.Node;
@@ -93,7 +94,27 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		float linear = v.linear;
 		float angular = v.angular;
 		
-		System.out.println("Velocity: linear = " + v.linear + ", angular = " + angular);
+		System.out.println("Velocity: linear = " + linear + ", angular = " + angular);
+		
+		if (linear != 0 && angular == 0) {
+			boolean forward = (linear > 0);
+			if (forward) df.forward();
+			else df.backward();
+		} else if (angular != 0 && linear == 0) {
+			boolean left = (angular > 0);
+			if (left) df.rotateLeft();
+			else df.rotateRight();
+		}
+		
+		Delay.msDelay(1000);	
+		df.stop();	
+	}
+	
+	public void updateTwist(Twist t) {	
+		double linear = t.linear.x;
+		double angular = t.angular.z;
+		
+		System.out.println("Velocity: linear = " + linear + ", angular = " + angular);
 		
 		if (linear != 0 && angular == 0) {
 			boolean forward = (linear > 0);
