@@ -16,9 +16,9 @@ public class CompassSensor extends NXTDevice implements INXTDevice {
 	private String stamp;
 	private float heading;
 	
-    final org.ros.message.nxt_msgs.Range message = new org.ros.message.nxt_msgs.Range(); 
-    Publisher<org.ros.message.nxt_msgs.Range> topic = null;
-    String messageType = "nxt_msgs/Range";
+    final org.ros.message.nxt_lejos_ros_msgs.Compass message = new org.ros.message.nxt_lejos_ros_msgs.Compass(); 
+    Publisher<org.ros.message.nxt_lejos_ros_msgs.Compass> topic = null;
+    String messageType = "nxt_lejos_ros_msgs/Compass";
 	
     //NXT Brick
 	private lejos.nxt.addon.CompassHTSensor compass;
@@ -73,6 +73,7 @@ public class CompassSensor extends NXTDevice implements INXTDevice {
 
 	public void updateTopic() {
 		heading = compass.getDegrees();
+		message.heading = heading;
 		topic.publish(message);		
 	}
 }

@@ -243,6 +243,7 @@ public class LCPProxy implements NodeMain {
 	        	
 	        	type = map2.get("type").toString().trim(); 
 
+	        	//System.out.println("Type is " + type);
 	        	//Actuators
 	        	if (type.equals("motor")) {
 	        		System.out.println("I found a motor description");
@@ -498,6 +499,17 @@ public class LCPProxy implements NodeMain {
     	    	public void onNewMessage(org.ros.message.turtlesim.Velocity message) {   		
 	        		DifferentialNavigationSystem df = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) actuatorSystemsList.get(0);
     	    		df.updateVelocity(message);	
+    	    	}
+    	    });
+            
+    		//Subscription to command_velocity_command
+            Subscriber<org.ros.message.geometry_msgs.Twist> subscriberTwist =
+    	        node.newSubscriber("cmd_vel", "geometry_msgs/Twist");
+            subscriberTwist.addMessageListener(new MessageListener<org.ros.message.geometry_msgs.Twist>() {
+    	    	@Override
+    	    	public void onNewMessage(org.ros.message.geometry_msgs.Twist message) {   		
+	        		DifferentialNavigationSystem df = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) actuatorSystemsList.get(0);
+    	    		df.updateTwist(message);	
     	    	}
     	    });
     		
