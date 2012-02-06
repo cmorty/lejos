@@ -213,12 +213,7 @@ public class LCP {
 		}	
 		case GET_OUTPUT_STATE: {
 			byte port = cmd[2]; 
-			NXTRegulatedMotor m;
-			if(port == 0)
-				m = Motor.A;
-			else if(port == 1)
-				m = Motor.B;
-			else m = Motor.C;
+			NXTRegulatedMotor m = Motor.getInstance(port);
 			int tacho = m.getTachoCount();
 			
 			reply[3] = port;
@@ -324,8 +319,14 @@ public class LCP {
 		case RESET_MOTOR_POSITION: {
 			// Check if boolean value (cmd[3]) is false. If so,
 			// reset TachoCount (i.e. RotationCount in LEGO FW terminology)
-			if(cmd[3] == 0)
-				MotorPort.getInstance(cmd[2]).resetTachoCount();
+		    // Note we assume that this like all other LCP motor commands needs to operate on
+		    // a regulated motor.
+		    if (cmd[3] == 0)
+		    {
+		        byte port = cmd[2]; 
+		        NXTRegulatedMotor m = Motor.getInstance(port);
+		        m.resetTachoCount();
+		    }
 			break;
 		}
 		case KEEP_ALIVE: {
