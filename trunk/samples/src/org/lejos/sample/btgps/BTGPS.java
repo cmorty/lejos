@@ -1,14 +1,21 @@
 package org.lejos.sample.btgps;
-import lejos.addon.gps.*;
-import lejos.nxt.*;
-import lejos.nxt.comm.*;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+
+import javax.bluetooth.RemoteDevice;
+import javax.microedition.location.Coordinates;
+
+import lejos.addon.gps.GPS;
+import lejos.addon.gps.Satellite;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.Sound;
+import lejos.nxt.comm.BTConnection;
+import lejos.nxt.comm.Bluetooth;
+import lejos.nxt.comm.NXTConnection;
 import lejos.util.Stopwatch;
 import lejos.util.TextMenu;
-
-import java.util.*;
-import java.io.*;
-import javax.bluetooth.*;
-import javax.microedition.location.*;
 
 /**
  * This example show how to:
@@ -315,7 +322,7 @@ public class BTGPS{
 		refreshSomeLCDLines();
 		LCD.drawString("RMC", 0, 2);
 		
-		LCD.drawString("Dat " + now.getDay() + "/" + now.getMonth() + "/" + now.getYear() + "", 0, 3);
+		LCD.drawString("Dat " + now.getDate() + "/" + now.getMonth() + "/" + now.getYear() + "", 0, 3);
 		LCD.drawString("Com " + gps.getCompassDegrees(), 0, 4);
 		LCD.refresh();
 	}
@@ -339,7 +346,7 @@ public class BTGPS{
 		LCD.drawString("GPS time data", 0, 2);
 
 		LCD.drawString("Tim " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() + "", 0, 3);
-		LCD.drawString("Dat " + now.getDay() + "/" + now.getMonth() + "/" + now.getYear() + "", 0, 4);
+		LCD.drawString("Dat " + now.getDate() + "/" + now.getMonth() + "/" + now.getYear() + "", 0, 4);
 		LCD.refresh();
 	}
 
