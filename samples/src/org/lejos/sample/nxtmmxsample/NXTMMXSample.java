@@ -5,10 +5,8 @@ import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import lejos.nxt.addon.MMXRegulatedMotor;
 import lejos.nxt.addon.NXTMMX;
-
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
-
 import lejos.util.Delay;
 
 /**

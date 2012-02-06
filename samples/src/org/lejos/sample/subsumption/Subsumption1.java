@@ -1,6 +1,12 @@
 package org.lejos.sample.subsumption;
 
-import lejos.nxt.*;
+import lejos.nxt.Button;
+import lejos.nxt.ButtonListener;
+import lejos.nxt.Motor;
+import lejos.nxt.SensorPort;
+import lejos.nxt.SensorPortListener;
+import lejos.nxt.Sound;
+import lejos.nxt.TouchSensor;
 import lejos.robotics.RegulatedMotor;
 
 /**

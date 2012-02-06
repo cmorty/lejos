@@ -1,7 +1,10 @@
 package org.lejos.sample.pfmatetest;
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
-import lejos.util.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.Sound;
+import lejos.nxt.addon.PFMate;
+import lejos.util.DebugMessages;
 
 /**
 * This Example show how to use the sensor PFMate.

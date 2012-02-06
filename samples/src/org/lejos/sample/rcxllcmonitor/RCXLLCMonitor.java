@@ -1,5 +1,6 @@
 package org.lejos.sample.rcxllcmonitor;
-import lejos.nxt.*;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
 import lejos.nxt.rcxcomm.LLC;
 
 

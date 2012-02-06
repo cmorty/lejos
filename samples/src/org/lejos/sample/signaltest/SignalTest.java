@@ -1,6 +1,8 @@
 package org.lejos.sample.signaltest;
-import lejos.nxt.*;
-import lejos.nxt.comm.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.comm.BTConnection;
+import lejos.nxt.comm.Bluetooth;
 
 /**
  * Open a connection to the NXT using the BTSend sample

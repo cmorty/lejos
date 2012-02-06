@@ -1,6 +1,9 @@
 package org.lejos.sample.performancetest;
-import java.lang.System;
-import lejos.nxt.*;
+import lejos.nxt.Button;
+import lejos.nxt.ButtonListener;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.SensorPortListener;
 
 /**
  * This program tests the performance with and without Listeners,

@@ -1,6 +1,8 @@
 package org.lejos.sample.sensormuxtest;
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.addon.SensorMux;
 
 /**
  * This example show how to use the device Sensor Mux from Hitechnic

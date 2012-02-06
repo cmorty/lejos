@@ -1,8 +1,9 @@
 package org.lejos.sample.soundsample;
-import lejos.nxt.*;
-import lejos.util.TextMenu;
+import java.io.File;
 
-import java.io.*;
+import lejos.nxt.LCD;
+import lejos.nxt.Sound;
+import lejos.util.TextMenu;
 
 /**
  * Demonstrates playing 8-bit WAV files.

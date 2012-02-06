@@ -1,7 +1,11 @@
 package org.lejos.sample.usbreceive;
-import lejos.nxt.*;
-import java.io.*;
-import lejos.nxt.comm.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+
+import lejos.nxt.LCD;
+import lejos.nxt.comm.USB;
+import lejos.nxt.comm.USBConnection;
 
 /**
  * Test of Java streams over USB.

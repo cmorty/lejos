@@ -1,7 +1,7 @@
 package org.lejos.sample.rcxremote;
 
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
+import lejos.nxt.SensorPort;
+import lejos.nxt.addon.RCXLink;
 import lejos.util.TextMenu;
 
 /*

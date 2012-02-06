@@ -1,5 +1,8 @@
 package org.lejos.sample.i2cdevices;
-import lejos.nxt.*;
+import lejos.nxt.Button;
+import lejos.nxt.I2CSensor;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
 
 /**
  * Display the type and address of any I2C sensors attached to the NXT

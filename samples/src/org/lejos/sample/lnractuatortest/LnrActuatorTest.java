@@ -3,7 +3,6 @@ import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.MotorPort;
 import lejos.nxt.addon.LnrActrFirgelliNXT;
-
 import lejos.util.Delay;
 
 /**

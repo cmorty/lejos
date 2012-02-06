@@ -1,9 +1,14 @@
 package org.lejos.sample.nxtconnecttest;
-import lejos.nxt.*;
-import lejos.nxt.comm.*;
-import lejos.util.TextMenu;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-import java.io.*;
+import lejos.nxt.LCD;
+import lejos.nxt.comm.Bluetooth;
+import lejos.nxt.comm.NXTCommConnector;
+import lejos.nxt.comm.NXTConnection;
+import lejos.nxt.comm.RS485;
+import lejos.util.TextMenu;
 
 
 /**

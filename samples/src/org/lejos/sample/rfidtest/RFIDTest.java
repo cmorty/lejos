@@ -1,6 +1,8 @@
 package org.lejos.sample.rfidtest;
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.addon.RFIDSensor;
 
 /**
  * Simple test of compass sensors.

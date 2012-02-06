@@ -1,7 +1,9 @@
 package org.lejos.sample.rcxemulator;
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
-import lejos.nxt.rcxcomm.*;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.Sound;
+import lejos.nxt.addon.RCXLink;
+import lejos.nxt.rcxcomm.Serial;
 
 /*
  * Responds to RCX Remote control

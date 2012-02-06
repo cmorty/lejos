@@ -1,11 +1,30 @@
 package org.lejos.sample.motortester;
-import java.io.*;
-import javax.microedition.lcdui.*;
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
-import lejos.nxt.comm.*;
-import lejos.nxt.remote.*;
-import lejos.robotics.*;
+import java.io.IOException;
+
+import javax.microedition.lcdui.Choice;
+import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.CommandListener;
+import javax.microedition.lcdui.Display;
+import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.Ticker;
+
+import lejos.nxt.MotorPort;
+import lejos.nxt.NXTMotor;
+import lejos.nxt.SensorPort;
+import lejos.nxt.addon.IRLink;
+import lejos.nxt.addon.MMXRegulatedMotor;
+import lejos.nxt.addon.NXTMMX;
+import lejos.nxt.addon.PFMate;
+import lejos.nxt.addon.PFMotorPort;
+import lejos.nxt.addon.RCXLink;
+import lejos.nxt.addon.RCXMotor;
+import lejos.nxt.addon.RCXMotorMultiplexer;
+import lejos.nxt.addon.RCXRemoteMotorPort;
+import lejos.nxt.comm.Bluetooth;
+import lejos.nxt.comm.RS485;
+import lejos.nxt.remote.RemoteNXT;
+import lejos.robotics.DCMotor;
 
 /**
  * Test motor implementations that support the DCMotor interface

@@ -1,6 +1,7 @@
 package org.lejos.sample.dltest;
-import lejos.nxt.*;
-import lejos.util.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.util.Datalogger;
 
 /**
  * Test of the DataLogger class. Logs 600 floating point 

@@ -1,10 +1,14 @@
 package org.lejos.sample.commandline;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.StringTokenizer;
+
 import javax.bluetooth.BluetoothStateException;
 
-import lejos.addon.keyboard.*;
-import lejos.nxt.*;
+import lejos.addon.keyboard.KeyEvent;
+import lejos.addon.keyboard.KeyListener;
+import lejos.addon.keyboard.Keyboard;
+import lejos.nxt.Button;
 
 /**
  * This is some sample code to demonstrate the Keyboard class if you have a Bluetooth 

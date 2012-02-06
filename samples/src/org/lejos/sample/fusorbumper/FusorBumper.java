@@ -1,10 +1,19 @@
 package org.lejos.sample.fusorbumper;
 import java.io.IOException;
-import lejos.nxt.*;
+
+import lejos.nxt.Button;
+import lejos.nxt.SensorPort;
+import lejos.nxt.TouchSensor;
+import lejos.nxt.UltrasonicSensor;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.Touch;
 import lejos.robotics.navigation.DifferentialPilot;
-import lejos.robotics.objectdetection.*;
+import lejos.robotics.objectdetection.Feature;
+import lejos.robotics.objectdetection.FeatureDetector;
+import lejos.robotics.objectdetection.FeatureListener;
+import lejos.robotics.objectdetection.FusorDetector;
+import lejos.robotics.objectdetection.RangeFeatureDetector;
+import lejos.robotics.objectdetection.TouchFeatureDetector;
 import lejos.util.PilotProps;
 
 /**

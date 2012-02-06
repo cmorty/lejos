@@ -1,7 +1,11 @@
 package org.lejos.sample.nxtlcprespond;
 
-import lejos.nxt.*;
-import lejos.nxt.comm.*;
+import lejos.nxt.LCD;
+import lejos.nxt.comm.Bluetooth;
+import lejos.nxt.comm.LCPResponder;
+import lejos.nxt.comm.NXTCommConnector;
+import lejos.nxt.comm.RS485;
+import lejos.nxt.comm.USB;
 import lejos.util.TextMenu;
 
 /**

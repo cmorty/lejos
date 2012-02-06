@@ -1,6 +1,8 @@
 package org.lejos.sample.rcxtemptest;
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.addon.RCXTemperatureSensor;
 
 /**
  * Demo for RCXTemperatureSensor

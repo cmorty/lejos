@@ -1,8 +1,10 @@
 package org.lejos.sample.nxtcamtest;
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
-
 import java.awt.Rectangle;
+
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.addon.NXTCam;
 
 /**
  * For testing the Mindsensors NXTCam.

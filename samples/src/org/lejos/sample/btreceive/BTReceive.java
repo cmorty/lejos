@@ -1,7 +1,10 @@
 package org.lejos.sample.btreceive;
-import lejos.nxt.*;
-import lejos.nxt.comm.*;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+
+import lejos.nxt.LCD;
+import lejos.nxt.comm.BTConnection;
+import lejos.nxt.comm.Bluetooth;
 
 /**
  * Receive data from another NXT, a PC, a phone, 

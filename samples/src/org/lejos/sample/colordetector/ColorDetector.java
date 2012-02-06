@@ -1,5 +1,7 @@
 package org.lejos.sample.colordetector;
-import lejos.nxt.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
 import lejos.nxt.addon.ColorHTSensor;
 import lejos.robotics.Color;
 

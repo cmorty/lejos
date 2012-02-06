@@ -1,6 +1,14 @@
 package org.lejos.sample.view;
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
+import lejos.nxt.Battery;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.LightSensor;
+import lejos.nxt.Motor;
+import lejos.nxt.SensorPort;
+import lejos.nxt.SoundSensor;
+import lejos.nxt.TouchSensor;
+import lejos.nxt.UltrasonicSensor;
+import lejos.nxt.addon.RCXLightSensor;
 import lejos.util.TextMenu;
 
 public class View {

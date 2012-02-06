@@ -1,9 +1,11 @@
 package org.lejos.sample.monitortest;
-import lejos.nxt.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.comm.LCP;
+import lejos.nxt.comm.LCPBTResponder;
 import lejos.robotics.RegulatedMotor;
-import lejos.robotics.navigation.*;
+import lejos.robotics.navigation.DifferentialPilot;
 import lejos.util.PilotProps;
-import lejos.nxt.comm.*;
 
 /**
  * Test of remote monitor.

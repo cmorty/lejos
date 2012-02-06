@@ -1,6 +1,12 @@
 package org.lejos.sample.speedtest;
-import java.util.*;
-import lejos.nxt.*;
+import java.util.Random;
+
+import lejos.nxt.LCD;
+import lejos.nxt.LightSensor;
+import lejos.nxt.MotorPort;
+import lejos.nxt.NXTMotor;
+import lejos.nxt.SensorPort;
+import lejos.nxt.UltrasonicSensor;
 
 public class SpeedTest {
 

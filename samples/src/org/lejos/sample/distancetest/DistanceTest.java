@@ -1,6 +1,7 @@
 package org.lejos.sample.distancetest;
-import lejos.util.*;
-import javax.microedition.location.*;
+import javax.microedition.location.Coordinates;
+
+import lejos.util.DebugMessages;
 
 /**
  * This example show how to use the class Coordinates from JSR-179
