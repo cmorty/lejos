@@ -38,4 +38,25 @@ public class Motor
     private Motor() {
     	// Motor class cannot be instantiated
     }
+
+    /**
+     * Return the Motor with the given Id.
+     * @param id the Id, between 0 and {@link MotorPort#NUMBER_OF_PORTS}-1.
+     * @return the MotorPort object
+     */
+    public static NXTRegulatedMotor getInstance(int id)
+    {
+        switch (id)
+        {
+            case 0:
+                return A;
+            case 1:
+                return B;
+            case 2:
+                return C;
+            default:
+                throw new IllegalArgumentException("no such motor");
+        }
+    }
+
 }

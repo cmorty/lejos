@@ -158,6 +158,11 @@ public class RemoteMotor implements RegulatedMotor, DCMotor, NXTProtocol {
 		// ** Really this can accept a ULONG value for count. Too lazy to properly convert right now:
 		// !! This used to say power > 0, apparently not working.
 		//if(power > 0)
+		// We must not attempt to perform a rotation of zero degrees. The LCP implementation uses
+		// none zero values to indicate that a limit is required. Sending 0 results in the motor
+		// running forever!
+		if (count == 0)
+		    return;
 		try {
 			if(count > 0)
 				nxtCommand.setOutputState(id, power, this.mode + MOTORON, regulationMode, turnRatio, runState, count); // Note using tachoLimit with Lego FW
