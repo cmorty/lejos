@@ -95,39 +95,50 @@
 					<div id="content">
 					<table width="100%">
 						<tr>
-				          <td valign="top" style="padding-top: 2ex"><b>Win32 leJOS NXJ</b></td>
-				        </tr>
-				        <tr> 
-				          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
-				        </tr>
-				        <tr> 
-				          <td valign="top">Download <a href="http://sourceforge.net/projects/lejos/files/lejos-NXJ-win32/">Click to download from Sourceforge</a></td>
-				        </tr>
-				        
+						  <td valign="top" style="padding-top: 2ex"><b>leJOS NXJ for Windows</b></td>
+						</tr>
+						<tr> 
+						  <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+						</tr>
+						<tr> 
+						  <td valign="top">Download <a href="http://sourceforge.net/projects/lejos/files/lejos-NXJ-win32/">Click to download from Sourceforge</a></td>
+						</tr>
+						
 						<tr>
-				          <td valign="top" style="padding-top: 2ex"><b>Linux/Mac OSX leJOS NXJ</b></td>
-				        </tr>
-				        <tr> 
-				          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
-				        </tr>
-				        <tr> 
-				          <td valign="top">Download <a href="http://sourceforge.net/projects/lejos/files/lejos-NXJ/"> Click to download from Sourceforge</a></td>
-				        </tr>
+						  <td valign="top" style="padding-top: 2ex"><b>leJOS NXJ for Linux and Mac OS&nbsp;X</b></td>
+						</tr>
+						<tr> 
+						  <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+						</tr>
+						<tr> 
+						  <td valign="top">Download <a href="http://sourceforge.net/projects/lejos/files/lejos-NXJ/"> Click to download from Sourceforge</a></td>
+						</tr>
 
 						<tr>
-				          <td valign="top" style="padding-top: 2ex"><b>Download Area at Sourceforge</b></td>
-				        </tr>
-				        <tr> 
-				          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
-				        </tr>
-				        <tr> 
-				          <td valign="top">Other releases, notes, dates and sizes are available 
-				            at the SourceForge <a href="http://sourceforge.net/projects/lejos/files/" target="_blank">download 
-				            area</a>.</td>
-				        </tr>
+						  <td valign="top" style="padding-top: 2ex"><b>leJOS NXJ sources</b></td>
+						</tr>
+						<tr> 
+						  <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+						</tr>
+						<tr> 
+						  <td valign="top">Download <a href="http://sourceforge.net/projects/lejos/files/lejos-NXJ-sources/"> Click to download from Sourceforge</a></td>
+						</tr>
 
-        			</table>
-        			</div>	
+						<tr>
+						  <td valign="top" style="padding-top: 2ex"><br />
+						  	<b>Download Area at Sourceforge</b></td>
+						</tr>
+						<tr> 
+						  <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+						</tr>
+						<tr> 
+						  <td valign="top">Other releases, notes, dates and sizes are available 
+							at the SourceForge <a href="http://sourceforge.net/projects/lejos/files/" target="_blank">download 
+							area</a>.</td>
+						</tr>
+
+					</table>
+					</div>	
 				</td>
 			</tr>
 		</table>
