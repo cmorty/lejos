@@ -147,6 +147,7 @@ public class GGASentence extends NMEASentence{
 	 */
 	protected void parse(String sentence){
 		
+		//TODO StringTokenizer must not be sued to parse NMEA sentences since it doesn't return empty tokens 
 		st = new StringTokenizer(sentence,",");
 
 		try{

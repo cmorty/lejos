@@ -10,6 +10,7 @@ public class StringTokenizer implements Enumeration<Object> {
 	 * Delimiter string.
 	 */
 	//TODO support UTF-16, multiple delimiters, etc.
+	//TODO StringTokeziner from JDK does not return empty tokens, this one does
 	private String _delimiter;
 //	private int total;
 	private int currentPosition;
