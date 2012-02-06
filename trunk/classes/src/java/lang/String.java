@@ -524,6 +524,8 @@ public final class String implements CharSequence, Comparable<String>
 	public boolean startsWith(String s, int begin)
 	{
 		int len = s.length();
+		if (begin + len > this.characters.length)
+			return false;
 		for (int i=0; i<len; i++)
 			if (this.characters[begin + i] != s.characters[i])
 				return false;
