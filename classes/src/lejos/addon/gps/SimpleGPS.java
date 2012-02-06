@@ -311,7 +311,7 @@ public class SimpleGPS extends Thread {
 			s = s.substring(0, p);
 			
 			try{
-				//TODO StringTokenizer must not be sued to parse NMEA sentences since it doesn't return empty tokens 
+				//TODO StringTokenizer must not be used to parse NMEA sentences since it doesn't return empty tokens 
 				tokenizer = new StringTokenizer(s);
 				token = tokenizer.nextToken();
 
