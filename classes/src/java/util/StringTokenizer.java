@@ -9,6 +9,7 @@ public class StringTokenizer implements Enumeration<Object> {
 	/**
 	 * Delimiter string.
 	 */
+	//TODO support UTF-16, multiple delimiters, etc.
 	private String _delimiter;
 //	private int total;
 	private int currentPosition;
@@ -21,6 +22,7 @@ public class StringTokenizer implements Enumeration<Object> {
 	 * @param s String to be StringTokenizer
 	 */
 	public StringTokenizer(String s){
+		//TODO wrong default delimiter
 		this(s, ",");
 	}
 
