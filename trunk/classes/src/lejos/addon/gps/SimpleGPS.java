@@ -1,5 +1,6 @@
 package lejos.addon.gps;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,17 +26,6 @@ import java.util.StringTokenizer;
 public class SimpleGPS extends Thread {
 
 
-	/**
-	 * BUFF is the amount of bytes to read from the stream at once.
-	 * It should not be longer than the number of characters in the shortest 
-	 * NMEA sentence otherwise it might cause a bug.
-	 */
-	private final int BUFF = 20; 
-	private byte [] segment = new byte[BUFF];
-	private StringBuffer currentSentence = new StringBuffer();
-	
-	private String START_CHAR = "$";
-	
 	private InputStream in;
 
 	//Classes which manages GGA, VTG, GSA Sentences
@@ -59,7 +49,7 @@ public class SimpleGPS extends Thread {
 	 * @param in An input stream from the GPS receiver
 	 */
 	public SimpleGPS(InputStream in) {
-		this.in = in;
+		this.in = new BufferedInputStream(in, 128);
 		
 		ggaSentence = new GGASentence();
 		vtgSentence = new VTGSentence();
@@ -350,50 +340,28 @@ public class SimpleGPS extends Thread {
 	 * @return NMEA string, including $ and end checksum 
 	 */
 	private String getNextString() {
-		boolean done = false;
-		String sentence = "";
-		int endIndex = 0;
-
-		do{
-			// Read in buf length of sentence
-			try {
-				in.read(segment);
-			}catch (IOException e) {
-				// How to handle error?
-			}catch(Exception e){
-				// ??
+		StringBuilder currentSentence = new StringBuilder();
+		try {
+			int c;
+			
+			// ignore leading CR/LF
+			do {
+				c = in.read();
+			} while (c == '\n' || c == '\r');
+			
+			// trailing EOF marks EOL, leading EOF shall yield ""
+			while (c >= 0) {
+				currentSentence.append((char)c);
+				c = in.read();
+				
+				// trailing CR/LF marks EOL
+				if (c == '\n' || c == '\r')
+					break;
 			}
-			// Append char[] data into currentSentence
-			for(int i=0;i<BUFF;i++)
-				currentSentence.append((char)segment[i]);
-			
-			// Search for $ symbol (indicates start of new sentence)
-			if(currentSentence.indexOf(START_CHAR, 1) >= 0) {
-				done = true;
-			}
-			
-			//JAB
-			//2011/10/30
-			//Latest firmware is better in this kind of scenario to avoid Fatal errors
-			
-			//In case of turn off GPS Device / GPS Device with low batteries / Other scenarios
-			if(currentSentence.length() >= 500){
-
-				return "";
-			}
-		}while(!done);
-
-		try{
-			endIndex = currentSentence.indexOf(START_CHAR, 1);
-			sentence = currentSentence.substring(0, endIndex);
-			
-			// Crop print current sentence
-			currentSentence.delete(0, endIndex);
-		}catch(Exception e){
-			//System.err.println("SimpleGPS: getNextSring / Exception")
+		} catch (IOException e) {
+			//TODO handle errors
 		}
-		
-		return sentence;
+		return currentSentence.toString();
 	}
 
 	/**
