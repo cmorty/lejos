@@ -100,7 +100,7 @@
 	<td class="n3t2r"><b>February 06, 2012 11:30 PM</b><br />
 		<b>leJOS NXJ 0.9.1</b> is available for <a href="nxj-downloads.php">download</a>.
 		Big thanks to all leJOS developer who made that happen. This release includes many bug fixes,
-		new sensor drivers, and even a new leJOS tools such nxjchartinglogger and nxjmapcommand.
+		new sensor drivers, and even new leJOS tools such as nxjchartinglogger and nxjmapcommand.
 		Consult the release notes included with any release for a detailed list of
 		changes.
 	</td>
