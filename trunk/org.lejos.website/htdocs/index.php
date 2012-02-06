@@ -99,6 +99,13 @@
 <!-- NEWS#1 -->
 
 <tr>
+	<td class="n3t2r"><a href="http://www.amazon.com/exec/obidos/ASIN/0986832200/lejos0e-20"><img src="r_media/images/newsIcons/intelligence_unleashed_thumb.jpg" /></a></td>
+	<td class="n3t2r"><b>August 26, 2011 1:15 PM</b><br />
+		<b>Announcing a new LEGO NXT book</b> launching in September, <a href="http://www.amazon.com/exec/obidos/ASIN/0986832200/lejos0e-20">Intelligence Unleashed: Creating LEGO NXT Robots with Java</a>. As the title suggests, the projects focus on robotics intelligence and advanced capabilities: Segway, Ballbot, Monte Carlo localization, realtime map display, outdoor GPS, robotic arm, the new navigation model, A* Search, image analysis and much more! There are 29 chapters with complete plans for 10 unique robots. Available in bookstores and on <a href="http://www.amazon.com/exec/obidos/ASIN/0986832200/lejos0e-20">Amazon</a>.
+	</td>
+</tr>
+
+<tr>
 							<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 							<td class="n3t2r">
 							<b>May 16, 2011 1:46 PM</b><br />
