@@ -5,8 +5,10 @@ package org.lejos.sample.rcxmuxtest;
  *  
  * @author Michael Smith <mdsmitty@gmail.com>
  */
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.addon.RCXLightSensor;
+import lejos.nxt.addon.RCXSensorMultiplexer;
 
 public class RCXMuxTest{
 	public static void main(String[] args) throws Exception {

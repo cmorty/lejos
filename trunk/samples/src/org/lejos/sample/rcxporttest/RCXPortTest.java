@@ -1,8 +1,14 @@
 package org.lejos.sample.rcxporttest;
 
-import lejos.nxt.rcxcomm.*;
-import java.io.*;
-import lejos.nxt.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.rcxcomm.RCXPort;
 
 /**
  * Test of NXT emulation of the leJOS RCX RCXPort class.

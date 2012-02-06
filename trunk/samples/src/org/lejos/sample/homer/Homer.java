@@ -1,25 +1,27 @@
 package org.lejos.sample.homer;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+
 import lejos.geom.Line;
 import lejos.geom.Rectangle;
 import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;
-import lejos.robotics.navigation.Pose;
+import lejos.nxt.comm.RConsole;
+import lejos.robotics.FixedRangeScanner;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.RangeScanner;
-import lejos.robotics.FixedRangeScanner;
+import lejos.robotics.RegulatedMotor;
+import lejos.robotics.localization.MCLParticleSet;
+import lejos.robotics.localization.MCLPoseProvider;
 import lejos.robotics.mapping.LineMap;
 import lejos.robotics.mapping.RangeMap;
-import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.DestinationUnreachableException;
 import lejos.robotics.navigation.DifferentialPilot;
+import lejos.robotics.navigation.Pose;
+import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.pathfinding.ShortestPathFinder;
 import lejos.util.PilotProps;
-import java.io.IOException;
-import lejos.robotics.navigation.Waypoint;
-import lejos.robotics.localization.*;//MCLPoseProvider;
-import lejos.nxt.comm.RConsole;
 /**
  * Test of Monte Carlo Localisation, Pose Controllers and Path finders.
  * 

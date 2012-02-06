@@ -1,6 +1,7 @@
 package org.lejos.sample.jsr256test;
 
 import java.io.IOException;
+
 import javax.microedition.io.Connector;
 import javax.microedition.sensor.Channel;
 import javax.microedition.sensor.ChannelInfo;
@@ -10,8 +11,9 @@ import javax.microedition.sensor.Data;
 import javax.microedition.sensor.LimitCondition;
 import javax.microedition.sensor.SensorConnection;
 import javax.microedition.sensor.SensorInfo;
+
 import lejos.nxt.Button;
-import lejos.nxt.comm.RConsole;
+//import lejos.nxt.comm.RConsole;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.util.PilotProps;

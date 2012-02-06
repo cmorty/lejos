@@ -1,6 +1,16 @@
 package org.lejos.sample.sniffer;
 import javax.microedition.io.Connector;
-import javax.microedition.sensor.*;
+import javax.microedition.sensor.Channel;
+import javax.microedition.sensor.ChannelInfo;
+import javax.microedition.sensor.Condition;
+import javax.microedition.sensor.ConditionListener;
+import javax.microedition.sensor.Data;
+import javax.microedition.sensor.DataListener;
+import javax.microedition.sensor.LimitCondition;
+import javax.microedition.sensor.SensorConnection;
+import javax.microedition.sensor.SensorInfo;
+import javax.microedition.sensor.SensorListener;
+import javax.microedition.sensor.SensorManager;
 
 import lejos.nxt.Button;
 

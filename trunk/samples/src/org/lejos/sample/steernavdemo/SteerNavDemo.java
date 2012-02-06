@@ -1,6 +1,12 @@
 package org.lejos.sample.steernavdemo;
-import lejos.robotics.navigation.*;
-import lejos.nxt.*;
+import lejos.nxt.Button;
+import lejos.nxt.Motor;
+import lejos.nxt.Sound;
+import lejos.robotics.navigation.ArcMoveController;
+import lejos.robotics.navigation.Navigator;
+import lejos.robotics.navigation.Pose;
+import lejos.robotics.navigation.SteeringPilot;
+import lejos.robotics.navigation.Waypoint;
 
 /**
  * <p>This sample demonstrates a steering vehicle that executes turns by rotating the front wheels  

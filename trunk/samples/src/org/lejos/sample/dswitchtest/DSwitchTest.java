@@ -1,6 +1,6 @@
 package org.lejos.sample.dswitchtest;
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
+import lejos.nxt.MotorPort;
+import lejos.nxt.addon.DSwitch;
 
 /**
  * 

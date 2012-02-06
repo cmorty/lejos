@@ -1,10 +1,13 @@
 package org.lejos.sample.btconnecttest;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
-import lejos.nxt.*;
-import lejos.nxt.comm.*;
-import java.io.*;
-import javax.bluetooth.*;
+import javax.bluetooth.RemoteDevice;
+
+import lejos.nxt.LCD;
+import lejos.nxt.comm.BTConnection;
+import lejos.nxt.comm.Bluetooth;
 
 /**
  * 

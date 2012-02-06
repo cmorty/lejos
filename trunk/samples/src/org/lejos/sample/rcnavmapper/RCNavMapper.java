@@ -1,21 +1,26 @@
 package org.lejos.sample.rcnavmapper;
 
-import lejos.nxt.*;
-import lejos.util.PilotProps;
 import java.io.IOException;
+
+import lejos.geom.Point;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.Sound;
+import lejos.nxt.UltrasonicSensor;
+import lejos.robotics.RangeFinder;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.navigation.ArcRotateMoveController;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.Navigator;
-import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.navigation.Pose;
-import lejos.geom.Point;
-import lejos.robotics.objectdetection.FeatureDetector;
+import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.objectdetection.Feature;
+import lejos.robotics.objectdetection.FeatureDetector;
 import lejos.robotics.objectdetection.FeatureListener;
 import lejos.robotics.objectdetection.RangeFeatureDetector;
-import lejos.robotics.RangeFinder;
+import lejos.util.PilotProps;
 import lejos.util.Stopwatch;
 
 /**

@@ -1,5 +1,6 @@
 package org.lejos.sample.matrixtest;
-import lejos.util.*;
+import lejos.util.DebugMessages;
+import lejos.util.Matrix;
 
 /**
  * Example created to test Matrix Class

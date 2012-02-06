@@ -1,5 +1,5 @@
 package org.lejos.sample.tune;
-import lejos.nxt.*;
+import lejos.nxt.Sound;
 
 public class Tune {
 

@@ -1,9 +1,12 @@
 package org.lejos.sample.waypointnav;
-import lejos.robotics.RegulatedMotor;
-import lejos.robotics.navigation.*;
-import lejos.util.PilotProps;
-import lejos.nxt.*;
 import java.io.IOException;
+
+import lejos.nxt.Button;
+import lejos.robotics.RegulatedMotor;
+import lejos.robotics.navigation.DifferentialPilot;
+import lejos.robotics.navigation.Navigator;
+import lejos.robotics.navigation.Waypoint;
+import lejos.util.PilotProps;
 
 /**
  * The WaypointNav class uses the Navigator to execute the

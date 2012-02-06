@@ -1,7 +1,9 @@
 package org.lejos.sample.filetest;
-import lejos.nxt.*;
-import java.io.*;
-import java.lang.StringBuffer;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import lejos.nxt.LCD;
 
 /**
  * 

@@ -1,10 +1,16 @@
 package org.lejos.sample.remotenxttest;
-import lejos.nxt.*;
-import lejos.nxt.comm.*;
-import lejos.nxt.remote.*;
+import java.io.IOException;
+
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.LightSensor;
+import lejos.nxt.comm.Bluetooth;
+import lejos.nxt.comm.NXTCommConnector;
+import lejos.nxt.comm.RS485;
+import lejos.nxt.remote.RemoteMotor;
+import lejos.nxt.remote.RemoteNXT;
 import lejos.util.TextMenu;
 
-import java.io.*;
 /**
  * This program demonstrates the use of the RemoteNXT class to allow one NXT
  * to control another. It should be used in conjunction either with the standard

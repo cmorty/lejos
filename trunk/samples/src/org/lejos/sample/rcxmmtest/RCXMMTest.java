@@ -1,6 +1,7 @@
 package org.lejos.sample.rcxmmtest;
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.addon.RCXMotorMultiplexer;
 
 /**
  * Test of the Mindsensors RCX Motor Multiplexer.

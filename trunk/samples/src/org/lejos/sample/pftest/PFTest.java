@@ -1,7 +1,9 @@
 package org.lejos.sample.pftest;
 
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.addon.IRLink;
 
 /**
  * Test of HiTechnic IRLink driving PF motors.

@@ -1,12 +1,22 @@
 package org.lejos.sample.echonavigator;
-import lejos.robotics.navigation.*;
-import lejos.robotics.objectdetection.*;
-import lejos.nxt.*;
-import lejos.robotics.RangeFinder;
-import lejos.robotics.RegulatedMotor;
-import lejos.util.PilotProps;
 import java.io.IOException;
 import java.util.Random;
+
+import lejos.nxt.Button;
+import lejos.nxt.SensorPort;
+import lejos.nxt.Sound;
+import lejos.nxt.UltrasonicSensor;
+import lejos.robotics.RangeFinder;
+import lejos.robotics.RegulatedMotor;
+import lejos.robotics.navigation.DifferentialPilot;
+import lejos.robotics.navigation.Navigator;
+import lejos.robotics.navigation.Pose;
+import lejos.robotics.navigation.Waypoint;
+import lejos.robotics.objectdetection.Feature;
+import lejos.robotics.objectdetection.FeatureDetector;
+import lejos.robotics.objectdetection.FeatureListener;
+import lejos.robotics.objectdetection.RangeFeatureDetector;
+import lejos.util.PilotProps;
 
 /**
  * <p>EchoNavigator is a simple obstacle avoiding robot that randomly travels to 

@@ -8,6 +8,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Gauge;
 import javax.microedition.lcdui.Graphics;
@@ -19,10 +20,10 @@ import javax.microedition.lcdui.Spacer;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.lcdui.Ticker;
-import javax.microedition.lcdui.Font;
+
+import lejos.nxt.LCD;
 import lejos.util.Timer;
 import lejos.util.TimerListener;
-import lejos.nxt.LCD;
 
 /**
  * 

@@ -1,5 +1,7 @@
 package org.lejos.sample.rtctest;
+
 import java.io.IOException;
+
 import lejos.robotics.Clock;
 
 public class DummyClock implements Clock {

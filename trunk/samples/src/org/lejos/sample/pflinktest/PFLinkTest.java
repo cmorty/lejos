@@ -1,6 +1,8 @@
 package org.lejos.sample.pflinktest;
-import lejos.nxt.*; 
-import lejos.nxt.addon.PFLink; 
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.addon.PFLink;
 
 /** 
  * Test class for PFLink, used to remote-control the lego bulldozer 

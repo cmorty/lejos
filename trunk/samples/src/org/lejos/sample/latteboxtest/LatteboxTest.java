@@ -1,8 +1,9 @@
 package org.lejos.sample.latteboxtest;
 
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
-import lejos.util.*;
+import lejos.nxt.Button;
+import lejos.nxt.SensorPort;
+import lejos.nxt.addon.NXTe;
+import lejos.util.DebugMessages;
 
 /**
  * Example created to test Lattebox NXTe Kit

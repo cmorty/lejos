@@ -2,15 +2,16 @@ package org.lejos.sample.rcpilot;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
-import lejos.nxt.*;
-import lejos.util.*;
+import lejos.nxt.LCD;
+import lejos.nxt.Sound;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 import lejos.robotics.RegulatedMotor;
-import lejos.robotics.navigation.*;
+import lejos.robotics.navigation.DifferentialPilot;
+import lejos.util.PilotProps;
 
 /**
  * Enables remote control of a pilot object using Bluetooth. Communicates with

@@ -1,5 +1,5 @@
 package org.lejos.sample.memorytest;
-import lejos.nxt.*;
+import lejos.nxt.LCD;
 
 /**
  * Shows how leJOS free RAM reduces as String objects are created.

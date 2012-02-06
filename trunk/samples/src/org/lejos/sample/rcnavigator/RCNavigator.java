@@ -2,19 +2,21 @@ package org.lejos.sample.rcnavigator;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import lejos.nxt.*;
+
+import lejos.geom.Point;
+import lejos.nxt.LCD;
+import lejos.nxt.Sound;
+import lejos.nxt.comm.BTConnection;
+import lejos.nxt.comm.Bluetooth;
+import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.navigation.ArcRotateMoveController;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.Pose;
-import lejos.robotics.RegulatedMotor;
 import lejos.util.PilotProps;
-import lejos.geom.Point;
-import lejos.nxt.comm.BTConnection;
-import lejos.nxt.comm.Bluetooth;
 
 /**
- *Example of a navigating robot  operating under remote control
+ * Example of a navigating robot  operating under remote control
  * uses Command  enum  to decode incoming messages
  * 
  * You can run the PilotParams sample to create a property file which 

@@ -1,13 +1,16 @@
 package org.lejos.sample.graphicssample;
 
+import java.io.File;
+import java.io.FileInputStream;
+
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
-import javax.microedition.lcdui.Font;
-import lejos.nxt.*;
+
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
 import lejos.util.Delay;
-import java.io.FileInputStream;
-import java.io.File;
 
 /**
  * Demonstrate various leJOS graphics techniques.

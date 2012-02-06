@@ -1,10 +1,17 @@
 package org.lejos.sample.pathfinding;
-import lejos.geom.*;
+import lejos.geom.Line;
+import lejos.geom.Rectangle;
 import lejos.robotics.RegulatedMotor;
-import lejos.robotics.localization.*;
+import lejos.robotics.localization.OdometryPoseProvider;
+import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.mapping.LineMap;
-import lejos.robotics.navigation.*;
-import lejos.robotics.pathfinding.*;
+import lejos.robotics.navigation.DifferentialPilot;
+import lejos.robotics.navigation.Navigator;
+import lejos.robotics.navigation.Waypoint;
+import lejos.robotics.pathfinding.AstarSearchAlgorithm;
+import lejos.robotics.pathfinding.FourWayGridMesh;
+import lejos.robotics.pathfinding.NodePathFinder;
+import lejos.robotics.pathfinding.PathFinder;
 import lejos.util.PilotProps;
 
 /**

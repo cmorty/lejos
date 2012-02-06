@@ -1,9 +1,13 @@
 package org.lejos.sample.linefollower;
-import lejos.nxt.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.LightSensor;
+import lejos.nxt.SensorPort;
 import lejos.robotics.RegulatedMotor;
-import lejos.robotics.subsumption.*;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.RotateMoveController;
+import lejos.robotics.subsumption.Arbitrator;
+import lejos.robotics.subsumption.Behavior;
 import lejos.util.PilotProps;
 
 /**

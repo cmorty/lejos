@@ -1,6 +1,7 @@
 package org.lejos.sample.bluestats;
-import lejos.nxt.*;
-import lejos.nxt.comm.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.comm.Bluetooth;
 
 /**
  * BlueStats: display local device Bluetooth information.

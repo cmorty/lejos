@@ -1,5 +1,9 @@
 package org.lejos.sample.listen;
-import lejos.nxt.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.SensorPortListener;
+import lejos.nxt.SoundSensor;
 
 /**
  * Test of sensor port listeners.

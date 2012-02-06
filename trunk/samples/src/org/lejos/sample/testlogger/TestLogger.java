@@ -7,7 +7,6 @@ import lejos.nxt.LCD;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
 import lejos.nxt.comm.USB;
-
 import lejos.util.Delay;
 import lejos.util.LogColumn;
 import lejos.util.Logger;

@@ -1,5 +1,10 @@
 package org.lejos.sample.subsumption;
-import lejos.nxt.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.Motor;
+import lejos.nxt.SensorPort;
+import lejos.nxt.SensorPortListener;
+import lejos.nxt.Sound;
 
 /**
  * Entry point for the program. This version uses

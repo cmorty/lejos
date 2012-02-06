@@ -1,6 +1,12 @@
 package org.lejos.sample.objectdetect;
-import lejos.nxt.*;
-import lejos.robotics.objectdetection.*;
+import lejos.nxt.Button;
+import lejos.nxt.SensorPort;
+import lejos.nxt.Sound;
+import lejos.nxt.UltrasonicSensor;
+import lejos.robotics.objectdetection.Feature;
+import lejos.robotics.objectdetection.FeatureDetector;
+import lejos.robotics.objectdetection.FeatureListener;
+import lejos.robotics.objectdetection.RangeFeatureDetector;
 
 /**
  * This class demonstrates the object detection package. For this example you will need a single ultrasonic

@@ -1,6 +1,9 @@
 package org.lejos.sample.sonictest;
 
-import lejos.nxt.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.UltrasonicSensor;
 
 /**
  * Simple test of the Lego UltraSonic Sensor.

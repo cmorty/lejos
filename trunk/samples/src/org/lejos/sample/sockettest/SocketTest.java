@@ -1,9 +1,15 @@
 package org.lejos.sample.sockettest;
 
-import lejos.nxt.*;
-import lejos.nxt.comm.*;
-import java.io.*;
-import java.net.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.net.NXTSocketUtils;
+import java.net.Socket;
+
+import lejos.nxt.LCD;
+import lejos.nxt.comm.BTConnection;
+import lejos.nxt.comm.Bluetooth;
 
 /**
 * Simple test program. Echoes data back to the socket server

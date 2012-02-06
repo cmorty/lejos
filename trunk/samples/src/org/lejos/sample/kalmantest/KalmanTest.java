@@ -1,12 +1,14 @@
 package org.lejos.sample.kalmantest;
 import java.util.Random;
 
+import lejos.nxt.SensorPort;
+import lejos.nxt.UltrasonicSensor;
+//import lejos.nxt.comm.RConsole;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.util.KalmanFilter;
 import lejos.util.Matrix;
 import lejos.util.PilotProps;
-import lejos.nxt.*;
 
 /**
  * Kalman Filter example. 

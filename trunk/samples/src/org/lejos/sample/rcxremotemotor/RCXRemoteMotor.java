@@ -1,7 +1,10 @@
 package org.lejos.sample.rcxremotemotor;
 
-import lejos.nxt.*;
-import lejos.nxt.addon.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.addon.RCXLink;
+import lejos.nxt.addon.RCXMotor;
 
 /**
  * Test of a remote RCX motor using a remote RCX as a controller.

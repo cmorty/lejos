@@ -1,9 +1,10 @@
 package org.lejos.sample.pilottester;
-import lejos.nxt.*;
-import lejos.util.Delay;
-import lejos.util.PilotProps;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.DifferentialPilot;
+import lejos.util.Delay;
+import lejos.util.PilotProps;
 
 /**
  * Test of the DifferentialPilot class.
