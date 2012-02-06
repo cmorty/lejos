@@ -121,7 +121,7 @@
 						  <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
 						</tr>
 						<tr> 
-						  <td valign="top">Download <a href="http://sourceforge.net/projects/lejos/files/lejos-NXJ-sources/"> Click to download from Sourceforge</a></td>
+						  <td valign="top">Download <a href="http://sourceforge.net/projects/lejos/files/lejos-NXJ-source/"> Click to download from Sourceforge</a></td>
 						</tr>
 
 						<tr>
