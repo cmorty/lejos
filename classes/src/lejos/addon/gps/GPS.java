@@ -25,6 +25,7 @@ public class GPS extends SimpleGPS {
 	
 	//Classes which manages GGA, RMC, VTG, GSV, GSA Sentences
 	private RMCSentence rmcSentence;
+	//TODO device sends a sequence of gsv sentences, this class only remembers the last one
 	private GSVSentence gsvSentence;
 
 	//Date Object with use GGA & RMC Sentence
