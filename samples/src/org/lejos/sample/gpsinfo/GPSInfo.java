@@ -1,13 +1,29 @@
 package org.lejos.sample.gpsinfo;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 
-import javax.bluetooth.*;
-import javax.microedition.io.*;
-import javax.microedition.location.*;
+import javax.bluetooth.BluetoothStateException;
+import javax.bluetooth.DeviceClass;
+import javax.bluetooth.DiscoveryAgent;
+import javax.bluetooth.DiscoveryListener;
+import javax.bluetooth.LocalDevice;
+import javax.bluetooth.RemoteDevice;
+import javax.microedition.io.Connector;
+import javax.microedition.io.StreamConnection;
+import javax.microedition.io.StreamConnectionNotifier;
+import javax.microedition.location.Coordinates;
+import javax.microedition.location.LocationException;
 
-import lejos.addon.gps.*;
-import lejos.nxt.*;
+import lejos.addon.gps.GGASentence;
+import lejos.addon.gps.GPS;
+import lejos.addon.gps.GPSListener;
+import lejos.addon.gps.GSASentence;
+import lejos.addon.gps.GSVSentence;
+import lejos.addon.gps.NMEASentence;
+import lejos.addon.gps.Satellite;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
 
 public class GPSInfo implements GPSListener {
 
@@ -131,7 +147,7 @@ public class GPSInfo implements GPSListener {
 			LCD.clearDisplay();
 			
 			LCD.drawString(" Accuracy Data ", 0, 0, true);
-			LCD.drawString(date.getMonth() + "/" + date.getDay() + "/" + date.getYear(), 0, 1);
+			LCD.drawString(date.getMonth() + "/" + date.getDate() + "/" + date.getYear(), 0, 1);
 			// Grenwich Mean Time. Ensure two-digit segments:
 			String minutes = "" + date.getMinutes();
 			if(minutes.length() <=1) minutes = "0" + minutes;
