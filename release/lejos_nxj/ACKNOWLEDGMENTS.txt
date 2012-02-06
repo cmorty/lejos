@@ -1,3 +1,11 @@
+Comments (06/02/12)
+-------------------
+
+- leJOS 0.9.1 now includes the JFreeChart 1.0.13
+  and JCommon 1.0.16 provided by Object Refinery Limited.
+  
+- See the LEGAL file for license information.
+
 Lawrie's comments (20/05/09)
 ----------------------------
 

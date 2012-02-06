@@ -41,6 +41,8 @@ Sven Koehler:
 - New installer (Windows only)
 - Windows batch and UNIX shell scripts ignore NXJ_HOME 
 - Windows batch and UNIX shell scripts check LEJOS_NXJ_JAVA_HOME or JAVA_HOME
+- Fixed bugs in GPS classes
+- Workaround for ZipException on OS X Leopard
 - Added source attachments to each library for development/debugging
 - removed NXJ_FIND* LCP commands
 - Various changes to the Ant-based build system
