@@ -98,23 +98,23 @@
 <!-- **** BOOK LIST **** -->
 <tr>
 <td>
-<p><a href="http://www.amazon.com/exec/obidos/ASIN/0973864958/lejos0e-20">Maximum LEGO NXT: Building Robots with Java Brains<br /> Second Edition</a> <br /> by Brian Bagnall</p>
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0986832200/lejos0e-20">Intelligence Unleashed: Creating LEGO NXT Robots with Java<br /></a> <br /> by Brian Bagnall</p>
 <p>			
-The revised second edition features updated instructions for the improved LEGO NXT 2.0 kit and the new leJOS NXJ software. This accessible manual is the perfect guide to LEGO Mindstorms NXT, an incredible kit for building and programming your own robots. Using Java, the most popular and easy-to-use programming language available, this manual helps engineers and amateurs alike design and build their own customized robots, programmed however they desire. Complete with a diverse set of projects, building tips, programming codes, 3D-rendered building instructions, and hundreds of illustrations, this useful handbook is the perfect complement to the LEGO NXT kit. The NXT intelligent brick's Bluetooth capabilities are introduced as well as the newest available parts, including the gyro and the RFID sensor.
+With user-friendly instructions for the leJOS NXJ software, this accessible manual is the perfect launch into LEGO Mindstorms NXT, an incredible kit for building and programming robots. Using Java, the most popular and easy-to-use programming language available, this book helps engineers and amateurs alike design and build their own customized robots, programmed however they desire. A diverse set of projects is accompanied by building tips, programming code, complete 3D-rendered building instructions, and hundreds of illustrations. The NXT intelligent brick’s Bluetooth capabilities are introduced, as are the newest available parts, from GPS to the RFID sensor, in this useful handbook that serves as the perfect compliment to the LEGO NXT kit.
 </p>
 
 <ul>
-<li>564 pages</li>
+<li>528 pages</li>
 <li>Softcover, glossy</li>
 <li>7" by 9.25"</li>
-<li>ISBN 0973864958</li>
-<li>Available July 15, 2009</li>
+<li>ISBN 9780986832208</li>
+<li>Available September 1, 2011</li>
 </ul>
-<p><a href="http://www.amazon.com/exec/obidos/ASIN/0973864958/lejos0e-20">Preorder from Amazon</a></p>
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0986832200/lejos0e-20">Order from Amazon</a></p>
 </td>
 
 <td>
-<a href="http://www.amazon.com/exec/obidos/ASIN/0973864958/lejos0e-20"><img src="r_media/images/books/maximum_NXT_second.jpg" /></a>
+<a href="http://www.amazon.com/exec/obidos/ASIN/0986832200/lejos0e-20"><img src="r_media/images/books/intelligence_unleashed.jpg" /></a>
 </td>
 </tr>
 
@@ -134,9 +134,9 @@ The revised second edition features updated instructions for the improved LEGO N
 			<tr>
 				<td class="n4t1r1c1">
 					<p>
-			<b>Disclaimer:</b> Java is a trademark of Sun Microsystems. 
+			<b>Disclaimer:</b> Java is a trademark of Oracle Corporation. 
 			Lego Mindstorms is a trademark of the LEGO Group. 
-			There is no association between Lego and leJOS or Sun and leJOS, or even between Lego and Sun as far as we know.
+			There is no association between Lego and leJOS or Oracle and leJOS, or even between Lego and Oracle as far as we know.
 					</p>
 				</td>
 			</tr>
