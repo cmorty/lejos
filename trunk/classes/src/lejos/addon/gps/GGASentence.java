@@ -56,9 +56,6 @@ public class GGASentence extends NMEASentence{
 	//Header
 	public static final String HEADER = "$GPGGA";
 	
-	//NMEA parts
-	private String part1,part2,part3,part4,part5,part6,part7,part8,part9,part10,part11 = "";
-
 	/*
 	 * GETTERS & SETTERS
 	 */
@@ -148,22 +145,22 @@ public class GGASentence extends NMEASentence{
 	protected void parse(String sentence){
 		
 		//TODO StringTokenizer must not be used to parse NMEA sentences since it doesn't return empty tokens 
-		st = new StringTokenizer(sentence,",");
+		StringTokenizer st = new StringTokenizer(sentence,",");
 
 		try{
 			
 			//Extracting data from a GGA Sentence
 			
-			part1 = st.nextToken();//NMEA header
-			part2 = st.nextToken();//Global Positioning System Fix Data
-			part3 = st.nextToken();//Latitude
-			part4 = st.nextToken();//Latitude Direction
-			part5 = st.nextToken();//Longitude
-			part6 = st.nextToken();//Longitude Direction
-			part7 = st.nextToken();//Quality
-			part8 = st.nextToken();//Satellite Tracked
-			part9 = st.nextToken();//Hdop
-			part10 = st.nextToken();//Altitude
+			String part1 = st.nextToken();//NMEA header
+			String part2 = st.nextToken();//Global Positioning System Fix Data
+			String part3 = st.nextToken();//Latitude
+			String part4 = st.nextToken();//Latitude Direction
+			String part5 = st.nextToken();//Longitude
+			String part6 = st.nextToken();//Longitude Direction
+			String part7 = st.nextToken();//Quality
+			String part8 = st.nextToken();//Satellite Tracked
+			String part9 = st.nextToken();//Hdop
+			String part10 = st.nextToken();//Altitude
 			
 			st = null;
 			

@@ -41,10 +41,6 @@ public class GSASentence extends NMEASentence{
 	//Header
 	public static final String HEADER = "$GPGSA";
 	
-	//NMEA parts
-	private String part1,part2,part3,part4,part5,part6,part7,part8,part9,part10,part11,part12,part13,part14,part15,part16,part17 = "";
-	private String part = "";
-	
 	/**
 	 * Constructor
 	 */
@@ -127,27 +123,28 @@ public class GSASentence extends NMEASentence{
 	protected void parse(String sentence){
 		
 		//TODO StringTokenizer must not be used to parse NMEA sentences since it doesn't return empty tokens 
-		st = new StringTokenizer(sentence,",");
+		StringTokenizer st = new StringTokenizer(sentence,",");
 
 		try{
 			
 			//Extracting data from a GSA Sentence
 			
-			part1 = st.nextToken();//NMEA header
-			part2 = st.nextToken();//mode
+			String part1 = st.nextToken();//NMEA header
+			String part2 = st.nextToken();//mode
+			String part3 = st.nextToken();//modeValue
 			/*
-			part3 = st.nextToken();//sv1
-			part4 = st.nextToken();//sv2
-			part5 = st.nextToken();//sv3
-			part6 = st.nextToken();//sv4
-			part7 = st.nextToken();//sv5
-			part8 = st.nextToken();//sv6
-			part9 = st.nextToken();//sv7
-			part10 = st.nextToken();//sv8
-			part11 = st.nextToken();//sv9
-			part12 = st.nextToken();//sv10
-			part13 = st.nextToken();//sv11
-			part14 = st.nextToken();//sv12
+			String part4 = st.nextToken();//sv1
+			String part5 = st.nextToken();//sv2
+			String part6 = st.nextToken();//sv3
+			String part7 = st.nextToken();//sv4
+			String part8 = st.nextToken();//sv5
+			String part9 = st.nextToken();//sv6
+			String part10 = st.nextToken();//sv7
+			String part11 = st.nextToken();//sv8
+			String part12 = st.nextToken();//sv9
+			String part13 = st.nextToken();//sv10
+			String part14 = st.nextToken();//sv11
+			String part15 = st.nextToken();//sv12
 			*/
 			
 			//Processing GSA data
@@ -165,8 +162,8 @@ public class GSASentence extends NMEASentence{
 				}
 			}
 
-			for(int i=0;i<=11;i++){
-				part = st.nextToken();
+			for(int i=0;i<12;i++){
+				String part = st.nextToken();
 				if(part.length() > 0){
 					SV[i] = Integer.parseInt(part);
 				}else{
@@ -174,28 +171,28 @@ public class GSASentence extends NMEASentence{
 				}
 			}
 			
-			part15 = st.nextToken();//PDOP
-			part16 = st.nextToken();//HDOP
-			part17 = st.nextToken();//VDOP
+			String part16 = st.nextToken();//PDOP
+			String part17 = st.nextToken();//HDOP
+			String part18 = st.nextToken();//VDOP
 			
 			st = null;
 			
-			if(part15.length() == 0){
+			if(part16.length() == 0){
 				PDOP = 0;
 			}else{
-				PDOP = Float.parseFloat(part15);
+				PDOP = Float.parseFloat(part16);
 			}
 
-			if(part16.length() == 0){
+			if(part17.length() == 0){
 				HDOP = 0;
 			}else{
-				HDOP = Float.parseFloat(part16);
+				HDOP = Float.parseFloat(part17);
 			}
 			
-			if(part17.length() == 0){
+			if(part18.length() == 0){
 				VDOP = 0;
 			}else{
-				VDOP = Float.parseFloat(part17);
+				VDOP = Float.parseFloat(part18);
 			}
 
 		}catch(NoSuchElementException e){
