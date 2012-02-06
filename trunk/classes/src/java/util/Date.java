@@ -26,7 +26,7 @@ public class Date {
 		//Empty
 	}
 	
-	// TODO: Juan didn't override toString()
+	//TODO Juan didn't override toString()
 	
 	/*
 	 * GETTERS & SETTERS
@@ -75,7 +75,7 @@ public class Date {
 	 * 
 	 * @param dd the day
 	 */
-	public void setDay(int dd){
+	public void setDate(int dd){
 		if((dd>=1) && (dd<=31)){
 			day = dd;
 		}
@@ -86,7 +86,8 @@ public class Date {
 	 * 
 	 * @return the day
 	 */
-	public int getDay(){
+	public int getDate(){
+		//TODO this should return the day of week instead of the day of the month
 		return day;
 	}
 
@@ -175,6 +176,7 @@ public class Date {
 	}
 
 	/**
+	 * TODO this method is broken.
 	 * Returns the millisecond value of this <code>Date</code> object
 	 * without affecting its internal state.
 	 * return the amount of time in milliseconds from 1/1/1970
