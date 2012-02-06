@@ -307,6 +307,9 @@ public class SimpleGPS extends Thread {
 				continue;
 			}
 			
+			//TODO strip * followed by checksum from sentence before passing to other parsers
+			//TODO actually check checksum
+			
 			try{
 				//TODO StringTokenizer must not be sued to parse NMEA sentences since it doesn't return empty tokens 
 				tokenizer = new StringTokenizer(s);
