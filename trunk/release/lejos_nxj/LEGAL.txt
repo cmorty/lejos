@@ -25,7 +25,9 @@ includes the license.
 The Bluecove-GPL library is used on Linux. The jar file and source is
 included in 3rdparty/lib. This uses the GNU GENERAL PUBLIC LICENSE Version 3.
 
+The JFreeChart and JCommon library are issued under the
+GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1. The source of these
+libraries is included.
+
 See the ACKNOWLEDGMENTS file for acknowledgment of authors
 and organisations that have contributed to this project.
-
-
