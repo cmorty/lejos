@@ -110,11 +110,11 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 		usSensor.ping();
 		range = usSensor.getDistance();
 		message.header.stamp = node.getCurrentTime();
-		message.header.frame_id = "/world";
+		message.header.frame_id = "/front";
 		message.max_range= range_max;
 		message.min_range = range_min;
 		message.field_of_view = spread_angle;
-		message.range = range;
+		message.range = range / 100; // in meters
 		message.radiation_type = 0; // Ultrasonic
 		topic.publish(message);		
 	}

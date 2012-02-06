@@ -11,6 +11,7 @@ import lejos.util.Delay;
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
 import org.ros.message.geometry_msgs.PoseStamped;
+import org.ros.message.geometry_msgs.Quaternion;
 import org.ros.message.geometry_msgs.TransformStamped;
 import org.ros.message.geometry_msgs.Twist;
 import org.ros.message.nav_msgs.Odometry;
@@ -34,6 +35,8 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	
 	// ROS
 	private TransformStamped tr = new TransformStamped();
+	private TransformStamped ftr = new TransformStamped();
+	
 	private tfMessage tf = new tfMessage();
 
     private final org.ros.message.geometry_msgs.Pose2D message = new org.ros.message.geometry_msgs.Pose2D(); 
@@ -166,9 +169,9 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	 * Convert a leJOS pose into a world to robot transform
 	 */
 	private void poseToTransform(Pose p) {
-		double attitude = 0;
+		double attitude = Math.toRadians(p.getHeading());
 		double bank = 0;
-		double heading = Math.toRadians(p.getHeading());
+		double heading = 0;
 	    double c1 = Math.cos(heading/2);
 	    double s1 = Math.sin(heading/2);
 	    double c2 = Math.cos(attitude/2);
@@ -177,53 +180,70 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	    double s3 = Math.sin(bank/2);
 	    double c1c2 = c1*c2;
 	    double s1s2 = s1*s2;
+	   	
+		Quaternion q = new Quaternion();
+		q.w = c1c2*c3 - s1s2*s3;
+		q.x =c1c2*s3 + s1s2*c3;
+		q.y =s1*c2*c3 + c1*s2*s3;
+		q.z =c1*s2*c3 - s1*c2*s3;
+		
+		double x = p.getX() / 100;
+		double y = p.getY() /100;
 	    
-	    tr.header.frame_id = "world"; 
+		// transform for robot in the world
+	    tr.header.frame_id = "/world"; 
 	    tr.header.stamp = node.getCurrentTime();
 	    tr.header.seq = seq++;
-	    tr.child_frame_id = "robot";
+	    tr.child_frame_id = "/robot";
 	    
-		tr.transform.translation.x = p.getX();
-		tr.transform.translation.y = p.getY();
+		tr.transform.translation.x = x;
+		tr.transform.translation.y = y;
 		tr.transform.translation.z = 0;
 		
-	    tr.transform.rotation.w =c1c2*c3 - s1s2*s3;
-	    tr.transform.rotation.x =c1c2*s3 + s1s2*c3;
-	    tr.transform.rotation.y =s1*c2*c3 + c1*s2*s3;
-	    tr.transform.rotation.z =c1*s2*c3 - s1*c2*s3;
+		tr.transform.rotation = q;
 	    
 	    tf.transforms.add(tr);
 	    
+	    // Transform for front tip of the robot
+	    ftr.header.frame_id = "/robot"; 
+	    ftr.header.stamp = node.getCurrentTime();
+	    ftr.header.seq = seq++;
+	    ftr.child_frame_id = "/front";
+	    
+		ftr.transform.translation.x = 0.2; // 20cm from center
+		ftr.transform.translation.y = 0;
+		ftr.transform.translation.z = 0;
+		
+		ftr.transform.rotation.w = 1; // No rotation
+	    
+	    tf.transforms.add(ftr);
+	    
 	    od.header.seq = seq;
 	    od.header.stamp = node.getCurrentTime();
-	    od.header.frame_id = "world";
-	    od.child_frame_id = "robot";
+	    od.header.frame_id = "/world";
+	    od.child_frame_id = "/robot";
 	    
-	    od.pose.pose.position.x = p.getX();
-	    od.pose.pose.position.y = p.getY();
+	    od.pose.pose.position.x = x;
+	    od.pose.pose.position.y = y;
 	    od.pose.pose.position.z = 0;
 	    
-	    od.pose.pose.orientation.w =c1c2*c3 - s1s2*s3;
-	    od.pose.pose.orientation.x =c1c2*s3 + s1s2*c3;
-	    od.pose.pose.orientation.y =s1*c2*c3 + c1*s2*s3;
-	    od.pose.pose.orientation.z =c1*s2*c3 - s1*c2*s3;
-	    
-	    od.twist.twist.angular.x = 0;
-	    od.twist.twist.angular.y = 0;
-	    //System.out.println("Move type is " + df.getMovement().getMoveType());
-	    
-	    od.twist.twist.angular.z = (df.isMoving() && df.getMovement().getMoveType() == Move.MoveType.ROTATE ? df.getRotateSpeed() : 0);
-	    
+	    od.pose.pose.orientation = q;
+
 	    od.twist.twist.linear.x = (df.isMoving() && df.getMovement().getMoveType() == Move.MoveType.TRAVEL  ? df.getTravelSpeed() : 0);
 	    od.twist.twist.linear.y = 0;
 	    od.twist.twist.linear.z = 0;
+	        
+	    od.twist.twist.angular.x = 0;
+	    od.twist.twist.angular.y = 0;	    
+	    od.twist.twist.angular.z = (df.isMoving() && df.getMovement().getMoveType() == Move.MoveType.ROTATE ? df.getRotateSpeed() : 0);
 	    
 	    poseStamped.header.seq = seq;
-	    poseStamped.header.stamp = node.getCurrentTime();
+	    poseStamped.header.stamp = node.getCurrentTime();	    
+	    poseStamped.header.frame_id = "/world";
 	    
-	    poseStamped.header.frame_id = "world";
-	    
-	    poseStamped.pose.position.x = p.getX();
-	    poseStamped.pose.position.y = p.getY();
+	    poseStamped.pose.position.x = x;
+	    poseStamped.pose.position.y = y;
+	    poseStamped.pose.position.z = 0;
+	    poseStamped.pose.orientation = q;
 	}
 }
