@@ -298,17 +298,17 @@ public class SimpleGPS extends Thread {
 		while(!close) {
 			
 			s = getNextString();
-
-			// Check if sentence is valid:
-			if(s.indexOf('*') < 0) { 
-				continue;
-			}
-			if(s.indexOf('$') < 0) {
-				continue;
-			}
 			
-			//TODO strip * followed by checksum from sentence before passing to other parsers
+			// Check if sentence is valid:
+			if (!s.startsWith("$"))
+				continue;
+			
+			int p = s.lastIndexOf('*');
+			if(p < 0) 
+				continue;
+			
 			//TODO actually check checksum
+			s = s.substring(0, p);
 			
 			try{
 				//TODO StringTokenizer must not be sued to parse NMEA sentences since it doesn't return empty tokens 
