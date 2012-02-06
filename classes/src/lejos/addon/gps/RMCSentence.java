@@ -50,9 +50,6 @@ public class RMCSentence extends NMEASentence{
 	//Header
 	public static final String HEADER = "$GPRMC";
 
-	//NMEA parts
-	private String part1,part2,part3,part4,part5,part6,part7,part8,part9,part10,part11,part12 = "";
-
 	/*
 	 * GETTERS & SETTERS
 	 */
@@ -125,24 +122,24 @@ public class RMCSentence extends NMEASentence{
 	public void parse (String sentence){
 		
 		//TODO StringTokenizer must not be used to parse NMEA sentences since it doesn't return empty tokens 
-		st = new StringTokenizer(sentence,",");
+		StringTokenizer st = new StringTokenizer(sentence,",");
 	
 		try{
 			
 			//Extracting data from a GGA Sentence
 			
-			part1 = st.nextToken();//NMEA header
-			part2 = st.nextToken();//Fix taken at 12:35:19 UTC
-			part3 = st.nextToken();//Status A=active or V=Void.
-			part4 = st.nextToken();//Latitude 48 deg 07.038' N
-			part5 = st.nextToken();//Latitude Direction
-			part6 = st.nextToken();//Longitude 11 deg 31.000' E
-			part7 = st.nextToken();//Longitude Direction
-			part8 = st.nextToken();//Speed over the ground in knots
-			part9 = st.nextToken();//Track angle in degrees True
-			part10 = st.nextToken();//Date - 23rd of March 1994
-			part11 = st.nextToken();//Magnetic Variation
-			part12 = st.nextToken();//Magnetic Variation Letter
+			String part1 = st.nextToken();//NMEA header
+			String part2 = st.nextToken();//Fix taken at 12:35:19 UTC
+			String part3 = st.nextToken();//Status A=active or V=Void.
+			String part4 = st.nextToken();//Latitude 48 deg 07.038' N
+			String part5 = st.nextToken();//Latitude Direction
+			String part6 = st.nextToken();//Longitude 11 deg 31.000' E
+			String part7 = st.nextToken();//Longitude Direction
+			String part8 = st.nextToken();//Speed over the ground in knots
+			String part9 = st.nextToken();//Track angle in degrees True
+			String part10 = st.nextToken();//Date - 23rd of March 1994
+			String part11 = st.nextToken();//Magnetic Variation
+			String part12 = st.nextToken();//Magnetic Variation Letter
 			
 			st = null;
 			

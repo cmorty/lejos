@@ -1,7 +1,5 @@
 package lejos.addon.gps;
 
-import java.util.StringTokenizer;
-
 /**
  * Class designed to manage all NMEA Sentence.
  * 
@@ -14,9 +12,6 @@ import java.util.StringTokenizer;
  */
 abstract public class NMEASentence {
 
-	static protected String nmeaSentence = "";
-	protected StringTokenizer st;
-	
 	public static final int LATITUDE = 0;
 	public static final int LONGITUDE = 1;
 
@@ -52,52 +47,49 @@ abstract public class NMEASentence {
 	 * @return
 	 */
 	protected float degreesMinToDegrees(String DD_MM,int CoordenateType) {//throws NumberFormatException
-		float decDegrees = 0;
-		float degrees = 0;
-		float minutes = 0;
-		float seconds = 0;
-		String doubleCharacterSeparator = ".";
-		String DDMM;
-
-		//1. Count characters until character '.'
-		int dotPosition = DD_MM.indexOf(doubleCharacterSeparator);
-		if(CoordenateType == NMEASentence.LATITUDE){
-			//Latitude Management
-			DDMM = DD_MM.substring(0, dotPosition);
-			if(DDMM.length() == 4){
-				degrees = Float.parseFloat(DDMM.substring(0, 2));
-				minutes = Float.parseFloat(DD_MM.substring(2));
-			}else if(DDMM.length() == 3){
-				degrees = Float.parseFloat(DDMM.substring(0, 1));
-				minutes = Float.parseFloat(DD_MM.substring(1));
-			}
-
-			if((degrees >=0) && (degrees <=90)){
-				//throw new NumberFormatException();
-			}
-		}else{
-			//Longitude Management
-			DDMM = DD_MM.substring(0, dotPosition);
-			if(DDMM.length() == 5){
-				degrees = Float.parseFloat(DDMM.substring(0, 3));
-				minutes = Float.parseFloat(DD_MM.substring(3));
-			}else if(DDMM.length() == 4){
-				degrees = Float.parseFloat(DDMM.substring(0, 2));
-				minutes = Float.parseFloat(DD_MM.substring(2));
-			}else if(DDMM.length() == 3){
-				degrees = Float.parseFloat(DDMM.substring(0, 1));
-				minutes = Float.parseFloat(DD_MM.substring(1));
-			}
-
-			if((degrees >=0) && (degrees <=180)){
-				//throw new NumberFormatException();
-			}
-		}
-		//Idea
-		//http://id.mind.net/%7Ezona/mmts/trigonometryRealms/degMinSec/degMinSec.htm
-		decDegrees = (float)(degrees + (minutes * (1.0 / 60.0)) + (seconds * (1.0 / 3600.0)));
+		// This methods accept all strings of the format
+		// DDDMM.MMMM
+		// DDDMM
+		// MM.MMMM
+		// MM
 		
-		return decDegrees;
+		// check first character, rest is checked by parseInt/parseFloat
+		int len = DD_MM.length();
+		if (len <= 0 || DD_MM.charAt(0) == '-')
+			throw new NumberFormatException();
+		
+		int dotPosition = DD_MM.indexOf('.');
+		if (dotPosition < 0)
+			dotPosition = len;
+		
+		int degrees;
+		float minutes;		
+		if (dotPosition > 2)
+		{
+			degrees = Integer.parseInt(DD_MM.substring(0, dotPosition-2));
+			// check first character of minutes since '-' is not allowed
+			// rest is checked by parseFloat
+			if (DD_MM.charAt(dotPosition-2) == '-')
+				throw new NumberFormatException();
+			minutes = Float.parseFloat(DD_MM.substring(dotPosition-2));
+		}
+		else
+		{
+			degrees = 0;
+			minutes = Float.parseFloat(DD_MM);
+		}
+		
+//		if(CoordenateType == NMEASentence.LATITUDE){
+//			if((degrees >=0) && (degrees <=90)){
+//				throw new NumberFormatException();
+//			}
+//		}else{
+//			if((degrees >=0) && (degrees <=180)){
+//				throw new NumberFormatException();
+//			}
+//		}
+		
+		return degrees + minutes * (float)(1.0 / 60.0);
 	}
 	
 	//Idea

@@ -39,9 +39,6 @@ public class VTGSentence extends NMEASentence{
 	//Header
 	public static final String HEADER = "$GPVTG";
 	
-	//NMEA parts
-	private String part1,part2,part3,part4,part5,part6,part7,part8,part9 = "";
-
 	/**
 	 * Returns the NMEA header for this sentence.
 	 */
@@ -76,21 +73,21 @@ public class VTGSentence extends NMEASentence{
 	public void parse(String sentence){
 		
 		//TODO StringTokenizer must not be used to parse NMEA sentences since it doesn't return empty tokens 
-		st = new StringTokenizer(sentence,",");
+		StringTokenizer st = new StringTokenizer(sentence,",");
 
 		try{
 			
 			//Extracting data from a VTG Sentence
 			
-			part1 = st.nextToken();//NMEA header
-			part2 = st.nextToken();//True course made good over ground, degrees
-			part3 = st.nextToken();//Letter
-			part4 = st.nextToken();//Magnetic course made good over ground
-			part5 = st.nextToken();//Letter
-			part6 = st.nextToken();//Ground speed, N=Knots
-			part7 = st.nextToken();//Letter
-			part8 = st.nextToken();//Speed over the ground in knots
-			part9 = st.nextToken();//Letter
+			String part1 = st.nextToken();//NMEA header
+			st.nextToken();//True course made good over ground, degrees
+			st.nextToken();//Letter
+			st.nextToken();//Magnetic course made good over ground
+			st.nextToken();//Letter
+			st.nextToken();//Ground speed, N=Knots
+			st.nextToken();//Letter
+			String part8 = st.nextToken();//Speed over the ground in knots
+			// String part9 = st.nextToken();//Letter
 			
 			st = null;
 			

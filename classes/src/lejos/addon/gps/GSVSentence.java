@@ -43,9 +43,6 @@ public class GSVSentence extends NMEASentence{
 	//Header
 	public static final String HEADER = "$GPGSV";
 
-	//NMEA parts
-	private String part1,part2,part3,part4,part5,part6,part7,part8,part9,part10,part11,part12,part13,part14,part15,part16,part17,part18,part19 = "";
-
 	/*
 	 * Constructor
 	 */
@@ -106,7 +103,7 @@ public class GSVSentence extends NMEASentence{
 	public void parse(String sentence){
 
 		//TODO StringTokenizer must not be used to parse NMEA sentences since it doesn't return empty tokens 
-		st = new StringTokenizer(sentence,",");
+		StringTokenizer st = new StringTokenizer(sentence,",");
 		int PRN = 0;
 		int elevation = 0;
 		int azimuth = 0;
@@ -119,29 +116,30 @@ public class GSVSentence extends NMEASentence{
 			//TODO Length of GSV Sentence varies.
 			// See http://www.gpsinformation.org/dale/nmea.htm for an example
 			
-			part1 = st.nextToken();//GPS Satellites in view
-			part2 = st.nextToken();//Message number
-			part3 = st.nextToken();//
-			part4 = st.nextToken();//
-			part5 = st.nextToken();//
-			part6 = st.nextToken();//
-			part7 = st.nextToken();//
-			part8 = st.nextToken();//
-			part9 = st.nextToken();//
-			part10 = st.nextToken();//
-			part11 = st.nextToken();//
-			part12 = st.nextToken();//
-			part13 = st.nextToken();//
-			part14 = st.nextToken();//
-			part15 = st.nextToken();//
-			part16 = st.nextToken();//
-			part17 = st.nextToken();//
-			part18 = st.nextToken();//
-			part19 = st.nextToken();//
+			String part0 = st.nextToken();//NMEA header
+			st.nextToken();//Number of messages
+			st.nextToken();//Message number
+			String part3 = st.nextToken();//
+			String part4 = st.nextToken();//
+			String part5 = st.nextToken();//
+			String part6 = st.nextToken();//
+			String part7 = st.nextToken();//
+			String part8 = st.nextToken();//
+			String part9 = st.nextToken();//
+			String part10 = st.nextToken();//
+			String part11 = st.nextToken();//
+			String part12 = st.nextToken();//
+			String part13 = st.nextToken();//
+			String part14 = st.nextToken();//
+			String part15 = st.nextToken();//
+			String part16 = st.nextToken();//
+			String part17 = st.nextToken();//
+			String part18 = st.nextToken();//
+			String part19 = st.nextToken();//
 			
 			st = null;
 			
-			nmeaHeader = part1;
+			nmeaHeader = part0;
 			
 			if(part3.length() == 0){
 				satellitesInView = 0;
@@ -211,7 +209,7 @@ public class GSVSentence extends NMEASentence{
 				ns2.setPRN(PRN);
 				ns2.setElevation(elevation);
 				ns2.setAzimuth(azimuth);
-				ns1.setSignalNoiseRatio(SNR);
+				ns2.setSignalNoiseRatio(SNR);
 				
 				//SAT 3
 
@@ -242,7 +240,7 @@ public class GSVSentence extends NMEASentence{
 				ns3.setPRN(PRN);
 				ns3.setElevation(elevation);
 				ns3.setAzimuth(azimuth);
-				ns1.setSignalNoiseRatio(SNR);
+				ns3.setSignalNoiseRatio(SNR);
 				
 				// SAT 4
 
@@ -273,7 +271,7 @@ public class GSVSentence extends NMEASentence{
 				ns4.setPRN(PRN);
 				ns4.setElevation(elevation);
 				ns4.setAzimuth(azimuth);
-				ns1.setSignalNoiseRatio(SNR);				
+				ns4.setSignalNoiseRatio(SNR);				
 				
 			}
 			
