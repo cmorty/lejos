@@ -96,7 +96,7 @@
 <!-- NEWS#1 -->
 
 <tr>
-	<td class="n3t2r"><a href="http://www.amazon.com/exec/obidos/ASIN/0986832200/lejos0e-20"><img src="r_media/images/newsIcons/intelligence_unleashed_thumb.jpg" /></a></td>
+	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 	<td class="n3t2r"><b>February 06, 2012 11:30 PM</b><br />
 		<b>leJOS NXJ 0.9.1</b> is available for <a href="nxj-downloads.php">download</a>.
 		Big thanks to all leJOS developer who made that happen. This release includes many bug fixes,
