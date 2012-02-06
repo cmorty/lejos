@@ -135,7 +135,7 @@ public class GPS extends SimpleGPS {
 			notifyListeners(this.rmcSentence);
 		}else if (header.equals(GSVSentence.HEADER)){
 			gsvSentence.parse(s);
-			notifyListeners(this.rmcSentence);
+			notifyListeners(this.gsvSentence);
 		} else{
 			super.sentenceChooser(header, s); // Check superclass sentences.
 		}
