@@ -1,7 +1,7 @@
 package lejos.addon.gps;
 
-import java.io.*;
-import java.util.*;
+import java.io.InputStream;
+import java.util.Date;
   
 /**
  * This class manages data received from a GPS Device.
