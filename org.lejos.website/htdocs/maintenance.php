@@ -9,7 +9,7 @@
 		<title>Oh no, the forum is down!</title>
 	</head>
 	<body>
-		<p>At the moment, we upgrade the forum from phpBB2 to phpBB3.</p>
+		<p>The forum is being upgraded.</p>
 		<p>Please be patient. The forum should be back in a few hours.</p>
 	</body>
 </html>
