@@ -8,17 +8,14 @@
 		<title>LeJOS, Java for Lego Mindstorms / Links</title>
 		<meta name="title" content="LeJOS, Java for Lego Mindstorms / Links" />
 		<meta name="DC.Title" content="LeJOS, Java for Lego Mindstorms / Links" />
-		<meta http-equiv="title" content="LeJOS, Java for Lego Mindstorms / Links" />
 
 		<!-- KEYWORDS -->
 		<meta name="keywords" content="LeJOS, NXJ, Icommand, NXT , RCX, lego mindstorm,Java, TinyVM, Lego, Mindstorms, RCX, Robots" />
-		<meta http-equiv="keywords"	content="LeJOS, NXJ, Icommand, NXT , RCX, lego mindstorm,Java, TinyVM, Lego, Mindstorms, RCX, Robots" />
 
 
 		<!-- DESCRIPCION -->
 		<meta name="description" content="leJOS is a Java based replacement firmware for the Lego Mindstorms RCX microcontroller and NXJ is a Java based replacement firmware for the Lego Mindstorms NXT microcontroller" />
-		<meta http-equiv="description" content="leJOS is a Java based replacement firmware for the Lego Mindstorms RCX microcontroller and NXJ is a Java based replacement firmware for the Lego Mindstorms NXT microcontroller" />
-		<meta http-equiv="DC.Description" content="leJOS is a Java based replacement firmware for the Lego Mindstorms RCX microcontroller and NXJ is a Java based replacement firmware for the Lego Mindstorms NXT microcontroller" />
+		<meta name="DC.Description" content="leJOS is a Java based replacement firmware for the Lego Mindstorms RCX microcontroller and NXJ is a Java based replacement firmware for the Lego Mindstorms NXT microcontroller" />
 
 		<!-- OTROS METADATOS -->
 		<meta name="VW96.objecttype" content="Document" />
