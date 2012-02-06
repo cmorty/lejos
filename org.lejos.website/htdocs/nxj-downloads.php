@@ -115,7 +115,7 @@
 						</tr>
 
 						<tr>
-						  <td valign="top" style="padding-top: 2ex"><b>leJOS NXJ sources</b></td>
+						  <td valign="top" style="padding-top: 2ex"><b>leJOS NXJ sources and samples</b></td>
 						</tr>
 						<tr> 
 						  <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
