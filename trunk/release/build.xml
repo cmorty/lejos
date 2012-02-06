@@ -290,7 +290,7 @@
 			locale="en_US"
 			author="true"
 			access="protected"
-			windowtitle="leJOS NXJ API documentation"
+			windowtitle="leJOS NXJ PC-API documentation"
 			classpathref="pc.3rdparty"
 			verbose="false"
 		>
