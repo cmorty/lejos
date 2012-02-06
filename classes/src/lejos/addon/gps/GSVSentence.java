@@ -116,6 +116,9 @@ public class GSVSentence extends NMEASentence{
 			
 			//Extracting data from a GSV Sentence
 			
+			//TODO Length of GSV Sentence varies.
+			// See http://www.gpsinformation.org/dale/nmea.htm for an example
+			
 			part1 = st.nextToken();//GPS Satellites in view
 			part2 = st.nextToken();//Message number
 			part3 = st.nextToken();//
