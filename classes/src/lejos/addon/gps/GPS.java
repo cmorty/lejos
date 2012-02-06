@@ -172,7 +172,7 @@ public class GPS extends SimpleGPS {
 			int mm = (dateStamp / 100) % 100;
 			int yy = dateStamp % 100;
 			
-			date.setDay(dd);
+			date.setDate(dd);
 			date.setMonth(mm);
 			date.setYear(yy);
 		}
