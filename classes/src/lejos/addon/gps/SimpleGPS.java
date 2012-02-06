@@ -291,29 +291,32 @@ public class SimpleGPS extends Thread {
 	 * This is a daemon thread so when program ends it won't keep running.
 	 */
 	public void run() {
-
-		String token = "";
-		String s = "";
-		
 		while(!close) {
-			
-			s = getNextString();
+			String s = getNextString();
 			
 			// Check if sentence is valid:
 			if (!s.startsWith("$"))
 				continue;
 			
 			int p = s.lastIndexOf('*');
-			if(p < 0) 
+			if (p < 0) 
 				continue;
 			
-			//TODO actually check checksum
-			s = s.substring(0, p);
+			//XOR all characters between $ and *
+			int checksum1 = 0;
+			for (int i=1; i<p; i++)
+				checksum1 ^= s.charAt(i);
 			
 			try{
+				int checksum2 = Integer.parseInt(s.substring(p+1), 16);
+				if (checksum1 != checksum2)
+					continue;
+				
+				s = s.substring(0, p);
+				
 				//TODO StringTokenizer must not be used to parse NMEA sentences since it doesn't return empty tokens 
 				tokenizer = new StringTokenizer(s);
-				token = tokenizer.nextToken();
+				String token = tokenizer.nextToken();
 
 				//System.out.println(token);
 									
@@ -329,10 +332,6 @@ public class SimpleGPS extends Thread {
 				//System.out.println("GPS: ArrayIndexOutOfBoundsException");
 			}catch(Exception e){
 				//System.out.println("GPS: Exception");
-			}finally{
-				//Reset
-				token = "";
-				s = "";
 			}
 		}
 	}
