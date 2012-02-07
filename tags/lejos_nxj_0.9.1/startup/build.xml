@@ -1,0 +1,145 @@
+<project name="StartUpText" default="all" basedir=".">
+	<description>
+		StartUpText build file
+	</description>
+
+	<property file="build.properties" />
+	<property file="${lejos.classes}/build.properties" prefix="vars.classes"/>
+	
+	<path id="lejos.pc">
+		<fileset dir="../jtools/3rdparty">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement location="../jtools/build/jtools.jar"/>
+		<fileset dir="../pccomms/3rdparty">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement location="../pccomms/build/pccomm.jar"/>
+		<fileset dir="../pctools/3rdparty">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement location="../pctools/build/pctools.jar"/>
+	</path>
+	<path id="lejos.nxt">
+		<pathelement location="../classes/build/classes.jar"/>
+	</path>
+
+	<target name="compile" description="compile the source " >
+		<!-- Compile the java code from ${src}	-->
+		<delete dir="${classes.dir}"/>
+		<mkdir dir="${classes.dir}"/>
+		<javac
+    		srcdir="${source.dir}"
+    		includes="${source.include}"
+    		excludes="${source.exclude}"
+    		encoding="${source.encoding}"
+    		source="${source.version}"
+    		target="${target.version}"
+  			destdir="${classes.dir}"
+    		debug="true"
+    		includeAntRuntime="false"
+  			includeJavaRuntime="false"
+			bootclasspathref="lejos.nxt"
+    		verbose="false"			
+		>
+			<!--
+				Without this, there are some JDK jars in the classpath.
+				Set verbose=true to check that the classpath is really clean.
+			-->
+    		<compilerarg value="-extdirs" />
+    		<compilerarg value="" />
+    		
+    		<!-- enable warnings -->
+    		<compilerarg value="-Xlint:${source.warn},-path" />
+		</javac>
+	</target>
+	
+	<target name="link" depends="compile" description="link the binary " >
+		<!-- Link the binary and create a signature file -->
+		<java
+			classname="lejos.pc.tools.NXJLink"
+			classpathref="lejos.pc"
+			output="${startup.out}"
+			failonerror="true"
+			logerror="true"
+			fork="true"
+		>
+			<arg value="--bootclasspath"/>
+			<arg pathref="lejos.nxt" /> 
+			<arg value="--classpath"/>
+			<arg path="${classes.dir}" /> 
+			<arg value="--writeorder" />
+			<arg value="LE" />
+			<arg value="-o"/>
+			<arg file="${startup.bin}"/>
+			<arg value="-od"/>
+			<arg file="${startup.debug}"/>
+			<arg value="-v"/>
+			<arg value="${startup.class}"/>
+		</java>
+	</target>
+	
+	<!-- generate javadocs -->
+	<target name="docs" description="generate javadocs">
+		<delete dir="${docs.dir}" />
+    	<mkdir dir="${docs.dir}" />
+		<javadoc
+    		encoding="${source.encoding}"
+			source="${source.version}"
+			destdir="${docs.dir}"
+			charset="utf-8"
+			locale="en_US"
+			author="true"
+			access="protected"
+			bootclasspathref="lejos.nxt"
+			verbose="false"
+		>
+			<!--
+				Without this, there are some JDK jars in the classpath.
+				Set verbose=true to check that the classpath is really clean.
+			-->
+    		<arg value="-extdirs" />
+    		<arg value="" />
+			
+	    	<arg value="-quiet"/>
+			
+			<fileset
+				dir="${source.dir}"
+	    		includes="${source.include}"
+	    		excludes="${source.exclude}"
+			>
+				<!-- javadoc only wants *.java files -->
+				<filename name="**/*.java"/>
+			</fileset>
+		</javadoc>
+	</target>
+	
+	<!-- zip the javadocs -->
+	<target name="docs.zip" description="generate zip of javadocs" depends="docs">
+		<dirname property="tmp" file="${docs.zip}" />
+    	<mkdir dir="${tmp}" />
+    	<zip
+    		basedir="${docs.dir}"
+			destfile="${docs.zip}"
+    	/>
+	</target>
+	
+	<!-- zip the project -->
+	<target name="source.zip" description="generate zip of sources">
+		<dirname property="tmp" file="${source.zip}" />
+    	<mkdir dir="${tmp}" />
+    	<zip destfile="${source.zip}"
+    		basedir="${basedir}"
+    		includes="${dist.include}"
+    		excludes="${dist.exclude}"
+    	/>
+	</target>
+	
+	<target name="all" depends="link, docs.zip, source.zip" />
+
+	<!-- deletes class files -->
+	<target name="clean" description="clean up all generated files">
+		<delete dir="${build.dir}"/> 
+	</target>
+	
+</project>

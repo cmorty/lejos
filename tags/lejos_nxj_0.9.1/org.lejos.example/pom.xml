@@ -1,0 +1,98 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>lejos</groupId>
+        <artifactId>lejos-parent</artifactId>
+        <version>0.9-SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>example</artifactId>
+
+    <name>Example</name>
+    <description>Simple example project to be run on the brick.</description>
+
+    <scm>
+        <connection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/org.lejos.${project.artifactId}</connection>
+        <developerConnection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/org.lejos.${project.artifactId}</developerConnection>
+    </scm>
+    <url>http://lejos.sourceforge.net/</url>
+    
+    <packaging>jar</packaging>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+
+        <plugins>
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <!-- For maven lifecycle order, see: http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
+
+                    <!-- create empty nirvana dir before compile -->
+                    <execution>
+                        <id>pre-compile</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${nirvana.dir}" />
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <!-- delete empty nirvana dir before package -->
+                    <execution>
+                        <id>post-compile</id>
+                        <phase>prepare-package</phase> <!-- keep dir around for unit testing with junit-lejos. -->
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete dir="${nirvana.dir}" />
+                            </target>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!--
+                        All that is need to kick any class from Sun's JDK out of the classpath.
+                        Check the search paths using verbose="true" that they really don't contain
+                        anything from the JDK, Ant, etc.
+                        There doesn't seem to be a clean way of having an empty (boot)classpath.
+                        javac keeps adding "." or even worse "" to the path. So i'm adding the
+                        nirvana path to the classpath.
+                    -->
+                    <compilerArguments>
+                        <bootclasspath>${nirvana.dir}</bootclasspath>
+                        <extdirs>${nirvana.dir}</extdirs>
+                    </compilerArguments>
+
+                    <optimize>true</optimize>
+                </configuration>
+            </plugin>
+
+        </plugins>
+        
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>lejos</groupId>
+            <artifactId>classes</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

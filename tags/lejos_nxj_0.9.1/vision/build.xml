@@ -1,0 +1,22 @@
+<!--
+  ==================================================
+  Buildfile for building vision
+  ==================================================
+-->
+<project name="vision" default="build" basedir=".">
+
+	<!-- creates the pctools jar -->
+	<target name="build" description="generate vision jar">
+		<delete dir="build"/>
+		<mkdir dir="build"/>
+		<!-- generate jar file -->
+		<javac srcdir="src" destdir="build" fork="yes" optimize="on" debug="on" source="1.5" target="1.5"/>
+		<mkdir dir="lib"/>
+		<jar destfile="lib/vision.jar" basedir="build" update="false">
+		</jar>
+	</target>
+	
+	<target name="clean" description="cleans the build folder">
+		<delete dir="build"/>
+	</target>
+</project>

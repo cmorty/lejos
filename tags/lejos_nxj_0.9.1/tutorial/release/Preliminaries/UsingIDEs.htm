@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		
+<!-- METADATA -->
+<title>Using a Java IDE</title>
+<meta name="title" content="Using a Java IDE" />
+<meta name="DC.Title" content="Using a Java IDE" />
+
+<meta name="description" content="How to use a Java IDE with leJOS NXJ" />
+<meta name="DC.Description"	content="How to use a Java IDE with leJOS NXJ" />
+
+<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+
+<meta name='VW96.objecttype' content='Document' />
+<meta http-equiv='content-language' content='en' />
+<meta name='DC.Language' scheme='RFC1766' content='English' />
+<meta name='distribution' content='global' />
+<meta name='resource-type' content='document' />
+
+<!-- SEARCH ENGINE -->
+<meta name='robots' content='all' />
+
+<!-- AUTHOR METADATA -->
+<meta name='Author' content='Sven Köhler' />
+
+<!-- CSS -->
+<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
+
+<!-- ICON -->
+<link rel="/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+<a id="top" name="top"></a>
+<!-- N1: HEADER -->
+<table cellpadding="0" cellspacing="0" class="n1t1">
+	<tr>
+		<td valign="top"><img
+			src="../r_media/images/tutorial_header1.jpg" /></td>
+		<td align="right" valign="top"><img
+			src="../r_media/images/tutorial_header2.jpg" /></td>
+	</tr>
+</table>
+<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+<table cellpadding="0" cellspacing="0" class="n2t1">
+	<tr>
+		<td class="n2t1r1c1"><!-- LEFT NAVIGATION SYSTEM -->
+		<div class="nolinkLESSON">Using a Java IDE</div>
+		<div class="linkAHEAD"><a href="#1">Eclipse</a></div>
+		<div class="linkAHEAD"><a href="#2">Other IDEs</a></div>
+		</td>
+		<td><!-- BREADCRUMBS -->
+		<div id="BreadCrumbs"><a href="../index.htm" target="_top">Home
+		Page</a> &gt; <a href="#">Using a Java IDE</a></div>
+		<!-- NAVIGATION TOOL -->
+		<div class="NavBit"><a target="_top"
+			href="../Preliminaries/CompileAndRun.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
+			href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
+			href="../MenuSystem/MenuSystem.htm">Next&nbsp;&raquo;</a></div>
+
+		<!-- CONTENT AREA --> <!-- CONTENT TITLE -->
+		<div id="PageTitle">Using a Java IDE with leJOS NXJ</div>
+
+		<a name="1"></a>
+		<h4>Eclipse</h4>
+		
+		<p>Eclipse is a pretty powerful Java IDE. At the moment, this is the IDE that is supported the
+		best by leJOS. The leJOS plug-in for Eclipse is pretty mature. Please read
+		our <a href="UsingEclipse.htm">tutorial page on how to use Eclipse with
+		leJOS</a>.</p> 
+		
+		<a name="2"></a>
+		<h4>Neatbeans and other Java IDEs</h4>
+		
+		<p>Besides Eclipse, there are many other Java IDEs. Most of them will probably
+		offer support for Ant and it recommended to compile and run your programs using Ant
+		build scripts. We provide Ant build scripts as part of your sample and example projects.
+		The example projects
+		are a good starting point for structuring your own project and their Ant files
+		<em>build.xml</em> and <em>build.properties</em> are a good template for your own
+		project's Ant build scripts.</p>
+		
+		<p>However, most of the IDEs we are aware of are based on the assumption, that a fully fledged Java Runtime
+		is used. For those Java programs that run on the NXT, leJOS provides a re-implementation
+		of a Java Runtime in form of the file <em>classes.jar</em>. But the
+		leJOS Java Runtime only implements a subset of the standard Java Runtime.
+		Also, some classes in the leJOS Java Runtime have additional methods that would not exist in a standard
+		Java Runtime. Therefore, even after configuring your IDE by adding the <em>classes.jar</em>
+		to the classpath of your project, the IDE might claim during the editing of your Java source
+		code that some methods (e.g. <code>java.io.File.exec()</code>) do not exist,
+		even though the project compiles fine using Ant. Also, during auto-completion, the
+		IDE may suggest classes or methods that actually do not exist in the leJOS Java Runtime
+		which might result in unexpected errors during the compilation process.</p>
+		<p>Hence it is recommended to use <a href="UsingEclipse.htm">Eclipse</a>, which
+		is probably the best choice at the moment, as far as leJOS support is concerned.</p>
+		<p>Java programs that run on the PC and remote control the NXT Brick via USB or Bluetooth
+		should be possible with most IDEs without problems. The IDE should be configured to include
+		the JAR files from <em>lib/pc</em> directory of the leJOS distribution in the classpath.
+		<em>classes.jar</em> must not be included in the project's classpath.</p>
+
+		<p><a href="#top">Back	to top</a></p>
+		<!-- END CONTENT AREA --> <!-- NAVIGATION TOOL --> <br />
+		<div class="NavBit"><a target="_top"
+			href="../Preliminaries/CompileAndRun.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
+			href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
+			href="../MenuSystem/MenuSystem.htm">Next&nbsp;&raquo;</a></div>
+		</td>
+	</tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,9 @@
+### Lego NXT brick in normal mode
+SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="0694", ATTRS{idProduct}=="0002", GROUP="lego", MODE="0660"
+### Lego NXT brick in firmware update mode (Atmel SAM-BA mode)
+SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", GROUP="lego", MODE="0660"
+
+### rules to unbind cdc_acm and sam-ba, there are several issues and they shouldn't be used
+#ACTION=="add", SUBSYSTEM=="usb", DRIVER=="cdc_acm", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", RUN+="/bin/sh -c 'echo $kernel >/sys/bus/usb/drivers/cdc_acm/unbind"
+#ACTION=="add", SUBSYSTEM=="usb", DRIVER=="sam-ba", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", RUN+="/bin/sh -c 'echo $kernel >/sys/bus/usb/drivers/sam-ba/unbind"
+

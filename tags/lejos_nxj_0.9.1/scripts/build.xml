@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="leJOS scripts" default="all">
+	<description>
+		Generates scripts
+    </description>
+	
+	<property file="build.properties" />
+	<loadfile property="template.linux" srcFile="templates/linux-base.sh"/>
+	<loadfile property="template.linux.parser" srcFile="templates/linux-parser.sh"/>
+	<loadfile property="template.windows" srcFile="templates/windows-base.bat"/>
+	
+	
+	<!--
+		Linux macros
+	-->
+	<macrodef name="linux-run">
+		<text name="command" trim="true"/>
+		<attribute name="file"/>
+		<sequential>
+			<mkdir dir="${linux.dir}"/>
+			<echo message="creating ${linux.dir}/@{file}"/>
+			<echo file="${linux.dir}/@{file}">${template.linux}
+				
+@{command}
+</echo>
+			<fixcrlf file="${linux.dir}/@{file}" encoding="latin1" eol="unix"/>
+		</sequential>
+	</macrodef>
+	<macrodef name="linux-tool">
+		<text name="args" trim="true" optional="true"/>
+		<attribute name="file"/>
+		<attribute name="class"/>
+		<sequential>
+			<linux-run file="@{file}">
+				"$JAVA" $NXJ_FORCE32 "-Dnxj.home=$NXJ_HOME" "-DCOMMAND_NAME=$NXJ_COMMAND" -classpath "$NXJ_CP_PC" @{class} @{args} "$@"
+			</linux-run>
+		</sequential>
+	</macrodef>
+	<macrodef name="linux-parser">
+		<text name="command" trim="true"/>
+		<attribute name="file"/>
+		<sequential>
+			<linux-run file="@{file}">
+${template.linux.parser}
+
+@{command}
+			</linux-run>
+		</sequential>
+	</macrodef>
+	
+	<!--
+		Windows macros
+	-->
+	<macrodef name="win-run">
+		<text name="command" trim="true"/>
+		<attribute name="file"/>
+		<sequential>
+			<mkdir dir="${windows.dir}"/>
+			<echo message="creating ${windows.dir}/@{file}.bat"/>
+			<echo file="${windows.dir}/@{file}.bat">${template.windows}
+
+@{command}
+:eof
+</echo>
+			<fixcrlf file="${windows.dir}/@{file}.bat" encoding="latin1" eol="dos"/>
+		</sequential>
+	</macrodef>
+	<macrodef name="win-tool">
+		<text name="args" trim="true" optional="true"/>
+		<attribute name="file"/>
+		<attribute name="class"/>
+		<sequential>
+			<win-run file="@{file}">
+				"%JAVA%" "-Dnxj.home=%NXJ_HOME%" "-DCOMMAND_NAME=%NXJ_COMMAND%" -classpath "%NXJ_CP_PC%" @{class} @{args} %*
+			</win-run>
+		</sequential>
+	</macrodef>
+	
+	<target name="linux" description="generated shell scripts">
+		<delete dir="${linux.dir}"/>
+		
+		<linux-tool file="nxjbrowse"        class="lejos.pc.tools.NXJBrowser"/>
+		<linux-tool file="nxjcontrol"       class="lejos.pc.tools.NXJControl"/>
+		<linux-tool file="nxjconsole"       class="lejos.pc.tools.NXJConsole"/>
+		<linux-tool file="nxjconsoleviewer" class="lejos.pc.tools.NXJConsoleViewer"/>
+		<linux-tool file="nxjdataviewer"    class="lejos.pc.tools.NXJDataViewer"/>
+		<linux-tool file="nxjdebugtool"     class="lejos.pc.tools.NXJDebugTool"/>
+		<linux-tool file="nxjflash"         class="lejos.pc.tools.NXJFlash"/>
+		<linux-tool file="nxjflashg"        class="lejos.pc.tools.NXJFlashG"/>
+		<linux-tool file="nxjmonitor"       class="lejos.pc.tools.NXJMonitor"/>
+		<linux-tool file="nxjsocketproxy"   class="lejos.pc.tools.NXJSocketProxy"/>
+		<linux-tool file="nxjupload"        class="lejos.pc.tools.NXJUpload"/>
+		<linux-tool file="nxjimage"         class="lejos.pc.tools.NXJImage"/>
+		<linux-tool file="nxjchartinglogger" class="lejos.pc.tools.NXJChartingLogger"/>
+		<linux-tool file="nxjmapcommand" class="lejos.pc.tools.NXJMapCommand"/>
+		
+		<linux-tool file="nxj" class="lejos.pc.tools.NXJLinkAndUpload">
+			--bootclasspath "$NXJ_CP_NXT" --writeorder "LE" --classpath "." 
+		</linux-tool>
+		<linux-tool file="nxjlink" class="lejos.pc.tools.NXJLink">
+			--bootclasspath "$NXJ_CP_NXT" --writeorder "LE" --classpath "." 
+		</linux-tool>
+		
+		<linux-run file="nxjc">
+			"$JAVAC" -bootclasspath "$NXJ_CP_NXT" -extdirs "" "$@"
+		</linux-run>
+		<linux-parser file="nxjpcc">
+			"$JAVAC" -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
+		</linux-parser>
+		<linux-parser file="nxjpc">
+			"$JAVA" $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
+		</linux-parser>
+<!--
+		Alternative version similar to the windows script, for testing purpose
+		<linux-run file="nxjpc">
+			"$JAVA" $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -Xbootclasspath/a:"$NXJ_CP_PC" "$@"
+		</linux-run>
+-->
+	</target>
+	
+	<target name="windows" description="generated batch scripts">
+		<delete dir="${windows.dir}"/>
+		
+		<win-tool file="nxjbrowse"        class="lejos.pc.tools.NXJBrowser"/>
+		<win-tool file="nxjcontrol"       class="lejos.pc.tools.NXJControl"/>
+		<win-tool file="nxjconsole"       class="lejos.pc.tools.NXJConsole"/>
+		<win-tool file="nxjconsoleviewer" class="lejos.pc.tools.NXJConsoleViewer"/>
+		<win-tool file="nxjdataviewer"    class="lejos.pc.tools.NXJDataViewer"/>
+		<win-tool file="nxjdebugtool"     class="lejos.pc.tools.NXJDebugTool"/>
+		<win-tool file="nxjflash"         class="lejos.pc.tools.NXJFlash"/>
+		<win-tool file="nxjflashg"        class="lejos.pc.tools.NXJFlashG"/>
+		<win-tool file="nxjmonitor"       class="lejos.pc.tools.NXJMonitor"/>
+		<win-tool file="nxjsocketproxy"   class="lejos.pc.tools.NXJSocketProxy"/>
+		<win-tool file="nxjupload"        class="lejos.pc.tools.NXJUpload"/>
+		<win-tool file="nxjimage"         class="lejos.pc.tools.NXJImage"/>
+		<win-tool file="nxjchartinglogger" class="lejos.pc.tools.NXJChartingLogger"/>
+		<win-tool file="nxjmapcommand" class="lejos.pc.tools.NXJMapCommand"/>
+		
+		<win-tool file="nxj" class="lejos.pc.tools.NXJLinkAndUpload">
+			--writeorder "LE" --bootclasspath "%NXJ_CP_NXT%" --classpath "." 
+		</win-tool>
+		<win-tool file="nxjlink" class="lejos.pc.tools.NXJLink">
+			--writeorder "LE" --bootclasspath "%NXJ_CP_NXT%" --classpath "." 
+		</win-tool>
+		
+		<win-run file="nxjc">
+			"%JAVAC%" -bootclasspath "%NXJ_CP_NXT%" -extdirs "" %*
+		</win-run>
+		<win-run file="nxjpcc">
+			"%JAVAC%" -Xbootclasspath/a:"%NXJ_CP_PC%" %*
+		</win-run>
+		<win-run file="nxjpc">
+			"%JAVA%" -Dnxj.home="%NXJ_HOME%" -Xbootclasspath/a:"%NXJ_CP_PC%" %*
+		</win-run>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+	</target>
+	
+	<target name="all" depends="linux, windows"/>
+</project>

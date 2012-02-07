@@ -1,0 +1,8 @@
+#RedirectMatch ^/+forum/ /maintenance.html
+
+RewriteEngine on
+RewriteRule ^favicon\.ico$ /lejos.ico
+
+#RewriteCond %{REMOTE_HOST} !=78.46.94.24
+#RewriteCond %{HTTP:X-Remote-Addr} !=78.46.94.24
+#RewriteRule ^forum/ /maintenance.php

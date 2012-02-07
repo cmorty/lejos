@@ -1,0 +1,17 @@
+grammar rover;
+
+public <command> = forwards {forwards} 
+                 | backwards {backwards}
+                 | back {backwards}
+                 | reverse {backwards}
+                 | stop {stop}
+                 | left {left}
+                 | right {right}
+                 | up {up}
+                 | down {down}
+                 | whoa {stop}
+                 | halt {stop}
+                 | spin {left}
+                 | go {forwards};
+
+public <bye> = Good bye {bye} | So long {bye} | Shut down {bye};

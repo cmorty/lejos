@@ -1,0 +1,121 @@
+<!--
+  ==================================================
+  Buildfile for building PC samples
+  ==================================================
+  
+  
+  === NOTE ===
+  Dear fellow leJOS user: Don't use this build.xml as a template for your
+  project. Instead, use the org.lejos.pcexample project as a template for
+  your projects.
+-->
+<project name="PC Samples" default="help" basedir=".">
+
+	<!-- set properties for this build -->
+	<property environment="env" />
+	<property file="build.properties" />
+
+	<!-- check whether nxj.home is correct -->
+	<available file="${nxj.home}/lib/pc" property="lejos.pc.exists" />
+	<available file="${nxj.home}/lib/nxt" property="lejos.nxt.exists" />
+	<fail unless="lejos.pc.exists" message="nxj.home variable incorrect, ${nxj.home}/lib/pc does not exist" />
+	<fail unless="lejos.nxt.exists" message="nxj.home variable incorrect, ${nxj.home}/lib/nxt does not exist" />
+
+	<!-- define the search paths -->
+	<path id="lejos.pc">
+		<fileset dir="${nxj.home}/lib/pc">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<path id="lejos.nxt">
+		<fileset dir="${nxj.home}/lib/nxt">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+	<condition property="d32Flag" value="-d32" else="-Dblank.dummy.arg=">
+		<and>
+			<os family="mac" />
+		</and>
+	</condition>
+
+	<loadfile property="sample.list" srcfile="build.properties">
+		<filterchain>
+			<tokenfilter>
+				<linetokenizer includedelims="true" />
+				<containsregex pattern="^\s*sample\.[^\.]+\.main\s*=" />
+				<replaceregex pattern="^\s*sample\." replace="  " />
+				<replaceregex pattern="\.main\s*=\s*" replace=" = " />
+			</tokenfilter>
+		</filterchain>
+	</loadfile>
+
+
+	<target name="help">
+		<echo>Here's the list of available samples:
+${sample.list}
+
+For running a sample run the following command:
+  ant run
+
+If you don't want to enter the number of the sample every time, use
+the paraneter -Dsample.id=&lt;XYZ&gt; with ant, e.g.
+  ant -Dsample.id=nav run
+</echo>
+	</target>
+	
+	<target name="sample.chose" unless="sample.id">
+		<echo>This is the list of samples:
+${sample.list}
+
+</echo>
+		<input message="Please enter the identifier of the sample to build/run: " addproperty="sample.id" />
+	</target>
+	
+	<macrodef name="init-sample">
+		<attribute name="id"/>
+		<sequential>
+			<fail unless="sample.@{id}.main" message="sample with number &quot;@{id}&quot; does not exist." />
+			<property name="main.class" value="${sample.@{id}.main}" />
+		</sequential>
+	</macrodef>
+	
+	<target name="sample.init" depends="compile, sample.chose">
+		<init-sample id="${sample.id}" />
+		<echo>Selected sample with id ${sample.id},
+main class ${main.class}</echo>
+	</target>
+
+	<target name="clean" description="cleans the build folder">
+		<delete dir="${build.dir}" />
+	</target>
+	
+	<target name="compile" description="compile PC samples">
+		<mkdir dir="${classes.dir}" />
+		<javac
+			srcdir="${source.dir}"
+			includes="${source.include}"
+			excludes="${source.exclude}"
+			encoding="${source.encoding}"
+			source="${source.version}"
+			target="${target.version}"
+			destdir="${classes.dir}"
+			debug="true"
+			includeAntRuntime="false"
+		>
+			<classpath refid="lejos.pc" />
+			<!-- enable warnings -->
+			<compilerarg value="-Xlint:${source.warn}" />
+		</javac>
+	</target>
+	
+	<target name="run" depends="sample.init, compile">
+		<echo>Running ${main.class}</echo>
+		<java classname="${main.class}" fork="true">
+			<sysproperty key="nxj.home" file="${nxj.home}"/>
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<classpath location="${classes.dir}" />
+		</java>
+	</target>
+</project>

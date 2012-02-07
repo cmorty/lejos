@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." name="org.lejos.example-IDE">
+    <target name="run-selected-file-in-src">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <ant antfile="build.xml" target="uploadandrun">
+            <property name="main.class" value="${run.class}"/>
+        </ant>
+    </target>
+
+    <target name="compile-selected-files-in-src">
+        <ant antfile="build.xml" target="compile"/>
+    </target>
+</project>

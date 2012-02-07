@@ -1,0 +1,42 @@
+### use mingw64 32bit toolchain by default
+LEJOS_NXT_WIN32_GCC ?= i686-w64-mingw32-gcc
+LEJOS_NXT_WIN32_DLLTOOL ?= $(shell "$(LEJOS_NXT_WIN32_GCC)" -print-prog-name=dlltool)
+### soon, there might be a multilib mingw64 toolchain, so use -m32 and -mi386
+LEJOS_NXT_WIN32_CFLAGS ?= -m32 -O2
+LEJOS_NXT_WIN32_DLLFLAGS ?= -mi386
+LEJOS_NXT_WIN32_FANTOMSDK ?=
+LEJOS_NXT_WIN32_FANTOMINC ?= $(LEJOS_NXT_WIN32_FANTOMSDK)/includes
+LEJOS_NXT_WIN32_FANTOMLIB ?= $(LEJOS_NXT_WIN32_FANTOMSDK)/targets/win32U/i386/msvc71/release
+LEJOS_NXT_WIN32_JDK ?=
+
+ifndef LEJOS_NXT_WIN32_FANTOMSDK
+$(error "You have to set LEJOS_NXT_WIN32_FANTOMSDK")
+endif
+ifndef LEJOS_NXT_WIN32_JDK
+$(error "You have to set LEJOS_NXT_WIN32_JDK")
+endif
+
+.PHONY: all
+all: jfantom.dll
+
+.PHONY: clean
+clean:
+	rm -f jfantom.dll fantom.lib #jfantom.h
+
+fantom.lib: fantom.def
+	"$(LEJOS_NXT_WIN32_DLLTOOL)" $(LEJOS_NXT_WIN32_DLLFLAGS) --input-def "$<" --output-lib "$@"
+
+# I think it's safe to use build host's javah
+#jfantom.h:
+#	"$(LEJOS_NXT_WIN32_JDK)/bin/javah" -o "$@" -classpath ../pccomms/build lejos.pc.comm.NXTCommFantom 
+
+jfantom.dll: jfantom.cpp fantom.lib | jfantom.h 
+	"$(LEJOS_NXT_WIN32_GCC)" $(LEJOS_NXT_WIN32_CFLAGS) \
+		-I"$(LEJOS_NXT_WIN32_JDK)/include" \
+		-I"$(LEJOS_NXT_WIN32_JDK)/include/win32" \
+		-I"$(LEJOS_NXT_WIN32_FANTOMINC)" \
+		-shared -Wl,-s,--kill-at -o "$@" $^
+
+### only needed for mingw32
+#		-D_JNI_IMPLEMENTATION_ \
+		

@@ -1,0 +1,187 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>rcxcomm</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="index.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../overview/toc.html#communication" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="protocolstack.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1">
+            <b>Trail</b>: Communication<br>
+            <b>Lesson</b>: rcxcomm
+        </font>
+
+        <!-- headline -->
+        <h1>rcxcomm</h1>
+        <p>
+        <em><b>by <a href="http://homepage.ntlworld.com/lawrie.griffiths/">Lawrie Griffiths</a></b></em>
+        <p>
+
+<h1>Overview</h1>
+<code>josx.rcxcomm</code> is a package for communication between a PC and the RCX.
+<br>
+It is based on original code created by the LEGO3 Team at DTU-IAU.
+<p>
+It uses standard Java IO Streams to send primitive Java data types from the 
+PC to the RCX, or from the RCX to the PC. Either end can initiate communication,
+and data can be sent in both directions.
+
+<h1>Example</h1>
+A simple program to send a byte is:
+<p>
+<pre><code>
+    import josx.rcxcomm.*;
+    import java.io.*;
+
+    public class TestRCXComm {
+
+      public static void main(String [] args) {
+
+        try {
+          RCXPort port = new RCXPort();
+
+          OutputStream os = port.getOutputStream();
+
+          os.write(123);
+          os.flush();
+        }
+        catch (IOException ioe) {
+         ...
+        } 
+    }
+</code></pre>
+<p>
+To read a byte back you would add:
+<p>
+<pre><code>
+      InputStream is = port.getInputStream();
+      is.read();
+</code></pre>
+<p>
+To send other Java primitive types, such as int, you add:
+<p>
+<pre><code>
+   DataOutputStream dos = new DataOutputStream(os);
+      dos.writeInt(123456);
+      dos.flush();
+</code></pre>
+
+<h1>Limitations</h1>
+Not all data types are available in the RCX implementation of 
+DataInputStream and DataOutputStream. Object streams and 
+serialization are not yet supported.
+<p>
+Both serial and USB towers are supported on Windows. Currently
+only serial towers are supported for Linux and Mac OSX.
+
+<h1>Compiling programs that use rcxcomm</h1> 
+To compile the RCX program, you use <code>lejosjc</code>. An extra jar 
+(<code>rcxcomm.jar</code>) is used automatically.
+<p>
+On the PC or Mac you compile with  <code>javac </code> and add  <code>pcrcxcomm.jar </code> 
+from the lejos lib directory to your CLASSPATH.
+
+<h1>Running programs that use rcxcomm</h1>
+The serial or USB tower is accessed by a dynamically linked library 
+using the Java Native Interface (JNI). On Windows this is irtower.dll
+and needs to be on you path. As it is in the lejos bin directory, it
+will normally already be on your PATH. On Linux or Mac OSX, it is a
+shared library, libirtower.so, which needs to be on your shared library 
+path. This can be achieved by adding the lejos bin directory to 
+LD_LIBRARY_PATH.
+<p>
+The port used for the IR Tower can be set in two ways:
+<ul>
+    <li>You can set RCXTTY and call RCXPort with no parameter</li>
+    <li>You can pass the port name on the RCXPort constructor</li>
+</ul>
+For USB the port name is <em>USB</em>, for a serial tower it is <em>COM1</em>, <em>COM2</em> etc.
+
+<h1>Communicating over the web</h1>
+There is an extra class available for the PC and Mac - <code>RCXBean</code>. This 
+provides a Java Bean interface for sending and receiving data from the RCX.
+<br>
+It is useful for creating Web sites using Java Server Pages (JSPs) that 
+access the RCX to read sensors, perform actions, etc.
+
+<h1>Ignoring messages</h1>
+For serial towers on the PC or Mac, there is an extra method: <code>setListen</code>.
+<br>This is used to keep the serial tower alive for receiving data. Use 
+<code>setListen(true)</code> when you want to receive data and <code>setListen(false)</code> to conserve 
+the serial tower batteries. You don't need to call <code>setListen</code> for USB towers.
+<br><code>setListen</code> is called automatically by the PC version of <code>getInputStream()</code>. You
+can call <code>setListen(false)</code> if you dont need to listen immediately and you want to 
+conserve batteries.
+
+<h1>Going further</h1>
+With lejos 2.0. low level comms that does not rely on the Lego firmware protocol 
+and opcodes has been added, and RCXPort has been re-implemented using this. This
+makes it faster and reliable. It will continue to try to send data until it gets 
+through, and ensure hat no data is duplicated. Future versions will be faster 
+still by adding buffering and using larger packet sizes.
+<p>
+With lejos 2.0 there are alternative versions of RCXPort. These are:
+<ul>
+<li>RCXF7Port - which uses the Lego F7 opcode in the same way as the lejos 1.0.5 version of RCXPort</li>
+<li>RCXLNPPort - which uses the LegOS Netwrorking Protocol Integrity layer</li>
+<li>RCXLNPAddrPort - which uses the LegOS Netwrorking Protocol Addressing layer</li>
+</ul>
+You can also write your own protocol stacks and RCX Ports; if you are interested in that, take a look 
+<a href="protocolstack.html">here</a>.
+
+<h1>Examples that use rcxcomm</h1> 
+There are several example programs that use RCXPort in the <code>rcxcomm/examples</code> directory.
+See the browser example for how to browse the Internet from the RCX using a socket 
+proxy on the PC, and servlet for how to turn the RCX into a Web Server using an Http
+Proxy on the PC.
+
+        <hr>
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="index.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../overview/toc.html#communication" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="protocolstack.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>

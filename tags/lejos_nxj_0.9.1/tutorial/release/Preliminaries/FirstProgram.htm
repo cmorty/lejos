@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		
+  <title>Writing and Running your first leJOS NXJ Program</title>
+  <!-- CSS -->
+  <link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" /><!-- ICONO -->
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+<a id="top" name="top"></a>
+<!-- N1: HEADER -->
+<table class="n1t1" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td><img src="../r_media/images/tutorial_header1.jpg" /></td>
+      <td align="right"><img src="../r_media/images/tutorial_header2.jpg" /></td>
+    </tr>
+  </tbody>
+</table>
+<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+<table class="n2t1" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td class="n2t1r1c1">
+      <div class="nolinkLESSON">Writing and Running your first leJOS NXJ program</div>
+      <div class="linkAHEAD"><a href="#1">The HelloWorld program</a></div>
+      <div class="linkAHEAD"><a href="#2">Compiling and linking the program</a></div>
+      <div class="linkAHEAD"><a href="#3">Uploading and running the program</a></div>
+      </td>
+      <td>
+        <div id="BreadCrumbs">
+            <a href="../index.htm" target="_top">Home Page</a> &gt;
+            <a href="#">Writing your first leJOS NXJ program</a>
+        </div>
+      <div class="NavBit"> <a target="_top" href="../Preliminaries/GettingStarted.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
+      href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/CompileAndRun.htm">Next&nbsp;»</a> </div>
+      <div id="PageTitle">Writing and Running your first leJOS NXJ program</div>
+     <a id="1" name="1"></a>
+      <h4>The HelloWorld program</h4>
+      <p> Let us start with a simple &#8220;Hello World&#8221; program. We will
+      create a HelloWorld class in the default java package: </p>
+      <pre class="CodeBox"><code>public class HelloWorld
+{
+
+}</code></pre>
+      <p> leJOS requires the standard main method for the program entry point: </p>
+      <pre class="CodeBox"><code>public class HelloWorld {
+  public static void main (String[] args) {
+  
+  }
+}</code></pre>
+      <p> leJOS NXJ supports the standard java System.out.println method and scroll the output on the NXT LCD screen. </p>
+      <pre class="CodeBox"><code>public class HelloWorld {
+  public static void main (String[] args) {
+    System.out.println("Hello World");
+  }
+}</code></pre>
+      <p>If you run this program as it is, it will display Hello World&#8221;
+      and then immediately return to the menu, so you will not be able to see
+      what is displayed (unless you are very quick). </p>
+      <p>We either need the program to sleep for a while to allow the
+      text to be read, or to wait for a button to be pressed. Let us wait for
+      a button to be pressed. In order to do this, we can call the 
+      waitForAnyPress() method of the Button class which is provided by leJOS.
+      But first, we need to import the leJOS NXJ Button class in the program.
+      Button is in the lejos.nxt package, so its full name is lejos.nxt.Button.
+      You can find out what methods a class supports by looking at the
+      <a href="http://lejos.sourceforge.net/nxt/nxj/api/index.html" target="_blank">API
+      documentation</a>.</p>
+      <p>The API documentation is on the leJOS web site here and
+      included in the leJOS download in the docs/nxt subfolder. </p>
+      <p>The complete HelloWorld program is: </p>
+      <pre class="CodeBox"><code>import lejos.nxt.Button;
+
+public class HelloWorld {
+  public static void main (String[] args) {
+    System.out.println("Hello World");
+    Button.waitForAnyPress();
+  }
+}</code></pre>
+     <p> <a href="#top">Back to top</a> </p>
+
+     <a id="2" name="2"></a>
+     <h4>Compiling and linking the program</h4>
+     
+     <p>Create a file called <code>HelloWorld.java</code> with the source code shown
+     above. Then open a command prompt and execute the following command in the
+     directory in which you created HelloWorld.java:</p>
+     
+     <pre class="CodeBox"><code>nxjc HelloWorld.java</code></pre>
+     
+     <p>This will the file called <em>HelloWorld.class</em>, which contains the result
+     of the compilation of HelloWorld.java. Unlike a real Java virtual machine, the
+     leJOS firmware does not execute *.class files directly. The HelloWorld program
+     needs to be linked, using the leJOS linker. This is done with the following command:</p>
+     
+     <pre class="CodeBox"><code>nxjlink -o HelloWorld.nxj HelloWorld</code></pre>
+     
+     <p>This will load the class HelloWorld (from HelloWorld.class) and all dependencies.
+     The classes are then merged together into a single file, namely <em>HelloWorld.nxj</em>.
+     However, before that file can be executed, it needs to be uploaded to the NXT brick.</p>
+     
+     <p> <a href="#top">Back to top</a> </p>
+      
+     <a id="3" name="3"></a>
+     <h4>Uploading and running the program</h4>
+     
+     <p>Using the commands above, you obtain the HelloWorld.nxj file. You can
+     now upload it to the NXT brick to execute it. To do that, use the following command:</p>
+     
+     <pre class="CodeBox"><code>nxjupload -r HelloWorld.nxj</code></pre>
+     
+     <p>The parameter <code>-r</code> means, that the program will be executed after
+     it has been uploaded to the NXT. By omitting the parameter, nxjupload will just upload
+     the file and it will not executed automatically. You can then execute HelloWorld.nxj
+     manually via the menu shown on the NXT brick.</p>
+     
+     <p>Also, there is the possibility of the linking a program and uploading the result
+     with one single command. The following command has the same effect as the
+     nxjlink and nxjupload commands above:</p>
+     
+     <pre class="CodeBox"><code>nxj -r -o HelloWorld.nxj HelloWorld</code></pre>
+     
+     <p>The command first creates HelloWorld.nxj and then uploads it to the NXT brick. 
+     The program is automatically started, since the <code>-r</code> parameter has been
+     specified.</p> 
+     
+      <p><a href="#top">Back to top</a> </p>
+      <div class="NavBit"> <a target="_top" href="../Preliminaries/GettingStarted.htm">«&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
+      <a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../Preliminaries/CompileAndRun.htm">Next&nbsp;»</a> </div>
+      <br />
+      </td>
+      <td> <br />
+      </td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>

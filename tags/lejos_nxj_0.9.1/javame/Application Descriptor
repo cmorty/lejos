@@ -1,0 +1,6 @@
+MIDlet-Version: 0.1.0
+MIDlet-Vendor: LeJOS
+MIDlet-Jar-URL: javame.jar
+MicroEdition-Configuration: CLDC-1.0
+MicroEdition-Profile: MIDP-1.0
+MIDlet-Name: javame

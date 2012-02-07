@@ -1,0 +1,7 @@
+Notes:
+- readlink -f
+	doesn't work on OSX
+- uname -o
+	doesn't work on OSX
+- -d32
+    is required on MacOSX to force 32-bit java for usb drivers to work

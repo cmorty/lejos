@@ -1,0 +1,109 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>Speech</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="../vision/index.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../overview/toc.html#speech" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="../contributing/index.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1"><b>Trail</b>: Speech</font>
+
+        <!-- headline -->
+        <h1>Trail: Speech</h1>
+        <p>
+        <em><b>by <a href="http://homepage.ntlworld.com/lawrie.griffiths/">Lawrie Griffiths</a></b></em>
+        <p>
+
+<h1>Speech</h1>
+
+        This example program uses the lejos Vision RCX Remote Control class to send remote control commands to the RCX. 
+    <p>
+        It uses the IBM implementation of the Java Speech API and IBM ViaVoice for voice recognition.
+    </p>
+    <p>
+        It needs IBM ViaVoice installed on your PC and a copy of the IBM alphaWorks Speech for Java software 
+        downloaded from <a href="http://www.alphaworks.ibm.com/tech/speech">http://www.alphaworks.ibm.com/tech/speech</a> and installed. 
+    </p>
+
+        <span class="remark">
+                [Note by editor] A Java-based speech recognition system freely available presently is      
+                	<a href="http://cmusphinx.sourceforge.net/sphinx4/">Sphinx-4</a>.
+                	<br>
+                	Free Java-based speech synthesis systems are for instance
+                	<a href="http://freetts.sourceforge.net/docs/index.php">FreeTTS</a> or 
+                	<a href="http://mary.dfki.de/">MARY</a>.
+        </span>
+
+    <p>
+        Download the lejos <a href="rover.java">Rover.java</a> program, compile it with lejosc and and then download it to the RCX.
+    </p>
+
+    <p>
+        Download the <a href="speechcontrol.java">SpeechControl.java</a> program, compile it
+        with javac, and run it by "java SpeechControl". Make sure that the IBM alphaWorks Java Speech jar (imbjs.jar), 
+        the lejos vision api jar (vision.jar) and the josx.rcxcomm package (pcrcxcomm.jar) are on the classpath.
+        You also need the alphaworks Java Speech API dlls (in ibmjs/lib) on the PATH.
+        You also need to download <a href="res_en.properties">res_en.properties<a> and
+        <a href="rover_en.gram">rover_en.gram</a> in the same directory as SpeechControl.class.   
+    </p> 
+    <p> 
+        Run "java SpeechControl" and you can control the robot using the commands in rover_en.gram,
+        such as "forwards", "backwards", "left", "right", "up" (tilt camera up), "down".
+        "stop" etc. Say "Goodbye" to stop the program.
+    </p>
+
+    <p>
+        SpeechControl.java is a modified version of IBM's hello test program.
+    </p>
+    <p>
+        Here is a a picture of the robot with an X10 Xcam2 camera that I used to test this program. 
+        <br/><br/>
+        <img src="robot.jpg">
+    </p>
+
+        <hr>
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="../vision/index.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../overview/toc.html#speech" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="../contributing/index.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>
