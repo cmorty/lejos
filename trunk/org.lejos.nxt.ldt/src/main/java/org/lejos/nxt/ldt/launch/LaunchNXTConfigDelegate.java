@@ -56,10 +56,10 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
 		boolean verbose = resolve(p, config, mode, LaunchConstants.SUFFIX_LINK_VERBOSE, false);
 		boolean run = resolve(p, config, mode, LaunchConstants.SUFFIX_RUN_AFTER_UPLOAD, true);
-		boolean debugNormal = PreferenceConstants.VAL_DEBUG_TYPE_NORMAL
-				.equals(resolve(p, config, mode, LaunchConstants.SUFFIX_MONITOR_TYPE, ""));
-		boolean debugRemote = PreferenceConstants.VAL_DEBUG_TYPE_REMOTE
-				.equals(resolve(p, config, mode, LaunchConstants.SUFFIX_MONITOR_TYPE, ""));
+		String monType = resolve(p, config, mode, LaunchConstants.SUFFIX_MONITOR_TYPE,
+				PreferenceConstants.VAL_DEBUG_TYPE_NORMAL);
+		boolean debugNormal = PreferenceConstants.VAL_DEBUG_TYPE_NORMAL.equals(monType);
+		boolean debugRemote = PreferenceConstants.VAL_DEBUG_TYPE_REMOTE.equals(monType);
 
 		if (monitor.isCanceled())
 			return;
