@@ -42,10 +42,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.lejos.nxt.ldt.LeJOSNature;
-import org.lejos.nxt.ldt.LeJOSPlugin;
 import org.lejos.nxt.ldt.preferences.PreferenceConstants;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
-import org.lejos.nxt.ldt.util.PrefsResolver;
 
 public class LaunchNXTMainTab extends JavaLaunchTab {
 
@@ -53,9 +51,11 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 	private Text mainText;
 	private Button fProjButton;
 	private Button fSearchButton;
+	private Button normalUseDefaults;
 	private Button normalRun;
 	private Button normalVerbose;
 	private Button normalConsole;
+	private Button debugUseDefaults;
 	private Button debugRun;
 	private Button debugVerbose;
 	private Button debugConsole;
@@ -236,7 +236,8 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		SelectionListener updater2 = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
-			}			
+				updateEnabledDisabled();
+			}
 		};
 				
 		createProjectEditor(comp, updater);
@@ -249,6 +250,20 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		setControl(comp);
 	}
 	
+	protected void updateEnabledDisabled() {
+		boolean e = !this.normalUseDefaults.getSelection();
+		this.normalRun.setEnabled(e);
+		this.normalConsole.setEnabled(e);
+		this.normalVerbose.setEnabled(e);
+		
+		e = !this.debugUseDefaults.getSelection();
+		this.debugRun.setEnabled(e);
+		this.debugConsole.setEnabled(e);
+		this.debugVerbose.setEnabled(e);
+		this.debugMonitorNormal.setEnabled(e);
+		this.debugMonitorRemote.setEnabled(e);
+	}
+
 	private Group newGroup(Composite p, int cols, String text)
 	{
 		Group g = new Group(p, SWT.NONE);
@@ -268,25 +283,31 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
+		this.normalUseDefaults = createCheckButton(g, "Use &defaults from Preferences");
 		this.normalRun = createCheckButton(g, "&Run program after upload");
 		this.normalVerbose = createCheckButton(g, "Link &verbose");
 		this.normalConsole = createCheckButton(g, "Start nxj&console after upload (not functional yet)");
 		
+		this.normalUseDefaults.addSelectionListener(updater);
 		this.normalRun.addSelectionListener(updater);
 		this.normalVerbose.addSelectionListener(updater);
 		this.normalConsole.addSelectionListener(updater);
+		this.normalUseDefaults.setLayoutData(gd);
 		this.normalConsole.setLayoutData(gd);
 		
 		createVerticalSpacer(parent, 1);
 		g = newGroup(parent, 2, "When in debug mode:");
 
+		this.debugUseDefaults = createCheckButton(g, "Use &defaults from Preferences");
 		this.debugRun = createCheckButton(g, "&Run program after upload");
 		this.debugVerbose = createCheckButton(g, "Link &verbose");
 		this.debugConsole = createCheckButton(g, "Start nxj&console after upload (not functional yet)");
 
+		this.debugUseDefaults.addSelectionListener(updater);
 		this.debugRun.addSelectionListener(updater);
 		this.debugVerbose.addSelectionListener(updater);
 		this.debugConsole.addSelectionListener(updater);
+		this.debugUseDefaults.setLayoutData(gd);
 		this.debugConsole.setLayoutData(gd);
 		
 		this.debugMonitorNormal = createRadioButton(g, "Normal Debug Monitor");
@@ -298,22 +319,16 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config)
 	{
-		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
-		config.setAttribute(LaunchConstants.KEY_NORMAL_RUN_AFTER_UPLOAD,
-				p.getBoolean(PreferenceConstants.KEY_NORMAL_RUN_AFTER_UPLOAD, true));
-		config.setAttribute(LaunchConstants.KEY_NORMAL_LINK_VERBOSE,
-				p.getBoolean(PreferenceConstants.KEY_NORMAL_LINK_VERBOSE, false));
-		config.setAttribute(LaunchConstants.KEY_NORMAL_START_CONSOLE,
-				p.getBoolean(PreferenceConstants.KEY_NORMAL_START_CONSOLE, false));
+		config.setAttribute(LaunchConstants.KEY_NORMAL_USE_DEFAULTS, true);
+		config.setAttribute(LaunchConstants.KEY_NORMAL_RUN_AFTER_UPLOAD, true);
+		config.setAttribute(LaunchConstants.KEY_NORMAL_LINK_VERBOSE, false);
+		config.setAttribute(LaunchConstants.KEY_NORMAL_START_CONSOLE, false);
 		
-		config.setAttribute(LaunchConstants.KEY_DEBUG_RUN_AFTER_UPLOAD,
-				p.getBoolean(PreferenceConstants.KEY_DEBUG_RUN_AFTER_UPLOAD, true));
-		config.setAttribute(LaunchConstants.KEY_DEBUG_LINK_VERBOSE,
-				p.getBoolean(PreferenceConstants.KEY_DEBUG_LINK_VERBOSE, false));
-		config.setAttribute(LaunchConstants.KEY_DEBUG_START_CONSOLE,
-				p.getBoolean(PreferenceConstants.KEY_DEBUG_START_CONSOLE, false));
-		config.setAttribute(LaunchConstants.KEY_DEBUG_MONITOR_TYPE,
-				p.getString(PreferenceConstants.KEY_DEBUG_MONITOR_TYPE, null));
+		config.setAttribute(LaunchConstants.KEY_DEBUG_USE_DEFAULTS, true);
+		config.setAttribute(LaunchConstants.KEY_DEBUG_RUN_AFTER_UPLOAD, true);
+		config.setAttribute(LaunchConstants.KEY_DEBUG_LINK_VERBOSE, false);
+		config.setAttribute(LaunchConstants.KEY_DEBUG_START_CONSOLE, false);
+		config.setAttribute(LaunchConstants.KEY_DEBUG_MONITOR_TYPE, PreferenceConstants.VAL_DEBUG_TYPE_NORMAL);
 		
 		IJavaElement context = getContext();
 		if (context != null)
@@ -397,10 +412,12 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectText.getText().trim());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainText.getText().trim());
 		
+		config.setAttribute(LaunchConstants.KEY_NORMAL_USE_DEFAULTS, normalUseDefaults.getSelection());
 		config.setAttribute(LaunchConstants.KEY_NORMAL_RUN_AFTER_UPLOAD, normalRun.getSelection());
 		config.setAttribute(LaunchConstants.KEY_NORMAL_LINK_VERBOSE, normalVerbose.getSelection());
 		config.setAttribute(LaunchConstants.KEY_NORMAL_START_CONSOLE, normalConsole.getSelection());
 		
+		config.setAttribute(LaunchConstants.KEY_DEBUG_USE_DEFAULTS, debugUseDefaults.getSelection());
 		config.setAttribute(LaunchConstants.KEY_DEBUG_RUN_AFTER_UPLOAD, debugRun.getSelection());
 		config.setAttribute(LaunchConstants.KEY_DEBUG_LINK_VERBOSE, debugVerbose.getSelection());
 		config.setAttribute(LaunchConstants.KEY_DEBUG_START_CONSOLE, debugConsole.getSelection());
@@ -467,9 +484,13 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		super.initializeFrom(config);
 		projectText.setText(extractConfigValue(config, IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME));
 		mainText.setText(extractConfigValue(config, IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME));
+		
+		normalUseDefaults.setSelection(extractConfigBool(config, LaunchConstants.KEY_NORMAL_USE_DEFAULTS, true));
 		normalRun.setSelection(extractConfigBool(config, LaunchConstants.KEY_NORMAL_RUN_AFTER_UPLOAD, true));
 		normalVerbose.setSelection(extractConfigBool(config, LaunchConstants.KEY_NORMAL_LINK_VERBOSE, false));
 		normalConsole.setSelection(extractConfigBool(config, LaunchConstants.KEY_NORMAL_START_CONSOLE, false));
+		
+		debugUseDefaults.setSelection(extractConfigBool(config, LaunchConstants.KEY_DEBUG_USE_DEFAULTS, true));
 		debugRun.setSelection(extractConfigBool(config, LaunchConstants.KEY_DEBUG_RUN_AFTER_UPLOAD, true));
 		debugVerbose.setSelection(extractConfigBool(config, LaunchConstants.KEY_DEBUG_LINK_VERBOSE, false));
 		debugConsole.setSelection(extractConfigBool(config, LaunchConstants.KEY_DEBUG_START_CONSOLE, false));
@@ -477,6 +498,8 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 				PreferenceConstants.VAL_DEBUG_TYPE_NORMAL));
 		debugMonitorRemote.setSelection(extractConfigRadio(config, LaunchConstants.KEY_DEBUG_MONITOR_TYPE,
 				PreferenceConstants.VAL_DEBUG_TYPE_REMOTE));
+		
+		updateEnabledDisabled();
 	}
 	
 	private boolean extractConfigRadio(ILaunchConfiguration config, String key, String val)

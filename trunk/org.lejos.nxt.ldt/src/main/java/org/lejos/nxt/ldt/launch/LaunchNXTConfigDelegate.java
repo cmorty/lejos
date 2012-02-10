@@ -14,8 +14,10 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
+import org.lejos.nxt.ldt.LeJOSPlugin;
 import org.lejos.nxt.ldt.preferences.PreferenceConstants;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
+import org.lejos.nxt.ldt.util.PrefsResolver;
 import org.lejos.nxt.ldt.util.ToolStarter;
 
 public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDelegate {
@@ -23,24 +25,41 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 	
 	//TODO we should make sure, that uploads to the same NXT are executed sequentially, not in parallel
 	
-	public void launch(ILaunchConfiguration configuration, String mode,	ILaunch launch, IProgressMonitor monitor)
+	private boolean resolve(PrefsResolver p, ILaunchConfiguration config,
+			String mode, String suffix, boolean def) throws CoreException {
+		boolean useDef = config.getAttribute(LaunchConstants.PREFIX+mode
+				+LaunchConstants.SUFFIX_USE_DEFAULT, true);
+		if (useDef)
+			return p.getBoolean(mode+suffix, def);
+		else
+			return config.getAttribute(LaunchConstants.PREFIX+mode+suffix, def);
+	}
+
+	private String resolve(PrefsResolver p, ILaunchConfiguration config,
+			String mode, String suffix, String def) throws CoreException {
+		boolean useDef = config.getAttribute(LaunchConstants.PREFIX+mode
+				+LaunchConstants.SUFFIX_USE_DEFAULT, true);
+		if (useDef)
+			return p.getString(mode+suffix, def);
+		else
+			return config.getAttribute(LaunchConstants.PREFIX+mode+suffix, def);
+	}
+
+	public void launch(ILaunchConfiguration config, String mode,	ILaunch launch, IProgressMonitor monitor)
 		throws CoreException
 	{
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		
-		monitor.beginTask("Launching "+configuration.getName()+"...", 3); //$NON-NLS-1$
+		monitor.beginTask("Launching "+config.getName()+"...", 3); //$NON-NLS-1$
 		
-		boolean verbose = configuration.getAttribute(LaunchConstants.PREFIX
-				+ mode + LaunchConstants.SUFFIX_LINK_VERBOSE, false);
-		boolean run = configuration.getAttribute(LaunchConstants.PREFIX + mode
-				+ LaunchConstants.SUFFIX_RUN_AFTER_UPLOAD, true);
+		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
+		boolean verbose = resolve(p, config, mode, LaunchConstants.SUFFIX_LINK_VERBOSE, false);
+		boolean run = resolve(p, config, mode, LaunchConstants.SUFFIX_RUN_AFTER_UPLOAD, true);
 		boolean debugNormal = PreferenceConstants.VAL_DEBUG_TYPE_NORMAL
-				.equals(configuration.getAttribute(LaunchConstants.PREFIX
-						+ mode + LaunchConstants.SUFFIX_MONITOR_TYPE, ""));
+				.equals(resolve(p, config, mode, LaunchConstants.SUFFIX_MONITOR_TYPE, ""));
 		boolean debugRemote = PreferenceConstants.VAL_DEBUG_TYPE_REMOTE
-				.equals(configuration.getAttribute(LaunchConstants.PREFIX
-						+ mode + LaunchConstants.SUFFIX_MONITOR_TYPE, ""));
+				.equals(resolve(p, config, mode, LaunchConstants.SUFFIX_MONITOR_TYPE, ""));
 
 		if (monitor.isCanceled())
 			return;
@@ -49,10 +68,10 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 		{
 			monitor.subTask("Verifying lauch configuration ..."); 
 			
-			String mainTypeName = this.verifyMainTypeName(configuration);	
-			String[] bootpath = this.getBootpath(configuration);
-			String[] classpath = this.getClasspath(configuration);
-			IJavaProject project = this.verifyJavaProject(configuration);
+			String mainTypeName = this.verifyMainTypeName(config);	
+			String[] bootpath = this.getBootpath(config);
+			String[] classpath = this.getClasspath(config);
+			IJavaProject project = this.verifyJavaProject(config);
 			
 			//TODO for some reason, the debug view fills with launch entries
 			
