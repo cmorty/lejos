@@ -7,7 +7,7 @@
 
 extern void init_exceptions();
 extern int throw_new_exception (int class);
-extern int throw_exception (Throwable *exception);
+extern int throw_exception (Throwable *exception, boolean allowDebug);
 
 #endif
 

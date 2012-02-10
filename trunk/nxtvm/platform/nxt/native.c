@@ -34,6 +34,7 @@
 #include "systick.h"
 #include "main.h"
 #include "nxt_lcd.h"
+#include "breakpoints.h"
 #include <string.h>
 
 
@@ -119,12 +120,6 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case isInterrupted_4_5Z:
     push_word(((Thread *) word2ptr(p0))->interruptState
 	      != INTERRUPT_CLEARED);
-    break;
-  case setDaemon_4Z_5V:
-    ((Thread *) word2ptr(p0))->daemon = (JBYTE) paramBase[1];
-    break;
-  case isDaemon_4_5Z:
-    push_word(((Thread *) word2ptr(p0))->daemon);
     break;
   case join_4_5V:
     join_thread((Thread *) word2ptr(p0), 0);
@@ -538,6 +533,50 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case changeEvent_4II_5I:
     push_word(change_event((NXTEvent *) ref2obj(p0), paramBase[1], paramBase[2]));
     break;
+  case isInitialized_4I_5Z:
+    push_word(is_initialized_idx(p0));
+    break;
+  case allocate_4II_5Ljava_3lang_3Object_2:
+    {
+      Object *allocated;
+      if(paramBase[1]>0){
+        allocated=new_single_array(p0,paramBase[1]);
+      }else{
+        allocated=new_object_for_class(p0);
+      }
+      if(allocated == NULL) return EXEC_RETRY;
+      push_word(obj2ref(allocated));
+    }
+    break;
+  case memPut_4IIII_5V:
+    store_word_ns((byte *)(memory_base[p0] + paramBase[1]), paramBase[2],paramBase[3]);
+    break;
+  case notifyEvent_4ILjava_3lang_3Thread_2_5Z:
+  	push_word(debug_event(paramBase[1], NULL, (Thread*) ref2obj(paramBase[2]), 0, 0, 0, 0));
+  	break;
+  case setThreadRequest_4Ljava_3lang_3Thread_2Llejos_3nxt_3debug_3SteppingRequest_2_5V:
+  	{
+  		Thread *th = (Thread*) ref2obj(p0);
+  		th->debugData = (REFERENCE) paramBase[1];
+  		// currently we only get stepping requests
+  		if(paramBase[1])
+  			th->flags |= THREAD_STEPPING;
+  		else
+  			th->flags &= ~THREAD_STEPPING;
+  	}
+  	break;
+  case isStepping_4Ljava_3lang_3Thread_2_5Z:
+    {
+    	Thread *th = (Thread*) ref2obj(p0);
+    	push_word(is_stepping(th));
+    }
+    break;
+  case setBreakpointList_4_1Llejos_3nxt_3debug_3Breakpoint_2I_5V:
+  	breakpoint_set_list((Breakpoint**) array_start(p0), paramBase[1]);
+  	break;
+  case enableBreakpoint_4Llejos_3nxt_3debug_3Breakpoint_2Z_5V:
+  	breakpoint_enable((Breakpoint*) word2ptr(p0), (boolean) paramBase[1]);
+  	break;
   case firmwareExceptionHandler_4Ljava_3lang_3Throwable_2II_5V:
     firmware_exception_handler((Throwable *)p0, paramBase[1], paramBase[2]);
     break;
@@ -545,6 +584,13 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     currentThread->state = DEAD;
     schedule_request(REQUEST_SWITCH_THREAD);
     break;
+  case updateThreadFlags_4Ljava_3lang_3Thread_2II_5I:
+    ((Thread *)p0)->flags |= paramBase[1];
+    ((Thread *)p0)->flags &= ~paramBase[2];
+printf("m %x %d\n", p0, ((Thread *)p0)->flags);
+    push_word(((Thread *)p0)->flags);
+    break;
+    
   default:
     return throw_new_exception(JAVA_LANG_NOSUCHMETHODERROR);
   }

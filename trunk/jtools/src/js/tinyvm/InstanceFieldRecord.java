@@ -39,7 +39,7 @@ public class InstanceFieldRecord implements WritableData
       }
    }
 
-   public int getFieldSize () throws TinyVMException
+   public int getFieldSize () 
    {
       return iType.size();
    }

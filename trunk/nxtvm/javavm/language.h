@@ -249,6 +249,8 @@ extern void dispatch_java(byte classIndex, byte sig, byte *retAddr, byte *btAddr
 #define __get_entry_classes_base()  (get_binary_base() + get_master_record()->entryClassesOffset)
 #define get_entry_classes_base()    (entryClassesBase)
 #define get_entry_class(N_)         (*(get_entry_classes_base() + (N_)))
+#define get_method_no(MREC_)        ((MREC_) - get_method_table(get_class_record(0)))
+#define get_offset(MREC_, PC_)      ((PC_) - get_code_ptr(MREC_))
 
 static inline void initialize_binary()
 {

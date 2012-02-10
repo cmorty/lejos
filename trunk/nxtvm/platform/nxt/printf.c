@@ -32,7 +32,7 @@
 #if REMOTE_CONSOLE
 #include <stdarg.h>
 #include "udp.h"
-//#define LCD
+#define LCD
 #ifdef LCD
 #include "display.h"
 #include "systick.h"
@@ -62,7 +62,7 @@ void flush()
     display_goto_xy( 0, line);
     display_string("                ");
     display_update();
-    //systick_wait_ms(1000);
+    //systick_wait_ms(10000);
 #else
     buf[0] = len;
     udp_rconsole(buf, len + 1);

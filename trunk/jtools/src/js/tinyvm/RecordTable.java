@@ -10,7 +10,7 @@ import js.tinyvm.io.IOUtilities;
 /**
  * Record table.
  */
-public class RecordTable<T extends WritableData> extends WritableDataWithOffset
+public class RecordTable<T extends WritableData> extends WritableDataWithOffset implements Iterable<T>
 {
    /**
     * Descriptive name of this record table.

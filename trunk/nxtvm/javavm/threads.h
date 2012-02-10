@@ -11,13 +11,20 @@
 #define NEW              0 // Just been created
 #define DEAD             1 // run() has exited
 #define STARTED          2 // start() has been called but we haven't run yet
-#define RUNNING          3 // We're running!
-#define MON_WAITING      4 // Trying to enter a synchronized block
-#define CONDVAR_WAITING  5 // Someone called wait() on us in a synchronized block.
-#define SLEEPING         6 // ZZZZZzzzzzzzz
-#define JOIN             7 // Waiting for another thread to exit
-#define SYSTEM_WAITING   8 // Waiting on a system var
+#define MON_WAITING      3 // Trying to enter a synchronized block
+#define CONDVAR_WAITING  4 // Someone called wait() on us in a synchronized block.
+#define SLEEPING         5 // ZZZZZzzzzzzzz
+#define JOIN             6 // Waiting for another thread to exit
+#define SYSTEM_WAITING   7 // Waiting on a system var
+#define RUNNING          8 // We're running!
+#define BREAKPOINT       9 // Executing a breakpoint
+#define EXCEPTIONBP      10// Executing an exception breakpoint
 #define SUSPENDED        0x80 // Or with the above to suspend
+
+// Thread flag values
+#define THREAD_DAEMON    1
+#define THREAD_SYSTEM    2
+#define THREAD_STEPPING  4
 
 #define INTERRUPT_CLEARED    0
 #define INTERRUPT_REQUESTED  1
@@ -31,11 +38,8 @@
 #define SF_SIZE (sizeof(StackFrame))
 
 extern Thread *currentThread;
-extern byte gThreadCounter;
 extern REFERENCE threads;
 extern Thread **threadQ;
-extern byte gProgramNumber;
-extern boolean gRequestSuicide;
 
 /**
  * A stack frame record
@@ -67,6 +71,7 @@ extern int monitor_notify(Object *obj, const boolean all);
 extern void monitor_notify_unchecked(Object *obj, const boolean all);
 extern void suspend_thread(Thread *thread);
 extern void resume_thread(Thread *thread);
+extern void set_thread_debug_state(Thread *thread, int debugState, Object *data);
 
 #define stackframe_array_ptr()   (word2ptr(currentThread->stackFrameArray))
 #define stack_array_ptr()        (word2ptr(currentThread->stackArray))
@@ -76,6 +81,9 @@ extern void resume_thread(Thread *thread);
 #define stack_array()            ((STACKWORD *) (array_start(stack_array_ptr())))
 #define is_reference_array()     ((JBYTE *) (array_start(is_reference_array_ptr()))
 #define get_sync(obj) (get_class_index((Object *)(obj)) == JAVA_LANG_CLASS ? staticSyncBase + ((ClassRecord *)(obj) - get_class_base()) : &(((Object *)(obj))->sync))
+#define is_daemon(T)             ((T)->flags & THREAD_DAEMON)
+#define is_system(T)             ((T)->flags & THREAD_SYSTEM)
+#define is_stepping(T)        	 ((T)->flags & THREAD_STEPPING)
 
 /**
  * Sets thread state to SLEEPING.

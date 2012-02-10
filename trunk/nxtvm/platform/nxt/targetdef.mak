@@ -47,7 +47,8 @@ C_VM_OBJECTS := \
 	$(VM_PREFIX)memory.o \
 	$(VM_PREFIX)language.o \
 	$(VM_PREFIX)poll.o \
-	$(VM_PREFIX)debug.o
+	$(VM_PREFIX)debug.o \
+	$(VM_PREFIX)breakpoints.o
 
 C_OBJECTS := \
 	$(C_PLATFORM_OBJECTS) \

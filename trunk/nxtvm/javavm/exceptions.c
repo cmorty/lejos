@@ -44,10 +44,10 @@ int throw_new_exception(int class)
   {
     // We are all of memory, clean things up and abort.
     wait_garbage_collect();
-    return throw_exception(outOfMemoryError);
+    return throw_exception(outOfMemoryError, true);
   }
   exception->stackTrace = obj2ref(stackTrace);
-  return throw_exception(exception);
+  return throw_exception(exception, true);
 }
 
     
@@ -55,122 +55,90 @@ int throw_new_exception(int class)
 /**
  * Create an exception.
  * Find the handler for this exception if one exists and set things up to
- * handle it. If no handler exists, call the debug interface and if that does
- * not deal with the exception call the default exception handler.
+ * handle it. If no handler exists, call the default exception handler.
+ * Allow the debug system to intercept the exception handling process
+ * and restart it.
  * @return the exection action state.
  */
-int throw_exception (Throwable *exception)
+int throw_exception (Throwable *exception, boolean allowDebug)
 {
   int exceptionFrame = currentThread->stackFrameIndex;
-  TWOBYTES tempCurrentOffset;
-  MethodRecord *tempMethodRecord = null;
-  StackFrame *tempStackFrame;
+  int frameCnt = 0;
+  MethodRecord *exceptionMethod;
+  MethodRecord *curMethodRecord;
+  StackFrame *curStackFrame;
   ExceptionRecord *exceptionRecord;
-  byte numExceptionHandlers;
-  MethodRecord *excepMethodRec = null;
-  byte *exceptionPc;
+  int exceptionMethodNo;
+  int exceptionOffset;
+  int catchMethodNo;
+  int catchOffset;
   
-  #ifdef VERIFY
-  assert (exception != null, EXCEPTIONS0);
-  #endif // VERIFY
-#if DEBUG_EXCEPTIONS
-  printf("Throw exception\n");
-#endif
-  if (currentThread == null)
-  {
-    // No threads have started probably
-    return EXEC_CONTINUE;
-  }
-  else if (exception->_super.flags.class == JAVA_LANG_INTERRUPTEDEXCEPTION)
-  {
+  if (exception->_super.flags.class == JAVA_LANG_INTERRUPTEDEXCEPTION)
     // Throwing an interrupted exception clears the flag
     currentThread->interruptState = INTERRUPT_CLEARED;
-  }
-  #ifdef VERIFY
-  assert (currentThread->state > DEAD, EXCEPTIONS1);
-  #endif // VERIFY
   // abort the current instruction so things are in a consistant state
   curPc = getPc();
   // record current state
-  exceptionPc = curPc;
-  tempStackFrame = current_stackframe();
-  update_stack_frame(tempStackFrame);
-  excepMethodRec = tempStackFrame->methodRecord;;
-
-  #if 0
-  trace (-1, get_class_index(exception), 3);
-  #endif
-
- LABEL_PROPAGATE:
-  tempMethodRecord = tempStackFrame->methodRecord;
-
-  exceptionRecord = (ExceptionRecord *) (get_binary_base() + tempMethodRecord->exceptionTable);
-  tempCurrentOffset = ptr2word(curPc) - ptr2word(get_binary_base() + tempMethodRecord->codeOffset);
-
-  numExceptionHandlers = tempMethodRecord->numExceptionHandlers;
-#if DEBUG_EXCEPTIONS
-  printf("Num exception handlers=%d\n",numExceptionHandlers);
-#endif
-  while (numExceptionHandlers--)
-  {
-    if (exceptionRecord->start <= tempCurrentOffset 
-        && tempCurrentOffset <= exceptionRecord->end)
+  curStackFrame = current_stackframe();
+  update_stack_frame(curStackFrame);
+  exceptionMethod = curStackFrame->methodRecord;
+  // Serach the stack looking for an exception handler
+  do {
+    int handlerCnt;
+    int pc;
+    curMethodRecord = curStackFrame->methodRecord;
+    exceptionRecord = (ExceptionRecord *) (get_binary_base() + curMethodRecord->exceptionTable);
+    handlerCnt = curMethodRecord->numExceptionHandlers;
+    // get pc offset, adjust all but top frame for return address rather then call
+    pc = get_offset(curMethodRecord, curStackFrame->pc) - (frameCnt == 0 ? 0 : 2);
+    while (handlerCnt-- > 0)
     {
-      // Check if exception class applies
-      if (instance_of ((Object *)exception, exceptionRecord->classIndex))
+      if (exceptionRecord->start <= pc 
+          && pc <= exceptionRecord->end)
       {
-        // Clear operand stack
-        curStackTop = init_sp (tempStackFrame, tempMethodRecord);
-        // Push the exception object
-        push_ref_cur (ptr2word (exception));
-        // Jump to handler:
-        curPc = get_binary_base() + tempMethodRecord->codeOffset + 
-                 exceptionRecord->handler;
-#if DEBUG_EXCEPTIONS
-  printf("Found exception handler\n");
-#endif
-        return EXEC_EXCEPTION;
+        // Check if exception class applies
+        if (instance_of ((Object *)exception, exceptionRecord->classIndex))
+          goto HANDLER_FOUND;
       }
+      exceptionRecord++;
     }
-    exceptionRecord++;
-  }
-  // No good handlers in current stack frame - go up.
-  do_return (0);
-  // Note: return takes care of synchronized methods.
-  if (currentThread->stackFrameIndex == 0)
+    curStackFrame--;
+    exceptionRecord = null;
+  } while(++frameCnt < exceptionFrame);
+HANDLER_FOUND:
+  exceptionMethodNo = get_method_no(exceptionMethod);
+  exceptionOffset = get_offset(exceptionMethod, curPc);
+  if (exceptionRecord)
   {
-#if DEBUG_EXCEPTIONS
-  printf("Thread is dead\n");
-#endif
-    if (exception->_super.flags.class != JAVA_LANG_THREADDEATH)
-    {
-#if DEBUG_EXCEPTIONS
-  printf("Handle uncaught exception\n");
-#endif
-      int methodNo = excepMethodRec - get_method_table(get_class_record(0));
-      // Restore the stack and pc of the exception thread. This prevents
-      // corruption of lower frames if we save the current state. The
-      // thread is now dead so this should be safe. This also allows any debug
-      // code to access the intact stack frames.
-      curPc = exceptionPc;
-      currentThread->stackFrameIndex = exceptionFrame;
-      tempCurrentOffset = ptr2word(exceptionPc) - ptr2word(get_binary_base() + excepMethodRec->codeOffset);
-      if (!debug_uncaught_exception (exception, currentThread,
-  			         methodNo,
-			         tempCurrentOffset))
-      {
-        call_exception_handler(exception, methodNo, tempCurrentOffset);
-      }
-    }
-    return EXEC_CONTINUE;
+    catchMethodNo = get_method_no(curMethodRecord);
+    catchOffset = exceptionRecord->handler;
   }
-  // After the return the address will point to the next, instruction, we need
-  // to back it off to point to the actual caller...Note that this does not 
-  // need to point at the start of the instruction since the only use made of
-  // PC here is to locate the exception handler, so we can get away with it
-  // pointing into the middle...
-  curPc--;
-  tempStackFrame = current_stackframe();
-  goto LABEL_PROPAGATE; 
+  else
+    catchMethodNo = catchOffset = -1;
+  // do we have a debugger that wants to handle this?
+  if (allowDebug && debug_exception (exception, currentThread,
+  			         exceptionMethodNo, exceptionOffset,
+			         catchMethodNo, catchOffset))
+  {
+    set_thread_debug_state(currentThread, EXCEPTIONBP, (Object *)exception);
+    return EXEC_EXCEPTION;
+  }
+  // prepare to actually throw the exception by unwinding the stack
+  while(frameCnt-- > 0)
+    do_return(0);
+  set_thread_debug_state(currentThread, RUNNING, null);
+  // was the exception caught?
+  if (exceptionRecord)
+  {
+    // Clear operand stack
+    curStackTop = init_sp (curStackFrame, curMethodRecord);
+    // Push the exception object
+    push_ref_cur (ptr2word (exception));
+    // Jump to handler:
+    curPc = get_code_ptr(curMethodRecord) + catchOffset;
+  }
+  else
+    call_exception_handler(exception, exceptionMethodNo, exceptionOffset);
+  return EXEC_EXCEPTION;
 }
 

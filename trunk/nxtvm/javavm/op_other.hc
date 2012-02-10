@@ -7,7 +7,7 @@ OPCODE(OP_ATHROW)
   if (tempStackWord == JNULL)
     goto LABEL_THROW_NULLPTR_EXCEPTION;
   SAVE_REGS();
-  throw_exception((Throwable *)word2obj(tempStackWord));
+  throw_exception((Throwable *)word2obj(tempStackWord), true);
   LOAD_REGS();
   DISPATCH_CHECKED;
 
@@ -31,7 +31,17 @@ OPCODE(OP_MONITOREXIT)
   }
   DISPATCH_CHECKED;
 
-// Notes:
-// - Not supported: BREAKPOINT
+OPCODE(OP_BREAKPOINT)
+  tempInt = check_breakpoint(current_stackframe()->methodRecord, pc-1);
+  if (tempInt >= 0)
+  {
+    DISPATCH_OPCODE(tempInt);
+  }
+  else
+  {
+    pc--;
+  }
+  DISPATCH_CHECKED;
+
 
 /*end*/

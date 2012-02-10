@@ -6,7 +6,7 @@ package js.tinyvm;
  * @author andy
  */
 public enum DebugOptions {
-    DebugMonitor(0x1), RemoteDebug(0x2);
+    LocalDebug(0x1), RConsoleDebug(0x2), RemoteDebug(0x4);
     private int value;
 
     DebugOptions(int value)

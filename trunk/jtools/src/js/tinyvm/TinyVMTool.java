@@ -84,6 +84,8 @@ public class TinyVMTool extends AbstractTool
          System.arraycopy(entryClassNames, 0, newNames, 1, names);
          entryClassNames = newNames;
          if ((debug & DebugOptions.RemoteDebug.getValue()) != 0)
+            entryClassNames[0] = "lejos.nxt.debug.JDWPDebugServer";
+         else if ((debug & DebugOptions.RConsoleDebug.getValue()) != 0)
             entryClassNames[0] = "lejos.nxt.comm.RConsole$Monitor";
          else
             entryClassNames[0] = "lejos.nxt.debug.DebugMonitor";

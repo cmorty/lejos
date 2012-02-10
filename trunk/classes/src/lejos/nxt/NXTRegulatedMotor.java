@@ -65,6 +65,8 @@ public class NXTRegulatedMotor implements RegulatedMotor
         // Start the single controller thread
         cont.setPriority(Thread.MAX_PRIORITY);
         cont.setDaemon(true);
+        // Mark it as system thread, so it won't happen to get suspended during debugging.
+        VM.updateThreadFlags(cont, VM.VM_THREAD_SYSTEM, 0);
         cont.start();
         // Add shutdown handler to stop the motors
         Runtime.getRuntime().addShutdownHook(new Thread() {
