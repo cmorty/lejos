@@ -482,8 +482,8 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 	public void initializeFrom(ILaunchConfiguration config)
 	{
 		super.initializeFrom(config);
-		projectText.setText(extractConfigValue(config, IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME));
-		mainText.setText(extractConfigValue(config, IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME));
+		projectText.setText(extractConfigValue(config, IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""));
+		mainText.setText(extractConfigValue(config, IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, ""));
 		
 		normalUseDefaults.setSelection(extractConfigBool(config, LaunchConstants.KEY_NORMAL_USE_DEFAULTS, true));
 		normalRun.setSelection(extractConfigBool(config, LaunchConstants.KEY_NORMAL_RUN_AFTER_UPLOAD, true));
@@ -494,17 +494,13 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		debugRun.setSelection(extractConfigBool(config, LaunchConstants.KEY_DEBUG_RUN_AFTER_UPLOAD, true));
 		debugVerbose.setSelection(extractConfigBool(config, LaunchConstants.KEY_DEBUG_LINK_VERBOSE, false));
 		debugConsole.setSelection(extractConfigBool(config, LaunchConstants.KEY_DEBUG_START_CONSOLE, false));
-		debugMonitorNormal.setSelection(extractConfigRadio(config, LaunchConstants.KEY_DEBUG_MONITOR_TYPE,
-				PreferenceConstants.VAL_DEBUG_TYPE_NORMAL));
-		debugMonitorRemote.setSelection(extractConfigRadio(config, LaunchConstants.KEY_DEBUG_MONITOR_TYPE,
-				PreferenceConstants.VAL_DEBUG_TYPE_REMOTE));
+		String monType = extractConfigValue(config, LaunchConstants.KEY_DEBUG_MONITOR_TYPE, 
+				PreferenceConstants.VAL_DEBUG_TYPE_NORMAL);
+		System.out.println("monType:"+monType);
+		debugMonitorNormal.setSelection(PreferenceConstants.VAL_DEBUG_TYPE_NORMAL.equals(monType));
+		debugMonitorRemote.setSelection(PreferenceConstants.VAL_DEBUG_TYPE_REMOTE.equals(monType));
 		
 		updateEnabledDisabled();
-	}
-	
-	private boolean extractConfigRadio(ILaunchConfiguration config, String key, String val)
-	{
-		return val.equals(extractConfigValue(config, key));
 	}
 	
 	private boolean extractConfigBool(ILaunchConfiguration config, String key, boolean def)
@@ -522,17 +518,17 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		return r;
 	}
 
-	private String extractConfigValue(ILaunchConfiguration config, String key)
+	private String extractConfigValue(ILaunchConfiguration config, String key, String def)
 	{
 		String r;
 		try
 		{
-			r = config.getAttribute(key, "");
+			r = config.getAttribute(key, def);
 		}
 		catch (CoreException ce)
 		{
 			setErrorMessage(ce.getMessage());
-			r = "";
+			r = def;
 		}
 		return r;
 	}
