@@ -236,7 +236,7 @@ public class PrimitiveClassRecord extends ClassRecord
     * @throws TinyVMException
     */
     @Override
-   public int getAllocationSize () throws TinyVMException
+   public int getAllocationSize () 
    {
       if (this.isArray())
       {

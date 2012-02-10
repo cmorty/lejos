@@ -42,8 +42,10 @@ extern void engine();
 typedef const unsigned short DISPATCH_LABEL;
 extern DISPATCH_LABEL * volatile dispatchTable;
 extern DISPATCH_LABEL *checkEvent;
+#define FORCE_STEP_CHECK() (dispatchTable = checkEvent)
 #define FORCE_EVENT_CHECK() (gMakeRequest = true, dispatchTable = checkEvent)
 #else
+#define FORCE_STEP_CHECK()
 #define FORCE_EVENT_CHECK() (gMakeRequest = true)
 #endif
 

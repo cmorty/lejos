@@ -243,7 +243,7 @@ public class ClassRecord implements WritableData
     * @return Number of bytes required for object allocation.
     * @throws TinyVMException
     */
-   public int getAllocationSize () throws TinyVMException
+   public int getAllocationSize () 
    {
       return (getClassSize() + 4);
    }
@@ -252,7 +252,7 @@ public class ClassRecord implements WritableData
     * @return Number of bytes occupied by instance fields.
     * @throws TinyVMException
     */
-   public int getClassSize () throws TinyVMException
+   public int getClassSize ()
    {
       if (iClassSize != -1)
          return iClassSize;
@@ -265,7 +265,7 @@ public class ClassRecord implements WritableData
     *         This is the exact size required for memory allocation.
     * @throws TinyVMException
     */
-   public int computeClassSize () throws TinyVMException
+   public int computeClassSize ()
    {
       int pSize = hasParent()? getParent().getClassSize() : 0;
       for (Iterator<InstanceFieldRecord> iter = iInstanceFields.iterator(); iter.hasNext();)
@@ -540,7 +540,7 @@ public class ClassRecord implements WritableData
       return iMethodTable.indexOf(aRecord);
    }
 
-   int getApparentInstanceFieldOffset (String aName) throws TinyVMException
+   int getApparentInstanceFieldOffset (String aName)
    {
       /* Locate the record for the field called aName starting at the current
        * class and if needed searching parent fields. When found return the
@@ -559,7 +559,7 @@ public class ClassRecord implements WritableData
       return -1;
    }
 
-   public int getInstanceFieldOffset (String aName) throws TinyVMException
+   public int getInstanceFieldOffset (String aName) 
    {
       int offset = getApparentInstanceFieldOffset(aName);
       if (offset < 0)
@@ -576,7 +576,7 @@ public class ClassRecord implements WritableData
    public int getStaticFieldOffset (String aName) throws TinyVMException
    {
       StaticValue pValue = iStaticValues.get(aName);
-      if (pValue == null)
+      if (pValue == null||!iStaticFields.get(aName).isUsed)
          return -1;
       return pValue.getOffset() - iBinary.iStaticState.getOffset();
    }

@@ -82,13 +82,14 @@ typedef struct S_Thread
   JINT sleepUntil;           // Time to wake up / also used as code buffer
   REFERENCE stackFrameArray; // Array of stack frames
   REFERENCE stackArray;      // The stack itself
+  REFERENCE debugData;       // stores the stepping request
   byte stackFrameIndex;      // Index of the current stack frame.
   byte monitorCount;         // Saved monitor depth for context switches
   byte threadId;             // Unique thread ID
-  byte state;                // RUNNING, DEAD, etc.
+  JBYTE state;                // RUNNING, DEAD, etc.
   byte priority;             // The priority
   byte interruptState;       // INTERRUPT_CLEARED, INTERRUPT_REQUESTED, ...
-  byte daemon;               // true == daemon thread
+  byte flags;                // Thread details, system, daemon etc.
 } Thread;
 
 /**

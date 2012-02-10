@@ -13,6 +13,7 @@
 #include "memory.h"
 #include "exceptions.h"
 #include "stack.h"
+#include "debug.h"
 #include <string.h>
 #define NO_OWNER 0x00
 #define MAX_ID 0xff
@@ -200,6 +201,8 @@ int init_thread (Thread *thread)
     
   enqueue_thread(thread);
 
+  debug_thread_start(thread);
+
   return EXEC_CONTINUE;
 }
 
@@ -247,6 +250,7 @@ boolean switch_thread(FOURBYTES now)
     
       // Remove thread from queue.
       dequeue_thread(currentThread);
+      debug_thread_stop(currentThread);
     }
     else { // Save context information
       stackFrame = current_stackframe();
@@ -280,7 +284,7 @@ boolean switch_thread(FOURBYTES now)
       	(int)candidate->state,
       	(int)candidate->priority,
       	(int)candidate->interruptState,
-      	(int)candidate->daemon
+      	(int)candidate->flags
              );
       #endif
       
@@ -349,7 +353,7 @@ find_next:
                         pOwner = word2ptr(pOwner->nextThread);
                         if (pOwner->threadId == threadId)
                         {
-            		      if (pOwner->state == RUNNING)
+            		      if (pOwner->state >= RUNNING)
             		      {
             			    currentThread = pOwner;
             			    goto done_pi;
@@ -427,7 +431,9 @@ done_pi:
           break;
         case SYSTEM_WAITING:
           // Just keep on waiting
+        case EXCEPTIONBP:
         case RUNNING:
+        case BREAKPOINT:
           // Its running already
         case DEAD:
           // Dead threads should be handled earlier
@@ -438,14 +444,14 @@ done_pi:
 
       // Do we now have a thread we want to run?
       // Note we may later decide not to if all non-daemon threads have died        
-      if (currentThread == null && candidate->state == RUNNING)
+      if (currentThread == null && candidate->state >= RUNNING)
       {
         currentThread = candidate;
         // Move thread to end of queue
         *pThreadQ = candidate;
       }
       
-      if (!candidate->daemon)
+      if (!(candidate->flags & THREAD_DAEMON))
       {
       	// May or may not be running but it could do at some point
 #if DEBUG_THREADS
@@ -492,6 +498,8 @@ printf ("currentThread=%d, ndr=%d\n", (int) currentThread, (int)nonDaemonRunnabl
     printf ("done updating registers\n");
     #endif
   
+    if (currentThread->state == EXCEPTIONBP)
+      throw_exception((Throwable *)ref2obj(currentThread->waitingOn), false);
     if (currentThread->interruptState == INTERRUPT_GRANTED)
       throw_new_exception(JAVA_LANG_INTERRUPTEDEXCEPTION);
   }
@@ -824,7 +832,7 @@ void set_thread_priority(Thread *thread, const FOURBYTES priority)
 
 /**
  * Suspend the specified thread. If thread is null suspend all threads
- * except currentThread.
+ * except currentThread, and system threads.
  */
 void suspend_thread(Thread *thread)
 {
@@ -844,13 +852,20 @@ void suspend_thread(Thread *thread)
       do {
         // Remember threadQ[i] is the last thread on the queue
         pThread = word2ptr(pThread->nextThread);
-        if (pThread != currentThread) pThread->state |= SUSPENDED;
+        if (pThread != currentThread && !is_system(pThread))
+{
+printf("st %x\n", pThread);
+          pThread->state |= SUSPENDED;
+}
       } while (pThread != threadQ[i]);
     }
   }
   schedule_request( REQUEST_SWITCH_THREAD);
 }
 
+/**
+ * Resumr the specified thread. The thread is null resume all threads.
+ */
 void resume_thread(Thread *thread)
 {
   int i;
@@ -873,4 +888,10 @@ void resume_thread(Thread *thread)
       pThread->state &= ~SUSPENDED;
     } while (pThread != threadQ[i]);
   }
+}
+
+void set_thread_debug_state(Thread *thread, int debugState, Object *data)
+{
+  thread->state = (debugState & ~SUSPENDED) | (thread->state & SUSPENDED);
+  thread->waitingOn = obj2ref(data);
 }

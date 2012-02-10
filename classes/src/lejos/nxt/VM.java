@@ -200,7 +200,7 @@ public final class VM
         // to allow for the extra "this" value.
         private static final int CLONE_OFFSET = 8;
         private final int length;
-        final int address;
+        public final int address;
 
         public void update()
         {
@@ -225,6 +225,7 @@ public final class VM
      */
     public static class VMValue
     {
+    	public final int addr;
         public final int type;
         public final Object value;
 
@@ -240,6 +241,7 @@ public final class VM
         private VMValue(int typ, int addr)
         {
             type = typ;
+            this.addr=addr;
             switch(typ)
             {
                 case VM_OBJECT:
@@ -283,6 +285,7 @@ public final class VM
          */
         private VMValue(Object obj)
         {
+        	addr=0;
             type = VM_OBJECT;
             this.value = obj;
         }
@@ -317,7 +320,7 @@ public final class VM
          */
         public VMClasses getVMClasses()
         {
-            return new VMClasses(lastClass + 1);
+            return new VMClasses((lastClass&0xFF) + 1);
         }
 
         /**
@@ -589,6 +592,10 @@ public final class VM
         {
             return new VMMethod(baseAddr + item*((METHOD_LEN + METHOD_ALIGNMENT - 1) & ~(METHOD_ALIGNMENT - 1)));
         }
+
+		public int size() {
+			return cnt;
+		}
 
     }
 
@@ -996,7 +1003,7 @@ public final class VM
     }
 
     // Provide access to the internal Thread data.
-    private static final int THREAD_LEN = 31;
+    private static final int THREAD_LEN = 35;
     /**
      * Internal version of a thread structure
      */
@@ -1008,13 +1015,14 @@ public final class VM
         public int sleepUntil;
         public Object stackFrameArray;
         public Object stackArray;
+        public Object debugData;
         public byte stackFrameIndex;
         public byte monitorCount;
         public byte threadId;
         public byte state;
         public byte priority;
         public byte interrupted;
-        public byte daemon;
+        public byte flags;
         // The following is not part of the VM internal structure
         private final Thread thread;
 
@@ -1204,4 +1212,23 @@ public final class VM
      * @param pc PC at which the exception occurred
      */
     public static native void firmwareExceptionHandler(Throwable exception, int method, int pc);
+
+    /**
+     * Thread flag value for daemon threads
+     */
+    public static final int VM_THREAD_DAEMON = 1;
+    /**
+     * Thread flag value used to mark system threads
+     */
+    public static final int VM_THREAD_SYSTEM = 2;
+    
+    /**
+     * Native method to allow the modification of the flags associated with a thread.
+     * @param thread the thread to modify
+     * @param set the new flag values to set
+     * @param clear the flag values to clear
+     * @return the new flag value
+     */
+    public static native int updateThreadFlags(Thread thread, int set, int clear);
+    
 }

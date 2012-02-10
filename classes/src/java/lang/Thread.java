@@ -26,8 +26,7 @@ public class Thread implements Runnable
 
   // Note 2: The following fields are used by the VM.
   // Their sizes and location can only be changed
-  // if classes.h is changed accordingly. Needless
-  // to say, they are read-only.
+  // if classes.h is changed accordingly.
 
   private Thread _TVM_nextThread;
   private Object _TVM_waitingOn;
@@ -35,20 +34,21 @@ public class Thread implements Runnable
   private int _TVM_sleepUntil;
   private Object _TVM_stackFrameArray;
   private Object _TVM_stackArray;
+  private Object _TVM_debugData;
   private byte _TVM_stackFrameArraySize;
   private byte _TVM_monitorCount;
   private byte _TVM_threadId; 
   private byte _TVM_state; 
   private byte _TVM_priority; 
   private byte _TVM_interrupted; 
-  private byte _TVM_daemon; 
+  private byte _TVM_flags;
 
   // Extra instance state follows:
   
   private String name;
   private UncaughtExceptionHandler uncaughtExceptionHandler;
   private static UncaughtExceptionHandler defaultUncaughtExceptionHandler;
-
+  
   public static interface UncaughtExceptionHandler
   {
       void uncaughtException(Thread t, Throwable e);
@@ -56,7 +56,7 @@ public class Thread implements Runnable
   
   public final boolean isAlive()
   {
-    return _TVM_state > 1;
+    return (_TVM_state & 0x7f) > 1;
   }    
 
   private void init(String name, Runnable target)
@@ -166,11 +166,14 @@ public class Thread implements Runnable
   public final native boolean isInterrupted();
   
   /**
-   * Set the daemon flag. If a thread is a daemon thread its existence will
+   * Checks to see if the thread is daemon thread. If a thread is a daemon thread its existence will
    * not prevent a JVM from exiting.
    * @return true if this thread has the daemon flag set otherwise false
    */
-  public final native boolean isDaemon();
+  public final boolean isDaemon()
+  {
+      return (_TVM_flags & VM.VM_THREAD_DAEMON) != 0;
+  }
   
   /**
    * Sets the state of the threads daemon flag. If this flag is set then the
@@ -178,7 +181,14 @@ public class Thread implements Runnable
    * have exited. 
    * @param on the new state of the daemon flag
    */
-  public final native void setDaemon(boolean on);
+  public final void setDaemon(boolean on)
+  {
+      if (on)
+          _TVM_flags |= VM.VM_THREAD_DAEMON;
+      else
+          _TVM_flags &= ~VM.VM_THREAD_DAEMON;
+          
+  }
   
   /**
    * Waits for this thread to die.

@@ -2,6 +2,7 @@
 #include "poll.h"
 #include "threads.h"
 #include "platform_hooks.h"
+#include "debug.h"
 
 #include "display.h"
 #define MAX_EVENTS 16
@@ -115,6 +116,8 @@ void shutdown_program(boolean abort)
 {
   // Search for a thread waiting for a shutdown event.
   int i;
+  if (debug_program_exit())
+    return;
   for(i = 0; i < eventCnt; i++)
   {
     NXTEvent *event = events[i];

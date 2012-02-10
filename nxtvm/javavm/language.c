@@ -19,6 +19,7 @@
 #include "rconsole.h"
 #include "magic.h"
 #include "opcodes.h"
+#include "debug.h"
 
 #if 0
 #define get_stack_object(MREC_)  ((Object *) get_ref_at ((MREC_)->numParameters - 1))
@@ -437,6 +438,12 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   curStackTop = newStackTop;
   // and jump to the start of the new code
   curPc = get_code_ptr(methodRecord);
+
+  // check for STEP_INTO
+  if(is_stepping(currentThread)){
+  	check_stepping(methodRecord, curPc, STEP_MODE_INTO, methodRecord, curPc);
+  }
+
   return true;
 }
 
@@ -449,8 +456,12 @@ void do_return (int numWords)
 {
   StackFrame *stackFrame;
   STACKWORD *fromStackPtr;
+  byte* oldPc;
+  MethodRecord* oldMethod;
 
   stackFrame = current_stackframe();
+  oldPc = curPc;
+  oldMethod=stackFrame->methodRecord;
 
   #if DEBUG_BYTECODE
   printf ("\n------ return ----- %d ------------------\n\n",
@@ -494,6 +505,12 @@ void do_return (int numWords)
   {
     push_word_cur (*(++fromStackPtr));
   }  
+
+  if(is_stepping(currentThread)){
+  	// we have do make a difference here between the reference location (which is the location of the RETURN command)
+  	// and the new location which will be outside the returned method.
+  	check_stepping(oldMethod, oldPc, STEP_MODE_OUT, stackFrame->methodRecord, curPc);
+  }
 }
 
 /**
@@ -568,6 +585,7 @@ int execute_program(int prog)
   // Push the param (we save a word by setting the top param)
   set_top_ref_cur(JNULL);
   curPc = (byte *)callProgram[prog];
+  debug_program_start();
   return EXEC_RUN;
 }
 

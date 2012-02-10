@@ -17,6 +17,7 @@
 #include "poll.h"
 #include "rconsole.h"
 #include "debug.h"
+#include "breakpoints.h"
 #include <string.h>
 //#include <math.h>
 extern double __ieee754_fmod(double, double);
@@ -135,13 +136,13 @@ static STACKWORD *array_helper(unsigned int idx, Object *obj, int sz)
   if (obj == JNULL)
   {
     thrownException = JAVA_LANG_NULLPOINTEREXCEPTION;
-    return NULL;
+    return null;
   }
 
   if ( /*idx < 0 ||*/ idx >= get_array_length(obj))
   {
     thrownException = JAVA_LANG_ARRAYINDEXOUTOFBOUNDSEXCEPTION;
-    return NULL;
+    return null;
   }
   return (STACKWORD *) (array_start(obj) + idx*sz);
 }
@@ -204,12 +205,13 @@ static STACKWORD *array_helper(unsigned int idx, Object *obj, int sz)
 #define OPCODE(op) L_##op: 
 #define UNUSED_OPCODE(op) 
 #define MULTI_OPCODE(op)
-#define DISPATCH1 goto *(&&CHECK_EVENT + dispatchTable[*pc++])
-#define DISPATCH goto *(&&CHECK_EVENT + dispatch[*pc++])
+#define DISPATCH1 {  goto *(&&CHECK_EVENT + dispatchTable[*pc++]); }
+#define DISPATCH {  goto *(&&CHECK_EVENT + dispatch[*pc++]); }
+#define DISPATCH_OPCODE(op) goto *(&&CHECK_EVENT + dispatch[(byte) op])
 #define DISPATCH_CHECKED {instruction_hook(); DISPATCH1;}
-#define START_DISPATCH DISPATCH;
+#define START_DISPATCH goto *(&&CHECK_EVENT + dispatch[*pc++]);
 #define END_DISPATCH
-#define DISPATCH_EVENTS CHECK_EVENT: (pc--, dispatchTable = dispatch);
+#define DISPATCH_EVENTS CHECK_EVENT: pc--; dispatchTable = dispatch;
 #define INIT_DISPATCH (pc++, checkEvent = forceCheck, dispatchTable = dispatch);
 DISPATCH_LABEL * volatile dispatchTable;
 DISPATCH_LABEL *checkEvent;
@@ -220,10 +222,16 @@ DISPATCH_LABEL *checkEvent;
 #define MULTI_OPCODE(op) case op:
 #define DISPATCH_CHECKED goto CHECK_EVENT
 #define DISPATCH goto DISPATCH_NEXT
-#define START_DISPATCH DISPATCH_NEXT: switch(*pc++) {
+#define DISPATCH_OPCODE(op) { dispatch_opcode = (byte) op; goto DISPATCH_SPECIFIED; }
+#define START_DISPATCH \
+  DISPATCH_NEXT:\
+  old_pc=pc;\
+  dispatch_opcode = *pc++;	\
+  DISPATCH_SPECIFIED:		\
+  switch(dispatch_opcode) {
 #define END_DISPATCH }
 #define DISPATCH_EVENTS CHECK_EVENT: instruction_hook();
-#define INIT_DISPATCH
+#define INIT_DISPATCH byte dispatch_opcode;
 #endif
 
 void engine()
@@ -456,7 +464,7 @@ static DISPATCH_LABEL dispatch[] =
   &&L_OP_IFNONNULL - &&CHECK_EVENT,
   &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT, //OP_GOTO_W
   &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT, //OP_JSR_W
-  &&L_OP_XXXUNUSEDXXX - &&CHECK_EVENT, //OP_BREAKPOINT
+  &&L_OP_BREAKPOINT - &&CHECK_EVENT, //OP_BREAKPOINT
   &&L_OP_GETSTATIC_1 - &&CHECK_EVENT, // Note use of duplicate entries
   &&L_OP_GETSTATIC_1 - &&CHECK_EVENT, // see the comment above for details
   &&L_OP_GETSTATIC_1 - &&CHECK_EVENT,
@@ -552,8 +560,24 @@ static DISPATCH_LABEL forceCheck[] =
     LOAD_REGS2();
   }
 
+
+
   assert( gRequestCode == REQUEST_TICK, INTERPRETER2);
   assert( currentThread != null, INTERPRETER3);
+
+  if(is_stepping(currentThread)){
+  	// TODO: This won't be reached always as most instructions don't check for events if they can't trigger one.
+  	// On the other hand, patching this into the dispatch code would lead to massive code duplication with FAST_DISPATCH active.
+
+  	if(check_stepping(current_stackframe()->methodRecord, pc, STEP_MODE_EXEC, current_stackframe()->methodRecord, pc)){
+  		// This will at this point directly lead back up to the event checker.
+  		// The succeeding debugger should have scheduled a SWITCH_THREAD by now.
+  	 	DISPATCH_CHECKED;
+  	}else{
+  		// Just set gMakeRequest to true, so we will meet here again after the next instruction
+  		FORCE_STEP_CHECK();
+  	}
+  }
 
   //-----------------------------------------------
   // SWITCH BEGINS HERE
@@ -563,7 +587,7 @@ static DISPATCH_LABEL forceCheck[] =
   printf ("0x%X: \n", (int) pc);
   printf ("OPCODE (0x%X) %s\n", (int) *pc, OPCODE_NAME[*pc]);
   #endif
-
+    
   START_DISPATCH
 
     #include "op_skip.hc"
