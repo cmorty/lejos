@@ -42,6 +42,8 @@ C. Test the release Windows installer and other distribution on as many operatin
    that the instructions in README.hml and in the tutorial work for this release.
 D. Release the Windows installer and zip file versions, and the Linux/MAC OSX distribution using the sourceforge
    File Release System.
+D2. Open the file details of the Windows installer and the Linux/OSX tarball in the sourceforge file release system,
+    and make the files as the default download for Windows and Linux/OSX respectively. 
 E. Copy the classes api docs to htdocs/nxt/nxj/api on the sourceforge web site.
 F. Copy the pc api docs to htdocs/nxt/nxj/pc/api on the sourceforge web site.
 G. Copy the contents of the dist folder in the org.lejos.nxt.ldt.update-site project to htdocs/tools/eclipse/plugin/nxj.
