@@ -13,8 +13,6 @@ import lejos.nxt.VM.VMMethods;
 import lejos.nxt.VM.VMValue;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
-import lejos.nxt.comm.RConsole;
-import lejos.nxt.comm.USB;
 
 /**
  * 
@@ -81,14 +79,13 @@ public final class JDWPDebugServer extends Thread implements JDWPConstants {
 	 *            Offset (in bytes) of the location
 	 * @param typ
 	 *            The primitive data type to access
-	 * @return Memory location contents.
 	 */
 	private static native void memPut(int base, int offset, int typ, int data);
 
 	/**
 	 * Copy the specified number of bytes from memory into the given object.
 	 * 
-	 * @param value
+	 * @param obj
 	 *            Object to copy to
 	 * @param objoffset
 	 *            Offset (in bytes) within the object
@@ -105,7 +102,7 @@ public final class JDWPDebugServer extends Thread implements JDWPConstants {
 	/**
 	 * Return the address of the given objects first data field.
 	 * 
-	 * @param value
+	 * @param obj
 	 * @return the required address
 	 */
 	private native static int getDataAddress(Object obj);
@@ -113,7 +110,7 @@ public final class JDWPDebugServer extends Thread implements JDWPConstants {
 	/**
 	 * Return the address of the given object.
 	 * 
-	 * @param value
+	 * @param obj
 	 * @return the required address
 	 */
 	native static int getObjectAddress(Object obj);
