@@ -115,7 +115,7 @@ abstract public class NXTCommDevice
 		int len = name.length;
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < len && name[i] != 0; i++)
-			sb.append((char) name[i]);
+			sb.append((char)(name[i] & 0xFF));
 		return sb.toString();
 	}
 
