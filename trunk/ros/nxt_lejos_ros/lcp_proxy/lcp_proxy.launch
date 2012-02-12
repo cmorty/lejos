@@ -1,9 +1,11 @@
 <!--
-NXTLoader is a ROS package included in the stack nxt_lejos_ros which 
-allow ROS developers and LeJOS developers to manage your NXT brick
-from a ROS Environment.
+lcp_proxy is a ROS package included in the stack nxt_lejos_ros which 
+allow ROS developers and leJOS developers to manage your NXT brick
+from a ROS Environment, using the Lego Communications Protocol.
 -->
+
 <launch>
+<param name="robot_description" command="cat $(find lcp_proxy)/robot.urdf"/>
 	<node pkg="rosjava_bootstrap" 
 	type="run.py" 
 	args="lcp_proxy org.lejos.ros.nodes.LCPProxy" 
