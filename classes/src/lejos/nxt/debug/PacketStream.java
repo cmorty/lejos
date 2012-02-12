@@ -245,14 +245,14 @@ class PacketStream {
 	 */
 	int readInt() throws PacketStreamException {
 		checkCursor(4);
-		return (((int) (data[outCursor++] & 0xff) << 24) + ((int) (data[outCursor++] & 0xff) << 16) + ((int) (data[outCursor++] & 0xff) << 8) + ((int) (data[outCursor++] & 0xff)));
+		return (((data[outCursor++] & 0xff) << 24) + ((data[outCursor++] & 0xff) << 16) + ((data[outCursor++] & 0xff) << 8) + ((data[outCursor++] & 0xff)));
 	}
 
 	/**
 	 * Read long represented as eight bytes.
 	 */
 	long readLong() throws PacketStreamException {
-		return (((long) (readInt()) << 32) + (long) readInt());
+		return (((long)readInt() << 32) + readInt());
 	}
 
 	/**
