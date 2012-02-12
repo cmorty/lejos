@@ -1,39 +1,36 @@
 package org.lejos.ros.nxt.sensors;
 
 import lejos.nxt.SensorPort;
-
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
-import lejos.nxt.addon.AccelMindSensor;
 
-public class AccelerationSensor extends NXTDevice implements INXTDevice {
+public class LightSensor extends NXTDevice implements INXTDevice{
 	
 	//NXT data
 	private String port;
 	
-	//Accelerometer message data
+	//Range message data
 	private String frame_id;
 	private String stamp;
-
 	
-    final org.ros.message.nxt_msgs.Accelerometer message = new org.ros.message.nxt_msgs.Accelerometer(); 
-    Publisher<org.ros.message.nxt_msgs.Accelerometer> topic = null;
-    String messageType = "nxt_msgs/Accelerometer";
+    final org.ros.message.nxt_msgs.Color message = new org.ros.message.nxt_msgs.Color(); 
+    Publisher<org.ros.message.nxt_msgs.Color> topic = null;
+    String messageType = "nxt_msgs/Color";
 	
     //NXT Brick
-	private lejos.nxt.addon.AccelMindSensor accel;
+	private lejos.nxt.LightSensor light;
     
-	public AccelerationSensor(String port){
+	public LightSensor(String port){
 		if(port.equals("PORT_1")){
-			accel = new AccelMindSensor(SensorPort.S1);
+			light = new lejos.nxt.LightSensor(SensorPort.S1);
 		}else if(port.equals("PORT_2")){
-			accel = new AccelMindSensor(SensorPort.S2);
+			light = new lejos.nxt.LightSensor(SensorPort.S2);
 		}else if(port.equals("PORT_3")){
-			accel = new AccelMindSensor(SensorPort.S3);
+			light = new lejos.nxt.LightSensor(SensorPort.S3);
 		}else if(port.equals("PORT_4")){
-			accel = new AccelMindSensor(SensorPort.S4);
+			light = new lejos.nxt.LightSensor(SensorPort.S4);
 		}
 	}
 	
@@ -70,12 +67,10 @@ public class AccelerationSensor extends NXTDevice implements INXTDevice {
 	}
 
 	public void updateTopic(Node node, long seq) {
-		message.linear_acceleration.x = accel.getXAccel();
-		message.linear_acceleration.y = accel.getYAccel();
-		message.linear_acceleration.z = accel.getZAccel();
 		message.header.seq = seq;
 		message.header.stamp = node.getCurrentTime();
 		message.header.frame_id = "/robot";
+		message.intensity = light.getLightValue();
 		topic.publish(message);		
 	}
 }

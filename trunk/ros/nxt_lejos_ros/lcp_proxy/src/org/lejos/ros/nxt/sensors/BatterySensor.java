@@ -32,7 +32,7 @@ public class BatterySensor extends NXTDevice implements INXTDevice{
 		topic = node.newPublisher("" + super.getName(), messageType);
 	}
 	
-	public void updateTopic(){
+	public void updateTopic(Node node, long seq){
 		message.voltage = getVoltage();
 		topic.publish(message);
 	}

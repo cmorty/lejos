@@ -68,7 +68,10 @@ public class ColorSensor extends NXTDevice implements INXTDevice{
 		topic = node.newPublisher("" + super.getName(), messageType);
 	}
 
-	public void updateTopic() {
+	public void updateTopic(Node node, long seq) {
+		message.header.seq = seq;
+		message.header.stamp = node.getCurrentTime();
+		message.header.frame_id = "/robot";
 		Color c = color.getColor();
 		message.r = c.getRed();
 		message.g = c.getGreen();

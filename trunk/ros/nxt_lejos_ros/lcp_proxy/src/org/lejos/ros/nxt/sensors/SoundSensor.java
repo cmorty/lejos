@@ -16,9 +16,9 @@ public class SoundSensor extends NXTDevice implements INXTDevice {
 	private String stamp;
 	private int  volume;
 	
-    final org.ros.message.nxt_msgs.Contact message = new org.ros.message.nxt_msgs.Contact(); 
-    Publisher<org.ros.message.nxt_msgs.Contact> topic = null;
-    String messageType = "nxt_msgs/Contact";
+    final org.ros.message.nxt_lejos_ros_msgs.Decibels message = new org.ros.message.nxt_lejos_ros_msgs.Decibels(); 
+    Publisher<org.ros.message.nxt_lejos_ros_msgs.Decibels> topic = null;
+    String messageType = "nxt_lejos_ros_msgs/Decibels";
 	
     //NXT Brick
 	private lejos.nxt.SoundSensor sound;
@@ -71,8 +71,8 @@ public class SoundSensor extends NXTDevice implements INXTDevice {
 		topic = node.newPublisher("" + super.getName(), messageType);
 	}
 
-	public void updateTopic() {
-		volume = sound.readValue();
+	public void updateTopic(Node node, long seq) {
+		message.decibels = (short) sound.readValue();
 		topic.publish(message);		
 	}
 }
