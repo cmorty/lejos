@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import lejos.nxt.Sound;
+
 import org.lejos.ros.nxt.sensors.ColorSensor;
 
 import org.lejos.ros.nxt.sensors.GyroSensor;
@@ -546,9 +548,18 @@ public class LCPProxy implements NodeMain {
 	        		DifferentialNavigationSystem df = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) actuatorSystemsList.get(0);
     	    		df.updateTwist(message);	
     	    	}
-    	    });
-    		
+    	    });  		
     	}
+    	
+		//Subscription to play_tone_command
+        Subscriber<org.ros.message.nxt_lejos_ros_msgs.Tone> subscriberTone =
+	        node.newSubscriber("play_tone", "nxt_lejos_ros_msgs/Tone");
+        subscriberTone.addMessageListener(new MessageListener<org.ros.message.nxt_lejos_ros_msgs.Tone>() {
+	    	@Override
+	    	public void onNewMessage(org.ros.message.nxt_lejos_ros_msgs.Tone message) {   		
+	    		Sound.playTone(message.pitch, message.duration)	;
+	    	}
+	    });
 
 	}
 
