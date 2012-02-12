@@ -18,6 +18,8 @@ import org.lejos.ros.nxt.navigation.DifferentialNavigationSystem;
 import org.lejos.ros.nxt.sensors.AccelerationSensor;
 import org.lejos.ros.nxt.sensors.CompassSensor;
 import org.lejos.ros.nxt.sensors.GPS;
+import org.lejos.ros.nxt.sensors.LightSensor;
+import org.lejos.ros.nxt.sensors.SoundSensor;
 import org.lejos.ros.nxt.sensors.TouchSensor;
 import org.lejos.ros.nxt.sensors.UltrasonicSensor;
 
@@ -223,8 +225,7 @@ public class LCPProxy implements NodeMain {
 			
 			//Read a YAML File
 	        YamlReader reader = new YamlReader(new FileReader(path));
-	        Object object = reader.read();
-	        Map map = (Map)object;
+	        Map map = (Map)reader.read();
 	        //System.out.println(map.size());
 	        
 	        //Get component list for NXT Robot
@@ -317,7 +318,41 @@ public class LCPProxy implements NodeMain {
         			color.publishTopic(node);
         			sensorList.add(color);		        			
 	        	
-	        	} else if(type.equals("acceleration")) {
+	        	} else if(type.equals("light")) {
+	        		System.out.println("I found a light sensor description");
+	        		
+	        		name = map2.get("name").toString().trim();
+	        		port = map2.get("port").toString().trim();
+	        		desiredFrequency = Float.parseFloat(map2.get("desired_frequency").toString().trim());
+	        				        		
+	        		System.out.println(name);
+	        		System.out.println(port);
+	        		System.out.println(desiredFrequency);
+        			
+        			LightSensor light = new LightSensor(port);
+        			light.setName(name);
+        			light.setDesiredFrequency(desiredFrequency);
+        			light.publishTopic(node);
+        			sensorList.add(light);		        			
+	        	
+	        	} else if(type.equals("sound")) {
+	        		System.out.println("I found a sound sensor description");
+	        		
+	        		name = map2.get("name").toString().trim();
+	        		port = map2.get("port").toString().trim();
+	        		desiredFrequency = Float.parseFloat(map2.get("desired_frequency").toString().trim());
+	        				        		
+	        		System.out.println(name);
+	        		System.out.println(port);
+	        		System.out.println(desiredFrequency);
+        			
+        			SoundSensor sound = new SoundSensor(port);
+        			sound.setName(name);
+        			sound.setDesiredFrequency(desiredFrequency);
+        			sound.publishTopic(node);
+        			sensorList.add(sound);		        			
+	        	
+	        	}else if(type.equals("acceleration")) {
 	        		System.out.println("I found an acceleration  sensor description");
 	        		
 	        		name = map2.get("name").toString().trim();
@@ -532,7 +567,7 @@ public class LCPProxy implements NodeMain {
 				for (NXTDevice device : motorList) {
 		        	if (device instanceof org.lejos.ros.nxt.actuators.NXTServoMotor) {
 		        		NXTServoMotor motor = (org.lejos.ros.nxt.actuators.NXTServoMotor) device;
-		        		motor.updateTopic();
+		        		motor.updateTopic(node, seq);
 		        	}
 				}
 			}
@@ -541,35 +576,41 @@ public class LCPProxy implements NodeMain {
 	        for (NXTDevice device : sensorList) {
 	        	if (device instanceof org.lejos.ros.nxt.sensors.BatterySensor) {
 	        		BatterySensor battery = (org.lejos.ros.nxt.sensors.BatterySensor) device;
-	        		battery.updateTopic();      		
+	        		battery.updateTopic(node,seq);      		
 	        	} else if (device instanceof org.lejos.ros.nxt.sensors.UltrasonicSensor) {
 	        		UltrasonicSensor us = (org.lejos.ros.nxt.sensors.UltrasonicSensor) device;
-	        		us.updateTopic();
+	        		us.updateTopic(node,seq);
 	        	} else if (device instanceof org.lejos.ros.nxt.sensors.GPS) {
 	        		GPS gps = (org.lejos.ros.nxt.sensors.GPS) device;
-	        		gps.updateTopic();
+	        		gps.updateTopic(node,seq);
 	        	} else if (device instanceof org.lejos.ros.nxt.sensors.CompassSensor) {
 	        		CompassSensor compass = (org.lejos.ros.nxt.sensors.CompassSensor) device;
-	        		compass.updateTopic();
+	        		compass.updateTopic(node,seq);
 	        	} else if (device instanceof org.lejos.ros.nxt.sensors.TouchSensor) {
 	        		TouchSensor touch = (org.lejos.ros.nxt.sensors.TouchSensor) device;
-	        		touch.updateTopic();
+	        		touch.updateTopic(node,seq);
 	        	} else if (device instanceof org.lejos.ros.nxt.sensors.GyroSensor) {
 	        		GyroSensor gyro = (org.lejos.ros.nxt.sensors.GyroSensor) device;
-	        		gyro.updateTopic();
+	        		gyro.updateTopic(node,seq);
 	        	} else if (device instanceof org.lejos.ros.nxt.sensors.ColorSensor) {
 	        		ColorSensor color = (org.lejos.ros.nxt.sensors.ColorSensor) device;
-	        		color.updateTopic();
+	        		color.updateTopic(node,seq);
+	        	} else if (device instanceof org.lejos.ros.nxt.sensors.LightSensor) {
+	        		LightSensor light = (org.lejos.ros.nxt.sensors.LightSensor) device;
+	        		light.updateTopic(node,seq);
+	        	} else if (device instanceof org.lejos.ros.nxt.sensors.SoundSensor) {
+	        		SoundSensor sound = (org.lejos.ros.nxt.sensors.SoundSensor) device;
+	        		sound.updateTopic(node,seq);
 	        	} else if (device instanceof org.lejos.ros.nxt.sensors.AccelerationSensor) {
 	        		AccelerationSensor accel = (org.lejos.ros.nxt.sensors.AccelerationSensor) device;
-	        		accel.updateTopic();
+	        		accel.updateTopic(node,seq);
 	        	}
 	        }
 
 	        //Actuator Systems
 	        for (NXTDevice device : actuatorSystemsList) {
         		DifferentialNavigationSystem das = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) device;
-        		das.updateTopic();       	
+        		das.updateTopic(node,seq);       	
 	        }      
 			seq++;
 		}

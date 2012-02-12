@@ -5,5 +5,5 @@ import org.ros.node.Node;
 public interface INXTDevice {
 
 	public void publishTopic(Node node);
-	public void updateTopic();
+	public void updateTopic(Node node, long seq);
 }

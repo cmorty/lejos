@@ -15,7 +15,7 @@ public class NXTServoMotor extends NXTDevice implements INXTDevice{
 	//ROS topic
     final org.ros.message.sensor_msgs.JointState message = new org.ros.message.sensor_msgs.JointState(); 
 	Publisher<org.ros.message.sensor_msgs.JointState> topic = null;
-	ArrayList<String> nameList = new ArrayList();
+	ArrayList<String> nameList = new ArrayList<String>();
 	double[] arrEffort = new double[1];
 	double[] arrPosition = new double[1];
 	double[] arrVelocity = new double[1];
@@ -48,8 +48,7 @@ public class NXTServoMotor extends NXTDevice implements INXTDevice{
 		topic =  node.newPublisher("" + super.getName(), "sensor_msgs/JointState");
 	}
 
-	public void updateTopic() {
-
+	public void updateTopic(Node node, long seq) {
 		nameList.clear();
 		nameList.add(super.getName());
 		message.name = nameList;
@@ -59,11 +58,13 @@ public class NXTServoMotor extends NXTDevice implements INXTDevice{
 		message.position = arrPosition;
 		arrVelocity[0] = (motor.isMoving() ? motor.getSpeed() : 0);
 		message.velocity = arrVelocity;
+		message.header.seq=seq;
+		message.header.stamp = node.getCurrentTime();
 		topic.publish(message);	
 	}
 	
 	public void updateJoint(double effort){
-		System.out.println("JOINTCommanD: effort = " + effort);
+		System.out.println("JointCommand: effort = " + effort);
 		
 		motor.setSpeed((int) effort * 9);
 		if (effort > 0) motor.forward();

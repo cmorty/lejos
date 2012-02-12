@@ -71,7 +71,7 @@ public class CompassSensor extends NXTDevice implements INXTDevice {
 		topic = node.newPublisher("" + super.getName(), messageType);
 	}
 
-	public void updateTopic() {
+	public void updateTopic(Node node, long seq) {
 		heading = compass.getDegrees();
 		message.heading = heading;
 		topic.publish(message);		

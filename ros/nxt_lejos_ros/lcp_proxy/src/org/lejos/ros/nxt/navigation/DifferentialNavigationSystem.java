@@ -93,7 +93,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		psTopic = node.newPublisher("pose3D", psMessageType);
 	}
 
-	public void updateTopic() {
+	public void updateTopic(Node node, long seq) {
 		Pose p = posep.getPose();
 		message.theta = p.getHeading();
 		message.x = p.getX();

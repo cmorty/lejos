@@ -47,7 +47,7 @@ public class GPS extends NXTDevice implements INXTDevice {
 		topic = node.newPublisher(topicName, messageType);
 	}
 
-	public void updateTopic() {
+	public void updateTopic(Node node, long seq) {
 
 		if(gps.linkStatus()){
 			navSatStatus.status = NavSatStatus.STATUS_FIX;			

@@ -71,7 +71,7 @@ public class GyroSensor extends NXTDevice implements INXTDevice {
 		topic = node.newPublisher("" + super.getName(), messageType);
 	}
 
-	public void updateTopic() {
+	public void updateTopic(Node node, long seq) {
 		angularVelocity = gyro.getAngularVelocity();
 		message.angular_velocity.x = angularVelocity;
 		topic.publish(message);		

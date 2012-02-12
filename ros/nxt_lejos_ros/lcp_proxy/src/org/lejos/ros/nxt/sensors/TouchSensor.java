@@ -71,7 +71,10 @@ public class TouchSensor extends NXTDevice implements INXTDevice {
 		topic = node.newPublisher("" + super.getName(), messageType);
 	}
 
-	public void updateTopic() {
+	public void updateTopic(Node node, long seq) {
+		message.header.seq = seq;
+		message.header.stamp = node.getCurrentTime();
+		message.header.frame_id = "/robot";
 		pressed = touch.isPressed();
 		message.contact = pressed;
 		topic.publish(message);		
