@@ -548,7 +548,18 @@ public class LCPProxy implements NodeMain {
 	        		DifferentialNavigationSystem df = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) actuatorSystemsList.get(0);
     	    		df.updateTwist(message);	
     	    	}
-    	    });  		
+    	    });  	
+            
+    		//Subscription to set_pose topic
+            Subscriber<org.ros.message.geometry_msgs.Pose2D> subscriberSetPose =
+    	        node.newSubscriber("set_pose", "geometry_msgs/Pose2D");
+            subscriberSetPose.addMessageListener(new MessageListener<org.ros.message.geometry_msgs.Pose2D>() {
+    	    	@Override
+    	    	public void onNewMessage(org.ros.message.geometry_msgs.Pose2D message) {   		
+	        		DifferentialNavigationSystem df = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) actuatorSystemsList.get(0);
+    	    		df.updatePose(message);	
+    	    	}
+    	    }); 
     	}
     	
 		//Subscription to play_tone_command

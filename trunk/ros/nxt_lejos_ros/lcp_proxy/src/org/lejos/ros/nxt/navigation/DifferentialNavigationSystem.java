@@ -10,6 +10,7 @@ import lejos.robotics.navigation.Pose;
 import lejos.util.Delay;
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
+import org.ros.message.geometry_msgs.Pose2D;
 import org.ros.message.geometry_msgs.PoseStamped;
 import org.ros.message.geometry_msgs.Quaternion;
 import org.ros.message.geometry_msgs.TransformStamped;
@@ -21,8 +22,14 @@ import org.ros.message.turtlesim.Velocity;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 
-public class DifferentialNavigationSystem extends NXTDevice implements INXTDevice{
-	
+/**
+ * 
+ * Uses leJOS navigation classes to control a robot with differential steering.
+ * 
+ * @author Juan Antonio Brenha Moral and Lawrie Griffiths
+ *
+ */
+public class DifferentialNavigationSystem extends NXTDevice implements INXTDevice {
 	// leJOS
 	private RegulatedMotor leftMotor;
 	private RegulatedMotor rightMotor;
@@ -143,6 +150,21 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		df.stop();	
 	}
 	
+	/**
+	 * Update the leJOS pose in the odometry pose provider from the ROS Pose2D message
+	 * 
+	 * @param pose the Pose2D message
+	 */
+	public void updatePose(Pose2D pose) {
+		posep.setPose(new Pose((float) pose.x, (float) pose.y, (float) Math.toDegrees(pose.theta)));
+	}
+	
+	/**
+	 * Apply the linear and angular velocities in the ros Twist method to the robot.
+	 * Currently only does travel and rotate actions, not arc.
+	 * 
+	 * @param t the ros Twist message
+	 */
 	public void updateTwist(Twist t) {	
 		double linear = t.linear.x;
 		double angular = t.angular.z;
