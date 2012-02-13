@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.lejos.nxt.ldt.LeJOSPlugin;
@@ -56,11 +57,17 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
 		boolean verbose = resolve(p, config, mode, LaunchConstants.SUFFIX_LINK_VERBOSE, false);
 		boolean run = resolve(p, config, mode, LaunchConstants.SUFFIX_RUN_AFTER_UPLOAD, true);
-		String monType = resolve(p, config, mode, LaunchConstants.SUFFIX_MONITOR_TYPE,
-				PreferenceConstants.VAL_DEBUG_TYPE_NORMAL);
-		boolean debugNormal = PreferenceConstants.VAL_DEBUG_TYPE_NORMAL.equals(monType);
-		boolean debugRemote = PreferenceConstants.VAL_DEBUG_TYPE_REMOTE.equals(monType);
-
+		boolean debugNormal, debugRemote;
+		if (!ILaunchManager.DEBUG_MODE.equals(mode))
+			debugNormal = debugRemote = false;
+		else
+		{
+			String monType = resolve(p, config, mode, LaunchConstants.SUFFIX_MONITOR_TYPE,
+					PreferenceConstants.VAL_DEBUG_TYPE_NORMAL);
+			debugNormal = PreferenceConstants.VAL_DEBUG_TYPE_NORMAL.equals(monType);
+			debugRemote = PreferenceConstants.VAL_DEBUG_TYPE_REMOTE.equals(monType);
+		}
+		
 		if (monitor.isCanceled())
 			return;
 		
