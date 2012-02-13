@@ -27,23 +27,19 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 	//TODO we should make sure, that uploads to the same NXT are executed sequentially, not in parallel
 	
 	private boolean resolve(PrefsResolver p, ILaunchConfiguration config,
-			String mode, String suffix, boolean def) throws CoreException {
-		boolean useDef = config.getAttribute(LaunchConstants.PREFIX+mode
-				+LaunchConstants.SUFFIX_USE_DEFAULT, true);
-		if (useDef)
-			return p.getBoolean(mode+suffix, def);
+			String defSwitch, String suffix, boolean def) throws CoreException {
+		if (config.getAttribute(defSwitch, true))
+			return p.getBoolean(suffix, def);
 		else
-			return config.getAttribute(LaunchConstants.PREFIX+mode+suffix, def);
+			return config.getAttribute(LaunchConstants.PREFIX+suffix, def);
 	}
 
 	private String resolve(PrefsResolver p, ILaunchConfiguration config,
-			String mode, String suffix, String def) throws CoreException {
-		boolean useDef = config.getAttribute(LaunchConstants.PREFIX+mode
-				+LaunchConstants.SUFFIX_USE_DEFAULT, true);
-		if (useDef)
-			return p.getString(mode+suffix, def);
+			String defSwitch, String suffix, String def) throws CoreException {
+		if (config.getAttribute(defSwitch, true))
+			return p.getString(suffix, def);
 		else
-			return config.getAttribute(LaunchConstants.PREFIX+mode+suffix, def);
+			return config.getAttribute(LaunchConstants.PREFIX+suffix, def);
 	}
 
 	public void launch(ILaunchConfiguration config, String mode,	ILaunch launch, IProgressMonitor monitor)
@@ -55,14 +51,27 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 		monitor.beginTask("Launching "+config.getName()+"...", 3); //$NON-NLS-1$
 		
 		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
-		boolean verbose = resolve(p, config, mode, LaunchConstants.SUFFIX_LINK_VERBOSE, false);
-		boolean run = resolve(p, config, mode, LaunchConstants.SUFFIX_RUN_AFTER_UPLOAD, true);
+		
+		String connType = resolve(p, config, LaunchConstants.KEY_TARGET_USE_DEFAULTS,
+				PreferenceConstants.KEY_TARGET_BUS, PreferenceConstants.VAL_TARGET_BUS_BOTH);
+		boolean connectByAddr = resolve(p, config, LaunchConstants.KEY_TARGET_USE_DEFAULTS,
+				PreferenceConstants.KEY_TARGET_CONNECT_BY_ADDR, false);
+		boolean connectByName = resolve(p, config, LaunchConstants.KEY_TARGET_USE_DEFAULTS,
+				PreferenceConstants.KEY_TARGET_CONNECT_BY_NAME, false);
+		String brickAddr = resolve(p, config, LaunchConstants.KEY_TARGET_USE_DEFAULTS,
+				PreferenceConstants.KEY_TARGET_BRICK_ADDR, "");
+		String brickName = resolve(p, config, LaunchConstants.KEY_TARGET_USE_DEFAULTS,
+				PreferenceConstants.KEY_TARGET_BRICK_NAME, "");
+		
+		String defSwitch = LaunchConstants.PREFIX+mode+LaunchConstants.SUFFIX_USE_DEFAULT;
+		boolean verbose = resolve(p, config, defSwitch, LaunchConstants.SUFFIX_LINK_VERBOSE, false);
+		boolean run = resolve(p, config, defSwitch, LaunchConstants.SUFFIX_RUN_AFTER_UPLOAD, true);
 		boolean debugNormal, debugRemote;
 		if (!ILaunchManager.DEBUG_MODE.equals(mode))
 			debugNormal = debugRemote = false;
 		else
 		{
-			String monType = resolve(p, config, mode, LaunchConstants.SUFFIX_MONITOR_TYPE,
+			String monType = resolve(p, config, defSwitch, LaunchConstants.SUFFIX_MONITOR_TYPE,
 					PreferenceConstants.VAL_DEBUG_TYPE_NORMAL);
 			debugNormal = PreferenceConstants.VAL_DEBUG_TYPE_NORMAL.equals(monType);
 			debugRemote = PreferenceConstants.VAL_DEBUG_TYPE_REMOTE.equals(monType);
@@ -144,7 +153,8 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 				LeJOSNXJUtil.message("Uploading ...");
 				monitor.subTask("Uploading ...");					
 				ArrayList<String> args = new ArrayList<String>();
-				LeJOSNXJUtil.getUploadOpts(args);
+				LeJOSNXJUtil.getUploadOpts(args, connType, connectByAddr ? brickAddr : null,
+						connectByName ? brickName : null);
 				if (run)
 					args.add("-r");			
 				args.add(binaryPath);

@@ -33,12 +33,14 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.lejos.nxt.ldt.LeJOSNature;
@@ -46,11 +48,55 @@ import org.lejos.nxt.ldt.preferences.PreferenceConstants;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
 
 public class LaunchNXTMainTab extends JavaLaunchTab {
+	
+	private static class LabelText
+	{
+		Label label;
+		Text text;
+		Color textBackground;
+		
+		public LabelText(Composite parent, String labelText, ModifyListener updater) {
+			GridLayout gl = new GridLayout(2, false);
+			Composite c = new Composite(parent, SWT.NONE);
+			c.setFont(parent.getFont());
+			c.setLayout(gl);
+			
+			label = new Label(c, SWT.NONE);
+			label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			label.setFont(c.getFont());
+			label.setText(labelText);
+			
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.minimumWidth = 100;
+			
+			text = new Text(c, SWT.SINGLE | SWT.BORDER);
+			text.setLayoutData(gd);
+			text.setFont(c.getFont());
+			text.addModifyListener(updater);
+			
+			textBackground = text.getBackground();
+		}
+		
+		String getText() {
+			return this.text.getText();
+		}
+		
+		void setText(String s) {
+			this.text.setText(s);
+		}
+		
+		void setEnabled(boolean b) {
+			this.label.setEnabled(b);
+			this.text.setEditable(b);
+			this.text.setBackground(b ? this.textBackground : this.label.getBackground());
+		}
+	}
 
 	private Text projectText;
-	private Text mainText;
-	private Button fProjButton;
-	private Button fSearchButton;
+	private Text mainClassText;
+	private Button projectSearch;
+	private Button mainClassSearch;
+	
 	private Button normalUseDefaults;
 	private Button normalRun;
 	private Button normalVerbose;
@@ -61,6 +107,14 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 	private Button debugConsole;
 	private Button debugMonitorNormal;
 	private Button debugMonitorRemote;
+	private Button targetUseDefaults;
+	private Button targetBusBoth;
+	private Button targetBusUSB;
+	private Button targetBusBT;
+	private Button targetConnectByName;
+	private Button targetConnectByAddr;
+	private LabelText targetBrickName;
+	private LabelText targetBrickAddr;
 	
 	private static IWorkspaceRoot getRoot()
 	{
@@ -159,7 +213,7 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 			return;
 		
 		projectText.setText(type.getJavaProject().getElementName());
-		mainText.setText(type.getFullyQualifiedName());
+		mainClassText.setText(type.getFullyQualifiedName());
 	}	
 
 	private void createProjectEditor(Composite parent, ModifyListener updater)
@@ -172,8 +226,8 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		
 		projectText = t;
 		projectText.addModifyListener(updater);
-		fProjButton = createPushButton(g, "&Browse...", null); 
-		fProjButton.addSelectionListener(new SelectionAdapter()
+		projectSearch = createPushButton(g, "&Browse...", null); 
+		projectSearch.addSelectionListener(new SelectionAdapter()
 			{
 				@Override
 				public void widgetSelected(SelectionEvent e)
@@ -191,10 +245,10 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		t.setFont(g.getFont());
 		
-		mainText = t;
-		mainText.addModifyListener(updater);
-		fSearchButton = createPushButton(g, "&Search...", null); 
-		fSearchButton.addSelectionListener(new SelectionAdapter()
+		mainClassText = t;
+		mainClassText.addModifyListener(updater);
+		mainClassSearch = createPushButton(g, "&Search...", null); 
+		mainClassSearch.addSelectionListener(new SelectionAdapter()
 			{
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -244,14 +298,23 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		createVerticalSpacer(comp, 1);
 		createMainTypeEditor(comp, updater);
 		createVerticalSpacer(comp, 1);
-		createOptionEditor(comp, updater2);
+		createOptionEditor(comp, updater, updater2);
 		
 		
 		setControl(comp);
 	}
 	
-	protected void updateEnabledDisabled() {
-		boolean e = !this.normalUseDefaults.getSelection();
+	private void updateEnabledDisabled() {
+		boolean e = !this.targetUseDefaults.getSelection();
+		this.targetBusBoth.setEnabled(e);
+		this.targetBusUSB.setEnabled(e);
+		this.targetBusBT.setEnabled(e);
+		this.targetConnectByAddr.setEnabled(e);
+		this.targetConnectByName.setEnabled(e);
+		this.targetBrickAddr.setEnabled(e);
+		this.targetBrickName.setEnabled(e);
+		
+		e = !this.normalUseDefaults.getSelection();
 		this.normalRun.setEnabled(e);
 		this.normalConsole.setEnabled(e);
 		this.normalVerbose.setEnabled(e);
@@ -267,7 +330,7 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 	private Group newGroup(Composite p, int cols, String text)
 	{
 		Group g = new Group(p, SWT.NONE);
-		g.setLayout(new GridLayout(2, false));
+		g.setLayout(new GridLayout(cols, false));
 		g.setText(text);
 		g.setFont(p.getFont());
 		GridData gd1 = new GridData(GridData.FILL_HORIZONTAL);
@@ -275,14 +338,35 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		return g;
 	}
 
-	private void createOptionEditor(Composite parent, SelectionListener updater)
+	private void createOptionEditor(Composite parent, ModifyListener updater2, SelectionListener updater)
 	{
-		//TODO add radiobuttons for configuring upload type, address, name and stuff
-		
-		Group g = newGroup(parent, 2, "When in run mode:");
-
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
+		
+		Group g = newGroup(parent, 2, "Target NXT:");
+		this.targetUseDefaults = createCheckButton(g, "Use &defaults from Preferences");
+		Composite c = new Composite(g, SWT.NONE);
+		c.setLayout(new GridLayout(3, false));
+		c.setLayoutData(gd);
+		this.targetBusBoth = createRadioButton(c, "Both");
+		this.targetBusUSB = createRadioButton(c, "USB");
+		this.targetBusBT = createRadioButton(c, "Bluetooth");
+		this.targetConnectByAddr = createCheckButton(g, "Connect to address");
+		this.targetBrickAddr = new LabelText(g, "Address", updater2);
+		this.targetConnectByName = createCheckButton(g, "Connect to address");
+		this.targetBrickName = new LabelText(g, "Name", updater2);
+		
+		this.targetUseDefaults.addSelectionListener(updater);
+		this.targetBusBoth.addSelectionListener(updater);
+		this.targetBusUSB.addSelectionListener(updater);
+		this.targetBusBT.addSelectionListener(updater);
+		this.targetConnectByAddr.addSelectionListener(updater);
+		this.targetConnectByName.addSelectionListener(updater);
+		this.targetUseDefaults.setLayoutData(gd);
+
+		createVerticalSpacer(parent, 1);
+		g = newGroup(parent, 2, "When in run mode:");
+
 		this.normalUseDefaults = createCheckButton(g, "Use &defaults from Preferences");
 		this.normalRun = createCheckButton(g, "&Run program after upload");
 		this.normalVerbose = createCheckButton(g, "Link &verbose");
@@ -319,6 +403,13 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config)
 	{
+		config.setAttribute(LaunchConstants.KEY_TARGET_USE_DEFAULTS, true);
+		config.setAttribute(LaunchConstants.KEY_TARGET_BUS, PreferenceConstants.VAL_TARGET_BUS_BOTH);
+		config.setAttribute(LaunchConstants.KEY_TARGET_CONNECT_BY_ADDR, false);
+		config.setAttribute(LaunchConstants.KEY_TARGET_CONNECT_BY_NAME, false);
+		config.setAttribute(LaunchConstants.KEY_TARGET_BRICK_ADDR, "");
+		config.setAttribute(LaunchConstants.KEY_TARGET_BRICK_NAME, "");
+		
 		config.setAttribute(LaunchConstants.KEY_NORMAL_USE_DEFAULTS, true);
 		config.setAttribute(LaunchConstants.KEY_NORMAL_RUN_AFTER_UPLOAD, true);
 		config.setAttribute(LaunchConstants.KEY_NORMAL_LINK_VERBOSE, false);
@@ -398,7 +489,7 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 			setErrorMessage("Project "+pname+" is closed"); 
 			return false;
 		}
-		String mname = mainText.getText().trim();
+		String mname = mainClassText.getText().trim();
 		if (mname.length() <= 0)
 		{
 			setErrorMessage("Main type not specified"); 
@@ -410,7 +501,24 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 	public void performApply(ILaunchConfigurationWorkingCopy config)
 	{
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectText.getText().trim());
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainText.getText().trim());
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainClassText.getText().trim());
+		
+		String targetType;
+		if (targetBusBoth.getSelection())
+			targetType = PreferenceConstants.VAL_TARGET_BUS_BOTH;
+		else if (targetBusUSB.getSelection())
+			targetType = PreferenceConstants.VAL_TARGET_BUS_USB;
+		else if (targetBusBT.getSelection())
+			targetType = PreferenceConstants.VAL_TARGET_BUS_BT;
+		else
+			targetType = null;
+		
+		config.setAttribute(LaunchConstants.KEY_TARGET_USE_DEFAULTS, targetUseDefaults.getSelection());
+		config.setAttribute(LaunchConstants.KEY_TARGET_BUS, targetType);
+		config.setAttribute(LaunchConstants.KEY_TARGET_CONNECT_BY_ADDR, targetConnectByAddr.getSelection());
+		config.setAttribute(LaunchConstants.KEY_TARGET_CONNECT_BY_NAME, targetConnectByName.getSelection());
+		config.setAttribute(LaunchConstants.KEY_TARGET_BRICK_ADDR, targetBrickAddr.getText());
+		config.setAttribute(LaunchConstants.KEY_TARGET_BRICK_NAME, targetBrickName.getText());
 		
 		config.setAttribute(LaunchConstants.KEY_NORMAL_USE_DEFAULTS, normalUseDefaults.getSelection());
 		config.setAttribute(LaunchConstants.KEY_NORMAL_RUN_AFTER_UPLOAD, normalRun.getSelection());
@@ -483,7 +591,20 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 	{
 		super.initializeFrom(config);
 		projectText.setText(extractConfigValue(config, IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""));
-		mainText.setText(extractConfigValue(config, IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, ""));
+		mainClassText.setText(extractConfigValue(config, IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, ""));
+		
+		targetUseDefaults.setSelection(extractConfigBool(config, LaunchConstants.KEY_TARGET_USE_DEFAULTS, true));
+		targetConnectByAddr.setSelection(extractConfigBool(config, LaunchConstants.KEY_TARGET_CONNECT_BY_ADDR, false));
+		targetConnectByName.setSelection(extractConfigBool(config, LaunchConstants.KEY_TARGET_CONNECT_BY_NAME, false));
+		targetBrickAddr.setText(extractConfigValue(config, LaunchConstants.KEY_TARGET_BRICK_ADDR, ""));
+		targetBrickName.setText(extractConfigValue(config, LaunchConstants.KEY_TARGET_BRICK_NAME, ""));
+		String type = extractConfigValue(config, LaunchConstants.KEY_TARGET_BUS, PreferenceConstants.VAL_TARGET_BUS_BOTH);
+		if (PreferenceConstants.VAL_TARGET_BUS_BOTH.equals(type))
+			targetBusBoth.setSelection(true);
+		else if (PreferenceConstants.VAL_TARGET_BUS_USB.equals(type))
+			targetBusUSB.setSelection(true);
+		else if (PreferenceConstants.VAL_TARGET_BUS_BT.equals(type))
+			targetBusBT.setSelection(true);
 		
 		normalUseDefaults.setSelection(extractConfigBool(config, LaunchConstants.KEY_NORMAL_USE_DEFAULTS, true));
 		normalRun.setSelection(extractConfigBool(config, LaunchConstants.KEY_NORMAL_RUN_AFTER_UPLOAD, true));
@@ -496,7 +617,6 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		debugConsole.setSelection(extractConfigBool(config, LaunchConstants.KEY_DEBUG_START_CONSOLE, false));
 		String monType = extractConfigValue(config, LaunchConstants.KEY_DEBUG_MONITOR_TYPE, 
 				PreferenceConstants.VAL_DEBUG_TYPE_NORMAL);
-		System.out.println("monType:"+monType);
 		debugMonitorNormal.setSelection(PreferenceConstants.VAL_DEBUG_TYPE_NORMAL.equals(monType));
 		debugMonitorRemote.setSelection(PreferenceConstants.VAL_DEBUG_TYPE_REMOTE.equals(monType));
 		
