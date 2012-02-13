@@ -1,7 +1,7 @@
 package org.lejos.ros.nxt.sensors;
 
 import lejos.nxt.SensorPort;
-
+import lejos.robotics.RangeFinder;
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
 import org.ros.node.Node;
@@ -118,5 +118,9 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 		message.range = range / 100; // in meters
 		message.radiation_type = 0; // Ultrasonic
 		topic.publish(message);		
+	}
+	
+	public RangeFinder getSonic() {
+		return usSensor;
 	}
 }
