@@ -15,6 +15,7 @@ public class NXTServoMotor extends NXTDevice implements INXTDevice{
 	//ROS topic
     final org.ros.message.sensor_msgs.JointState message = new org.ros.message.sensor_msgs.JointState(); 
 	Publisher<org.ros.message.sensor_msgs.JointState> topic = null;
+	
 	ArrayList<String> nameList = new ArrayList<String>();
 	double[] arrEffort = new double[1];
 	double[] arrPosition = new double[1];

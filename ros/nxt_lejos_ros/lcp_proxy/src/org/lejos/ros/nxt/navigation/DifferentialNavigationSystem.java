@@ -268,4 +268,8 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	    poseStamped.pose.position.z = 0;
 	    poseStamped.pose.orientation = q;
 	}
+	
+	public DifferentialPilot getPilot() {
+		return df;
+	}
 }

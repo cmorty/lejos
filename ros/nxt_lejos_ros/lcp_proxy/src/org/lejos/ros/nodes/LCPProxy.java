@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import lejos.nxt.Sound;
+import org.lejos.ros.nxt.navigation.RangeScanner;
 
 import org.lejos.ros.nxt.sensors.ColorSensor;
 
@@ -62,6 +63,9 @@ public class LCPProxy implements NodeMain {
     boolean connectionStatus = false;
     
 	protected Node node;
+	
+	DifferentialNavigationSystem df;
+	UltrasonicSensor us;
 	
     //Topic Management    
     ArrayList<NXTServoMotor> motorList = new ArrayList<NXTServoMotor>();
@@ -297,7 +301,7 @@ public class LCPProxy implements NodeMain {
 	        		System.out.println(port);
 	        		System.out.println(desiredFrequency);
         			
-        			UltrasonicSensor us = new UltrasonicSensor(node, port);
+        			us = new UltrasonicSensor(node, port);
         			us.setName(name);
         			us.setDesiredFrequency(desiredFrequency);
         			us.publishTopic(node);
@@ -458,12 +462,35 @@ public class LCPProxy implements NodeMain {
 	        		String motorPortLetter1 = port.substring(pattern.length(), port.length()-1);
 	        		String motorPortLetter2 = port.substring(pattern.length()+1, port.length());
 	        		
-	        		DifferentialNavigationSystem df = new DifferentialNavigationSystem(node, motorPortLetter1, motorPortLetter2, WHEEL_DIAMETER, TRACK_WIDTH, REVERSE);
+	        		df = new DifferentialNavigationSystem(node, motorPortLetter1, motorPortLetter2, WHEEL_DIAMETER, TRACK_WIDTH, REVERSE);
         			df.setName(name);
         			df.setDesiredFrequency(desiredFrequency);
 	        		df.publishTopic(node);
 	        		actuatorSystemsList.add(df);			
-	        	} else {
+	        	} else if(type.equals("scanner")) {	
+	        		System.out.println("I found a scanner");
+	        		
+	        		//Business exception
+	        		if(!DIFFERENTIAL_NAVIGATION_FEATURES){
+	        			String message = "Scanner detected in YAML. Navigation features not enabled.";
+	        			throw new YAMLException(message);
+	        		}
+	        		
+	        		name = map2.get("name").toString().trim();
+	        		port = map2.get("port").toString().trim();
+	        		desiredFrequency = Float.parseFloat(map2.get("desired_frequency").toString().trim());
+	        				        		
+	        		System.out.println(name);
+	        		System.out.println(port);
+	        		System.out.println(desiredFrequency);
+	        		
+	        		RangeScanner scan = new RangeScanner(df.getPilot(), us.getSonic());
+	        		
+        			scan.setName(name);
+        			scan.setDesiredFrequency(desiredFrequency);
+	        		scan.publishTopic(node);
+	        		actuatorSystemsList.add(scan);			
+	        	}else {
 	        		System.out.println("I found a rare device");
 	        		
 	        		name = map2.get("name").toString().trim();
@@ -511,7 +538,7 @@ public class LCPProxy implements NodeMain {
     		        	}
     				}	    		
     	    	}
-    	    });
+    	    });         
     	}
     	
     	//TODO: Datatype must change soon
@@ -631,8 +658,12 @@ public class LCPProxy implements NodeMain {
 
 	        //Actuator Systems
 	        for (NXTDevice device : actuatorSystemsList) {
-        		DifferentialNavigationSystem das = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) device;
-        		das.updateTopic(node,seq);       	
+	        	if (device instanceof DifferentialNavigationSystem) {
+	        		DifferentialNavigationSystem das = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) device;
+	        		das.updateTopic(node,seq); 
+	        	} else if (device instanceof RangeScanner) {
+	        		((RangeScanner) device).updateTopic(node, seq);
+	        	}
 	        }      
 			seq++;
 		}
