@@ -99,22 +99,22 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 		//TODO add option for skipping the upload
 		// connection type
 		addField(new RadioGroupFieldEditor(
-				PreferenceConstants.KEY_CONNECTION_TYPE, "Connection type", 3,
+				PreferenceConstants.KEY_TARGET_BUS, "Connection type", 3,
 				new String[][] {
-						{ "B&oth", PreferenceConstants.VAL_CONNECTION_TYPE_BOTH },
-						{ "&USB", PreferenceConstants.VAL_CONNECTION_TYPE_USB },
-						{ "&Bluetooth",	PreferenceConstants.VAL_CONNECTION_TYPE_BLUETOOTH },
+						{ "B&oth", PreferenceConstants.VAL_TARGET_BUS_BOTH },
+						{ "&USB", PreferenceConstants.VAL_TARGET_BUS_USB },
+						{ "&Bluetooth",	PreferenceConstants.VAL_TARGET_BUS_BT },
 				}, newParent(g, 2)));
 		
 		// connect to NXT address?
-		addField(new BooleanFieldEditor(PreferenceConstants.KEY_CONNECT_TO_BRICK_ADDRESS,
+		addField(new BooleanFieldEditor(PreferenceConstants.KEY_TARGET_CONNECT_BY_ADDR,
 				"&Connect to address", newParent(g, 1)));
-		addField(new StringFieldEditor(PreferenceConstants.KEY_CONNECTION_BRICK_ADDRESS,
+		addField(new StringFieldEditor(PreferenceConstants.KEY_TARGET_BRICK_ADDR,
 				"&Address",	newParentF(g, 1)));
 		// connect to named NXT?
-		addField(new BooleanFieldEditor(PreferenceConstants.KEY_CONNECT_TO_NAMED_BRICK,
+		addField(new BooleanFieldEditor(PreferenceConstants.KEY_TARGET_CONNECT_BY_NAME,
 				"Connect to &named brick", newParent(g, 1)));
-		addField(new StringFieldEditor(PreferenceConstants.KEY_CONNECTION_BRICK_NAME,
+		addField(new StringFieldEditor(PreferenceConstants.KEY_TARGET_BRICK_NAME,
 				"&Name", newParentF(g, 1)));
 		
 		g = createGroup(parent, 2, "Defaults for run mode");

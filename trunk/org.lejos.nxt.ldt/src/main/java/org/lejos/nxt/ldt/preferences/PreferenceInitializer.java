@@ -23,9 +23,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		// new DefaultScope() is the preferred way for Eclipse 3.6, deprecated since Eclipse 3.7
 		IEclipsePreferences store = new DefaultScope().getNode(LeJOSPlugin.ID);
-		store.put(PreferenceConstants.KEY_CONNECTION_TYPE, PreferenceConstants.VAL_CONNECTION_TYPE_BOTH);
-		store.putBoolean(PreferenceConstants.KEY_CONNECT_TO_BRICK_ADDRESS, false);
-		store.putBoolean(PreferenceConstants.KEY_CONNECT_TO_NAMED_BRICK, false);
+		store.put(PreferenceConstants.KEY_TARGET_BUS, PreferenceConstants.VAL_TARGET_BUS_BOTH);
+		store.putBoolean(PreferenceConstants.KEY_TARGET_CONNECT_BY_ADDR, false);
+		store.putBoolean(PreferenceConstants.KEY_TARGET_CONNECT_BY_NAME, false);
 		
 		store.putBoolean(PreferenceConstants.KEY_NORMAL_RUN_AFTER_UPLOAD, true);
 		store.putBoolean(PreferenceConstants.KEY_NORMAL_LINK_VERBOSE, false);

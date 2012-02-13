@@ -13,11 +13,16 @@ public class PreferenceConstants {
 
 	public static final String KEY_NXJ_HOME = "nxjHome";
 	public static final String KEY_SEPARATE_JVM = "useSeparateJVM";
-	public static final String KEY_CONNECTION_TYPE = "connectionType";
-	public static final String KEY_CONNECT_TO_NAMED_BRICK = "ConnectToName";
-	public static final String KEY_CONNECT_TO_BRICK_ADDRESS = "ConnectToAddress";
-	public static final String KEY_CONNECTION_BRICK_NAME = "ConnectionName";
-	public static final String KEY_CONNECTION_BRICK_ADDRESS = "ConnectionAddress";
+	
+	public static final String KEY_TARGET_BUS = "connectionType";
+	public static final String KEY_TARGET_CONNECT_BY_NAME = "ConnectToName";
+	public static final String KEY_TARGET_CONNECT_BY_ADDR = "ConnectToAddress";
+	public static final String KEY_TARGET_BRICK_NAME = "ConnectionName";
+	public static final String KEY_TARGET_BRICK_ADDR = "ConnectionAddress";
+	
+	public static final String VAL_TARGET_BUS_BOTH = "ub";
+	public static final String VAL_TARGET_BUS_USB = "u";
+	public static final String VAL_TARGET_BUS_BT = "b";
 	
 	public static final String KEY_NORMAL_LINK_VERBOSE = ILaunchManager.RUN_MODE+LaunchConstants.SUFFIX_LINK_VERBOSE;
 	public static final String KEY_NORMAL_RUN_AFTER_UPLOAD = ILaunchManager.RUN_MODE+LaunchConstants.SUFFIX_RUN_AFTER_UPLOAD;
@@ -30,7 +35,4 @@ public class PreferenceConstants {
 	
 	public static final String VAL_DEBUG_TYPE_NORMAL = "normal";
 	public static final String VAL_DEBUG_TYPE_REMOTE = "remote";
-	public static final String VAL_CONNECTION_TYPE_BOTH = "ub";
-	public static final String VAL_CONNECTION_TYPE_USB = "u";
-	public static final String VAL_CONNECTION_TYPE_BLUETOOTH = "b";
 }

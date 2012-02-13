@@ -229,27 +229,37 @@ public class LeJOSNXJUtil {
 	{
 		PrefsResolver p = new PrefsResolver(LeJOSPlugin.ID, null);
 		
-		String connectionType = p.getString(PreferenceConstants.KEY_CONNECTION_TYPE, null);
-		if (PreferenceConstants.VAL_CONNECTION_TYPE_BLUETOOTH.equals(connectionType))
+		String connectionType = p.getString(PreferenceConstants.KEY_TARGET_BUS, null);
+		boolean byAddr = p.getBoolean(PreferenceConstants.KEY_TARGET_CONNECT_BY_ADDR, false);
+		boolean byName = p.getBoolean(PreferenceConstants.KEY_TARGET_CONNECT_BY_NAME, false);
+		String name = p.getString(PreferenceConstants.KEY_TARGET_BRICK_ADDR, "");
+		String addr = p.getString(PreferenceConstants.KEY_TARGET_BRICK_NAME, "");
+		
+		getUploadOpts(dst, connectionType, byAddr ? addr : null, byName ? name : null);
+	}
+
+	public static void getUploadOpts(List<String> dst, String type, String addr, String name) throws LeJOSNXJException
+	{
+		if (PreferenceConstants.VAL_TARGET_BUS_BT.equals(type))
 			dst.add("-b");
-		else if (PreferenceConstants.VAL_CONNECTION_TYPE_USB.equals(connectionType))
+		else if (PreferenceConstants.VAL_TARGET_BUS_USB.equals(type))
 			dst.add("-u");
-		else if (PreferenceConstants.VAL_CONNECTION_TYPE_BOTH.equals(connectionType))
+		else if (PreferenceConstants.VAL_TARGET_BUS_BOTH.equals(type))
 		{
 			// don't add anything, since usb+bluetooth is default
 		}
 		else
 			throw new LeJOSNXJException("illegal connection type");
 		
-		if (p.getBoolean(PreferenceConstants.KEY_CONNECT_TO_BRICK_ADDRESS, false))
+		if (addr != null)
 		{
 			dst.add("-d");
-			dst.add(p.getString(PreferenceConstants.KEY_CONNECTION_BRICK_ADDRESS, ""));
+			dst.add(addr);
 		}
-		if (p.getBoolean(PreferenceConstants.KEY_CONNECT_TO_NAMED_BRICK, false))
+		if (name != null)
 		{
 			dst.add("-n");
-			dst.add(p.getString(PreferenceConstants.KEY_CONNECTION_BRICK_NAME, ""));
+			dst.add(name);
 		}
 	}
 
