@@ -538,7 +538,55 @@ public class LCPProxy implements NodeMain {
     		        	}
     				}	    		
     	    	}
-    	    });         
+    	    });
+            
+    		//Subscription to joint_velocity
+            Subscriber<org.ros.message.nxt_lejos_ros_msgs.JointVelocity> subscriberVelocity =
+    	        node.newSubscriber("joint_velocity", "nxt_lejos_ros_msgs/JointVelocity");
+            subscriberVelocity.addMessageListener(new MessageListener<org.ros.message.nxt_lejos_ros_msgs.JointVelocity>() {
+    	    	@Override
+    	    	public void onNewMessage(org.ros.message.nxt_lejos_ros_msgs.JointVelocity message) {
+    	    		
+    	    		String name = message.name;
+
+    				//Actuators
+    				for (NXTDevice device : motorList){
+    		        	if (device instanceof org.lejos.ros.nxt.actuators.NXTServoMotor){
+    		        		NXTServoMotor motor = (org.lejos.ros.nxt.actuators.NXTServoMotor) device;
+    		        		//motor.updateTopic();
+    		        		if (motor.getName().equals(name)){
+    		    	    		node.getLog().info("State: \"" + message.name + " " + message.velocity + "\"");
+    		    	    		
+    		    	    		motor.updateVelocity(message.velocity);
+    		        		}
+    		        	}
+    				}	    		
+    	    	}
+    	    });
+            
+    		//Subscription to joint_position
+            Subscriber<org.ros.message.nxt_lejos_ros_msgs.JointPosition> subscriberPosition =
+    	        node.newSubscriber("joint_position", "nxt_lejos_ros_msgs/JointPosition");
+            subscriberPosition.addMessageListener(new MessageListener<org.ros.message.nxt_lejos_ros_msgs.JointPosition>() {
+    	    	@Override
+    	    	public void onNewMessage(org.ros.message.nxt_lejos_ros_msgs.JointPosition message) {
+    	    		
+    	    		String name = message.name;
+
+    				//Actuators
+    				for (NXTDevice device : motorList){
+    		        	if (device instanceof org.lejos.ros.nxt.actuators.NXTServoMotor){
+    		        		NXTServoMotor motor = (org.lejos.ros.nxt.actuators.NXTServoMotor) device;
+    		        		//motor.updateTopic();
+    		        		if (motor.getName().equals(name)){
+    		    	    		node.getLog().info("State: \"" + message.name + " " + message.angle + "\"");
+    		    	    		
+    		    	    		motor.updatePosition(message.angle);
+    		        		}
+    		        	}
+    				}	    		
+    	    	}
+    	    });
     	}
     	
     	//TODO: Datatype must change soon
