@@ -64,11 +64,29 @@ public class NXTServoMotor extends NXTDevice implements INXTDevice{
 		topic.publish(message);	
 	}
 	
+	// Update using an effort (power) level
 	public void updateJoint(double effort){
 		System.out.println("JointCommand: effort = " + effort);
 		
+		// LCP sets power to speed / 9
 		motor.setSpeed((int) effort * 9);
 		if (effort > 0) motor.forward();
 		else motor.backward();
+	}
+	
+	// Update using velocity
+	public void updateVelocity(double velocity){
+		System.out.println("JointVelocity: velocity = " + velocity);
+		
+		motor.setSpeed((int) velocity);
+		if (velocity > 0) motor.forward();
+		else motor.backward();
+	}
+	
+	// Update by setting the angle
+	public void updatePosition(double angle){
+		System.out.println("JointPosition: angle = " + angle);
+		
+		motor.rotateTo((int) angle);
 	}
 }
