@@ -29,8 +29,8 @@ class NXJLinkCommandLineParser extends AbstractCommandLineParser
 		options.addOption("h", "help", false, "show this help");
 		options.addOption("a", "all", false, "do not filter classes");
 		options.addOption("g", "debug", false, "include debug monitor");
-		options.addOption("gl", "localdebug", false, "include local debug monitor");
-		options.addOption("gr", "rconsoledebug", false, "include RConsole debug monitor");
+		options.addOption("gr", "remotedebug", false, "include remote debug monitor");
+		options.addOption("gj", "jdwpdebug", false, "include jdwp debug monitor");
 		options.addOption("v", "verbose", false, "print class and signature information");
 		options.addOption("ea", "enableassert", false, "enable assertions");
 		options.addOption("ec", "enablechecks", false, "enable run time checks");
@@ -104,20 +104,20 @@ class NXJLinkCommandLineParser extends AbstractCommandLineParser
 	{
 		return this.result.hasOption("a");
 	}
-	
+
 	public boolean isDebug()
 	{
 		return this.result.hasOption("g");
 	}
-	
-	public boolean isLocalDebug()
-	{
-		return this.result.hasOption("gl");
-	}
 
-	public boolean isRConsoleDebug()
+	public boolean isRemoteDebug()
 	{
 		return this.result.hasOption("gr");
+	}
+
+	public boolean isJDWPDebug()
+	{
+		return this.result.hasOption("gj");
 	}
 
 	public boolean isVerbose()
@@ -186,10 +186,10 @@ class NXJLinkCommandLineParser extends AbstractCommandLineParser
 	{
 		int opt = 0;
 		if (isDebug())
-			opt |= DebugOptions.RemoteDebug.getValue();
-		if (isLocalDebug())
 			opt |= DebugOptions.LocalDebug.getValue();
-		if (isRConsoleDebug())
+		if (isJDWPDebug())
+			opt |= DebugOptions.RemoteDebug.getValue();
+		if (isRemoteDebug())
 			opt |= DebugOptions.RConsoleDebug.getValue();
 		return opt;
 	}
