@@ -353,7 +353,7 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		this.targetBusBT = createRadioButton(c, "Bluetooth");
 		this.targetConnectByAddr = createCheckButton(g, "Connect to address");
 		this.targetBrickAddr = new LabelText(g, "Address", updater2);
-		this.targetConnectByName = createCheckButton(g, "Connect to address");
+		this.targetConnectByName = createCheckButton(g, "Connect to name");
 		this.targetBrickName = new LabelText(g, "Name", updater2);
 		
 		this.targetUseDefaults.addSelectionListener(updater);
