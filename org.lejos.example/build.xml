@@ -97,6 +97,26 @@
 			<arg file="${output.nxj}" />
 			<arg value="-od" />
 			<arg file="${output.nxd}" />
+			<arg value="-gj" />
+			<arg value="-v" />
+			<arg value="${main.class}" />
+		</java>
+	</target>
+
+	<target name="rconsolelink" depends="compile" description="link the binary">
+		<!-- Link the binary and create a signature file -->
+		<java classname="lejos.pc.tools.NXJLink" failonerror="true">
+			<classpath refid="lejos.pc" />
+			<arg value="--bootclasspath" />
+			<arg pathref="lejos.nxt" />
+			<arg value="--classpath" />
+			<arg path="${classes.dir}" />
+			<arg value="--writeorder" />
+			<arg value="LE" />
+			<arg value="-o" />
+			<arg file="${output.nxj}" />
+			<arg value="-od" />
+			<arg file="${output.nxd}" />
 			<arg value="-gr" />
 			<arg value="-v" />
 			<arg value="${main.class}" />
@@ -121,7 +141,7 @@
 			<arg file="${output.nxj}" />
 		</java>
 	</target>
-	
+
 	<target name="debuguploadandrun" depends="debuglink" description="upload and run the binary">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
 			<sysproperty key="nxj.home" file="${nxj.home}"/>
@@ -131,19 +151,41 @@
 			<arg file="${output.nxj}" />
 		</java>
 	</target>
-	
-	<target name="console" depends="debuguploadandrun" description="run a console">
+
+	<target name="rconsoleuploadandrun" depends="rconsolelink" description="upload and run the binary">
+		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
+			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-r" />
+			<arg file="${output.nxj}" />
+		</java>
+	</target>
+
+	<target name="debug" depends="debuguploadandrun" description="Will start the Debug proxy tool, through which java debuggers can access the program running on the nxt">
+		<sleep seconds="4" />
+		<java classname="lejos.pc.tools.NXJConsole" fork="true" failonerror="true">
+			<sysproperty key="nxj.home" file="${nxj.home}" />
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-di" />
+			<arg file="${output.nxd}" />
+			<arg vlue="-l" />
+		</java>
+	</target>
+
+	<target name="console" depends="rconsoleuploadandrun" description="run a console">
 		<sleep seconds="4" />
 		<java classname="lejos.pc.tools.NXJConsole" fork="true" failonerror="true">
 			<sysproperty key="nxj.home" file="${nxj.home}"/>
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-di" />
-			<arg file="${output.nxj}" />
+			<arg file="${output.nxd}" />
 		</java>
 	</target>
-	
-	<target name="consoleviewer" depends="debuguploadandrun" description="run the GUI Console Viewer">
+
+	<target name="consoleviewer" depends="rconsoleuploadandrun" description="run the GUI Console Viewer">
 		<sleep seconds="4" />
 		<java classname="lejos.pc.tools.NXJConsoleViewer" fork="true" failonerror="true">
 			<sysproperty key="nxj.home" file="${nxj.home}"/>
