@@ -64,14 +64,14 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 				PreferenceConstants.KEY_TARGET_BRICK_NAME, "");
 		
 		String defSwitch = LaunchConstants.PREFIX+mode+LaunchConstants.SUFFIX_USE_DEFAULT;
-		boolean verbose = resolve(p, config, defSwitch, LaunchConstants.SUFFIX_LINK_VERBOSE, false);
-		boolean run = resolve(p, config, defSwitch, LaunchConstants.SUFFIX_RUN_AFTER_UPLOAD, true);
+		boolean verbose = resolve(p, config, defSwitch, mode+LaunchConstants.SUFFIX_LINK_VERBOSE, false);
+		boolean run = resolve(p, config, defSwitch, mode+LaunchConstants.SUFFIX_RUN_AFTER_UPLOAD, true);
 		boolean debugNormal, debugRemote;
 		if (!ILaunchManager.DEBUG_MODE.equals(mode))
 			debugNormal = debugRemote = false;
 		else
 		{
-			String monType = resolve(p, config, defSwitch, LaunchConstants.SUFFIX_MONITOR_TYPE,
+			String monType = resolve(p, config, defSwitch, mode+LaunchConstants.SUFFIX_MONITOR_TYPE,
 					PreferenceConstants.VAL_DEBUG_TYPE_NORMAL);
 			debugNormal = PreferenceConstants.VAL_DEBUG_TYPE_NORMAL.equals(monType);
 			debugRemote = PreferenceConstants.VAL_DEBUG_TYPE_REMOTE.equals(monType);
