@@ -14,11 +14,10 @@ import java.util.ArrayList;
  * @author Lawrie Griffiths
  */
 public class RangeReadings extends ArrayList<RangeReading> implements Transmittable  { 
-	private int numReadings;
+
   
   public RangeReadings(int numReadings) {
     super(numReadings);
-    this.numReadings = numReadings;
     for(int i=0;i<numReadings;i++) add(new RangeReading(0,-1));
   }
 
@@ -71,7 +70,7 @@ public class RangeReadings extends ArrayList<RangeReading> implements Transmitta
    * Get the number of readings in a set
    */
   public int getNumReadings() {
-    return numReadings;
+    return size();
   }
   
   /**
@@ -91,7 +90,7 @@ public class RangeReadings extends ArrayList<RangeReading> implements Transmitta
    * @throws IOException
    */
   public void dumpObject(DataOutputStream dos) throws IOException {
-	dos.writeInt(numReadings);
+	dos.writeInt(size());
     for (RangeReading r: this) {
       dos.writeFloat(r.getAngle());
       dos.writeFloat(r.getRange());
@@ -105,7 +104,7 @@ public class RangeReadings extends ArrayList<RangeReading> implements Transmitta
    * @throws IOException
    */
   public void loadObject(DataInputStream dis) throws IOException {
-	numReadings = dis.readInt();
+	int numReadings = dis.readInt();
 	this.clear();
     for (int i = 0; i < getNumReadings(); i++) {
       add(new RangeReading(dis.readFloat(),dis.readFloat()));
