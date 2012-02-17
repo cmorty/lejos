@@ -142,7 +142,7 @@ main class ${main.class}</echo>
 		<echo file="${output.txt}">${linker.output}</echo>
 	</target>
 
-	<target name="debuglink" depends="compile" description="link the binary">
+	<target name="debuglink" depends="sample.init, compile" description="link the binary">
 		<!-- Link the binary and create a signature file -->
 		<java classname="lejos.pc.tools.NXJLink" failonerror="true">
 			<classpath refid="lejos.pc" />
@@ -162,7 +162,7 @@ main class ${main.class}</echo>
 		</java>
 	</target>
 
-	<target name="rconsolelink" depends="compile" description="link the binary">
+	<target name="rconsolelink" depends="sample.init, compile" description="link the binary">
 		<!-- Link the binary and create a signature file -->
 		<java classname="lejos.pc.tools.NXJLink" failonerror="true">
 			<classpath refid="lejos.pc" />
@@ -232,7 +232,7 @@ main class ${main.class}</echo>
 
 	<target name="debug" depends="debuguploadandrun" description="Will start the Debug proxy tool, through which java debuggers can access the program running on the nxt">
 		<sleep seconds="4" />
-		<java classname="lejos.pc.tools.NXJConsole" fork="true" failonerror="true">
+		<java classname="lejos.pc.tools.NXJDebugProxy" fork="true" failonerror="true">
 			<sysproperty key="nxj.home" file="${nxj.home}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
