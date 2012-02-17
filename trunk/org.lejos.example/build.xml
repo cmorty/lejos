@@ -164,7 +164,7 @@
 
 	<target name="debug" depends="debuguploadandrun" description="Will start the Debug proxy tool, through which java debuggers can access the program running on the nxt">
 		<sleep seconds="4" />
-		<java classname="lejos.pc.tools.NXJConsole" fork="true" failonerror="true">
+		<java classname="lejos.pc.tools.NXJDebugProxy" fork="true" failonerror="true">
 			<sysproperty key="nxj.home" file="${nxj.home}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
