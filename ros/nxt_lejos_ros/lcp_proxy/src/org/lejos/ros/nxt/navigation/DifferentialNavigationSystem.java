@@ -232,7 +232,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	    ftr.header.seq = seq++;
 	    ftr.child_frame_id = "/front";
 	    
-		ftr.transform.translation.x = 0.2; // 20cm from center
+		ftr.transform.translation.x = 0.1; // 10cm from center
 		ftr.transform.translation.y = 0;
 		ftr.transform.translation.z = 0;
 		
