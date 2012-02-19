@@ -710,7 +710,7 @@ public class LCPProxy implements NodeMain {
 	        		DifferentialNavigationSystem das = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) device;
 	        		das.updateTopic(node,seq); 
 	        	} else if (device instanceof RangeScanner) {
-	        		((RangeScanner) device).updateTopic(node, seq);
+	        		if (seq % 10 == 9) ((RangeScanner) device).updateTopic(node, seq);
 	        	}
 	        }      
 			seq++;

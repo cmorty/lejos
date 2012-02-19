@@ -1,6 +1,7 @@
 package org.lejos.ros.nxt.navigation;
 
 
+import lejos.nxt.UltrasonicSensor;
 import lejos.robotics.FixedRangeScanner;
 import lejos.robotics.RangeFinder;
 import lejos.robotics.RangeReadings;
@@ -21,6 +22,7 @@ public class RangeScanner extends NXTDevice implements INXTDevice {
 	
 	private FixedRangeScanner scanner;
 	private float[] angles = {-45f,-30f,-15f,0f,15f,30f,45f};
+	private RangeFinder finder;
 	
 	// ROS
 
@@ -30,6 +32,7 @@ public class RangeScanner extends NXTDevice implements INXTDevice {
 
 	
 	public RangeScanner(DifferentialPilot pilot, RangeFinder finder){	
+		this.finder = finder;
 		scanner = new FixedRangeScanner(pilot,finder);
 		scanner.setAngles(angles);
 	}
@@ -49,6 +52,8 @@ public class RangeScanner extends NXTDevice implements INXTDevice {
 		message.scan_time = 5.0f;
 		message.range_min = 0.05f;
 		message.range_max = 2.0f;
+		if (finder instanceof UltrasonicSensor) 
+			((UltrasonicSensor) finder).continuous();
 		RangeReadings readings = scanner.getRangeValues();
 		readings.printReadings();
 		float[] ranges = new float[7];
