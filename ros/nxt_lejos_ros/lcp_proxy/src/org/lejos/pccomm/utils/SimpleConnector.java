@@ -62,6 +62,26 @@ public class SimpleConnector {
 	}
 	
 	/**
+	 * This method connect with a NXT Brick connected by USB.
+	 * 
+	 * @param brickName
+	 * @return
+	 */
+	public static boolean connectByUSB(final String brickName){
+
+		boolean connectionStatus = false;
+		
+		initializeConnection();
+		
+		if (conn.connectTo(USB_CONNECTION_PROTOCOL+brickName, NXTComm.PACKET)) {
+			NXTCommandConnector.setNXTCommand(new NXTCommand(conn.getNXTComm()));			
+			connectionStatus = true;
+		}
+		
+		return connectionStatus;
+	}
+	
+	/**
 	 * 
 	 * @return
 	 */
