@@ -687,7 +687,7 @@ public final class JDWPDebugServer extends Thread implements JDWPConstants {
 		case SF_THIS_OBJECT:
 			if ((frame.getVMMethod().mflags & (VM.VMMethod.M_STATIC | VM.VMMethod.M_NATIVE)) != 0) {
 				ps.writeByte(0);
-				ps.writeObjectId(0);
+				ps.writeObjectId(-1);
 				break;
 			}
 			int offset = frame.localsBase;
@@ -1264,14 +1264,12 @@ public final class JDWPDebugServer extends Thread implements JDWPConstants {
 
 			if (startFrame >= frameCount) {
 				sendErrorReply(in, INVALID_THREAD);
-				handled = true;
-				break;
+				return true;
 			}
 
 			if (startFrame + length >= frameCount) {
 				sendErrorReply(in, INVALID_THREAD);
-				handled = true;
-				break;
+				return true;
 			} else if (length == -1) {
 				length = frameCount - startFrame;
 			}
@@ -1312,7 +1310,7 @@ public final class JDWPDebugServer extends Thread implements JDWPConstants {
 	static void writeLocation(lejos.nxt.debug.PacketStream ps,
 			VM.VMThread thread, VM.VMStackFrame frame, boolean isTopFrame) {
 		VM.VMMethod method = frame.getVMMethod();
-		int pc = frame.pc - method.codeOffset - VM.getVM().getImage().address;
+		int pc = frame.pc - (method.codeOffset & 0xFFFF) - VM.getVM().getImage().address;
 		// <clinit> is not called by an invoke instruction
 		if (!isTopFrame && method.signature != 3) {
 			// Needed for correct method call line display
