@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/lawrie/workspace/snapshot/lib/pc/3rdparty/bluecove-gpl.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/.m2/repository/org/apache/commons/com.springsource.org.apache.commons.httpclient/3.1.0/com.springsource.org.apache.commons.httpclient-3.1.0.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/.m2/repository/org/jboss/netty/netty/3.2.4.Final/netty-3.2.4.Final.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/.m2/repository/org/apache/commons/com.springsource.org.apache.commons.codec/1.3.0/com.springsource.org.apache.commons.codec-1.3.0.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/.m2/repository/com/google/guava/org.ros.rosjava.guava/r07/org.ros.rosjava.guava-r07.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/.ros/rosjava/lib/org.ros.rosjava.test_ros-0.0.0.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/ros_workspace/nxt_lejos_ros/lejos_speech/target/org.lejos.ros.nodes.SpeechControl-0.0.1.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/.m2/repository/org/apache/commons/com.springsource.org.apache.commons.net/2.0.0/com.springsource.org.apache.commons.net-2.0.0.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/workspace/snapshot/lib/pc/3rdparty/bluecove.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/.m2/repository/org/apache/commons/com.springsource.org.apache.commons.logging/1.1.1/com.springsource.org.apache.commons.logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/.ros/rosjava/lib/org.ros.rosjava.rosgraph_msgs-0.0.0.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/.ros/rosjava/lib/org.ros.rosjava.geometry_msgs-0.0.0.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/workspace/snapshot/lib/pc/pccomm.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/ros_workspace/nxt_lejos_ros/lejos_speech/build"/>
+	<classpathentry kind="lib" path="/home/lawrie/.m2/repository/dnsjava/org.ros.rosjava.dnsjava/2.1.1/org.ros.rosjava.dnsjava-2.1.1.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/ros_workspace/rosjava_core/rosjava/target/org.ros.rosjava-0.0.0.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/.ros/rosjava/lib/org.ros.rosjava.roscpp-0.0.0.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/.ros/rosjava/lib/org.ros.rosjava.nxt_lejos_ros_msgs-0.0.0.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/.ros/rosjava/lib/org.ros.rosjava.topic_tools-0.0.0.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/ros_workspace/rosjava_core/rosjava_bootstrap/target/org.ros.rosjava.rosjava_bootstrap-0.0.0.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/ros_workspace/rosjava_core/apache_commons_util/target/org.ros.rosjava.ws-commons-util-1.0.2.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/.ros/rosjava/lib/org.ros.rosjava.std_msgs-0.0.0.jar"/>
+	<classpathentry kind="lib" path="/home/lawrie/ros_workspace/rosjava_core/apache_xmlrpc/target/org.ros.rosjava.apache-xmlrpc-3.1.3.jar"/>
+	<classpathentry kind="output" path="build"/>
+</classpath>
