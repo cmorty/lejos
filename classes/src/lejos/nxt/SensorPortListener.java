@@ -5,8 +5,9 @@ package lejos.nxt;
  * Interface for monitoring changes to the value for an 
  * Analogue/Digital sensor (such as a Touch, Light or Sound sensor)
  * on a SensorPort.
- * 
+ * @deprecated SensorPortListeners will be removed in a future release.
  */
+@Deprecated
 public interface SensorPortListener 
 {
 	

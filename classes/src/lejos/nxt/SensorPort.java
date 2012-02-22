@@ -841,7 +841,9 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
      * </b>
      * @param aListener Listener for call backs
      * @see lejos.nxt.SensorPortListener
+     * @deprecated SensorPortListeners will be removed in a future release.
      */
+    @Deprecated
     public synchronized void addSensorPortListener(SensorPortListener aListener)
     {
         if (iListeners == null)
