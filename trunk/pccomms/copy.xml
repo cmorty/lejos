@@ -4,6 +4,9 @@
   =============================================================
 -->
 <project name="leJOS pccomm copy" default="copy" basedir=".">
+	
+	<fail message="deprecated file, build.xml uses ../classes/src_shared directly"/>
+	
   	<target name="copy"  description="Copy source of common classes">
   		<mkdir dir="src/lejos/geom"/>
   		<delete dir="src/lejos/geom" includes="*.java, package.html"/>

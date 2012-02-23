@@ -20,10 +20,6 @@
  	<!-- compiles the classes -->
   	<target name="classes" description="compile classes" depends="prepare">
   		<!--
-  			Grab copied of some classes from the classes project
-  		-->
-  		<ant antfile="copy.xml" target="copy"/>
-  		<!--
   			Ant is NOT suitable for incremental compilation.
   			It doesn't keep track of inlined constants and possibly
   			other things. So we simply delete the output folder.
@@ -31,7 +27,6 @@
 		<delete dir="${classes.dir}" />
 		<mkdir dir="${classes.dir}" />
   		<javac
-  			srcdir="${source.dir}"
   			includes="${source.include}"
   			excludes="${source.exclude}"
   			encoding="${source.encoding}"
@@ -44,6 +39,9 @@
   			classpathref="3rdparty"
 			verbose="false"
 		>
+  			<src path="${source.dir}" />
+  			<src path="${source.dir2}" />
+  			
 			<!-- enable warnings -->
 			<compilerarg value="-Xlint:${source.warn}" />
 		</javac>
@@ -65,12 +63,10 @@
 	
  	<!-- creates the classes jar -->
 	<target name="classes.src.zip" description="generate zip of sources" depends="prepare">
-		<zip
-			destfile="${classes.src.zip}"
-			basedir="${source.dir}"
-			includes="${source.include}"
-			excludes="${source.exclude}"
-		/>
+		<zip destfile="${classes.src.zip}">
+			<fileset dir="${source.dir}"  includes="${source.include}" excludes="${source.exclude}" />
+			<fileset dir="${source.dir2}" includes="${source.include}" excludes="${source.exclude}" />
+		</zip>
 	</target>
 	
 	<!-- generate javadocs -->
@@ -91,11 +87,8 @@
 		>
 			<arg value="-quiet"/>
 			
-			<packageset
-				dir="${source.dir}"
-				includes="${docs.include}"
-				excludes="${docs.exclude}"
-			/>
+			<packageset dir="${source.dir}"  includes="${docs.include}" excludes="${docs.exclude}" />
+			<packageset dir="${source.dir2}" includes="${docs.include}" excludes="${docs.exclude}" />
 		</javadoc>
 	</target>
 	
