@@ -23,7 +23,6 @@
 		<delete dir="${classes.dir}" />
 		<mkdir dir="${classes.dir}" />
   		<javac
-  			srcdir="${source.dir}"
   			includes="${source.include}"
   			excludes="${source.exclude}"
   			encoding="${source.encoding}"
@@ -43,8 +42,10 @@
       			touch anything from the JDK, Ant, etc.
       			There doesn't seem to be a clean way of having an empty (boot)classpath.
       			Hence the workaround with an empty dir (nirvana.dir).
-      		--> 
-      		
+      		-->
+  			<src path="${source.dir}" />
+  			<src path="${source.dir2}" />
+  			
 			<!-- enable warnings -->
 			<compilerarg value="-Xlint:${source.warn}" />
 		</javac>
@@ -66,12 +67,10 @@
 	
  	<!-- creates the classes jar -->
 	<target name="classes.src.zip" description="generate zip of sources" depends="prepare">
-		<zip
-			destfile="${classes.src.zip}"
-			basedir="${source.dir}"
-			includes="${source.include}"
-			excludes="${source.exclude}"
-		/>
+		<zip destfile="${classes.src.zip}">
+			<fileset dir="${source.dir}"  includes="${source.include}" excludes="${source.exclude}" />
+			<fileset dir="${source.dir2}" includes="${source.include}" excludes="${source.exclude}" />
+		</zip>
 	</target>
 	
 	<!-- generate javadocs -->
@@ -93,11 +92,8 @@
 		>
 			<arg value="-quiet"/>
 			
-			<packageset
-				dir="${source.dir}"
-				includes="${docs.include}"
-				excludes="${docs.exclude}"
-			/>
+			<packageset dir="${source.dir}"  includes="${docs.include}" excludes="${docs.exclude}" />
+			<packageset dir="${source.dir2}" includes="${docs.include}" excludes="${docs.exclude}" />
 		</javadoc>
 	</target>
 	
