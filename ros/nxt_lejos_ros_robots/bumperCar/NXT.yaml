@@ -1,0 +1,12 @@
+nxt_robot:
+  - type: ultrasonic
+    name: ultrasonic_sensor
+    port: PORT_1
+    spread_angle: 0.2
+    min_range: 0.01
+    max_range: 2.5
+    desired_frequency: 10.0
+  - type: differential_navigation_system
+    name: differential_navigation_system
+    port: PORT_AC
+    desired_frequency: 10.0

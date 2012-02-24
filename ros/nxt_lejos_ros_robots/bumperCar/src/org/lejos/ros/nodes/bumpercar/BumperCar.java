@@ -1,84 +1,98 @@
 package org.lejos.ros.nodes.bumpercar;
 
 import lejos.util.Delay;
-
 import org.ros.message.MessageListener;
+import org.ros.message.nxt_lejos_ros_msgs.DNSCommand;
+import org.ros.message.sensor_msgs.Range;
 import org.ros.namespace.GraphName;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
-public class BumperCar implements NodeMain {
-	
-    final org.ros.message.nxt_lejos_ros_msgs.DNSCommand message = new org.ros.message.nxt_lejos_ros_msgs.DNSCommand(); 
-    Publisher<org.ros.message.nxt_lejos_ros_msgs.DNSCommand> topic = null;
-    String messageType = "nxt_lejos_ros_msgs/DNSCommand";
-    
-    private float range = 255;
+/**
+ * A bumper car using the lcp_proxy API.
+ * Drives forward using dns_command forward.
+ * Uses the ultrasonic_sensor topic to detect obstacles and then 
+ * uses a sequence of dns commands to avoid the obstacle.
+ * 
+ * @author Lawrie Griffiths
+ *
+ */
+public class BumperCar implements NodeMain {	
+    private DNSCommand message = new DNSCommand(); 
+    private Publisher<DNSCommand> topic;
+    private String messageType = "nxt_lejos_ros_msgs/DNSCommand";
+    private boolean processing = false;
+    private static final float limit = 0.6f; // minimum distance to obstacle
 
 	@Override
-	public void onShutdown(Node arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onShutdownComplete(Node arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onStart(Node node) {
-		
-		//Subscription to ultrasonic message
-        Subscriber<org.ros.message.sensor_msgs.Range> subscriberMotor =
+	public void onStart(Node node) {		
+		//Subscription to ultrasonic_sensor topic
+        Subscriber<Range> subscriberRange =
 	        node.newSubscriber("ultrasonic_sensor", "sensor_msgs/Range");
-        subscriberMotor.addMessageListener(new MessageListener<org.ros.message.sensor_msgs.Range>() {
+        subscriberRange.addMessageListener(new MessageListener<Range>() {
 	    	@Override
-	    	public void onNewMessage(org.ros.message.sensor_msgs.Range msg) {
-	    		range = (float)  msg.range;
-	    		System.out.println("Range is " + range);
-				if (range < 50) {
-					message.type = "travel";
+	    	public void onNewMessage(Range msg) {
+	    		System.out.println("Range is " + msg.range + " (" + processing + ")");
+				if (msg.range < limit && !processing) {
+					processing = true;
+					message.type = "travel"; 
 					message.value = -20;
-					topic.publish(message);
-					Delay.msDelay(300);
-					message.type = "rotate";
+					topic.publish(message); // Go back 20cm
+					Delay.msDelay(3000);
+					message.type = "rotate";  
 					message.value = 30;
-					topic.publish(message);
-					Delay.msDelay(300);
+					topic.publish(message); // Rotate 30 degrees
+					Delay.msDelay(2000);
 					message.type = "forward";
-					topic.publish(message);
+					message.value = 0;
+					topic.publish(message);  // Go forward
+					Delay.msDelay(500);
+					processing = false;
 				}		
 	    	}
 	    });
         
+        // Create publisher for dns_command
         topic = node.newPublisher("dns_command", messageType);
         Delay.msDelay(1000);
         
+        // Set the robot travel speed
         message.type = "setTravelSpeed";
         message.value = 10;
-		topic.publish(message);
+		topic.publish(message);	
+		Delay.msDelay(1000);
 		
-		Delay.msDelay(500);
-		
+		// Set the rotate speed
         message.type = "setRotateSpeed";
-        message.value = 30;
+        message.value = 50;
 		topic.publish(message);
+		Delay.msDelay(1000);
 		
-		Delay.msDelay(500);
-		
-		// Go forward
+		// Start going forward
 		message.type = "forward";
+		message.value = 0;
 		topic.publish(message);
+		Delay.msDelay(300);
 	}
 
 	@Override
 	public GraphName getDefaultNodeName() {
-		// TODO Auto-generated method stub
-		return null;
+		return new GraphName("nxt_lejos_ros_robots/bumperCar");
+	}
+	
+	@Override
+	public void onShutdown(Node arg0) {
+		// Stop the robot
+		message.type = "stop";
+		message.value = 0;
+		topic.publish(message);
+		Delay.msDelay(300);
 	}
 
+	@Override
+	public void onShutdownComplete(Node arg0) {
+		// Nothing	
+	}
 }
