@@ -4,6 +4,7 @@ import lejos.nxt.SensorPort;
 import lejos.robotics.RangeFinder;
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
+import org.ros.message.sensor_msgs.Range;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 
@@ -20,8 +21,8 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 	private float range_min = 0.05f;
 	private float range_max = 2.0f;
 	
-    final org.ros.message.sensor_msgs.Range message = new org.ros.message.sensor_msgs.Range(); 
-    Publisher<org.ros.message.sensor_msgs.Range> topic = null;
+    final Range message = new Range(); 
+    Publisher<Range> topic = null;
     String messageType = "sensor_msgs/Range";
     
     Node node;
@@ -40,10 +41,16 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 		}else if(port.equals("PORT_4")){
 			usSensor = new lejos.nxt.UltrasonicSensor(SensorPort.S4);
 		}
+		message.header.stamp = node.getCurrentTime();
+		message.header.frame_id = "/front";
+		message.max_range= range_max;
+		message.min_range = range_min;
+		message.field_of_view = spread_angle;
+		message.radiation_type = 0; // Ultrasonic
+		//usSensor.continuous();
 	}
 	
 	public void activate(){
-
 	}
 
 	public void setPort(final String _port){
@@ -107,16 +114,8 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 	}
 
 	public void updateTopic(Node node, long seq) {
-		usSensor.ping();
-		range = usSensor.getDistance();
-		message.header.seq = seq;
-		message.header.stamp = node.getCurrentTime();
-		message.header.frame_id = "/front";
-		message.max_range= range_max;
-		message.min_range = range_min;
-		message.field_of_view = spread_angle;
-		message.range = range / 100; // in meters
-		message.radiation_type = 0; // Ultrasonic
+		//usSensor.ping();
+		message.range = usSensor.getDistance() / 100f;
 		topic.publish(message);		
 	}
 	

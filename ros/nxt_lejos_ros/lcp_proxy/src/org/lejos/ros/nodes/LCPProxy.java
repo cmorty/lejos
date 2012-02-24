@@ -250,7 +250,7 @@ public class LCPProxy implements NodeMain {
 	        	
 	        	type = map2.get("type").toString().trim(); 
 
-	        	//System.out.println("Type is " + type);
+	        	System.out.println("Type is " + type);
 	        	//Actuators
 	        	if (type.equals("motor")) {
 	        		System.out.println("I found a motor description");
@@ -589,7 +589,6 @@ public class LCPProxy implements NodeMain {
     	    });
     	}
     	
-    	//TODO: Datatype must change soon
     	if (actuatorSystemsList.size() > 0) {    		
     		//Subscription to DNS_command
             Subscriber<org.ros.message.nxt_lejos_ros_msgs.DNSCommand> subscriberDifferentialActuatorSystem =
@@ -648,6 +647,8 @@ public class LCPProxy implements NodeMain {
 	    });
 
 	}
+	
+    long seq = 0;
 
 	/**
 	 * Publish to all topics.
@@ -656,7 +657,6 @@ public class LCPProxy implements NodeMain {
 		System.out.println("* Updating Topics");
 		
         //Publish data
-        int seq = 0;
 		while(true){
         
 			if (motorList.size() > 0) {
@@ -708,12 +708,12 @@ public class LCPProxy implements NodeMain {
 	        for (NXTDevice device : actuatorSystemsList) {
 	        	if (device instanceof DifferentialNavigationSystem) {
 	        		DifferentialNavigationSystem das = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) device;
-	        		das.updateTopic(node,seq); 
+	        		if (seq % 5 == 0) das.updateTopic(node,seq); 
 	        	} else if (device instanceof RangeScanner) {
 	        		if (seq % 10 == 9) ((RangeScanner) device).updateTopic(node, seq);
 	        	}
-	        }      
-			seq++;
+	        }
+	        seq++;
 		}
 	}
 	
@@ -727,18 +727,17 @@ public class LCPProxy implements NodeMain {
 
 	@Override
 	public void onShutdown(Node arg0) {
-		// TODO Auto-generated method stub
+		// Nothing
 	}
 
 	@Override
 	public void onShutdownComplete(Node arg0) {
-		// TODO Auto-generated method stub
+		// Nothing
 	}
 
 	@Override
 	public GraphName getDefaultNodeName() {
-		// TODO Auto-generated method stub
-		return null;
+		return new GraphName("nxt_lejos_ros/lcp_proxy");
 	}	
 }
 

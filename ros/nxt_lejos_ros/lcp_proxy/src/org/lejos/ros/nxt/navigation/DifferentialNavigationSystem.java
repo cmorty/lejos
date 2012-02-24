@@ -45,10 +45,6 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	private TransformStamped ftr = new TransformStamped();
 	
 	private tfMessage tf = new tfMessage();
-
-    private final org.ros.message.geometry_msgs.Pose2D message = new org.ros.message.geometry_msgs.Pose2D(); 
-    private Publisher<org.ros.message.geometry_msgs.Pose2D> topic = null;
-    private String messageType = "geometry_msgs/Pose2D";
      
     private Publisher<tfMessage> tfTopic = null;
     private String tfMessageType = "tf/tfMessage";
@@ -68,7 +64,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		
 		//TODO: Exception if letters are the same
 		
-		if (port1.equals("A")){ 
+		if (port1.equals("A")) { 
 			leftMotor = Motor.A;
 		} else if (port1.equals("B")) {
 			leftMotor = Motor.B;
@@ -80,7 +76,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 			rightMotor = Motor.A;
 		} else if (port2.equals("B")) {
 			rightMotor = Motor.B;
-		}else if (port2.equals("C")) {
+		} else if (port2.equals("C")) {
 			rightMotor = Motor.C;
 		}
 		
@@ -89,24 +85,17 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		reverse = _reverse;
 		
     	df = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
-    	posep = new OdometryPoseProvider(df);
-    	
+    	posep = new OdometryPoseProvider(df);  	
 	}
 	
 	public void publishTopic(Node node) {
-		topic = node.newPublisher("pose", messageType);
 		tfTopic = node.newPublisher("tf", tfMessageType);
 		odomTopic = node.newPublisher("odom", odomMessageType);
-		psTopic = node.newPublisher("pose3D", psMessageType);
+		psTopic = node.newPublisher("pose", psMessageType);
 	}
 
 	public void updateTopic(Node node, long seq) {
-		Pose p = posep.getPose();
-		message.theta = p.getHeading();
-		message.x = p.getX();
-		message.y = p.getY();
-		topic.publish(message);
-		poseToTransform(p);
+		poseToTransform(posep.getPose());
 		tfTopic.publish(tf);
 		odomTopic.publish(od);
 		psTopic.publish(poseStamped);
@@ -159,6 +148,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		posep.setPose(new Pose((float) pose.x, (float) pose.y, (float) Math.toDegrees(pose.theta)));
 	}
 	
+	double oldAngular, oldLinear;
 	/**
 	 * Apply the linear and angular velocities in the ros Twist method to the robot.
 	 * Currently only does travel and rotate actions, not arc.
@@ -168,24 +158,38 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	public void updateTwist(Twist t) {	
 		double linear = t.linear.x;
 		double angular = t.angular.z;
+		boolean suppress = false;
+		
 		
 		System.out.println("Velocity: linear = " + linear + ", angular = " + angular);
+		if (suppress) {
+			System.out.println("Suppresssed");
+			return;
+		}
 		
-		if (linear != 0 && angular == 0) {
+		if (angular != 0 && angular != oldAngular) df.setRotateSpeed(Math.abs(Math.toDegrees(angular)));
+		if (linear != 0 && linear != oldLinear) df.setTravelSpeed(Math.abs(linear * 100));
+		
+		if (linear != 0 && linear != oldLinear) {
+			oldAngular = angular;
+			oldLinear = linear;
+			System.out.println("Travel");
 			boolean forward = (linear > 0);
-			if (forward) df.forward();
-			else df.backward();
-		} else if (angular != 0 && linear == 0) {
+			if (forward) df.steer(Math.toDegrees(angular));
+			else df.steerBackward(Math.toDegrees(angular));
+		} else if (angular != 0 && angular != oldAngular && linear == 0) {
+			System.out.println("rotate " + angular + ", " + oldAngular);
+			oldAngular = angular;
+			oldLinear = linear;
 			boolean left = (angular > 0);
 			if (left) df.rotateLeft();
 			else df.rotateRight();
-		}
-		
-		Delay.msDelay(1000);	
-		df.stop();	
+		} else if (linear == 0 && angular == 0 && (linear != oldLinear || angular != oldAngular)) {
+			oldAngular = angular;
+			oldLinear = linear;
+			df.stop();
+		}	
 	}
-	
-	private long seq = 0;
 	
 	/*
 	 * Convert a leJOS pose into a world to robot transform
@@ -215,7 +219,6 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		// transform for robot in the world
 	    tr.header.frame_id = "/world"; 
 	    tr.header.stamp = node.getCurrentTime();
-	    tr.header.seq = seq++;
 	    tr.child_frame_id = "/robot";
 	    
 		tr.transform.translation.x = x;
@@ -229,7 +232,6 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	    // Transform for front tip of the robot
 	    ftr.header.frame_id = "/robot"; 
 	    ftr.header.stamp = node.getCurrentTime();
-	    ftr.header.seq = seq++;
 	    ftr.child_frame_id = "/front";
 	    
 		ftr.transform.translation.x = 0.1; // 10cm from center
@@ -240,7 +242,6 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	    
 	    tf.transforms.add(ftr);
 	    
-	    od.header.seq = seq;
 	    od.header.stamp = node.getCurrentTime();
 	    od.header.frame_id = "/world";
 	    od.child_frame_id = "/robot";
@@ -250,16 +251,18 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	    od.pose.pose.position.z = 0;
 	    
 	    od.pose.pose.orientation = q;
+	    
+	    boolean moving = df.isMoving();
+	    Move.MoveType moveType = df.getMovement().getMoveType();
 
-	    od.twist.twist.linear.x = (df.isMoving() && df.getMovement().getMoveType() == Move.MoveType.TRAVEL  ? df.getTravelSpeed() : 0);
+	    od.twist.twist.linear.x = (moving && moveType == Move.MoveType.TRAVEL  ? df.getTravelSpeed() : 0);
 	    od.twist.twist.linear.y = 0;
 	    od.twist.twist.linear.z = 0;
 	        
 	    od.twist.twist.angular.x = 0;
 	    od.twist.twist.angular.y = 0;	    
-	    od.twist.twist.angular.z = (df.isMoving() && df.getMovement().getMoveType() == Move.MoveType.ROTATE ? df.getRotateSpeed() : 0);
+	    od.twist.twist.angular.z = (moving && moveType == Move.MoveType.ROTATE ? df.getRotateSpeed() : 0);
 	    
-	    poseStamped.header.seq = seq;
 	    poseStamped.header.stamp = node.getCurrentTime();	    
 	    poseStamped.header.frame_id = "/world";
 	    
