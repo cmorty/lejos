@@ -426,6 +426,7 @@ public class DifferentialPilot implements
     _type = Move.MoveType.ROTATE;
     _distance = 0;
     _angle = angle;
+    _turnRate = _robotRotateSpeed;
     movementStart(immediateReturn);
     setSpeed(Math.round(_robotRotateSpeed * _leftTurnRatio), Math.round(_robotRotateSpeed * _rightTurnRatio));
     int rotateAngleLeft = _parity * (int) (angle * _leftTurnRatio);
@@ -665,6 +666,8 @@ public class DifferentialPilot implements
    */
   public void steer(double turnRate)
   {
+	_turnRate = turnRate;
+	
     if (turnRate == 0)
     {
       forward();
@@ -701,6 +704,7 @@ public class DifferentialPilot implements
    */
   public void steerBackward(final double turnRate)
   {
+	_turnRate = -turnRate;
     if (turnRate == 0)
     {
       if (_parity < 0)  forward();
@@ -711,7 +715,7 @@ public class DifferentialPilot implements
      steerPrep(turnRate);
      if(_parity > 0 ) _outside.backward();
      else _outside.forward();
-    if (!_steering)  //only call movement start if this is the most recent methoc called
+    if (!_steering)  //only call movement start if this is the most recent method called
     {
       _type = Move.MoveType.ARC;
          if(turnRate < 0 )
@@ -982,6 +986,14 @@ public class DifferentialPilot implements
   {
     return  new Move(_type, getMovementIncrement(), getAngleIncrement(), isMoving());
   }
+  
+  /**
+   * Get the turn rate for arc and steer commands
+   * @return
+   */
+  public double getTurnRate() {
+	  return _turnRate;
+  }
 
   private float _turnRadius = 0;
   /**
@@ -1078,7 +1090,8 @@ public class DifferentialPilot implements
     * Angle about to turn - used by movementStopped
     */
    private double _angle;
-  private int _acceleration;
+   private int _acceleration;
    private int  _quickAcceleration; // used for quick stop.
+   private double _turnRate; 
 
 }
