@@ -41,12 +41,6 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 		}else if(port.equals("PORT_4")){
 			usSensor = new lejos.nxt.UltrasonicSensor(SensorPort.S4);
 		}
-		message.header.stamp = node.getCurrentTime();
-		message.header.frame_id = "/front";
-		message.max_range= range_max;
-		message.min_range = range_min;
-		message.field_of_view = spread_angle;
-		message.radiation_type = 0; // Ultrasonic
 		//usSensor.continuous();
 	}
 	
@@ -115,6 +109,12 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 
 	public void updateTopic(Node node, long seq) {
 		//usSensor.ping();
+		message.header.stamp = node.getCurrentTime();
+		message.header.frame_id = "/front";
+		message.max_range= range_max;
+		message.min_range = range_min;
+		message.field_of_view = spread_angle;
+		message.radiation_type = 0; // Ultrasonic
 		message.range = usSensor.getDistance() / 100f;
 		topic.publish(message);		
 	}
