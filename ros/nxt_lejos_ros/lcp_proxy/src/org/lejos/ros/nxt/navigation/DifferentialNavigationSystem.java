@@ -173,12 +173,16 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		if (linear != 0 && linear != oldLinear) {
 			oldAngular = angular;
 			oldLinear = linear;
-			System.out.println("Travel");
 			boolean forward = (linear > 0);
-			if (forward) df.steer(Math.toDegrees(angular));
-			else df.steerBackward(Math.toDegrees(angular));
+			if (forward) {
+				System.out.println("Twist: Steer " + Math.toDegrees(angular));
+				df.steer(Math.toDegrees(angular));
+			} else {
+				System.out.println("Twist: Steer backwards " + Math.toDegrees(angular));
+				df.steerBackward(Math.toDegrees(angular));
+			}
 		} else if (angular != 0 && angular != oldAngular && linear == 0) {
-			System.out.println("rotate " + angular + ", " + oldAngular);
+			System.out.println("Twist: Rotate " + angular);
 			oldAngular = angular;
 			oldLinear = linear;
 			boolean left = (angular > 0);
@@ -187,6 +191,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 		} else if (linear == 0 && angular == 0 && (linear != oldLinear || angular != oldAngular)) {
 			oldAngular = angular;
 			oldLinear = linear;
+			System.out.println("Twist: Stopping");
 			df.stop();
 		}	
 	}
@@ -255,13 +260,13 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	    boolean moving = df.isMoving();
 	    Move.MoveType moveType = df.getMovement().getMoveType();
 
-	    od.twist.twist.linear.x = (moving && moveType == Move.MoveType.TRAVEL  ? df.getTravelSpeed() : 0);
+	    od.twist.twist.linear.x = (moveType == Move.MoveType.ROTATE  ? 0 : (moving ? Math.toRadians(df.getTravelSpeed()) : 0));
 	    od.twist.twist.linear.y = 0;
 	    od.twist.twist.linear.z = 0;
 	        
 	    od.twist.twist.angular.x = 0;
 	    od.twist.twist.angular.y = 0;	    
-	    od.twist.twist.angular.z = (moving && moveType == Move.MoveType.ROTATE ? df.getRotateSpeed() : 0);
+	    od.twist.twist.angular.z = (moving  ? Math.toRadians(df.getTurnRate()): 0);
 	    
 	    poseStamped.header.stamp = node.getCurrentTime();	    
 	    poseStamped.header.frame_id = "/world";
