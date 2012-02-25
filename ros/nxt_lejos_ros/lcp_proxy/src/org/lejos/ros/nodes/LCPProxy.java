@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import lejos.nxt.Sound;
+
+import org.lejos.ros.nxt.navigation.PFMotorController;
 import org.lejos.ros.nxt.navigation.RangeScanner;
 
 import org.lejos.ros.nxt.sensors.ColorSensor;
@@ -490,7 +492,24 @@ public class LCPProxy implements NodeMain {
         			scan.setDesiredFrequency(desiredFrequency);
 	        		scan.publishTopic(node);
 	        		actuatorSystemsList.add(scan);			
-	        	}else {
+	        	} else if(type.equals("pfcontroller")) {	
+	        		System.out.println("I found a PF controller");
+	        		
+	        		name = map2.get("name").toString().trim();
+	        		port = map2.get("port").toString().trim();
+	        		desiredFrequency = Float.parseFloat(map2.get("desired_frequency").toString().trim());
+	        				        		
+	        		System.out.println(name);
+	        		System.out.println(port);
+	        		System.out.println(desiredFrequency);
+	        		
+	        		PFMotorController pf = new PFMotorController(port);
+	        		
+        			pf.setName(name);
+        			pf.setDesiredFrequency(desiredFrequency);
+	        		pf.publishTopic(node);
+	        		actuatorSystemsList.add(pf);			
+	        	} else {
 	        		System.out.println("I found a rare device");
 	        		
 	        		name = map2.get("name").toString().trim();
@@ -595,31 +614,38 @@ public class LCPProxy implements NodeMain {
     	        node.newSubscriber("dns_command", "nxt_lejos_ros_msgs/DNSCommand");
             subscriberDifferentialActuatorSystem.addMessageListener(new MessageListener<org.ros.message.nxt_lejos_ros_msgs.DNSCommand>() {
     	    	@Override
-    	    	public void onNewMessage(org.ros.message.nxt_lejos_ros_msgs.DNSCommand message) {  	    		
-	        		DifferentialNavigationSystem df = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) actuatorSystemsList.get(0);
-    	    		df.updateActuatorSystem(message);
+    	    	public void onNewMessage(org.ros.message.nxt_lejos_ros_msgs.DNSCommand message) { 
+    	    		for (NXTDevice device : actuatorSystemsList) {
+    		        	if (device instanceof DifferentialNavigationSystem) {
+			        		DifferentialNavigationSystem df = (DifferentialNavigationSystem) device;
+		    	    		df.updateActuatorSystem(message);
+    		        	} else if (device instanceof PFMotorController) {
+    		        		PFMotorController pf = (PFMotorController) device;
+    		        		pf.updateActuatorSystem(message);
+    		        	}
+    	    		}
 	    		
     	    	}
     	    });
             
-    		//Subscription to command_velocity_command
+    		//Subscription to command_velocity topic
             Subscriber<org.ros.message.turtlesim.Velocity> subscriberCommandVelocity =
     	        node.newSubscriber("/turtle1/command_velocity", "turtlesim/Velocity");
             subscriberCommandVelocity.addMessageListener(new MessageListener<org.ros.message.turtlesim.Velocity>() {
     	    	@Override
     	    	public void onNewMessage(org.ros.message.turtlesim.Velocity message) {   		
-	        		DifferentialNavigationSystem df = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) actuatorSystemsList.get(0);
+	        		DifferentialNavigationSystem df = (DifferentialNavigationSystem) actuatorSystemsList.get(0);
     	    		df.updateVelocity(message);	
     	    	}
     	    });
             
-    		//Subscription to command_velocity_command
+    		//Subscription to cmd_val topic
             Subscriber<org.ros.message.geometry_msgs.Twist> subscriberTwist =
     	        node.newSubscriber("cmd_vel", "geometry_msgs/Twist");
             subscriberTwist.addMessageListener(new MessageListener<org.ros.message.geometry_msgs.Twist>() {
     	    	@Override
     	    	public void onNewMessage(org.ros.message.geometry_msgs.Twist message) {   		
-	        		DifferentialNavigationSystem df = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) actuatorSystemsList.get(0);
+	        		DifferentialNavigationSystem df = (DifferentialNavigationSystem) actuatorSystemsList.get(0);
     	    		df.updateTwist(message);	
     	    	}
     	    });  	
@@ -630,7 +656,7 @@ public class LCPProxy implements NodeMain {
             subscriberSetPose.addMessageListener(new MessageListener<org.ros.message.geometry_msgs.Pose2D>() {
     	    	@Override
     	    	public void onNewMessage(org.ros.message.geometry_msgs.Pose2D message) {   		
-	        		DifferentialNavigationSystem df = (org.lejos.ros.nxt.navigation.DifferentialNavigationSystem) actuatorSystemsList.get(0);
+	        		DifferentialNavigationSystem df = (DifferentialNavigationSystem) actuatorSystemsList.get(0);
     	    		df.updatePose(message);	
     	    	}
     	    }); 
