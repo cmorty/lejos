@@ -1,0 +1,14 @@
+<package>
+  <description brief="lejos_navigation">
+
+     lejos_navigation
+
+  </description>
+  <author>lawrie</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/lejos_navigation</url>
+
+</package>
+
+
