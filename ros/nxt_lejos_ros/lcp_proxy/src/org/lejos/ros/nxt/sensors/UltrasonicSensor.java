@@ -4,6 +4,7 @@ import lejos.nxt.SensorPort;
 import lejos.robotics.RangeFinder;
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
+import org.ros.message.sensor_msgs.LaserScan;
 import org.ros.message.sensor_msgs.Range;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
@@ -24,6 +25,10 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
     final Range message = new Range(); 
     Publisher<Range> topic = null;
     String messageType = "sensor_msgs/Range";
+    
+    private final LaserScan laserMessage = new LaserScan(); 
+    private Publisher<LaserScan> laserTopic = null;
+    private String laserMessageType = "sensor_msgs/LaserScan";
     
     Node node;
 	
@@ -105,18 +110,38 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 
 	public void publishTopic(Node node) {
 		topic = node.newPublisher("" + super.getName(), messageType);
+		laserTopic = node.newPublisher("scan", laserMessageType);
 	}
 
 	public void updateTopic(Node node, long seq) {
-		//usSensor.ping();
+		float range = usSensor.getDistance() / 100f;
+		
+		// Range message
 		message.header.stamp = node.getCurrentTime();
 		message.header.frame_id = "/front";
 		message.max_range= range_max;
 		message.min_range = range_min;
 		message.field_of_view = spread_angle;
 		message.radiation_type = 0; // Ultrasonic
-		message.range = usSensor.getDistance() / 100f;
-		topic.publish(message);		
+		message.range = range;
+		topic.publish(message);	
+		
+		// Laser scan message
+		laserMessage.header.stamp = node.getCurrentTime();
+		laserMessage.header.frame_id = "/robot";
+		laserMessage.angle_min = -0.02f;
+		laserMessage.angle_max = 0.02f;
+		laserMessage.angle_increment = 0.02f; 
+		laserMessage.time_increment = 0.1f;
+		laserMessage.scan_time = 1f;
+		laserMessage.range_min = 0.05f;
+		laserMessage.range_max = 2.0f;
+		
+		// Show a spread of 3 points as exact location is not known
+		float[] ranges = new float[3];
+		for(int i=0;i<ranges.length;i++) ranges[i] = range;
+		laserMessage.ranges = ranges;
+		laserTopic.publish(laserMessage);
 	}
 	
 	public RangeFinder getSonic() {

@@ -42,7 +42,6 @@ public class RangeScanner extends NXTDevice implements INXTDevice {
 	}
 
 	public void updateTopic(Node node, long seq) {
-		message.header.seq = seq;
 		message.header.stamp = node.getCurrentTime();
 		message.header.frame_id = "/robot";
 		message.angle_min = (float) Math.toRadians(-45);
