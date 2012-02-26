@@ -33,6 +33,7 @@ import org.lejos.ros.nxt.NXTDevice;
 import org.lejos.ros.nxt.actuators.NXTServoMotor;
 import org.lejos.ros.nxt.sensors.BatterySensor;
 import org.ros.message.MessageListener;
+import org.ros.message.geometry_msgs.Pose2D;
 import org.ros.namespace.GraphName;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
@@ -660,6 +661,23 @@ public class LCPProxy implements NodeMain {
     	    		df.updatePose(message);	
     	    	}
     	    }); 
+            
+    		//Subscription to set_pose topic
+            Subscriber<org.ros.message.geometry_msgs.PoseWithCovarianceStamped> subscriberInitialPose =
+    	        node.newSubscriber("initialpose", "geometry_msgs/PoseWithCovarianceStamped");
+            subscriberInitialPose.addMessageListener(new MessageListener<org.ros.message.geometry_msgs.PoseWithCovarianceStamped>() {
+    	    	@Override
+    	    	public void onNewMessage(org.ros.message.geometry_msgs.PoseWithCovarianceStamped message) {   		
+	        		DifferentialNavigationSystem df = (DifferentialNavigationSystem) actuatorSystemsList.get(0);
+    	    		System.out.println("Received initial pose");
+    	    		System.out.println("x = " + message.pose.pose.position.x + ", y = " + message.pose.pose.position.y);
+    	    		Pose2D pose = new Pose2D();;
+    	    		pose.x = message.pose.pose.position.x;
+    	    		pose.y = message.pose.pose.position.y;
+    	    		pose.theta = 0;
+    	    		df.updatePose(pose);
+    	    	}
+    	    });
     	}
     	
 		//Subscription to play_tone_command

@@ -145,7 +145,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	 * @param pose the Pose2D message
 	 */
 	public void updatePose(Pose2D pose) {
-		posep.setPose(new Pose((float) pose.x, (float) pose.y, (float) Math.toDegrees(pose.theta)));
+		posep.setPose(new Pose((float) pose.x * 100f, (float) pose.y * 100f, (float) Math.toDegrees(pose.theta)));
 	}
 	
 	double oldAngular, oldLinear;
