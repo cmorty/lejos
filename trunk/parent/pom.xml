@@ -59,6 +59,12 @@
             <!-- use plugin-updates-report to check for new versions of these plugins. -->
             <plugins>
                 <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.7</version>
+                </plugin>
+
+                <plugin>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>2.3</version>
                 </plugin>
