@@ -28,6 +28,25 @@
         <plugins>
 
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src_shared</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <!-- For maven lifecycle order, see: http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->

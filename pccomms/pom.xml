@@ -39,24 +39,21 @@
         <plugins>
 
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
-                    <!-- For maven lifecycle order, see: http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
-                    
-                    <!-- Copy common classes before compile -->
                     <execution>
-                        <id>pre-compile</id>
-                        <phase>process-sources</phase>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>add-source</goal>
                         </goals>
                         <configuration>
-                            <target>
-                                <ant antfile="copy.xml" target="copy"/>
-                            </target>
+                            <sources>
+                                <source>../classes/src_shared</source>
+                            </sources>
                         </configuration>
                     </execution>
-
                 </executions>
             </plugin>
 
