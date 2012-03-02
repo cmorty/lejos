@@ -305,6 +305,11 @@
 				excludes="${vars.pccomms.docs.exclude}"
 			/>
 			<packageset
+				dir="${project.pccomms}/${vars.pccomms.source.dir2}"
+				includes="${vars.pccomms.docs.include}"
+				excludes="${vars.pccomms.docs.exclude}"
+			/>
+			<packageset
 				dir="${project.pctools}/${vars.pctools.source.dir}"
 				includes="${vars.pctools.docs.include}"
 				excludes="${vars.pctools.docs.exclude}"
