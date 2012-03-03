@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import lejos.internal.config.ConfigManager;
 import lejos.internal.jni.JNIClass;
 import lejos.internal.jni.JNILoader;
 import lejos.internal.jni.OSInfo;
@@ -19,7 +20,8 @@ import lejos.internal.jni.OSInfo;
  */
 public class NXTCommFactory {
 
-    /** Use USB for the connection
+    private static final String ANDROID_CACHEFILE = "sdcard/leJOS NXJ/nxj.cache";
+	/** Use USB for the connection
      */
     public static final int USB = 1;
     /** Use Bluetooth for the connection
@@ -30,6 +32,7 @@ public class NXTCommFactory {
 	public static final int ALL_PROTOCOLS = USB | BLUETOOTH;
 
 	// initialized lazy, use methods below
+	// lazy initialization fixed bug on OS X with JDK 1.5
 	private static OSInfo osinfo;
 	private static JNILoader jniloader;
 	
@@ -123,24 +126,6 @@ public class NXTCommFactory {
 		return home + File.separatorChar + "bin" + File.separatorChar + "nxj.properties";
 	}
 
-	private static String getCacheFile() {
-		OSInfo osi;
-		try	{
-			osi = getOSInfo();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		
-		if (isAndroid(osi))
-			return "sdcard/leJOS/nxj.cache";
-		
-		String userHome = System.getProperty("user.home");
-		if (userHome == null)
-			return null;
-		
-		return userHome + File.separatorChar + "nxj.cache";
-	}
-
 	/**
 	 * Load the leJOS NXJ properties
 	 * 
@@ -163,34 +148,6 @@ public class NXTCommFactory {
 				//ignore
 			} catch (IOException e) {
 				throw new NXTCommException("Cannot read nxj.properties file");
-			}
-		}
-		return props;
-	}
-
-	/**
-	 * Load the Bluetooth name cache as properties
-	 * 
-	 * @return the Properties object
-	 * @throws NXTCommException
-	 */
-	public static Properties getNXJCache() throws NXTCommException {
-		Properties props = new Properties();
-		String cacheFile = getCacheFile();
-
-		if (cacheFile != null)
-		{
-			try {
-				FileInputStream fis = new FileInputStream(cacheFile); 
-				try {
-					props.load(fis);	
-				} finally {
-					fis.close();
-				}
-			} catch (FileNotFoundException e) {
-				//ignore
-			} catch (IOException e) {
-				throw new NXTCommException("Cannot read nxj.cache file");
 			}
 		}
 		return props;
@@ -221,6 +178,38 @@ public class NXTCommFactory {
 	}
 
 	/**
+	 * Load the Bluetooth name cache as properties
+	 * 
+	 * @return the Properties object
+	 * @throws NXTCommException
+	 */
+	public static Properties getNXJCache() throws NXTCommException {
+		OSInfo osi;
+		try	{
+			osi = getOSInfo();
+		} catch (IOException e) {
+			throw new NXTCommException("failed to create OSInfo", e);
+		}
+		
+		Properties props = new Properties();
+		try {
+			if (isAndroid(osi)) {
+				FileInputStream fis = new FileInputStream(ANDROID_CACHEFILE); 
+				try {
+					props.load(fis);	
+				} finally {
+					fis.close();
+				}
+			} else {
+				ConfigManager.loadPropFile(ConfigManager.CONFIG_BTCACHE, props);
+			}
+		} catch (IOException e) {
+			throw new NXTCommException("Cannot read nxj.cache file", e);
+		}
+		return props;
+	}
+
+	/**
 	 * Save the leJOS NXJ Properties
 	 * 
 	 * @param props
@@ -229,18 +218,17 @@ public class NXTCommFactory {
 	 *            a comment that is written to the file
 	 * @throws IOException
 	 */
-	public static void saveNXJCache(Properties props, String comment)
-			throws IOException {
-		String cacheFile = getCacheFile();
-		
-		if (cacheFile != null)
-		{
-			FileOutputStream fos = new FileOutputStream(cacheFile);
+	public static void saveNXJCache(Properties props, String comment) throws IOException {
+		OSInfo osi = getOSInfo();
+		if (isAndroid(osi)) {
+			FileOutputStream fos = new FileOutputStream(ANDROID_CACHEFILE);
 			try	{
 				props.store(fos, comment);
 			} finally {
 				fos.close();
 			}
+		} else {
+			ConfigManager.savePropFile(ConfigManager.CONFIG_BTCACHE, props);
 		}
 	}
 

@@ -16,9 +16,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.VolatileImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -51,6 +49,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import lejos.internal.config.ConfigManager;
 import lejos.robotics.RangeReading;
 import lejos.robotics.RangeReadings;
 import lejos.robotics.mapping.NavigationModel.NavEvent;
@@ -271,45 +270,20 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 		loadProperties();
 	}
 	
-	private static String getPropsFileName() {
-		String userHome = System.getProperty("user.home");
-		if (userHome == null)
-			return null;
-		
-		return userHome + File.separatorChar + "nav.props";
-	}
-	
 	protected void loadProperties() {
-		//FIXME don't store properties file in current working directory!
-		String propsFileName = getPropsFileName();
-		if (propsFileName != null) {
-			try {
-				FileInputStream fis =new FileInputStream(propsFileName);
-				try {
-					props.load(fis);
-				} finally {
-					fis.close();
-				}
-			} catch (IOException ioe) {
-				log("Error loading properties file: " + ioe.getMessage());
-			}
+		try {
+			ConfigManager.loadPropFile(ConfigManager.CONFIG_NAVPANEL, props);
+		} catch (IOException ioe) {
+			log("Error loading properties file: " + ioe.getMessage());
 		}
 	}
-	
+
 	protected void saveProperties() {
 		mapPanel.saveColors(props);
-		String propsFileName = getPropsFileName();
-		if (propsFileName != null) {
-			try {
-				FileOutputStream out = new FileOutputStream(propsFileName);
-				try {
-					props.store(out, "Automatic save");					
-				} finally {
-					out.close();
-				}
-			} catch (IOException ioe) {
-				log("Failed to store properties");
-			}
+		try {
+			ConfigManager.savePropFile(ConfigManager.CONFIG_NAVPANEL, props);
+		} catch (IOException ioe) {
+			log("Failed to store properties");
 		}
 	}
 	
