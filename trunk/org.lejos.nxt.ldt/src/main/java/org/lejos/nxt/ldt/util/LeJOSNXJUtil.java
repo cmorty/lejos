@@ -374,6 +374,7 @@ public class LeJOSNXJUtil {
 		return currentStarter;
 	}
 
+	public static final String TOOL_DEBUG_PROXY = "lejos.pc.tools.NXJDebugProxy";
 	public static final String TOOL_UPLOAD = "lejos.pc.tools.NXJUpload";
 	public static final String TOOL_FLASH = "lejos.pc.tools.NXJFlash";
 	public static final String TOOL_FLASHG = "lejos.pc.tools.NXJFlashG";

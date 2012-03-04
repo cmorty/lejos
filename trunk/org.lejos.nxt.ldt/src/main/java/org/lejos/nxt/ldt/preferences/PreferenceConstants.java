@@ -34,5 +34,6 @@ public class PreferenceConstants {
 	public static final String KEY_DEBUG_MONITOR_TYPE = ILaunchManager.DEBUG_MODE+LaunchConstants.SUFFIX_MONITOR_TYPE;
 	
 	public static final String VAL_DEBUG_TYPE_NORMAL = "normal";
-	public static final String VAL_DEBUG_TYPE_REMOTE = "remote";
+	public static final String VAL_DEBUG_TYPE_RCONSOLE = "remote";
+	public static final String VAL_DEBUG_TYPE_JDWP = "jdwp";
 }
