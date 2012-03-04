@@ -247,7 +247,9 @@ public final class String implements CharSequence, Comparable<String>
 	
 	public boolean contentEquals(StringBuffer sb)
 	{
-		return contentEquals((CharSequence)sb);
+		synchronized (sb) {
+			return contentEquals((CharSequence)sb);
+		}
 	}
 	
 	public static String copyValueOf(char[] data)
