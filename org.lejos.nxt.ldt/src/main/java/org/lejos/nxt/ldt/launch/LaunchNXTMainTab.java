@@ -106,7 +106,7 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 	private Button debugVerbose;
 	private Button debugConsole;
 	private Button debugMonitorNormal;
-	private Button debugMonitorRemote;
+	private Button debugMonitorRConsole;
 	private Button targetUseDefaults;
 	private Button targetBusBoth;
 	private Button targetBusUSB;
@@ -115,6 +115,7 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 	private Button targetConnectByAddr;
 	private LabelText targetBrickName;
 	private LabelText targetBrickAddr;
+	private Button debugMonitorJdwp;
 	
 	private static IWorkspaceRoot getRoot()
 	{
@@ -324,7 +325,8 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		this.debugConsole.setEnabled(e);
 		this.debugVerbose.setEnabled(e);
 		this.debugMonitorNormal.setEnabled(e);
-		this.debugMonitorRemote.setEnabled(e);
+		this.debugMonitorRConsole.setEnabled(e);
+		this.debugMonitorJdwp.setEnabled(e);
 	}
 
 	private Group newGroup(Composite p, int cols, String text)
@@ -395,10 +397,12 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		this.debugConsole.setLayoutData(gd);
 		
 		this.debugMonitorNormal = createRadioButton(g, "Normal Debug Monitor");
-		this.debugMonitorRemote = createRadioButton(g, "Remote Debug Monitor");
+		this.debugMonitorRConsole = createRadioButton(g, "RConsole Debug Monitor");
+		this.debugMonitorJdwp = createRadioButton(g, "Remote Debug Monitor (will start eclipse debugger)");
 		
 		this.debugMonitorNormal.addSelectionListener(updater);
-		this.debugMonitorRemote.addSelectionListener(updater);
+		this.debugMonitorRConsole.addSelectionListener(updater);
+		this.debugMonitorJdwp.addSelectionListener(updater);
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config)
@@ -533,8 +537,10 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		String v;
 		if (debugMonitorNormal.getSelection())
 			v = PreferenceConstants.VAL_DEBUG_TYPE_NORMAL;
-		else if (debugMonitorRemote.getSelection())
-			v = PreferenceConstants.VAL_DEBUG_TYPE_REMOTE;
+		else if (debugMonitorRConsole.getSelection())
+			v = PreferenceConstants.VAL_DEBUG_TYPE_RCONSOLE;
+		else if (debugMonitorJdwp.getSelection())
+			v = PreferenceConstants.VAL_DEBUG_TYPE_JDWP;
 		else
 			v = null;
 			
@@ -618,7 +624,8 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		String monType = extractConfigValue(config, LaunchConstants.KEY_DEBUG_MONITOR_TYPE, 
 				PreferenceConstants.VAL_DEBUG_TYPE_NORMAL);
 		debugMonitorNormal.setSelection(PreferenceConstants.VAL_DEBUG_TYPE_NORMAL.equals(monType));
-		debugMonitorRemote.setSelection(PreferenceConstants.VAL_DEBUG_TYPE_REMOTE.equals(monType));
+		debugMonitorRConsole.setSelection(PreferenceConstants.VAL_DEBUG_TYPE_RCONSOLE.equals(monType));
+		debugMonitorJdwp.setSelection(PreferenceConstants.VAL_DEBUG_TYPE_JDWP.equals(monType));
 		
 		updateEnabledDisabled();
 	}

@@ -138,7 +138,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 		addField(new RadioGroupFieldEditor(PreferenceConstants.KEY_DEBUG_MONITOR_TYPE, 
 				"Debug Monitor", 2,	new String[][] {
 						{ "Normal Debug Monitor", PreferenceConstants.VAL_DEBUG_TYPE_NORMAL },
-						{ "Remote Debug Monitor", PreferenceConstants.VAL_DEBUG_TYPE_REMOTE },
+						{ "RConsole Debug Monitor", PreferenceConstants.VAL_DEBUG_TYPE_RCONSOLE },
+						{ "Remote Debug Monitor", PreferenceConstants.VAL_DEBUG_TYPE_JDWP },
 				}, newParent(g, 2)));
 	}
 

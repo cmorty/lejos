@@ -1,8 +1,13 @@
 package org.lejos.nxt.ldt.launch;
 
 import java.io.File;
+import java.io.InputStreamReader;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -10,16 +15,30 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.debug.core.model.RuntimeProcess;
+import org.eclipse.jdi.Bootstrap;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.lejos.nxt.ldt.LeJOSPlugin;
 import org.lejos.nxt.ldt.preferences.PreferenceConstants;
+import org.lejos.nxt.ldt.util.ExternalJVMToolStarter;
 import org.lejos.nxt.ldt.util.LeJOSNXJUtil;
+import org.lejos.nxt.ldt.util.PipeThread;
 import org.lejos.nxt.ldt.util.PrefsResolver;
 import org.lejos.nxt.ldt.util.ToolStarter;
+
+import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.VirtualMachineManager;
+import com.sun.jdi.connect.AttachingConnector;
+import com.sun.jdi.connect.Connector;
+import com.sun.jdi.connect.Connector.IntegerArgument;
 
 public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDelegate {
 	public static final String ID_TYPE = "org.lejos.nxt.ldt.LaunchType";
@@ -66,15 +85,16 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 		String defSwitch = LaunchConstants.PREFIX+mode+LaunchConstants.SUFFIX_USE_DEFAULT;
 		boolean verbose = resolve(p, config, defSwitch, mode+LaunchConstants.SUFFIX_LINK_VERBOSE, false);
 		boolean run = resolve(p, config, defSwitch, mode+LaunchConstants.SUFFIX_RUN_AFTER_UPLOAD, true);
-		boolean debugNormal, debugRemote;
+		boolean debugNormal, debugRemote, debugJDWP;
 		if (!ILaunchManager.DEBUG_MODE.equals(mode))
-			debugNormal = debugRemote = false;
+			debugNormal = debugRemote = debugJDWP = false;
 		else
 		{
 			String monType = resolve(p, config, defSwitch, mode+LaunchConstants.SUFFIX_MONITOR_TYPE,
 					PreferenceConstants.VAL_DEBUG_TYPE_NORMAL);
 			debugNormal = PreferenceConstants.VAL_DEBUG_TYPE_NORMAL.equals(monType);
-			debugRemote = PreferenceConstants.VAL_DEBUG_TYPE_REMOTE.equals(monType);
+			debugRemote = PreferenceConstants.VAL_DEBUG_TYPE_RCONSOLE.equals(monType);
+			debugJDWP = PreferenceConstants.VAL_DEBUG_TYPE_JDWP.equals(monType);
 		}
 		
 		if (monitor.isCanceled())
@@ -126,6 +146,8 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 					args.add("-g");
 				else if (debugRemote)
 					args.add("-gr");
+				else if (debugJDWP)
+					args.add("-gj");
 				args.add("--bootclasspath");
 				args.add(classpathToString(bootpath));
 				args.add("--classpath");
@@ -160,10 +182,76 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 				args.add(binaryPath);
 				
 				r = starter.invokeTool(LeJOSNXJUtil.TOOL_UPLOAD, args);
-				if (r == 0)
-					LeJOSNXJUtil.message("program has been uploaded");
-				else
+				if (r != 0)
 					LeJOSNXJUtil.error("uploading the program failed with exit status "+r);
+				else {
+					LeJOSNXJUtil.message("program has been uploaded");
+					
+					if(run && debugJDWP) {
+						LeJOSNXJUtil.message("Starting proxy ...");
+						monitor.subTask("Starting proxy ...");		
+						
+						// Wait a bit to give the program time to start
+						Thread.sleep(3000);
+						
+						// Find a free port
+						int port = DebugUtil.findFreePort();
+						
+						// Start nxjdebugproxy. 
+						ArrayList<String> proxyargs = new ArrayList<String>();
+						LeJOSNXJUtil.getUploadOpts(proxyargs, connType, connectByAddr ? brickAddr : null,
+								connectByName ? brickName : null);
+						proxyargs.add("-l");
+						proxyargs.add(Integer.toString(port));
+						
+						proxyargs.add("-di");
+						proxyargs.add(binaryDebugPath);
+						
+						
+						// The proxy has to run asyncronously, so we create a new process
+						ExternalJVMToolStarter externalStarter;
+						if (starter instanceof ExternalJVMToolStarter) {
+							externalStarter = (ExternalJVMToolStarter) starter;
+						} else {
+							externalStarter = (ExternalJVMToolStarter) LeJOSNXJUtil.getCachedExternalStarter();
+						}
+						
+						Process proxy = externalStarter.createProcess(LeJOSNXJUtil.TOOL_DEBUG_PROXY, proxyargs);
+						
+						LeJOSNXJUtil.message("Proxy listening on port " + port);
+						
+						LeJOSNXJUtil.message("Starting debugger ...");
+						monitor.subTask("Starting debugger ...");
+						
+						// Find the socket attach connector
+						VirtualMachineManager mgr=Bootstrap.virtualMachineManager();
+						
+						List<?> connectors = mgr.attachingConnectors();
+						
+						AttachingConnector chosen=null;
+						for (Iterator<?> iterator = connectors.iterator(); iterator
+								.hasNext();) {
+							AttachingConnector conn = (AttachingConnector) iterator.next();
+							if(conn.name().contains("SocketAttach")) {
+								chosen=conn;
+								break;
+							}
+						}
+						
+						if(chosen == null) 
+							LeJOSNXJUtil.error("No suitable connector");
+						else {
+							Map<?, ?> connectorArgs = chosen.defaultArguments();
+							Connector.IntegerArgument portArg = (IntegerArgument) connectorArgs.get("port");
+							portArg.setValue(port);
+							
+							VirtualMachine vm = chosen.attach(connectorArgs);
+							LeJOSNXJUtil.message("Connection established");
+							
+							JDIDebugModel.newDebugTarget(launch, vm, simpleName, null, true, true, true);
+						}
+					}
+				}
 			}
 		}
 		catch (Exception t)
