@@ -1,0 +1,21 @@
+
+(cl:in-package :asdf)
+
+(defsystem "nxt_lejos_msgs-msg"
+  :depends-on (:roslisp-msg-protocol :roslisp-utils )
+  :components ((:file "_package")
+    (:file "Compass" :depends-on ("_package_Compass"))
+    (:file "_package_Compass" :depends-on ("_package"))
+    (:file "JointVelocity" :depends-on ("_package_JointVelocity"))
+    (:file "_package_JointVelocity" :depends-on ("_package"))
+    (:file "Decibels" :depends-on ("_package_Decibels"))
+    (:file "_package_Decibels" :depends-on ("_package"))
+    (:file "JointPosition" :depends-on ("_package_JointPosition"))
+    (:file "_package_JointPosition" :depends-on ("_package"))
+    (:file "DNSCommand" :depends-on ("_package_DNSCommand"))
+    (:file "_package_DNSCommand" :depends-on ("_package"))
+    (:file "Battery" :depends-on ("_package_Battery"))
+    (:file "_package_Battery" :depends-on ("_package"))
+    (:file "Tone" :depends-on ("_package_Tone"))
+    (:file "_package_Tone" :depends-on ("_package"))
+  ))
