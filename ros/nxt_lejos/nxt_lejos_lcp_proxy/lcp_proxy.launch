@@ -1,0 +1,15 @@
+<!--
+nxt_lejos_lcp_proxy is a ROS package included in the stack nxt_lejos which 
+leJOS users to manage their NXT robot from a ROS Environment, 
+using the Lego Communications Protocol.
+-->
+
+<launch>
+<param name="robot_description" command="cat $(find nxt_lejos_lcp_proxy)/robot.urdf"/>
+	<node pkg="rosjava_bootstrap" 
+	type="run.py" 
+	args="nxt_lejos_lcp_proxy org.lejos.ros.nodes.LCPProxy" 
+	name="nxt_lejos_lcp_proxy" 
+	output="screen" />     
+</launch>
+
