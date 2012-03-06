@@ -69,8 +69,8 @@ public interface ArcMoveController extends MoveController {
 	 * If <code>radius</code> is zero, is zero, the robot rotates in place.
 	 * <p>
 	 * Robot will stop when the degrees it has moved along the arc equals <code>angle</code>.<br> 
-	 * If <code>angle</code> is positive, the robot will move travel forwards.<br>
-	 * If <code>angle</code> is negative, the robot will move travel backwards.
+	 * If <code>angle</code> is positive, the robot will turn to the left (anti-clockwise).<br>
+	 * If <code>angle</code> is negative, the robot will turn to the right (clockwise).
 	 * If <code>angle</code> is zero, the robot will not move and the method returns immediately.
 	 * <p>
 	 * Postcondition: Motor speeds are unpredictable.
@@ -79,7 +79,7 @@ public interface ArcMoveController extends MoveController {
 	 * 
 	 * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	 *          side of the robot is on the outside of the turn.
-	 * @param angle The sign of the angle determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
+	 * @param angle The sign of the angle determines the direction of the robot turns: Positive is anti-clockwise,  negative is clockwise.
 	 * @see #travelArc(double, double)
 	 */
 	 public void arc(double radius, double angle);
@@ -94,9 +94,9 @@ public interface ArcMoveController extends MoveController {
 	 * If <code>radius</code> is zero, is zero, the robot rotates in place.
 	 * <p>
 	 * The robot will stop when the degrees it has moved along the arc equals <code>angle</code>.<br> 
-	 * If <code>angle</code> is positive, the robot will move travel forwards.<br>
-	 * If <code>angle</code> is negative, the robot will move travel backwards.
-	 * If <code>angle</code> is zero, the robot will not move and the method returns immediately.
+     * If <code>angle</code> is positive, the robot will turn to the left (anti-clockwise).<br>
+	 * If <code>angle</code> is negative, the robot will turn to the right (clockwise).
+	 * If <code>angle</code> is zero, the robot will not move and the method returns immediately. 
 	 * <p>
 	 * Postcondition: Motor speeds are unpredictable.
 	 * <p>
@@ -104,7 +104,7 @@ public interface ArcMoveController extends MoveController {
 	 * 
 	 * @param radius of the arc path. If positive, the left side of the robot is on the inside of the turn. If negative, the left
 	 *          side of the robot is on the outside of the turn.
-	 * @param angle The sign of the angle determines the direction of robot motion. Positive drives the robot forward, negative drives it backward.
+	 * @param angle The sign of the angle determines the direction of the robot turns: Positive is anti-clockwise,  negative is clockwise.
 	 * @param immediateReturn If immediateReturn is true then the method returns immediately. 
 	 * @see #travelArc(double, double, boolean)
 	 */

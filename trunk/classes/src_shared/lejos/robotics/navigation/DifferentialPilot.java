@@ -34,7 +34,11 @@ import java.util.ArrayList;
  * true </code>,  <code>isMoving()</code>  returns <code>false</code>, <code>moveStopped()
  * </code> is called, and, if a blocking method is executing, that method exits.
  * The units of measure for travel distance, speed and acceleration are the units 
- * used in specifying the wheel diameter and track width in the constructor. 
+ * used in specifying the wheel diameter and track width in the constructor. <br>
+ * In all the methods that cause the robot to change its heading (the angle relative to the X axis 
+ * in which the robot is facing) the angle parameter specifies the change in heading. 
+ * A positive angle causes a turn to the left (anti-clockwise) to increase the heading,
+ * and a negative angle causes a turn to the right (clockwise).
  * <br> Example of use of come common methods:
  * <p>
  * <code><pre>
