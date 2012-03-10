@@ -15,6 +15,12 @@
 		</fileset>
 	</path>
 
+	<target name="clean">
+		<delete file="artifacts.jar"/>
+		<delete file="content.jar"/>
+		<delete dir="features"/>
+		<delete dir="plugins"/>
+	</target>
 	
 	<target name="publish" description="Publishes update site in dist directory">
 	
