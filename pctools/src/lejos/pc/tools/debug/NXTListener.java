@@ -68,13 +68,13 @@ class NXTListener extends ProxyListener implements JDWPConstants {
 
 				handled = false;
 				Packet p = waitForPacket();
-				System.out.println("From NXT " + p);
+				debug("From NXT " + p);
 				if (p == null) {
 					debuggerListener.setStop();
 					break; // must be time to quit
 				}
 
-//				System.out.println("From NXT "+p);
+//				debug("From NXT "+p);
 
 				in = new PacketStream(this, p);
 				if ((p.flags & Packet.Reply) == 0) {

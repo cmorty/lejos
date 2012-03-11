@@ -169,7 +169,7 @@ class DebuggerListener extends ProxyListener implements JDWPConstants {
 				if ((p.flags & Packet.Reply) == 1) {
 					continue;
 				}
-//				System.out.println("From Debugger "+p);
+//				debug("From Debugger "+p);
 
 				boolean handled = false;
 				in = new PacketStream(this, p);
@@ -309,7 +309,7 @@ class DebuggerListener extends ProxyListener implements JDWPConstants {
 						return true;
 					}
 				}
-				System.out.println("did not find class "+classToMatch);
+				debug("did not find class "+classToMatch);
 				sendErrorReply(this, in, NOT_FOUND);
 				handled = true;
 			} catch (PacketStreamException e) {
@@ -641,7 +641,7 @@ class DebuggerListener extends ProxyListener implements JDWPConstants {
 		// try {
 		// classId = in.readUnsignedByte();
 		// } catch (PacketStreamException e) {
-		// System.out.println("Interfaces cmd: exception: " + e);
+		// debug("Interfaces cmd: exception: " + e);
 		// sendErrorReply(this, in, INVALID_OBJECT);
 		// handled = true;
 		// break;
@@ -731,7 +731,7 @@ class DebuggerListener extends ProxyListener implements JDWPConstants {
 // try {
 // threadId = in.readUnsignedByte();
 // } catch (PacketStreamException e) {
-// System.out.println("Methods cmd: exception: " + e);
+// debug("Methods cmd: exception: " + e);
 // sendErrorReply(this, in, INVALID_OBJECT);
 // handled = true;
 // return true;
@@ -875,13 +875,13 @@ class DebuggerListener extends ProxyListener implements JDWPConstants {
 		}
 		// int fieldID = classId << 8;
 		ps.writeInt(fiList.size());
-		System.out.println("Get fields for class "+cData);
+		debug("Get fields for class "+cData);
 		for (FieldData fi : fiList) {
-			System.out.println(fi);
 			if (fi == null) {
 				sendErrorReply(this, in, INVALID_OBJECT);
 				return false;
 			}
+			debug(fi.toString());
 			ps.writeFieldId(fi.id);
 			ps.writeString(fi.name);
 			ps.writeString(fi.signature);

@@ -110,7 +110,7 @@ class Packet extends Object implements JDWPConstants {
 			s.append(id);
 			s.append('\n');
 		} catch (ArrayIndexOutOfBoundsException e) {
-			System.out.println("UNKNOWN COMMAND: " + cmdSet + "/" + cmd);
+			return("UNKNOWN COMMAND: " + cmdSet + "/" + cmd);
 		}
 		if (cmdSet == 15 && cmd == 1) {
 			s.append("\nEventKind == ").append(data[0]).append("\n");

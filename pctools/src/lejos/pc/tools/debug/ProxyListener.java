@@ -123,7 +123,7 @@ abstract class ProxyListener extends Thread {
 				try {
 					p.wait();
 				} catch (InterruptedException e) {
-					System.out.println(this + " waitForReply Interrupted");
+					debug(this + " waitForReply Interrupted");
 					throw new ProxyConnectionException();
 				}
 			}

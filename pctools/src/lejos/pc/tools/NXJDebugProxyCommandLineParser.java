@@ -35,13 +35,15 @@ public class NXJDebugProxyCommandLineParser extends AbstractCommandLineParser {
 		Option debugDataOption = new Option("di","debuginfo", true, "use the specified debug data file");
 		debugDataOption.setArgName("file");
 		options.addOption(debugDataOption);
+		
+		options.addOption("v", "verbose", false, "print debug outputs. This is used for debugging the proxy and not for debugging the target program!");
+		
 	}
 
 	/**
 	 * Parse commandline.
 	 * 
 	 * @param args command line
-	 * @throws TinyVMException
 	 */
 	public CommandLine parse(String[] args) throws ParseException
 	{

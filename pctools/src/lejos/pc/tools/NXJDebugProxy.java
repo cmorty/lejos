@@ -21,14 +21,12 @@ import org.apache.commons.cli.ParseException;
 public class NXJDebugProxy implements NXTCommLogListener {
 
 	public static void main(String[] args) {
-		int r;
-		try {
-			r = new NXJDebugProxy().run(args);
-		} catch (Exception e) {
-			e.printStackTrace(System.err);
-			r = 1;
-		}
-		System.exit(r);
+		ToolStarter.startTool(NXJDebugProxy.class, args);
+	}
+	
+	public static int start(String[] args) throws Exception
+	{
+		return new NXJDebugProxy().run(args);
 	}
 
 	public int run(String[] args) throws Exception {
@@ -39,6 +37,7 @@ public class NXJDebugProxy implements NXTCommLogListener {
 
 		InetSocketAddress socketAddress = null;
 		boolean attach = false;
+		boolean debug=false;
 
 		NXJDebugProxyCommandLineParser parser = new NXJDebugProxyCommandLineParser(NXJDebugProxy.class, "[options]");
 		try {
@@ -51,7 +50,8 @@ public class NXJDebugProxy implements NXTCommLogListener {
 			boolean blueTooth = commandLine.hasOption("b");
 			boolean usb = commandLine.hasOption("u");
 			address = AbstractCommandLineParser.getLastOptVal(commandLine, "d");
-
+			debug = commandLine.hasOption("v");
+			
 			if (blueTooth)
 				protocols |= NXTCommFactory.BLUETOOTH;
 			if (usb)
@@ -141,6 +141,7 @@ public class NXJDebugProxy implements NXTCommLogListener {
 
 		DebugProxyTool tool = new DebugProxyTool(data, debuggerConnection, nxtConnection);
 
+		tool.setDebug(debug);
 		tool.addLogListener(this);
 		tool.start();
 		tool.waitForCompletion();
