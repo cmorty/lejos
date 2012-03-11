@@ -1,0 +1,14 @@
+<launch>
+
+  <node name="recognizer" pkg="pocketsphinx" type="recognizer.py">
+    <param name="lm" value="$(find pocketsphinx)/demo/voice_cmd.lm"/>
+    <param name="dict" value="$(find pocketsphinx)/demo/voice_cmd.dic"/>
+  </node>
+
+	<node pkg="rosjava_bootstrap" 
+	type="run.py" 
+	args="nxt_lejos_speech_control org.lejos.ros.nodes.SpeechControl" 
+	name="nxt_lejos_speech_control" 
+	output="screen" />
+
+</launch>

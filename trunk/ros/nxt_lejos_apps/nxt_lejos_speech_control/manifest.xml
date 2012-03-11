@@ -1,0 +1,26 @@
+<package>
+  <description brief="nxt_lejos_speech_control">
+
+     nxt_lejos_speech_control
+
+  </description>
+  <author>leJOS development</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/nxt_lejos_speech_control</url>
+
+  <depend package="rosjava" />
+  <depend package="std_msgs" />
+  <depend package="nxt_lejos_msgs" />
+
+ <export>
+	    <rosjava-src location="src" /> 
+	   	<rosjava-pathelement location="target/" groupId="org.lejos.ros" artifactId="org.lejos.ros.nodes.SpeechControl" version="0.0.1" built="true" />
+    	<rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/pccomm.jar" />
+     	<rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove-gpl.jar" />
+    	<rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove.jar" />
+  </export>
+
+</package>
+
+
