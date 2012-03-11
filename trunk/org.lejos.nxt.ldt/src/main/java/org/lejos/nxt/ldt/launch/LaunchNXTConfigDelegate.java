@@ -215,8 +215,13 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 						} else {
 							externalStarter = (ExternalJVMToolStarter) LeJOSNXJUtil.getCachedExternalStarter();
 						}
-						
 						Process proxy = externalStarter.createProcess(LeJOSNXJUtil.TOOL_DEBUG_PROXY, proxyargs);
+						
+						LeJOSPlugin p2 = LeJOSPlugin.getDefault();
+						Writer consw = p2.getConsoleWriter();
+						
+						new PipeThread(new InputStreamReader(proxy.getInputStream()), consw).start();
+						new PipeThread(new InputStreamReader(proxy.getErrorStream()), consw).start();
 						
 						LeJOSNXJUtil.message("Proxy listening on port " + port);
 						
