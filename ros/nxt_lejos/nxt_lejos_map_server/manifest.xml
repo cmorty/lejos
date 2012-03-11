@@ -1,8 +1,9 @@
 <package>
   <description brief="nxt_lejos_map_server">
-
-     nxt_lejos_map_server
-
+     The nxt_lejos_map_server package will publish leJOS line maps
+     as occupancy grid maps so that they can be used by rviz and
+     the ROS navigation stack. Currently it publishes line maps as
+     markers that can be shown in rviz.
   </description>
   <author>leJOS development</author>
   <license>BSD</license>
@@ -19,7 +20,4 @@
      	<rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove-gpl.jar" />
     	<rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove.jar" />	    	
   </export>
-
 </package>
-
-

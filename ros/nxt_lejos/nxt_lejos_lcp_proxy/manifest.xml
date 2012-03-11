@@ -1,8 +1,11 @@
 <package>
   <description brief="nxt_lejos_lcp_proxy">
-
-     nxt_lejos_lcp_proxy
-
+     The nxt_lejos_lcp_proxy package acts as a controller for leJOS NXT robots.
+     It uses a YAML file to describe the robot configuration. It publishes
+     tf, odometry and pose data, and sensor data for all sensors in the
+     robot configuration. It supports several ways of driving the robot, 
+     and its individual motors. It supports everything required by the ROS
+     navigation stack.
   </description>
   <author>leJOS development</author>
   <license>BSD</license>
@@ -25,7 +28,4 @@
     <rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove.jar" />	    	
     <rosjava-pathelement location="/home/lejosdev/ros/workspace/nxt_lejos/nxt_lejos_lcp_proxy/lib/yamlbeans-1.06.jar" />
   </export>
-
 </package>
-
-

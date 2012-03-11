@@ -1,14 +1,15 @@
 <package>
   <description brief="nxt_lejos_navigation">
-
-     nxt_lejos_navigation
-
+     The nxt_lejos_navigation package contains launch files and parameter
+     files to start the move_base node in the ROS navigation stack in order to navigate
+     a leJOS NXT robot. The nxt_lejos_lcp_proxy node acts as the robot
+     controller and supplies sensor data and odometry data. It is not
+     started by the launch file.
   </description>
-  <author>leJOS development</author>
+  <author>Lawrie Griffiths</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/nxt_lejos_navigation</url>
-
 </package>
 
 
