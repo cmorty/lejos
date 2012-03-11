@@ -1,0 +1,14 @@
+<package>
+  <description brief="nxt_lejos_msgs">
+
+     nxt_lejos_msgs
+
+  </description>
+  <author>leJOS development</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/nxt_lejos_msgs</url>
+
+</package>
+
+
