@@ -1,14 +1,12 @@
 <package>
   <description brief="nxt_lejos_msgs">
-
-     nxt_lejos_msgs
-
+     The nxt_lejos_msgs package contains extra messages used by the nxt_lejos
+     stack, in addition to the ones in the nxt_msgs package. They are used to
+     publish sensor information, control the robot, control individual
+     motors, and send tones to the NXT brick.
   </description>
-  <author>leJOS development</author>
+  <author>Lawrie Griffiths and Juan Antonio Brenha Moral</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/nxt_lejos_msgs</url>
-
 </package>
-
-
