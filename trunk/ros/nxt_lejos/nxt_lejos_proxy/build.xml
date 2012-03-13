@@ -12,7 +12,6 @@
   <path id="classpath">
     <pathelement path="${ros.compile.classpath}" />
   	<pathelement path="/home/lejosdev/workspace/snapshot/lib/pc/pccomm.jar" />
-  	<pathelement path="lib/yamlbeans-1.06.jar" />
   </path>
 	
   <echo message="${toString:classpath}" />
