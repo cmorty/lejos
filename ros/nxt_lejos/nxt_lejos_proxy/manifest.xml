@@ -1,0 +1,37 @@
+<package>
+  <description brief="nxt_lejos_proxy">
+      The nxt_lejos_proxy package communicates with a leJOS NXT robot running
+      the ROS Responder. It works over USB or Bluetooth.  The proxy publishes
+      sensor messages for all sensors in the "nxt_robot" configuration 
+      parameters.  It also publishes tf transforms and odometry data. 
+      It subscribes to the cmd_vel topic with a Twist message to allow the
+      robot to be controlled by the ROS navigation stack. It also subscribes
+      to other topics that allow the robot to be controlled with pilot 
+      commands and allow tones to be played on the robot. It is much faster
+      than nxt_lejos_lcp_proxy.
+  </description>
+  <author>leJOS development</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/nxt_lejos_proxy</url>
+
+  <depend package="rosjava"/>
+  <depend package="std_msgs" />
+  <depend package="sensor_msgs" />
+  <depend package="geometry_msgs" />
+  <depend package="nav_msgs" />
+  <depend package="nxt_msgs" />
+  <depend package="nxt_lejos_msgs" />
+  <depend package="tf" />
+
+<export>
+	<rosjava-src location="src" /> 
+	<rosjava-pathelement location="target/" groupId="org.lejos.ros" artifactId="org.lejos.ros.nodes.ROSProxy" version="0.0.1" built="true" />
+   	<rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/pccomm.jar" />
+   	 <rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove-gpl.jar" />
+    	<rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove.jar" />	    	
+    	<rosjava-pathelement location="/home/lejosdev/ros/workspace/nxt_lejos/nxt_lejos_proxy/lib/yamlbeans-1.06.jar" />
+  </export>
+</package>
+
+
