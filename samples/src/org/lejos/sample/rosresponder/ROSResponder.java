@@ -154,6 +154,8 @@ public class ROSResponder {
 				color = new ColorSensor(port);
 			} else if (type == LIGHT) {
 				light = new LightSensor(port);
+			} else if (type == SOUND) {
+				sound = new SoundSensor(port);
 			}
 		}
 		
@@ -191,7 +193,7 @@ public class ROSResponder {
 						reading = color.getLightValue();
 						break;
 					case TOUCH:
-						reading = (touch.isPressed() ? 0 : 1);
+						reading = (touch.isPressed() ? 1 : 0);
 						break;
 					}
 				}
