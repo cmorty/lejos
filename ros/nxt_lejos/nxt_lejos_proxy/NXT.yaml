@@ -5,7 +5,7 @@ nxt_robot:
     spread_angle: 0.2
     min_range: 0.01
     max_range: 2.5
-    desired_frequency: 60.0
+    desired_frequency: 20.0
   - type: differential_pilot
     name: pilot
     port: PORT_AC
@@ -13,15 +13,3 @@ nxt_robot:
     track_width: 16.0
     wheel_diameter: 4.6
     reverse: true
-  - type: compass
-    name: compass_sensor
-    port: PORT_2
-    desired_frequency: 30.0
-  - type: gyro
-    name: gyro_sensor
-    port: PORT_3
-    desired_frequency: 40.0
-  - type: touch
-    name: touch_sensor
-    port: PORT_4
-    desired_frequency: 10.0

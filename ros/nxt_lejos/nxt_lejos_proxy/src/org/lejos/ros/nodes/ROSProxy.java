@@ -16,10 +16,14 @@ import org.lejos.ros.sensors.LightSensor;
 import org.lejos.ros.sensors.SoundSensor;
 import org.lejos.ros.sensors.TouchSensor;
 import org.lejos.ros.sensors.UltrasonicSensor;
+import org.ros.message.MessageListener;
+import org.ros.message.geometry_msgs.Twist;
+import org.ros.message.nxt_lejos_msgs.DNSCommand;
 import org.ros.namespace.GraphName;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
 import org.ros.node.parameter.ParameterTree;
+import org.ros.node.topic.Subscriber;
 
 public class ROSProxy implements NodeMain {
 	
@@ -88,6 +92,7 @@ public class ROSProxy implements NodeMain {
 		dos = new DataOutputStream(conn.getOutputStream());
 		dis = new DataInputStream(conn.getInputStream());
 		
+		// Process nxt_robot configuration
 		List<HashMap<String,?>> robotParams = (List<HashMap<String,?>>) params.getList("nxt_robot");
 		if (robotParams != null) {
 			for (HashMap<String,?> m: robotParams) {
@@ -113,8 +118,40 @@ public class ROSProxy implements NodeMain {
 					System.out.println("Wheel diameter is " + wheelDiameter);
 					
 					boolean reverse = (Boolean) m.get("reverse");
-					System.out.println("reverse is " + reverse);
+					System.out.println("reverse is " + reverse);	
 					
+					//Subscribe to the Twist message on "cmd_vel" topic
+		            Subscriber<Twist> subscriberTwist =
+		        	        node.newSubscriber("cmd_vel", "geometry_msgs/Twist");
+		                subscriberTwist.addMessageListener(new MessageListener<org.ros.message.geometry_msgs.Twist>() {
+		        	    	@Override
+		        	    	public void onNewMessage(org.ros.message.geometry_msgs.Twist message) { 
+		        	    		twist((float) message.linear.x, (float) message.angular.z);
+		        	    	}
+		        	    });
+		                
+		            // Subscribe to the DNSCommand message on the dns_command topic
+	                Subscriber<DNSCommand> subscriberDifferentialActuatorSystem =
+	            	        node.newSubscriber("dns_command", "nxt_lejos_msgs/DNSCommand");
+	                    subscriberDifferentialActuatorSystem.addMessageListener(new MessageListener<DNSCommand>() {
+	            	    	@Override
+	            	    	public void onNewMessage(DNSCommand message) { 
+	            	    		String t = message.type;
+	            	    		System.out.println("Sending " + t + " " + message.value);
+	            	    		
+	            	    		if (t.equals("forward")) forward();
+	            	    		else if (t.equals("backward")) backward();
+	            	    		else if (t.equals("stop")) stop();
+	            	    		else if (t.equals("rotateLeft")) rotateLeft();
+	            	    		else if (t.equals("rotateRight")) rotateRight();
+	                    		else if (t.equals("shutdown")) shutDown();
+	                    		else if (t.equals("travel")) travel((float) message.value);
+	                    		else if (t.equals("rotate")) rotate((float) message.value);		
+	                    		else if (t.equals("setTravelSpeed")) setTravelSpeed((float) message.value);
+	                    		else if (t.equals("setRotateSpeed")) setRotateSpeed((float) message.value);
+	            	    	}
+	            	    });
+		                
 				} else {
 					configureSensor(getType(type), getPort(port));
 					
@@ -222,11 +259,11 @@ public class ROSProxy implements NodeMain {
 		connected =  conn.connectTo((connection.equals("usb") ? "usb" : "btspp" + "://"));	    	
 
 		if (connected) {
-			System.out.println("ROS node connected with NXT brick " + brickName);
+			System.out.println("ROS node connected to NXT brick " + brickName);
 			dos = new DataOutputStream(conn.getOutputStream());
 			dis = new DataInputStream(conn.getInputStream());
 		} else {
-			System.err.println("I can't connect with a NXT brick");
+			System.err.println("I can't connect to a NXT brick");
 			System.exit(1);
 		}
 	}
@@ -254,6 +291,18 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	private void twist(float linear, float angular) {
+		try {
+			dos.writeByte(TWIST);
+			dos.writeFloat(linear);
+			dos.writeFloat(angular);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
 	private byte getType(String type) {
 		if (type.equals("ultrasonic")) return SONIC;
 		else if (type.equals("compass")) return COMPASS;
@@ -274,6 +323,110 @@ public class ROSProxy implements NodeMain {
 	    else if(port.equals("PORT_4")) return 3;
 		
 		return -1;
+	}
+	
+	private void forward() {
+		try {
+			dos.writeByte(FORWARD);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
+	private void backward() {
+		try {
+			dos.writeByte(BACKWARD);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
+	private void stop() {
+		try {
+			dos.writeByte(STOP);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
+	private void shutDown() {
+		try {
+			dos.writeByte(SHUT_DOWN);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
+	private void rotateLeft() {
+		try {
+			dos.writeByte(ROTATE_LEFT);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
+	private void rotateRight() {
+		try {
+			dos.writeByte(ROTATE_RIGHT);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
+	private void travel(float distance) {
+		try {
+			dos.writeByte(TRAVEL);
+			dos.writeFloat(distance);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
+	private void rotate(float angle) {
+		try {
+			dos.writeByte(ROTATE);
+			dos.writeFloat(angle);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
+	private void setTravelSpeed(float speed) {
+		try {
+			dos.writeByte(SET_TRAVEL_SPEED);
+			dos.writeFloat(speed);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
+	private void setRotateSpeed(float speed) {
+		try {
+			dos.writeByte(SET_ROTATE_SPEED);
+			dos.writeFloat(speed);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
 	}
 
 	@Override
