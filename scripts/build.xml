@@ -105,18 +105,24 @@ ${template.linux.parser}
 		<linux-run file="nxjc">
 			"$JAVAC" -bootclasspath "$NXJ_CP_NXT" -extdirs "" "$@"
 		</linux-run>
+<!--
+		Version different to the windows script, with parser written in bash script
 		<linux-parser file="nxjpcc">
 			"$JAVAC" -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
 		</linux-parser>
 		<linux-parser file="nxjpc">
-			"$JAVA" $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
+			"$JAVA" $NXJ_FORCE32 "-Dnxj.home=$NXJ_HOME" -classpath "$NXJ_CMDLINE_CP" "${NXJ_CMDLINE[@]}"
 		</linux-parser>
+-->
 <!--
 		Alternative version similar to the windows script, for testing purpose
-		<linux-run file="nxjpc">
-			"$JAVA" $NXJ_FORCE32 -Dnxj.home="$NXJ_HOME" -Xbootclasspath/a:"$NXJ_CP_PC" "$@"
-		</linux-run>
 -->
+		<linux-run file="nxjpcc">
+			"$JAVAC" "-Xbootclasspath/a:$NXJ_CP_PC" "$@"
+		</linux-run>
+		<linux-run file="nxjpc">
+			"$JAVA" $NXJ_FORCE32 "-Dnxj.home=$NXJ_HOME" "-Xbootclasspath/a:$NXJ_CP_PC" "$@"
+		</linux-run>
 	</target>
 	
 	<target name="windows" description="generated batch scripts">
@@ -149,10 +155,10 @@ ${template.linux.parser}
 			"%JAVAC%" -bootclasspath "%NXJ_CP_NXT%" -extdirs "" %*
 		</win-run>
 		<win-run file="nxjpcc">
-			"%JAVAC%" -Xbootclasspath/a:"%NXJ_CP_PC%" %*
+			"%JAVAC%" "-Xbootclasspath/a:%NXJ_CP_PC%" %*
 		</win-run>
 		<win-run file="nxjpc">
-			"%JAVA%" -Dnxj.home="%NXJ_HOME%" -Xbootclasspath/a:"%NXJ_CP_PC%" %*
+			"%JAVA%" -Dnxj.home="%NXJ_HOME%" "-Xbootclasspath/a:%NXJ_CP_PC%" %*
 		</win-run>
 	</target>
 	
