@@ -238,7 +238,8 @@ main class ${main.class}</echo>
 			<classpath refid="lejos.pc" />
 			<arg value="-di" />
 			<arg file="${output.nxd}" />
-			<arg vlue="-l" />
+			<arg value="-l" />
+			<arg value="8000" />
 		</java>
 	</target>
 
