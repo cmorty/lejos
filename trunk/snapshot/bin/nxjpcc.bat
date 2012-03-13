@@ -77,5 +77,5 @@ if "%OS%" == "Windows_NT" goto :winnt
 	)
 
 
-"%JAVAC%" -Xbootclasspath/a:"%NXJ_CP_PC%" %*
+"%JAVAC%" "-Xbootclasspath/a:%NXJ_CP_PC%" %*
 :eof
