@@ -34,21 +34,21 @@ public class BumperCar implements NodeMain {
         subscriberRange.addMessageListener(new MessageListener<Range>() {
 	    	@Override
 	    	public void onNewMessage(Range msg) {
-	    		System.out.println("Range is " + msg.range + " (" + processing + ")");
+	    		if (msg.range < 1.0) System.out.println("Range is " + msg.range + " (" + processing + ")");
 				if (msg.range < limit && !processing) {
 					processing = true;
 					message.type = "travel"; 
 					message.value = -20;
 					topic.publish(message); // Go back 20cm
-					Delay.msDelay(3000);
+					Delay.msDelay(2000);
 					message.type = "rotate";  
 					message.value = 30;
 					topic.publish(message); // Rotate 30 degrees
-					Delay.msDelay(2000);
+					Delay.msDelay(1000);
 					message.type = "forward";
 					message.value = 0;
 					topic.publish(message);  // Go forward
-					Delay.msDelay(500);
+					//Delay.msDelay(500);
 					processing = false;
 				}		
 	    	}
@@ -60,13 +60,13 @@ public class BumperCar implements NodeMain {
         
         // Set the robot travel speed
         message.type = "setTravelSpeed";
-        message.value = 10;
+        message.value = 20;
 		topic.publish(message);	
 		Delay.msDelay(1000);
 		
 		// Set the rotate speed
         message.type = "setRotateSpeed";
-        message.value = 50;
+        message.value = 100;
 		topic.publish(message);
 		Delay.msDelay(1000);
 		
