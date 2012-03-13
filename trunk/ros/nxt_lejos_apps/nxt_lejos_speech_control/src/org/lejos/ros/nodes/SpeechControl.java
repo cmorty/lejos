@@ -1,7 +1,10 @@
 package org.lejos.ros.nodes;
 
+import lejos.util.Delay;
+
 import org.ros.message.MessageListener;
 import org.ros.message.nxt_lejos_msgs.DNSCommand;
+import org.ros.message.sensor_msgs.Range;
 import org.ros.namespace.GraphName;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
@@ -17,6 +20,7 @@ public class SpeechControl implements NodeMain {
   private Publisher<DNSCommand> topic = null;
   private String messageType = "nxt_lejos_msgs/DNSCommand";
   private DNSCommand dns = new DNSCommand();
+  private boolean stopped =false;
 
   @Override
   public GraphName getDefaultNodeName() {
@@ -25,7 +29,6 @@ public class SpeechControl implements NodeMain {
 
   @Override
   public void onStart(Node node) {
-	  
 	topic = node.newPublisher("dns_command", messageType);
     
     Subscriber<org.ros.message.std_msgs.String> subscriber =
@@ -42,7 +45,23 @@ public class SpeechControl implements NodeMain {
     	  else if (cmd.equals("stop")) dns.type = "stop";
     	  dns.value = 0;
     	  topic.publish(dns);
+    	  Delay.msDelay(1000);
+    	  stopped = false;
       }
+    });
+    
+	//Subscription to ultrasonic_sensor topic
+    Subscriber<Range> subscriberRange =
+        node.newSubscriber("ultrasonic_sensor", "sensor_msgs/Range");
+    subscriberRange.addMessageListener(new MessageListener<Range>() {
+    	@Override
+    	public void onNewMessage(Range msg) {
+			if (msg.range < 0.5 && !stopped) {
+				stopped = true;;
+				dns.type = "stop"; 
+				topic.publish(dns);
+			}		
+    	}
     });
   }
 
