@@ -77,5 +77,5 @@ if "%OS%" == "Windows_NT" goto :winnt
 	)
 
 
-"%JAVA%" -Dnxj.home="%NXJ_HOME%" -Xbootclasspath/a:"%NXJ_CP_PC%" %*
+"%JAVA%" -Dnxj.home="%NXJ_HOME%" "-Xbootclasspath/a:%NXJ_CP_PC%" %*
 :eof
