@@ -10,6 +10,7 @@ import lejos.nxt.LightSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
+import lejos.nxt.Sound;
 import lejos.nxt.SoundSensor;
 import lejos.nxt.TouchSensor;
 import lejos.nxt.UltrasonicSensor;
@@ -63,6 +64,7 @@ public class ROSResponder {
 	private static final byte SHUT_DOWN = 24;
 	private static final byte SET_POSE = 25;
 	private static final byte CONFIGURE_PILOT = 26;
+	private static final byte PLAY_TONE = 27;
 	
 	private static DataInputStream dis;
 	private static DataOutputStream dos;
@@ -75,6 +77,7 @@ public class ROSResponder {
 	
 	public static void main(String[] args) {
 		
+		// Wait for a connection from the proxy
 		NXTConnection conn = ((blueTooth)
 				? Bluetooth.waitForConnection()
 		        : USB.waitForConnection());
@@ -82,10 +85,12 @@ public class ROSResponder {
 	    dis = conn.openDataInputStream();
 		dos = conn.openDataOutputStream();
 		
+		// Start the responder
 		Responder r = new Responder();
 		Thread t = new Thread(r);
 		t.start();
 		
+		// Publish requested data continuously
 		while(true) {
 			try {
 				synchronized(sensorReaders) {
@@ -116,6 +121,10 @@ public class ROSResponder {
 		}
 	}
 	
+	/*
+	 * There is one instance of this thread for each configured sensor. It gets the latest reading for
+	 * the sensor as fast as possible.
+	 */
 	static class SensorReader implements Runnable {
 		private float reading;
 		private byte type;
@@ -196,6 +205,10 @@ public class ROSResponder {
 		}	
 	}
 	
+	/*
+	 * There is one instance of this thread for each configured motor.
+	 * It currently publishes just the tacho count.
+	 */
 	static class MotorReader implements Runnable {
 		private int reading;
 		private NXTRegulatedMotor motor;
@@ -226,6 +239,10 @@ public class ROSResponder {
 		}	
 	}
 	
+	/*
+	 * The communications responder. Deals with configuration requests and pilot commands,
+	 * including the TWIST command which drives the robot using linear and angular velocities.
+	 */
 	static class Responder implements Runnable {
 		public void run() {
 			while (true) {
@@ -336,6 +353,11 @@ public class ROSResponder {
 				    	robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
 				    	posep = new OdometryPoseProvider(robot);
 				    	break;
+					case PLAY_TONE:
+						float freq = dis.readShort();
+						float duration = dis.readShort();
+						Sound.playTone((int) freq, (int) duration);
+						break;
 					}
 				} catch (IOException e) {
 					System.exit(1);
