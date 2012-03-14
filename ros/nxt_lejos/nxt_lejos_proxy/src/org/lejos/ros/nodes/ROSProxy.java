@@ -17,6 +17,7 @@ import org.lejos.ros.sensors.SoundSensor;
 import org.lejos.ros.sensors.TouchSensor;
 import org.lejos.ros.sensors.UltrasonicSensor;
 import org.ros.message.MessageListener;
+import org.ros.message.geometry_msgs.PoseWithCovarianceStamped;
 import org.ros.message.geometry_msgs.Twist;
 import org.ros.message.nxt_lejos_msgs.DNSCommand;
 import org.ros.namespace.GraphName;
@@ -52,6 +53,8 @@ public class ROSProxy implements NodeMain {
 	private static final byte SET_ROTATE_SPEED = 22;
 	private static final byte STOP = 23;
 	private static final byte SHUT_DOWN = 24;
+	private static final byte SET_POSE = 25;
+	private static final byte CONFIGURE_PILOT = 26;
 	
 	private NXTConnector conn = new NXTConnector();
 	
@@ -67,14 +70,16 @@ public class ROSProxy implements NodeMain {
 	
 	private int numMessages = 0;
 	
-	UltrasonicSensor sonicSensor;
-	CompassSensor compassSensor;
-	GyroSensor gyroSensor;
-	LightSensor lightSensor;
-	SoundSensor soundSensor;
-	TouchSensor touchSensor;
-	ColorSensor colorSensor;
-	AccelerationSensor accelerationSensor;
+	private UltrasonicSensor sonicSensor;
+	private CompassSensor compassSensor;
+	private GyroSensor gyroSensor;
+	private LightSensor lightSensor;
+	private SoundSensor soundSensor;
+	private TouchSensor touchSensor;
+	private ColorSensor colorSensor;
+	private AccelerationSensor accelerationSensor;
+	
+	private float angularVelocity = 0, linearVelocity = 0;
 	
 	@Override
 	public void onStart(Node node) {
@@ -96,7 +101,7 @@ public class ROSProxy implements NodeMain {
 		List<HashMap<String,?>> robotParams = (List<HashMap<String,?>>) params.getList("nxt_robot");
 		if (robotParams != null) {
 			for (HashMap<String,?> m: robotParams) {
-				System.out.println(m);
+				//System.out.println(m);
 				
 				String type = (String) m.get("type");
 				System.out.println("Type is " + type);
@@ -118,7 +123,18 @@ public class ROSProxy implements NodeMain {
 					System.out.println("Wheel diameter is " + wheelDiameter);
 					
 					boolean reverse = (Boolean) m.get("reverse");
-					System.out.println("reverse is " + reverse);	
+					System.out.println("reverse is " + reverse);
+					
+					String leftMotorName = port.substring(5,6);
+					String rightMotorName = port.substring(6,7);
+					
+					byte leftMotorId = (byte) (leftMotorName.charAt(0) - 'A');
+					byte rightMotorId = (byte) (rightMotorName.charAt(0) - 'A');
+					
+					System.out.println("left motor id = " + leftMotorId);
+					System.out.println("right motor id = " + rightMotorId);
+					
+					configurePilot(leftMotorId, rightMotorId,(float) wheelDiameter, (float) trackWidth, reverse);
 					
 					//Subscribe to the Twist message on "cmd_vel" topic
 		            Subscriber<Twist> subscriberTwist =
@@ -126,7 +142,14 @@ public class ROSProxy implements NodeMain {
 		                subscriberTwist.addMessageListener(new MessageListener<org.ros.message.geometry_msgs.Twist>() {
 		        	    	@Override
 		        	    	public void onNewMessage(org.ros.message.geometry_msgs.Twist message) { 
-		        	    		twist((float) message.linear.x, (float) message.angular.z);
+		        	    		float linear = (float) message.linear.x;
+		        	    		float angular = (float) message.angular.z;
+		        	    		
+		        	    		if (angular != angularVelocity || linear != linearVelocity) {
+		        	    			angularVelocity = angular;
+		        	    			linearVelocity = linear;
+		        	    			twist(linear, angular);
+		        	    		}
 		        	    	}
 		        	    });
 		                
@@ -149,6 +172,16 @@ public class ROSProxy implements NodeMain {
 	                    		else if (t.equals("rotate")) rotate((float) message.value);		
 	                    		else if (t.equals("setTravelSpeed")) setTravelSpeed((float) message.value);
 	                    		else if (t.equals("setRotateSpeed")) setRotateSpeed((float) message.value);
+	            	    	}
+	            	    });
+	                    
+	            		//Subscription to set_initialpose topic
+	                    Subscriber<PoseWithCovarianceStamped> subscriberInitialPose =
+	            	        node.newSubscriber("initialpose", "geometry_msgs/PoseWithCovarianceStamped");
+	                    subscriberInitialPose.addMessageListener(new MessageListener<PoseWithCovarianceStamped>() {
+	            	    	@Override
+	            	    	public void onNewMessage(PoseWithCovarianceStamped message) {   		
+	            	    		setPose((float) message.pose.pose.position.x * 100, (float) message.pose.pose.position.y * 100, 0f);	            	    		
 	            	    	}
 	            	    });
 		                
@@ -184,13 +217,13 @@ public class ROSProxy implements NodeMain {
 				}				
 			}
 			
+			// Endless loop to read sensor values from the NXT and publish them at required frequencies
 			long start = System.currentTimeMillis();
 			
-			while(true) {
-				byte type;
-				
+			while(true) {			
 				try {
-					type = dis.readByte();
+					byte type = dis.readByte();
+					
 					switch (type) {
 					case SONIC:
 						floatValue = dis.readFloat();
@@ -250,10 +283,10 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
-	/**
+	/*
 	 * Connect to the NXT
 	 */
-	protected void connect() {
+	private void connect() {
 		System.out.println("* Connecting with a NXT brick");
 
 		connected =  conn.connectTo((connection.equals("usb") ? "usb" : "btspp" + "://"));	    	
@@ -268,6 +301,9 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	/*
+	 * Send sensor configuration to the NXT 
+	 */
 	private void configureSensor(byte type, byte portId) {
 		try {
 			dos.writeByte(CONFIGURE_SENSOR);
@@ -280,6 +316,9 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	/*
+	 * Send motor configuration to the NXT
+	 */
 	private void configureMotor(byte type) {
 		try {
 			dos.writeByte(CONFIGURE_MOTOR);
@@ -291,6 +330,9 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	/*
+	 * Send linear and angular velocity to the NXT
+	 */
 	private void twist(float linear, float angular) {
 		try {
 			dos.writeByte(TWIST);
@@ -303,6 +345,9 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	/*
+	 * Convert type string to encoded value
+	 */
 	private byte getType(String type) {
 		if (type.equals("ultrasonic")) return SONIC;
 		else if (type.equals("compass")) return COMPASS;
@@ -316,6 +361,9 @@ public class ROSProxy implements NodeMain {
 		return -1;
 	}
 	
+	/*
+	 * Convert port string to port id
+	 */
 	private byte getPort(String port) {
 		if (port.equals("PORT_1")) return 0;
 		else if(port.equals("PORT_2")) return 1;
@@ -325,6 +373,9 @@ public class ROSProxy implements NodeMain {
 		return -1;
 	}
 	
+	/*
+	 * Move the robot forward
+	 */
 	private void forward() {
 		try {
 			dos.writeByte(FORWARD);
@@ -335,6 +386,9 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	/*
+	 * Move the robot backwards
+	 */
 	private void backward() {
 		try {
 			dos.writeByte(BACKWARD);
@@ -345,6 +399,9 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	/*
+	 * Stop the robot
+	 */
 	private void stop() {
 		try {
 			dos.writeByte(STOP);
@@ -355,6 +412,9 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	/*
+	 * Shut down the ROS responder on the NXT
+	 */
 	private void shutDown() {
 		try {
 			dos.writeByte(SHUT_DOWN);
@@ -365,6 +425,9 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	/*
+	 * Rotate the robot left
+	 */
 	private void rotateLeft() {
 		try {
 			dos.writeByte(ROTATE_LEFT);
@@ -375,6 +438,9 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	/*
+	 * Rotate the robot right
+	 */
 	private void rotateRight() {
 		try {
 			dos.writeByte(ROTATE_RIGHT);
@@ -385,6 +451,9 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	/*
+	 * Make the robot travel forward or backwards a specified distance
+	 */
 	private void travel(float distance) {
 		try {
 			dos.writeByte(TRAVEL);
@@ -396,6 +465,9 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	/*
+	 * Make the robot rotate a specified angle
+	 */
 	private void rotate(float angle) {
 		try {
 			dos.writeByte(ROTATE);
@@ -407,6 +479,9 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	/*
+	 * Set the robot forward/backward travel speed
+	 */
 	private void setTravelSpeed(float speed) {
 		try {
 			dos.writeByte(SET_TRAVEL_SPEED);
@@ -418,10 +493,48 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	/*
+	 * Set the robot rotate speed
+	 */
 	private void setRotateSpeed(float speed) {
 		try {
 			dos.writeByte(SET_ROTATE_SPEED);
 			dos.writeFloat(speed);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
+	/*
+	 * Set the pose of the robot
+	 */
+	private void setPose(float x, float y, float heading) {
+		try {
+			dos.writeByte(SET_POSE);
+			dos.writeFloat(x);
+			dos.writeFloat(y);
+			dos.writeFloat(heading);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
+	/*
+	 * Send the pilot configuration to the BXT
+	 */
+	private void configurePilot(byte leftMotorId, byte rightMotorId, 
+			float wheelDiameter, float trackWidth, boolean reverse) {
+		try {
+			dos.writeByte(CONFIGURE_PILOT);
+			dos.writeByte(leftMotorId);
+			dos.writeByte(rightMotorId);
+			dos.writeFloat(wheelDiameter);
+			dos.writeFloat(trackWidth);
+			dos.writeBoolean(reverse);
 			dos.flush();
 		} catch (IOException e) {
 			System.err.println("IO Exception");
@@ -435,10 +548,12 @@ public class ROSProxy implements NodeMain {
 	}
 	
 	@Override
-	public void onShutdown(Node arg0) {	
+	public void onShutdown(Node node) {
+		// No action
 	}
 
 	@Override
-	public void onShutdownComplete(Node arg0) {	
+	public void onShutdownComplete(Node node) {
+		// No action
 	}
 }

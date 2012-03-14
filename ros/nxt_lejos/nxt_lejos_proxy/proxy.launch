@@ -1,7 +1,7 @@
 <!--
 nxt_lejos__proxy is a ROS package included in the stack nxt_lejos which 
 leJOS users can use to manage their NXT robot from a ROS Environment, 
-using an optimized protocol communicating with the ROS Responder running on the robot.
+using an optimized protocol for communicating with the ROS Responder running on the robot.
 -->
 
 <launch>
