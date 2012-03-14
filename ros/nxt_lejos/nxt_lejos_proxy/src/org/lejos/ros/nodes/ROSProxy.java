@@ -7,12 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import lejos.pc.comm.NXTConnector;
+import lejos.robotics.navigation.Pose;
 
 import org.lejos.ros.sensors.AccelerationSensor;
 import org.lejos.ros.sensors.ColorSensor;
 import org.lejos.ros.sensors.CompassSensor;
 import org.lejos.ros.sensors.GyroSensor;
 import org.lejos.ros.sensors.LightSensor;
+import org.lejos.ros.sensors.OdometrySensor;
 import org.lejos.ros.sensors.SoundSensor;
 import org.lejos.ros.sensors.TouchSensor;
 import org.lejos.ros.sensors.UltrasonicSensor;
@@ -20,6 +22,7 @@ import org.ros.message.MessageListener;
 import org.ros.message.geometry_msgs.PoseWithCovarianceStamped;
 import org.ros.message.geometry_msgs.Twist;
 import org.ros.message.nxt_lejos_msgs.DNSCommand;
+import org.ros.message.nxt_lejos_msgs.Tone;
 import org.ros.namespace.GraphName;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
@@ -55,6 +58,8 @@ public class ROSProxy implements NodeMain {
 	private static final byte SHUT_DOWN = 24;
 	private static final byte SET_POSE = 25;
 	private static final byte CONFIGURE_PILOT = 26;
+	private static final byte PLAY_TONE = 27;
+
 	
 	private NXTConnector conn = new NXTConnector();
 	
@@ -78,8 +83,11 @@ public class ROSProxy implements NodeMain {
 	private TouchSensor touchSensor;
 	private ColorSensor colorSensor;
 	private AccelerationSensor accelerationSensor;
+	private OdometrySensor odometrySensor;
 	
 	private float angularVelocity = 0, linearVelocity = 0;
+	private Pose pose;
+
 	
 	@Override
 	public void onStart(Node node) {
@@ -184,13 +192,15 @@ public class ROSProxy implements NodeMain {
 	            	    		setPose((float) message.pose.pose.position.x * 100, (float) message.pose.pose.position.y * 100, 0f);	            	    		
 	            	    	}
 	            	    });
+	                    
+	                    odometrySensor = new OdometrySensor(this,node,frequency);
 		                
 				} else {
 					configureSensor(getType(type), getPort(port));
 					
 					switch (getType(type)) {
 					case SONIC:
-						sonicSensor = new UltrasonicSensor(node,name,frequency);
+						sonicSensor = new UltrasonicSensor(node,name,frequency, OdometrySensor.ROBOT_FRAME);
 						break;
 					case COMPASS: 
 						compassSensor = new CompassSensor(node,name,frequency);
@@ -216,6 +226,16 @@ public class ROSProxy implements NodeMain {
 					}
 				}				
 			}
+			
+			//Subscription to play_tone_command
+	        Subscriber<Tone> subscriberTone =
+		        node.newSubscriber("play_tone", "nxt_lejos_msgs/Tone");
+	        subscriberTone.addMessageListener(new MessageListener<Tone>() {
+		    	@Override
+		    	public void onNewMessage(Tone message) {   		
+		    		playTone(message.pitch, message.duration)	;
+		    	}
+		    });
 			
 			// Endless loop to read sensor values from the NXT and publish them at required frequencies
 			long start = System.currentTimeMillis();
@@ -251,11 +271,13 @@ public class ROSProxy implements NodeMain {
 						intValue = dis.readInt();
 						break;
 					case BASE:
-						floatValue = dis.readFloat();
-						floatValue = dis.readFloat();
-						floatValue = dis.readFloat();
-						floatValue = dis.readFloat();
-						floatValue = dis.readFloat();
+						float x = dis.readFloat();
+						float y = dis.readFloat();
+						float heading = dis.readFloat();
+						pose = new Pose(x,y,heading);
+						linearVelocity = dis.readFloat();
+						angularVelocity = dis.readFloat();
+						odometrySensor.publish(start,0f); // Dummy argument
 						break;
 					case GYRO:
 						floatValue = dis.readFloat();
@@ -540,6 +562,45 @@ public class ROSProxy implements NodeMain {
 			System.err.println("IO Exception");
 			System.exit(1);
 		}
+	}
+	
+	/*
+	 * Play a tome on the NXT
+	 */
+	private void playTone(short freq, short duration) {
+		try {
+			dos.writeByte(PLAY_TONE);
+			dos.writeShort(freq);
+			dos.writeShort(duration);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
+	/**
+	 * Get the current angular velocity
+	 * @return the current angular velocity
+	 */
+	public float getAngularVelocity() {
+		return angularVelocity;
+	}
+	
+	/**
+	 * Get the current linear velocity
+	 * @return the current linear velocity
+	 */
+	public float getLinearVelocity() {
+		return linearVelocity;
+	}
+	
+	/**
+	 * Get the current pose
+	 * @return the current pose
+	 */
+	public Pose getPose() {
+		return pose;
 	}
 
 	@Override

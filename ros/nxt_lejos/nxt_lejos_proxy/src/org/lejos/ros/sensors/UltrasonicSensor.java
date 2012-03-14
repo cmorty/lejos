@@ -9,13 +9,15 @@ public class UltrasonicSensor extends Sensor {
 	protected Range message = new Range();
 	protected Publisher<Range> topic;
 	
-	public UltrasonicSensor(Node node, String topicName, double desiredFrequency) {
+	public UltrasonicSensor(Node node, String topicName, double desiredFrequency, String frameId) {
 		super(node,topicName,desiredFrequency);
+		this.frameId = frameId;
 		topic = node.newPublisher(topicName, messageType);
 		message.min_range = 0.05f;
 		message.max_range = 2.5f;
 		message.radiation_type = 0;
-		message.field_of_view = 1; // radian
+		message.field_of_view = 0.5f; // radian
+		message.header.frame_id = frameId;
 	}
 	
 	@Override
