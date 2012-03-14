@@ -65,6 +65,7 @@ public class ROSResponder {
 	private static final byte SET_POSE = 25;
 	private static final byte CONFIGURE_PILOT = 26;
 	private static final byte PLAY_TONE = 27;
+	private static final byte LASER = 28;
 	
 	private static DataInputStream dis;
 	private static DataOutputStream dos;
