@@ -12,3 +12,6 @@ nxt_robot:
     track_width: 16.0
     wheel_diameter: 5.6
     reverse: true
+  - type: laser
+    name: scan
+    desired_frequency: 10.0

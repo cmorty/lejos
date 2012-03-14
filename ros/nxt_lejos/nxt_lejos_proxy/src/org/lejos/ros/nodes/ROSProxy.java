@@ -13,6 +13,7 @@ import org.lejos.ros.sensors.AccelerationSensor;
 import org.lejos.ros.sensors.ColorSensor;
 import org.lejos.ros.sensors.CompassSensor;
 import org.lejos.ros.sensors.GyroSensor;
+import org.lejos.ros.sensors.LaserSensor;
 import org.lejos.ros.sensors.LightSensor;
 import org.lejos.ros.sensors.OdometrySensor;
 import org.lejos.ros.sensors.SoundSensor;
@@ -59,6 +60,7 @@ public class ROSProxy implements NodeMain {
 	private static final byte SET_POSE = 25;
 	private static final byte CONFIGURE_PILOT = 26;
 	private static final byte PLAY_TONE = 27;
+	private static final byte LASER = 28;
 
 	
 	private NXTConnector conn = new NXTConnector();
@@ -84,6 +86,7 @@ public class ROSProxy implements NodeMain {
 	private ColorSensor colorSensor;
 	private AccelerationSensor accelerationSensor;
 	private OdometrySensor odometrySensor;
+	private LaserSensor laserSensor;
 	
 	private float angularVelocity = 0, linearVelocity = 0;
 	private Pose pose;
@@ -196,7 +199,7 @@ public class ROSProxy implements NodeMain {
 	                    odometrySensor = new OdometrySensor(this,node,frequency);
 		                
 				} else {
-					configureSensor(getType(type), getPort(port));
+					if (!type.equals("laser")) configureSensor(getType(type), getPort(port));
 					
 					switch (getType(type)) {
 					case SONIC:
@@ -223,6 +226,9 @@ public class ROSProxy implements NodeMain {
 					case ACCEL:
 						accelerationSensor = new AccelerationSensor(node,name,frequency);
 						break;
+					case LASER:
+						laserSensor = new LaserSensor(node,name,frequency);
+						break;
 					}
 				}				
 			}
@@ -248,6 +254,7 @@ public class ROSProxy implements NodeMain {
 					case SONIC:
 						floatValue = dis.readFloat();
 						sonicSensor.publish(start, floatValue);
+						if (laserSensor != null) laserSensor.publish(start, floatValue);
 						break;
 					case COMPASS:
 						floatValue = dis.readFloat();
@@ -379,6 +386,7 @@ public class ROSProxy implements NodeMain {
 		else if (type.equals("touch")) return TOUCH;
 		else if (type.equals("acceleration")) return ACCEL;
 		else if (type.equals("sound")) return SOUND;
+		else if (type.equals("laser")) return LASER;
 		
 		return -1;
 	}
