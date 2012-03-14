@@ -23,7 +23,6 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.Pose;
-import lejos.util.PilotProps;
 
 public class ROSResponder {
 	private static boolean blueTooth = true;
@@ -62,37 +61,26 @@ public class ROSResponder {
 	private static final byte SET_ROTATE_SPEED = 22;
 	private static final byte STOP = 23;
 	private static final byte SHUT_DOWN = 24;
+	private static final byte SET_POSE = 25;
+	private static final byte CONFIGURE_PILOT = 26;
 	
 	private static DataInputStream dis;
+	private static DataOutputStream dos;
 	
 	private static ArrayList<SensorReader> sensorReaders = new ArrayList<SensorReader>();
 	private static ArrayList<MotorReader> motorReaders = new ArrayList<MotorReader>();
 	
-	private static float trackWidth;
+	private static float trackWidth, wheelDiameter;
+	private static boolean reverse;
 	
 	public static void main(String[] args) {
 		
-    	PilotProps pp = new PilotProps();
-    	try {
-			pp.loadPersistentValues();
-		} catch (IOException e1) {
-			System.exit(1);
-		}
-    	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "4.96"));
-    	trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "13.0"));
-    	leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
-    	rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "C"));
-    	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
-    	
-    	robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
-    	posep = new OdometryPoseProvider(robot);
-    	
-		NXTConnection conn;
-		if (blueTooth) 	conn=Bluetooth.waitForConnection();
-		else conn = USB.waitForConnection();
+		NXTConnection conn = ((blueTooth)
+				? Bluetooth.waitForConnection()
+		        : USB.waitForConnection());
 		
 	    dis = conn.openDataInputStream();
-		DataOutputStream dos = conn.openDataOutputStream();
+		dos = conn.openDataOutputStream();
 		
 		Responder r = new Responder();
 		Thread t = new Thread(r);
@@ -100,21 +88,27 @@ public class ROSResponder {
 		
 		while(true) {
 			try {
-				for(SensorReader sr: sensorReaders) {
-					dos.writeByte(sr.getType());
-					dos.writeFloat(sr.getReading());
+				synchronized(sensorReaders) {
+					for(SensorReader sr: sensorReaders) {
+						dos.writeByte(sr.getType());
+						dos.writeFloat(sr.getReading());
+					}
 				}
-				for(MotorReader mr: motorReaders) {
-					dos.writeByte(mr.getType());
-					dos.writeInt(mr.getReading());
+				synchronized(motorReaders) {
+					for(MotorReader mr: motorReaders) {
+						dos.writeByte(mr.getType());
+						dos.writeInt(mr.getReading());
+					}
 				}
-				dos.writeByte(BASE);
-				Pose p = posep.getPose();
-				dos.writeFloat(p.getX());
-				dos.writeFloat(p.getY());
-				dos.writeFloat(p.getHeading());
-				dos.writeFloat(linearVelocity);
-				dos.writeFloat(angularVelocity);
+				if (posep != null) {
+					dos.writeByte(BASE);
+					Pose p = posep.getPose();
+					dos.writeFloat(p.getX());
+					dos.writeFloat(p.getY());
+					dos.writeFloat(p.getHeading());
+					dos.writeFloat(linearVelocity);
+					dos.writeFloat(angularVelocity);
+				}
 				dos.flush();
 			} catch (IOException e) {
 				System.exit(1);
@@ -275,7 +269,9 @@ public class ROSResponder {
 						SensorReader sr = new SensorReader();
 						SensorPort port = SensorPort.getInstance(portId);
 						sr.setTypeAndPort(sType, port);
-						sensorReaders.add(sr);
+						synchronized(sensorReaders) {
+							sensorReaders.add(sr);
+						}
 						Thread t = new Thread(sr);
 						t.start();
 						break;
@@ -284,7 +280,9 @@ public class ROSResponder {
 						MotorReader mr = new MotorReader();
 						NXTRegulatedMotor motor = Motor.getInstance(mType - MOTOR_A);
 						mr.setMotor(mType, motor);
-						motorReaders.add(mr);
+						synchronized(motorReaders) {
+							motorReaders.add(mr);
+						}
 						Thread tm = new Thread(mr);
 						tm.start();
 						break;
@@ -321,6 +319,23 @@ public class ROSResponder {
 						break;
 					case SHUT_DOWN:
 						System.exit(0);
+					case SET_POSE:
+						float x = dis.readFloat();
+						float y = dis.readFloat();
+						float heading = dis.readFloat();
+						posep.setPose(new Pose(x,y,heading));
+						break;
+					case CONFIGURE_PILOT:
+						byte leftMotorId = dis.readByte();
+						byte rightMotorId = dis.readByte();
+						wheelDiameter = dis.readFloat();
+						trackWidth = dis.readFloat();
+						reverse = dis.readBoolean();
+						leftMotor = Motor.getInstance(leftMotorId);
+						rightMotor = Motor.getInstance(rightMotorId);
+				    	robot = new DifferentialPilot(wheelDiameter,trackWidth,leftMotor,rightMotor,reverse);
+				    	posep = new OdometryPoseProvider(robot);
+				    	break;
 					}
 				} catch (IOException e) {
 					System.exit(1);
