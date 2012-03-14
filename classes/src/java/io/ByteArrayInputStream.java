@@ -36,7 +36,7 @@ public class ByteArrayInputStream extends InputStream
 	}
 
 	@Override
-	public synchronized void mark(int readlimit)
+	public void mark(int readlimit)
 	{
 		this.mark = this.pos;
 	}
@@ -77,7 +77,7 @@ public class ByteArrayInputStream extends InputStream
 	}
 
 	@Override
-	public synchronized void reset()
+	public void reset()
 	{
 		this.pos = this.mark;
 	}
