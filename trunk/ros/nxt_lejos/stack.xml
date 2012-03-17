@@ -1,7 +1,17 @@
 <stack>
-  <description brief="nxt_lejos">nxt_lejos</description>
-  <author>Maintained by leJOS development</author>
-  <license>BSD</license>  
+  <description brief="leJOS ROS API and navigation support">
+  The nxt_lejos stack provides a ROS API for leJOS NXT robots. There are two versions of the API: 
+  nxt_lejos_proxy and nxt_lejos_lcp_proxy. The nxt_lejos_proxy package is much faster and more up to date,
+  but it requires a leJOS ROS Responder program to be running on the NXT. The API uses a robot configuration, 
+  similar to that used by the nxt stack, to describe the NXT robot and specify which sensors are published
+  on which topics, at what frequency, and also the tf frames that are used for each robot joint and sensor. There is also a set of
+  topics available to control the robot, or individual motors, and to play tones etc. There is support for the 
+  navigation stack and rviz: tf, odom and pose are published, and cmd_vel (Twist messages) and initialpose 
+  are supported. There is a package (nxt_lejos_navigation) that provides navigation stack launch and
+  parameter files. There is support for leJOS map fles - see the nxt_lejos_map_server package.
+  </description>
+  <author>Lawrie Griffiths and Juan Antonio Brenha Moral</author>
+  <license>GPL</license>  
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/nxt_lejos</url>
   <depend stack="common_msgs" /> <!-- nav_msgs, geometry_msgs, sensor_msgs, visualization_msgs -->
@@ -11,5 +21,4 @@
   <depend stack="ros_comm" /> <!-- std_msgs -->
   <depend stack="ros_tutorials" /> <!-- turtlesim -->
   <depend stack="rosjava_core" /> <!-- rosjava -->
-
 </stack>

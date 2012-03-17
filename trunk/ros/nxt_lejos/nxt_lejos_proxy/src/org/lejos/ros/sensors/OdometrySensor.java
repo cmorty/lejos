@@ -40,7 +40,7 @@ public class OdometrySensor extends Sensor {
 	}
 	
 	@Override
-	public void publishMessage(double value) {
+	public synchronized void publishMessage(double value) {
 		//System.out.println("Publishing transforms");
 		poseToTransform(node, proxy.getPose(), proxy.getAngularVelocity(), proxy.getLinearVelocity());
 		tfTopic.publish(tf);
