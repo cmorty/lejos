@@ -1,0 +1,12 @@
+<!--
+Launch nxt_lejos_monitor.
+-->
+
+<launch>
+<node pkg="rosjava_bootstrap" 
+	type="run.py" 
+	args="nxt_lejos_monitor org.lejos.ros.nodes.Monitor" 
+	name="nxt_lejos_monitor" 
+	output="screen" /> 	   
+</launch>
+
