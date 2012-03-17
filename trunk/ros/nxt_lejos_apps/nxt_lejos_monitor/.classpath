@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/lejosdev/.ros/rosjava/lib/org.ros.rosjava.tf-0.0.0.jar"/>
 	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/pccomm.jar"/>
 	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/org/apache/commons/com.springsource.org.apache.commons.httpclient/3.1.0/com.springsource.org.apache.commons.httpclient-3.1.0.jar"/>
 	<classpathentry kind="lib" path="/home/lejosdev/.ros/rosjava/lib/org.ros.rosjava.nxt_lejos_msgs-0.0.0.jar"/>
