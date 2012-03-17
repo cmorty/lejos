@@ -4,13 +4,10 @@ import java.awt.Dimension;
 
 import javax.swing.JFrame;
 import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 import org.ros.message.MessageListener;
 import org.ros.message.geometry_msgs.PoseStamped;
-import org.ros.message.geometry_msgs.TransformStamped;
 import org.ros.message.nav_msgs.Odometry;
 import org.ros.message.nxt_lejos_msgs.Battery;
 import org.ros.message.nxt_lejos_msgs.Compass;
@@ -28,7 +25,7 @@ import org.ros.node.NodeMain;
 import org.ros.node.topic.Subscriber;
 
 public class Monitor extends JFrame implements NodeMain {
-	
+	private static final long serialVersionUID = 1L;
 	private float batteryVoltage;
 	private float range;
 	private float heading;
@@ -39,18 +36,21 @@ public class Monitor extends JFrame implements NodeMain {
 	private tfMessage tf = new tfMessage();
 	private Odometry od = new Odometry();
 	private PoseStamped pose = new PoseStamped();
+	private Imu imu = new Imu();
+	private LaserScan laser = new LaserScan();
 
 	@Override
 	public void onStart(Node node) {
 		
+		// Table model data
         final String[] labels = {
         		"Battery  voltage:", "Ultrasonic sensor:", "Compass sensor:", "Gyro sensor:",
         		"Sound sensor:", "Touch sensor:","Light sensor:", "Color sensor:",
-        		"Laser sensor:", "Imu sensor:", "tf:", "odom:", "pose:"
+        		"Imu heading:", "Imu angular velocity:", "Linear velocity", "Angular velocity", "Pose:"
         		};
         
         final DefaultTableModel dataModel = new DefaultTableModel() {
-            public int getColumnCount() { return 2; }
+			public int getColumnCount() { return 2; }
             public int getRowCount() { return 13;}
             public Object getValueAt(int row, int col) { 
             	if (col == 0) return labels[row]; 
@@ -73,13 +73,13 @@ public class Monitor extends JFrame implements NodeMain {
             		case 7:
             			return intensity;
             		case 8:
-            			return "n/a";
+            			return (float) quatToHeading(imu.orientation.z, imu.orientation.w);
             		case 9:
-            			return "n/a";
+            			return (float) imu.angular_velocity.z;           			
             		case 10:
-            			return "n/a";
+            			return od.twist.twist.linear.x;
             		case 11:
-            			return "n/a";
+            			return od.twist.twist.angular.z;
             		case 12:
             			return "x: " + (float) pose.pose.position.x + "," + " y: " + (float) pose.pose.position.y + "," +
             				   " h: " + (float) Math.toDegrees(quatToHeading(pose.pose.orientation.z, pose.pose.orientation.w));
@@ -88,10 +88,15 @@ public class Monitor extends JFrame implements NodeMain {
             	return "";
             }
         };
+        
+        // Create a table for the display values
         final JTable table = new JTable(dataModel);
+        
+        // Add the table and set the frame visible
         this.getContentPane().add(table);
         setTitle("leJOS ROS Monitor");
-        table.setPreferredSize(new Dimension(400,220));
+        table.setPreferredSize(new Dimension(800,220));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
         setVisible(true);
 		
