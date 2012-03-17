@@ -10,9 +10,11 @@ import lejos.pc.comm.NXTConnector;
 import lejos.robotics.navigation.Pose;
 
 import org.lejos.ros.sensors.AccelerationSensor;
+import org.lejos.ros.sensors.BatterySensor;
 import org.lejos.ros.sensors.ColorSensor;
 import org.lejos.ros.sensors.CompassSensor;
 import org.lejos.ros.sensors.GyroSensor;
+import org.lejos.ros.sensors.ImuSensor;
 import org.lejos.ros.sensors.LaserSensor;
 import org.lejos.ros.sensors.LightSensor;
 import org.lejos.ros.sensors.OdometrySensor;
@@ -61,7 +63,10 @@ public class ROSProxy implements NodeMain {
 	private static final byte CONFIGURE_PILOT = 26;
 	private static final byte PLAY_TONE = 27;
 	private static final byte LASER = 28;
-
+	private static final byte CALIBRATE_COMPASS = 29;
+	private static final byte CALIBRATE_GYRO = 30;
+	private static final byte IMU = 31;
+	private static final byte BATTERY = 32;
 	
 	private NXTConnector conn = new NXTConnector();
 	
@@ -87,6 +92,8 @@ public class ROSProxy implements NodeMain {
 	private AccelerationSensor accelerationSensor;
 	private OdometrySensor odometrySensor;
 	private LaserSensor laserSensor;
+	private ImuSensor imuSensor;
+	private BatterySensor batterySensor;
 	
 	private float angularVelocity = 0, linearVelocity = 0;
 	private Pose pose;
@@ -186,20 +193,25 @@ public class ROSProxy implements NodeMain {
 	            	    	}
 	            	    });
 	                    
-	            		//Subscription to set_initialpose topic
-	                    Subscriber<PoseWithCovarianceStamped> subscriberInitialPose =
-	            	        node.newSubscriber("initialpose", "geometry_msgs/PoseWithCovarianceStamped");
-	                    subscriberInitialPose.addMessageListener(new MessageListener<PoseWithCovarianceStamped>() {
-	            	    	@Override
-	            	    	public void onNewMessage(PoseWithCovarianceStamped message) {   		
-	            	    		setPose((float) message.pose.pose.position.x * 100, (float) message.pose.pose.position.y * 100, 0f);	            	    		
-	            	    	}
-	            	    });
-	                    
-	                    odometrySensor = new OdometrySensor(this,node,frequency);
+            		//Subscription to set_initialpose topic
+                    Subscriber<PoseWithCovarianceStamped> subscriberInitialPose =
+            	        node.newSubscriber("initialpose", "geometry_msgs/PoseWithCovarianceStamped");
+                    subscriberInitialPose.addMessageListener(new MessageListener<PoseWithCovarianceStamped>() {
+            	    	@Override
+            	    	public void onNewMessage(PoseWithCovarianceStamped message) {  
+            	    		System.out.println("Setting pose to " + message.pose.pose.position.x + ", " + message.pose.pose.position.y);
+            	    		setPose((float) message.pose.pose.position.x * 100, (float) message.pose.pose.position.y * 100, 
+            	    				(float) Math.toDegrees(quatToHeading(message.pose.pose.orientation.z, message.pose.pose.orientation.w)));	            	    		
+            	    	}
+            	    });
+                    
+                    // Create an odometry sensor to publish the ofdometry data
+                    odometrySensor = new OdometrySensor(this,node,frequency);
 		                
 				} else {
-					if (!type.equals("laser")) configureSensor(getType(type), getPort(port));
+					if (!type.equals("laser") && !type.equals("imu")) { // Skip virtual sensors
+						configureSensor(getType(type), getPort(port));
+					}
 					
 					switch (getType(type)) {
 					case SONIC:
@@ -229,6 +241,9 @@ public class ROSProxy implements NodeMain {
 					case LASER:
 						laserSensor = new LaserSensor(node,name,frequency);
 						break;
+					case IMU:
+						imuSensor = new ImuSensor(this,node,name,frequency);
+						break;
 					}
 				}				
 			}
@@ -242,6 +257,9 @@ public class ROSProxy implements NodeMain {
 		    		playTone(message.pitch, message.duration)	;
 		    	}
 		    });
+	        
+	        // Always publish battery readings
+	        batterySensor = new BatterySensor(node,"battery",10.0);
 			
 			// Endless loop to read sensor values from the NXT and publish them at required frequencies
 			long start = System.currentTimeMillis();
@@ -259,6 +277,7 @@ public class ROSProxy implements NodeMain {
 					case COMPASS:
 						floatValue = dis.readFloat();
 						compassSensor.publish(start, floatValue);
+						if (imuSensor != null) imuSensor.publish(start,0f);
 						break;
 					case TOUCH:
 						floatValue = dis.readFloat();
@@ -289,6 +308,7 @@ public class ROSProxy implements NodeMain {
 					case GYRO:
 						floatValue = dis.readFloat();
 						gyroSensor.publish(start, floatValue);
+						if (imuSensor != null) imuSensor.publish(start,0f);
 						break;
 					case LIGHT:
 						floatValue = dis.readFloat();
@@ -297,10 +317,15 @@ public class ROSProxy implements NodeMain {
 					case ACCEL:
 						floatValue = dis.readFloat();
 						accelerationSensor.publish(start, floatValue);
+						if (imuSensor != null) imuSensor.publish(start,0f);
 						break;
 					case COLOR:
 						floatValue = dis.readFloat();
 						colorSensor.publish(start, floatValue);
+						break;
+					case BATTERY:
+						floatValue = dis.readFloat();
+						batterySensor.publish(start, floatValue);
 						break;
 					}
 					numMessages++;
@@ -387,6 +412,7 @@ public class ROSProxy implements NodeMain {
 		else if (type.equals("acceleration")) return ACCEL;
 		else if (type.equals("sound")) return SOUND;
 		else if (type.equals("laser")) return LASER;
+		else if (type.equals("imu")) return IMU;
 		
 		return -1;
 	}
@@ -587,6 +613,26 @@ public class ROSProxy implements NodeMain {
 		}
 	}
 	
+	private void calibrateCompass() {
+		try {
+			dos.writeByte(CALIBRATE_COMPASS);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
+	private void calibrateGyro() {
+		try {
+			dos.writeByte(CALIBRATE_GYRO);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
 	/**
 	 * Get the current angular velocity
 	 * @return the current angular velocity
@@ -609,6 +655,22 @@ public class ROSProxy implements NodeMain {
 	 */
 	public Pose getPose() {
 		return pose;
+	}
+	
+	public GyroSensor getGyroSensor() {
+		return gyroSensor;
+	}
+	
+	public CompassSensor getCompassSensor() {
+		return compassSensor;
+	}
+	
+	public AccelerationSensor getAccelerationSensor() {
+		return accelerationSensor;
+	}
+	
+	private double quatToHeading(double z, double w) {
+		return 2 * Math.atan2(z, w);
 	}
 
 	@Override
