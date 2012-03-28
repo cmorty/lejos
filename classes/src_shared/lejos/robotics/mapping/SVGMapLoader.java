@@ -48,7 +48,7 @@ public class SVGMapLoader {
 	        if (x1 > maxX) maxX = x1;
 	        if (x2 > maxX) maxX = x2;
 	        if (y1 < minY) minY = y1;
-	        if (y2 < minY)minY = y1;
+	        if (y2 < minY) minY = y2;
 	        if (y1 > maxY) maxY = y1;
 	        if (y2 > maxY) maxY = y2;        
 	        
