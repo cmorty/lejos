@@ -26,18 +26,14 @@
         <sourceDirectory>src</sourceDirectory>
 
         <!-- copy DB files from nxtvm project -->
-        <!-- @todo avoid changes to the source tree, instead copy to 'target' folder? (but then packaging is affected).
-         maybe create new project containing only shared *.db files, then this and nxtvm project depend on it. -->
+        <!-- @todo collides with current practice of ant script, which copies resources to src/js/tinyvm -->
         <resources>
             <resource>
                 <directory>../nxtvm/javavm</directory>
                 <includes>
                     <include>*.db</include>
                 </includes>
-                <targetPath>../../src/main/resources/js/tinyvm</targetPath>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
+                <targetPath>js/tinyvm</targetPath>
             </resource>
         </resources>
 
