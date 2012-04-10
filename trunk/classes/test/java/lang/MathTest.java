@@ -34,17 +34,25 @@ public class MathTest {
 		if (actual != expected)
 			throw new RuntimeException("expected "+expected+" but was "+actual);
 	}
+	
+	private void testFloor() {
+		for (int i=0; i<FLOORCEIL_INPUT.length; i++)
+			assertEqualsExact(Math.floor(FLOORCEIL_INPUT[i]), FLOOR_EXPECT[i]);
+	}
+	
+	private void testCeil() {
+		for (int i=0; i<FLOORCEIL_INPUT.length; i++)
+			assertEqualsExact(Math.ceil(FLOORCEIL_INPUT[i]), CEIL_EXPECT[i]);
+	}
 
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		for (int i=0; i<FLOORCEIL_INPUT.length; i++)
-			assertEqualsExact(Math.floor(FLOORCEIL_INPUT[i]), FLOOR_EXPECT[i]);
-		
-		for (int i=0; i<FLOORCEIL_INPUT.length; i++)
-			assertEqualsExact(Math.ceil(FLOORCEIL_INPUT[i]), CEIL_EXPECT[i]);
+		MathTest t = new MathTest();
+		t.testFloor();
+		t.testCeil();
 	}
 
 
