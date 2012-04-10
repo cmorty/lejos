@@ -284,6 +284,7 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 			{
 				public void modifyText(ModifyEvent e)
 				{
+				    //TODO display error, if project is not a leJOS project
 					updateLaunchConfigurationDialog();
 				}
 			};
