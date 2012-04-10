@@ -400,6 +400,7 @@ public class LaunchNXTMainTab extends JavaLaunchTab {
 		this.debugMonitorNormal = createRadioButton(g, "Normal Debug Monitor");
 		this.debugMonitorRConsole = createRadioButton(g, "RConsole Debug Monitor");
 		this.debugMonitorJdwp = createRadioButton(g, "Remote Debug Monitor (will start eclipse debugger)");
+		this.debugMonitorJdwp.setLayoutData(gd);
 		
 		this.debugMonitorNormal.addSelectionListener(updater);
 		this.debugMonitorRConsole.addSelectionListener(updater);
