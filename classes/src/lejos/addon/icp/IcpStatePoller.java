@@ -191,21 +191,24 @@ public class IcpStatePoller {
 	 * </p>
 	 */
 	public void run() {
-	    try {
-		// get data from Icp
-		IcpState state = icp.getControlState();
-		// tell all the listeners about it
-		synchronized(listeners) {
-		    for (IcpStateListener c : listeners) {
-			c.pollEvent(state);
-		    }	
+		try {
+			synchronized(listeners) {
+				// get data from Icp
+				IcpState state = icp.getControlState();
+				// tell all the listeners about it
+				for (IcpStateListener c : listeners) {
+					c.pollEvent(state);
+				} 
+			}
 		}
-	    }
-	    //catch (IcpTimeoutException ite) {
-	    catch (Exception ite) {
-		// don't bother firing an event if the device isn't responding
-	    }
-	    
+		catch (IcpTimeoutException ite) {
+			System.out.println("Caught ite " + System.currentTimeMillis());
+		}
+		finally {
+			System.out.println("Finally run() " + System.currentTimeMillis());
+		}
+
+		System.out.println("After finally " + System.currentTimeMillis());
 	}
 
     }
