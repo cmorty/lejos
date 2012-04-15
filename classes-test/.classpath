@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/classes"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.lejos.junit"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
