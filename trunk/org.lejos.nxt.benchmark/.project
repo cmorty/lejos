@@ -17,7 +17,7 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.lejos.nxt.ldt.leJOSNature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
 </projectDescription>
