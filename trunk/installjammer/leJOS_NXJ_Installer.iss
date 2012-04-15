@@ -50,13 +50,15 @@ JDKSelectDescription=Select a Java Development Kit for use with leJOS NXJ
 
 [Types]
 Name: "compact"; Description: "Compact installation"
+Name: "minimal"; Description: "Minimal installation"
 Name: "full"; Description: "Full installation"
 Name: "custom"; Description: "Custom installation"; Flags: iscustom
   
 [Components]
-Name: "main"; Description: "leJOS Development Kit"; Types: full compact custom; Flags: fixed disablenouninstallwarning
-Name: "main\apinxt"; Description: "API Documentation (NXT)"; Types: full compact; Flags: disablenouninstallwarning
-Name: "main\apipc"; Description: "API Documentation (PC)"; Types: full compact; Flags: disablenouninstallwarning
+Name: "main"; Description: "leJOS Development Kit"; Types: full compact minimal custom; Flags: fixed disablenouninstallwarning
+Name: "docs"; Description: "Documentation"; Types: full compact; Flags: disablenouninstallwarning
+Name: "docs\apinxt"; Description: "API Documentation (NXT)"; Types: full compact; Flags: disablenouninstallwarning
+Name: "docs\apipc"; Description: "API Documentation (PC)"; Types: full compact; Flags: disablenouninstallwarning
 Name: "extras"; Description: "Additional Sources"; Types: full; Flags: disablenouninstallwarning
 Name: "extras\samples"; Description: "Sample and Example Projects"; Types: full; Flags: disablenouninstallwarning
 Name: "extras\sources"; Description: "Sources of leJOS Development Kit"; Types: full; Flags: disablenouninstallwarning
@@ -66,14 +68,14 @@ Name: "extras\sources"; Description: "Sources of leJOS Development Kit"; Types: 
 ; not even be accessible by the original user when using postinstall/runasoriginaluser in [Run]
 Source: "scripts\startNxjFlash.bat"; DestDir: "{app}"; Flags: deleteafterinstall
 Source: "..\release\build\bin_windows\*"; DestDir: "{app}"; Excludes: "docs"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main
-Source: "..\release\build\bin_windows\docs\pc\*"; DestDir: "{app}\docs\pc"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main\apipc
-Source: "..\release\build\bin_windows\docs\nxt\*"; DestDir: "{app}\docs\nxt"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main\apinxt
+Source: "..\release\build\bin_windows\docs\pc\*"; DestDir: "{app}\docs\pc"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: docs\apipc
+Source: "..\release\build\bin_windows\docs\nxt\*"; DestDir: "{app}\docs\nxt"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: docs\apinxt
 Source: "..\release\build\samples\*"; DestDir: "{code:ExtrasDirPage_GetSamplesFolder}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: extras\samples
 Source: "..\release\build\source\*"; DestDir: "{code:ExtrasDirPage_GetSourcesFolder}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: extras\sources
 
 [Icons]
-Name: "{group}\API Documentation (PC)"; Filename: "{app}\docs\pc\index.html"; Components: main\apipc
-Name: "{group}\API Documentation (NXT)"; Filename: "{app}\docs\nxt\index.html"; Components: main\apinxt
+Name: "{group}\API Documentation (PC)"; Filename: "{app}\docs\pc\index.html"; Components: docs\apipc
+Name: "{group}\API Documentation (NXT)"; Filename: "{app}\docs\nxt\index.html"; Components: docs\apinxt
 Name: "{group}\NXJ Flash"; Filename: "{app}\bin\nxjflashg.bat"; Flags: closeonexit runminimized
 Name: "{group}\NXJ Browse"; Filename: "{app}\bin\nxjbrowse.bat"; Flags: closeonexit runminimized
 Name: "{group}\NXJ Charting Logger"; Filename: "{app}\bin\nxjchartinglogger.bat"; Flags: closeonexit runminimized
