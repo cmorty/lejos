@@ -419,20 +419,40 @@ public class LeJOSNXJUtil {
 	}
 
 	private static void escapeWindowsArg(String t, StringBuilder sb) {
-		// escaping according to CommandLineToArgvW 
-		// http://msdn.microsoft.com/de-de/site/bb776391
+		/* Escaping according to CommandLineToArgvW
+		 * http://msdn.microsoft.com/de-de/site/bb776391
+		 * 
+		 * How decoding works:
+		 * 2n backslashes + quote => n backslashes + closing quote
+		 * 2n+1 backslashes + quote => n backslashes + inner quote
+		 * n backslashes not followed by a quote => n backslashes
+		 * 
+		 * The difference between closing/inner quote is not in the docs
+		 * but it has been confirmed by testing.
+		 */
 		int len = t.length();
 		sb.append("\"");
-		for (int i=0; i<len; i++)
+		for (int i=0; i<len; )
 		{
 			char c = t.charAt(i);
 			switch (c)
 			{
 				case '\\':
+					int j=i++;
+					sb.append('\\');
+					for (; i<len && t.charAt(i)=='\\'; i++)
+						sb.append('\\');
+					// double the number of backslashes if they are at the
+					// end of the argument or precede a quote
+					if (i==len || t.charAt(i)=='\"')
+						for (; j<i; j++)
+							sb.append('\\');
+					break;
 				case '"':
 					sb.append('\\');
 				default:
 					sb.append(c);
+					i++;
 			}
 		}
 		sb.append("\"");
