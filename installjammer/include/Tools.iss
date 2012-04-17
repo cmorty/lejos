@@ -11,6 +11,14 @@ const
     else
       Result := Path1 + '\' + Path2;
   end;
+  
+  function FixCString(var Data: String);
+  var
+  	i: Longint;
+  begin
+    i := Pos(#0, Data);
+    if i > 0 then SetLength(Data, i-1);
+  end;
 
   function GetEnvVar(const Name: String; var Data: String): Boolean;
   begin
@@ -24,6 +32,9 @@ const
     if not RegQueryStringValue(HKLM, SessionEnvKey, Name, Data) then
       RaiseException('Failed to determine value of '
         + Name + ' environment variable');
+    // On several Win2k machines, Path variable contained trailing garbage
+    // after first Null terminator. Calling FixCString as a workaround.
+    FixCString(Data);
     Log('GetEnvVar: '+Name+' is equal to '+Data);
     Result := true;
   end;
