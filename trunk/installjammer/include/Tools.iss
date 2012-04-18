@@ -14,7 +14,7 @@ const
   
   procedure FixCString(var Data: String);
   var
-  	i: Longint;
+    i: Longint;
   begin
     i := Pos(#0, Data);
     if i > 0 then SetLength(Data, i-1);
