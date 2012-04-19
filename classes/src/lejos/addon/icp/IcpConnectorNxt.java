@@ -1,5 +1,7 @@
 package lejos.addon.icp;
 
+import java.io.*; // TODO: DELETE LINE
+
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
@@ -64,12 +66,17 @@ public class IcpConnectorNxt extends IcpConnectorAdapter {
      * @see Bluetooth#connect(String, int, byte[])
      */
     public void connect() {
-	//System.out.println("Try:" + target);
-	conn = Bluetooth.connect(target, NXTConnection.RAW, pin);
-	if (null != conn) {
-	    is = conn.openInputStream();
-	    os = conn.openOutputStream();
-	}
+    	//System.out.println("Try:" + target);
+
+    	// TODO: UNCOMMENT FOLLOWING CODE
+    	/* conn = Bluetooth.connect(target, NXTConnection.RAW, pin);
+    	if (null != conn) {
+    		is = conn.openInputStream();
+    		os = conn.openOutputStream();
+    	}
+    	*/
+    	is = new DummyInputStream(); //TODO: DELETE TEMP LINE
+    	os = new DummyOutputStream(); //TODO: DELETE TEMP LINE
     }
 
     
@@ -91,5 +98,33 @@ public class IcpConnectorNxt extends IcpConnectorAdapter {
 	    conn.close();
 	}
 	connect();
+    }
+    
+    /**
+     *  // TODO: DELETE TEMP CLASS
+     * @author Brian
+     *
+     */
+    private class DummyInputStream extends InputStream {
+
+		@Override
+		public int read() throws IOException {
+			System.out.println("READ CALLED");
+			return 0;
+		}
+    	
+    }
+    
+    /**
+     * // TODO: DELETE TEMP CLASS
+     * @author Brian
+     *
+     */
+    private class DummyOutputStream extends OutputStream {
+
+		@Override
+		public void write(int arg0) throws IOException {
+			System.out.println("WRITE CALLED");
+		}
     }
 }
