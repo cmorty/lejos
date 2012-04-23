@@ -1,9 +1,7 @@
 package lejos.pc.charting;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingWorker;
 
 
 /**
