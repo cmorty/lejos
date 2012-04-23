@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.HashSet;
 
+import lejos.util.EndianTools;
+
 /**
  * This class provides the communications protocol manager for receiving and processing messages from the
  * <code>lejos.util.NXTDataLogger</code> class. It uses an event model for notifications of the events specified
@@ -17,6 +19,7 @@ import java.util.HashSet;
  * @see lejos.util.NXTDataLogger 
  * @author Kirk P. Thompson
  */
+@SuppressWarnings("javadoc")
 public class LoggerProtocolManager {
     private static final byte ATTENTION1 = (byte)0xff;
     private static final byte ATTENTION2 = (byte)0xab;
@@ -34,13 +37,14 @@ public class LoggerProtocolManager {
     private static final byte COMMAND_SETHEADERS   = 2;  
     private static final byte COMMAND_FLUSH        = 3; 
     private static final byte COMMAND_COMMENT      = 4;   
-    private static final byte COMMAND_PASSTHROUGH  = 5;   // TODO future implementation to allow passthrough messages to a different listener type
+    private static final byte COMMAND_PASSTHROUGH  = 5;   
     
     private final String THISCLASS;
     private HashSet<LoggerListener> listeners = new HashSet<LoggerListener>();
     private int elementsPerLine = 1;
     private InputStream nXTInputStream;
-    private OutputStream nXTOutputStream;
+    @SuppressWarnings("unused")
+	private OutputStream nXTOutputStream;
     
     /**
      * Create a <code>LoggerProtocolManager</code> instance. 
@@ -157,7 +161,7 @@ public class LoggerProtocolManager {
                         streamedDataType = readBytes[1];
                         break;
                     case COMMAND_SETHEADERS:
-                        this.elementsPerLine=((int)readBytes[1])&0xff;
+                        this.elementsPerLine=readBytes[1]&0xff;
                         // if we have residual, output it
                         if (endOfLineCycler>0) notifyLogLineAvailable(readVals); // send readvals[] to output
                         // get the headers from the stream
@@ -185,7 +189,7 @@ public class LoggerProtocolManager {
                         try {
                             // get the timestamp
                             getBytes(readBytes,4);
-                            int timestamp = this.parseInt(readBytes);
+                            int timestamp = LoggerProtocolManager.parseInt(readBytes);
                             
                             // get the comment
                             getBytes(readBytes,4);  // preload for parseString() 
@@ -196,17 +200,16 @@ public class LoggerProtocolManager {
                         } catch (EOFException e){
                             break mainloop;
                         }
-                        
                         break;
                     case COMMAND_PASSTHROUGH:
                         try {
                             // get the number of bytes in the passthrough message
                             getBytes(readBytes,4);
-                            int followingByteCount = this.parseInt(readBytes);
+                            int followingByteCount = LoggerProtocolManager.parseInt(readBytes);
                             // create and fill an array with the specified number of bytes
                             tempBytes = new byte[followingByteCount];
-                            getBytes(tempBytes,followingByteCount);
-                            // TODO pass the tempBytes array through registered callback yet-to-be-defined
+                            getBytes(tempBytes, followingByteCount);
+                            // pass the tempBytes array through registered callback 
                             this.notifyPassthrough(tempBytes);
                         } catch (EOFException e){
                             break mainloop;
@@ -225,32 +228,20 @@ public class LoggerProtocolManager {
                     case DT_BYTE:
                     case DT_SHORT:
                     case DT_INTEGER:
+                    case DT_FLOAT:
                         // Parse an int from the 4 bytes
                         readVals[endOfLineCycler] = new DataItem();
-                        readVals[endOfLineCycler].value = new Integer(this.parseInt(readBytes));
+                        readVals[endOfLineCycler].value = new Integer(LoggerProtocolManager.parseInt(readBytes));
+                        if (streamedDataType==DT_FLOAT) {
+                        	readVals[endOfLineCycler].value = new Float(LoggerProtocolManager.parseFloat(readBytes));
+                        } else {
+                        	readVals[endOfLineCycler].value = new Integer(LoggerProtocolManager.parseInt(readBytes));
+                        }
                         readVals[endOfLineCycler].datatype=streamedDataType;
                         break;
                     case DT_LONG:
-                        // Parse a long from the 4 + 4 more bytes
-                        readVals[endOfLineCycler] = new DataItem();
-                        tempBytes = new byte[8];
-                        System.arraycopy(readBytes,0,tempBytes,0,4);
-                        try {
-                            getBytes(readBytes,4);
-                        } catch (EOFException e){
-                            break mainloop;
-                        }
-                        System.arraycopy(readBytes,0,tempBytes,4,4);
-                        readVals[endOfLineCycler].value = new Long(this.parseLong(tempBytes));
-                        readVals[endOfLineCycler].datatype=streamedDataType;
-                        break;
-                    case DT_FLOAT:
-                        readVals[endOfLineCycler] = new DataItem();
-                        readVals[endOfLineCycler].value = new Float(this.parseFloat(readBytes));
-                        readVals[endOfLineCycler].datatype=streamedDataType;
-                        break;
                     case DT_DOUBLE:
-                        // Parse a long from the 4 + 4 more bytes
+                        // Parse a long or double from the 4 + 4 more bytes
                         readVals[endOfLineCycler] = new DataItem();
                         tempBytes = new byte[8];
                         System.arraycopy(readBytes,0,tempBytes,0,4);
@@ -260,8 +251,11 @@ public class LoggerProtocolManager {
                             break mainloop;
                         }
                         System.arraycopy(readBytes,0,tempBytes,4,4);
-                        readVals[endOfLineCycler].value = new Double(this.parseDouble(tempBytes));
-//                        dbg(this.parseLong(tempBytes));
+                        if (streamedDataType==DT_LONG) {
+                        	readVals[endOfLineCycler].value = new Long(LoggerProtocolManager.parseLong(tempBytes));
+                        } else {
+                        	readVals[endOfLineCycler].value = new Double(LoggerProtocolManager.parseDouble(tempBytes));
+                        }
                         readVals[endOfLineCycler].datatype=streamedDataType;
                         break;
                     case DT_STRING:
@@ -321,7 +315,7 @@ public class LoggerProtocolManager {
      * @return A formatted string representation of the <code>DataItem</code>s
      * @see DataItem
      */
-    public static String parseLogData(DataItem[] logDataItems){
+    public static final String parseLogData(DataItem[] logDataItems){
         StringBuilder logLineBuilder = new StringBuilder();
         for (int i = 0; i < logDataItems.length; i++) {
             if (logDataItems[i]==null) continue;
@@ -380,11 +374,14 @@ public class LoggerProtocolManager {
     }
     
     private void notifyPassthrough(byte[] message){
-        // TODO pass the bytes back through the registered callback
-         dbg("notifyPassthrough called with " + message.length + " bytes.");
+        // pass the bytes back through the registered callback         
+         for (LoggerListener listener: this.listeners) {
+             listener.tunneledMessageReceived(message);
+         }
     }
     
-    private void hexByteOut(String desc, long value, int bits) {
+    @SuppressWarnings({ "unused", "boxing" })
+	private void hexByteOut(String desc, long value, int bits) {
 //        value = value & 0xffffffff;
         StringBuilder sb1 = new StringBuilder(bits-bits/8-1);
         int pow=0;
@@ -417,29 +414,19 @@ public class LoggerProtocolManager {
      * @param ba The 4 byte array to convert to an int
      * @return The integer value of the 4 bytes
      */
-    private final int parseInt(byte[] ba) {   
-        return  (ba[0] << 24) | 
-                ((ba[1] & 0xFF) << 16) | 
-                ((ba[2] & 0xFF) << 8) | 
-                (ba[3] & 0xFF);
+    public static final int parseInt(byte[] ba) {   
+    	return EndianTools.decodeIntBE(ba, 0);
     }
     
-    private final long parseLong(byte[] ba) {   
-        return  ((long)ba[0] << 56) | 
-                ((long)(ba[1] & 0xFF) << 48) | 
-                ((long)(ba[2] & 0xFF) << 40) | 
-                ((long)(ba[3] & 0xFF) << 32) |
-                ((long)(ba[4] & 0xFF) << 24) |
-                ((ba[5] & 0xFF) << 16) | 
-                ((ba[6] & 0xFF) << 8)  | 
-                 (ba[7] & 0xFF);
+    public static final long parseLong(byte[] ba) {   
+    	return EndianTools.decodeLongBE(ba, 0);
     }
     
-    private final float parseFloat(byte[] ba) {
+    public static final float parseFloat(byte[] ba) {
        return Float.intBitsToFloat(parseInt(ba));
     }
     
-    private final Double parseDouble(byte[] ba) {
+    public static final double parseDouble(byte[] ba) {
        return Double.longBitsToDouble(parseLong(ba));
     }
     
@@ -461,65 +448,30 @@ public class LoggerProtocolManager {
         return sb.toString();
     }
     
-    /** Write a byte to the DataOutputStream
-     * @param value The byte to write
+    /**
+     * Write the raw passthrough message to the NXT with a common header. 
+     * 
+     * @param command
+     * @param handlerTypeID
+     * @param message
+     * @param offset
+     * @param length
+     * @param flush Flush after write?
      */
-    //    public void writeByte(int value){
-    //        try {
-    //            this.dos.writeByte(value);
-    //            this.dos.flush();
-    //        } catch (IOException e) {
-    //            // TODO
-    //            dbg("!** writeByte() error: " + e.toString());
-    //            e.printStackTrace();
-    //        }
-    //    }
-    
-    /** Write a byte array to the DataOutputStream
-     * @param value The byte array to write
-     *
-     **/
-    //    public void write(byte[] value){
-    //        try {
-    //            this.dos.write(value);
-    //            this.dos.flush();
-    //        } catch (IOException e) {
-    //            // TODO
-    //            dbg("!** write() error: " + e.toString());
-    //            e.printStackTrace();
-    //        }
-    //    }
-    
-    /** Write an <code>int</code> to the DataOutputStream
-     * @param value The <code>int</code> value to write
-     *
-     **/
-    //    public void writeInt(int value){
-    //        try {
-    //            this.dos.writeInt(value);
-    //            this.dos.flush();
-    //        } catch (IOException e) {
-    //            // TODO
-    //            dbg("!** writeInt() error: " + e.toString());
-    //            e.printStackTrace();
-    //        }
-    //    }
-    
-    /** Write an <code>float</code> to the DataOutputStream
-     * @param value The <code>float</code> value to write
-     *
-     **/
-    //    public void writeFloat(float value) {
-    //       writeInt(Float.floatToIntBits(value));
-    //    }
-    
-    /** Write an <code>long</code> to the DataOutputStream
-     * @param value The <code>long</code> value to write
-     *
-     **/
-    //    public void writeLong(long value) {
-    //       //writeInt(Long.??? floatToIntBits(value));
-    //        writeInt((int)value<<24);
-    //    }
-    
+    synchronized void writePassthroughMessage( //TODO use in JPanel?
+    		int command, int handlerTypeID, byte[] message, int offset, int length, boolean flush)
+    {
+    	// size to headers 
+    	byte[] buf = new byte[4];       
+    	buf[0] = (byte)(command & 0xff); // set command
+    	buf[1] = (byte)(handlerTypeID & 0xff); // set handler type ID
+    	EndianTools.encodeShortBE(length, buf, 2); // set packet length
+    	try {
+    		this.nXTOutputStream.write(buf); //send header
+    		this.nXTOutputStream.write(message, offset, length); // send data
+    		if (flush) this.nXTOutputStream.flush();
+		} catch (IOException e) {
+			notifyISEOF();
+		}
+    }
 }

@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTCommLogListener;
 import lejos.pc.comm.NXTConnector;
-import lejos.pc.comm.NXTInfo;
 
 
 /**
@@ -25,6 +23,7 @@ import lejos.pc.comm.NXTInfo;
  * @see CachingInputStream
  * @author Kirk P. Thompson
  */
+@SuppressWarnings("javadoc")
 public class LoggerComms {
     /** 
      * Used to get more details from <code>NXTConnector</code> for the Status pane. Notice that the GUI
@@ -133,7 +132,7 @@ public class LoggerComms {
             // TODO how to handle?
             dbg("closeConnection(): this.dis.close() IOException: " + e.toString());
         } catch (NullPointerException e) {
-            ; // ignore
+             // ignore
         }
         try {
             if (this.out!=null) {
@@ -146,7 +145,7 @@ public class LoggerComms {
             // TODO how to handle?
             dbg("closeConnection(): dos.close() IOException: " + e.toString());
         } catch (NullPointerException e) {
-            ; // ignore
+             // ignore
         }
         try {
             if (this.conn!=null) this.conn.close();
