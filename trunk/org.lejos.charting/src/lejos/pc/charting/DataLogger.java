@@ -72,6 +72,10 @@ public class DataLogger {
                 e.printStackTrace();
             }
         }
+
+		public void tunneledMessageReceived(byte[] message) {
+			// Ignore passthrough messages because all we do here is log to a file
+		}
     }
     
     /**Create a <code>DataLogger</code> instance. If valid, the passed passed <code>logfile</code> is opened and the 

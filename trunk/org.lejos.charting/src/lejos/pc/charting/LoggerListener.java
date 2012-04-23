@@ -46,4 +46,13 @@ public interface LoggerListener {
      * @param comment The text comment
      */
     void logCommentReceived(int timestamp, String comment);
+    
+    /**
+     * Invoked when a pass-through message is received from <code>NXTDataLogger</code>. 
+     * 
+     * @param message an array that contains the passthrough message
+     * @see lejos.util.NXTDataLogger.registerTunnelManager()
+     */
+    @SuppressWarnings("javadoc")
+	void tunneledMessageReceived(byte[] message);
 }

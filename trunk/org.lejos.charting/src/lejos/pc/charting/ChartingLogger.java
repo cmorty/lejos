@@ -8,7 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 
 /**
@@ -27,7 +27,7 @@ public class ChartingLogger {
         Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
         frame.setLocation(center.x - frameSize.width / 2, 
                           center.y - frameSize.height / 2);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(myWindowListener);
         //frame.setIconImage(Toolkit.getDefaultToolkit().getImage("graph.png"));
         Image appIcon=null;
@@ -42,12 +42,14 @@ public class ChartingLogger {
     }
     
     private class MyWindowListener extends WindowAdapter {
-        public void windowClosed(WindowEvent e) {
+        @Override
+		public void windowClosed(WindowEvent e) {
             System.out.println("windowClosed");
             System.exit(0);
         }
 
-        public void windowClosing(WindowEvent e) {
+        @Override
+		public void windowClosing(WindowEvent e) {
             System.out.println("windowClosing");
             frame.closeCurrentConnection();
             frame.dispose();
