@@ -18,7 +18,7 @@
 		<link>
 			<name>src_shared</name>
 			<type>2</type>
-			<locationURI>WORKSPACE_LOC/classes/src_shared</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/classes/src_shared</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
