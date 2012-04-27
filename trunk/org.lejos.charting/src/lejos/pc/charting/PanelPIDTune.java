@@ -8,13 +8,13 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
-public class PanelPIDTune extends AbstractTunneledMessagePanel {
-
-
-	public PanelPIDTune(int handlerID, ExtensionGUIManager extensionGUIManager) {
-		super(handlerID, extensionGUIManager);
-	}
-
+/**
+ * PID tuning implementation. Utilized by <code>lejos.util.PIDTuner</code>.
+ * 
+ * @author Kirk P. Thompson
+ *
+ */
+public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 	private JFormattedTextField textKp;
 	private JFormattedTextField textKi;
 	private JFormattedTextField textMVLimitLow;
@@ -29,9 +29,12 @@ public class PanelPIDTune extends AbstractTunneledMessagePanel {
 	private JFormattedTextField textRampThreshold;
 	private JCheckBox chckbxFreezeIntegral;
 
+	public PanelPIDTune(int handlerID, ExtensionGUIManager extensionGUIManager) {
+		super(handlerID, extensionGUIManager);
+	}
 	
 	@Override
-	protected void initGUI() {
+	protected final void initGUI() {
 		super.initGUI();
 
 		JPanel panelLimits = new JPanel();
@@ -177,7 +180,7 @@ public class PanelPIDTune extends AbstractTunneledMessagePanel {
 	 * @see lejos.pc.charting.AbstractTunneledMessagePanel#getHandlerTypeID()
 	 */
 	@Override
-	protected int getHandlerTypeID() {
+	protected final int getHandlerTypeID() {
 		return TYPE_PID_TUNER; 
 	}
 }
