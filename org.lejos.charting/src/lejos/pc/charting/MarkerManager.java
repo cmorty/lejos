@@ -6,7 +6,10 @@ import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
 import java.util.Vector;
+
+import lejos.pc.charting.MarkerManager.CommentMarker;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -228,6 +231,10 @@ class MarkerManager implements PlotChangeListener, RendererChangeListener, AxisC
                 ((XYPlot)MarkerManager.this.chart.getPlot()).addAnnotation(commentMarkerLabel);
             }
         }
+        
+        double getXVal(){
+        	return markerLine.getValue();
+        }
     }
     
     MarkerManager(ChartPanel loggingChartPanel) {
@@ -324,7 +331,7 @@ class MarkerManager implements PlotChangeListener, RendererChangeListener, AxisC
         CommentMarker cm = new CommentMarker(xVal, comment);
         cm.setY();
         //System.out.println("y=" + cm.commentMarkerLabel.getY());
-        cm.setVisible(true);
+        cm.setVisible(commentMarkersVisible);
         comments.add(cm);
     }
 
@@ -373,6 +380,23 @@ class MarkerManager implements PlotChangeListener, RendererChangeListener, AxisC
         comments.removeAllElements();
     }
 
+    /**
+     * clear all event markers (logging comments)
+     */
+    void deleteComments(double lessThanValue){
+    	if (comments.isEmpty()) return;
+    	Iterator<CommentMarker> i = comments.iterator();
+    	CommentMarker item;
+    	while (i.hasNext()){
+    		item = i.next();
+            if (item.getXVal()<lessThanValue) {
+	        	item.die();
+	            i.remove();
+            }
+        }
+        
+    }
+    
     /**
      * Turn off measuring tools
      */

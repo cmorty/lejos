@@ -13,11 +13,10 @@ import lejos.util.EndianTools;
  * @author Kirk P Thompson
  *
  */
-class TunneledMessageManager {
+class TunneledMessageManager implements LoggerListener{
 	private static final int CMD_INIT_HANDLER = 0;
 	private static final int CMD_SET_PLUGIN_NAME = 2;
 	private static final int CMD_DELIVER_PACKET = 3;
-	
 	
 	private DataOutputStream dos;
 	private ExtensionGUIManager eGuiManager;
@@ -46,7 +45,7 @@ class TunneledMessageManager {
 	 * 
 	 * @param message
 	 */
-	void processMessage(byte[] message){
+	private void processMessage(byte[] message){
 		int command = message[0] & 0xff;
 		int handlerTypeID = message[1] & 0xff;
 		int handlerID=0;
@@ -70,7 +69,7 @@ class TunneledMessageManager {
 		case CMD_INIT_HANDLER:
 			// add/init JPanel per handler Type and associate with handler ID
 			handlerID=dataPacket[0];
-			eGuiManager.activateHandler(handlerTypeID, handlerID); // TODO manage with arrays
+			eGuiManager.activateHandler(handlerTypeID, handlerID); 
 			break;
 		case CMD_SET_PLUGIN_NAME:
 			handlerID=dataPacket[0];
@@ -81,13 +80,13 @@ class TunneledMessageManager {
 			try {
 				displayname = new String(strVal, "US-ASCII");
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
+				System.out.println("**! TunneledMessageManager.processMessage:");
 				e.printStackTrace();
 			}
 			eGuiManager.setPluginName(handlerTypeID, handlerID, displayname); 
 			break;
 		case CMD_DELIVER_PACKET:
-			System.out.println("CMD_DELIVER_PACKET");
+//			System.out.println("CMD_DELIVER_PACKET");
 			eGuiManager.notifyTypeHandlers(handlerTypeID, dataPacket); 
 			break;
 		default:
@@ -116,10 +115,31 @@ class TunneledMessageManager {
 			dos.write(buf);
 			dos.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			System.out.println("!** tunnelTheMessage failed");
 			dos=null;
 //			e.printStackTrace();
 		}
+	}
+
+	public void logLineAvailable(DataItem[] logDataItems) {
+		// ignore
+	}
+
+	public void dataInputStreamEOF() {
+		// iterate and notify AbstractTunneledMessagePanels that the connection is severed
+		eGuiManager.dataInputStreamEOF();
+	}
+
+	public void logFieldNamesChanged(String[] logFields) {
+		// ignore
+	}
+
+	public void logCommentReceived(int timestamp, String comment) {
+		// ignore
+	}
+
+	public void tunneledMessageReceived(byte[] message) {
+		// Process a passthrough message
+		processMessage(message);
 	}
 }
