@@ -19,6 +19,13 @@ import javax.swing.SwingConstants;
 
 import lejos.util.EndianTools;
 
+/**
+ * Base class for logger extension GUI plug-ins for utilizing the tunneled message functionality
+ * of NXT Charting Logger.
+ * 
+ * @author Kirk P. Thompson
+ *
+ */
 public abstract class AbstractTunneledMessagePanel extends JPanel {
 	/**
 	 * Use this type to always receive the data package. Basically equivalent to
@@ -48,11 +55,15 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 		this.handlerID= handlerID;	
 	}
 	
+	/**
+	 * Called when session connection is closed form NXT
+	 */
 	void connectionClosed(){
 		disableRegisteredFields();
 	}
 	/**
-	 * Textfield manager. send data on lost focus & enter, validations, etc.
+	 * User Input/message output manager. Sends data on lost focus & enter. Does validations via
+	 * <code>JFormattedTextField</code>, etc.
 	 * 
 	 * @author Kirk P. Thompson
 	 * 
@@ -255,7 +266,8 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 * handler type protocol. 
 	 * 
 	 * @param label The label for the <code>JCheckBox</code>
-	 * @param SETcommandID The SET command ID as specified in the handler type protocol
+	 * @param SETcommandID The SET command ID as specified in the handler type protocol. 
+	 * <code>false</code> values are sent as a byte with value of zero (0).
 	 * @param GETcommandID The GET command ID as specified in the handler type protocol
 	 * @return A <code>JCheckBox</code> instance
 	 */
@@ -267,7 +279,8 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	}
 	
 	/**
-	 * Init the JPanel and children containers, components, etc.
+	 * Init the JPanel and children containers, components, etc. Make sure your subclass
+	 * calls this or the poll button will not be instantiated.
 	 */
 	protected void initGUI() {
 		setPreferredSize(new Dimension(621, 177));
@@ -289,6 +302,10 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 
 	
 
+	/**
+	 * Sets the name label displayed in the GUI panel.
+	 * @param name The label
+	 */
 	protected void setPlugInName(String name) {
 		lblPluginName.setText("Name: " + name);
 	}
@@ -305,11 +322,11 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	abstract protected int getHandlerTypeID();
 
 	/**
-	 * Provides the unique (per handler Type ID) handler ID. This ID is used by
-	 * the PC-side <code>NXJChartingLogger</code> to route the message to the
-	 * corresponding PC-side message handler and tabbed pane and to ensure that
+	 * Provides the [unique] handler ID passed in the constructor. 
+	 * This ID is used to route the message to the
+	 * corresponding message handler and tabbed pane and to ensure that
 	 * messages are routed back to the correct
-	 * <code>LogMessageTypeHandler</code> concrete subclass instance.
+	 * <code>lejos.util.LogMessageTypeHandler</code> concrete subclass instance.
 	 * 
 	 * @return The handler instance ID.
 	 */
@@ -367,7 +384,8 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	}
 	
 	/**
-	 * Query the remote handler to send all defined values. Used in INIT.
+	 * Query the remote handler to send all defined values. Used in init().
+	 * @see #init
 	 */
 	void pollForRemoteHandlerValues(){
 		disableRegisteredFields();
@@ -378,7 +396,7 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	
 	/**
 	 * Tunnel a Type handler-specific protocol message to the PC. This method
-	 * builds the Handler ID, command value and message into an array that is
+	 * builds the Handler ID, command value and message into a packet that is
 	 * sent through the logger protocol <code>COMMAND_PASSTHROUGH</code> via
 	 * <code>writePassthroughMessage()</code>.
 	 * 
@@ -420,6 +438,8 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	/**
 	 * Do any intialization, Default is to poll <code>lejos.util.LogMessageTypeHandler</code> concrete 
 	 * subclass (via GET commands) on NXT for all current values.
+	 * 
+	 * @see #pollForRemoteHandlerValues
 	 */
 	protected void init(){
 		pollForRemoteHandlerValues();
@@ -427,7 +447,7 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	
 	/**
 	 * Called by <code>ExtensionGUIManager</code> when NXT logging session connection ends. This
-	 * disables all regsitered inputs in the panel
+	 * disables all registered inputs in the panel. Can be overridden if that behavior is unwanted.
 	 */
 	protected void dataInputStreamEOF(){
 		disableRegisteredFields();
