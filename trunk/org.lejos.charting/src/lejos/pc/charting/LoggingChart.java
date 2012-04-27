@@ -155,17 +155,22 @@ class LoggingChart extends ChartPanel{
                                         // delete the identified range from all datasets and their series
                                         if (endIndex>0) {
                                             LoggingChart.this.getChart().setNotify(false);
+                                            //delete markers here
+                                            double xval =((XYSeriesCollection)plot.getDataset(0)).getSeries(0).getX(endIndex-1).doubleValue();
+                                            markerManager.deleteComments(xval);
+                                            
                                             for (int i=0;i<plot.getDatasetCount();i++){
                                                 for (int j=0;j<plot.getDataset(i).getSeriesCount();j++) {
                                                     ((XYSeriesCollection)plot.getDataset(i)).getSeries(j).delete(0,endIndex-1);
                                                 }
                                             }
+                                            
                                             LoggingChart.this.getChart().setNotify(true);
                                         }
                                         try {
-                                            lockObj1.wait(50);;
+                                            lockObj1.wait(50);
                                         } catch (InterruptedException e) {
-                                            ; // do nothing
+                                        	// do nothing
                                         }
                                     }
                                 }
@@ -191,7 +196,8 @@ class LoggingChart extends ChartPanel{
     // set the double-click to restore zoom to extents
     private void setMouseListener() {
         class ml extends MouseAdapter{
-            public void mouseClicked(MouseEvent e) {
+            @Override
+			public void mouseClicked(MouseEvent e) {
                 if ((e.getButton()&MouseEvent.BUTTON1)==MouseEvent.BUTTON1) {
                     // doubleclick zooms extents of data
                     if (e.getClickCount()==2) {
@@ -215,7 +221,8 @@ class LoggingChart extends ChartPanel{
                 }
             }
             
-            public void mouseReleased(MouseEvent e) {
+            @Override
+			public void mouseReleased(MouseEvent e) {
                 getChart().setNotify(true);
             }
             
@@ -235,19 +242,22 @@ class LoggingChart extends ChartPanel{
         return this.emptyChart;
     }
     
-    public void mouseMoved(MouseEvent e) {
+    @Override
+	public void mouseMoved(MouseEvent e) {
         if (mouseManager.doMouseMoved(e))  {
             super.mouseMoved(e);
         }
     }
     
-    public void mouseDragged(MouseEvent e) {
+    @Override
+	public void mouseDragged(MouseEvent e) {
         if (mouseManager.doMouseDragged(e)) {
             super.mouseDragged(e);
         }
     }
     
-    public void mouseClicked(MouseEvent e) {
+    @Override
+	public void mouseClicked(MouseEvent e) {
         if (mouseManager.doMouseClicked(e)) {
             super.mouseClicked(e);
         }    
@@ -284,7 +294,8 @@ class LoggingChart extends ChartPanel{
         yExtents=new Range[RANGE_AXIS_COUNT];
     }
     
-    public void paintComponent(Graphics g) {
+    @Override
+	public void paintComponent(Graphics g) {
         synchronized (lockObj1) {
             try {
                 super.paintComponent(g);

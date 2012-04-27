@@ -1,11 +1,11 @@
 package lejos.pc.charting;
 
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 
 
 /**
- * Passthrough message plug-in manager. Manages GUI (JPanel) loading/unloading/message routing
+ * Passthrough message plug-in manager. Manages GUI (AbstractTunneledMessagePanel) loading/unloading/message routing
  * 
  * @author Kirk P. Thompson
  *
@@ -28,28 +28,17 @@ class ExtensionGUIManager {
 		this.tabbedPane = tabbedPane;
 	}
 	
-//	/**
-//	 * Set the ref to the tabbed pane that will hold passthrough message control panels.
-//	 * 
-//	 * @param tabbedPane
-//	 */
-//	void setJTabbedPane(JTabbedPane tabbedPane){
-//		this.tabbedPane = tabbedPane;
-//		hasInited=true;
-//	}
-	
-	// TODO use abstract class or interface for retval
-	private JPanel getPanel(int handlerTypeID, int handlerID){
+	private AbstractTunneledMessagePanel getPanel(int handlerTypeID, int handlerID){
 		// find the matching tab for the plug-in
         int i=0;
-        JPanel thePanel = null;
+        AbstractTunneledMessagePanel thePanel = null;
 //        System.out.println("searching for " + handlerTypeID + "_" + handlerID);
         for (;i<tabbedPane.getTabCount();i++){
 //        	System.out.println("name=" + tabbedPane.getComponentAt(i).getName());
         	String theName = tabbedPane.getComponentAt(i).getName();
         	if (theName != null && theName.equalsIgnoreCase(handlerTypeID + "_" + handlerID)){
         		tabbedPane.setSelectedIndex(i);
-        		thePanel = (JPanel) tabbedPane.getComponentAt(i);
+        		thePanel = (AbstractTunneledMessagePanel) tabbedPane.getComponentAt(i);
         		thePanel.requestFocus();
         		break;
         	}
@@ -57,43 +46,40 @@ class ExtensionGUIManager {
 		return thePanel;
 	}
 	
-	private void tabSetup(int handlerTypeID, int handlerID){
-		// find the matching tab for the plug-in
-		PanelPIDTune targetPanel = (PanelPIDTune) getPanel(handlerTypeID, handlerID);
+	void activateHandler(int handlerTypeID, int handlerID){
+		String tabLabel;
+        String tabHoverText;
         
+		// find the matching tab for the plug-in
+		AbstractTunneledMessagePanel targetPanel = getPanel(handlerTypeID, handlerID);
+		
+		// switch to select handler type
 		if (targetPanel==null) {
-        	targetPanel = new PanelPIDTune(handlerID, this); 
-        	System.out.println("tabSetup: handlerID=" + handlerID);
+			switch(handlerTypeID){
+			case TYPE_PID_TUNER:
+				targetPanel = new PanelPIDTune(handlerID, this);
+				tabLabel = "PID Tuning-" + handlerID;
+				tabHoverText = "PID Tuning interface";
+				break;
+			default:
+				System.out.println("!** Invalid type handler specified in ExtensionGUIManager.tabSetup");
+				return;
+			}
+			
         	targetPanel.setName(handlerTypeID + "_" + handlerID);
 	    	//jTabbedPane1.addTab("PID Tuning", jp1);
-	        tabbedPane.insertTab("PID Tuning-" + handlerID, null, targetPanel, "PIDController Tuning interface", tabbedPane.getTabCount());
+	        tabbedPane.insertTab(tabLabel, null, targetPanel, tabHoverText, tabbedPane.getTabCount());
 //	    	System.out.println("name=" + jp1.getName());
 	    	tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
         }
         targetPanel.init();
-    	System.out.println("done tab setup");
-	}
-
-	void activateHandler(int handlerTypeID, int handlerID) {
-		// make sure we have a handler JPanel installed for the requested type & instance ID
-		System.out.println("ExtensionGUIManager.activateHandler: handlerTypeID=" + handlerTypeID + ", handlerID=" + handlerID);
-		switch(handlerTypeID){
-			case TYPE_PID_TUNER:
-				tabSetup(handlerTypeID, handlerID);
-				break;
-			default:
-				System.out.println("!** Invalid type handler specified in ExtensionGUIManager.activateHandler");
-				return;
-		}
 	}
 
 	void setPluginName(int handlerTypeID, int handlerID, String name) {
-		// TODO use abstract or interface
 		// find the matching tab for the plug-in
-		PanelPIDTune targetPanel = (PanelPIDTune) getPanel(handlerTypeID, handlerID);
+		AbstractTunneledMessagePanel targetPanel = getPanel(handlerTypeID, handlerID);
 		if (targetPanel==null) return;
 		targetPanel.setPlugInName(name);
-		
 	}
 	
 	/**
@@ -105,38 +91,64 @@ class ExtensionGUIManager {
 	 * @param dataPacket
 	 */
 	void notifyTypeHandlers(final int handlerTypeID, final byte[] dataPacket) {
-		// TODO Auto-generated method stub. Spin through [YTBD] collection and notify of 
+		// get the handler ID
 		int handlerID = dataPacket[0];
-		final PanelPIDTune targetPanel = (PanelPIDTune) getPanel(handlerTypeID, handlerID);
+		
+		// find the AbstractTunneledMessagePanel
+		// TODO this doesn't accomodate broadcast handlerTypeID=0 or handlerID=0 as per protocol doc
+		final AbstractTunneledMessagePanel targetPanel = getPanel(handlerTypeID, handlerID);
 		//System.out.println("notifyTypeHandlers: handlerTypeID=" + handlerTypeID + ", handlerID=" + handlerID);
 		
 		if (targetPanel==null) return;
 		//System.out.println("found panel: " + handlerTypeID + "_" + handlerID);
 		
-		// message to all handlerTypeID, or zeros (broadcast)
-		new Thread (new Runnable(){
-			// TODO test case. assume pid tuner
-			public void run() {
-				targetPanel.processMessage(dataPacket, handlerTypeID);
-			}
-		}
-		).start();
+//		// message to all handlerTypeID, or zeros (broadcast)
+//		for (LogMessageTypeHandler curItem : arrayMessageTypeHandlers){
+//			// if registered handler matches the TYPE_ID sent, or registered handler is set as
+//			// broadcast receiver, or the the TYPE_ID sent is broadcast (zero :0)
+//			// The handler is responsible for parsing the ID and determining if the packet belongs to it. This
+//			// allows all handlers of a specific type to receive the packets (like a type-specific broadcast).
+//			if (curItem.getHandlerTypeID()==typeID || 
+//					curItem.getHandlerTypeID()==LogMessageTypeHandler.TYPE_ALWAYS_RECEIVE || 
+//					typeID == LogMessageTypeHandler.TYPE_ALWAYS_RECEIVE) {
+//				curItem.processMessage(packet, typeID);
+//			}
+//		}
+		
+		// play nice with Swing and send the packet to processing
+		SwingUtilities.invokeLater(new Runnable(){
+            public void run() {
+            	targetPanel.processMessage(dataPacket, handlerTypeID);
+            }
+        });
+		
 	}
 
 	void setTunneledMessageManager(TunneledMessageManager tunneledMessageManager) {
-		// TODO Auto-generated method stub
-		tmm = tunneledMessageManager;
-		
+		this.tmm = tunneledMessageManager;
 	}
 	
 	/**
-	 * Send a command to the lejos.util.LogMessageManager.
+	 * Send a command package to the lejos.util.TunneledMessageManager which will package it 
+	 * up as a CMD_DELIVER_PACKET and send to NXT.
 	 * 
-	 * @param command TODO
-	 * @param typeID
+	 * @param typeID the handler well-defined Type ID
 	 * @param msg the sub-message (i.e. from LogMessageTypeHandler)
 	 */
 	void sendControlPacket(int typeID, byte[] msg){
 		tmm.tunnelTheMessage(typeID, msg);
+	}
+
+	/**
+	 * Iterate and notify AbstractTunneledMessagePanels that the connection is severed
+	 */
+	void dataInputStreamEOF() {
+		// iterate and notify AbstractTunneledMessagePanels that the connection is severed
+		int i=0;
+        for (;i<tabbedPane.getTabCount();i++){
+        	if (tabbedPane.getComponentAt(i) instanceof AbstractTunneledMessagePanel) {
+        		((AbstractTunneledMessagePanel) tabbedPane.getComponentAt(i)).dataInputStreamEOF();
+        	}
+        }
 	}
 }

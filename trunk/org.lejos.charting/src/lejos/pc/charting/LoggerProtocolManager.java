@@ -43,8 +43,7 @@ public class LoggerProtocolManager {
     private HashSet<LoggerListener> listeners = new HashSet<LoggerListener>();
     private int elementsPerLine = 1;
     private InputStream nXTInputStream;
-    @SuppressWarnings("unused")
-	private OutputStream nXTOutputStream;
+    private OutputStream nXTOutputStream;
     
     /**
      * Create a <code>LoggerProtocolManager</code> instance. 
@@ -458,7 +457,7 @@ public class LoggerProtocolManager {
      * @param length
      * @param flush Flush after write?
      */
-    synchronized void writePassthroughMessage( //TODO use in JPanel?
+    synchronized void writePassthroughMessage( 
     		int command, int handlerTypeID, byte[] message, int offset, int length, boolean flush)
     {
     	// size to headers 
