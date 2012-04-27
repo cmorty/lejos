@@ -118,7 +118,7 @@ public interface Logger {
       * @see #startRealtimeLog(NXTConnection)
       * @throws UnsupportedOperationException if <code>setColumns</code> is called more than once in cached mode.
       */
-    void setColumns(LogColumn[] columnDefs) throws IllegalArgumentException; 
+    void setColumns(LogColumn[] columnDefs) throws UnsupportedOperationException; 
     
     // Log a comment. Displayed as event marker on domain axis of chart and after the current line in the log. 
     // Ignored in cache mode.
