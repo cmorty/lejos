@@ -5,7 +5,8 @@ import javax.swing.SwingUtilities;
 
 
 /**
- * Passthrough message plug-in manager. Manages GUI (AbstractTunneledMessagePanel) loading/unloading/message routing
+ * Passthrough message plug-in manager. Manages GUI (<code>AbstractTunneledMessagePanel</code>) 
+ * loading/unloading/message routing
  * 
  * @author Kirk P. Thompson
  *
