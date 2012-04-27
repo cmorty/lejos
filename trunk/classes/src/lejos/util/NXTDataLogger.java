@@ -13,10 +13,12 @@ import lejos.util.Delay;
 
 
 /**
- * Logger class for the NXT that supports real time and deferred (cached) data logging of the primitive datatypes. 
+ * Logger class for the NXT that supports real time and deferred (cached) data logging of the primitive datatypes. Also, 
+ * message passthrough is supported for 2 way communication for implementations of <code>LogMessageTypeHandler</code> when
+ * in real time mode (See {@link #startRealtimeLog(NXTConnection)}). 
  * <p>
  * This class communicates with 
- * <code>lejos.pc.charting.DataLogger</code> via Bluetooth or USB which is used by the NXT Charting Logger tool.
+ * <code>lejos.pc.charting.LoggerProtocolManager</code> via Bluetooth or USB which is used by the NXJChartingLogger tool.
  * <p>When instantiated, the <code>NXTDataLogger</code> starts out in cached mode (<code>{@link #startCachingLog}</code>) as default.
  * Cache mode uses a growable ring buffer that consumes (if needed) up to all available memory during a logging run.
  * <p>Hints for real-time logging efficiency:
@@ -30,6 +32,7 @@ import lejos.util.Delay;
  * <code>int</code>, and <code>float</code> and 8 bytes for <code>long</code> and <code>double</code>.
  * </ul>
  * @author Kirk P. Thompson
+ * @see LogMessageManager
  */
 public class NXTDataLogger implements Logger{
     private static final byte ATTENTION1 = (byte)0xff;
@@ -46,10 +49,10 @@ public class NXTDataLogger implements Logger{
     private static final byte COMMAND_SETHEADERS   = 2;  
     private static final byte COMMAND_FLUSH        = 3;    
     private static final byte COMMAND_COMMENT      = 4;    
-    private static final byte COMMAND_PASSTHROUGH  = 5;   // TODO future implementation to allow passthrough messages to a different listener type
+    private static final byte COMMAND_PASSTHROUGH  = 5;   
     private static final int XORMASK = 0xff;
     private static final int FLUSH_THRESHOLD_MS = 200;
-    private static final int BYTEBUF_CAPCITY_INCREMENT = 256;
+    private static final int BYTEBUF_CAPACITY_INCREMENT = 256;
     
     private DataOutputStream dos = null;
     private DataInputStream dis = null;
@@ -59,7 +62,7 @@ public class NXTDataLogger implements Logger{
     private boolean initialFlush=false;
     
     private LogColumn[] columnDefs=null;
-    private ByteRingQueue byteQueue = new ByteRingQueue();
+    ByteRingQueue byteQueue = new ByteRingQueue();
     private byte[] attentionRandoms = new byte[5];
     private int chksumSeedIndex=-1;
     
@@ -72,12 +75,12 @@ public class NXTDataLogger implements Logger{
     
     private int sessionBeginTime;
     private int setColumnsCount=0;
-    private int lineBytes;
+    int lineBytes;
     private NXTConnection passedNXTConnection=null;
     private String commentText = new String("");
     private int currentTimeStamp=0;
     private long finishLineTS=0;
-    
+	private LogMessageListener tunnelManager = null;
     /**
      * Default constructor establishes a data logger instance in cache mode.
      * @see #startCachingLog
@@ -105,6 +108,12 @@ public class NXTDataLogger implements Logger{
         }
     }
     
+    /**
+     * hybrid ring buffer queue used for logger-specific LogColumns-defined logged data structure
+     * 
+     * @author Kirk
+     *
+     */
     private class ByteRingQueue{
         private int addIndex=0;
         private int removeIndex=0;
@@ -137,7 +146,7 @@ public class NXTDataLogger implements Logger{
         void add(byte b){
             barr[addIndex++]=b;
             this.lineByteCounter++; 
-            if (!ringMode && !ensureCapacity(BYTEBUF_CAPCITY_INCREMENT)){ 
+            if (!ringMode && !ensureCapacity(BYTEBUF_CAPACITY_INCREMENT)){ 
                 // out of memory
                 ringMode=true;
                 // since this is the first "use" of ringbuffer, move the pointer to next line (lose first row of data). 
@@ -186,11 +195,11 @@ public class NXTDataLogger implements Logger{
             if (this.removeIndex>=this.barr.length) this.removeIndex=0;
         }
         
-        int byteCount(){
-            int size=addIndex-removeIndex;
-            if (size<0) size=barr.length+size;
-            return size;
-        }
+//        int byteCount(){
+//            int size=addIndex-removeIndex;
+//            if (size<0) size=barr.length+size;
+//            return size;
+//        }
     }
     
     // return one of our seeded random check vals
@@ -211,12 +220,17 @@ public class NXTDataLogger implements Logger{
      * <p>
      * The use of this method is mutually exclusive with <code>startCachingLog()</code> and will reset internal state 
      * to realtime mode.
+     * <p>
+     * For passthrough messaging, one of the <code>startRealtimeLog()</code> methods must be called before 
+     * the <code>NXTDataLogger</code> can be used by <code>LogMessageManager</code>.
+     * 
      * @param out A valid <code>DataOutputStream</code>
      * @param in A valid <code>DataInputStream</code>
      * @throws IOException if the data streams are not valid
      * @see #stopLogging
      * @see #startRealtimeLog(NXTConnection)
      * @see #setColumns
+     * @see LogMessageManager
      */
     public void startRealtimeLog(DataOutputStream out, DataInputStream in) throws IOException{
         if (out==null) throw new IOException("DataOutputStream is null");
@@ -225,6 +239,9 @@ public class NXTDataLogger implements Logger{
         
         this.dos=out;
         this.dis=in;
+        if (this.tunnelManager!=null) {
+    		this.tunnelManager.setInputStream(dis);
+    	}
         sessionBeginTime=(int)System.currentTimeMillis();
         setColumnsCount=0;
     } 
@@ -237,12 +254,17 @@ public class NXTDataLogger implements Logger{
      * <code>writeLog()</code> method is called. 
      * <p>
      * The use of this method is mutually exclusive with <code>startCachingLog()</code> and will reset internal state 
-     * to realtime mode.
+     * to realtime mode. 
+     * <p>
+     * For passthrough messaging, one of the <code>startRealtimeLog()</code> methods must be called before 
+     * the <code>NXTDataLogger</code> can be used by <code>LogMessageManager</code>.
+     * 
      * @param connection A connected <code>NXTConnection</code> instance
      * @throws IOException if the data streams are not valid
      * @see #stopLogging
      * @see #startRealtimeLog(DataOutputStream, DataInputStream)
      * @see #setColumns
+     * @see LogMessageManager
      */
     public void startRealtimeLog(NXTConnection connection) throws IOException{
         this.passedNXTConnection=connection;
@@ -256,7 +278,7 @@ public class NXTDataLogger implements Logger{
      * @see #startRealtimeLog(NXTConnection)
      * @see #startCachingLog
      */
-    public void stopLogging() {
+    public synchronized void stopLogging() {
         cleanConnection();
     }
     
@@ -306,7 +328,7 @@ public class NXTDataLogger implements Logger{
         logmodeState=LMSTATE_REAL;
         
         // TODO this provides the basis to talk to Roger's logger (lejos.pc.tools.DataViewComms.startDownload()). It expects a handshake:
-        // I receive a 15 and then send the number of floats it needs to capture. It then iterates to read the floats  out of it;s
+        // I receive a 15 and then send the number of floats it needs to capture. It then iterates to read the floats  out of its
         // dis and outputs the values to the GUI.
         //System.out.println("itm cnt=" + byteQueue.byteCount()/lineBytes*columnDefs.length);
         
@@ -371,15 +393,21 @@ public class NXTDataLogger implements Logger{
             // wait for the hardware to finish any "flushing". I found that without this, the last data may be lost if the program ends
             // or dos is set to null right after the flush().
             Delay.msDelay(100); 
+            
+            // give the passthrough manager a chance to do housekeeping, etc. before we close the dis
+            if (tunnelManager!=null) {
+        		tunnelManager.connectionClosing();
+        	}
+            
             if (this.passedNXTConnection!=null) {
                 passedNXTConnection.close();
             }
             if (this.dis!=null) this.dis.close();
             if (this.dos!=null) this.dos.close();
         } catch (IOException e) {
-            ; // ignore
+             // ignore
         } catch (Exception e) {
-            ; // ignore
+             // ignore
         }
         this.dis = null;
         this.dos = null;
@@ -389,7 +417,7 @@ public class NXTDataLogger implements Logger{
      * lower level data sending method
      * @param command the bytes[] to send
      */
-    private final synchronized void sendCommand(byte[] command){
+    private final void sendCommand(byte[] command){
         if (this.dos==null) return;
         try {
             this.dos.write(command);
@@ -443,7 +471,7 @@ public class NXTDataLogger implements Logger{
      * @throws IllegalStateException if all the columns defined with <code>setColumns()</code> per row have not been logged. 
      * @see #setColumns
      */
-    public void finishLine() {
+    public synchronized void finishLine() {
         if (this.currColumnPosition!=((this.itemsPerLine)&0xff)) throw new IllegalStateException("too few cols ");
         currColumnPosition=1;
         if (currentTimeStamp==0) {
@@ -456,15 +484,15 @@ public class NXTDataLogger implements Logger{
             try {
                 dos.flush();
             } catch (IOException e) {
-                ; // ignore
+                 // ignore
             }
         }
         this.finishLineTS=System.currentTimeMillis();
         if (this.commentText.equals("")) return;
         
         // a comment was set: send command, timestamp, and comment text
-        sendATTN();
         byte[] command = {COMMAND_COMMENT,-1};  
+        sendATTN();
         sendCommand(command);
         try {
             this.dos.writeInt(this.currentTimeStamp);
@@ -523,7 +551,7 @@ public class NXTDataLogger implements Logger{
     * @see #setColumns
     * @see #finishLine
     */
-    public void writeLog(boolean datapoint) {
+    public synchronized void writeLog(boolean datapoint) {
         writeInt(datapoint ? 1 : 0, DT_BOOLEAN);
     }
 
@@ -541,7 +569,7 @@ public class NXTDataLogger implements Logger{
     * @see #setColumns
     * @see #finishLine
     */
-    public void writeLog(byte datapoint) {
+    public synchronized void writeLog(byte datapoint) {
         writeInt(datapoint, DT_BYTE);
     }
     
@@ -559,7 +587,7 @@ public class NXTDataLogger implements Logger{
     * @see #setColumns
     * @see #finishLine
     */
-    public void writeLog(short datapoint) {
+    public synchronized void writeLog(short datapoint) {
         writeInt(datapoint, DT_SHORT);
     }
 
@@ -575,7 +603,7 @@ public class NXTDataLogger implements Logger{
       * @see #setColumns
       * @see #finishLine
       */
-    public void writeLog(int datapoint) {
+    public synchronized void writeLog(int datapoint) {
         writeInt(datapoint, DT_INTEGER);
     }
     
@@ -599,7 +627,7 @@ public class NXTDataLogger implements Logger{
     * @see #setColumns
     * @see #finishLine
     */
-    public void writeLog(long datapoint) {
+    public synchronized void writeLog(long datapoint) {
         checkWriteState(DT_LONG);  
         try {
             this.dos.writeLong(datapoint);
@@ -620,7 +648,7 @@ public class NXTDataLogger implements Logger{
     * @see #setColumns
     * @see #finishLine
     */
-    public void writeLog(float datapoint) {
+    public synchronized void writeLog(float datapoint) {
         checkWriteState(DT_FLOAT);
         try {
 //            LCD.drawString("this.dos " + value + " ",0,1);
@@ -642,7 +670,7 @@ public class NXTDataLogger implements Logger{
     * @see #setColumns
     * @see #finishLine
     */
-    public void writeLog(double datapoint) {
+    public synchronized void writeLog(double datapoint) {
         checkWriteState(DT_DOUBLE);
         try {
     //            LCD.drawString("this.dos " + value + " ",0,1);
@@ -658,11 +686,52 @@ public class NXTDataLogger implements Logger{
      * Only one comment per line. (i.e. before <code>finishLine()</code> is called)
     * @param comment The comment
     */
-    public void writeComment(String comment){
+    public synchronized void writeComment(String comment){
         // return if user logging in cache mode
         if (logmodeState!=LMSTATE_REAL) return;
         this.commentText=comment;
     }
+    
+    
+    /**
+     * Tunnel a passthrough message to the PC-side <code>LoggerProtocolManager</code>. Method will block until
+     * message has been sent. Message is sent after logger-specific data is finalized and sent by 
+     * <code>finishLine</code>. 
+     * <P>
+     * A protocol handler must be running on the PC to do anything useful with the message. The handler
+     * normally uses the <code>LoggerListener</code> interface to be nofied via the <code>notifyPassthrough()</code>
+     * method.
+     * 
+     * @see #finishLine()
+     * @param message The message.
+     */
+    void writePassthroughMessage(byte[] message){
+    	writePassthroughMessage(message,0, message.length, true);
+    }
+    synchronized void writePassthroughMessage(byte[] message, int offset, int length, boolean flush){
+    	byte[] buf = {COMMAND_PASSTHROUGH,-1};        
+        sendATTN();
+        sendCommand(buf);
+
+        // follow with an int specifying how many bytes will be sent
+        buf = new byte[4 + length];
+        encodeIntBE(length, buf, 0);
+        System.arraycopy(message, offset, buf, 4, length);
+    	try {
+    		this.dos.write(buf);
+    		if (flush) this.dos.flush();
+		} catch (IOException e) {
+			System.out.println("WPTM IOException");
+			cleanConnection();
+		}
+    }
+    
+    private void encodeIntBE(int v, byte[] b, int off){
+		b[off] = (byte)(v >>> 24);
+		b[off+1] = (byte)(v >>> 16);
+		b[off+2] = (byte)(v >>> 8);
+		b[off+3] = (byte)v;
+	}
     
     private void writeStringData(String strData) {
         byte[] strBytes;
@@ -716,7 +785,10 @@ public class NXTDataLogger implements Logger{
       */
     // sets the header names, datatypes, count, chartable attribute, range axis ID (for multiple axis charting)
     // This is mandatory and implies a new log structure when called
-    public void setColumns(LogColumn[] columnDefs){
+    /* (non-Javadoc)
+     * @see lejos.util.Logger#setColumns(lejos.util.LogColumn[])
+     */
+    public synchronized void setColumns(LogColumn[] columnDefs){
         if (columnDefs.length==0) return;
         if (columnDefs.length>255) return;
         if (this.setColumnsCount>1&&logmodeState==LMSTATE_CACHE) throw new UnsupportedOperationException("already called");
@@ -747,5 +819,30 @@ public class NXTDataLogger implements Logger{
             writeStringData(item.getName().replace('!',' ') + "!" + (item.isChartable()?"y":"n") + "!" + item.getRangeAxisID());
         }
     }
+    
+    /**
+     * Register a passthrough message manager that implements <code>LogMessageListener</code>. Only one
+     * passthrough message manager can be registered. On 
+	 * registration, the internal <code>DataInputStream</code> reference is passed to the manager via
+	 * calling <code>LogMessageListener.setInputStream()</code>.
+	 * <p>
+	 * Must be called only after a connection has been established with <code>startRealtimeLog()</code>.
+     * 
+     * @see LogMessageListener
+     * @see #startRealtimeLog
+     * @param manager The passthrough message manager instance of <code>LogMessageManager</code>. Set to null to disable.
+     * @throws IllegalStateException if <code>startRealtimeLog()</code> has not been called and active.
+     */
+    void registerTunnelManager(LogMessageListener manager){ 
+    	// return if user logging in cache mode
+        if (logmodeState!=LMSTATE_REAL || this.dis == null) throw new IllegalStateException("bad state");
+        
+    	this.tunnelManager = manager;
+    	if (this.tunnelManager!=null) {
+    		this.tunnelManager.setInputStream(dis);
+    	}
+    
+    }
+
 }
 

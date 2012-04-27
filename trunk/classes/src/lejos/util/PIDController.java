@@ -47,10 +47,12 @@ package lejos.util;
  * </ul>
  * This class provides two methods to manage integral windup:
  * <ol><li>
- * Disabling the integral function until the PV has entered the controllable region 
- * <li>Preventing the integral term from accumulating above or below pre-determined bounds
+ * Disabling the integral function until the PV has entered the controllable region. 
+ * See <code>{@link #freezeIntegral(boolean)}</code>.
+ * <li>Preventing the integral term from accumulating above or below pre-determined bounds. 
+ * See <code>{@link #PID_I_LIMITHIGH}</code>, <code>{@link #PID_I_LIMITLOW}</code>.
  * </ol>
- * 
+
  * The derivative term <code>D</code> (sometimes called rate) slows the rate of change of the controller output and this effect is most noticeable
  * close to the controller setpoint. Hence, derivative control is used to reduce the magnitude of the overshoot produced by the 
  * integral component (<code>I</code>) and improve the combined controller-process stability. The rate of change of the process error is 
@@ -170,17 +172,47 @@ public class PIDController {
      */
     public static final int PID_I_LIMITHIGH = 10;
 
-    /** The integral accumulator <code>I</code> value. Read-only.Calling <tt>setPIDParam()</tt> with this is ignored. The <tt>I</tt> value is the
+    /** 
+     * The current internal integral accumulator <code>I</code> value. Read-only. 
+     * Calling <tt>setPIDParam()</tt> with this is ignored. The <tt>I</tt> value is the
      * accumulator for <code>Ki * error * dt</code>. 
+     * <p>
+     * It is used as: MV = Kp*error + <b>integral</b> + Kd*derivative
      */
     public static final int PID_I = 11;
     
-    /** The process variable (<code>PV</code>) value. Read-only.Calling <tt>setPIDParam()</tt> with this is ignored. The <tt>PV</tt> value is the
+    /** 
+     * The process variable (<code>PV</code>) value. Read-only. 
+     * Calling <tt>setPIDParam()</tt> with this is ignored. The <tt>PV</tt> value is the
      * last value passed to <code>doPID()</code>.
      * 
      * @see #doPID
      */
     public static final int PID_PV = 12;
+    
+    /** 
+     * The current internal derivitive <code>D</code> value. Read-only. Calling <tt>setPIDParam()</tt> 
+     * with this is ignored.
+     * <p>
+     * It is used as: MV = Kp*error + integral + Kd*<b>derivative</b>
+     */
+    public static final int PID_D = 13;
+    
+    /** 
+     * The current internal error value. Read-only. Calling <tt>setPIDParam()</tt> with this is ignored. 
+     * <p>
+     * It is used as: MV = Kp*<b>error</b> + integral + Kd*derivative
+     */
+    public static final int PID_ERROR = 14;
+    
+    /** 
+     * The manipulated variable (<code>MV</code>) value. Read-only. 
+     * Calling <tt>setPIDParam()</tt> with this is ignored. The <tt>MV</tt> value is the
+     * last value returned from <code>doPID()</code>.
+     * 
+     * @see #doPID
+     */
+    public static final int PID_MV = 15;
 
     // Our default Constants for the PID controller 
     private float Kp=1.0f;          // proportional value determines the reaction to the current error
@@ -207,6 +239,7 @@ public class PIDController {
     private Logger dataLogger=null;
     private int cycleCount=0;
     private int PV;
+    private int outputMV;
     
     /**
      * Construct a PID controller instance using passed setpoint (SP) and millisecond delay (used before returning from a call to
@@ -257,8 +290,7 @@ public class PIDController {
                 this.lowLimit = (int)value;
                 break;
             case PIDController.PID_SETPOINT:
-                this.setpoint = (int)value;
-                this.cycleTime = 0;
+	            this.setpoint = (int)value;
                 break;
             case PIDController.PID_I_LIMITLOW:
                 this.integralLowLimit = (int)value;
@@ -308,7 +340,7 @@ public class PIDController {
                 retval = this.lowLimit;
                 break;
             case PIDController.PID_SETPOINT:
-                retval = this.setpoint;
+            	retval = this.setpoint;
                 break; 
             case PIDController.PID_I_LIMITLOW:
                 retval = this.integralLowLimit ;
@@ -322,6 +354,12 @@ public class PIDController {
             case PID_PV:
                 retval = this.PV;
                 break;
+            case PID_D:
+            	retval = this.derivative;
+            	break;
+            case PID_ERROR:
+            	retval = this.error;
+            	break;
             default:
         }
         return retval;
@@ -356,7 +394,6 @@ public class PIDController {
      * @return The Manipulated Variable <code>MV</code> to input into the process (motor speed, etc.)
      */
     public int doPID(int processVariable){
-        int outputMV;
         int delay=0;
         this.PV = processVariable;
         
