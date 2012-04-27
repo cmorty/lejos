@@ -379,17 +379,61 @@ public class DexterWifiSensor {
 		return -1;
 	}
 	
-	/** Send TCP data
+	/** Send TCP data as String
 	 * 
 	 * @param connectionID - The connection ID of the connection we want to send over
 	 * @param data - The data we want to send
 	 */
 	public void sendTCPData(int connectionID, String data){
-		data = ((char)ESC)+"S"+connectionID+data+((char)ESC)+"E";
-		debug("Sending tcp:"+data);
 		byte[] txBuf = data.getBytes();
-		RS485.hsWrite(txBuf, 0, txBuf.length);
+		debug("Sending tcp:"+data);
+		sendTCPData(connectionID, txBuf, 0, txBuf.length);
+	}
+	
+	/** Send TCP data TODO: Currently writes whole data array rather than offset length
+	 * 
+	 * @param connectionID - The connection ID of the connection we want to send over
+	 * @param data - The data we want to send
+	 * @param offset TODO: NOT FUNCTIONAL
+	 * @param length TODO: NOT FUNCTIONAL
+	 */
+	public void sendTCPData(int connectionID, byte[] data, int offset, int length) {
+		// 1) send ESC+S+connectionID
+		String d1 = ((char)ESC)+"S"+connectionID;
+		byte[] txBuf = d1.getBytes();
+		sendRS485Data(txBuf);
+		
+		// 2) read response and check for ESC+O/F
+		String result = readFully(true);
+		if(result.charAt(1) == 'O') {
+			// TODO: Not sure what proper behavior is if F occurs
+		}
+		
+		// 3) send data (actually replace each ESC with ESC+ESC)
+		sendRS485Data(data);
+		
+		// 4) send ESC+E
+		String d2 = ((char)ESC)+"E";
+		txBuf = d2.getBytes();
+		sendRS485Data(txBuf);
+		
+		// 5) read response and check for ESC+O/F
+		// TODO: Check for ESC+O/F. Ignore for now.
 		String input = readFully(true);
+	}
+	
+	/**
+	 * Helper method used by sendTCPData() to make sure all bytes are properly written to WiFi using RS485.hsWrite().
+	 * @param data
+	 */
+	private void sendRS485Data(byte [] data) {
+		int start = 0;
+		int bytes_length = data.length;
+		do {
+			int written = RS485.hsWrite(data, start, bytes_length);
+			start += written;
+			bytes_length -= start; 
+		} while(bytes_length > 0);
 	}
 	
 	/**
