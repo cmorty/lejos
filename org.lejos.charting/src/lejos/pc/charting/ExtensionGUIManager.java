@@ -25,6 +25,27 @@ class ExtensionGUIManager {
 	private JTabbedPane tabbedPane;
 	private TunneledMessageManager tmm;
 	
+	/**
+	 * Used for invokeLater of processMEssage()
+	 * @author Kirk
+	 *
+	 */
+	private class MessageProcessorThread implements Runnable{
+		private AbstractTunneledMessagePanel atmp;
+		private byte[] dataPacket;
+		private int handlerTypeID;
+		
+		MessageProcessorThread(AbstractTunneledMessagePanel atmp, byte[] innerdataPacket, int innerhandlerTypeID){
+			this.atmp = atmp;
+			this.dataPacket = innerdataPacket;
+			this.handlerTypeID = innerhandlerTypeID;
+		}
+
+		public void run() {
+			atmp.processMessage(dataPacket, handlerTypeID);
+		}
+	}
+	
 	ExtensionGUIManager(JTabbedPane tabbedPane){
 		this.tabbedPane = tabbedPane;
 	}
@@ -91,38 +112,35 @@ class ExtensionGUIManager {
 	 * @param handlerTypeID
 	 * @param dataPacket
 	 */
-	void notifyTypeHandlers(final int handlerTypeID, final byte[] dataPacket) {
-		// get the handler ID
-		int handlerID = dataPacket[0];
+	void notifyTypeHandlers(int handlerTypeID, byte[] dataPacket) {
+		String[] theIDs;
+		int compareTypeID;
+		AbstractTunneledMessagePanel targetPanel;
 		
-		// find the AbstractTunneledMessagePanel
-		// TODO this doesn't accomodate broadcast handlerTypeID=0 or handlerID=0 as per protocol doc
-		final AbstractTunneledMessagePanel targetPanel = getPanel(handlerTypeID, handlerID);
 		//System.out.println("notifyTypeHandlers: handlerTypeID=" + handlerTypeID + ", handlerID=" + handlerID);
 		
-		if (targetPanel==null) return;
-		//System.out.println("found panel: " + handlerTypeID + "_" + handlerID);
-		
-//		// message to all handlerTypeID, or zeros (broadcast)
-//		for (LogMessageTypeHandler curItem : arrayMessageTypeHandlers){
-//			// if registered handler matches the TYPE_ID sent, or registered handler is set as
-//			// broadcast receiver, or the the TYPE_ID sent is broadcast (zero :0)
-//			// The handler is responsible for parsing the ID and determining if the packet belongs to it. This
-//			// allows all handlers of a specific type to receive the packets (like a type-specific broadcast).
-//			if (curItem.getHandlerTypeID()==typeID || 
-//					curItem.getHandlerTypeID()==LogMessageTypeHandler.TYPE_ALWAYS_RECEIVE || 
-//					typeID == LogMessageTypeHandler.TYPE_ALWAYS_RECEIVE) {
-//				curItem.processMessage(packet, typeID);
-//			}
-//		}
-		
-		// play nice with Swing and send the packet to processing
-		SwingUtilities.invokeLater(new Runnable(){
-            public void run() {
-            	targetPanel.processMessage(dataPacket, handlerTypeID);
-            }
-        });
-		
+		// accomodate broadcast handlerTypeID=0 or handlerID=0 as per protocol doc
+		// notify all AbstractTunneledMessagePanel tabs with the same handlerTypeID
+		int i=0;
+        for (;i<tabbedPane.getTabCount();i++){
+//        	System.out.println("name=" + tabbedPane.getComponentAt(i).getName());
+        	
+        	if (tabbedPane.getComponentAt(i) instanceof AbstractTunneledMessagePanel){
+        		targetPanel = (AbstractTunneledMessagePanel)tabbedPane.getComponentAt(i);
+        		theIDs = tabbedPane.getComponentAt(i).getName().split("_");
+        		compareTypeID = Integer.parseInt(theIDs[0]);
+        		
+        		// if registered handler matches the HANDLER_TYPE_ID sent,
+    			// The handler is responsible for parsing the handler ID and determining if the packet belongs to it. This
+    			// allows all handlers of a specific type to receive the packets (like a type-specific broadcast).
+        		if (handlerTypeID==compareTypeID) {
+        			// play nice with Swing and send the packet to processing
+        			SwingUtilities.invokeLater(new MessageProcessorThread(targetPanel, dataPacket, handlerTypeID));
+        			tabbedPane.setSelectedIndex(i);
+        			targetPanel.requestFocus();
+        		}
+        	}
+        }
 	}
 
 	void setTunneledMessageManager(TunneledMessageManager tunneledMessageManager) {
