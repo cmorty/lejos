@@ -261,6 +261,18 @@ public final class String implements CharSequence, Comparable<String>
 	{
 		return new String(data, off, len);
 	}
+	
+	public boolean endsWith(String s)
+	{
+		int l = s.characters.length;
+		int off = characters.length - l;
+		if (off < 0)
+			return false;
+		for (int i=0; i<l; i++)
+			if (characters[off+i] != s.characters[i])
+				return false;
+		return true;
+	}
 
 	/**
 	 * Compares the String with an Object
@@ -525,7 +537,7 @@ public final class String implements CharSequence, Comparable<String>
 	
 	public boolean startsWith(String s, int begin)
 	{
-		int len = s.length();
+		int len = s.characters.length;
 		if (begin + len > this.characters.length)
 			return false;
 		for (int i=0; i<len; i++)
