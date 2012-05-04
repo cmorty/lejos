@@ -44,6 +44,7 @@ public class LoggerProtocolManager {
     private int elementsPerLine = 1;
     private InputStream nXTInputStream;
     private OutputStream nXTOutputStream;
+	private volatile boolean pauseInput;
     
     /**
      * Create a <code>LoggerProtocolManager</code> instance. 
@@ -113,6 +114,18 @@ public class LoggerProtocolManager {
         return false;
     }
     
+    boolean isReaderPaused() {
+    	return this.pauseInput;
+    }
+    
+    synchronized void setReaderPaused(boolean doPause){
+    	if (this.pauseInput && !doPause) {
+    		this.pauseInput=doPause;
+    		this.notify();
+    		return;
+    	}
+    	this.pauseInput=doPause;
+    }
     /** 
      * Start listening for and processing logging data. After the NXT closes the connection (i.e. on EOF or other 
      * <code>IOException</code>), 
@@ -133,7 +146,7 @@ public class LoggerProtocolManager {
         if (this.nXTInputStream==null) {
             throw new IOException("Null InputStream in startLogging()!");
         }
-                
+        this.pauseInput=false;
         mainloop:
         while (true) {
             // get 4 bytes from the is
@@ -143,6 +156,7 @@ public class LoggerProtocolManager {
                 dbg("startLogging(): EOFException in getBytes(4): " + e);
                 break;
             }
+            
             // do we need to pay attention?
             isCommand = isATTN(readBytes);
             // if we have an ATTENTION request (4 bytes)...
@@ -336,6 +350,18 @@ public class LoggerProtocolManager {
         for (LoggerListener listener: this.listeners) {
             listener.logLineAvailable(readVals);
         }
+        
+        if (this.pauseInput) {
+        	synchronized (this) {
+        		while (this.pauseInput) {
+        			try {
+        				this.wait();
+        			} catch (InterruptedException e){
+        				// DO NOTHING
+        			}
+        		}
+        	}
+        }
     }
     
     /**
@@ -447,30 +473,34 @@ public class LoggerProtocolManager {
         return sb.toString();
     }
     
-    /**
-     * Write the raw passthrough message to the NXT with a common header. 
-     * 
-     * @param command
-     * @param handlerTypeID
-     * @param message
-     * @param offset
-     * @param length
-     * @param flush Flush after write?
-     */
-    synchronized void writePassthroughMessage( 
-    		int command, int handlerTypeID, byte[] message, int offset, int length, boolean flush)
-    {
-    	// size to headers 
-    	byte[] buf = new byte[4];       
-    	buf[0] = (byte)(command & 0xff); // set command
-    	buf[1] = (byte)(handlerTypeID & 0xff); // set handler type ID
-    	EndianTools.encodeShortBE(length, buf, 2); // set packet length
-    	try {
-    		this.nXTOutputStream.write(buf); //send header
-    		this.nXTOutputStream.write(message, offset, length); // send data
-    		if (flush) this.nXTOutputStream.flush();
-		} catch (IOException e) {
-			notifyISEOF();
-		}
-    }
+//    /**
+//     * Write the raw passthrough message to the NXT with a common header. 
+//     * 
+//     * @param command
+//     * @param handlerTypeID
+//     * @param message
+//     * @param offset
+//     * @param length
+//     * @param flush Flush after write?
+//     */
+//    synchronized void writePassthroughMessage( 
+//    		int command, int handlerTypeID, byte[] message, int offset, int length, boolean flush)
+//    {
+//    	// size to headers 
+//    	byte[] buf = new byte[4];       
+//    	buf[0] = (byte)(command & 0xff); // set command
+//    	buf[1] = (byte)(handlerTypeID & 0xff); // set handler type ID
+//    	EndianTools.encodeShortBE(length, buf, 2); // set packet length
+//    	try {
+//    		this.nXTOutputStream.write(buf); //send header
+//    		this.nXTOutputStream.write(message, offset, length); // send data
+//    		if (flush) this.nXTOutputStream.flush();
+//		} catch (IOException e) {
+//			notifyISEOF();
+//		}
+//    	System.out.println("writePassthroughMessage: sent"); 
+//    }
+    
+    
+    
 }

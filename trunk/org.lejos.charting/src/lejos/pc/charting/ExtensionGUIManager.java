@@ -12,22 +12,12 @@ import javax.swing.SwingUtilities;
  *
  */
 class ExtensionGUIManager {
-	// **** Types must coorespond to lejos.util.LogMessageTypeHandler
-	/**
-	 * Use this type to always receive the data package. Basically equivalent to broadcast address.
-	 */
-	static final int TYPE_ALWAYS_RECEIVE = 0;
-	/**
-	 * Use this type to ID as PID Tuner. Use <code>PIDTuner</code> to run your <code>LoggerPIDTune</code> implementation.
-	 */
-	static final int TYPE_PID_TUNER = 1;
-		
 	private JTabbedPane tabbedPane;
 	private TunneledMessageManager tmm;
 	
 	/**
 	 * Used for invokeLater of processMEssage()
-	 * @author Kirk
+	 * @author Kirk 
 	 *
 	 */
 	private class MessageProcessorThread implements Runnable{
@@ -78,10 +68,15 @@ class ExtensionGUIManager {
 		// switch to select handler type
 		if (targetPanel==null) {
 			switch(handlerTypeID){
-			case TYPE_PID_TUNER:
+			case AbstractTunneledMessagePanel.TYPE_PID_TUNER:
 				targetPanel = new PanelPIDTune(handlerID, this);
 				tabLabel = "PID Tuning-" + handlerID;
 				tabHoverText = "PID Tuning interface";
+				break;
+			case AbstractTunneledMessagePanel.TYPE_ROBOT_DRIVE:
+				targetPanel = new PanelRobotDrive(handlerID, this);
+				tabLabel = "Drive-" + handlerID;
+				tabHoverText = "Robot Driver interface";
 				break;
 			default:
 				System.out.println("!** Invalid type handler specified in ExtensionGUIManager.tabSetup");
@@ -155,6 +150,7 @@ class ExtensionGUIManager {
 	 * @param msg the sub-message (i.e. from LogMessageTypeHandler)
 	 */
 	void sendControlPacket(int typeID, byte[] msg){
+//		System.out.println("sendControlPacket. msg[1]=" + msg[1]);
 		tmm.tunnelTheMessage(typeID, msg);
 	}
 

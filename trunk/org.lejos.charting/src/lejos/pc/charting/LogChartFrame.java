@@ -55,7 +55,11 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.BadLocationException;
 
+import lejos.util.EndianTools;
+
 import org.jfree.chart.JFreeChart;
+import javax.swing.JToggleButton;
+import javax.swing.ImageIcon;
 
 
 /** The main GUI window for NXT Charting Logger.
@@ -126,6 +130,8 @@ class LogChartFrame extends JFrame {
     private JCheckBox scrollDomainCheckBox = new JCheckBox();
     private ExtensionGUIManager eGuiManager = new ExtensionGUIManager(jTabbedPane1);
     private TunneledMessageManager tmm = new TunneledMessageManager(eGuiManager);
+    private LoggerProtocolManager lpm;
+    private JToggleButton tglbtnpauseplay;
     
     /** Default constructor
      */
@@ -565,7 +571,8 @@ class LogChartFrame extends JFrame {
         this.setEnabled(true);
         // enforce minimum window size
         this.addComponentListener(new ComponentAdapter(){
-            public void componentResized(ComponentEvent e){
+            @Override
+			public void componentResized(ComponentEvent e){
                 JFrame theFrame =(JFrame)e.getSource();
                 Dimension d1=theFrame.getMinimumSize();
                 Dimension d2=theFrame.getSize();
@@ -803,10 +810,9 @@ class LogChartFrame extends JFrame {
         connectionPanel.add(jTextFieldNXTName, null);
         connectionPanel.add(jButtonConnect, null);
         connectionPanel.add(jLabel5, null);
-
-        dataLogScrollPane.getViewport().add(dataLogTextArea,null);
+        dataLogScrollPane.setViewportView(dataLogTextArea);
         jTabbedPane1.addTab("Data Log", dataLogScrollPane);
-        statusScrollPane.getViewport().add(jTextAreaStatus, null);
+        statusScrollPane.setViewportView(jTextAreaStatus);
         jTabbedPane1.addTab("Status", statusScrollPane);
         jTabbedPane1.addTab("Chart", chartOptionsPanel);
         chartDomLimitsPanel.add(datasetLimitEnableCheckBox, null);
@@ -827,6 +833,29 @@ class LogChartFrame extends JFrame {
         chartOptionsPanel.add(jLabel2, null);
         chartOptionsPanel.add(jLabel1, null);
         chartOptionsPanel.add(chartDomLimitsPanel, null);
+        
+        tglbtnpauseplay = new JToggleButton("");
+        tglbtnpauseplay.addItemListener(new ItemListener() {
+        	public void itemStateChanged(ItemEvent e) {
+        		if (lpm==null) return;
+        		boolean doPause=false;
+        		if (e.getStateChange()==ItemEvent.SELECTED) {
+        			doPause=true;
+        		} 
+        		lpm.setReaderPaused(doPause);
+        	}
+        });
+//        tglbtnpauseplay.addChangeListener(new ChangeListener() {
+//        	public void stateChanged(ChangeEvent e) {
+//        		System.out.println(e.toString());
+//        		//lpm.setReaderPaused(doPause)
+//        	}
+//        });
+        tglbtnpauseplay.setSelectedIcon(new ImageIcon(LogChartFrame.class.getResource("/lejos/pc/charting/play.png")));
+        tglbtnpauseplay.setIcon(new ImageIcon(LogChartFrame.class.getResource("/lejos/pc/charting/pause.png")));
+        tglbtnpauseplay.setBounds(571, 135, 30, 30);
+        chartOptionsPanel.add(tglbtnpauseplay);
+        
         jTabbedPane1.setToolTipTextAt(0, "The tab-delimited log of the data sent from the NXT");
         jTabbedPane1.setToolTipTextAt(1, "Status output");
         jTabbedPane1.setToolTipTextAt(2, "Chart options");
@@ -884,7 +913,7 @@ class LogChartFrame extends JFrame {
             
             new Thread(new Runnable() {
             	private DataLogger dataLogger = null;
-                private LoggerProtocolManager lpm;
+                
                 
                 // Start the logging run with the specifed file
                 public void run() {
@@ -901,7 +930,7 @@ class LogChartFrame extends JFrame {
                     // if the log file field is empty, the PC logger will handle it. we need to make sure the title is appropo
                     // start the logger
                     try {
-                        
+                    	tglbtnpauseplay.setSelected(false);
                         lpm.startListen(); // will block until logging session ends
                     } catch (IOException e) {
                         System.out.println(THISCLASS+" IOException in makeConnection():" + e);
@@ -957,13 +986,26 @@ class LogChartFrame extends JFrame {
         System.out.println("Sample dataset generation complete");
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         
-//        // emulate a CMD_INIT_HANDLER command from the NXT lejos.util.LogMessageManager
-//        byte[] buf = {0,1,-1,-1,1};
-//        EndianTools.encodeShortBE(1, buf, 2);
-//        tmm.processMessage(buf);
+        // emulate a CMD_INIT_HANDLER command from the NXT lejos.util.LogMessageManager
+        byte[] buf = {0,2,-1,-1,1};
+        EndianTools.encodeShortBE(1, buf, 2);
+        tmm.tunneledMessageReceived(buf);
+        
+        // emulate a CMD_DELIVER_PACKET command from the NXT lejos.util.LogMessageManager
+		buf = new byte[10];
+		buf[0]= 3; // CMD_DELIVER_PACKET
+		buf[1]= 2; // TYPE_ROBOT_DRIVE
+		EndianTools.encodeShortBE(6, buf, 2); // Packet size = 6: 2 bytes , 1 float
+		buf[4]= 1; // Handler uniqID
+		buf[5]= 0; // handler command: Set Forward
+		EndianTools.encodeIntBE(Float.floatToIntBits(500.6675f), buf, 6);
+		System.out.println("emulate: intbits=" + Float.floatToIntBits(500f));
+		tmm.tunneledMessageReceived(buf);
+        
+        
 //        // add another
 //        buf[4] = 2;
-//        tmm.processMessage(buf);
+//        tmm.tunneledMessageReceived(buf);
 //        
 //        // emulate a CMD_SET_PLUGIN_NAME command from the NXT lejos.util.LogMessageManager
 //        buf = new byte[]{2,1,-1,-1};
@@ -1149,5 +1191,4 @@ class LogChartFrame extends JFrame {
         }
         
     }
-
 }

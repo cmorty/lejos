@@ -25,7 +25,9 @@ import lejos.pc.comm.NXTConnector;
  */
 @SuppressWarnings("javadoc")
 public class LoggerComms {
-    /** 
+    private static final int MAX_IS_BUFFER_SIZE = 500000;
+    
+	/** 
      * Used to get more details from <code>NXTConnector</code> for the Status pane. Notice that the GUI
      * forks STDOUT to the Status textarea so using <code>System.out.println()</code> works to put data into
      * the Status textarea.
@@ -80,7 +82,7 @@ public class LoggerComms {
         // ref the DIS/DOS to class vars
         if (this.isConnConnected) {
         	this.connectedNXTName = conn.getNXTInfo().name;
-            this.in = new CachingInputStream(this.conn.getInputStream(), 100000); 
+            this.in = new CachingInputStream(this.conn.getInputStream(), MAX_IS_BUFFER_SIZE); 
             this.out = this.conn.getOutputStream();
             this.isEOF=false; // used to flag EOF
         }

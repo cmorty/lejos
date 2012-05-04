@@ -76,13 +76,7 @@ class TunneledMessageManager implements LoggerListener{
 			int strLength = dataPacket[1] & 0xff;
 			byte[] strVal = new byte[strLength];
 			System.arraycopy(dataPacket, 2, strVal, 0, strLength);
-			String displayname = null;
-			try {
-				displayname = new String(strVal, "US-ASCII");
-			} catch (UnsupportedEncodingException e) {
-				System.out.println("**! TunneledMessageManager.processMessage:");
-				e.printStackTrace();
-			}
+			String displayname = decodeString(strVal);
 			eGuiManager.setPluginName(handlerTypeID, handlerID, displayname); 
 			break;
 		case CMD_DELIVER_PACKET:
@@ -92,6 +86,17 @@ class TunneledMessageManager implements LoggerListener{
 		default:
 			break;
 		}
+	}
+	
+	String decodeString(byte[] array){
+		String theString = null;
+		try {
+			theString = new String(array, "US-ASCII");
+		} catch (UnsupportedEncodingException e) {
+			System.out.println("**! TunneledMessageManager.decodeString:");
+			e.printStackTrace();
+		}
+		return theString;
 	}
 	
 	/**
@@ -106,6 +111,7 @@ class TunneledMessageManager implements LoggerListener{
 		}
 		byte[] buf = new byte[4 + msg.length]; 
 		
+//		System.out.println("TunneledMessageManager:tunnelTheMessage()");
 		// send the handler type, etc. to NXTDataLogger so it can process the command
 		buf[0] = (byte)(CMD_DELIVER_PACKET & 0xff); // set the command
 		buf[1] = (byte)(typeID & 0xff); //set the handler type ID
@@ -119,6 +125,7 @@ class TunneledMessageManager implements LoggerListener{
 			dos=null;
 //			e.printStackTrace();
 		}
+//		System.out.println("tunnelTheMessage: sent"); 
 	}
 
 	public void logLineAvailable(DataItem[] logDataItems) {
