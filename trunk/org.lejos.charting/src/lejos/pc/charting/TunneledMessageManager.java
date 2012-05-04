@@ -77,7 +77,7 @@ class TunneledMessageManager implements LoggerListener{
 			byte[] strVal = new byte[strLength];
 			System.arraycopy(dataPacket, 2, strVal, 0, strLength);
 			String displayname = decodeString(strVal);
-			eGuiManager.setPluginName(handlerTypeID, handlerID, displayname); 
+			eGuiManager.setPluginLabel(handlerTypeID, handlerID, displayname); 
 			break;
 		case CMD_DELIVER_PACKET:
 //			System.out.println("CMD_DELIVER_PACKET");
