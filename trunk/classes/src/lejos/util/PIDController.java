@@ -8,7 +8,7 @@ package lejos.util;
  *  current rate of change. 
  * <p> <b>Proportional gain, Kp:</b>
  * Larger values typically mean faster response since the larger the error, the larger the proportional term compensation. 
- * An excessively large proportional gain will lead to process instability and oscillation.<br>
+ * An excessively large proportional gain will lead to process instability and oscillation around the Setpoint.<br>
  * <p><b>Integral gain, Ki:</b>
  * Larger values imply steady state errors are eliminated more quickly. The trade-off is larger overshoot: any negative error integrated during transient response must be integrated away by positive error before reaching steady state.
  * <p><b>Derivative gain, Kd:</b>
@@ -450,7 +450,7 @@ public class PIDController {
      * <code>PIDController</code> will
      * set the column headers and log values on every call to <code>doPID()</code>.
      * <p>
-     * This is useful when using the NXJChartingLogger tool to visualize the PID response by monitoring the internal
+     * This is useful when using the NXT Charting Logger tool to visualize the PID response by monitoring the internal
      * variables.
      * @param dataLogger A <code>NXTDataLogger</code> instance in realtime or cached logging mode.
      * @return <code>true</code> if successful, <code>false</code> otherwise.

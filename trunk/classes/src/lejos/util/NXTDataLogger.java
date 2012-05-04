@@ -18,7 +18,7 @@ import lejos.util.Delay;
  * in real time mode (See {@link #startRealtimeLog(NXTConnection)}). 
  * <p>
  * This class communicates with 
- * <code>lejos.pc.charting.LoggerProtocolManager</code> via Bluetooth or USB which is used by the NXJChartingLogger tool.
+ * <code>lejos.pc.charting.LoggerProtocolManager</code> via Bluetooth or USB which is used by the NXT Charting Logger tool.
  * <p>When instantiated, the <code>NXTDataLogger</code> starts out in cached mode (<code>{@link #startCachingLog}</code>) as default.
  * Cache mode uses a growable ring buffer that consumes (if needed) up to all available memory during a logging run.
  * <p>Hints for real-time logging efficiency:
@@ -681,7 +681,7 @@ public class NXTDataLogger implements Logger{
     }
 
     /** 
-     * Log a text comment. Displayed as event marker on domain axis of NXJChartingLogger chart and after the current line in the log. 
+     * Log a text comment. Displayed as event marker on domain axis of NXT Charting Logger chart and after the current line in the log. 
      * Ignored in cache mode.
      * Only one comment per line. (i.e. before <code>finishLine()</code> is called)
     * @param comment The comment
@@ -709,6 +709,7 @@ public class NXTDataLogger implements Logger{
     	writePassthroughMessage(message,0, message.length, true);
     }
     synchronized void writePassthroughMessage(byte[] message, int offset, int length, boolean flush){
+//    	System.out.println("wptm: " + message.length);
     	byte[] buf = {COMMAND_PASSTHROUGH,-1};        
         sendATTN();
         sendCommand(buf);
@@ -834,6 +835,8 @@ public class NXTDataLogger implements Logger{
      * @throws IllegalStateException if <code>startRealtimeLog()</code> has not been called and active.
      */
     void registerTunnelManager(LogMessageListener manager){ 
+//    	System.out.println("regTunnlMgr");
+    	
     	// return if user logging in cache mode
         if (logmodeState!=LMSTATE_REAL || this.dis == null) throw new IllegalStateException("bad state");
         

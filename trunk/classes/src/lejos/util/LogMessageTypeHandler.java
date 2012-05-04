@@ -6,13 +6,20 @@ package lejos.util;
  * <p>
  * A corresponding protocol handler subclass of 
  * <code>lejos.pc.charting.AbstractTunneledMessagePanel</code> must be implemented on the PC-side 
- * <code>NXJChartingLogger</code> 
+ * NXT Charting Logger 
  * to do anything useful with the messages that are produced with subclasses of this class. 
+ * <p>
+ * At this time,
+ * there is no mechanism to dynamically load <code>lejos.pc.charting.AbstractTunneledMessagePanel</code>
+ * implementations so any new extensions will have be built into 
+ * <code>lejos.pc.charting.ExtensionGUIManager.activateHandler(int, int)</code>.
  * 
- * @author Kirk P. Thompson
+ * @author Kirk P. Thompson, 5/4/2012
+ * @version 0.1
  * @see LogMessageManager
  */
 public abstract class LogMessageTypeHandler {
+	// **** Types must coorespond to lejos.pc.charting.AbstractTunneledMessagePanel
 	/**
 	 * Use this type to always receive the data package. Basically equivalent to broadcast address.
 	 */
@@ -23,6 +30,16 @@ public abstract class LogMessageTypeHandler {
 	 * @see PIDTuningProvider
 	 */
 	protected static final int TYPE_PID_TUNER = 1;
+	/**
+	 * Use this type to ID as simple robot driver
+	 */
+	protected static final int TYPE_ROBOT_DRIVE = 2;
+	
+	
+	/**
+	 *  Specifies the number of header bytes before the start of the value packet in recieved
+	 *  messages.
+	 */
 	protected static final int HEADER_DATA_OFFSET = 2;
 	
 	private static int statichandlerID = 0;
@@ -40,12 +57,13 @@ public abstract class LogMessageTypeHandler {
 		}
 		this.loggerMessageManager = loggerMessageManager;
 		this.handlerID = ++statichandlerID;
+//		System.out.println("handlr= " + this.handlerID);
 		this.loggerMessageManager.registerMessageTypeHandler(this);
 	}
 	
 	/**
 	 * Must provide the well defined handler Type ID. See the constants for <code>LogMessageTypeHandler</code>.
-	 * The type ID is used by the PC-side <code>NXJChartingLogger</code> to load the appropriate message
+	 * The type ID is used by the PC-side NXT Charting Logger to load the appropriate message
 	 * handler in the tabbed pane and route the message to the corresponding
 	 * PC-side message handler type (in conjunction with <code>getHandlerID()</code>).
 	 * 
@@ -55,7 +73,7 @@ public abstract class LogMessageTypeHandler {
 	
 	/**
 	 * Provides the unique handler ID. 
-	 * This ID is used by the PC-side <code>NXJChartingLogger</code> to route the message to the corresponding
+	 * This ID is used by the PC-side NXT Charting Logger to route the message to the corresponding
 	 * PC-side message handler and tabbed pane and to ensure that messages are routed back to the correct 
      * <code>LogMessageTypeHandler</code> concrete subclass instance.
 	 * 
@@ -73,18 +91,29 @@ public abstract class LogMessageTypeHandler {
 	 * Must be able to handle <code>typeID=LogMessageTypeHandler.TYPE_ALWAYS_RECEIVE</code> in some way even
 	 * if that means just ignoring it.
 	 * 
-	 * @param message The data packet received from (PC-side) NXJChartingLogger via (NXT-side) NXTDataLogger.
-	 * @param typeID the TYPE_ID that was send from NXJChartingLogger
+	 * @param message The data packet received from (PC-side) NXT Charting Logger via (NXT-side) NXTDataLogger.
+	 * @param typeID the TYPE_ID that was send from NXT Charting Logger
 	 */
 	abstract void processMessage(byte[] message, int typeID);
 	
 	/**
+	 * Get the <code>NXTDataLogger</code> instance registered with <code>LogMessageManager</code>.
 	 * @return The reference to the <code>NXTDataLogger</code>.
+	 * @see NXTDataLogger
+	 * @see LogMessageManager
 	 */
 	protected final NXTDataLogger getNXTDataLogger(){
 		return loggerMessageManager.getNXTDataLogger();
 	}
 	
+	/** Covenience method for {@link #sendMessage(int, byte[], int, int)}
+	 * @param command The handler type-specific protocol command
+	 * @param buf array of bytes containing handler type-specific data to send
+	 */
+	protected final void sendMessage(int command, byte[] buf){
+//		System.out.println("sndmsg " + command +" " + buf.length);
+		sendMessage(command, buf, buf.length, 0);	
+	}
 	
 	/**
 	 * Tunnel a Type handler-specific protocol message to the PC. This method builds the Handler ID, command value
@@ -103,7 +132,7 @@ public abstract class LogMessageTypeHandler {
 		System.arraycopy(msg, off, buf, HEADER_DATA_OFFSET, len); // aggregate it all in one array
 
 		// Will be packed into a common header for CMD_DELIVER_PACKET.
-		loggerMessageManager.sendControlPacket(TYPE_PID_TUNER, buf);
+		loggerMessageManager.sendControlPacket(getHandlerTypeID(), buf);
 	}
 	
 	/**

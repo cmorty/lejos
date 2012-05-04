@@ -2,10 +2,10 @@ package lejos.util;
 
 /**
  * Remote PID tuning extension for <code>NXTDataLogger</code> using the <code>LogMessageManager</code>. 
- * Provides an out-of-the-box tuning interface for the 
- * <code>PIDController</code> class.
+ * Provides an out-of-the-box tuning interface in the NXT Charting Logger for the 
+ * <code>PIDController</code> class or your own custom PID tuning class.
  * <p>
- * You can also create your own PID tuning module
+ * You can create your own PID tuning implementation
  * by implementing <code>PIDTuner</code> in your class and passing an instance of it to the 
  * <code>{@link PIDTuner#PIDTuner(PIDTuningProvider, LogMessageManager)}</code> constructor.
  * 
@@ -22,6 +22,7 @@ public class PIDTuner extends LogMessageTypeHandler {
 	 * the <code>LogMessageManager</code> singleton instance. 
 	 * 
 	 * @param tuner The instantiated <code>PIDTuner</code> implementation
+	 * @param lmm The <code>LogMessageManager</code> singleton. See {@link LogMessageManager#getLogMessageManager(NXTDataLogger)}.
 	 * @see LogMessageManager#registerMessageTypeHandler(LogMessageTypeHandler)
 	 * @see PIDTuningProvider
 	 */
@@ -39,7 +40,8 @@ public class PIDTuner extends LogMessageTypeHandler {
 	 * <p>
 	 * This constructor will call <code>PIDController.registerDataLogger()</code> to set the headers 
 	 * for <code>NXTDataLogger</code> and do the corresponding <code>writeLog</code> calls. You do 
-	 * not need to do any logging setup in your code.
+	 * not need to do any <code>LogColumn</code> setup in your code as the 
+	 * <code>PIDController.registerDataLogger()</code> will do this for you.
 	 * 
 	 * @param thePIDController The instantiated <code>PIDController</code> 
 	 * @see PIDController
@@ -219,7 +221,7 @@ public class PIDTuner extends LogMessageTypeHandler {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/** Implementation use only. You do not need to use this method.
 	 * @see lejos.util.LogMessageTypeHandler#getHandlerTypeID()
 	 */
 	@Override
@@ -375,10 +377,6 @@ public class PIDTuner extends LogMessageTypeHandler {
 		float t = Float.intBitsToFloat(EndianTools.decodeIntBE(buf, HEADER_DATA_OFFSET));
 		//System.out.println("flt=" + t);
 		return t;
-	}
-	
-	private void sendMessage(int command, byte[] buf){
-		super.sendMessage(command, buf, buf.length, 0);	
 	}
 	
 }

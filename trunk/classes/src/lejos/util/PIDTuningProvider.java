@@ -4,7 +4,8 @@ package lejos.util;
  * An interface used for creating a PID tuning provider through <code>NXTDataLogger</code> passthrough messaging 
  * via a <code>PIDTuner</code> instance.
  * <p>
- * The methods are based on what <code>lejos.util.PIDController</code> implements and what fields the NXJChartingLogger PID tuning 
+ * The methods are based on what <code>lejos.util.PIDController</code> implements and what fields the NXT Charting 
+ * Logger PID tuning 
  * <code>lejos.pc.charting.PanelPIDTune</code> displays. Your implementation may differ so code
  * accordingly.
  * 
