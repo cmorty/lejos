@@ -986,64 +986,22 @@ class LogChartFrame extends JFrame {
         System.out.println("Sample dataset generation complete");
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         
-        // emulate a CMD_INIT_HANDLER command from the NXT lejos.util.LogMessageManager
-        byte[] buf = {0,2,-1,-1,1};
-        EndianTools.encodeShortBE(1, buf, 2);
-        tmm.tunneledMessageReceived(buf);
-        
-        // emulate a CMD_DELIVER_PACKET command from the NXT lejos.util.LogMessageManager
-		buf = new byte[10];
-		buf[0]= 3; // CMD_DELIVER_PACKET
-		buf[1]= 2; // TYPE_ROBOT_DRIVE
-		EndianTools.encodeShortBE(6, buf, 2); // Packet size = 6: 2 bytes , 1 float
-		buf[4]= 1; // Handler uniqID
-		buf[5]= 0; // handler command: Set Forward
-		EndianTools.encodeIntBE(Float.floatToIntBits(500.6675f), buf, 6);
-		System.out.println("emulate: intbits=" + Float.floatToIntBits(500f));
-		tmm.tunneledMessageReceived(buf);
-        
-        
-//        // add another
-//        buf[4] = 2;
+//        // emulate a CMD_INIT_HANDLER command from the NXT lejos.util.LogMessageManager
+//        byte[] buf = {0,2,-1,-1,1};
+//        EndianTools.encodeShortBE(1, buf, 2);
 //        tmm.tunneledMessageReceived(buf);
 //        
-//        // emulate a CMD_SET_PLUGIN_NAME command from the NXT lejos.util.LogMessageManager
-//        buf = new byte[]{2,1,-1,-1};
-//        byte[] str= {0};
-//        try {
-//        	str = "test plugin name here".getBytes("UTF-8");
-//		} catch (UnsupportedEncodingException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			//return;
-//		}
-//        
-//        EndianTools.encodeShortBE(str.length + 2, buf, 2); // packet size
-//        byte[] newbuf = new byte[str.length + 2 + buf.length]; // + add 2 for handler ID and string size in packet 
-//        System.arraycopy(buf, 0, newbuf, 0, buf.length); // common header
-//        System.arraycopy(str, 0, newbuf, buf.length + 2, str.length);
-//        newbuf[buf.length] = (byte) 2; // handler ID
-//        newbuf[buf.length+1] = (byte) str.length;
-////        System.out.println("*** newbuf.len=" + newbuf.length);
-//        tmm.processMessage(newbuf);
-//        
 //        // emulate a CMD_DELIVER_PACKET command from the NXT lejos.util.LogMessageManager
-//        buf = new byte[10];
-//        buf[0]= 3; // CMD_DELIVER_PACKET
-//        buf[1]= 1; // TYPE_PID_TUNER
-//        EndianTools.encodeShortBE(6, buf, 2); // Packet size = 6: 2 bytes , 1 float
-//        buf[4]= 1; // Handler uniqID
-//        buf[5]= 14; // handler command: Set MV Limit low
+//		buf = new byte[10];
+//		buf[0]= 3; // CMD_DELIVER_PACKET
+//		buf[1]= 2; // TYPE_ROBOT_DRIVE
+//		EndianTools.encodeShortBE(6, buf, 2); // Packet size = 6: 2 bytes , 1 float
+//		buf[4]= 1; // Handler uniqID
+//		buf[5]= 0; // handler command: Set Forward
 //		EndianTools.encodeIntBE(Float.floatToIntBits(500.6675f), buf, 6);
 //		System.out.println("emulate: intbits=" + Float.floatToIntBits(500f));
-//		tmm.processMessage(buf);
-//		
-//		// try boolean
-//		EndianTools.encodeShortBE(3, buf, 2); // Packet size = 3: 3 bytes
-//        buf[4]= 1; // Handler uniqID
-//        buf[5]= 24; // handler command: Set integralFrozen
-//		buf[6] = 1;
-//		tmm.processMessage(buf);
+//		tmm.tunneledMessageReceived(buf);
+ 
     }
     
     private String getCanonicalName(File file){
