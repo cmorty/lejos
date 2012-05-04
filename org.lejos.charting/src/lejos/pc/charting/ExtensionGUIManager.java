@@ -92,11 +92,11 @@ class ExtensionGUIManager {
         targetPanel.init();
 	}
 
-	void setPluginName(int handlerTypeID, int handlerID, String name) {
+	void setPluginLabel(int handlerTypeID, int handlerID, String label) {
 		// find the matching tab for the plug-in
 		AbstractTunneledMessagePanel targetPanel = getPanel(handlerTypeID, handlerID);
 		if (targetPanel==null) return;
-		targetPanel.setPlugInName(name);
+		targetPanel.setPlugInLabel(label);
 	}
 	
 	/**

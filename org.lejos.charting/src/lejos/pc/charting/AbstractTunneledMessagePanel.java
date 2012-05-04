@@ -577,11 +577,10 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 
 	/**
 	 * Sets the name label displayed in the GUI panel.
-	 * @param name The label
+	 * @param label The label
 	 */
-	protected void setPlugInName(String name) {
-		if (name.equals("")) name = "n/a";
-		lblPluginName.setText("Name: " + name);
+	protected void setPlugInLabel(String label) {
+		lblPluginName.setText(label);
 	}
 
 	/**
@@ -757,12 +756,15 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	}
 	
 	/**
-	 * Do any intialization, Default is to poll <code>lejos.util.LogMessageTypeHandler</code> concrete 
+	 * Do any required intialization. Called by <code>ExtensionGUIManager.activateHandler()</code> on
+	 * plugin init command (CMD_INIT_HANDLER) from <code>lejos.util.LogMessageManager</code> . Default is to
+	 * clear the plugin label and poll <code>lejos.util.LogMessageTypeHandler</code> concrete 
 	 * subclass (via GET commands) on NXT for all current values.
 	 * 
 	 * @see #pollForRemoteHandlerValues
 	 */
 	protected void init(){
+		setPlugInLabel("");
 		pollForRemoteHandlerValues();
 	}
 	
