@@ -21,7 +21,7 @@ interface LogMessageListener {
 	 * Called by <code>NXTDataLogger</code> on registration via <code>registerTunnelManager</code> 
 	 * and when <code>startRealtimeLog()</code> is called
 	 * to set a reference to the <code>DataInputStream</code> so the implementing class
-	 * can manage the receiving of data from NXT ChartingLOgger plugins<code>NXJChartingLogger</code> sent through logger protocol 
+	 * can manage the receiving of data from NXT ChartingLOgger plugins sent through logger protocol 
 	 * passthrough messages.
 	 * <p>
 	 * The the implementing class is responsible for all <code>DataInputStream</code> input management. On 

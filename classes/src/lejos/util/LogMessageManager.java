@@ -33,6 +33,7 @@ import java.util.ArrayList;
  * @see LogMessageTypeHandler
  * @see NXTDataLogger
  * @see PIDTuner
+ * @see SimpleDrive
  */
 public class LogMessageManager  {
 	private static final LogMessageManager SELF_LMM = new LogMessageManager();
@@ -56,9 +57,8 @@ public class LogMessageManager  {
 	}
 	
 	/**
-	 * Get the <code>LogMessageManager</code> instance and set up the passed <code>NXTDataLogger</code>
-	 * for passthrough message handling. Any previously registered <code>LogMessageTypeHandler</code> 
-	 * handlers are unloaded.
+	 * Get the <code>LogMessageManager</code> singleton and set up the passed <code>NXTDataLogger</code>
+	 * for passthrough message handling. 
 	 * 
 	 * @param logger An instance of <code>NXTDataLogger</code> that is in realtime mode.
 	 * @return The singleton <code>LogMessageManager</code> instance ref
@@ -72,6 +72,7 @@ public class LogMessageManager  {
 	
 	private void setLogger(NXTDataLogger logger){
 		this.logger = logger;
+		// remove any handlers on new logger
 		if (arrayMessageTypeHandlers!= null) {
 			arrayMessageTypeHandlers.removeAll(arrayMessageTypeHandlers);
 		}
@@ -98,6 +99,7 @@ public class LogMessageManager  {
 				byte[] buf;
 				
 				killListener = false;
+//				System.out.println("threadrun");
 				
 				while(!killListener) {
 					try {
@@ -167,7 +169,7 @@ public class LogMessageManager  {
 	 * @param packet
 	 */
 	void notifyTypeHandlers(int typeID, byte[] packet){
-		//System.out.println(counter ++ + ": typeID=" + typeID);
+//		System.out.println("nth: " + typeID);
 		for (LogMessageTypeHandler curItem : arrayMessageTypeHandlers){
 			// if registered handler matches the TYPE_ID sent, or registered handler is set as
 			// broadcast receiver, or the the TYPE_ID sent is broadcast (zero :0)
@@ -216,6 +218,7 @@ public class LogMessageManager  {
 		 * @see lejos.util.LogMessageListener#setInputStream(java.io.DataInputStream)
 		 */
 		public void setInputStream(DataInputStream dis) {
+//			System.out.println("lmm setIS");
 			startNewListener(dis);
 		}
 	}
@@ -244,11 +247,15 @@ public class LogMessageManager  {
 	}
 	
 	/**
-	 * @param command
-	 * @param typeID
-	 * @param msg the sub-message (i.e. from LogMessageTypeHandler)
+	 * write to logger.writePassthroughMessage which will do a COMMAND_PASSTHROUGH protocol exchange to
+	 * send data to PC.
+	 * 
+	 * @param command The passthrough message header-specific command
+	 * @param typeID The Target Handler type ID. See <code>LogMessageTypeHandler</code> constants.
+	 * @param msg the sub-message (i.e. from <code>LogMessageTypeHandler</code>)
 	 */
 	private synchronized void tunnelTheMessage(int command, int typeID, byte[] msg){
+		if (msg==null) msg = new byte[0];
 		byte[] buf = new byte[4 + msg.length]; 
 		
 		// send the handler type to NXJChartingLogger so it can load the required JPanel in the TabbedPane
