@@ -137,13 +137,14 @@ public abstract class LogMessageTypeHandler {
 	
 	/**
 	 * Set the name that is displayed in the NXT Charting Logger tab panel for the associated plugin.
-	 * Limited to 40 characters
+	 * Limited to 80 characters
 	 * 
 	 * @param displayname
 	 */
 	public final void setDisplayName(String displayname){
-		if (displayname.length()>40) {
-			this.displayname = displayname.substring(0, 40);
+		final int MAXLEN = 80;
+		if (displayname.length()>MAXLEN) {
+			this.displayname = displayname.substring(0, MAXLEN);
 		} else {
 			this.displayname = displayname;
 		}
