@@ -232,9 +232,9 @@ public final class Math
 	 */
 	public static double max(double a, double b)
 	{
-		if (a < b)
-			return a;
 		if (a > b)
+			return a;
+		if (a < b)
 			return b;
 		// early out for non-zero values, NaN falls through
 		if (a == b && a != 0)
@@ -244,7 +244,7 @@ public final class Math
 		long ra = Double.doubleToRawLongBits(a);
 		long rb = Double.doubleToRawLongBits(b);
 		
-		if (ra > rb)
+		if (ra < rb)
 			return b;
 		return a;
 	}
