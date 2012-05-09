@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -75,6 +76,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 		directionButtons[0].setSelectedIcon(getIcon("/lejos/pc/charting/green_arrow_N.png"));
 		directionButtons[0].addActionListener(tbl);
 		directionButtons[0].getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("W"), "forward");
+		directionButtons[0].getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "forward");
 		directionButtons[0].getActionMap().put("forward", 
 			new AbstractAction(){
 				public void actionPerformed(ActionEvent e) {
@@ -96,6 +98,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 		directionButtons[1].setSelectedIcon(getIcon("/lejos/pc/charting/green_arrow_E.png"));
 		directionButtons[1].addActionListener(tbl);
 		directionButtons[1].getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("D"), "right");
+		directionButtons[1].getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "right");
 		directionButtons[1].getActionMap().put("right", 
 			new AbstractAction(){
 				public void actionPerformed(ActionEvent e) {
@@ -117,6 +120,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 		directionButtons[2].setSelectedIcon(getIcon("/lejos/pc/charting/green_arrow_S.png"));
 		directionButtons[2].addActionListener(tbl);
 		directionButtons[2].getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("S"), "back");
+		directionButtons[2].getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "back");
 		directionButtons[2].getActionMap().put("back", 
 			new AbstractAction(){
 				public void actionPerformed(ActionEvent e) {
@@ -138,6 +142,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 		directionButtons[3].setSelectedIcon(getIcon("/lejos/pc/charting/green_arrow_W.png"));
 		directionButtons[3].addActionListener(tbl);
 		directionButtons[3].getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("A"), "left");
+		directionButtons[3].getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "left");
 		directionButtons[3].getActionMap().put("left", 
 			new AbstractAction(){
 				public void actionPerformed(ActionEvent e) {
