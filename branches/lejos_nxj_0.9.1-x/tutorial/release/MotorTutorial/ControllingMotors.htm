@@ -1,0 +1,649 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		
+	<title>Controlling the Motors</title>
+	<!-- METADATA -->
+	<meta name="title" content="Controlling the Motors" />
+	<meta name="DC.Title" content="Controlling the Motors" />
+	<meta http-equiv="title" content="Controlling the Motors" />
+		
+	<meta name="description" content="Controlling the Motors" />
+	<meta http-equiv="description" content="Controlling the Motors" />
+	<meta http-equiv="DC.Description" content="Controlling the Motors" />
+
+	<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta http-equiv="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta name='VW96.objecttype' content='Document' />
+	<meta http-equiv='content-language' content='en' />
+	<meta name='DC.Language' scheme='RFC1766' content='English' />
+	<meta name='distribution' content='global' />
+	<meta name='resource-type' content='document' />
+
+	<!-- SEARCH ENGINE -->
+	<meta name='robots' content='all' />
+
+	<!-- AUTHOR METADATA -->
+	<meta name="AUTHOR" content="Roger Glassey"/>
+
+	<!-- CSS -->
+  	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css"/>
+	
+	<!-- ICON -->
+  	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
+</head>
+<body>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table class="n1t1" cellpadding="0" cellspacing="0">
+    <tr>
+      <td><img src="../r_media/images/tutorial_header1.jpg"/></td>
+      <td align="right"><img src="../r_media/images/tutorial_header2.jpg"/></td>
+    </tr>
+	</table>
+	
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table class="n2t1" cellpadding="0" cellspacing="0">
+    <tr>
+    	<td class="n2t1r1c1">
+    		<!-- LEFT NAVIGATION SYSTEM -->
+			<div class="nolinkLESSON">Controlling the Motors</div>
+			<div class="linkAHEAD"><a href="#1">Introduction to the Motor class.</a></div>
+			<div class="linkAHEAD"><a href="#2">Program 1 - Basic movement controls.</a></div>
+			<div class="linkAHEAD"><a href="#3">Program 2: Using the Tachometer</a></div>
+			<div class="linkAHEAD"><a href="#4">Program 3: Accurate rotation control</a></div>
+			<div class="linkAHEAD"><a href="#5">Program 4. Interrupting rotation</a></div>
+			<div class="linkAHEAD"><a href="#6">Program 5: Regulating motor speed</a></div>
+			<div class="linkAHEAD"><a href="#7">Other Motor Methods</a></div>
+		</td>
+		<td>
+			<!-- BREADCRUMBS -->
+			<div id="BreadCrumbs">
+				<a href="../index.htm" target="_top">Home Page</a> &gt;
+				<a href="#">Controlling the Motors</a>
+			</div>
+			<!-- NAVIGATION TOOL -->
+			<div class="NavBit">
+                <a target="_top" href="../MenuSystem/MenuSystem.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
+                href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
+                href="../WheeledVehicles/WheeledVehicles.htm">Next&nbsp;&raquo;</a>
+			</div>
+					
+			<!-- CONTENT AREA -->
+					
+			<!-- CONTENT TITLE -->
+			<div id="PageTitle">Controlling the Motors</div>
+				
+			<a name="1"></a>
+			<h4> Introduction to the Motor class.</h4>
+
+      		<p>This Motor class provides access to the NXT motors. To be useful, a motor must be
+			connected to one of the three NXT motor ports. This class provides an
+			instance for each port. They are: Motor.A, Motor.B and Motor.C.</p>
+			
+			<p>Each of these three objects is an instance of the class NXTRegulatedMotor. This
+			class provides methods for controlling the motor, and for finding out
+			what the motor is doing. </p>
+			
+      		<p>This	tutorial contains a set of five programs for you to write. With them,
+			you can perform experiments to understand how the NXT motor performs.
+			They are simple enough so you don&#8217;t need much Java experience (beyond loops) to write
+			them. Finally, there is a discussion of <a href="#7"><font  color="#0000ff"><u>other motor methods</u></font></a> , not used in
+			the programs, that you might find useful. </p>
+			
+			<a name="2"></a>
+			<h4>Program 1 - Basic movement controls.</h4>
+			
+      		<p>This program uses the most basic motor methods that control movement. They are listed below,  together with other methods you will need for this program.</p>
+      		<h5>Methods used in this program</h5>
+      		<dl>
+        		<dd>
+          		<table border="1" cellpadding="7"  cellspacing="0" width="548">
+            		<col width="64"/> <col width="166"/> <col width="274"/> 
+            		<tbody>
+              			<tr valign="top">
+                			<td width="64">
+                				<p>Class</p>
+                			</td>
+               	 			<td width="166">
+                				<p>Method name </p>
+                			</td>
+                			<td width="274">
+                				<p>Notes</p>
+                			</td>
+              			</tr>
+              			<tr valign="top">
+                			<td width="64">
+                				<p><code>NXTRegulatedMotor, e.g. Motor.A</code></p>
+                			</td>
+                			<td width="166">
+                				<p><code>forward()</code></p>
+                			</td>
+                			<td width="274">
+                				<p>Start the motor rotating forward</p>
+                			</td>
+              			</tr>
+              			<tr valign="top">
+                			<td width="64">
+                				<p>&nbsp;</p>
+                			</td>
+                			<td width="166">
+                				<p><code>backward()</code></p>
+                			</td>
+                			<td width="274">
+                				<p>Start rotating backward </p>
+                			</td>
+              			</tr>
+              			
+              			<tr valign="top">
+                			<td width="64">
+                				<p>&nbsp;</p>
+                			</td>
+                			<td width="166">
+                				<p><code>stop()</code></p>
+                			</td>
+                			<td width="274">
+                				<p>Stop quickly</p>
+                			</td>
+              			</tr>
+              			<tr valign="top">
+                			<td width="64">
+                				<p><code>Button</code></p>
+                			</td>
+                			<td width="166">
+                				<p><code>waitForPress()</code></p>
+                			</td>
+                			<td width="274">
+                				<p>Wait till any button is pressed</p>
+                			</td>
+              			</tr>
+              			<tr valign="top">
+                			<td width="64">
+                				<p><code>LCD</code></p>
+                			</td>
+                			<td width="166">
+                				<p><code>drawString(String str, int x, int y)</code></p>
+                			</td>
+                			<td width="274">
+                				<p>Draw a string at position x in row y </p>
+                			</td>
+              			</tr>
+            		</tbody>
+          		</table>
+        		</dd>
+     		</dl>
+     	
+      		<h5 class="western">What the program should do: </h5>
+      		<ol>
+      		<li> Display "Program 1 " in row 0 of the LCD.</li>
+      		<li> Wait for a button to be pressed </li>
+        		<li>
+          			Run motor A in the forward direction.
+        		</li>
+        		<li>
+          			Display FORWARD in the top line.
+        		</li>
+        		<li>
+          			Wait until a button is pressed.
+        		</li>
+        		<li>
+          			Run the motor backward.
+        		</li>
+        		<li>
+          			Display BACKWARD in next line.
+        		</li>
+        		<li>
+          			Wait until a button is pressed.
+        		</li>
+        		
+        		<li>
+          			Stop the motor.
+        		</li>
+      		</ol>
+      
+      		<p><a href="MotorTutor1.html" target="_blank"><font color="#0000ff"><u>Solution</u></font></a><br/></p>
+
+      		<p><a href="#top"><font color="#0000ff"><u>Back to top</u></font></a></p>
+      				
+      		<a name="3"></a>
+			<h4>Program 2 - Using the Tachometer.</h4>
+			
+      		<p>The NXT motor has a built in tachometer that keeps track of the current
+			angle (in degrees) of the motor axle. The purpose of this  experiment is   to find out how quickly the motor stops. The program will
+			attempt to rotate the motor  exactly 4  revolutions.   It uses two different ideas to accomplish this goal.  The first idea set the motor speed at 2 
+			revolutions per second and stop after two seconds.  The second idea is to stop the motor after 4  revolutions,  as measured by  the tachometer. </p>
+      		
+      		<h5 class="western">New methods used in this program</h5>
+      		<table border="1" cellpadding="7" cellspacing="0" width="656">
+        		<col width="64"/> <col width="202"/> <col width="346"/> 
+        		<tbody>
+          		<tr valign="top">
+            		<td width="64">
+            			<p>Class</p>
+            		</td>
+            		<td width="202">
+            			<p>Method name </p>
+            		</td>
+            		<td width="346">
+            			<p>Notes</p>
+            		</td>
+          		</tr>
+          		<tr valign="top">
+            		<td width="64">
+            			<code>NXTRegulatedMotor,</code> e.g. Motor.A
+            		</td>
+            		<td width="202">
+            			<code>getTachoCount()</code>
+            		</td>
+            		<td width="346">
+            			Returns the motor angle in degrees.
+            		</td>
+          		</tr>
+          		
+          		
+          		<tr valign="top">
+            		<td width="64">
+            			<p>&nbsp;</p>
+            		</td>
+            		<td width="202">
+            			<code>setSpeed(int speed)</code>
+            		</td>
+            		<td width="346">
+            			speed &#8211; degrees per second.. The maximum speed that can be accurately maintained is about 110 times the battery voltage. 
+            		</td>
+          		</tr>
+          		
+          		
+          		<tr valign="top">
+            		<td width="64">
+            			<code>Delay</code>
+            		</td>
+            		<td width="202">
+            			<code>msDelay(int interval)</code>
+            		</td>
+            		<td width="346">
+            			<p>Pause the program  for  <i>interval</i> milliseconds</p>
+            		</td>
+          		</tr>
+        	</tbody>
+      	</table>
+      	
+      	<h5>What the program should do</h5>
+      	<ol>
+      	<li> Display the program number as before.</li>
+      	    <li> Set the motor speed to 2 rev/sec</li>
+        	<li>
+          		Run Motor.A forward.
+        	</li>
+        	<li>
+          		Wait for 2 seconds.
+        	</li>
+        	<li>
+          		Display the motor angle on the LCD.
+        	 (what should it be?)</li>
+        	<li>Stop the motor.
+        	</li>
+        	<li>
+          		Display the tachometer reading on the on the next line LCD.
+        	</li>
+        	<li>
+          		Start the motor rotating backward.
+        	</li>
+        	<li>
+          		Wait till the tacho count reaches 0.
+        	</li>
+        	<li>
+          		Display the tacho count on the next line.
+        	</li>
+        	<li>
+          		Stop the motor.
+        	</li>
+        	<li> Display the tacho count on the next line.</li>
+        	<li> Wait for a button press so you can read the LCD.</li>
+      	</ol>
+  
+      	<p>Observe that in the first attempt, the  stop instruction is issued before the motort has quite completed the 4 revolutions in 2 seconds, and that   the it does not stop immediatel  because of inertia. <br />  </p>
+      	<p><a href="MotorTutor2.html" target="_blank"><u>Solution</u></a></p>
+      	<p><a href="#top"><u>Back to top</u></a></p>
+
+		<a name="4"></a>
+		<h4>Program 3 - Accurate rotation control.</h4>
+		
+      	<p>The Motor class has a regulator thread that runs all the time. It has two
+		principle jobs, one of which is to stop the motor at a specified angle.
+		This program will test the accuracy of the methods to accurately control the rotation.  
+		The methods have two versions. The basic method returns only when the rotation is complete,  the other
+		returns immediately but the motor stops when the rotation is completed.   </p>
+		
+      	<h5>New methods used in this program</h5>
+      	<table border="1" cellpadding="7" cellspacing="0" width="656">
+        <col width="90"/> <col width="192"/> <col width="329"/> 
+        <tbody>
+          	<tr valign="top">
+            	<td width="90">
+            		<p>Class</p>
+            	</td>
+            	<td width="192">
+            		<p>Method name </p>
+            	</td>
+            	<td width="329">
+            	<p>Notes</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="90">
+            <p><code>NXTRegulatedMotor, e.g. Motor.A</code></p>
+            </td>
+            <td width="192">
+            <p><code>rotate(int angle)</code></p>
+            </td>
+            <td width="329">
+            <p>Rotates through <i>angle </i>degrees</p>
+            </td>
+          </tr>
+          
+          <tr valign="top">
+            <td width="90">
+            &nbsp;
+            </td>
+            <td width="192">
+            <p><code>rotateTo(int angle)</code></p>
+            </td>
+            <td width="329">
+            <p>Rotates to <i>angle </i> </p>
+            </td>
+          </tr>
+         
+        </tbody>
+      </table>
+
+      <h5>What the program should do</h5>
+      <ol>
+      <li> Display the program name and wait for a button press.</li>
+        <li>
+         Rotate the motor 4  complete revolutions.
+        </li>
+        <li>
+          Display the tachometer reading on the on the LCD.
+        </li>
+        <li>
+          Rotate the motor to angle 0.
+        </li>
+        <li>
+          Display the tachometer reading on the on the LCD, next row
+        </li>
+        <li>
+          Wait for a button press.
+        </li>
+       
+      </ol>
+    
+      <p>The motor usually stops within 1 degree of the specified angle if the motor regulator is doing its job.
+		It works by calculating how far the motor will continue
+		to turn after the brake has been applied and applies the brake before
+		reaching the specified angle. </p>
+      <p>Observe: Once the motor has stopped if you try to turn it by hand it will resist you and will even
+      return nack to the stopped position. This is because when the regulator will continue 
+      to control  the motor at its stopped position. 
+    </p>
+      	<p><a href="MotorTutor3.html" target="_blank"><u>Solution</u></a></p>
+
+      	<a href="#top">Back to top</a>
+
+      	<a name="5"></a>
+		<h4>Program 4.Interrupting rotation</h4>
+      
+      	<p>Sometimes you will want the motor stop (or do something else) before it reaches
+		the specified angle. This program will detect a button press to
+		interrupt the rotation task if you press a button soon enough. The
+		rotate() methods will not return until the motor has stopped at the
+		target angle. But the new methods in this program can return
+		immediately. The motor will still stop at the specified angle unless a
+		new motor method is called in the meantime. </p>
+		
+      <h5>New methods used in this program</h5>
+      <table style="width: 641px;" border="2" cellpadding="7" cellspacing="0">
+        <col width="57"/> <col width="307"/> <col width="233"/> 
+        <col width="0"/> 
+        <col width="0"/> 
+        <col width="0"/> 
+        <tbody>
+          <tr valign="top">
+            <td style="width: 57px; font-weight: bold;">
+            	<p>Class</p>
+            </td>
+            <td style="width: 307px; font-weight: bold;">
+            	<p>Method name </p>
+            </td>
+            <td style="font-weight: bold;" width="233">
+            	<p>Notes</p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="57">
+           	 <p><code>NXTRegulatedMotor, e.g. Motor.A</code></p>
+            </td>
+            <td width="307">
+            <p><code>rotate(int angle,boolean immediateReturn)</code></p>
+            </td>
+            <td rowspan="2" width="233">
+            <p>The method returns immediately if the boolean parameter <i>immediateReturn</i> is <b>true</b></p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="57">
+            <p><br/>
+            </p>
+            </td>
+            <td width="307">
+            <p><code>rotateTo(int angle,booleanimmediateReturn)</code></p>
+            </td>
+          </tr>
+          <tr valign="top">
+            <td width="57">
+            <p><br/>
+            </p>
+            </td>
+            <td width="307">
+            <p><code>(boolean)isRotating()</code></p>
+            </td>
+            <td width="233">
+            <p>Returns <b>false</b> when the motor has stopped at the specified angle</p>
+            </td>
+          </tr>
+        
+        </tbody>
+      </table>
+      
+      <h5>What the program should do</h5>
+      <ol>
+      <li> Display the program number.</li>
+        <li>
+          Start a rotation of 4 revolutions backward.
+        </li>
+        <li>
+          While the motor is rotating, display the tacho count.
+        </li>
+        <li>
+          When a button is pressed, stop the motor.
+        </li>
+        <li>
+          After the motor has stopped, display the tacho count in another row.
+        </li>
+        <li>
+          Wait for a button press.
+        </li>
+        
+      </ol>
+      <p>Observe: if you press the button before the rotation is complete, the motor will stop
+		without completing its rotation. Otherwise, the stop() method has no
+		effect. </p>
+      	<p><a href="MotorTutor4.html" target="_blank"><u>Solution</u></a></p>
+
+      	
+      	<a href="#top">Back to top</a>
+
+      	<a name="6"></a>
+		<h4>Program 5: Regulating motor speed</h4>
+      <p>The other principle task of the regulator thread is to control the motor
+		speed. One reason for doing this is that a two wheel vehicle will only
+		travel in a straight line if both motors run at the same
+		speed.(obviously). The standard Lego software solves this problem by
+		directly synchronizing two motors. NXJ takes a different approach:
+		keeping each motor rotation synchronized to the system clock. The
+		regulator compares the tacho count (minus its reference count) with
+		speed times elapsed time, and adjusts the power to keep these two
+		quantities closely matched. The regulator resets its reference count
+		and its elapsed time to zero and begins its comparison again whenever
+		you call any of the methods you have used so far.     
+		This program allows you to experiment with the effectiveness of speed regulation 
+		in keeping motors synchroniced.<br />
+		You will not need any new methods for this program.</p>
+
+     
+      <h5>What the program should do:</h5>
+      <ol>
+        <li>
+          Display the program number as usual.
+        </li>
+        <li>
+          Set the speed of all 3 motors at 2 revolutions/sec.
+        </li>
+        <li> Start all 3 motors rotating through 2 revolutions simultaneously. </li>
+        <li>
+         Every 200 ms, display all 3 tacho count values in a row. 
+        </li>
+        <li>
+          Repeat step 3, 8 times, using a different row each time.
+        </li>
+        <li>
+          Wait for a button press while you write down the array of numbers (perhaps in a spread sheet) 
+        </li>
+      </ol>
+      <p> The motors should remain within  1 or 2  degrees of each
+		other, once the target speed is attained.   <br />
+		Speed regulation depends on increasing or decreasing power.   But if the motor is
+		the motor cannot acheive the desired speed even at maximum power, speed regulation is impossible.
+		The maximum speed for reliable reglation  is approximately 100 times the battery voltage.  
+		You should repeat the experiment with target speed of 1000 deg/sec  to verify this. 
+		</p>
+      <p><a href="MotorTutor5.html" target="_blank"><u>Solution</u></a></p>
+
+    
+      <a href="#top">Back to top</a>
+
+      <h5>When might you want to turn off speed regulation? </h5>
+      <p>In some robots, the motor speed should not be constant but changed in
+		response to a sensor reading as for example in a line follower or a
+		balancing robot. If the speed corrections happen frequently, there is
+		no advantage in the regulator thread using CPU cycles in adjusting the
+		motor power to maintain constant speed between adjustments. To use an unregulated 
+	    Motor you must create an instance of the class NXTMotor. For example: </p>
+	    
+	   <div class="CodeBox">
+	   <pre><code>
+	   NXTMotor m1 = new NXTMotor(MotorPort.A);
+	   </code></pre>
+	   </div>
+	   
+	   <p>NXTMotor has many of the methods of NXTRegulatedMotor, but instead of the setSpeed method, it has a setPower method,
+	      and, as it has no regulation thread, it does not support any of the rotate methods.</p>
+		
+      <h5>When should you use speed regulation?</h5>
+      <p>If you specify a very slow speed, the power to maintain it may not be
+		enough overcome the motor internal friction, so the motor never moves.
+		In this case, a call to rotate() will never return. But with speed
+		regulation on, the regulator will keep increasing the power until the
+		motor comes up to speed. </p>
+      <p/>
+      <h5>Can you mix the two methods of control?</h5>
+      <p>Yes you can. Simply create an instance of both NXTRegulatedMotor and NXTMotor classes for the same motor
+      port. When you want to use setPower simply turn off motor regulation by calling suspendRegulation on the
+      NXTRegulatedMotor instance.</p>
+
+      <p><a href="#top">Back to top</a></p>
+
+      	<a name="7"></a>
+		<h4> Some Other Motor Methods</h4>
+	
+      <h5>Finding out what the motor is doing</h5>
+  
+      <ul class="BlueArrows">
+        <li>
+          <p>boolean isMoving();</p><p>
+			This is useful to test if the motor has finished rotating. isMoving()
+			returns true when the Motor is moving for any reason (e.g. forward() or
+			backward() have been called or a rotate() task is in progress) </p>
+        </li>
+        <li>
+          <p>int getLimitAngle()</p><p>Returns the angle to which the motor is currently rotating </p>
+        </li>
+        <li>
+          <p>int getSpeed()</p><p>Returns the current speed setting.</p>
+        </li>
+        <li>
+          <p>int getActualSpeed()</p><p>Returns the actual speed of the motor. </p>
+        </li>
+        <li>
+          <p>boolean isStalled()</p><p>Tells you if the motor is stalled or if the regulation of
+          the motor speed has failed (have you asked it to go faster then is possible?).</p>
+        </li>
+
+      </ul>
+
+      <h5>Various other motor methods</h5>
+  
+      <ul class="BlueArrows">
+        <li>
+          <p>resetTachoCount()</p><p>
+			This method not only sets the tacho count to 0 but also resets the
+			origin used by the regulator thread in deciding when to stop a rotation
+			task. </p>
+        </li>
+        <li>
+          <p>void setAcceleration(int acceleration)</p><p>Lets you control how fast the motor speed will
+          change from one speed to another. The acceleration is set in degrees per second per second. Use
+          small values (try 200 or 500) to have your robot smoothly accelerate up to speed.</p>
+        </li>
+        <li>
+          <p>void getAcceleration()</p><p>Returns the current acceleration value for the motor</p>
+        </li>
+        <li>
+          <p>suspendRegulation()</p><p>
+            Turns of the regulation of the motor. Use this method if you want to mix regulated and 
+            unregulated control of the same motor.
+          </p>
+        </li>
+      </ul>
+
+      <p><a href="#top">Back to top</a></p>
+      
+      <h5>NXTMotor methods</h5>
+    
+      <ul class="BlueArrows">
+        <li>
+        setPower(int aPower)
+            <p>
+			Used to control motor power directly. Use a value between 0 and 100.
+			Don&#8217;t call this method if speed regulation is turned on because then
+			the regulator thread is continuously adjusting the power. </p>
+        </li>
+        <li>
+          <p>int getPower()</p><p>returns the current power setting in the range of 0 to 100.</p>
+        </li>
+       </ul>
+       
+      <p><a href="#top">Back to top</a></p>
+      
+      <div class="NavBit"> 
+      	<a target="_top" href="../MenuSystem/MenuSystem.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a
+      	href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a
+      	href="../WheeledVehicles/WheeledVehicles.htm">Next&nbsp;&raquo;</a>
+      </div>
+      </td>
+    </tr>
+</table>
+</body>
+</html>

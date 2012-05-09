@@ -1,0 +1,69 @@
+<!--
+  ==============================================================
+  Buildfile for publishing the update site in the dist directory
+  ==============================================================
+-->
+<project name="leJOS NXJ plugin update site" default="publish" basedir=".">
+
+	<!-- Need to set "Run in same JRE as workspace" in Ant Buld JRE tab for eclipse.home to be set  -->
+	<property name="dist" value="${basedir}/dist" />
+	
+	<property name="eclipse.equinox.main" value="org.eclipse.equinox.launcher.Main" />
+	<path id="eclipse.equinox.cp">
+		<fileset dir="${eclipse.home}/plugins/">
+			<include name="org.eclipse.equinox.launcher_*.jar" />
+		</fileset>
+	</path>
+
+	
+	<target name="publish" description="Publishes update site in dist directory">
+	
+	    <echo message="dist = ${dist}"/>
+	    <echo message="Eclipse home = ${eclipse.home}"/>
+	    
+		<delete dir="${dist}"/>
+		<mkdir dir="${dist}"/>
+		
+	    <java classname="${eclipse.equinox.main}"
+	       classpathref="eclipse.equinox.cp"
+	       fork="true"
+           failonerror="true">
+	         <arg value="-application"/>
+	         <arg value="org.eclipse.equinox.p2.publisher.UpdateSitePublisher"/>
+	         <arg value="-metadataRepository"/>
+	         <arg value="file:${dist}"/>
+	         <arg value="-metadataRepositoryName"/>
+	         <arg value="LeJOS Update Site"/>
+	         <arg value="-artifactRepository"/>
+	         <arg value="file:${dist}"/>
+	         <arg value="-artifactRepositoryName"/>
+	         <arg value="LeJOS Eclipse Plugin"/>
+	         <arg value="-source"/>
+	         <arg value="${basedir}"/>
+	         <arg value="-configs"/>
+	         <arg value="gtk.linux.x86"/>
+	         <arg value="-compress"/>
+	         <arg value="-publishArtifacts"/>
+       </java>
+       
+       <java classname="${eclipse.equinox.main}"
+	       classpathref="eclipse.equinox.cp"
+       	   fork="true"
+           failonerror="true">
+           <arg value="-application"/>
+           <arg value="org.eclipse.equinox.p2.publisher.CategoryPublisher"/>
+           <arg value="-metadataRepository"/>
+           <arg value="file:${dist}"/>
+           <arg value="-categoryDefinition"/>
+           <arg value="file:${basedir}/category.xml"/>
+       </java>
+       
+       	<copy todir="${dist}">
+          	<fileset dir="${basedir}">
+            	<include name="site.xml"/>
+            	<include name="index.html"/>
+            	<include name="web/**"/>
+          	</fileset>
+		</copy>
+	</target>
+</project>

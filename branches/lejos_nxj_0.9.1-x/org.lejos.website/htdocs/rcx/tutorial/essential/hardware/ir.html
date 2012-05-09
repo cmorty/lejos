@@ -1,0 +1,179 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>Controlling the Hardware: The IR Interface</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="sensors.html" target="_top"><img src="../../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../toc.html#hardware" target="_top"><img src="../../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="sound.html" target="_top"><img src="../../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="../index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1">
+            <b>Trail</b>: Essential leJOS classes<br>
+            <b>Lesson</b>: Controlling the Hardware
+        </font>
+
+        <!-- headline -->
+        <h1>Controlling the Hardware: The IR Interface</h1>
+        <p>
+
+        <!-- intro -->
+        <img src="../../images/rcx_ir.jpg"></td>
+        <br clear="all">
+        The IR Interface located at the front of the RCX serves the purpose of receiving and
+        sending infrared data from resp. to the LEGO&reg; Tower or another RCX.
+        <br>
+        All changeable data like the firmware, programs or commands from the PC to the RCX are 
+        transmitted that way. 
+        Having the advantage of making the RCX independent of any cable stuff, the deranged 
+        communication between the IR tower and the RCX when the interface goes out of scope of the tower
+        is the major drawback of such a solution.
+
+        <!-- configuring -->
+        <h2>The Serial class</h2>
+        The basic class for communication between the RCX to the tower or another RCX is <code>josx.rcx.platform.Serial</code>.
+        <br>
+        As usual with hardware related leJOS classes, <code>Serial</code> is static; hence a typical call would be
+        <pre><code>
+            Serial.setRangLong();
+        </code></pre>
+        There are two methods available to configure the Serial class for the actual needs:
+        <ul>
+            <li><code>public static void setRangeLong()</code></li>
+            <li><code>public static void setRangeShort()</code></li>
+        </ul>
+        which sets the sensitivity for transmitted signals up or down. The default setting is the latter one.
+        <br>So if you encounter communication problems with your robot, be sure to set the long range at first.
+
+        <p>
+        <span class="remark">Note that the <code>Serial</code> class can only be used on the RCX! 
+        If you want to send or receive data on the IR Tower, consult the according 
+        <a href="../../communication/index.html" target="_top">communication trail</a>.
+        </span>
+        <p>
+
+        <!-- sending and receiving -->
+        <h2>Sending and receiving data</h2>
+        <code>Serial</code> is intended to be used for transmission of <code>byte</code> data, so you won't
+        be able to send other primitive Java types, let alone more complex types.
+        <br>
+        The method to read incoming data is 
+        <pre><code>
+            public static int readPacket(byte[] aBuffer);
+        </code></pre>
+        If incoming data is available (you can check this using <code>Serial.isPacketAvailable()</code>),
+        these are filled into the argument buffer, which has to be instantiated before, and delivers the number
+        of bytes actually read.
+
+        <p>
+        <span class="remark">Note that the first incoming byte from the IR Tower always is the opcode.
+        For a description of the protocol used see <a href="http://graphics.stanford.edu/~kekoa/rcx/index.html" 
+        parent="_top">Kekoa Proudfoot's Opcode Reference</a>.
+        </span>
+        <p>
+
+        The method to send data to the IR Tower or to another RCX is (not very surprisingly)
+        <pre><code>
+            public static boolean sendPacket(byte[] aBuffer, int aOffset, int aLen);
+        </code></pre>
+        which sends <code>aLen</code> bytes in the argument buffer, starting from <code>aOffset</code>;
+        it returns false, if the packet has already be sent.
+
+        <p>
+        <span class="remark">Note that there is no confirmation of the addressee that the message was actually received.
+        <br>Note also, that the IR Tower will reveice only responses to messages it has actually sent.
+        </span>
+
+        A much more elegant way for receiving data is using Java's <b>event listener</b> technology:
+        <br>
+        Your class to listen for incoming data event will implement the 
+        <code>public void packetAvailable(byte[] aPacket, int aLength)</code> method 
+        of the <code>josx.platform.rcx.SerialListener</code> interface:
+        <pre><code>
+            public class MySerialListener implements SerialListener {
+                public void packetAvailable(byte[] aPacket, int aLength) {
+                    // handle incoming data here
+                } // stateChanged()
+            } // class MySerialListener
+        </code></pre>
+
+        Now you are able to add this class as a listener to the IR interface:
+        <pre><code>
+            Serial.addSerialListener(mySerialListener) 
+        </code></pre>
+
+        Every time the IR Interface receives data, the  
+        <code>packetAvailable()</code> method of the 
+        <code>MySerialListener</code> will be called, where the <code>aLenght</code> bytes of data 
+        are contained in the <code>aPacket</code> argument.
+        <p>
+
+        <span class="remark">If you are unfamiliar with event listeners, feel free to consult the
+        <a href="http://java.sun.com/docs/books/tutorial/uiswing/events/actionlistener.html" target="_top">
+        section</a> of The Java Tutorial&trade; in question.
+        </span>
+        <p>
+
+        <h2>Examples that use the Serial and the SerialListener class</h2>
+        are the classes in <code>examples/serial</code>, <code>examples/serial2rcx</code> and
+        <code>examples/serial_listener_test</code> sections of the leJOS tree.
+
+        <h2>The Serial API</h2>
+        may be found <a href="http://lejos.sourceforge.net/apidocs/josx/platform/rcx/Serial.html"
+        target="_top">here</a>.
+
+        <p>
+        <span class="remark">The Serial class is a rather basic part of leJOS communication. There
+        already exists a much more elaborate communication layer, contained in the <code>josx.rcxcomm</code>
+        package. See the <a href="../../communication/index.html" target="_top">Trail on communication</a>
+        in the specialized section of this tutorial. 
+        </span>
+
+        <hr>
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="sensors.html" target="_top"><img src="../../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../toc.html#hardware" target="_top"><img src="../../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="sound.html" target="_top"><img src="../../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="../index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>

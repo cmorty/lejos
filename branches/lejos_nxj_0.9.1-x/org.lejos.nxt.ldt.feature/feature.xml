@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.lejos.nxt.ldt.feature"
+      label="leJOS NXJ plugin"
+      version="0.9.0.qualifier"
+      provider-name="The leJOS Team"
+      plugin="org.lejos.nxt.ldt">
+
+   <description>
+      Eclipse features for leJOS NXJ
+   </description>
+
+   <copyright>
+      Copyrighted to the leJOS project
+   </copyright>
+
+   <license>
+      Licensed under the GPL
+   </license>
+
+   <plugin
+         id="org.lejos.nxt.ldt"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

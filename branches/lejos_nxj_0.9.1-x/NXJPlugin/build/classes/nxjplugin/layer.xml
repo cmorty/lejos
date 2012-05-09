@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.1//EN" "http://www.netbeans.org/dtds/filesystem-1_1.dtd">
+<filesystem>
+    <folder name="Templates">
+        <folder name="Project">
+            <folder name="Samples">
+                <file name="NXJSampleProject.zip" url="NXJSampleProject.zip">
+                    <attr name="SystemFileSystem.localizingBundle" stringvalue="nxjplugin.Bundle"/>
+                    <attr name="instantiatingIterator" methodvalue="nxjplugin.NXJSampleWizardIterator.createIterator"/>
+                    <attr name="instantiatingWizardURL" urlvalue="nbresloc:/nxjplugin/NXJSampleDescription.html"/>
+                    <attr name="template" boolvalue="true"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

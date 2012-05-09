@@ -1,0 +1,156 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>Controlling the Hardware: Buttons</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="index.html" target="_top"><img src="../../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../toc.html#hardware" target="_top"><img src="../../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="lcd.html" target="_top"><img src="../../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="../index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1">
+            <b>Trail</b>: Essential leJOS classes<br>
+            <b>Lesson</b>: Controlling the Hardware
+        </font>
+
+        <!-- headline -->
+        <h1>Controlling the Hardware: Buttons</h1>
+        <p>
+
+        <img src="../../images/rcx_buttons.gif">
+        <br clear="all">
+        When viewing the upper side of the RCX there are four buttons to be detected:
+        <ul>
+            <li>the View button for displaying sensor and other values</li>
+            <li>the Prgm button for selection of the loaded programs</li>
+            <li>the Run button for starting programs</li>
+            <li>the On/Off button for switching the RCX on and off</li>
+        </ul>
+        Except for the On/Off button every one of these buttons is accessible by the leJOS API.
+        <p>
+
+        As with most of the hardware related leJOS classes, these three buttons are implemented
+        as static fields of the static <code>Button</a> class:
+        <ul>
+            <li>Button.RUN</li>
+            <li>Button.PRGM</li>
+            <li>Button.VIEW</li>
+        </ul>
+        The reason for this should be clear: there IS actually only one RUN button on the RCX, so it
+        wouldn't make much sense to create more than one instance of it.
+        <p>
+
+        <span class="remark">Another possibility to access the buttons is via the 
+        static <code>Button[]</code> array, which contains the VIEW, PRGM and RUN button, in this order.
+        </span>
+
+        <h2>Detecting when a button is pressed (and maybe even released)</h2>
+        The main (and eventually the single) interaction the developer of leJOS programs is interested in
+        when referring to buttons is the event, when a user presses the button and 
+        - maybe even more important - when he releases it.
+        <p>
+        The easiest way to achieve this is the use of the <code>waitForPressAndRelease()</code>
+        method. When calling it, the program (or to be more precise, the actual thread) will wait until
+        the user presses and releases the button:
+        <pre><code>
+            try {
+                Button.RUN.waitForPressAndRelease();
+            } catch(InterruptedException e) {
+                // maybe do something here
+            } // catch()
+        </code></pre>
+        You will notice that you have to catch the InteruptedException the method (in fact the underlying thread
+        method) may throw.
+        <p>
+        After all, in most cases it isn't convenient to stop execution until the user releases a button, but
+        you might want to be notified when such an event happens while the program is running.<br>
+        In leJOS, for such cases you will use Java's wonderful <b>event listener</b> technology:
+        <br>
+        Your class to listen for such a button event will implement the two methods 
+        <ul>
+            <li>public void buttonPressed(Button b)</li>
+            <li>public void buttonReleased(Button b)</li>
+        </ul>
+        of the <code>josx.platform.rcx.ButtonListener</code> interface.<br>
+        <pre><code>
+            public class MyButtonListener implements ButtonListener {
+                public void buttonPressed(Button b) {
+                    // maybe do something here
+                } // buttonPressed()
+                public void buttonReleased(Button b) {
+                    // maybe do something here
+                } // buttonReleased()
+            } // class MyButtonListener
+        </code></pre>
+
+        Now you are able to add this class as a listener to the button in question:
+        <pre><code>
+            Button.RUN.addButtonListener(myButtonListener);
+        </code></pre>
+
+        Every time the RUN button is pressed or released, the according methods of the 
+        <code>MyButtonListener</code> will be called.
+        <p>
+
+        <span class="remark">If you are unfamiliar with event listeners, feel free to consult the
+        <a href="http://java.sun.com/docs/books/tutorial/uiswing/events/actionlistener.html" target="_top">
+        section</a> of The Java Tutorial&trade; in question.
+        </span>
+        <p>
+
+        <h2>A complete example which uses the Button class</h2>
+        is <b>PerformanceTest.java</b> which may be found in the <code>examples/performance_test</code> 
+        section of the leJOS tree.
+
+        <h2>The Button API</h2>
+        may be found <a href="http://lejos.sourceforge.net/apidocs/josx/platform/rcx/Button.html"
+        target="_top">here</a>.
+
+        <hr>
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="index.html" target="_top"><img src="../../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../toc.html#hardware" target="_top"><img src="../../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="lcd.html" target="_top"><img src="../../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="../index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>

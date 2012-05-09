@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>leJOS NXJ Eclipse Plug-In: FAQs</title>
+	</head>
+
+	<body>
+		<h1>FAQs</h1>
+		
+		<h2>When compiling my classes, I get an error stating that some leJOS classes can not be found.</h2>
+		<p>Make sure that <em>NXJ_HOME</em> is set in the
+		the <em>leJOS NXJ</em> section of the <em>Preferences</em> page of Eclipse and that you have converted the project 
+		to a leJOS project.</p>
+		 
+		<h2>When trying to upload my main class to the brick, I get an error stating that the communication classes 
+		can not be instantiated.</h2>
+		<p>This is due to the fact that the native comm driver library can not be loaded. On Linux, make sure that 
+		you have built the native libraries. On Windows, make sure that you use the 32bit version of Eclipse.
+		64Bit Eclipse is currently not supported.</p>
+	</body>
+</html>

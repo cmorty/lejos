@@ -1,0 +1,323 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>lejos</groupId>
+    <artifactId>lejos-parent</artifactId>
+    <version>0.9-SNAPSHOT</version>
+
+    <name>Lejos parent pom</name>
+    <description>Lejos parent project, containing child modules.</description>
+
+    <scm>
+        <connection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/</connection>
+        <developerConnection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/</developerConnection>
+    </scm>
+    <url>http://lejos.sourceforge.net/</url>
+    
+    <packaging>pom</packaging>
+
+    <distributionManagement>
+        <site>
+            <!-- fake url, is required to build fully linked site via: mvn package site site:stage -->
+            <id>dummyForSiteStage</id>
+            <url>dummySiteStageURL</url>
+        </site>
+    </distributionManagement>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <source.version>1.5</source.version>
+        <target.version>1.5</target.version>
+
+        <!-- Special folder that shouldn't exist. It's used obtain empty (boot)classpath. -->
+        <nirvana.dir>${basedir}/target/nirvana</nirvana.dir>
+
+    </properties>
+
+    <modules>
+        <module>../classes</module>
+        <!--<module>../classes-common</module>-->
+        <module>../leJOSlab/junit</module>
+        <module>../org.lejos.junit</module>
+        <module>../classes-test</module>
+        <module>../jtools</module>
+        <module>../pccomms</module>
+        <module>../pctools</module>
+        <module>../startup</module>
+        <module>../org.lejos.charting</module>
+        <module>../samples</module>
+        <module>../pcsamples</module>
+        <module>../org.lejos.example</module>
+        <module>../org.lejos.pcexample</module>
+    </modules>
+
+    <build>
+
+        <pluginManagement>
+            <!-- use plugin-updates-report to check for new versions of these plugins. -->
+            <plugins>
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.3</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>2.9</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>2.4.1</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.1.2</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.5</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>${source.version}</source>
+                        <target>${target.version}</target>
+
+                        <verbose>true</verbose>
+                        <showWarnings>true</showWarnings>
+                        <showDeprecation>true</showDeprecation>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.6</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.11</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.3.2</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.2.1</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.8</version>
+                </plugin>
+
+                <!-- these appear in the 'plugin updates report' only when using maven 2.2.x, and not when using maven 3.x.
+                <plugin>
+                    <artifactId>maven-rar-plugin</artifactId>
+                    <version>2.2</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.1.1</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-ear-plugin</artifactId>
+                    <version>2.4.2</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-ejb-plugin</artifactId>
+                    <version>2.3</version>
+                </plugin>
+                -->
+
+                <plugin>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <!-- NOTE: site-plugin v2.3 or v3.0 breaks site goal with maven2, so stay on v2.2 for maven2 support. -->
+                    <version>2.2</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.3.1</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.2.1</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>1.0.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        
+        <plugins>
+            <!-- Install/Deploy with sources, Allows easy drill-down in IDE's. -->
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- install/deploy with javadocs.  -->
+            <!-- @todo Restore this if we decide the time delay to build javadocs is worth it.
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
+        </plugins>
+    </build>
+
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <!-- NOTE: site-plugin v2.3 or v3.0 breaks site goal with maven2, so stay on v2.2 for maven2 support. -->
+                <version>2.2</version>
+            </plugin>
+            <!-- 'maven-project-info-reports-plugin' declaration is only required to keep enforcer happy under maven 2.2.x. -->
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
+
+
+            <plugin>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>2.3</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.3.3</version>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <targetJdk>${source.version}</targetJdk>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.11</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>1.2</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
+
+    <profiles>
+        <profile>
+            <id>maven-3</id>
+            <activation>
+                <file>
+                    <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+                    <exists>${basedir}</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <version>3.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-descriptor</id>
+                                <goals>
+                                    <goal>attach-descriptor</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+
+                    <!-- Under maven v2.2.x, enforcer demands version for some plugins we don't actually use, so only run it under maven v3. -->
+                    <plugin>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-versions</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requirePluginVersions/>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+
+
+        <profile>
+            <id>m2e</id>
+
+            <activation>
+                <property>
+                    <name>m2e.version</name>
+                    <!-- Activate only when within eclipse -->
+                </property>
+            </activation>
+
+            <build>
+                <!-- use default output location, except when running in eclipse via profile: m2e.
+                see: http://m2eclipse.sonatype.org/m2eclipse-faq.html#8
+                -->
+                <directory>target-eclipse</directory>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

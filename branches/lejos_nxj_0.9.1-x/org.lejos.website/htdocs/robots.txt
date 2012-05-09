@@ -1,0 +1,4 @@
+# robots.txt for http://lejos.sourceforge.net/
+User-agent: *
+Disallow: /assets/
+Disallow: /apidocs/

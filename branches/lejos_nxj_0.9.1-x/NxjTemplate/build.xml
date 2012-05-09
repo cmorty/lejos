@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="sampletesting" default="uploadandrun" basedir=".">
+	<description>Builds, tests, and runs the project NXJTemplate3.</description>
+
+
+	<property environment="env" />
+	<property file="nbproject/project.properties" />
+	<property name="nxj.library.path" location="${nxj.home}/bin" />
+	<property name="src" location="src" />
+	<property name="build" location="build" />
+	<!--  <property name="class" value="NXJMain"/>-->
+
+	<path id="lejos.pc">
+		<fileset dir="${nxj.home}/lib/pc">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<path id="lejos.nxt">
+		<fileset dir="${nxj.home}/lib/nxt">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean" description="clean up all generated files">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
+
+	<target name="compile" depends="clean" description="compile the source directory ">
+		<echo> compiling ="${src}" </echo>
+		<!-- Compile the java code from ${src} to ${build}  -->
+		<javac srcdir="${src}" destdir="${build}" includeantruntime="false" verbose="false">
+			<bootclasspath refid="lejos.nxt" />
+			<!--
+				Without this, there are some JDK jars in the classpath.
+				Set verbose=true to check that the classpath is really clean.
+			-->
+    		<compilerarg value="-extdirs" />
+    		<compilerarg value="" />
+		</javac>
+	</target>
+
+	<target name="compile-single" depends="clean" description="compile a single selected file ">
+		<echo>compiling single = ${javac.includes}</echo>
+		<fail unless="javac.includes">Must select a file in the IDE</fail>
+		<!-- Compile the java code from ${src} to ${build}  -->
+		<javac srcdir="${src}" destdir="${build}" includeantruntime="false" verbose="false">
+			<bootclasspath refid="lejos.nxt" />
+			<!--
+				Without this, there are some JDK jars in the classpath.
+				Set verbose=true to check that the classpath is really clean.
+			-->
+    		<compilerarg value="-extdirs" />
+    		<compilerarg value="" />
+			
+			<include name="${javac.includes}" />
+		</javac>
+	</target>
+
+
+	<target name="link" depends="compile" description="link the binary ">
+		<!-- sets link class to run.class if it exists -->
+		<condition property="link.class" value="${run.class}">
+			<isset property="run.class" />
+		</condition>
+		<!-- else sets link.class to main.class-->
+		<condition property="link.class" value="${main.class}">
+			<not>
+				<isset property="run.class" />
+			</not>
+		</condition>
+
+		<property name="binary" value="${build}/${class}.nxj" />
+		<!-- Link the binary and create a signature file -->
+		<java classname="lejos.pc.tools.NXJLink" failonerror="true">
+			<classpath refid="lejos.px" />
+			<arg value="--bootclasspath" />
+			<arg pathref="lejos.nxt" />
+			<arg value="--classpath" />
+			<!--   <arg path="${build};${nxj.classes.home}/lib/toolbox.jar" />-->
+			<arg path="${build}" />
+			<arg value="--writeorder" />
+			<arg value="LE" />
+			<arg value="-o" />
+			<arg value="${binary}" />
+			<arg value="-v" />
+			<arg value="${link.class}" />
+		</java>
+		<echo>success linked = ${link.class}</echo>
+	</target>
+
+	<target name="upload" depends="link" description="upload the binary">
+		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
+			<jvmarg value="-Djava.library.path=${nxj.library.path}" />
+			<sysproperty key="nxj.home" file="${nxj.home}" />
+			<classpath refid="lejos.pc" />
+			<arg value="${binary}" />
+		</java>
+	</target>
+
+	<target name="run-single">
+		<echo> run class = ${run.class} </echo>
+		<antcall target="uploadandrun">
+			<param name="class" value="${run.class}" />
+			<param name="binary" value="${build}/${run.class}.nxj" />
+		</antcall>
+	</target>
+
+	<target name="run">
+		<echo> run class = ${main.class}</echo>
+		<antcall target="uploadandrun">
+			<param name="class" value="${main.class}" />
+		</antcall>
+	</target>
+
+	<target name="uploadandrun" depends="link" description="upload and run the binary">
+		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
+			<jvmarg value="-Djava.library.path=${nxj.library.path}" />
+			<sysproperty key="nxj.home" file="${nxj.home}" />
+			<classpath refid="lejos.pc" />
+			<arg value="${binary}" />
+			<arg value="-r" />
+		</java>
+	</target>
+
+	<target name="-javadoc-build" depends="clean">
+		<mkdir dir="${dist.javadoc.dir}" />
+		<javadoc additionalparam="${javadoc.additionalparam}" author="${javadoc.author}" charset="UTF-8" destdir="${dist.javadoc.dir}" docencoding="UTF-8" failonerror="true" noindex="${javadoc.noindex}" nonavbar="${javadoc.nonavbar}" notree="${javadoc.notree}" private="${javadoc.private}" source="${javac.source}" splitindex="${javadoc.splitindex}" use="${javadoc.use}" useexternalfile="true" version="${javadoc.version}" windowtitle="${javadoc.windowtitle}">
+			<classpath refid="lejos.nxt" />
+			<fileset dir="${src.dir}" excludes="${excludes}" includes="${includes}">
+				<filename name="**/*.java" />
+			</fileset>
+		</javadoc>
+	</target>
+	<target name="-javadoc-browse" depends="clean,-javadoc-build" if="netbeans.home" unless="no.javadoc.preview">
+		<nbbrowse file="${dist.javadoc.dir}/index.html" />
+	</target>
+	<target name="javadoc" depends="clean,-javadoc-build,-javadoc-browse" description="Build Javadoc." />
+
+
+	<!--  used only for modifying the NXJplugin -->
+	<target name="zipme" description="Zip the application to the sample project">
+		<property name="plugin" location="../NXJPlugin/src/nxjplugin/" />
+		<echo> address=${plugin} </echo >
+		<zip basedir="." destfile="${plugin}/NXJSampleProject.zip">
+			<!--       <zip basedir="." destfile="${build}/NXJProjectProject.zip"> -->
+			<exclude name="build/**" />
+			<exclude name="dist/**" />
+			<exclude name="nbproject/private/**" />
+		</zip>
+	</target>
+
+
+
+</project>

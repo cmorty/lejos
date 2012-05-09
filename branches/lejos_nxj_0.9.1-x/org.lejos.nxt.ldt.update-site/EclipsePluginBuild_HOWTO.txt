@@ -1,0 +1,47 @@
+How to build the Eclipse plugin
+-------------------------------
+
+A. Set version numbers if necessary
+This step is only necessary if the version number needs to change (e.g. from 0.9.0 to 0.9.1). Minor releases are managed by Eclipse without us having to change the version.
+
+In the org.lejos.nxt.ldt project:
+Open plugin.xml with the Plugin Manifest Editor. 
+Change the version number there, for example 0.9.0.qualifier --> 0.9.1.qualifier. 
+Save
+
+In the org.lejos.nxt.ldt.feature project:
+Open feature.xml with the Feature Manifest Editor. Change the version number as above.
+In the Overview tab, click the Synchronize link (under Exporting) and make sure "Synchronize versions on build (recommended)" is selected.
+Click Finish.
+
+B. Build
+In the org.lejos.nxt.ldt.update-site project:
+Important: Make sure you don't have any versions of the plugin/feature installed.
+Important: Delete everything from the features and plugins directories. These are generated files, not under source control, and we don't want old version lying around.
+Open site.xml with the Site Manifest Editor.
+Expand the category (org.lejos.nxt)
+Right-click on the old feature, which should now be greyed out, and select Remove.
+Make sure the category is selected and click the Add Feature... button. Select the new feature. It is called org.lejos.nxt.ldt.feature and it has the new version number. 
+Click the Synchronize button
+Click Build All
+You should see the new jars appear in the features and plugins directories.
+
+C. Generate a local update repository
+Run the updatesite.xml script. 
+Note that you must have "Run in same JVM as the workspace" set, under the JRE tab on "Ant Build ...".
+
+D. Test the build via the local update repository
+In Eclipse, open Help > Install New Software...
+If you haven't already done so, add a local update repository that points to the dist directory inside org.nxt.ldt.update-site. Here's how: (a) Click the Add button at the top right to add the dist directory as a local update repository. (b) Click the Local... button and navigate to the dist directory inside org.nxt.ldt.update-site and click Open. The Location field should now contain a file: URL pointing to dist. Mine looks like this: file:/Users/johnt/workspace/org.lejos.nxt.ldt.update-site/dist/ (c) Give the local repository a name and click OK.
+Select the local update site. The "leJOS NXJ Support" category should appear. If "Group items by category" is checked, you will need to click the triangle to disclose the feature called "leJOS NXJ plugin". (Sheesh. The terminology is all wrong. It's a FEATURE not a plugin!) If "Group items by category" is NOT checked, you'll just see the feature called "leJOS NXJ plugin". Verify that the version number is something like 0.9.0.201105112006. (The 8 digits after 0.9.0 are today's date; the next digits are some sort of sequence number.)
+Check the checkbox next to the feature and click Next a few times, accepting the license, etc. 
+You will be asked to allow Eclipse to install unsigned code, which you must allow.
+Put it through its paces. ;-)
+
+E. Deploy
+Copy (SFTP) the entire contents of the dist directory into the update site at http://lejos.sourceforge.net/tools/eclipse/plugin/nxj/  
+Verify that site.xml can be accessed using http://lejos.sourceforge.net/tools/eclipse/plugin/nxj/site.xml Even though some browsers, like Safari, don't display the xml file correctly, Eclipse will be able to make sense of it as long as it is being correctly served by the web server. (The most common problem here is file permissions.)
+Uninstall the feature/plugin you installed in D. above.
+If necessary, create an update repository pointing to http://lejos.sourceforge.net/tools/eclipse/plugin/nxj/ 
+Install as usual
+A quick test should verify that it was properly installed.

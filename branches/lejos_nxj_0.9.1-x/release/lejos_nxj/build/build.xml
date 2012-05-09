@@ -1,0 +1,104 @@
+<!-- build file for building the os dependent parts of the lejos distribution -->
+<!-- do not change this file -->
+
+<project name="leJOS JNI wrappers" default="all" basedir=".">
+	
+	<!-- Setting up the global properties for the build -->
+	<property name="lejos.dist.root" value="${basedir}/.."/>
+	<property name="lejos.dist.src.jlibnxt" value="${basedir}/libnxt"/>
+	<property name="lejos.dist.lib.pc" value="${lejos.dist.root}/lib/pc"/>
+	<property name="lejos.dist.lib.pc.native" value="${lejos.dist.lib.pc}/native"/>
+	
+    <condition property="jni.include.dir" value="${java.home}/../include">
+		<or>
+			<os name="Linux"/>
+			<os family="windows"/>
+			<os name="SunOS"/>
+		</or>
+	</condition>
+	<condition property="jni.include.dir" value="/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/">
+		<and>
+			<os family="mac"/>
+			<matches pattern="^10\.5.*" string="${os.version}"/>
+		</and>
+	</condition>
+	<condition property="jni.include.dir" value="/Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/">
+		<and>
+			<os family="mac"/>
+			<matches pattern="^10\.4.*" string="${os.version}"/>
+		</and>
+	</condition>
+	<fail unless="jni.include.dir">OS not recognized</fail>
+	
+    <condition property="jni.sys.dir" value="${jni.include.dir}/linux">
+		<os name="Linux"/>
+	</condition>
+    <condition property="jni.sys.dir" value="${jni.include.dir}/win32">
+    	<os family="windows"/>
+	</condition>
+    <condition property="jni.sys.dir" value="${jni.include.dir}/solaris">
+    	<os name="SunOS"/>
+	</condition>
+	<fail unless="jni.sys.dir">OS not recognized</fail>
+	
+	<java outputproperty="osinfo.path" classname="lejos.internal.jni.OSInfo" failonerror="true">
+		<classpath>
+			<fileset dir="${lejos.dist.lib.pc}">
+				<include name="**/*.jar"/>
+			</fileset>
+		</classpath>
+	</java>
+	<property name="lejos.dist.native" value="${lejos.dist.lib.pc.native}/${osinfo.path}"/>
+	
+	<!-- cpptasks task & type def -->
+	<taskdef resource="cpptasks.tasks">
+	  <classpath>
+	    <pathelement location="${basedir}/cpptasks.jar"/>
+	  </classpath>
+	</taskdef>
+	<typedef resource="cpptasks.types">
+	  <classpath>
+	    <pathelement location="${basedir}/cpptasks.jar"/>
+	  </classpath>
+	</typedef>
+
+	<!-- build the os dependent parts of the lejos distribution --> 
+	<target name="all" depends ="jlibnxt" 
+		description="build the os dependent parts of the lejos distribution">
+		<echo message="Done."/>
+	</target>
+
+  	<!-- cleans the os dependent parts of the lejos distribution -->
+	<target name="clean" description="cleans the os dependent parts of the lejos distribution">
+	    <!-- move existing files to *.bak -->
+		<echo message="saving existing files to .bak files"/>
+		<move todir="${lejos.dist.native}">
+			<fileset dir="${lejos.dist.native}">
+				<include name="*.so"/>
+				<include name="*.dylib"/>
+		      	<exclude name="*.bak"/>
+		    </fileset>
+		    <mapper type="glob" from="*" to="*.bak"/>
+		</move>
+  	</target>
+  	
+	<!-- builds libnxt -->
+  	<target name="jlibnxt" description="builds libnxt">
+  		<ant antfile="${lejos.dist.src.jlibnxt}/build.xml" dir="${lejos.dist.src.jlibnxt}" inheritall="true" />
+		<copy todir="${lejos.dist.native}">
+      		<fileset dir="${lejos.dist.src.jlibnxt}">
+      			<include name="libjlibnxt.so"/>
+      			<include name="libjlibnxt.dylib"/>
+      		</fileset>
+		</copy>		
+  		<chmod perm="755">
+  			<fileset dir="${lejos.dist.native}">
+      			<include name="libjlibnxt.so"/>
+      			<include name="libjlibnxt.dylib"/>
+  	      	</fileset>
+  		</chmod>
+  		<echo>
+*** SUCCESS: jlibnxt was installed correctly ***
+  		</echo>
+  	</target>
+</project>

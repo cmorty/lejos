@@ -1,0 +1,52 @@
+For running the ant based release utilities successfully, you will need to have
+
+- an ANT installation (at least 1.6)
+- all projects downloaded from SVN and updated
+
+To create a new release of leJOS NXJ in Eclipse on Linux, please perform the following steps:
+
+1. Update the following files:
+	release/lejos_nxj/README.txt
+	release/lejos_nxj/README.html
+	release/lejos_nxj/RELEASENOTES
+	and other documentation for the release
+2. Update the following files with the current version number:
+	nxtvm/platform/nxt/version.mak
+	startup/src/lejos/nxt/startup/Config.java
+	release/build.properties
+	installjammer/leJOS_NXJ_Installer.iss
+4. Ensure you have the latest firmware and the lated native libraries. The release/build.xml does
+   not build them. The files are located at
+	pccomms/native/...
+	snapshot/bin/lejos_nxt_rom.bin
+6. Test that all the samples and pcsamples run successfully.
+9. Make sure that the Linux ant build file in the release/lejos_nxj/build is uptodate and works.
+10. Check the the API docs builds without errors or warnings.
+12. Ensure that the release/build.xml script is up to date
+13. Build and test the Eclipse plugin - see EclipsePlugin.HOWTO
+14. Build the Netbeans plugin using the latest version  of the org.lejos.example project.
+    Make sure you generate a new .nbm file in the build directory.
+15. Update this file if there are any changes in the way the release is built
+16. Right click on release/build.xml and select "Run As", "Ant Build"
+17. After the ant script has finished, the packed distributions for Linux and Windows may be found
+    inside the folder release/dist.
+
+18. Install Inno Setup (unicode version) and open/compile installjammer/leJOS_NXJ_Installer.iss
+19. After that, the installer can be found at installjammer/leJOS_NXJ_<version>_win32_setup.exe
+
+There are other steps that are needed after this to release the product:
+
+B. Update the tutorial in the tutorial project. Ensure that all the HTML is validated. Copy the tutorial to
+   htdocs/nxt/nxj/tutorial. Rename the old version first, by appending its version number.
+C. Test the release Windows installer and other distribution on as many operating systems as possible. Ensure
+   that the instructions in README.hml and in the tutorial work for this release.
+D. Release the Windows installer and zip file versions, and the Linux/MAC OSX distribution using the sourceforge
+   File Release System.
+E. Copy the classes api docs to htdocs/nxt/nxj/api on the sourceforge web site.
+F. Copy the pc api docs to htdocs/nxt/nxj/pc/api on the sourceforge web site.
+G. Copy the contents of the dist folder in the org.lejos.nxt.ldt.update-site project to htdocs/tools/eclipse/plugin/nxj.
+   Rename the old version first by appending its version number.
+H. Announce the release, tutorial and Eclipse plugin on the lejos web site with new items.
+I. Announce the release on the forums.
+J. Create tags with the release number in SVN for all affected projects.
+    

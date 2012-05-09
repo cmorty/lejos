@@ -1,0 +1,22 @@
+Notes:
+- pushd/popd
+	according to docs on the net: available in Win2k and up
+	test result: actually works on WinNT 4 SP6
+- set "name=val"
+	works on WinNT and up
+	creates variable "name with value val" on Win9x/ME
+- %cd% variable
+	exists on Win2k and up
+	alternative for WinNT 4: for /F "delims=" %%i in ('cd') do set "var=%%i"
+- %OS% variable
+	exists on WinNT and up
+	and has value "Windows_NT"
+- %~dp0 variable
+	exists on WinNT and up
+	contains a valid path to the current batch file
+- %0 variable
+	does NOT contain a valid path to the current batch file
+- goto :eof
+	works on WinNT and up
+	1) return statement for "call :label"
+	2) jumps to end of file	(can be used on Win9x/ME if eof label is declared)

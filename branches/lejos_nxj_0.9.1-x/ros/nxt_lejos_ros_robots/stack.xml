@@ -1,0 +1,9 @@
+<stack>
+  <description brief="nxt_lejos_ros_robots">nxt_lejos_ros_robots</description>
+  <author>Maintained by Juan Antonio Brenha Moral</author>
+  <license>BSD</license>  
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/nxt_lejos_ros_robots</url>
+  <depend stack="ros" />
+
+</stack>

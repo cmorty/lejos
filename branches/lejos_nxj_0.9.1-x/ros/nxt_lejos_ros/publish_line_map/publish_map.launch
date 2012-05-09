@@ -1,0 +1,13 @@
+<!--
+NXTLoader is a ROS package included in the stack nxt_lejos_ros which 
+allow ROS developers and LeJOS developers to manage your NXT brick
+from a ROS Environment.
+-->
+<launch>
+	<node pkg="rosjava_bootstrap" 
+	type="run.py" 
+	args="publish_line_map org.lejos.ros.nodes.PublishMap" 
+	name="publish_line_map" 
+	output="screen" />     
+</launch>
+
