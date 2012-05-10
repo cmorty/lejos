@@ -7,7 +7,7 @@
 #endif
 
 #ifndef MyAppVersion
-  #define MyAppVersion "0.9.1beta"
+  #define MyAppVersion "0.9.1beta-2"
 #endif
 #define MinFantomVersion "1,1,3"
 
@@ -89,8 +89,6 @@ Name: "{group}\Uninstall LeJOS"; Filename: "{uninstallexe}"
 ; Delete LEJOS_NXT_JAVA_HOME and NXJ_HOME value for current user and set new value globally
 Root: HKCU; Subkey: "Environment"; ValueType: none; ValueName: "NXJ_HOME"; Flags: deletevalue
 Root: HKCU; Subkey: "Environment"; ValueType: none; ValueName: "LEJOS_NXT_JAVA_HOME"; Flags: deletevalue
-Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "NXJ_HOME"; ValueData: "{app}"; Flags: uninsdeletevalue
-Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "LEJOS_NXT_JAVA_HOME"; ValueData: "{code:JDKSelect_GetSelection}"; Flags: uninsdeletevalue
 
 [Run]
 ; startNxjFlash.bat will terminate immediately, and hence we don't use the nowait flag.
@@ -116,8 +114,22 @@ WorkingDir: "{app}"; Filename: "{app}\startNxjFlash.bat"; Parameters: "{code:JDK
   begin
     if CurStep = ssPostInstall then
     begin
-      GetEnvVar('Path', Data);
-      SetEnvVar('Path', ModPath_Append(Data, ExpandConstant('{app}\bin')));
+      try
+        GetEnvVar('Path', Data);
+        SetExpEnvVar('Path', ModPath_Append(Data, ExpandConstant('{app}\bin')));
+      except
+        ShowExceptionMessage;
+      end;
+      try
+        SetEnvVar('NXJ_HOME', ExpandConstant('{app}'));
+      except
+        ShowExceptionMessage;
+      end;
+      try
+        SetEnvVar('LEJOS_NXT_JAVA_HOME', JDKSelect_GetSelection('dummy param'));
+      except
+        ShowExceptionMessage;
+      end;
     end;   
   end;
   
@@ -127,8 +139,22 @@ WorkingDir: "{app}"; Filename: "{app}\startNxjFlash.bat"; Parameters: "{code:JDK
   begin
     if CurUninstallStep = usUninstall then
     begin
-      GetEnvVar('Path', Data);
-      SetEnvVar('Path', ModPath_Delete(Data, ExpandConstant('{app}\bin')));
+      try
+        GetEnvVar('Path', Data);
+        SetEnvVar('Path', ModPath_Delete(Data, ExpandConstant('{app}\bin')));
+      except
+        ShowExceptionMessage;
+      end;
+      try
+        DeleteEnvVar('NXJ_HOME');
+      except
+        ShowExceptionMessage;
+      end;
+      try
+        DeleteEnvVar('LEJOS_NXT_JAVA_HOME');
+      except
+        ShowExceptionMessage;
+      end;
     end;   
   end;
   
