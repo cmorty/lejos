@@ -159,7 +159,7 @@ int throw_exception (Throwable *exception)
   			         methodNo,
 			         tempCurrentOffset))
       {
-        call_exception_handler(exception, methodNo, tempCurrentOffset);
+        return call_exception_handler(exception, methodNo, tempCurrentOffset);
       }
     }
     return EXEC_CONTINUE;
