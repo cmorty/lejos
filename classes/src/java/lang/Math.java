@@ -232,9 +232,9 @@ public final class Math
 	 */
 	public static double max(double a, double b)
 	{
-		if (a < b)
-			return a;
 		if (a > b)
+			return a;
+		if (a < b)
 			return b;
 		// early out for non-zero values, NaN falls through
 		if (a == b && a != 0)
@@ -244,7 +244,7 @@ public final class Math
 		long ra = Double.doubleToRawLongBits(a);
 		long rb = Double.doubleToRawLongBits(b);
 		
-		if (ra > rb)
+		if (ra < rb)
 			return b;
 		return a;
 	}
@@ -257,19 +257,15 @@ public final class Math
 	 */
 	public static double floor(double a)
 	{
-		// no rounding required, otherwise casting to long is safe
-		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
+		if (a > 0.0)
+			return (a > ROUND_DOUBLE_MAX) ? a : (double)(long)a;
+		
+		if (a < ROUND_DOUBLE_MIN)
 			return a;
-
+			
+		// if b==a, there were no decimal places (also handles negative zero)
 		double b = (long) a;
-
-		// if numbers are equal, there were no decimal places
-		// also handles negative zero
-		if (b == a)
-			return a;
-
-		// round down or strip
-		return b > 0.0 ? b : (b - 1.0);
+		return b == a ? a : (b - 1.0);
 	}
 
 	/**
@@ -278,19 +274,16 @@ public final class Math
 	 */
 	public static double ceil(double a)
 	{
-		// no rounding required, otherwise casting to long is safe
-		if (a < ROUND_DOUBLE_MIN || a > ROUND_DOUBLE_MAX)
+		if (a < 0.0)
+			// using double negative such that a==-0.3 yields negative zero
+			return (a < ROUND_DOUBLE_MIN) ? a : -(double)(long)(-a);
+		
+		if (a > ROUND_DOUBLE_MAX)
 			return a;
 
-		double b = (long) a;
-
-		// if numbers are equal, there were no decimal places
-		// also handles negative zero
-		if (b == a)
-			return a;
-
-		// round up or strip
-		return b < 0.0 ? b : (b + 1.0); 
+		// if b==a, there were no decimal places (also handles negative zero)
+		double b = (long)a;
+		return (b == a) ? a : (b + 1.0); 
 	}
 
 	/**
@@ -298,7 +291,7 @@ public final class Math
 	 */
 	public static int round(float a)
 	{
-		// no rounding required
+		// check whether rounding required
 		if (a < ROUND_FLOAT_MIN || a > ROUND_FLOAT_MAX)
 			return (int) a;
 
