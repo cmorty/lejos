@@ -2,6 +2,7 @@
 const
   CRLF = #13#10;
   CRLF2 = #13#10#13#10;
+  SessionEnvKey = 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment';
 
   function ConcatPath(const Path1, Path2: String): String;
   begin
@@ -13,28 +14,43 @@ const
 
   function GetEnvVar(const Name: String; var Data: String): Boolean;
   begin
-    if not RegValueExists(HKLM,
-      'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
-      Name) then
+    if not RegValueExists(HKLM, SessionEnvKey, Name) then
     begin
+      Log('GetEnvVar: '+Name+' does not exist');
       Result := false;
       Data := '';
       Exit;
     end;
-    if not RegQueryStringValue(HKLM,
-      'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
-      Name, Data) then
-      RaiseException('Failed to determine old value of '
+    if not RegQueryStringValue(HKLM, SessionEnvKey, Name, Data) then
+      RaiseException('Failed to determine value of '
         + Name + ' environment variable');
+    Log('GetEnvVar: '+Name+' is equal to '+Data);
     Result := true;
   end;
   
   procedure SetEnvVar(const Name: String; Data: String);
   begin
-    if not RegWriteStringValue(HKLM,
-      'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
-      Name, Data) then
+    Log('SetEnvVar: '+Name+':='+Data);
+    if not RegWriteStringValue(HKLM, SessionEnvKey, Name, Data) then
       RaiseException('Failed to set value of '+Name+' environment variable');
+  end;
+  procedure SetExpEnvVar(const Name: String; Data: String);
+  begin
+    Log('SetExpEnvVar: '+Name+':='+Data);
+    if not RegWriteExpandStringValue(HKLM, SessionEnvKey, Name, Data) then
+      RaiseException('Failed to set value of '+Name+' environment variable');
+  end;
+
+  procedure DeleteEnvVar(const Name: String);
+  begin
+    if not RegValueExists(HKLM, SessionEnvKey, Name) then
+    begin
+      Log('DeleteEnvVar: '+Name+' does not exist');
+      Exit;
+    end;
+    Log('DeleteEnvVar: deleting '+Name);
+    if not RegDeleteValue(HKLM, SessionEnvKey, Name) then
+      RaiseException('Failed to delete environment variable '+Name);
   end;
   
   procedure OpenWebPage(const URL: String);
