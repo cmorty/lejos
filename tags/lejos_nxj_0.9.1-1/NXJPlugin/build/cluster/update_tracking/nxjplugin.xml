@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module codename="nxjplugin">
+    <module_version install_time="1305489320595" last="true" origin="installer" specification_version="1.0">
+        <file crc="1569443929" name="config/Modules/nxjplugin.xml"/>
+        <file crc="912080874" name="modules/nxjplugin.jar"/>
+    </module_version>
+</module>

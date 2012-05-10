@@ -1,0 +1,191 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>Writing your own protocol stack</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="rcxcomm.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../overview/toc.html#communication" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="remotecontrol.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1">
+            <b>Trail</b>: Communication<br>
+            <b>Lesson</b>: Writing you own protocol stack
+        </font>
+
+        <!-- headline -->
+        <h1>Writing your own protocol stack</h1>
+        <p>
+        <em><b>by <a href="http://homepage.ntlworld.com/lawrie.griffiths/">Lawrie Griffiths</a></b></em>
+        <p>
+
+In lejos 2.0 support for writing your own comms protocol stacks has be added.
+<p>
+The protocol stacks are based on the abstract <code>josx.rcxcomm.PacketHandler</code>
+interface. All packet handlers must implement three methods:
+<ul>
+    <li>public boolean sendPacket(byte [] packet, int len);</li>
+    <li>public int receivePacket(byte [] packet);</li>
+    <li>public boolean isPacketAvailable();</li>
+</ul>
+
+Protocol stacks are written in layers. The lowest layer deals with recognising, 
+the start and length of a packet and reading in complete packets. On the PC, it 
+will normally use the Tower class. On the RCX, it can use the LLC or Serial classes.
+It should skip bytes that are not start of packets, to resynchronize after errors.
+<p>
+If the stack is going to support acknowledgement of the receipt of packets (acks) 
+then the lowest handler should also implement the methods:
+<ul>
+    <li>public int receiveAck(byte [] packet);</li>
+    <li>public boolean isAckAvailable();</li>
+</ul>
+
+A lowest level protocol handler for a reliable stack should support independent
+streams of data in both directions, so out of sync conditions can be recovered from.
+It should therefore read in and buffer an ack or a packet as soon as it detects one,
+and must be able to read in an ack when expecting a data packet and vice versa.
+<p>
+On the PC, the method
+<pre><code>
+    public void close();
+</code></pre>
+should be supported to close the Tower.
+<p>
+Also, on the PC the method
+<pre><code>
+    public setListen(boolean listen);
+</code></pre>
+<p>
+should be supported and when listen is true, keep-alive messages should be sent to
+a serial tower at least every 3 seconds. Doing this in <code>isPacketAvailable()</code> and 
+<code>isAckAvailable()</code> will normally suffice.
+<p>
+The next higher level layer should support integrity and optionally reliable delivery.
+Integrity will normally be done by checksums which should have been read in as part
+of the packet. Reliable delivery involves using the lower level handler to send
+and receive acks, and checking sequence numbers. If each packet is immediately
+acknowledged a one-bit sequence number should suffice. Integrity and reliable
+delivery could be separated into separate layers, but it is normally more efficient
+to do this in one layer.
+<p>
+The constructor of a PacketHandler is passed the lower level packet handler. This is
+then available in the protected lowerHandler variable. The lowest level handler has no
+parameters.
+<p>
+For example:
+<p>
+<pre><code>
+    PacketHandler packetHandler = 
+            (PacketHandler) new IntegrityPacketHandler(
+                (PacketHandler) new LowestPacketHandler());
+</code></pre>
+<p>
+Extra levels of packet handlers can be added, for example an addressing layer.
+Addressing packet handlers implement point-to-point connections between two ports.
+They need to support
+<p>
+<pre><code>
+    public void open(byte source, byte destination);
+</code></pre>
+<p>
+An example of a three level stack is:
+<p>
+<pre><code>
+    PacketHandler packetHandler =
+          (PacketHandler) AddressingPacketHandler( 
+            (PacketHandler) new IntegrityPacketHandler(
+                (PacketHandler) new LowestPacketHandler()));
+</code></pre>
+<p>
+Streams that implement java.io.InputStream and java.io.OutputStream can be
+implemented using protocol stacks by use of the abstract port interface <code>RCXAbstractPort</code>.
+<p>
+To create an RCX Port class that uses aPacketHandler protocol stack, you extend
+RCXAbstractPort and call <code>super()</code> in the constructor and pass it the packet handler, 
+for example:
+<p>
+<pre><code>
+    public class MyRCXPort extends RCXAbstractPort {
+      public MyRCXPort() throws IOException {
+        super((PacketHandler) new IntegrityPacketHandler(
+                (PacketHandler) new LowestPacketHandler()));
+      }
+    }
+</code></pre>
+<p>
+If the port is to support addressing you need pass the constructor the source
+and destination ports and call the packet handlers open method, for example:
+<p>
+<pre><code>
+    public class MyRCXAddressingPort extends RCXAbstractPort {
+      public MyRCXAddressingPort(byte source, byte dest) throws IOException {
+        super((PacketHandler) new AddressingHandler(
+                               (PacketHandler) new IntegrityHandler(
+                                 (PacketHandler) new LowestHandler(true)));
+        packetHandler.open(source, dest);
+      }
+    }
+</code></pre>
+<p>
+
+The constructor for <code>LowestHandler</code> is assumed here to have a parameter that tells
+it whether addressing is in use, as this might affect the format of the packet.
+<p>             
+Four example RCX Ports are provided as part of the josx.rcxcomm package with
+lejos 2.0. They are: 
+<ul>
+    <li>RCXPort - supports reliable streams using LLC</li>
+    <li>RCXF7Port - supports not so reliable streams using the F7 Lego firmware opcode</li>
+    <li>RCXLNPPort - uses the LegOS Networking Protocol Integrity Layer</li>
+    <li>RCXLNPAddrPort - supports point-to-point connections using the LNP Addressing protocol layer</li> 
+</ul>
+
+        <hr>
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="rcxcomm.html" target="_top"><img src="../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../overview/toc.html#communication" target="_top"><img src="../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="remotecontrol.html" target="_top"><img src="../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>

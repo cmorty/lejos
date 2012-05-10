@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="resource"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/pccomms"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/pctools"/>
+	<classpathentry exported="true" kind="lib" path="3rdparty/lib/jcommon.jar" sourcepath="3rdparty/lib/jcommon-src.zip"/>
+	<classpathentry exported="true" kind="lib" path="3rdparty/lib/jfreechart.jar" sourcepath="3rdparty/lib/jfreechart-src.zip"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

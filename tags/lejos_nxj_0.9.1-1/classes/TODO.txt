@@ -1,0 +1,21 @@
+- compare JDK and nxtvm semantics for casting floats to int or doubles to long
+	expected results:
+		f > Integer.MAX_VALUE  =>  (int)f == Integer.MAX_VALUE (including f == +infinity) 
+		f < Integer.MIN_VALUE  =>  (int)f == Integer.MIN_VALUE (including f == -infinity)
+		f == NaN  =>  (int)f == 0
+		
+		d > Long.MAX_VALUE  =>  (int)d == Long.MAX_VALUE (including d == +infinity) 
+		d < Long.MIN_VALUE  =>  (int)d == Long.MIN_VALUE (including d == -infinity)
+		d == NaN  =>  (int)d == 0
+
+- JUnit test: StringBuffers/Builders with initial sizes <= 2 used to loop infinitely
+- JUnit test: Math.abs(-0.0) == Math.abs(+0.0) == +0.0
+- JUnit test: Float.toString() must handle NaN, +/-Infinity and +/-0.0 correctly
+- JUnit test: sqrt must return -0.0 for x=-0.0
+- JUnit test: Double.parseDouble must handle "NaN" and "Inifinity" strings (with +/-)
+- JUnit test: using static final objects from interfaces with static initializer
+(used to throw NoSuchMethod in 0.8.5)
+- JUnit test: a <= b and the like
+(used to be a problem, if a=Integer.MIN_VALUE and b=30)
+
+

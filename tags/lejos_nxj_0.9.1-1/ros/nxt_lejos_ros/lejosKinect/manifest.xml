@@ -1,0 +1,40 @@
+<package>
+	<description brief="NXTLoader">
+		NXTLoader
+	</description>
+	<author>Juan Antonio Brenha Moral</author>
+	<license>BSD</license>
+	<review status="unreviewed" notes=""/>
+	<url>http://ros.org/wiki/nxt_lejos_ros</url>
+
+	<depend package="rosjava" />
+	<depend package="std_msgs" />
+	<depend package="sensor_msgs" />
+
+	<export>
+	    	<rosjava-src location="src" /> 
+	    	<rosjava-pathelement location="target/" groupId="org.lejos.ros" artifactId="org.lejos.ros.nodes.lejosKinect" version="0.0.1" built="true" />
+
+			<!-- EXTERNAL LIBRARIES -->
+			<!-- 
+			README:
+			It is necessary to define the absolute path where 
+			you have installed the following libraries:
+			
+			+ javacv
+			+ javacpp
+			+ javacv-linux-x86
+			
+			<rosjava-pathelement location="<ABSOLUTE PATH>/javacv.jar" />
+	    	<rosjava-pathelement location="<ABSOLUTE PATH>/javacpp.jar" />
+	    	<rosjava-pathelement location="<ABSOLUTE PATH>/javacv-linux-x86.jar" />
+			
+			 -->
+			<rosjava-pathelement location="/home/jabrena/ros3/workspace/nxt_lejos_ros/lejosKinect/lib/javacv.jar" />
+	    	<rosjava-pathelement location="/home/jabrena/ros3/workspace/nxt_lejos_ros/lejosKinect/lib/javacpp.jar" />
+	    	<rosjava-pathelement location="/home/jabrena/ros3/workspace/nxt_lejos_ros/lejosKinect/lib/javacv-linux-x86.jar" />	
+	    </export>
+
+</package>
+
+

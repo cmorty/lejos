@@ -1,0 +1,134 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>Controlling the Hardware: Motors</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="lcd.html" target="_top"><img src="../../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../toc.html#hardware" target="_top"><img src="../../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="sensors.html" target="_top"><img src="../../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="../index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1">
+            <b>Trail</b>: Essential leJOS classes<br>
+            <b>Lesson</b>: Controlling the Hardware
+        </font>
+
+        <!-- headline -->
+        <h1>Controlling the Hardware: Motors</h1>
+        <p>
+
+        <!-- intro -->
+        <img src="../../images/actuators.gif">
+        <br clear="all">
+        The static <code>Motor</code> class is used to control actuators, i.e., devices connected to
+        one of the three black output ports mounted beneath the RCX's display:
+        <br>
+        Most of its methods are intented to be used with actual LEGO&reg; motors, but may also be used in 
+        connection with, say, a light bulb.
+        <br>
+        <img src="../../images/rcx_motors.jpg">
+        <br clear="all">
+        
+        <!-- access -->
+        Not very surprisingly, the three ports are implemented as static fields of the <code>Motor</code> 
+        class:
+        <ul>
+            <li>Motor.A</li>
+            <li>Motor.B</li>
+            <li>Motor.C</li>
+        </ul>
+        Hence a typical call would be 
+        <pre><code>
+            Motor.A.forward();
+        </code></pre>
+
+        <!-- control -->
+        Controlling one of these motors is rather simple:
+        <ul>
+            <li>public static void forward()</li>
+            <li>public static void backward()</li>
+            <li>public static void reverseDirection()</li>
+            <li>public static void flt()</li>
+            <li>public static void stop()</li>
+        </ul>
+        for forcing the motor turning clock- or counterclockwise, floating (which means that the motor is 
+        idling) or stopping it,
+        <ul>
+            <li>public static void setPower(int aPower)</li>
+        </ul>
+        for setting the motor power from 0 to 7 (which has only a noticeable effect on the motor 
+        when it's heavy loaded!)<br>
+        and the associated information methods
+        <ul>
+            <li>public static boolean isForward()</li>
+            <li>public static boolean isBackward()</li>
+            <li>public static boolean isFloating()</li>
+            <li>public static boolean isMoving()</li>
+            <li>public static boolean isStopped()</li>
+        </ul>
+        and <code>public static char getID()</code>, which delivers 'A', 'B' or 'C'.
+        <p>
+
+        <span class="remark">Note that the actual direction the motor is turning to         
+        depends on the way the connectors are mounted on the ports and the motors, resp.
+        - so if your robot is running backwards when it shouldn't it may suffice to turn
+        one of the connectors for 90°.
+        </span>
+        <p>
+
+        <h2>A complete example which uses the Motor class</h2>
+        is <b>Rotator.java</b> which may be found in the <code>examples/rotator</code> 
+        section of the leJOS tree.
+
+        <h2>The Motor API</h2>
+        may be found <a href="http://lejos.sourceforge.net/apidocs/josx/platform/rcx/Motor.html"
+        target="_top">here</a>.
+
+        <hr>
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="lcd.html" target="_top"><img src="../../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../toc.html#hardware" target="_top"><img src="../../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="sensors.html" target="_top"><img src="../../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="../index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+<package>
+	<description brief="roslejos">
+     roslejos
+	</description>
+	<author>Juan Antonio Brenha Moral</author>
+	<license>BSD</license>
+	<review status="unreviewed" notes=""/>
+	<url>http://ros.org/wiki/roslejos</url>
+
+	<depend package="rosjava" />
+	<depend package="std_msgs" />
+
+	<export>
+    	<rosjava-src location="src" /> 
+    	<rosjava-pathelement location="target/" groupId="org.lejos.ros" artifactId="org.lejos.ros.helloworld" version="0.0.1" built="true" />
+    	<rosjava-pathelement location="/usr/local/lejos/lib/pc/pccomm.jar" />
+	</export>
+
+</package>
+
+

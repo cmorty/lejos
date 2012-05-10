@@ -1,0 +1,200 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>lejos</groupId>
+        <artifactId>lejos-parent</artifactId>
+        <version>0.9-SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>junit</artifactId>
+
+    <name>Lejos JUnit</name>
+    <description>Unit Test library for Lejos based on JUnit for running tests on the NXT hardware.</description>
+
+    <scm>
+        <connection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/org.lejos.${project.artifactId}</connection>
+        <developerConnection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/org.lejos.${project.artifactId}</developerConnection>
+    </scm>
+    <url>http://lejos.sourceforge.net/</url>
+    
+    <packaging>jar</packaging>
+
+    <build>
+        <sourceDirectory>src/main</sourceDirectory>
+        <testSourceDirectory>src/test</testSourceDirectory>
+
+        <plugins>
+            <!-- add a second dir containing unit test sources.
+             This is messy, and these tests should be moved to 'classes-test' project instead. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/classes.test</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <!-- For maven lifecycle order, see: http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
+
+                    <!-- create empty nirvana dir before compile -->
+                    <execution>
+                        <id>pre-compile</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${nirvana.dir}" />
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <!-- delete empty nirvana dir before package -->
+                    <execution>
+                        <id>post-compile</id>
+                        <phase>prepare-package</phase> <!-- keep dir around for unit testing with junit-lejos. -->
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete dir="${nirvana.dir}" />
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <!-- run tests with junit-lejos classes in J2SE vm (not on NXT hardware). A small sanity check. -->
+                    <execution>
+                        <id>test</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <property name="test_classpath" refid="maven.test.classpath"/>
+                                <echo>test_classpath: ${test_classpath}}</echo>
+
+                                        <!-- classname="junit.examples.AllTests" -->
+                                <java   classname="junit.tests.AllTests"
+                                        fork="true"
+                                        failonerror="true"
+                                        >
+
+                                    <!-- uncleared bootclasspath means we are not using lejos core runtime classes.
+                                    Even so, running at all provides a small sanity check.
+                                    <bootclasspath>
+                                        <pathelement location="${nirvana.dir}" />
+                                    </bootclasspath>
+                                    -->
+
+                                    <!--<jvmarg value="-extdirs"/>-->
+                                    <!--<jvmarg path="${nirvana.dir}" />-->
+                                    <sysproperty key="java.ext.dirs" path="${nirvana.dir}"/>
+
+                                    <classpath>
+                                        <pathelement path="${test_classpath}"/>
+                                    </classpath>
+
+                                </java>
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>test-classes.test</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <property name="test_classpath" refid="maven.test.classpath"/>
+                                <echo>test_classpath: ${test_classpath}}</echo>
+
+                                <java   classname="test.java.lang.AllTests"
+                                        fork="true"
+                                        failonerror="true"
+                                        >
+
+                                    <!-- uncleared bootclasspath means we are not using lejos core runtime classes.
+                                    Even so, running at all provides a small sanity check.
+                                    <bootclasspath>
+                                        <pathelement location="${nirvana.dir}" />
+                                    </bootclasspath>
+                                    -->
+
+                                    <!--<jvmarg value="-extdirs"/>-->
+                                    <!--<jvmarg path="${nirvana.dir}" />-->
+                                    <sysproperty key="java.ext.dirs" path="${nirvana.dir}"/>
+
+                                    <classpath>
+                                        <pathelement path="${test_classpath}"/>
+                                    </classpath>
+
+                                </java>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!--
+                        All that is need to kick any class from Sun's JDK out of the classpath.
+                        Check the search paths using verbose="true" that they really don't contain
+                        anything from the JDK, Ant, etc.
+                        There doesn't seem to be a clean way of having an empty (boot)classpath.
+                        javac keeps adding "." or even worse "" to the path. So i'm adding the
+                        nirvana path to the classpath.
+                    -->
+                    <compilerArguments>
+                        <bootclasspath>${nirvana.dir}</bootclasspath>
+                        <extdirs>${nirvana.dir}</extdirs>
+                    </compilerArguments>
+
+                    <optimize>true</optimize>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- run nothing with the regular junit/surefire, would fail due missing reflection methods in lejos junit lib-->
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+        
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>lejos</groupId>
+            <artifactId>classes</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>
