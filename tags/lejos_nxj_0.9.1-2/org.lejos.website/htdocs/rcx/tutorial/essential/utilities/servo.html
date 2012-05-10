@@ -1,0 +1,100 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+    <head>
+        <title>Utilities: Servo</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta NAME="Author" CONTENT="Matthias Paul Scholz">
+        <meta name="expires" content="0">
+        <link rel="stylesheet" type="text/css" href="../../tutorial.css">
+    </head>
+
+    <body>
+
+        <!-- navigation header -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="battery.html" target="_top"><img src="../../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../toc.html#utilities" target="_top"><img src="../../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="timer.html" target="_top"><img src="../../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="../index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation header -->
+        <hr>
+
+        <font size="-1">
+            <b>Trail</b>: Essential leJOS classes<br>
+            <b>Lesson</b>: Utilities
+        </font>
+
+        <!-- headline -->
+        <h1>Utilities: Servo</h1>
+
+        <!-- overview -->
+        The <code>josx.platform.rcx.Servo</code> class is a utility to encapsulate a common task of 
+        navigation: to rotate your robot to a given position.
+
+        <p>
+        <!-- methods -->
+        The class uses a rotation sensor in connection with a motor, so an instance is constructed by 
+        <pre><code>
+            public Servo(Sensor aSensor,Motor aMotor,int aSlack)
+        <code></pre>
+        where <code>aSlack</code> is the amount of deviation accepted when rotating.
+        
+        <p>
+        To rotate,  
+        <pre><code>
+            public boolean rotateTo(int aPosition)
+        <code></pre>
+        is used: the robot will rotate to the given position (+/- the slack). 
+        The value depends on the gearing between the motor and the sensor 
+        as well as between the motor and the wheels.
+        <br>
+        The method returns false, if the robot is on the given position already, else true.
+
+        <p>
+        <span class="remark">Note that <code>rotateTo</code> returns immediately: it doesn't block until the
+        robot has in fact rotated to the desired position.
+        </span>
+
+        <!-- api -->
+        <h2>The Servo API</h2>
+        may be found <a href="http://lejos.sourceforge.net/apidocs/josx/platform/rcx/Servo.html"
+        target="_top">here</a>.
+
+
+        <hr>
+        <!-- navigation footer -->
+        <b><font SIZE="-1">The leJOS Tutorial</font></b>
+        <br>
+        <table width="550">
+            <tr>
+                <td align="left" valign="center">
+                    <a href="battery.html" target="_top"><img src="../../images/previous.gif" align="center" border="0" alt="Previous Page"></a>
+                    <a href="../toc.html#utilities" target="_top"><img src="../../images/toc.gif" align="center" border="0" alt="Lesson Contents"></a>
+                    <a href="timer.html" target="_top"><img src="../../images/next.gif" align="center" border="0" alt="Next Page"></a></td>
+
+                <td align="center" valign="center">
+                    <font size="-1">
+                    <a href="../../index.html" target="_top">Start of Tutorial</a>
+                    &gt;
+                    <a href="../index.html" target="_top">Start of Trail</a>
+                    </font>
+                </td>
+            </tr>
+        </table>
+        <!-- end navigation footer -->
+</body>
+
+</html>

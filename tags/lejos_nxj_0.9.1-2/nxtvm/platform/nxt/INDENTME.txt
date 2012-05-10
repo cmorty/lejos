@@ -1,0 +1,5 @@
+
+The parameters used to indent are:
+
+indent -bad -bap -bbb -sc -br -ce -cdw -npcs -cs -nprs -di2 -nbc -psl -T U8 \
+-T S8 -T U16 -T S16 -T U32 -T S32 -brs -i2 -lp -ppi2 --line-length78 

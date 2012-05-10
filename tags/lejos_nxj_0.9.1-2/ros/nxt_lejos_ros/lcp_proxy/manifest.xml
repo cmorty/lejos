@@ -1,0 +1,32 @@
+<package>
+  <description brief="lcp_proxy">
+
+     lcp_proxy
+
+  </description>
+  <author>lawrie</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/lcp_proxy</url>
+  <depend package="rosjava"/>
+  <depend package="rosjava" />
+  <depend package="std_msgs" />
+  <depend package="sensor_msgs" />
+  <depend package="geometry_msgs" />
+  <depend package="nav_msgs" />
+  <depend package="nxt_msgs" />
+  <depend package="nxt_lejos_ros_msgs" />
+  <depend package="turtlesim" />
+  <depend package="tf" />
+
+  <export>
+	    <rosjava-src location="src" /> 
+	   	<rosjava-pathelement location="target/" groupId="org.lejos.ros" artifactId="org.lejos.ros.nodes.LCPProxy" version="0.0.1" built="true" />
+		<rosjava-pathelement location="build/" built="true" />
+    	<rosjava-pathelement location="/home/lawrie/workspace/snapshot/lib/pc/pccomm.jar" />
+     	<rosjava-pathelement location="/home/lawrie/workspace/snapshot/lib/pc/3rdparty/bluecove-gpl.jar" />
+    	<rosjava-pathelement location="/home/lawrie/workspace/snapshot/lib/pc/3rdparty/bluecove.jar" />	    	<rosjava-pathelement location="/home/lawrie/ros_workspace/nxt_lejos_ros/NXTLoader/lib/yamlbeans-1.06.jar" />
+  </export>
+</package>
+
+

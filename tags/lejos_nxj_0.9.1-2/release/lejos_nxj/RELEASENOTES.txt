@@ -1,0 +1,1315 @@
+leJOS NXJ 0.9.1 beta
+--------------------
+Starting with 0.9.1, the Netbeans plug-in is not shipped with leJOS anymore.
+We now focus on the leJOS plug-in for Eclipse.
+
+Lawrie Griffiths and Juan Antonio Brenha Moral:
+- Added support for loading line maps from SVG files
+ 
+Lawrie Griffiths:
+- Support for Dexter Industries pressure sensors
+- Made Socket and ServerSocket constructors standard
+- Added LCP commands for remote setting of menu settings
+- Support for NXT system settings in nxjcontrol
+- Added support for LCP messageWrite command (as used by the Enchanting project)
+- Removed singleton from NXTCommand and added NXTComm object on the constructor.
+- Added partial support for XML Streams (javax.xml.stream and javax.xml.stream.events).
+- Added NXTNavigationModel and related classes to support transmitting navigation events to 
+  and from mapping applications on the PC. 
+- Added PCNavigationModel, NavigationPanel, MapPanel and related classes to pccomms to support
+  mapping applications.
+- Tidied up the navigation classes and fixed various bugs
+- Added a new tool, NXJMapCommand, that allows maps to be loaded and remote execution of navigation
+  methods, including path finding, localization, etc.
+- Added various mapping applications to pcsamples
+- Added MapCommand and MCLCommand samples which are used by NXJMapCommand and PC-based map applications.
+- Added support for HiTechnic Magnetic sensor.
+- Added Button and LCD emulation to pccomms
+
+Andy Shaw:
+- I2C fixes
+- Fixes for VM class
+- Enhancements to RS485 code and added cleanup of UART code 
+- less RAM usage by moving some firmware code from RAM to ROM
+- Added support for InterruptedException to event code
+- New exception handler and shutdown hook code
+- Power consumption of NXT reduced when idle
+- Fixed bug in stall detection
+- Added I2C clock stretching support in high speed mode
+
+Sven Koehler:
+- New installer (Windows only)
+- Windows batch and UNIX shell scripts ignore NXJ_HOME 
+- Windows batch and UNIX shell scripts check LEJOS_NXJ_JAVA_HOME or JAVA_HOME
+- Fixed bugs in GPS classes
+- Workaround for ZipException on OS X Leopard
+- Added source attachments to each library for development/debugging
+- removed NXJ_FIND* LCP commands
+- Various changes to the Ant-based build system
+- Ant-based menu for building the samples on the command line
+- Added org.lejos.pcexample project as a template for PC-side leJOS projects
+- Added import for leJOS sample/example projects to Eclipse plug-in
+- Bug fixes for the Eclipse plug-in
+- Support for Java 7 try-with-resource statement
+- Fixed various leaks of OS handles in pccomms
+- Performance enhancement for NXTInputStream
+- Added java.io.BufferedReader
+- Deleted get getDataInput/OutputStream methods from NXTConnector and Socket
+- lejos.nxt.Button: deprecated isPressed, added isDown
+- lejos.nxt.Button: added methods for waiting for certain events
+- Added support for some control characters to LCDOutputStream 
+- Fixed Coordinates conversion to String
+- Additions to java.lang.StringBuffer/Builder
+- Most parts of java.util.Arrays
+
+Brian Bagnall:
+- Added rotateTo() method to Navigator
+- Enhancements of OmniPilot implementation
+- New Ballbot class
+- Added Aswin's drivers for dIMU sensors 
+- Support for dGPS sensor in javax.microedition.location
+
+Aswin Bouwmeester:
+- Contributed drivers for dIMU sensors
+      
+Roger Glassey:
+- Added quickStop method for DifferentialPilot
+- Fixed synchronization issues in OdometryPoseProvider
+- Bug fixes in Navigator class
+- Added LightScanner
+
+Juan Antonio Breña Moral:
+- Fixes for GPS package
+- New sample: LocationPTest
+- Added bubblesort implementation (later used for java.util.Arrays.sort)
+
+Kirk Thompson:
+- Added a new major leJOS tool for logging data from the NXT and dynamically charting it on the PC. (%NXJ_HOME%\bin\nxjchartinglogger.bat and lejos.util.NXTDataLogger)
+- New TETRIX Servo and Motor controller support
+- General Javadoc additions/edits to existing classes
+- Experimental support for Firgelli linear actuators driven by NXTMMX
+- Bug fixes and enhancements for LnrActrFirgelliNXT, MMXRegulatedMotor, PIDController, and various others.
+
+Dan Rollo:
+- Improvements to Maven POM files 
+
+Daniele Benedettelli:
+- Added driver for Mindsensors SumoEyes
+- Added OmniPilot for holonomic robots with omni wheels
+
+Michael Mirwaldt:
+- Contributed driver for LEGO temperature sensor
+- Added method for retrieving the line number map of DebugData
+- Additions to java.util (LinkedList, HashSet, Set, HashMap, Map)
+
+
+leJOS NXJ 0.9.0 beta
+--------------------
+Lawrie Griffiths, Roger Glassey and Brian Bagnall have made some major revisions
+to the leJOS Robotics API and class structure. These changes provide a more generic
+interface and allow greater flexibility in the way the classes may be
+combined.
+
+In addition there have been many other changes...
+
+Sven Koehler:
+- Much improved Math and Random classes, improved String/Integer/Byte/Long.
+- Added generics, for vector, stack etc.
+- Improved path resolution in Linux/OSX shell scripts
+- Command line parser for nxjpc and nxjpcc shell scripts
+- Removed Windows 9x/ME support from Windows batch scripts
+- Command line tools now report exit status in case of an error
+- Simplified native method implementation and build system
+- Improved Java i2c interface
+- Changed sensor interface to use getInterface factory method
+- Allow flashing of NXT with Linux 2.6.35.5 and above
+- Improved and updated image converter
+- Implemented a loader for JNI libraries (no need to set java.library.path anymore)
+- New directory structure: JARs have been moved to $NXJ_HOME/lib/nxt and $NXJ_HOME/lib/pc
+- Native libraries moved to subfolders of $NXJ_HOME/lib/pc/native
+- Added new nxjdebugtool to decode exceptions
+
+Andy Shaw:
+- New memory allocator, large objects can now be moved to avoid fragmentation
+- Added new Event system, converted Bluetooth/USB/I2C/Buttons/RConsole to
+  use it.
+- Fixed Lego light sensor implementation, improved timing and color
+  recognition.
+- Enhanced exception handling/debugging, stack trace is now generated, and
+  symbolic trace can be displayed by RConsole.
+- Improved firmware startup and shutdown, allow return to the menu after
+  program error, clean up after crash
+- Improved i2c interface, new address format, reduced cpu usage.
+- Improved handling of USB errors
+- Allow constant strings greater than 256 characters in length and with
+  16bit values
+- Allow access to LCD contrast setting, changed startup menu to use it
+- Allowed playback of sound samples from RAM
+- Restructured LCD and Display classes. Moved higher level code to standard
+  javax classes, improved LCD graphics interface, new fonts, images,
+  rotation (see updated image sample).
+- Added new image conversion tool (nxjimage) based on code from user Programus
+- Added support for Mindsesnsors port splitter
+- Added support for Mindsensors TouchMux
+- Added high speed i2c operating mode (125Kbps instead of standard 9.6Kbps)
+- Improved motor regulation & restructured motor classes
+
+Roger Glassey:
+- Fixed bugs in compass pilot
+- Improved behavioural tutorial
+- Fixed bugs in motor control, added acceleration and deceleration
+- Added RemotePilot test program
+- Added ArcNavigator test program
+- Re-worked large parts of the Pilot/Motor/Pose implementations to allow
+  navigators and notifiers
+- Implemented various proposed robotics class prototypes
+
+Brian Bagnall:
+- Added Segway and SegwayPilot classes
+- Added lejos.robotics.objectdetection package
+- Added lejos.robotics.pathfinding package
+- Restructured light and color sensor classes added new interfaces
+- Added new Timer and TimerTask classes, improved Thread class
+- Improved Arc steering code, added SteeringPilot code and ArcPoseController
+- Reimplemented Acceleration sensor classes to separate them and implement Accelerometer interface
+- Added NodeSearch PC sample
+- Added ShapefileLoader to load a map from a shape file 
+- Added FusorBumper, ObjectDetect and PathFinder samples
+
+Lawrie Griffiths:
+- NXJControl added drag and drop
+- Added support for javax.microedition.sensor and Sniffer and JSR256Test samples
+- Added support for HiTechnics Gyro sensor and created test program
+- Added support for IRSeekerV2 based on code from forum user Eric
+- Support sending data to RCX with IRLink
+- Clean up up samples to work with new robotics code
+- MotorTest sample
+- Updated the tutorial with help from Andy, Brian, Roger and others
+
+Shawn Brown:
+- Cleaned up build process for comms etc.
+- Modified PC code to allow it to begin to run on Android
+- Improved diagnostics from PC comms
+- Improved eclipse linker error handling
+- Improved Mac documentation and build system
+
+Brent Gardner:
+- Added GyroDirectionFinder and DirectionFinder interface
+
+Abram Early:
+- Improved menu status bar
+- New graphics menu system
+- Startup menu improvements
+
+Kirk Thompson:
+- PID control classes
+- Linear actuator driver
+- Added GyroSensor interface and improvment to Gyro classes
+- Added MMXRegulatedMotor [based on Michael D. Smith's NXTMMXMotor] to work with restructured motor classes/interfaces. 
+
+Juan Antonio Brenha Moral:
+- Added class to support NXTLineLeader based on code from Eric Pascual
+- Support for Dswitch
+- Added support for hitechnics sensor mux
+
+Dan Rollo:
+- Set up continuous build system that aids development
+
+John Tangney:
+- Updated the Eclipse plugin and update site to support Eclipse Galileo and later,
+  and provided a HOWTO document on how to build the plugin.
+
+Michael Mirwald:
+- Contributed the AngleSensor class that supports the HiTechnic angle sensor.
+
+Mark Crosbie:
+- Contributed the GPSSensor class that supports the Dexter Industries dGPS sensor.
+
+Mike Smith:
+- Contributed the NXTMMMX and NXTMMXMotor classes that support the Mindsensors NXTMMX sensor.
+- Also the NXTMMXSAmple sample.
+
+Robert J Kramer:
+- Contributed the RealTimeClock class that supports the Mindsensors RTC sensor,
+  and also the RTCTest sample. 
+
+Daniele Benedettelli:
+- Added the CruizCoreGyro class.
+
+
+leJOS NXJ 0.85 beta
+-------------------
+
+Andy Shaw has added:
+
+- Improvements to the speed of the Java VM including changes to the alignment of data.
+- A new object format for .nxj files.
+- Access to VM structures from Java using the VM class.
+- Synchonization and locking of class data.
+- Support for instance of on all data including interfaces and arrays.
+- Support for Cloneable interface on objects and arrays
+- Support for detection of rechargeable batteries and improved battery indicator.
+- Improved i2c support including remote i2c from the PC.
+- Increased ADC sensing frequency
+- Support for nanosecond timers and improved timer support with the Delay class.
+- Support for % operation on floats and doubles
+- Improvements to SensorPort class and firmware support for sensors
+- Added support for isAssignableFrom
+- RFID sensor sample
+- Optional display of LCD screen in ConsoleViewer#
+- Refactoring of startup menu vode
+- Several bug fixes
+
+Andy Shaw and Sven Koehler have added:
+
+- Support for the Class class.
+
+Andy Shaw and Brian Bagnall have added:
+
+- Support for the new LEGO color sensor in the NXT 2.0 set
+- A new ColorSensorTest sample
+
+Sven Koehler has added:
+
+- Much improved versions of the java.Math classes with bug fixes, 
+  accuracy improvements and in some cases, dramatic speed improvements. 
+- Improvement to the firmware make files and other minor firmware improvements
+- A new benchmark project for testing Math performance.
+- New flashwrite project
+- Improvements to SAM-BA support in pccomms and improvements to flash utilities
+
+Brian Bagnall, Roger Glassey and Lawrie Griffiths have added:
+
+- Improved package structure with all NXT-specific classes in lejos.nxt subpackages
+  and all robotics support in lejos.robotics.
+- New proposal for navigation which is platform independent, supports more
+  type of vehicles, has better localization support, and supports new concepts
+  of pose controllers and path finders. Includes support for probabilistic robots.
+  Supports platforms for mounting sensors on. Has interfaces for better hardware
+  abstraction. This proposal is still work in progress.
+- Removal of deprecated navigation classes and classes superseded by the new proposal
+
+Shawn Brown has added:
+
+- Better support and documentation for MAC OS X including make the fantom USB driver the default.
+- Raname of nxjpccomm scripty to nxjpc and addition of nxjpcc script
+
+Lawrie Griffiths has added:
+
+- Reworking of the Monte Carlo Localization classes to make them easier to use.
+- A new Homer MCL sample.
+- Support for java.awt and java.awt.geom Rectangle, Line and Point classes#
+- lejos.geom package that extends java.awt.geom
+- Removal of activity based subsumption classes.
+- MotorPort for PF motors via HoiTechnic IRLink
+- Improvements top Matrix code asnd addition of LUDecomposition
+- General purpose KalmanFilter class using matrix algebra and a KalmanTest sample
+- Moved mapping support from lejos.localization to lejos.robotics.mapping
+- Corrections to common class warning so that it does not appear in the API docs.
+- Improvements to the release build files.
+- Updated TachoCount pcsample that demonstrates improved control and diagnostics for remote access using LCP.
+- Various bug fixes.
+
+Lawrie Griffiths and Brian Bagnall have added:
+
+- Improvments to RemoteMotor support
+
+Brian Bagnall has added:
+
+- Support for rotation and elevation platforms.
+- Rationalization of steer and arc methods in pilots.
+- Improvements to GPS support and a GPSInfo sample
+- Deletion of redundant samples.
+
+Roger Glassey has added:
+
+- A Netbeans plugin
+- Improvements to TachoPilot abd SimpleNavigator
+- New obstacle avoidance samples
+- A Pose class
+- Various bug fixes
+
+Dirk Sturzebecher has added:
+- TachoMotor interface
+- SimpleNavigator bug fix
+
+leJOS NXJ 0.8 beta
+------------------
+
+Andy Shaw has added:
+
+- RS485 BitBus Support and restructure of communication classes to support it
+- Support for LCP over RS485, including a restructured LCPResponder
+- NXTConnectTest, NXTReceive and NXPLCPRespond samples
+- Fix for fantom driver to avoid Windows blue screens and fix for USB on Linux
+- Fix for private synchronized methods
+- Increased reserved flash (and decreased user flash) as firmware has grown
+- Improved way that number of reserved flash pages are handled to make this easier to change in future
+- Improvements to I2C including standard and Lego modes and improved buffer handling
+- Improved handling of communication with the AVR
+- Fixed the problems with writing to flash memory that affected specific NXT bricks
+- Improved firmware buffer handling and memory usage
+- Fixed exception wrongly caught bug
+- Improvements to sensor port handling and sensor and button polling
+- Improved support for NaN in the firmware
+- Firmware support for corrections to converting floats and doubles to bits
+- Enhanced run time type checking
+- Improved handling of interfaces and added clone support to the VM
+- Added throw of exception for stack overflow
+- Restructured and simplified jlibnxt
+- Fixed bug with libnxt on MAC OSX
+- Added locking to jfantom dll
+- Support for RFID sensor
+- Support for RCX Rotation Sensor
+- Verification of uploaded firmware
+- Faster start up of the menu (starts tune playing earlier)
+- Other minor fixes and improvements 
+- Support for CompassPilot in restructured lejos.navigation
+- Added FlashError class to report errors reading and writing flash memory
+
+Sven Koehler has added:
+
+- Improvements to Eclipse projects
+- Improvements to ant build files and C makefiles
+- Support for a much larger subset of the Java 1.6 version of java.lang
+- Autoboxing support
+- Support for generics, enum classes, and foreach loops
+- Improved, redesigned and expanded java.io package
+- Support for java 1.6 collection classes in java.util
+- Improvements to java.lang.Math
+- Support for annotations
+- Support for assertions
+- UTF16 support in java.lang.Character
+- Performance improvements to ArrayList, StringBuilder, Math methods, etc.
+- Added --bootclasspath parameter to linker to make setting user classpath easier
+- Completely reworked Linux and Windows command line scripts - they are now generated by an ant build file
+- Added ant build file to build the snapshot
+- Added an ant build file for building the snapshot
+- Modernised various source by use of ArrayList not Vector, HashMap not Hashtable etc.
+- Added use of generics to various source files
+- Added a lejos.charset package that supplies a simple Charset API for encoding/decoding
+- Added a lejos.io package to support the leJOS implementation of java.io
+- Other minor fixes and improvements
+
+Lawrie Griffiths has added:
+
+- NXT class for NXT-specific system methods
+- Improved lejos.localization classes including Localizer interface and TachoLocalizer class
+- Added new NXTConnector class to pccomms and made all tools and samples use it
+- Full support for NXTCommand and other iCommand-derived classes in lejos.nxt.remote
+- Support for equivalent of iCommand in pccomms (other than the vision package)
+- Common classes between classes.jar and pccomm.jar including nearly all of the sensor driving classes
+- Fix for RCXMotor broken bug
+- More functional Rectangle class for use with NXTCam
+- Support for remote I2C writes and improvements to LCP support
+- j2mecomms and j2mesamples projects (not in release)
+- Added iCommand-like samples to pcsamples
+- New NXJControl utility combining functions of NXTBrowser, NXTMonitor and console and data viewers
+- Cache of NXT names and addresses for faster connection to the NXT over Bluetooth
+- Added command line processors to the tools which did not have them 
+- Common code for different user interfaces for data viewer and console viewer
+- Added new org.lejos.example project
+- Changed jar file and source zip and tarball files to omit version numbers consistently
+- Various minor additions to java.lang and java.io classes
+
+Roger Glassey has added:
+
+- More robust Arbitrator with change to contract between behaviors and Arbitrator
+- Updated samples to implement new Arbitrator rules
+- Improvements to Data Logger
+
+Roger Glassey and Dirk Sturzebecher have added:
+
+- Made Pilot an interface, added TachoPilot class, and renamed TachoNavigator as SimpleNavigator
+- Added TachoNavigator class for backwards compatibility 
+- Implemented drift correction in TachoPilot
+- Made pilots and navigators support a wider range of robots with different steering mechanisms#
+- Changed Navigator and Pilot interfaces to support independent move and turn speeds and other generalisations
+
+Dirk Sturzebecher has added:
+
+- Added WaypointNavigator class
+
+Brian Bagnall has added:
+
+- Support for J2ME Location API
+- Additions to Vector class
+- Pairing of Bluetooth devices from the NXT start-up menu
+- Support for more of the javax.bluetooth and javax.microedition.io packages
+- Restructured and improved lejos.gps package
+- Improvements to NXTCam
+- Changed NXTSocket and NXTServerSocket to standard java.net versions
+- Improved lejos.keyboard package
+- Minor additions to java.lang, java.io etc.
+- Degrees, Latitude and Longitude classes (for future GPSNavigator)
+
+Juan Antonio Brenha Moral had added:
+
+- Improvements to Mindsensors NXTServo and PFMate support
+- PFMate sample
+
+Matthias Paul Scholz had added:
+
+- Additions to pccomms to support Eclipse plugin NXT browser
+- Updated the Eclipse plugin for the 0.8 release
+
+Alexander Vegh has contributed:
+
+- The PFLink class which driver Power Functions Motors using the Mindsensors NrLink
+
+Mike Smith has contributed:
+
+- Support for Mindsensors PFMate and sample test program
+
+leJOS NXJ 0.7 beta
+------------------
+
+Andy Shaw has added:
+
+- Changed low-level protocol used by USB to work better with MAC OS X
+- Added USB support with fantom API on Windows and made this the default.
+- Converged libusb and fantom USB support and improved USB support in firmware
+- Support for communication with SAM-BA in Java
+- Rewrote nxjflash in Java
+- Software support for booting firmware into firmware update mode, so user
+  does not need to do a long reset when running nxjflash
+- changes to .nxj binary format (e.g. byte rather than word sizes)
+- True incremental garbage collection with much smaller delays
+- Many bug fixes to the firmware
+- Improvements to sound support
+- Improved firmware debugging including remote tracing to PC compatible with RConsole
+- Support for double and full support for long data type
+- Support for latest class file format and latest Java source version
+- Added Thread.join and running threads using the Runnable interface
+- Support for checking casts on arrays
+- Convergence of USB and Bluetooth comms to share more code and prepare for RS485 support
+- Improvements to firmware memory usage
+- Linker improvements
+- StringBuilder class
+
+Roger Glassey has added:
+
+- GUI version of nxjflash
+- GUI version of nxjconsole
+- Convergence of GUI of Data Viewer and Console Viewer
+- Improved Behavior and Arbitrator support
+- Graphics bug fix
+- Stopwatch utility class
+- Pilot and Navigator fixes
+- Remote Navigator sample
+- Button.waitForPress no waits for release 
+- ButtonCounter bug fix
+- Removed recycler utility classes
+- Additions to Float class
+- Improved Connector class
+
+Lawrie Griffiths, Roger Glassey, and Juan Antonio Brenha Moral have added:
+
+- A tutorial on the web site
+
+Lawrie Griffiths and Roger Glassey have added:
+
+- Restructuring of lejos packages including moving third party sensors to lejos.nxt.addon
+
+Lawrie Griffiths has added:
+
+- A Windows installer
+- Improved support for samples and other projects in Eclipse and Netbeans
+- A localization API including support for Monte Carlo Localization
+- Improvements to NXTSocket and NXTServerSocket
+- Improvements to NXTCommand
+- Support for HiTechic IRLink driving PF motors
+- New and modified scripts to support other changes
+- PC Java build files use -source 1.5 -target 1.5 to support MAC OS X
+- Changes to release build for Windows installer and other changes
+- New sample project that replaces examples
+- New pcsamples project for pcsamples
+- Omitted emulator from the build as it is probably not used
+
+Juan Antonio Brenha Moral has added:
+
+- Support for Mindsensors NXTServo, with sample
+- Improved GPS support and start of support for the location API, including new samples
+- Improved Lattebox support
+- StringTokenizer class and sample
+- Matrix math support with sample
+- RuntimeException class
+- IllegalArgumentException class
+- ArrayIndexOutofBoundsException class
+- Enumerator interface
+
+Brian Bagnall has added:
+
+- Start of support for J2ME library for use with mobile phones
+
+
+Michael Smith has contributed
+
+- Support for HiTechic EOPD sensor
+
+Soren Hiller has contributed:
+
+- RCX Temperature Sensor support
+
+leJOS NXJ 0.6 beta
+------------------
+
+Andy Shaw has added:
+
+- Support for arrays with more than 511 elements
+- Convergence of USB and Bluetooth
+- Much improved USB handling including USB connections similar to
+  Bluetooth connections and support for multiple named NXTs over USB.
+- Improved AVR and flash write handling
+- Linker improvements, including much improved unused method
+  removal, that significantly reduce memory usage.
+- Button handling improvements including debounce and audible clicks
+- Persistent property setttings for master volume and button click volume.
+- DebugMonitor and debug mode in linker that allows interrupting
+  and simple debugging of user programs.
+- Bluetooth improvments
+- Removal of various limits in linker and VM
+- Sound improvements
+- Speed and other improvements to LCDUI graphics including BitBlt methods.
+- LCD improvements including sharing system font beteen Java and the firmware
+- Tidy up of firmware code including timers, hardware headers and removal of unused code
+- Debug class replaced by RConsole that works over USB and Bluetooth
+  and nxjdebug replaced by nxjconsole
+- Various bug fixes
+
+Janusz Gorecki has added:
+
+- Switch statements
+- Incremental garbage colllection
+- Significant speed improvements to the Java VM
+- Various bug fixes including to Motor class
+
+Brian Bagnall had added:
+
+- Support for Bluetooth GPS devices including NMEA sentence processing
+- BTGPS example
+- Support for Bluetooth connected keyboards (that use SPP not HID), with a sample program
+- Properties and related classes
+- Bluetooth improvements to bring it closer to the JSR-82 standard
+- Improvements to File, String, StringBuffer, Integer and Float classes
+- Support for the Mindsensors PS2 controller
+- Various bug fixes
+
+Lawrie Griffiths has added:
+
+- Persistent property settings
+- Firmware version number on the menu
+- Automatic switch off of the brick when the menu is running with persistent
+  sleep time setting
+- Implementation of System.out.println and System.err.println
+- I2C discovery example
+- Combining VM and menu into single area of flash to allow for firmware > 32kb
+- File submenus in the menu system specific to filetype (.nxj and .wav)
+- -f parameter to nxjflash to force a format of the file system
+- PC API docs
+- Various bug fixes
+
+Lawrie Griffiths and Roger Glassey have added:
+
+- Support for a default program with optional auto-run
+  
+Roger Glassey has added:
+
+- Improved LightSensor callibration
+- Motor and Pilot improvements
+- Textmenu improvements
+- Graphical battery icon and rework of menu top line
+- Graphical version of nxjconsole
+- Improved data logger
+- Various bug fixes
+
+Eric Dalquist has added
+
+- Improvements to input streams, String handling and exceptions
+
+Mike Smith has contributed:
+
+- Improved OpticalDistanceSensor
+- Support the mindsensors Rx Mux (RCXSensorMultiplexer) with a sample program
+
+Juan Antonio Brena Moral has added:
+
+- File example
+- Support for Iterator interface
+- Extra random number generation methods
+- Support for Lattebox NXTe interface and servers motors, with a sample program
+
+Asbjorn Brask has contributed:
+
+- Improvements to the ColorSensor class
+
+lejos NXJ 0.5 beta
+------------------
+
+Andy Shaw has added:
+
+- I2C writes.
+- Use of port 4 for I2C sensors and the light sensor.
+- Faster LCD writing without need for LCD.refresh().
+- Mixing of text and graphics.
+- Bluetooth reset and detection of BC4 mode.
+- Rewrite of Bluetooth comms to support multiple connections and to remove restrictions.
+- Ability to switch Bluetooth power on and off.
+- Greatly improved UltrasonicSensor class.
+- Native arrayCopy method for improved performance.
+- Speed improvements to the SpeedTest sample.
+- I/O activity indicator in startup menu.
+- Fix for slow startup of USB on Windows.
+- Remote debugging over USB.
+- Size of menu flash area increased from 32kb to 48kb (causes reformat of file system).
+- Various bug fixes including to the garbage collector.
+
+Janusz Gorecki has added:
+
+- Garbage collection.
+- Execution of program directly from flash memory.
+
+Lawrie Griffiths has added:
+
+- Return to the startup menu after a program exits.
+- More Bluetooth methods including getSignalStrength().
+- Support for Mindsensors NRLink adapter (RCXLink class).
+- RCX Comms support using RCXLink class.
+- Support for Remote Motors, Sensors, etc. over Bluetooth via RemoteNXT class.
+- Remote monitoring and tracing over Bluetooth, including NXTMonitor tool.
+- Format menu item on System menu.
+- Support for Mindsensors NXTCam camera for tracking objects.
+- Support for the Mindsensors RCX Motor Multiplexer.
+- Untested support for the Hitechnic Gyro Sensor.
+- Improved Tiltsensor class including acceleration data for Mindsensors and HiTechnic Acceleration Sensors.
+- Untested support for the HiTechnic IRSeeker sensor.
+- Checking for flash and directory full conditions during program or file upload.
+- New and improved samples.
+- Support for 64-bit Linux systems in jlibnxt.
+- Various bug fixes.
+
+Brian Bagnall and Lawrie Griffiths have added:
+
+- Improved support for the Lego communications Protocol.
+- Support for automatic defrag of the file system.
+
+Brian Bagnall has added:
+
+- Bigger file table - now supports 30 files.
+
+Roger Glassey has added:
+
+- Improved Motor and TachoNavigator classes.
+- ButtonCounter class.
+- Behavior2 classes as an alternative to the Behavior classes.
+
+Patai Gergely and Brian Bagnall have added:
+
+- Improved support for playing 8-bit WAV files.
+
+Matthias Paul Scholz has added:
+
+- Restructured error handling of leJOS tools to support the Eclipse plugin.
+- An Eclipse plugin for leJOS.
+
+lejos NXJ 0.4beta
+-----------------
+
+Most of the leJOS functionality is now present, so this has been declared a beta release.
+
+Lawrie Griffiths and Michael Wiedau have added:
+
+- NXT to NXT Bluetooth comms.
+
+Lawrie Griffiths has added:
+
+- Multi-level StartUp Text menu
+- Connection by address on the nxj and nxjupload utilities
+
+Roger Glassey has added:
+
+- DataLogger
+- Some improvement to Motor speed control
+
+Andre Nijholt and Brian Bagnall have added:
+
+- Support for the J2ME MIDP LCD user interface and graphics
+
+Ranulf Green has added:
+
+- Comms proxy included NXTSocket class
+
+Patai Gergely and Lawrie Griffiths have added:
+
+- Playing sound files (8-bit WAV)
+
+Brian Bagnall has added
+
+- Fixes to Windows batch files to allows spaces in NXJ_HOME
+- Backward compatibility lejosdl and lejosfirmdl scripts
+- Some improvement to Lego Communications Protocol support.
+
+leJOS NXJ 0.3alpha
+------------------
+
+This is the first firmware release of leJOS NXJ. It includes a flash file system
+and a menu system, written in Java.
+
+Brian Bagnall and Roger Glassey have added:
+
+- A flash file system including implementations of java.io.File,
+  FileInputStream, and FileOutputStream.
+- CompassPilot and CompassNavigator
+
+Lawrie Griffiths and Roger Glassey have added:
+
+- The StartUpText menu system that supports executing and
+  deleting programs, and LCP commands with NXJ extensions
+  over USB and Bluetooth
+- Java streams over Bluetooth and USB
+
+Lawrie Griffiths has added:
+
+- USB support
+- Flash native methods
+- Working flash build of leJOS NXJ
+- Support in the VM for running a Java start-up menu
+- Improved LCP support including file commands
+- Improved Bluetooth support including setting the NXT name
+- The pccomm library including Windows and Linux Bluetooth and
+  USB comms drivers. This incorporates some of the functionality
+  of iCommand.
+- The pctools library of nxj tools including nxjbrowse
+- Ant build files for all the samples
+- Libnxt JNI library
+- Bluez JNI library based on the iCommand version
+- nxjflash utility based on David Anderson's fwflash
+
+leJOS NXT 0.2alpha
+------------------
+
+- This release is similar to 0.1alpha in that it still runs in RAM under SAMBA. 
+- It adds partial support for I2C, Bluetooth, and sound, and greatly improved Motor
+  control and navigation.
+- The API is substantially revised
+
+Charles Manning has added:
+
+- I2C support (reads only)
+
+Lawrie Griffiths has added:
+
+- Bluetooth support (PC to NXT)
+- Sound support (playTone, single volume)
+- Native methods for I2C
+- Ultrasonic sensor support
+- Refactored API and native methods
+- new samples (BTRespond, updated View sample etc.)
+
+Roger Glassey has added:
+
+- Improved Motor class
+- New Pilot class for steering control
+- TextMenu
+- new samples
+
+Roger Glassey and Brian Bagnall have added:
+
+- New TachoNavigator class and Navigator interface replacing previous navigators
+
+Brian Bagnall has added:
+
+- javax.microedition.lcdui.Graphics class
+- Support for third party I2C sensors (ColorSensor, CompassSensor etc.)
+- new samples
+
+Lawrie Griffiths and Brian Bagnall have added:
+
+- Support for Lego Communications Protocol
+- Partial support for iCommand (no files)
+- Partial support for Bluetooth utilities that work with the standard Lego firmware
+  (This includes the Lego Mobile Application)
+
+leJOS NXT 0.1alpha
+------------------
+
+- First alpha release for the NXT
+- The lejos VM is essentially the same as lejos 3.0 for the RCX
+- The code is now held in a subversion repository, not CVS
+- This release runs under the SAMBA boot monitor and executes code from RAM
+- You must do a long reset on your NXT to go into SAMBA mode
+- It makes no use of Flash memory
+- The VM and Java binary are downloaded together by the runjava command
+- The NXT powers down 5 seconds after finishing a program and the program is lost from memory
+- It has been tested on Linux and Windows
+- It has no support for Sound or Comms
+- The API has changed substantially to support the NXT
+- The Motor classes has new methods to support the inbuilt tachometer
+- Motor also supports regulated speed control methods: setSpeed, setRegulation, rotate, rotateTo.
+- Motor.setSpeed() replaces Motor.setPower()
+- There is a class for each sensor, and variant for legacy RCX sensors
+- The Sensor class is replaced by a Port class
+- SensorListener is replaced by PortListener
+- The RCX touch and light sensors are supported, but not the rotation sensor
+- RCX motors are supported
+- I2C sensors such as the Ultrasonic sensior are not supported
+
+leJOS 3.0.0
+-----------
+
+- leJOS supports Lunix kernel 2.6 now
+- There has been a major restructuring and refactoring of leJOS' classes
+- The single "lejos" command for linking and downloading programs in one step is available again
+- The tutorial is part of the leJOS release now (see doc/tutorial)
+- The third party libraries have been factored out to a "3rdparty" folder
+- There is a folder "check" now that contains a script for checking the distribution after having installed it  
+
+Known compatibility to 2.1.0 issues:
+- the Tower() constructor without port argument is no longer supported (for it lead to errors)
+- the Tower methods return no longer error codes but throw exceptions in case of an error/exception
+- Tower.send(byte[],int) is deprecated now and no longer public
+
+ 
+leJOS 2.1.0
+-----------
+
+  Paul Andrews has added:
+  - Activity class in josx.robotics
+
+  Lawrie Griffiths has added:
+  - linker changes to remove some unused methods and hence reduce program
+    sizes.
+  - bug fixes to josx.rcxcomm particularly to RCXPort with serial towers. 
+  - a new LNP class that supports a Lego Network Protocol style of API
+    including listening on multiple ports.
+  - a vision API based on the Java Media Framework similar to the one that
+    comes with the Lego Vision Command product.
+  - remote execution of Java methods sufficient to support the Vision API.
+  - example programs using the Vision API for motion, color and light
+    detection and remote method execution.
+  - Java versions of the lejos tools, which use the josx.rcxcomm package.
+
+  Matthias Paul Scholz has added:
+  - a new remotecontrol package in josx.platform which handles incoming messages from 
+    the LEGO remote control or by Maroc (the associated emulator). For details and a 
+    description, see http://mp.scholz.bei.t-online.de/lejos.
+  - a new example file (RemoteControlTest.java) for this in the examples\remotectl section 
+ 
+  Markus Strickler has added:
+  - enhanced support for USB on Mac OS X including josx.rcxcomm
+  - fixed Makefile for picking up JNI headers on Linux
+
+  Markus Strickler & Andy Belk have added:
+  - fixed Makefiles for Mac OS X 10.2
+ 
+  David Glance has added:
+  - Support for USB on Linux
+
+
+leJOS 2.0
+---------
+
+  Paul Andrews has added:
+  - Priority inversion avoidance to the thread scheduler.
+  - Variable thread stack sizes.
+  - Code layout modifications to remove the motor twitching introduced in 1.0.5
+  - Various minor code/build tweaks to reduce the size of the VM.
+  - Minor fix to the 'lejos' command to enable multiple levels of
+    verbosity (syntax -verbos[=<n>]).
+  
+  Markus Strickler has added:
+  - Experimental support for USB on MAC OS X
+
+  Brian Bagnall has added:
+  - Modified trig functions in Math class - they are now 10x faster.
+    Code donated by Paulo Costa
+  - Support for floats in DataInputStream and DataOutputStream
+
+  Lawrie Griffiths has added:
+  - Decoupling of ListenerThread from Sensor, Button and Serial, so that these
+    classes are not included when they are not used.
+  - Low level comms (LLC) that allows single bytes to be sent and received
+    over IR, without being limited to the Lego firmware protocol and opcodes
+  - A re-implementation of josx.rcxcomm.RCXPort using LLC which is faster 
+    and reliable.
+  - A similar re-implementation of RCXInputStream and RCXOutputStream.
+  - An abstract interface - PacketHandler - for creating your own multi-layer 
+    comms protocols.
+  - Partial implementations of the LegOS Networking Protocol (LNP) Integrity 
+    and Addressing layers using the PacketHandler interface.
+  - A re-implementation of the 1.0.5 RCXPort protocol, called RCXF7Port - 
+    this uses Serial not LLC on the RCX.
+  - An Abstract RCX port interface - RCXAbstractPort - for creating ports using
+    any protocol, and implementations: RCXPort, RCXF7Port, RCXLNPPort, and 
+    RCXLNPAddrPort.
+  - Partial support for point-to-point connections to multiple RCXs using the
+    LNP addressing protocol via RCXLNPAddrPort of direct use of the packet 
+    handlers.
+  - Versions of the SensorReader examples using all the above protocols.
+  - A version of javax.servlet.html for writing lejos Web servers.
+  - Example servlets including one that sets and reads Sensors via URLs.
+  - An Integer class that implements toString(int).
+  - Additional String methods and a new StringUtils class.
+  - Removal of memory leaks in Button.waitForPressAndRelease and TextLCD.print. 
+  - New floatToIntBits and intBitsToFloat native methods to support data streams.
+  - Fixes and minor enhancements to josx.rcxcomm.
+  - Improvements to apidocs including the inclusion of josx.utils. 
+
+leJOS 1.0.5:
+------------
+
+  Brian Bagnall and Lawrie Griffihs have added:
+  - the josx.rcxcomm package for stream-based communication between PC and RCX
+
+  Lawrie Griffiths has added:
+  - a version of java.net building on josx.rcxcomm
+
+  Brian Bagnall has added:
+  - MacOSX support
+
+  Juergen Stuber has added:
+  - P1 one remote control now starts program (the one selected by Prgm)
+  - added memory regions + 3K extra memory
+  - added file TODO
+  - Persistent memory
+  - writeShort method in Native
+  - moved methods from Native to Memory and ROM,
+    and from ROM to Battery and MinuteTimer
+  - removed Runtime as special class
+  - corrected bug in scheduler that could interrupt wrong thread
+  - renamed class josx.util.Test to Assertion, method assert to test etc.
+    to avoid name clash with JDK 1.4 reserved word assert
+  
+leJOS 1.0.4:
+------------
+
+  Juergen Stuber has added:
+  - Serial listeners
+  
+  Paul Andrews has added (with a lot of help from Martin Nielsen):
+  - Number formatting to StringBuffer
+  - delete() method to StringBuffer
+  - Fixed Math.log() and Math.exp() to handle a much larger range of numbers.
+
+leJOS 1.0.3:
+-----------
+
+  Paul Andrews has added:
+  - Fixed application download code. Fewer hangs now.
+  - Added experimental USB support to firmdl and lejosrun. Set RCXTTY
+    to 'usb'.
+  - Added progress indicator to lejosrun.
+  - Fixed uninitialised variable and boundary condition in
+    interpreter that could have prevented task switching.
+  - All input listeners now use one thread.
+  - Added Proximity Sensor Class
+  - Added Servo class
+  - Added more accessor methods to sensor and motor classes.
+  
+  Juergen Stuber has added:
+  - LCDConstants.java
+  - idle_hook() in interpreter
+
+leJOS 1.0.2:
+------------
+
+  Paul Andrews has added:
+  - Added Runtime class so that heap size and free memory can be
+    returned.
+  - Added Object.wait()/notify()
+  - Added thread priorities. Scheduler will always run threads
+    of a greater priority in preference to those of a lower priority.
+  - Added daemon threads.
+  - Added ability to interrupt sleeping/waiting threads.
+  - Added System.exit().
+  - Added a 'Poll' class to monitor changes of sensors and buttons in
+    the VM (i.e. a call that blocks until a state change occurs).
+  - Changed Sensor and Button listeners to use Poll.
+  - Changed Sensor and Button listener threads to be daemon threads.
+  - Modified 'View' example to update display whenever a sensor state
+    changes rather than only when a button is pressed.
+  - Modified native method name mangler so that native methods can
+    be overloaded.
+  - Added default constructor to StringBuffer so that expressions of the
+    form "string1" + "string2" will compile.
+  - Added several new exceptions to support all of the above.
+  - Added the 'final' keyword to API classes where Java 2 normally has it.
+  - Added Test class for performing assertions.
+  - Fixed bug in memory allocator that failed to detect a full heap.
+  - Added subsumption architcture examples using old and new threading.
+  - Added '-n' option to lejosfirmdl so that the JVM size can be checked.
+  - Fixed up code to remove warnings when compiling with GCC 3.0.
+  - Added instructions on building with CygWin1.3.2 and GCC 3.0.
+  - Modified code in several places to reduce footprint.
+  - Modified compile options to reduce footprint.
+  - Reduced footprint to 16k
+  
+  Juergen Stuber has added:
+  - Fixed rotation sensor mode.
+  - Modified main loop to check only one flag for increased speed.
+  - Cleaned up hooks.
+  - Added performance test to examples.
+  - Internal changes to button and sensor listener code to make it smaller.
+
+  Brian Bagnall has added:
+  - Behavioural API
+  - Navigation API
+  
+leJOS 1.0.1 (not released separately):
+--------------------------------------
+
+  - Fixed bug in java.util.Vector: NoSuchMethodError after 7
+    elements added.
+  --------------------------------------------------------------
+  - Phil Berry has contributed some documentation (see
+    docs/phil_berry) and more meaningful trace output
+    for emu-lejosrun -v.
+  - Hajime Murao reporded a bug in jtoolexec.c. The first
+    argument was not initialized properly, which
+    means that in some systems (e.g. W2K) you'd see a message 
+    saying that lejosc was unable to execute javac or something 
+    to that effect, with no apparent reason.
+
+leJOS 1.0.0beta3:
+-----------------
+ 
+  - Removed gcc's -O2 option from unix_impl/Makefile, as
+    it was crashing gcc 2.95.2.
+  - Added Christophe Ponsard's remote control example,
+    Ryan Vander Bijl's hworld example, and Reinhard Schiedermeier's
+    example on RCX-to-RCX communication (serial2rcx).
+  - Added a few methods to the Motor class, based on
+    suggestions sent by Rune Berge.
+  - Copied the entire util/firmdl directory from legOS 0.2.4
+    into tools/firmdl, and made minor modifications to it.
+    This should fix the infamous "Permission Denied" bug.
+  - The emulation tool was crashing when string constants
+    were used, due to a byte ordering problem which is now
+    fixed.
+  - Considerable performance improvements for certain
+    Math functions.
+  
+leJOS 1.0.0beta2:
+-----------------
+ 
+  - Fixed a multi-dimensional array allocation bug.
+  - Brian Bagnall's performance improvements for java.lang.Math.
+  - Fixed a bug in sqrt.
+    
+leJOS 1.0.0beta1:
+-----------------
+
+  - Multi-program downloading. All programs are linked and
+    downloaded in one shot and override previously downloaded 
+    programs. Use: lejos Class0,Class1,...
+  - Auto power off, but only while in program-download mode.
+  - Increased default stack size.
+  - Brian Bagnall's latest changes to Math (log, exp, sqrt, and more!)
+  - Changed memory allocation and deallocation routines, in preparation
+    for upcoming implementation of garbage collection.
+  - Max array length is now 511 (was 255).
+  - Linker warns about truncated long and double constants.
+  - Battery power shown as percentage in program-download mode.
+  - This should now work: To kill a running program, hold Run while 
+    you press On/Off.
+  - Miscellaneous bug fixes (e.g. a js.tinyvm.Sequence bug reported
+    by K. E. Elby).
+
+leJOS 1.0.0alpha5:
+------------------
+
+  - Significant changes to Sensor API. Sensor.setTypeAndMode()
+    should be called before using a Sensor. Sensor.getPercentageValue()
+    is no longer there. SensorListener only has one method.
+  - Performance of low-level method readSensorValue has
+    improved by at least a factor of 6.
+  - There is only one global thread that dispatches events to
+    SensorListener's, which will also improve performance
+    considerably, and may even prevent certain race conditions.
+    (Having only one thread for sensor events was once mentioned 
+    by Reinhard Schiedermeier).
+  - java.lang.Math.atan(double), contributed by Brian Bagnall.
+  - Linker checks whether entry class has a main method.
+  - Forced persistence across runs was taken out, i.e. all memory 
+    is reinitialized every time you rerun a program.
+  - Prgm-On/Off does nothing. Run-On/Off kills a running program.
+  - Emulation tools have been renamed.
+  
+leJOS 1.0.0alpha4:
+------------------
+  
+  - Added Brian Bagnall's java.lang.Math class.
+  - Fixed bug in the way the linker was writing doubles.
+  - Optimized native method calling. About 30% performance
+    improvement.
+  - Found bugs in handling of stack by some native methods.
+    This might have been causing programs to misbehave.
+
+leJOS 1.0.0alpha3:
+------------------
+  
+  - ButtonListener support.
+  - Fixed a linker bug: it was dumping a stack trace if
+    one of the zip/jar entries in the classpath wasn't found.
+    This bug was reported by E. Harshbarger.
+  - lejosc and lejosp will work with Java 2 compilers only.
+    For JDK 1.1, use lejosc1 and lejosp1. The problem was
+    that java.util.Random couldn't be used with Java 2.
+    Reported by J. Knudsen.
+  - Changed Random(int) to Random(long).
+  - Fixed memory leak. Thread stacks were not getting deallocated
+    properly on program death.
+  - Fixed Makefiles and other things to make leJOS installable
+    under Linux.
+  
+leJOS 1.0.0alpha2:
+------------------
+
+  - Distributing CYGWIN1.DLL in the bin directory. 
+  
+leJOS 1.0.0alpha1:
+------------------
+
+  - leJOS is born out of TinyVM. Versions starting
+    with 0 are TinyVM versions, whereas versions starting
+    with 1 are leJOS versions.
+  - Marking references in stack.
+  - String constants.
+  - Caught up with TinyVM. This is ongoing. Refer to
+    TinyVM release notes for 0.1.4 and up.
+  - Scripts converted into executables. 
+  - Native Thread.sleep() and System.currentTimeMillis().
+  - Various other enhancements.
+
+TinyVM 0.1.3:
+--------------
+
+  - Found that the hello example did not compile in
+    the last version. Fixed it.
+
+  - Decided to make the firmware show battery power 
+    whenever it enters program-download mode.
+
+  - Fixed virtual method linker bug. (The linker was
+    unable to find certain virtual methods in classfiles
+    compiled with JDK1.2.x).
+
+  - Apparently fixed On/Off bug. (The LCD is not cleared 
+    by shutdown_buttons in some RCXs).
+
+  - Got rid of TINYVM_HOME.
+
+  - TINYVMPATH is no longer necessary. CLASSPATH is
+    used.
+
+  - More appropriate message for linker failure when
+    instanceof or checkcast of array classes is 
+    encountered.
+
+  - Multi-dimensional array allocation was broken.
+    Fixed it.
+
+  - Fixed checkcast bug. (It was not allowing casts of
+    null).
+
+  - Footprint report:
+    Test13 creates 4238 objects.
+    Firmware download count: ~1020
+
+TinyVM 0.1.2:
+--------------
+
+  - Fixed serial comm bug. (If you tried to download
+    a program to the RCX while another program was
+    running, the transferred data could clobber 
+    program memory. TinyVM is now shutting down
+    serial communications right after a program is
+    downloaded).
+
+  - Added a couple dummy classes to satisfy the
+    jikes compiler. Users simply have to set JAVAC
+    to "jikes". (Jikes is a really fast Java compiler
+    by IBM).
+
+  - Changed implementation of Sensor.readSensorValue.
+    Reading values from sensors should be more
+    efficient now. (I might have to adjust the rotator
+    example a bit).
+
+  - Publicized the SensorListener interface and
+    Sensor.addListener. It probably still needs to
+    be optimized for performance.
+
+  - Added examples to some classes in the API
+    documentation.
+
+  - Removed "queued" parameter from most methods in
+    Sound. It really didn't make sense to have it 
+    in some APIs. Hopefully that won't be much of a 
+    problem for anyone.
+
+  - Removed previously deprecated APIs from ROM.
+    Again, sorry if this affects you.
+
+  - Fixed MONITORENTER bug. (It was not throwing
+    NPE on null monitors - it was crashing instead).
+
+  - TinyVM's linker is now also a loader: The -d
+    option will download the program to the RCX.
+
+  - TinyVM's firmware is now listening for the 
+    standard "Delete Firmware" opcode (0x65/0x6d).
+    Consequently, Prgm-Run On/Off is no longer
+    useful, so it has been removed.
+
+  - tvmfirmdl doesn't need an argument now.
+
+  - Added the Serial API and a corresponding example.
+
+  - Footprint report:
+    Test13 creates 4262 objects.
+    The firmware download count is about 1000.    
+
+TinyVM 0.1.1:
+--------------
+
+  - Fixed PUTSTATIC bug. (Setting a static field
+    in uninitialized class could produce subsequent
+    erroneous behavior).
+
+  - Fixed exceptions bug. (Very critical bug:
+    exceptions were not pushed on the stack before
+    they were caught).
+
+  - Changed RCX API so that its style conforms
+    a bit more with other Java APIs. Namely, 
+    depracted routines in ROM, and split them up
+    into LCD and Sound, which have more convenient
+    APIs. Removed some ROM routines, which hopefully
+    haven't been used too much yet. Class Native
+    now contains native APIs. ROM contains certain
+    unclassified APIs.
+
+  - Added buttons API.
+
+  - Improved the usability of the firmware a bit.
+    Basically, you can now press the On/Off button
+    to turn off the RCX and kill running programs.
+
+  - To continue on exception "traces" you have to
+    press On/Off instead of View.
+
+  - TinyVM has been ported to JDK1.2. This required
+    a couple of fixes under jtools.
+
+  - Footprint: Test13 can create 4338 empty objects
+    (17352 bytes of allocation space).
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,226 @@
+/*
+PROJECT: Lejos
+AUTHOR: Juan Antonio Breña Moral
+EMAIL: bren@juanantonio.info
+DESCRIPTION: CSS file for project: Lejos
+CREATION DATE 2007/01/13
+LAST UPDATE: 2007/01/13
+*/
+
+/********************
+***** HTML TAGS *****
+********************/
+
+table{
+	border : 0px none;
+}
+body{
+	margin : 0px 0px 0px 0px;
+	background : #ffffff;
+}
+form{
+	margin : 0px 0px 0px 0px;
+}
+
+ul{
+	list-style: square;
+}
+
+a{
+	border: 0px;
+}
+
+img{
+	border: 0px;
+}
+
+p{
+	vertical-align: top;
+}
+
+/************************
+***** WEB STRUCTURE *****
+************************/
+
+/*N1*/
+td.n1t1r1c1{
+	text-align: left;
+	vertical-align: top;
+}
+
+td.n1t1r1c2{
+	text-align: right;
+	vertical-align: middle;
+}
+
+/*N2*/
+td.n2t1r1c1{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	width: 140px;
+	vertical-align: top;
+	padding: 0px 0px 0px 10px;
+}
+
+ul.menu{
+	list-style: url(../r_media/images/transparent_pixel.gif);
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+}
+
+ul.menu{
+	list-style: url(../r_media/images/transparent_pixel.gif);
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+}
+
+ul.menu_l1{
+	list-style: url(../r_media/images/transparent_pixel.gif);
+	padding: 0px 0px 0px 15px;
+	margin: 0px 0px 0px 0px;
+}
+
+ul.menu_l2{
+	list-style: url(../r_media/images/transparent_pixel.gif);
+	padding: 0px 0px 0px 15px;
+	margin: 0px 0px 0px 0px;
+}
+
+li.selected{
+	color: #FF6600;
+}
+
+a.menuLink{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	color: black;
+}
+
+a.menuLink:link {
+	text-decoration: none;
+	color: black;
+} 
+a.menuLink:visited {
+	text-decoration: none;
+	color: black;
+} 
+a.menuLink:hover {
+	text-decoration: underline;
+	color: #FF6600;
+}
+
+a.menuLinkSelected{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	color: #FF6600;
+}
+
+a.menuLinkSelected:link {
+	text-decoration: none;
+} 
+a.menuLinkSelected:visited {
+	text-decoration: none;
+} 
+a.menuLinkSelected:hover {
+	text-decoration: underline;
+	color: black;
+}
+
+/*N3*/
+
+td.n3t1r1c1{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	text-align: left;
+	vertical-align: top;
+}
+
+td.n3t2r{
+	padding-bottom: 5px;
+	vertical-align: top;
+}
+
+h1.title{
+	color: #FF6600;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 30px;
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+}
+
+a.simpleLink{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	color: #FF6600;
+}
+
+a.simpleLink:link {
+	text-decoration: none;
+} 
+a.simpleLink:visited {
+	text-decoration: none;
+} 
+a.simpleLink:hover {
+	text-decoration: underline;
+}
+
+/*N4*/
+td.n4t1r1c1{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	
+	text-align: center;
+	vertical-align: top;
+	
+	padding: 10px 0px 10px 0px;
+}
+
+
+/*ESMETA*/
+td.n4t1r2c1{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	color: #FF6600;
+	text-align: center;
+	vertical-align: top;
+	padding: 0px 0px 10px 0px;
+}
+
+a.esmeta{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	color: #FF6600;
+}
+
+a.esmeta:link {
+	text-decoration: none;
+} 
+a.esmeta:visited {
+	text-decoration: none;
+} 
+a.esmeta:hover {
+	text-decoration: underline;
+}
+
+a.top{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	color: #FF6600;
+}
+
+a.top:link {
+	text-decoration: none;
+} 
+a.top:visited {
+	text-decoration: none;
+} 
+a.top:hover {
+	text-decoration: underline;
+}
