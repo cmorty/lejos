@@ -352,15 +352,13 @@ public class LoggerProtocolManager {
         }
         
         if (this.pauseInput) {
-        	synchronized (this) {
-        		while (this.pauseInput) {
-        			try {
-        				this.wait();
-        			} catch (InterruptedException e){
-        				// DO NOTHING
-        			}
-        		}
-        	}
+    		while (this.pauseInput) {
+    			try {
+    				this.wait();
+    			} catch (InterruptedException e){
+    				// DO NOTHING
+    			}
+    		}
         }
     }
     
@@ -369,7 +367,7 @@ public class LoggerProtocolManager {
      * @param timeStamp
      * @param comment
      */
-    private synchronized void notifyCommentRecieved(int timeStamp, String comment) {
+    private void notifyCommentRecieved(int timeStamp, String comment) {
         // notify all listeners that a new comment is available
         for (LoggerListener listener: this.listeners) {
             listener.logCommentReceived(timeStamp, comment);
@@ -380,7 +378,7 @@ public class LoggerProtocolManager {
      * Notify of headers change
      * @param fieldNames
      */
-    private synchronized void notifyHeaderChange(String[] fieldNames) {
+    private void notifyHeaderChange(String[] fieldNames) {
         // notify all listeners of new header label event
         for (LoggerListener listener: this.listeners) {
             listener.logFieldNamesChanged(fieldNames);
@@ -390,7 +388,7 @@ public class LoggerProtocolManager {
     /**
      * Notify all listeners of EOF event and clear the listener list. This is [basically] the end of life for this instance
      */
-    private synchronized void notifyISEOF() {
+    private void notifyISEOF() {
         for (LoggerListener listener: this.listeners) {
             listener.dataInputStreamEOF();
         }
@@ -472,35 +470,4 @@ public class LoggerProtocolManager {
         
         return sb.toString();
     }
-    
-//    /**
-//     * Write the raw passthrough message to the NXT with a common header. 
-//     * 
-//     * @param command
-//     * @param handlerTypeID
-//     * @param message
-//     * @param offset
-//     * @param length
-//     * @param flush Flush after write?
-//     */
-//    synchronized void writePassthroughMessage( 
-//    		int command, int handlerTypeID, byte[] message, int offset, int length, boolean flush)
-//    {
-//    	// size to headers 
-//    	byte[] buf = new byte[4];       
-//    	buf[0] = (byte)(command & 0xff); // set command
-//    	buf[1] = (byte)(handlerTypeID & 0xff); // set handler type ID
-//    	EndianTools.encodeShortBE(length, buf, 2); // set packet length
-//    	try {
-//    		this.nXTOutputStream.write(buf); //send header
-//    		this.nXTOutputStream.write(message, offset, length); // send data
-//    		if (flush) this.nXTOutputStream.flush();
-//		} catch (IOException e) {
-//			notifyISEOF();
-//		}
-//    	System.out.println("writePassthroughMessage: sent"); 
-//    }
-    
-    
-    
 }
