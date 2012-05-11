@@ -65,11 +65,8 @@ public final class Float extends Number implements Comparable<Float>
 			return 0;
 		
 		// handle NaN and negative/positive zero
-		byte ra = (byte)(Float.floatToIntBits(a) >>> 24);
-		byte rb = (byte)(Float.floatToIntBits(b) >>> 24);
-		// normalize NaN
-		ra &= ~(ra << 1);
-		rb &= ~(rb << 1);
+		int ra = Float.floatToIntBits(a);
+		int rb = Float.floatToIntBits(b);
 		
 		if (ra > rb)
 			return 1;

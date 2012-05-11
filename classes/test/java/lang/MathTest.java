@@ -5,17 +5,14 @@ public class MathTest {
     private static final double[] FLOORCEIL_INPUT = {
         Double.NEGATIVE_INFINITY, -2.5, -2.3, -2.0, -1.7, -1.5, -1.3, -1.0, -0.7, -0.5, -0.3, -0.0,
         0.0, 0.3, 0.5, 0.7, 1.0, 1.3, 1.5, 1.7, 2.0, 2.3, 2.5, Double.POSITIVE_INFINITY,
-        Double.NaN,
     };
     private static final double[] FLOOR_EXPECT = {
         Double.NEGATIVE_INFINITY, -3.0, -3.0, -2.0, -2.0, -2.0, -2.0, -1.0, -1.0, -1.0, -1.0, -0.0,
         0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, Double.POSITIVE_INFINITY,
-        Double.NaN,
     };
     private static final double[] CEIL_EXPECT = {
         Double.NEGATIVE_INFINITY, -2.0, -2.0, -2.0, -1.0, -1.0, -1.0, -1.0, -0.0, -0.0, -0.0, -0.0,
         0.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 3.0, 3.0, Double.POSITIVE_INFINITY,
-        Double.NaN,
     };
     
     private static final float[] FLOAT_ORDER = {
@@ -67,19 +64,27 @@ public class MathTest {
 
     private static void assertEquals(long actual, long expected) {
         if (actual != expected)
-            throw new RuntimeException("expected "+expected+" but was "+actual);
+        {
+        	System.out.println("expected "+expected+" but was "+actual);
+        	while (true) {}
+//            throw new RuntimeException("expected "+expected+" but was "+actual);
+        }
     }
     
     private void testFloor() {
+        for (int j=0; j<DOUBLE_NAN.length; j++)
+        	assertNaN(Math.floor(DOUBLE_NAN[j]));
         for (int i=0; i<FLOORCEIL_INPUT.length; i++)
             assertEqualsExact(Math.floor(FLOORCEIL_INPUT[i]), FLOOR_EXPECT[i]);
     }
     
     private void testCeil() {
+        for (int j=0; j<DOUBLE_NAN.length; j++)
+        	assertNaN(Math.ceil(DOUBLE_NAN[j]));
         for (int i=0; i<FLOORCEIL_INPUT.length; i++)
             assertEqualsExact(Math.ceil(FLOORCEIL_INPUT[i]), CEIL_EXPECT[i]);
     }
-
+    
     private void testFloatCompare() {
         for (int i=0; i<FLOAT_NAN.length; i++)
         {
@@ -212,6 +217,7 @@ public class MathTest {
         t.testMinDouble();
         t.testMaxFloat();
         t.testMaxDouble();
+        System.out.println("OK");
     }
 
 
