@@ -1,5 +1,7 @@
 package java.lang;
 
+import lejos.nxt.Button;
+
 public class MathTest {
     
     private static final double[] FLOORCEIL_INPUT = {
@@ -39,37 +41,40 @@ public class MathTest {
     
     private static void assertNaN(float actual) {
         if (actual == actual)
-            throw new RuntimeException("expected NaN but was "+actual);
+            emergencyExit("expected NaN but was "+actual);
     }
 
     private static void assertNaN(double actual) {
         if (actual == actual)
-            throw new RuntimeException("expected NaN but was "+actual);
+            emergencyExit("expected NaN but was "+actual);
     }
 
     private static void assertEqualsExact(float actual, float expected) {
         int a2 = Float.floatToIntBits(actual);
         int e2 = Float.floatToIntBits(expected);
         if (a2 != e2)
-            throw new RuntimeException("expected "+expected+" but was "+actual);
+            emergencyExit("expected "+expected+" but was "+actual);
     }
 
     private static void assertEqualsExact(double actual, double expected) {
         long a2 = Double.doubleToLongBits(actual);
         long e2 = Double.doubleToLongBits(expected);
         if (a2 != e2)
-            throw new RuntimeException("expected "+expected+" but was "+actual);
+            emergencyExit("expected "+expected+" but was "+actual);
     }
 
 
     private static void assertEquals(long actual, long expected) {
         if (actual != expected)
-        {
-        	System.out.println("expected "+expected+" but was "+actual);
-        	while (true) {}
-//            throw new RuntimeException("expected "+expected+" but was "+actual);
-        }
+        	emergencyExit("expected "+expected+" but was "+actual);
     }
+    
+    private static void emergencyExit(String s)
+    {
+    	System.out.println(s);
+    	Button.ESCAPE.waitForPress();
+    }
+    
     
     private void testFloor() {
         for (int j=0; j<DOUBLE_NAN.length; j++)
