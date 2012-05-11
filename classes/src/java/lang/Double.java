@@ -56,8 +56,11 @@ public final class Double extends Number implements Comparable<Double>
 			return 0;
 		
 		// handle NaN and negative/positive zero
-		long ra = Double.doubleToLongBits(a);
-		long rb = Double.doubleToLongBits(b);
+		byte ra = (byte)(Double.doubleToLongBits(a) >>> 56);
+		byte rb = (byte)(Double.doubleToLongBits(b) >>> 56);
+		// normalize NaN
+		ra &= ~(ra << 1);
+		rb &= ~(rb << 1);
 		
 		if (ra > rb)
 			return 1;
