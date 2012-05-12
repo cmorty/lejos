@@ -50,13 +50,17 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 * Use this type to ID as simple robot drive
 	 */
 	public static final int TYPE_ROBOT_DRIVE = 2;
+	/**
+	 * Use this type to ID as debug console
+	 */
+	public static final int TYPE_DEBUG_CONSOLE = 3;
 	
 	/**
 	 * Use for GET or SET to ignore
 	 */
 	public static final int  CMD_IGNORE = 256;
 	
-	private JLabel lblPluginName = new JLabel("");
+	private JLabel lblPluginName = new JLabel("label goes here");
 	private int handlerID = 0;
 	private int handlerTypeID = TYPE_ALWAYS_RECEIVE;
 	private ExtensionGUIManager extensionGUIManager;
@@ -64,6 +68,7 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	private NumberFormat formatterInteger =  NumberFormat.getIntegerInstance();
 	private DecimalFormat formatterDecimal =  (DecimalFormat)NumberFormat.getInstance();
 	private volatile boolean skipPropertyEvent=false;
+	JButton btnRefreshData;
 	
 	public AbstractTunneledMessagePanel(int handlerID, ExtensionGUIManager extensionGUIManager) {
 		formatterDecimal.setMinimumFractionDigits(1);
@@ -560,7 +565,7 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 		setMinimumSize(new Dimension(621, 177));
 		setLayout(null);
 
-		JButton btnRefreshData = new JButton("Poll NXT");
+		btnRefreshData = new JButton("Poll NXT");
 		btnRefreshData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				pollForRemoteHandlerValues();
@@ -707,7 +712,7 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 * empty method if not used in your subclass.
 	 * 
 	 * @param command The command (byte 1 value of handler message)
-	 * @param message the byte array packet  with byte 0-1 stripped out. Byte 1 (command) is passed as <code>command</code>
+	 * @param message the byte[] array packet  with elements 0-1 stripped out. Byte 1 (command) is passed as <code>command</code>
 	 * @see #registerCommandCallback
 	 */
 	protected abstract void customSETMessage(int command, byte[] message);
@@ -774,5 +779,22 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 */
 	protected void dataInputStreamEOF(){
 		disableRegisteredFields();
+	}
+	
+	/**
+	 * Have your implementation return <code>true</code> to request focus when a message is routed to it from
+	 * the NXT.
+	 * 
+	 * @return <code>true</code> to request focus for the panel
+	 */
+	protected abstract boolean requestFocusOnMessage();
+	
+	/**
+	 * Allows your implementation to hide the poll button. Default return value is <code>true</code> to keep it 
+	 * shown.
+	 * @return <code>false</code> to hide the "Poll NXT" button
+	 */
+	protected boolean showPollButton() {
+		return true;
 	}
 }

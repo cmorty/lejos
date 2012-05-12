@@ -188,4 +188,8 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	protected boolean requestFocusOnMessage() {
+		return false;
+	}
 }
