@@ -34,6 +34,7 @@ import java.util.ArrayList;
  * @see NXTDataLogger
  * @see PIDTuner
  * @see SimpleDrive
+ * @see LoggerDebugConsole
  */
 public class LogMessageManager  {
 	private static final LogMessageManager SELF_LMM = new LogMessageManager();
@@ -240,7 +241,7 @@ public class LogMessageManager  {
 			byte[] buf= { (byte)(typeHandler.getHandlerID() & 0xff)};
 			
 			arrayMessageTypeHandlers.add(typeHandler);
-			//System.out.println("found " + typeHandler.getHandlerTypeID());
+//			System.out.println("reghndrlr " + typeHandler.getHandlerTypeID());
 			// send the handler info to NXJChartingLogger so it can load the required JPanel in the TabbedPane
 			tunnelTheMessage(CMD_INIT_HANDLER,typeHandler.getHandlerTypeID(), buf);
 		}
