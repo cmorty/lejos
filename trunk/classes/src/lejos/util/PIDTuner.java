@@ -23,7 +23,6 @@ public class PIDTuner extends LogMessageTypeHandler {
 	 * 
 	 * @param tuner The instantiated <code>PIDTuner</code> implementation
 	 * @param lmm The <code>LogMessageManager</code> singleton. See {@link LogMessageManager#getLogMessageManager(NXTDataLogger)}.
-	 * @see LogMessageManager#registerMessageTypeHandler(LogMessageTypeHandler)
 	 * @see PIDTuningProvider
 	 */
 	public PIDTuner(PIDTuningProvider tuner, LogMessageManager lmm){

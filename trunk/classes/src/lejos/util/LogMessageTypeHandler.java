@@ -35,6 +35,10 @@ public abstract class LogMessageTypeHandler {
 	 */
 	protected static final int TYPE_ROBOT_DRIVE = 2;
 	
+	/**
+	 * Use this type to ID as debug console
+	 */
+	protected static final int TYPE_DEBUG_CONSOLE = 3;
 	
 	/**
 	 *  Specifies the number of header bytes before the start of the value packet in recieved
