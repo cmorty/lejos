@@ -51,7 +51,9 @@ class ExtensionGUIManager {
         	if (theName != null && theName.equalsIgnoreCase(handlerTypeID + "_" + handlerID)){
         		tabbedPane.setSelectedIndex(i);
         		thePanel = (AbstractTunneledMessagePanel) tabbedPane.getComponentAt(i);
-        		thePanel.requestFocus();
+        		if (thePanel.requestFocusOnMessage()) {
+        			thePanel.requestFocus();
+        		}
         		break;
         	}
         }
@@ -78,12 +80,20 @@ class ExtensionGUIManager {
 				tabLabel = "Drive-" + handlerID;
 				tabHoverText = "Robot Driver interface";
 				break;
+			case AbstractTunneledMessagePanel.TYPE_DEBUG_CONSOLE:
+				targetPanel = new PanelDebugConsole(handlerID, this);
+				tabLabel = "Debug Out-" + handlerID;
+				tabHoverText = "Debug Output Console";
+				break;
 			default:
 				System.out.println("!** Invalid type handler specified in ExtensionGUIManager.tabSetup");
 				return;
 			}
 			
         	targetPanel.setName(handlerTypeID + "_" + handlerID);
+        	if (!targetPanel.showPollButton()){
+        		targetPanel.btnRefreshData.setVisible(false);
+        	}
 	    	//jTabbedPane1.addTab("PID Tuning", jp1);
 	        tabbedPane.insertTab(tabLabel, null, targetPanel, tabHoverText, tabbedPane.getTabCount());
 //	    	System.out.println("name=" + jp1.getName());
@@ -131,8 +141,10 @@ class ExtensionGUIManager {
         		if (handlerTypeID==compareTypeID) {
         			// play nice with Swing and send the packet to processing
         			SwingUtilities.invokeLater(new MessageProcessorThread(targetPanel, dataPacket, handlerTypeID));
-        			tabbedPane.setSelectedIndex(i);
-        			targetPanel.requestFocus();
+        			if (targetPanel.requestFocusOnMessage()) {
+        				tabbedPane.setSelectedIndex(i);
+        				targetPanel.requestFocus();
+            		}
         		}
         	}
         }

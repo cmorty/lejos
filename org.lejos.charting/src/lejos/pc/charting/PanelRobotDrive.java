@@ -335,4 +335,8 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 			directionButtons[i].setSelected(false);
 		}
 	}
+	@Override
+	protected boolean requestFocusOnMessage() {
+		return true;
+	}
 }
