@@ -1,8 +1,13 @@
 package lejos.util;
 
 /**
- *  Proportional <tt>&lt;P&gt;</tt>, Integral <tt>&lt;I&gt;</tt>, Derivative <tt>&lt;D&gt;</tt> controller implementation.
- *  
+ * A generic implementation of a Proportional <tt>&lt;P&gt;</tt>, Integral <tt>&lt;I&gt;</tt>, Derivative <tt>&lt;D&gt;</tt> 
+ * (PID) controller
+ * that provides output limiting, integral windup limiting, output ramping, 
+ * compensated time delay, deadband threshold control, and remote tuning via the <code>PIDTuner</code> class.
+ * <p>
+ * <b>PID Control Overview:</b>
+ * <br>
  *  <code>P</code> depends on the present error, <code>I</code> on the accumulation of past errors, and <code>D</code> is a 
  *  prediction of future errors, based on 
  *  current rate of change. 
@@ -61,13 +66,14 @@ package lejos.util;
  * the noise and the derivative gain Kd are sufficiently large.
  *  <p>
  *  It is important to tune the PID controller with an implementation of a consistent delay between calls to <code>doPID()</code>
- *  because the MV calc in a PID controller is time-dependent by definition. This implementation provides an optional delay (set
- *  in the constructor) and calculates the time delta (<code>dt</code>) between 
- *  calls to <code>{@link #doPID}</code> in milliseconds.
+ *  because the MV calc in a PID controller is time-dependent by definition. This class provides an optional delay 
+ *  which calculates the time delta (<code>dt</code>) between 
+ *  calls to <code>{@link #doPID}</code> for the implementation of [repeatable] periodic time delays.
  *  <p>
  *  Reference: Wikipedia- <a href="http://en.wikipedia.org/wiki/PID_controller" target="_blank">http://en.wikipedia.org/wiki/PID_controller</a>
  *  
  *  @author Kirk Thompson, 2/5/2011 &lt;lejos@mosen.net&gt;
+ *  @see PIDTuner
  */
 public class PIDController {
     /**
