@@ -2,9 +2,13 @@ package org.lejos.ros.nxt.sensors;
 
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
-import org.ros.message.nxt_lejos_msgs.Battery;
+import nxt_lejos_msgs.Battery;
+
+import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
+
+import tf.tfMessage;
 
 /**
  * 
@@ -14,7 +18,7 @@ import org.ros.node.topic.Publisher;
 public class BatterySensor extends NXTDevice implements INXTDevice{
 
 	float voltage = 0;
-    final Battery message = new Battery(); 
+    Battery message; 
     Publisher<Battery> topic = null;
     final String messageType = "nxt_lejos_msgs/Battery";
     
@@ -27,13 +31,20 @@ public class BatterySensor extends NXTDevice implements INXTDevice{
 		return voltage;
 	}
 	
-	public void publishTopic(Node node){
+	public void publishTopic(ConnectedNode node){
 		topic = node.newPublisher("" + super.getName(), messageType);
 	}
 	
 	public void updateTopic(Node node, long seq){
-		message.voltage = getVoltage();
+		message = node.getTopicMessageFactory().newFromType(Battery._TYPE);
+		message.setVoltage(getVoltage());
 		topic.publish(message);
+	}
+
+	@Override
+	public void publishTopic(Node node) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

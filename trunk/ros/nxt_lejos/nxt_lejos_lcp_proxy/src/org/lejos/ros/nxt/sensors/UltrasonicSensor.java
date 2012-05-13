@@ -4,8 +4,10 @@ import lejos.nxt.SensorPort;
 import lejos.robotics.RangeFinder;
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
-import org.ros.message.sensor_msgs.LaserScan;
-import org.ros.message.sensor_msgs.Range;
+import sensor_msgs.LaserScan;
+import sensor_msgs.Range;
+
+import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 
@@ -22,21 +24,18 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 	private float range_min = 0.05f;
 	private float range_max = 2.0f;
 	
-    final Range message = new Range(); 
+    Range message; 
     Publisher<Range> topic = null;
     String messageType = "sensor_msgs/Range";
     
-    private final LaserScan laserMessage = new LaserScan(); 
-    private Publisher<LaserScan> laserTopic = null;
-    private String laserMessageType = "sensor_msgs/LaserScan";
-    
-    Node node;
+    private LaserScan laserMessage;
+    Publisher<LaserScan> laserTopic = null;
+    String laserMessageType = "sensor_msgs/LaserScan";
 	
     //NXT Brick
 	private lejos.nxt.UltrasonicSensor usSensor;
     
-	public UltrasonicSensor(Node node, String port){
-		this.node = node;
+	public UltrasonicSensor(ConnectedNode node, String port){
 		if(port.equals("PORT_1")){
 			usSensor = new lejos.nxt.UltrasonicSensor(SensorPort.S1);
 		}else if(port.equals("PORT_2")){
@@ -108,43 +107,55 @@ public class UltrasonicSensor extends NXTDevice implements INXTDevice{
 		return range_max;
 	}
 
-	public void publishTopic(Node node) {
+	public void publishTopic(ConnectedNode node) {
 		topic = node.newPublisher("" + super.getName(), messageType);
 		laserTopic = node.newPublisher("scan", laserMessageType);
 	}
 
-	public void updateTopic(Node node, long seq) {
+	public void updateTopic(ConnectedNode node, long seq) {
 		float range = usSensor.getDistance() / 100f;
 		
 		// Range message
-		message.header.stamp = node.getCurrentTime();
-		message.header.frame_id = "/front";
-		message.max_range= range_max;
-		message.min_range = range_min;
-		message.field_of_view = spread_angle;
-		message.radiation_type = 0; // Ultrasonic
-		message.range = range;
+		message.getHeader().setStamp(node.getCurrentTime());
+		message.getHeader().setFrameId("/front");
+		message.setMaxRange(range_max);
+		message.setMinRange(range_min);
+		message.setFieldOfView(spread_angle);
+		message.setRadiationType((byte) 0); // Ultrasonic
+		message.setRange(range);
 		topic.publish(message);	
 		
 		// Laser scan message
-		laserMessage.header.stamp = node.getCurrentTime();
-		laserMessage.header.frame_id = "/robot";
-		laserMessage.angle_min = -0.02f;
-		laserMessage.angle_max = 0.02f;
-		laserMessage.angle_increment = 0.02f; 
-		laserMessage.time_increment = 0.1f;
-		laserMessage.scan_time = 1f;
-		laserMessage.range_min = 0.05f;
-		laserMessage.range_max = 2.0f;
+		laserMessage.getHeader().setStamp(node.getCurrentTime());
+		laserMessage.getHeader().setFrameId("/robot");
+		laserMessage.setAngleMin(-0.02f);
+		laserMessage.setAngleMax(0.02f);
+		laserMessage.setAngleIncrement(0.02f); 
+		laserMessage.setTimeIncrement(0.1f);
+		laserMessage.setScanTime(1f);
+		laserMessage.setRangeMin(0.05f);
+		laserMessage.setRangeMax(2.0f);
 		
 		// Show a spread of 3 points as exact location is not known
 		float[] ranges = new float[3];
 		for(int i=0;i<ranges.length;i++) ranges[i] = range;
-		laserMessage.ranges = ranges;
+		laserMessage.setRanges(ranges);
 		laserTopic.publish(laserMessage);
 	}
 	
 	public RangeFinder getSonic() {
 		return usSensor;
+	}
+
+	@Override
+	public void publishTopic(Node node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateTopic(Node node, long seq) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -2,8 +2,11 @@ package org.lejos.ros.nxt.sensors;
 
 import lejos.nxt.SensorPort;
 
+import nxt_msgs.Contact;
+
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
+import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 
@@ -16,8 +19,8 @@ public class TouchSensor extends NXTDevice implements INXTDevice {
 	private String stamp;
 	private boolean pressed;
 	
-    final org.ros.message.nxt_msgs.Contact message = new org.ros.message.nxt_msgs.Contact(); 
-    Publisher<org.ros.message.nxt_msgs.Contact> topic = null;
+    Contact message; 
+    Publisher<Contact> topic = null;
     String messageType = "nxt_msgs/Contact";
 	
     //NXT Brick
@@ -67,16 +70,28 @@ public class TouchSensor extends NXTDevice implements INXTDevice {
 		return pressed;
 	}
 
-	public void publishTopic(Node node) {
+	public void publishTopic(ConnectedNode node) {
 		topic = node.newPublisher("" + super.getName(), messageType);
 	}
 
-	public void updateTopic(Node node, long seq) {
-		message.header.seq = seq;
-		message.header.stamp = node.getCurrentTime();
-		message.header.frame_id = "/robot";
+	public void updateTopic(ConnectedNode node, long seq) {
+		message = node.getTopicMessageFactory().newFromType(Contact._TYPE);
+		message.getHeader().setStamp(node.getCurrentTime());
+		message.getHeader().setFrameId("/robot");
 		pressed = touch.isPressed();
-		message.contact = pressed;
+		message.setContact(pressed);
 		topic.publish(message);		
+	}
+
+	@Override
+	public void publishTopic(Node node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateTopic(Node node, long seq) {
+		// TODO Auto-generated method stub
+		
 	}
 }

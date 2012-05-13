@@ -4,9 +4,13 @@ import lejos.nxt.SensorPort;
 
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
-import org.ros.message.nxt_lejos_msgs.Compass;
+import nxt_lejos_msgs.Compass;
+
+import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
+
+import tf.tfMessage;
 
 public class CompassSensor extends NXTDevice implements INXTDevice {	
 	//NXT data
@@ -17,8 +21,8 @@ public class CompassSensor extends NXTDevice implements INXTDevice {
 	private String stamp;
 	private float heading;
 	
-    final Compass message = new Compass(); 
-    Publisher<org.ros.message.nxt_lejos_msgs.Compass> topic = null;
+    Compass message; 
+    Publisher<Compass> topic = null;
     String messageType = "nxt_lejos_ros_msgs/Compass";
 	
     //NXT Brick
@@ -68,13 +72,20 @@ public class CompassSensor extends NXTDevice implements INXTDevice {
 		return heading;
 	}
 
-	public void publishTopic(Node node) {
+	public void publishTopic(ConnectedNode node) {
 		topic = node.newPublisher("" + super.getName(), messageType);
 	}
 
 	public void updateTopic(Node node, long seq) {
+		message = node.getTopicMessageFactory().newFromType(Compass._TYPE);
 		heading = compass.getDegrees();
-		message.heading = heading;
+		message.setHeading(heading);
 		topic.publish(message);		
+	}
+
+	@Override
+	public void publishTopic(Node node) {
+		// TODO Auto-generated method stub
+		
 	}
 }

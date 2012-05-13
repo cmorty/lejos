@@ -7,14 +7,18 @@ import lejos.robotics.RegulatedMotor;
 
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
+import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
+
+import sensor_msgs.JointState;
+import tf.tfMessage;
 
 public class NXTServoMotor extends NXTDevice implements INXTDevice{
 
 	//ROS topic
-    final org.ros.message.sensor_msgs.JointState message = new org.ros.message.sensor_msgs.JointState(); 
-	Publisher<org.ros.message.sensor_msgs.JointState> topic = null;
+    JointState message = null;
+	Publisher<JointState> topic = null;
 	
 	ArrayList<String> nameList = new ArrayList<String>();
 	double[] arrEffort = new double[1];
@@ -45,22 +49,22 @@ public class NXTServoMotor extends NXTDevice implements INXTDevice{
 		return port;
 	}
 	
-	public void publishTopic(Node node){		
+	public void publishTopic(ConnectedNode node){		
 		topic =  node.newPublisher("" + super.getName(), "sensor_msgs/JointState");
 	}
 
-	public void updateTopic(Node node, long seq) {
+	public void updateTopic(ConnectedNode node, long seq) {
+		message = node.getTopicMessageFactory().newFromType(JointState._TYPE);
 		nameList.clear();
 		nameList.add(super.getName());
-		message.name = nameList;
+		message.setName(nameList);
 		arrEffort[0] = (double) (motor.getSpeed() / 9);
-		message.effort = arrEffort;
+		message.setEffort(arrEffort);
 		arrPosition[0] =  motor.getTachoCount();
-		message.position = arrPosition;
+		message.setPosition(arrPosition);
 		arrVelocity[0] = (motor.isMoving() ? motor.getSpeed() : 0);
-		message.velocity = arrVelocity;
-		message.header.seq=seq;
-		message.header.stamp = node.getCurrentTime();
+		message.setVelocity(arrVelocity);
+		message.getHeader().setStamp(node.getCurrentTime());
 		topic.publish(message);	
 	}
 	
@@ -88,5 +92,15 @@ public class NXTServoMotor extends NXTDevice implements INXTDevice{
 		System.out.println("JointPosition: angle = " + angle);
 		
 		motor.rotateTo((int) angle);
+	}
+
+	@Override
+	public void publishTopic(Node node) {
+		//Do nothing
+	}
+
+	@Override
+	public void updateTopic(Node node, long seq) {
+		// Do nothing
 	}
 }

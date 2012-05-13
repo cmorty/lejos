@@ -2,10 +2,15 @@ package org.lejos.ros.nxt.sensors;
 
 import lejos.nxt.SensorPort;
 
+import nxt_msgs.Gyro;
+
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
+import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
+
+import tf.tfMessage;
 
 public class GyroSensor extends NXTDevice implements INXTDevice {	
 	//NXT data
@@ -16,8 +21,8 @@ public class GyroSensor extends NXTDevice implements INXTDevice {
 	private String stamp;
 	private float angularVelocity;
 	
-    final org.ros.message.nxt_msgs.Gyro message = new org.ros.message.nxt_msgs.Gyro(); 
-    Publisher<org.ros.message.nxt_msgs.Gyro> topic = null;
+    Gyro message; 
+    Publisher<Gyro> topic = null;
     String messageType = "nxt_msgs/Gyro";
 	
     //NXT Brick
@@ -67,13 +72,20 @@ public class GyroSensor extends NXTDevice implements INXTDevice {
 		return angularVelocity;
 	}
 
-	public void publishTopic(Node node) {
+	public void publishTopic(ConnectedNode node) {
 		topic = node.newPublisher("" + super.getName(), messageType);
 	}
 
 	public void updateTopic(Node node, long seq) {
+		message = node.getTopicMessageFactory().newFromType(Gyro._TYPE);
 		angularVelocity = gyro.getAngularVelocity();
-		message.angular_velocity.x = angularVelocity;
+		message.getAngularVelocity().setX(angularVelocity);
 		topic.publish(message);		
+	}
+
+	@Override
+	public void publishTopic(Node node) {
+		// TODO Auto-generated method stub
+		
 	}
 }
