@@ -2,9 +2,9 @@
 Launches the PublishMap program, which publishes a line map as markers.
 -->
 <launch>
-	<node pkg="rosjava_bootstrap" 
-	type="run.py" 
-	args="nxt_lejos_map_server org.lejos.ros.nodes.PublishMap" 
+	<node pkg="nxt_lejos_map_server" 
+	type="nxt_lejos_map_server" 
+	args="org.lejos.ros.nodes.PublishMap" 
 	name="nxt_lejos_map_server" 
 	output="screen" />     
 </launch>

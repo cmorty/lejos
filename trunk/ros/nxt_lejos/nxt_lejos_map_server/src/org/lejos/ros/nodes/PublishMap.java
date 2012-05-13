@@ -11,32 +11,35 @@ import lejos.robotics.mapping.LineMap;
 import lejos.robotics.mapping.SVGMapLoader;
 import lejos.util.Delay;
 
-import org.ros.message.geometry_msgs.Point;
-import org.ros.message.visualization_msgs.Marker;
+import geometry_msgs.Point;
+import tf.tfMessage;
+import visualization_msgs.Marker;
 import org.ros.namespace.GraphName;
+import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
 import org.ros.node.topic.Publisher;
 
 public class PublishMap implements NodeMain {	
 	String mapFileName = "Floor.svg";
-	Marker marker = new Marker();
+	Marker marker;
 	long seq=0;
 
 	@Override
 	public void onShutdown(Node arg0) {
-		// TODO Auto-generated method stub
-		
+		// Do nothing
 	}
 
 	@Override
 	public void onShutdownComplete(Node arg0) {
-		// TODO Auto-generated method stub
-		
+		// Do nothing	
 	}
 
 	@Override
-	public void onStart(Node node) {
+	public void onStart(ConnectedNode node) {
+		
+		marker = node.getTopicMessageFactory().newFromType(Marker._TYPE);
+				
 		File mapFile = new File(mapFileName);
 		if (!mapFile.exists()) {
 			String abs = mapFile.getAbsolutePath();
@@ -55,34 +58,33 @@ public class PublishMap implements NodeMain {
 			for(int i=0;i<lines.length;i++) {
 				Line line = lines[i];
 				
-				marker.header.seq = seq++;
-				marker.header.frame_id = "/world";
-				marker.header.stamp = node.getCurrentTime();
-				marker.ns = "line_map";
-				marker.id = 0;
-				marker.type = Marker.LINE_LIST;
-				marker.action = Marker.ADD;
-				marker.scale.x = 0.05;
-				marker.scale.y = 0.05;
-				marker.scale.z = 0.05;
-				marker.color.r = 1.0f;
-				marker.color.g = 0.0f;
-				marker.color.b = 1.0f;
-				marker.color.a = 1.0f;
+				marker.getHeader().setFrameId("/world");
+				marker.getHeader().setStamp(node.getCurrentTime());
+				marker.setNs("line_map");
+				marker.setId(0);
+				marker.setType(Marker.LINE_LIST);
+				marker.setAction(Marker.ADD);
+				marker.getScale().setX(0.05);
+				marker.getScale().setY(0.05);
+				marker.getScale().setZ(0.05);
+				marker.getColor().setR(1.0f);
+				marker.getColor().setG(0.0f);
+				marker.getColor().setB(1.0f);
+				marker.getColor().setA(1.0f);
 				
-				Point p1 = new Point();
-				p1.x = line.x1 / 100;
-				p1.y = line.y1 / 100;
-				p1.z = 0;
+				Point p1 = node.getTopicMessageFactory().newFromType(Point._TYPE);
+				p1.setX(line.x1 / 100);
+				p1.setY(line.y1 / 100);
+				p1.setZ(0);
 				
-				marker.points.add(p1);
+				marker.getPoints().add(p1);
 				
-				Point p2 = new Point();
-				p2.x = line.x2 / 100;
-				p2.y = line.y2 / 100;
-				p2.z = 0;
+				Point p2 = node.getTopicMessageFactory().newFromType(Point._TYPE);
+				p2.setX(line.x2 / 100);
+				p2.setY(line.y2 / 100);
+				p2.setZ(0);
 				
-				marker.points.add(p2);
+				marker.getPoints().add(p2);
 				
 			}
 			 
@@ -103,8 +105,11 @@ public class PublishMap implements NodeMain {
 
 	@Override
 	public GraphName getDefaultNodeName() {
-		// TODO Auto-generated method stub
-		return null;
+		return new GraphName("nxt_lejos/nxt_lejos_map_server");
 	}
 
+	@Override
+	public void onError(Node arg0, Throwable arg1) {
+		// Do nothing		
+	}
 }
