@@ -7,19 +7,20 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import org.ros.message.MessageListener;
-import org.ros.message.geometry_msgs.PoseStamped;
-import org.ros.message.nav_msgs.Odometry;
-import org.ros.message.nxt_lejos_msgs.Battery;
-import org.ros.message.nxt_lejos_msgs.Compass;
-import org.ros.message.nxt_lejos_msgs.Decibels;
-import org.ros.message.nxt_msgs.Color;
-import org.ros.message.nxt_msgs.Contact;
-import org.ros.message.nxt_msgs.Gyro;
-import org.ros.message.sensor_msgs.Imu;
-import org.ros.message.sensor_msgs.LaserScan;
-import org.ros.message.sensor_msgs.Range;
-import org.ros.message.tf.tfMessage;
+import geometry_msgs.PoseStamped;
+import nav_msgs.Odometry;
+import nxt_lejos_msgs.Battery;
+import nxt_lejos_msgs.Compass;
+import nxt_lejos_msgs.Decibels;
+import nxt_msgs.Color;
+import nxt_msgs.Contact;
+import nxt_msgs.Gyro;
+import sensor_msgs.Imu;
+import sensor_msgs.LaserScan;
+import sensor_msgs.Range;
+import tf.tfMessage;
 import org.ros.namespace.GraphName;
+import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
 import org.ros.node.topic.Subscriber;
@@ -33,14 +34,20 @@ public class Monitor extends JFrame implements NodeMain {
 	private float decibels;
 	private float intensity;
 	private boolean contact;
-	private tfMessage tf = new tfMessage();
-	private Odometry od = new Odometry();
-	private PoseStamped pose = new PoseStamped();
-	private Imu imu = new Imu();
-	private LaserScan laser = new LaserScan();
+	private tfMessage tf;
+	private Odometry od;
+	private PoseStamped pose;
+	private Imu imu;
+	private LaserScan laser;
 
 	@Override
-	public void onStart(Node node) {
+	public void onStart(ConnectedNode node) {
+		
+		tf = node.getTopicMessageFactory().newFromType(tfMessage._TYPE);
+		od = node.getTopicMessageFactory().newFromType(Odometry._TYPE);
+		pose = node.getTopicMessageFactory().newFromType(PoseStamped._TYPE);
+		imu = node.getTopicMessageFactory().newFromType(Imu._TYPE);
+		laser = node.getTopicMessageFactory().newFromType(LaserScan._TYPE);
 		
 		// Table model data
         final String[] labels = {
@@ -73,16 +80,18 @@ public class Monitor extends JFrame implements NodeMain {
             		case 7:
             			return intensity;
             		case 8:
-            			return (float) quatToHeading(imu.orientation.z, imu.orientation.w);
+            			return (float) quatToHeading(imu.getOrientation().getZ(), imu.getOrientation().getW());
             		case 9:
-            			return (float) imu.angular_velocity.z;           			
+            			return (float) imu.getAngularVelocity().getZ();           			
             		case 10:
-            			return od.twist.twist.linear.x;
+            			return od.getTwist().getTwist().getLinear().getX();
             		case 11:
-            			return od.twist.twist.angular.z;
+            			return od.getTwist().getTwist().getAngular().getZ();
             		case 12:
-            			return "x: " + (float) pose.pose.position.x + "," + " y: " + (float) pose.pose.position.y + "," +
-            				   " h: " + (float) Math.toDegrees(quatToHeading(pose.pose.orientation.z, pose.pose.orientation.w));
+            			return "x: " + (float) pose.getPose().getPosition().getX() + "," + " y: " + 
+            		                   (float) pose.getPose().getPosition().getY() + "," +
+            				   " h: " + (float) Math.toDegrees(quatToHeading(pose.getPose().getOrientation().getZ(), 
+            						                                         pose.getPose().getOrientation().getW()));
             		}
             	}
             	return "";
@@ -106,7 +115,7 @@ public class Monitor extends JFrame implements NodeMain {
         subscriberBattery.addMessageListener(new MessageListener<Battery>() {
 	    	@Override
 	    	public void onNewMessage(Battery message) {   		
-	    		batteryVoltage = (float) message.voltage;
+	    		batteryVoltage = (float) message.getVoltage();
 	    		dataModel.fireTableDataChanged();
 	    	}
 	    });
@@ -117,7 +126,7 @@ public class Monitor extends JFrame implements NodeMain {
         subscriberSonic.addMessageListener(new MessageListener<Range>() {
 	    	@Override
 	    	public void onNewMessage(Range message) {   		
-	    		range = (float) message.range;
+	    		range = (float) message.getRange();
 	    		dataModel.fireTableDataChanged();
 	    	}
 	    });
@@ -128,7 +137,7 @@ public class Monitor extends JFrame implements NodeMain {
         subscriberTouch.addMessageListener(new MessageListener<Contact>() {
 	    	@Override
 	    	public void onNewMessage(Contact message) {   		
-	    		contact = message.contact;
+	    		contact = message.getContact();
 	    		dataModel.fireTableDataChanged();
 	    	}
 	    });
@@ -139,7 +148,7 @@ public class Monitor extends JFrame implements NodeMain {
         subscriberGyro.addMessageListener(new MessageListener<Gyro>() {
 	    	@Override
 	    	public void onNewMessage(Gyro message) {   		
-	    		angularVelocity = (float) message.angular_velocity.z;
+	    		angularVelocity = (float) message.getAngularVelocity().getZ();
 	    		dataModel.fireTableDataChanged();
 	    	}
 	    });
@@ -150,7 +159,7 @@ public class Monitor extends JFrame implements NodeMain {
         subscriberCompass.addMessageListener(new MessageListener<Compass>() {
 	    	@Override
 	    	public void onNewMessage(Compass message) {   		
-	    		heading = message.heading;
+	    		heading = message.getHeading();
 	    		dataModel.fireTableDataChanged();
 	    	}
 	    });
@@ -161,7 +170,7 @@ public class Monitor extends JFrame implements NodeMain {
         subscriberSound.addMessageListener(new MessageListener<Decibels>() {
 	    	@Override
 	    	public void onNewMessage(Decibels message) {   		
-	    		decibels = message.decibels;
+	    		decibels = message.getDecibels();
 	    		dataModel.fireTableDataChanged();
 	    	}
 	    });
@@ -172,7 +181,7 @@ public class Monitor extends JFrame implements NodeMain {
         subscriberLight.addMessageListener(new MessageListener<Color>() {
 	    	@Override
 	    	public void onNewMessage(Color message) {   		
-	    		intensity = (float) message.intensity;
+	    		intensity = (float) message.getIntensity();
 	    		dataModel.fireTableDataChanged();
 	    	}
 	    });
@@ -183,7 +192,7 @@ public class Monitor extends JFrame implements NodeMain {
         subscriberColor.addMessageListener(new MessageListener<Color>() {
 	    	@Override
 	    	public void onNewMessage(Color message) {   		
-	    		intensity = (float) message.intensity;
+	    		intensity = (float) message.getIntensity();
 	    		dataModel.fireTableDataChanged();
 	    	}
 	    });
@@ -262,4 +271,8 @@ public class Monitor extends JFrame implements NodeMain {
 		return 2 * Math.atan2(z, w);
 	}
 
+	@Override
+	public void onError(Node arg0, Throwable arg1) {
+		// Do nothing	
+	}
 }

@@ -1,8 +1,7 @@
 <package>
   <description brief="nxt_lejos_monitor">
-
-     nxt_lejos_monitor
-
+	A GUI to show the state of the battery and sensors, the robot pose and velocity etc.,
+	for a robot running nxt_lejos_proxy. 
   </description>
   <author>leJOS development</author>
   <license>BSD</license>
@@ -15,15 +14,6 @@
   <depend package="geometry_msgs"/>
   <depend package="nav_msgs"/>
   <depend package="tf"/>
-
-<export>
-        <rosjava-src location="src" />
-        <rosjava-pathelement location="target/" groupId="org.lejos.ros" artifactId="org.lejos.ros.nodes.monitor" version="0.0.1" built="true" />
-        <rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/pccomm.jar" />
-        <rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove-gpl.jar" />
-        <rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove.jar" />
-        </export>
-
 </package>
 
 
