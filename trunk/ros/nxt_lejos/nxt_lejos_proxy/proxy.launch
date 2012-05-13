@@ -9,9 +9,9 @@ using an optimized protocol for communicating with the ROS Responder running on 
 <param name="brick_name" value="NOISY"/>
 <param name="connection" value="bluetooth"/>
 <param name="robot_description" command="cat $(find nxt_lejos_proxy)/robot.urdf"/>
-<node pkg="rosjava_bootstrap" 
-	type="run.py" 
-	args="nxt_lejos_proxy org.lejos.ros.nodes.ROSProxy" 
+<node pkg="nxt_lejos_proxy" 
+	type="nxt_lejos_proxy" 
+	args="org.lejos.ros.nodes.ROSProxy" 
 	name="nxt_lejos_proxy" 
 	output="screen"> 	
 </node>    

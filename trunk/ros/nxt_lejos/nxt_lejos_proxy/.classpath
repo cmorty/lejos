@@ -1,32 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="output" path="bin"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.ros/rosjava/lib/org.ros.rosjava.tf-0.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/pccomm.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/org/apache/commons/com.springsource.org.apache.commons.httpclient/3.1.0/com.springsource.org.apache.commons.httpclient-3.1.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.ros/rosjava/lib/org.ros.rosjava.nxt_lejos_msgs-0.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.ros/rosjava/lib/org.ros.rosjava.roscpp-0.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.ros/rosjava/lib/org.ros.rosjava.nav_msgs-0.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.ros/rosjava/lib/org.ros.rosjava.test_ros-0.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.ros/rosjava/lib/org.ros.rosjava.sensor_msgs-0.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/com/google/guava/org.ros.rosjava.guava/r07/org.ros.rosjava.guava-r07.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/ros/workspace/rosjava_core/apache_commons_util/target/org.ros.rosjava.ws-commons-util-1.0.2.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/org/apache/commons/com.springsource.org.apache.commons.logging/1.1.1/com.springsource.org.apache.commons.logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/dnsjava/org.ros.rosjava.dnsjava/2.1.1/org.ros.rosjava.dnsjava-2.1.1.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/ros/workspace/rosjava_core/apache_xmlrpc/target/org.ros.rosjava.apache-xmlrpc-3.1.3.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/ros/workspace/rosjava_core/rosjava_bootstrap/target/org.ros.rosjava.rosjava_bootstrap-0.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/org/apache/commons/com.springsource.org.apache.commons.net/2.0.0/com.springsource.org.apache.commons.net-2.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.ros/rosjava/lib/org.ros.rosjava.std_msgs-0.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/org/jboss/netty/netty/3.2.4.Final/netty-3.2.4.Final.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.ros/rosjava/lib/org.ros.rosjava.rosgraph_msgs-0.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.ros/rosjava/lib/org.ros.rosjava.topic_tools-0.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/ros/workspace/rosjava_core/rosjava/target/org.ros.rosjava-0.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove-gpl.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/ros/workspace/nxt_lejos/nxt_lejos_proxy/target/org.lejos.ros.nodes.ROSProxy-0.0.1.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.ros/rosjava/lib/org.ros.rosjava.nxt_msgs-0.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.ros/rosjava/lib/org.ros.rosjava.geometry_msgs-0.0.0.jar"/>
-	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/org/apache/commons/com.springsource.org.apache.commons.codec/1.3.0/com.springsource.org.apache.commons.codec-1.3.0.jar"/>
-	<classpathentry kind="output" path="build"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/ros/rosjava_core/rosjava/0.0.0-SNAPSHOT/rosjava-0.0.0-SNAPSHOT.jar" exported="true"/>
+	<classpathentry sourcepath="/home/lejosdev/.gradle/caches/artifacts-13/filestore/com.google.guava/guava/r07/source/3c721bace03d387465e1dfa7e11c9b5f5d537a54/guava-r07-sources.jar" kind="lib" path="/home/lejosdev/.gradle/caches/artifacts-13/filestore/com.google.guava/guava/r07/jar/d2e4d3138d0798b7500685ed85c78c712fb82fe5/guava-r07.jar" exported="true"/>
+	<classpathentry sourcepath="/home/lejosdev/.gradle/caches/artifacts-13/filestore/org.apache.commons/com.springsource.org.apache.commons.lang/2.4.0/source/2b8c4b3035e45520ef42033e823c7d33e4b4402c/com.springsource.org.apache.commons.lang-2.4.0-sources.jar" kind="lib" path="/home/lejosdev/.gradle/caches/artifacts-13/filestore/org.apache.commons/com.springsource.org.apache.commons.lang/2.4.0/jar/686e3713650c8e3a5d98723b4d3e239586bf9822/com.springsource.org.apache.commons.lang-2.4.0.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/org/apache/commons/com.springsource.org.apache.commons.codec/1.3.0/com.springsource.org.apache.commons.codec-1.3.0.jar" exported="true"/>
+	<classpathentry sourcepath="/home/lejosdev/.gradle/caches/artifacts-13/filestore/org.apache.commons/com.springsource.org.apache.commons.io/1.4.0/source/48753e43ff29409fbbeadfb36186cbe27e41b179/com.springsource.org.apache.commons.io-1.4.0-sources.jar" kind="lib" path="/home/lejosdev/.gradle/caches/artifacts-13/filestore/org.apache.commons/com.springsource.org.apache.commons.io/1.4.0/jar/51097cd000ec88214ff181c9f059947de1cf4a35/com.springsource.org.apache.commons.io-1.4.0.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/ros/rosjava_core/rosjava_bootstrap/0.0.0-SNAPSHOT/rosjava_bootstrap-0.0.0-SNAPSHOT.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/org/jboss/netty/netty/3.2.4.Final/netty-3.2.4.Final.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/org/apache/commons/com.springsource.org.apache.commons.net/2.0.0/com.springsource.org.apache.commons.net-2.0.0.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/ros/rosjava_core/rosjava_messages/0.0.0-SNAPSHOT/rosjava_messages-0.0.0-SNAPSHOT.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/org/apache/commons/com.springsource.org.apache.commons.logging/1.1.1/com.springsource.org.apache.commons.logging-1.1.1.jar" exported="true"/>
+	<classpathentry sourcepath="/home/lejosdev/.gradle/caches/artifacts-13/filestore/junit/junit/3.8.2/source/aaa058540bf14ad600dd784de979c46c721ccbbe/junit-3.8.2-sources.jar" kind="lib" path="/home/lejosdev/.gradle/caches/artifacts-13/filestore/junit/junit/3.8.2/jar/7e4cde26b53a9a0e3fe5b00d1dbbc7cc1d46060/junit-3.8.2.jar" exported="true"/>
+	<classpathentry sourcepath="/home/lejosdev/.gradle/caches/artifacts-13/filestore/xml-apis/xml-apis/1.0.b2/source/d8525661c5a0a05702fa41873d250d135031ec25/xml-apis-1.0.b2-sources.jar" kind="lib" path="/home/lejosdev/.gradle/caches/artifacts-13/filestore/xml-apis/xml-apis/1.0.b2/jar/3136ca936f64c9d68529f048c2618bd356bf85c9/xml-apis-1.0.b2.jar" exported="true"/>
+	<classpathentry sourcepath="/home/lejosdev/.gradle/caches/artifacts-13/filestore/org.apache.ws.commons/ws-commons-util/1.0.1/source/9a4ae65898d4fadb03f281ee2bcbed4200e394b4/ws-commons-util-1.0.1-sources.jar" kind="lib" path="/home/lejosdev/.gradle/caches/artifacts-13/filestore/org.apache.ws.commons/ws-commons-util/1.0.1/jar/126e80ff798fece634bc94e61f8be8a8da00be60/ws-commons-util-1.0.1.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/org/apache/commons/com.springsource.org.apache.commons.httpclient/3.1.0/com.springsource.org.apache.commons.httpclient-3.1.0.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/ros/rosjava_core/apache_xmlrpc_common/0.0.0-SNAPSHOT/apache_xmlrpc_common-0.0.0-SNAPSHOT.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/ros/rosjava_core/apache_xmlrpc_server/0.0.0-SNAPSHOT/apache_xmlrpc_server-0.0.0-SNAPSHOT.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/.m2/repository/ros/rosjava_core/apache_xmlrpc_client/0.0.0-SNAPSHOT/apache_xmlrpc_client-0.0.0-SNAPSHOT.jar" exported="true"/>
+	<classpathentry sourcepath="/home/lejosdev/.gradle/caches/artifacts-13/filestore/dnsjava/dnsjava/2.1.1/source/fef9364120c9c5092af1ee6a288760fe731cd519/dnsjava-2.1.1-sources.jar" kind="lib" path="/home/lejosdev/.gradle/caches/artifacts-13/filestore/dnsjava/dnsjava/2.1.1/jar/5708df81cf6dbff545695f0be6380b7bbc85accc/dnsjava-2.1.1.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/pctools.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/charting.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/pccomm.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/jtools.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/jfreechart.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/commons-cli.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/stax-api-1.0.1.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/jcommon.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove-gpl.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bcel.jar" exported="true"/>
 </classpath>

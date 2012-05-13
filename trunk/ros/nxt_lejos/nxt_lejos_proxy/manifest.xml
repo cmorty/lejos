@@ -11,7 +11,7 @@
       than nxt_lejos_lcp_proxy.
   </description>
   <author>leJOS development</author>
-  <license>BSD</license>
+  <license>GPL</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/nxt_lejos_proxy</url>
 
@@ -23,14 +23,6 @@
   <depend package="nxt_msgs" />
   <depend package="nxt_lejos_msgs" />
   <depend package="tf" />
-
-<export>
-	<rosjava-src location="src" /> 
-	<rosjava-pathelement location="target/" groupId="org.lejos.ros" artifactId="org.lejos.ros.nodes.ROSProxy" version="0.0.1" built="true" />
-   	<rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/pccomm.jar" />
-   	<rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove-gpl.jar" />
-    <rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove.jar" />	    	
-  </export>
 </package>
 
 

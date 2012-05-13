@@ -22,11 +22,12 @@ import org.lejos.ros.sensors.SoundSensor;
 import org.lejos.ros.sensors.TouchSensor;
 import org.lejos.ros.sensors.UltrasonicSensor;
 import org.ros.message.MessageListener;
-import org.ros.message.geometry_msgs.PoseWithCovarianceStamped;
-import org.ros.message.geometry_msgs.Twist;
-import org.ros.message.nxt_lejos_msgs.DNSCommand;
-import org.ros.message.nxt_lejos_msgs.Tone;
+import geometry_msgs.PoseWithCovarianceStamped;
+import geometry_msgs.Twist;
+import nxt_lejos_msgs.DNSCommand;
+import nxt_lejos_msgs.Tone;
 import org.ros.namespace.GraphName;
+import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
 import org.ros.node.parameter.ParameterTree;
@@ -100,8 +101,8 @@ public class ROSProxy implements NodeMain {
 
 	
 	@Override
-	public void onStart(Node node) {
-		params = node.newParameterTree();
+	public void onStart(ConnectedNode node) {
+		params = node.getParameterTree();
 			
 		brickName = params.getString("brick_name");
 		System.out.println("Brick name is " + brickName);
@@ -157,11 +158,11 @@ public class ROSProxy implements NodeMain {
 					//Subscribe to the Twist message on "cmd_vel" topic
 		            Subscriber<Twist> subscriberTwist =
 		        	        node.newSubscriber("cmd_vel", "geometry_msgs/Twist");
-		                subscriberTwist.addMessageListener(new MessageListener<org.ros.message.geometry_msgs.Twist>() {
+		                subscriberTwist.addMessageListener(new MessageListener<geometry_msgs.Twist>() {
 		        	    	@Override
-		        	    	public void onNewMessage(org.ros.message.geometry_msgs.Twist message) { 
-		        	    		float linear = (float) message.linear.x;
-		        	    		float angular = (float) message.angular.z;
+		        	    	public void onNewMessage(geometry_msgs.Twist message) { 
+		        	    		float linear = (float) message.getLinear().getX();
+		        	    		float angular = (float) message.getAngular().getZ();
 		        	    		
 		        	    		if (angular != angularVelocity || linear != linearVelocity) {
 		        	    			angularVelocity = angular;
@@ -177,8 +178,8 @@ public class ROSProxy implements NodeMain {
 	                    subscriberDifferentialActuatorSystem.addMessageListener(new MessageListener<DNSCommand>() {
 	            	    	@Override
 	            	    	public void onNewMessage(DNSCommand message) { 
-	            	    		String t = message.type;
-	            	    		System.out.println("Sending " + t + " " + message.value);
+	            	    		String t = message.getType();
+	            	    		System.out.println("Sending " + t + " " + message.getValue());
 	            	    		
 	            	    		if (t.equals("forward")) forward();
 	            	    		else if (t.equals("backward")) backward();
@@ -186,10 +187,10 @@ public class ROSProxy implements NodeMain {
 	            	    		else if (t.equals("rotateLeft")) rotateLeft();
 	            	    		else if (t.equals("rotateRight")) rotateRight();
 	                    		else if (t.equals("shutdown")) shutDown();
-	                    		else if (t.equals("travel")) travel((float) message.value);
-	                    		else if (t.equals("rotate")) rotate((float) message.value);		
-	                    		else if (t.equals("setTravelSpeed")) setTravelSpeed((float) message.value);
-	                    		else if (t.equals("setRotateSpeed")) setRotateSpeed((float) message.value);
+	                    		else if (t.equals("travel")) travel((float) message.getValue());
+	                    		else if (t.equals("rotate")) rotate((float) message.getValue());		
+	                    		else if (t.equals("setTravelSpeed")) setTravelSpeed((float) message.getValue());
+	                    		else if (t.equals("setRotateSpeed")) setRotateSpeed((float) message.getValue());
 	            	    	}
 	            	    });
 	                    
@@ -199,9 +200,9 @@ public class ROSProxy implements NodeMain {
                     subscriberInitialPose.addMessageListener(new MessageListener<PoseWithCovarianceStamped>() {
             	    	@Override
             	    	public void onNewMessage(PoseWithCovarianceStamped message) {  
-            	    		System.out.println("Setting pose to " + message.pose.pose.position.x + ", " + message.pose.pose.position.y);
-            	    		setPose((float) message.pose.pose.position.x * 100, (float) message.pose.pose.position.y * 100, 
-            	    				(float) Math.toDegrees(quatToHeading(message.pose.pose.orientation.z, message.pose.pose.orientation.w)));	            	    		
+            	    		//System.out.println("Setting pose to " + message.pose.pose.position.x + ", " + message.pose.pose.position.y);
+            	    		setPose((float) message.getPose().getPose().getPosition().getX() * 100, (float) message.getPose().getPose().getPosition().getY() * 100, 
+            	    				(float) Math.toDegrees(quatToHeading(message.getPose().getPose().getOrientation().getZ(), message.getPose().getPose().getOrientation().getW())));	            	    		
             	    	}
             	    });
                     
@@ -254,7 +255,7 @@ public class ROSProxy implements NodeMain {
 	        subscriberTone.addMessageListener(new MessageListener<Tone>() {
 		    	@Override
 		    	public void onNewMessage(Tone message) {   		
-		    		playTone(message.pitch, message.duration)	;
+		    		playTone(message.getPitch(), message.getDuration())	;
 		    	}
 		    });
 	        
@@ -686,5 +687,11 @@ public class ROSProxy implements NodeMain {
 	@Override
 	public void onShutdownComplete(Node node) {
 		// No action
+	}
+
+	@Override
+	public void onError(Node arg0, Throwable arg1) {
+		// TODO Auto-generated method stub
+		
 	}
 }
