@@ -10,16 +10,17 @@ import lejos.robotics.navigation.Pose;
 import lejos.util.Delay;
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
-import org.ros.message.geometry_msgs.Pose2D;
-import org.ros.message.geometry_msgs.PoseStamped;
-import org.ros.message.geometry_msgs.Quaternion;
-import org.ros.message.geometry_msgs.TransformStamped;
-import org.ros.message.geometry_msgs.Twist;
-import org.ros.message.nav_msgs.Odometry;
-import org.ros.message.nxt_lejos_msgs.DNSCommand;
-import org.ros.message.tf.tfMessage;
-import org.ros.message.turtlesim.Velocity;
+import geometry_msgs.Pose2D;
+import geometry_msgs.PoseStamped;
+import geometry_msgs.Quaternion;
+import geometry_msgs.TransformStamped;
+import geometry_msgs.Twist;
+import nav_msgs.Odometry;
+import nxt_lejos_msgs.DNSCommand;
+import tf.tfMessage;
+import turtlesim.Velocity;
 import org.ros.node.Node;
+import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Publisher;
 
 /**
@@ -47,28 +48,34 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	private static final String FRONT_FRAME = "/front";
 	private static final double FRONT_OFFSET = 0.1;
 	
-	private TransformStamped tr = new TransformStamped();
-	private TransformStamped ftr = new TransformStamped();
+	private TransformStamped tr;
+	private TransformStamped ftr;
 	
-	private tfMessage tf = new tfMessage();
+	private tfMessage tf;
      
     private Publisher<tfMessage> tfTopic = null;
     private String tfMessageType = "tf/tfMessage";
-    private Node node;
+    private ConnectedNode node;
     
-    private Odometry od = new Odometry();
+    private Odometry od;
     
     private Publisher<Odometry> odomTopic = null;
     private String odomMessageType = "nav_msgs/Odometry";
     
-    private PoseStamped poseStamped = new PoseStamped();
+    private PoseStamped poseStamped;
     private Publisher<PoseStamped> psTopic = null;
     private String psMessageType = "geometry_msgs/PoseStamped";
 	
 	private double oldAngular, oldLinear;
 	
-	public DifferentialNavigationSystem(Node node, String port1, String port2, float _wheelDiameter, float _trackWidth, boolean _reverse){		
+	public DifferentialNavigationSystem(ConnectedNode node, String port1, String port2, float _wheelDiameter, float _trackWidth, boolean _reverse){		
 		this.node = node;
+		
+		tr = node.getTopicMessageFactory().newFromType(TransformStamped._TYPE);
+		ftr = node.getTopicMessageFactory().newFromType(TransformStamped._TYPE);
+		tf = node.getTopicMessageFactory().newFromType(tfMessage._TYPE);
+		od = node.getTopicMessageFactory().newFromType(Odometry._TYPE);
+		poseStamped = node.getTopicMessageFactory().newFromType(PoseStamped._TYPE);
 		
 		//TODO: Exception if letters are the same
 		
@@ -96,7 +103,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
     	posep = new OdometryPoseProvider(df);  	
 	}
 	
-	public void publishTopic(Node node) {
+	public void publishTopic(ConnectedNode node) {
 		tfTopic = node.newPublisher("tf", tfMessageType);
 		odomTopic = node.newPublisher("odom", odomMessageType);
 		psTopic = node.newPublisher("pose", psMessageType);
@@ -110,8 +117,8 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	}
 	
 	public void updateActuatorSystem(DNSCommand cmd){
-		String type = cmd.type;
-		double value = cmd.value;
+		String type = cmd.getType();
+		double value = cmd.getValue();
 		
 		System.out.println("DNS cmd = " + type + " " + value);
 		
@@ -134,8 +141,8 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	 * @param v the Velocity message
 	 */
 	public void updateVelocity(Velocity v) {	
-		float linear = v.linear;
-		float angular = v.angular;
+		float linear = v.getLinear();
+		float angular = v.getAngular();
 		
 		System.out.println("Velocity: linear = " + linear + ", angular = " + angular);
 		
@@ -159,7 +166,7 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	 * @param pose the Pose2D message
 	 */
 	public void updatePose(Pose2D pose) {
-		posep.setPose(new Pose((float) pose.x * 100f, (float) pose.y * 100f, (float) Math.toDegrees(pose.theta)));
+		posep.setPose(new Pose((float) pose.getX() * 100f, (float) pose.getY() * 100f, (float) Math.toDegrees(pose.getTheta())));
 	}
 
 	/**
@@ -169,8 +176,8 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	 * @param t the ros Twist message
 	 */
 	public void updateTwist(Twist t) {	
-		double linear = t.linear.x; // Movement relative to robot co-ordinates
-		double angular = t.angular.z; 
+		double linear = t.getLinear().getX(); // Movement relative to robot co-ordinates
+		double angular = t.getAngular().getZ(); 
 		boolean suppress = false;	
 		
 		System.out.println("Velocity: linear = " + linear + ", angular = " + angular);
@@ -224,72 +231,77 @@ public class DifferentialNavigationSystem extends NXTDevice implements INXTDevic
 	    double c1c2 = c1*c2;
 	    double s1s2 = s1*s2;
 	   	
-		Quaternion q = new Quaternion();
-		q.w = c1c2*c3 - s1s2*s3;
-		q.x = c1c2*s3 + s1s2*c3;
-		q.y = s1*c2*c3 + c1*s2*s3;
-		q.z = c1*s2*c3 - s1*c2*s3;
+		Quaternion q = node.getTopicMessageFactory().newFromType(Quaternion._TYPE);
+		q.setW(c1c2*c3 - s1s2*s3);
+		q.setX(c1c2*s3 + s1s2*c3);
+		q.setY(s1*c2*c3 + c1*s2*s3);
+		q.setZ(c1*s2*c3 - s1*c2*s3);
 		
 		double x = p.getX() / 100;
 		double y = p.getY() /100;
 	    
 		// transform for robot in the world
-	    tr.header.frame_id = WORLD_FRAME; 
-	    tr.header.stamp = node.getCurrentTime();
-	    tr.child_frame_id = ROBOT_FRAME;
+	    tr.getHeader().setFrameId(WORLD_FRAME); 
+	    tr.setChildFrameId(ROBOT_FRAME);
 	    
-		tr.transform.translation.x = x;
-		tr.transform.translation.y = y;
-		tr.transform.translation.z = 0;
+		tr.getTransform().getTranslation().setX(x);
+		tr.getTransform().getTranslation().setY(y);
+		tr.getTransform().getTranslation().setZ(0);
 		
-		tr.transform.rotation = q;
+		tr.getTransform().setRotation(q);
 	    
-	    tf.transforms.add(tr);
+	    tf.getTransforms().add(tr);
 	    
 	    // Transform for front tip of the robot
-	    ftr.header.frame_id = ROBOT_FRAME;
-	    ftr.header.stamp = node.getCurrentTime();
-	    ftr.child_frame_id = FRONT_FRAME;
+	    ftr.getHeader().setFrameId(ROBOT_FRAME);
+	    ftr.getHeader().setStamp(node.getCurrentTime());
+	    ftr.setChildFrameId(FRONT_FRAME);
 	    
-		ftr.transform.translation.x = FRONT_OFFSET; // Distance from center to front of robot
-		ftr.transform.translation.y = 0;
-		ftr.transform.translation.z = 0;
+		ftr.getTransform().getTranslation().setX(FRONT_OFFSET); // Distance from center to front of robot
+		ftr.getTransform().getTranslation().setY(0);
+		ftr.getTransform().getTranslation().setZ(0);
 		
-		ftr.transform.rotation.w = 1; // No rotation
+		ftr.getTransform().getRotation().setW(1); // No rotation
 	    
-	    tf.transforms.add(ftr);
+	    tf.getTransforms().add(ftr);
 	    
-	    od.header.stamp = node.getCurrentTime();
-	    od.header.frame_id = WORLD_FRAME;
-	    od.child_frame_id = ROBOT_FRAME;
+	    od.getHeader().setStamp(node.getCurrentTime());
+	    od.getHeader().setFrameId(WORLD_FRAME);
+	    od.setChildFrameId(ROBOT_FRAME);
 	    
-	    od.pose.pose.position.x = x;
-	    od.pose.pose.position.y = y;
-	    od.pose.pose.position.z = 0;
+	    od.getPose().getPose().getPosition().setX(x);
+	    od.getPose().getPose().getPosition().setY(y);
+	    od.getPose().getPose().getPosition().setZ(0);
 	    
-	    od.pose.pose.orientation = q;
+	    od.getPose().getPose().setOrientation(q);
 	    
 	    boolean moving = df.isMoving();
 	    Move.MoveType moveType = df.getMovement().getMoveType();
 
-	    od.twist.twist.linear.x = (moveType == Move.MoveType.ROTATE  ? 0 : (moving ? Math.toRadians(df.getTravelSpeed()) : 0));
-	    od.twist.twist.linear.y = 0;
-	    od.twist.twist.linear.z = 0;
+	    od.getTwist().getTwist().getLinear().setX((moveType == Move.MoveType.ROTATE  ? 0 : (moving ? Math.toRadians(df.getTravelSpeed()) : 0)));
+	    od.getTwist().getTwist().getLinear().setY(0);
+	    od.getTwist().getTwist().getLinear().setZ(0);
 	        
-	    od.twist.twist.angular.x = 0;
-	    od.twist.twist.angular.y = 0;	    
-	    od.twist.twist.angular.z = (moving  ? Math.toRadians(df.getTurnRate()): 0);
+	    od.getTwist().getTwist().getAngular().setX(0);
+	    od.getTwist().getTwist().getAngular().setY(0);	    
+	    od.getTwist().getTwist().getAngular().setZ((moving  ? Math.toRadians(df.getTurnRate()): 0));
 	    
-	    poseStamped.header.stamp = node.getCurrentTime();	    
-	    poseStamped.header.frame_id = WORLD_FRAME;
+	    poseStamped.getHeader().setStamp(node.getCurrentTime());	    
+	    poseStamped.getHeader().setFrameId(WORLD_FRAME);
 	    
-	    poseStamped.pose.position.x = x;
-	    poseStamped.pose.position.y = y;
-	    poseStamped.pose.position.z = 0;
-	    poseStamped.pose.orientation = q;
+	    poseStamped.getPose().getPosition().setX(x);
+	    poseStamped.getPose().getPosition().setY(y);
+	    poseStamped.getPose().getPosition().setZ(0);
+	    poseStamped.getPose().setOrientation(q);
 	}
 	
 	public DifferentialPilot getPilot() {
 		return df;
+	}
+
+	@Override
+	public void publishTopic(Node node) {
+		// TODO Auto-generated method stub
+		
 	}
 }

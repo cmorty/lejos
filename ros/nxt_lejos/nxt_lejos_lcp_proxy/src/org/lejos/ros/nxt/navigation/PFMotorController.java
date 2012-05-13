@@ -5,7 +5,7 @@ import lejos.nxt.addon.IRLink;
 
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
-import org.ros.message.nxt_lejos_msgs.DNSCommand;
+import nxt_lejos_msgs.DNSCommand;
 import org.ros.node.Node;
 
 /**
@@ -32,8 +32,8 @@ public class PFMotorController extends NXTDevice implements INXTDevice {
 	}
 	
 	public void updateActuatorSystem(DNSCommand cmd){
-		String type = cmd.type;
-		double value = cmd.value;
+		String type = cmd.getType();
+		double value = cmd.getValue();
 		
 		System.out.println("DNS cmd = " + type + " " + value);
 		

@@ -1,10 +1,15 @@
 package org.lejos.ros.nxt.sensors;
 
 import lejos.nxt.SensorPort;
+import nxt_msgs.Color;
+
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
+import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
+
+import tf.tfMessage;
 
 public class LightSensor extends NXTDevice implements INXTDevice{
 	
@@ -15,8 +20,8 @@ public class LightSensor extends NXTDevice implements INXTDevice{
 	private String frame_id;
 	private String stamp;
 	
-    final org.ros.message.nxt_msgs.Color message = new org.ros.message.nxt_msgs.Color(); 
-    Publisher<org.ros.message.nxt_msgs.Color> topic = null;
+    Color message; 
+    Publisher<Color> topic = null;
     String messageType = "nxt_msgs/Color";
 	
     //NXT Brick
@@ -62,15 +67,27 @@ public class LightSensor extends NXTDevice implements INXTDevice{
 		return stamp;
 	}
 
-	public void publishTopic(Node node) {
+	public void publishTopic(ConnectedNode node) {
 		topic = node.newPublisher("" + super.getName(), messageType);
 	}
 
-	public void updateTopic(Node node, long seq) {
-		message.header.seq = seq;
-		message.header.stamp = node.getCurrentTime();
-		message.header.frame_id = "/robot";
-		message.intensity = light.getLightValue();
+	public void updateTopic(ConnectedNode node, long seq) {
+		message = node.getTopicMessageFactory().newFromType(Color._TYPE);
+		message.getHeader().setStamp(node.getCurrentTime());
+		message.getHeader().setFrameId("/robot");
+		message.setIntensity(light.getLightValue());
 		topic.publish(message);		
+	}
+
+	@Override
+	public void publishTopic(Node node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateTopic(Node node, long seq) {
+		// TODO Auto-generated method stub
+		
 	}
 }

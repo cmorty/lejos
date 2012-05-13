@@ -9,8 +9,12 @@ import lejos.robotics.navigation.DifferentialPilot;
 
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
+import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
+
+import sensor_msgs.LaserScan;
+import tf.tfMessage;
 
 /**
  * 
@@ -26,8 +30,8 @@ public class RangeScanner extends NXTDevice implements INXTDevice {
 	
 	// ROS
 
-    private final org.ros.message.sensor_msgs.LaserScan message = new org.ros.message.sensor_msgs.LaserScan(); 
-    private Publisher<org.ros.message.sensor_msgs.LaserScan> topic = null;
+    private LaserScan message; 
+    private Publisher<LaserScan> topic = null;
     private String messageType = "sensor_msgs/LaserScan";
 
 	
@@ -37,28 +41,41 @@ public class RangeScanner extends NXTDevice implements INXTDevice {
 		scanner.setAngles(angles);
 	}
 	
-	public void publishTopic(Node node) {
+	public void publishTopic(ConnectedNode node) {
 		topic = node.newPublisher("scan", messageType);
 	}
 
-	public void updateTopic(Node node, long seq) {
-		message.header.stamp = node.getCurrentTime();
-		message.header.frame_id = "/robot";
-		message.angle_min = (float) Math.toRadians(-45);
-		message.angle_max = (float) Math.toRadians(45);
-		message.angle_increment = (float) Math.toRadians(15); 
-		message.time_increment = 1.0f;
-		message.scan_time = 5.0f;
-		message.range_min = 0.05f;
-		message.range_max = 2.0f;
+	public void updateTopic(ConnectedNode node, long seq) {
+		message = node.getTopicMessageFactory().newFromType(LaserScan._TYPE);
+		message.getHeader().setStamp(node.getCurrentTime());
+		message.getHeader().setFrameId("/robot");
+		message.setAngleMin((float) Math.toRadians(-45));
+		message.setAngleMax((float) Math.toRadians(45));
+		message.setAngleIncrement((float) Math.toRadians(15)); 
+		message.setTimeIncrement(1.0f);
+		message.setScanTime(5.0f);
+		message.setRangeMin(0.05f);
+		message.setRangeMax(2.0f);
 		if (finder instanceof UltrasonicSensor) 
 			((UltrasonicSensor) finder).continuous();
 		RangeReadings readings = scanner.getRangeValues();
 		readings.printReadings();
 		float[] ranges = new float[7];
 		for(int i=0;i<7;i++) ranges[i] = readings.getRange(i) / 100;
-		message.ranges = ranges;
+		message.setRanges(ranges);
 		topic.publish(message);
+	}
+
+	@Override
+	public void publishTopic(Node node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateTopic(Node node, long seq) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

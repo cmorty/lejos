@@ -4,7 +4,9 @@ import lejos.nxt.SensorPort;
 
 import org.lejos.ros.nxt.INXTDevice;
 import org.lejos.ros.nxt.NXTDevice;
-import org.ros.message.nxt_lejos_msgs.Decibels;
+import nxt_lejos_msgs.Decibels;
+
+import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 
@@ -17,7 +19,7 @@ public class SoundSensor extends NXTDevice implements INXTDevice {
 	private String stamp;
 	private int  volume;
 	
-    final Decibels message = new Decibels(); 
+    Decibels message; 
     Publisher<Decibels> topic = null;
     String messageType = "nxt_lejos_msgs/Decibels";
 	
@@ -68,12 +70,19 @@ public class SoundSensor extends NXTDevice implements INXTDevice {
 		return volume;
 	}
 
-	public void publishTopic(Node node) {
+	public void publishTopic(ConnectedNode node) {
 		topic = node.newPublisher("" + super.getName(), messageType);
 	}
 
 	public void updateTopic(Node node, long seq) {
-		message.decibels = (short) sound.readValue();
+		message = node.getTopicMessageFactory().newFromType(Decibels._TYPE);
+		message.setDecibels((short) sound.readValue());
 		topic.publish(message);		
+	}
+
+	@Override
+	public void publishTopic(Node node) {
+		// TODO Auto-generated method stub
+		
 	}
 }
