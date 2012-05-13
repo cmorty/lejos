@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import lejos.nxt.Battery;
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LightSensor;
 import lejos.nxt.Motor;
@@ -66,6 +67,10 @@ public class ROSResponder {
 	private static final byte CONFIGURE_PILOT = 26;
 	private static final byte PLAY_TONE = 27;
 	private static final byte LASER = 28;
+	private static final byte CALIBRATE_COMPASS = 29;
+	private static final byte CALIBRATE_GYRO = 30;
+	private static final byte IMU = 31;
+	private static final byte BATTERY = 32;
 	
 	private static DataInputStream dis;
 	private static DataOutputStream dos;
@@ -75,6 +80,9 @@ public class ROSResponder {
 	
 	private static float trackWidth, wheelDiameter;
 	private static boolean reverse;
+	
+	private static float compassZero = 0, gyroZero = 0;
+	private static SensorReader compassReader;
 	
 	public static void main(String[] args) {
 		
@@ -94,18 +102,24 @@ public class ROSResponder {
 		// Publish requested data continuously
 		while(true) {
 			try {
+				// Send configured sensor readings
 				synchronized(sensorReaders) {
 					for(SensorReader sr: sensorReaders) {
 						dos.writeByte(sr.getType());
 						dos.writeFloat(sr.getReading());
 					}
 				}
+				// Send configured motor readings
 				synchronized(motorReaders) {
 					for(MotorReader mr: motorReaders) {
 						dos.writeByte(mr.getType());
 						dos.writeInt(mr.getReading());
 					}
 				}
+				// Always send the battery reading
+				dos.writeByte(BATTERY);
+				dos.writeFloat(Battery.getVoltage());
+				// Send the pose and velocities if a pilot is configured
 				if (posep != null) {
 					dos.writeByte(BASE);
 					Pose p = posep.getPose();
@@ -179,10 +193,10 @@ public class ROSResponder {
 						reading = sonic.getRange();
 						break;					
 					case COMPASS:
-						reading = compass.getDegrees();
+						reading = (compass.getDegrees() - compassZero) % 360;
 						break;
 					case GYRO:
-						reading = gyro.getAngularVelocity();
+						reading = gyro.getAngularVelocity() - gyroZero;
 						break;
 					case ACCEL:
 						reading = accel.getXAccel();
@@ -285,6 +299,7 @@ public class ROSResponder {
 						byte sType = dis.readByte();
 						byte portId = dis.readByte();
 						SensorReader sr = new SensorReader();
+						if (sType == COMPASS) compassReader = sr; 
 						SensorPort port = SensorPort.getInstance(portId);
 						sr.setTypeAndPort(sType, port);
 						synchronized(sensorReaders) {
@@ -358,6 +373,12 @@ public class ROSResponder {
 						float freq = dis.readShort();
 						float duration = dis.readShort();
 						Sound.playTone((int) freq, (int) duration);
+					case CALIBRATE_COMPASS:
+						if (posep != null && compassReader != null) {
+							Pose p = posep.getPose();
+							compassZero = 0;
+							compassZero = (compassReader.getReading() - p.getHeading());
+						}
 						break;
 					}
 				} catch (IOException e) {
