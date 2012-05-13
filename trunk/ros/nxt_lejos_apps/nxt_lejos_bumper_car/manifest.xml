@@ -1,27 +1,18 @@
 <package>
   <description brief="nxt_lejos_bumper_car">
-
-     nxt_lejos_bumper_car
-
+     An implementation of a simple bumper car using the nxt_lejos_proxy API. The robot
+     car should include an ultrasonic sensor and use differential steering. The nxt_lejos_proxy
+     node should be running. The car will drive around a room avoiding obstacles.
   </description>
-  <author>leJOS development</author>
-  <license>BSD</license>
+  <author>Lawrie Griffiths</author>
+  <license>GPL</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/nxt_lejos_bumper_car</url>
-
-        <depend package="rosjava" />
-        <depend package="std_msgs" />
-        <depend package="sensor_msgs" />
-        <depend package="nxt_msgs" />
-        <depend package="nxt_lejos_msgs" />
-
-        <export>
-        <rosjava-src location="src" />
-        <rosjava-pathelement location="target/" groupId="org.lejos.ros" artifactId="org.lejos.ros.nodes.bumpercar" version="0.0.1" built="true" />
-        <rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/pccomm.jar" />
-        <rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove-gpl.jar" />
-        <rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove.jar" />
-        </export>
+  <depend package="rosjava" />
+  <depend package="std_msgs" />
+  <depend package="sensor_msgs" />
+  <depend package="nxt_msgs" />
+  <depend package="nxt_lejos_msgs" />
 </package>
 
 

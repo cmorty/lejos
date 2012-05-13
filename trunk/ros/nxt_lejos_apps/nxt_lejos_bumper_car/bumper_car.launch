@@ -1,4 +1,8 @@
 <launch>
-	<node pkg="rosjava_bootstrap" type="run.py" args="nxt_lejos_bumper_car org.lejos.ros.nodes.bumpercar.BumperCar" name="BumperCar" output="screen" />     
+	<node pkg="nxt_lejos_bumper_car" 
+		type="nxt_lejos_bumper_car" 
+		args="org.lejos.ros.nodes.bumpercar.BumperCar" 
+		name="nxt_lejos_bumper_car" 
+		output="screen" />     
 </launch>
 

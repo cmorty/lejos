@@ -2,9 +2,11 @@ package org.lejos.ros.nodes.bumpercar;
 
 import lejos.util.Delay;
 import org.ros.message.MessageListener;
-import org.ros.message.nxt_lejos_msgs.DNSCommand;
-import org.ros.message.sensor_msgs.Range;
+import nxt_lejos_msgs.DNSCommand;
+import sensor_msgs.Range;
+
 import org.ros.namespace.GraphName;
+import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
 import org.ros.node.topic.Publisher;
@@ -20,33 +22,36 @@ import org.ros.node.topic.Subscriber;
  *
  */
 public class BumperCar implements NodeMain {	
-    private DNSCommand message = new DNSCommand(); 
+    private DNSCommand message; 
     private Publisher<DNSCommand> topic;
     private String messageType = "nxt_lejos_msgs/DNSCommand";
     private boolean processing = false;
     private static final float limit = 0.6f; // minimum distance to obstacle
 
 	@Override
-	public void onStart(Node node) {		
+	public void onStart(ConnectedNode node) {	
+		
+		message = node.getTopicMessageFactory().newFromType(DNSCommand._TYPE);
+				
 		//Subscription to ultrasonic_sensor topic
         Subscriber<Range> subscriberRange =
 	        node.newSubscriber("ultrasonic_sensor", "sensor_msgs/Range");
         subscriberRange.addMessageListener(new MessageListener<Range>() {
 	    	@Override
 	    	public void onNewMessage(Range msg) {
-	    		if (msg.range < 1.0) System.out.println("Range is " + msg.range + " (" + processing + ")");
-				if (msg.range < limit && !processing) {
+	    		if (msg.getRange() < 1.0) System.out.println("Range is " + msg.getRange() + " (" + processing + ")");
+				if (msg.getRange() < limit && !processing) {
 					processing = true;
-					message.type = "travel"; 
-					message.value = -20;
+					message.setType("travel"); 
+					message.setValue(-20);
 					topic.publish(message); // Go back 20cm
 					Delay.msDelay(2000);
-					message.type = "rotate";  
-					message.value = 30;
+					message.setType("rotate");  
+					message.setValue(30);
 					topic.publish(message); // Rotate 30 degrees
 					Delay.msDelay(1000);
-					message.type = "forward";
-					message.value = 0;
+					message.setType("forward");
+					message.setValue(0);
 					topic.publish(message);  // Go forward
 					//Delay.msDelay(500);
 					processing = false;
@@ -59,20 +64,20 @@ public class BumperCar implements NodeMain {
         Delay.msDelay(1000);
         
         // Set the robot travel speed
-        message.type = "setTravelSpeed";
-        message.value = 20;
+        message.setType("setTravelSpeed");
+        message.setValue(20);
 		topic.publish(message);	
 		Delay.msDelay(1000);
 		
 		// Set the rotate speed
-        message.type = "setRotateSpeed";
-        message.value = 100;
+        message.setType("setRotateSpeed");
+        message.setValue(100);
 		topic.publish(message);
 		Delay.msDelay(1000);
 		
 		// Start going forward
-		message.type = "forward";
-		message.value = 0;
+		message.setType("forward");
+		message.setValue(0);
 		topic.publish(message);
 		Delay.msDelay(300);
 	}
@@ -85,14 +90,20 @@ public class BumperCar implements NodeMain {
 	@Override
 	public void onShutdown(Node arg0) {
 		// Stop the robot
-		message.type = "stop";
-		message.value = 0;
+		message.setType("stop");
+		message.setValue(0);
 		topic.publish(message);
 		Delay.msDelay(300);
 	}
 
 	@Override
+	public void onError(Node arg0, Throwable arg1) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
 	public void onShutdownComplete(Node arg0) {
-		// Nothing	
+		//Do nothing
+	
 	}
 }
