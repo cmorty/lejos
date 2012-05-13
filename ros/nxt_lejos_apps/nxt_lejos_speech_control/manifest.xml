@@ -1,8 +1,8 @@
 <package>
   <description brief="nxt_lejos_speech_control">
-
-     nxt_lejos_speech_control
-
+  Controls a NXT lejOS robot using speech commands, such as forward, backwards, left, right,
+  stop. The nxt_lejos_proxy node must be running. Uses a pocketsphinx node to recognize the
+  commands. 
   </description>
   <author>leJOS development</author>
   <license>BSD</license>
@@ -13,15 +13,7 @@
   <depend package="std_msgs" />
   <depend package="nxt_lejos_msgs" />
   <depend package="sensor_msgs" />
-
- <export>
-	    <rosjava-src location="src" /> 
-	   	<rosjava-pathelement location="target/" groupId="org.lejos.ros" artifactId="org.lejos.ros.nodes.SpeechControl" version="0.0.1" built="true" />
-    	<rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/pccomm.jar" />
-     	<rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove-gpl.jar" />
-    	<rosjava-pathelement location="/home/lejosdev/workspace/snapshot/lib/pc/3rdparty/bluecove.jar" />
-  </export>
-
+  <depend package="pocketsphinx" />
 </package>
 
 
