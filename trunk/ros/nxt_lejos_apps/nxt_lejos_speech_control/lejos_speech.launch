@@ -5,9 +5,9 @@
     <param name="dict" value="$(find pocketsphinx)/demo/voice_cmd.dic"/>
   </node>
 
-	<node pkg="rosjava_bootstrap" 
-	type="run.py" 
-	args="nxt_lejos_speech_control org.lejos.ros.nodes.SpeechControl" 
+	<node pkg="nxt_lejos_speech_control" 
+	type="nxt_lejos_speech_control" 
+	args="org.lejos.ros.nodes.SpeechControl" 
 	name="nxt_lejos_speech_control" 
 	output="screen" />
 
