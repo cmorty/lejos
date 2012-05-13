@@ -1,6 +1,6 @@
 package org.lejos.ros.sensors;
 
-import org.ros.node.Node;
+import org.ros.node.ConnectedNode;
 
 public abstract class Sensor {
 	protected double desiredFrequency;
@@ -11,10 +11,10 @@ public abstract class Sensor {
 	protected long fudge = 4;
 	protected int numMessages;	
 	protected String topicName;
-	protected Node node;
+	protected ConnectedNode node;
 	protected float reading;
 	
-	public Sensor(Node node, String topicName, double desiredFrequency) {
+	public Sensor(ConnectedNode node, String topicName, double desiredFrequency) {
 		this.node = node;
 		this.topicName = topicName;
 		this.desiredFrequency = desiredFrequency;
