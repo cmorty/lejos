@@ -1,11 +1,12 @@
-package org.lejos.sample.NXTBeeSend;
+package org.lejos.sample.nxtbee;
 
 
-import lejos.nxt.*;
+import java.io.DataOutputStream;
+import java.io.OutputStream;
 
-import java.io.*;
-
-import lejos.nxt.addon.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.addon.NXTBee;
 import lejos.nxt.comm.RConsole;
 import lejos.util.Delay;
 
@@ -39,8 +40,8 @@ public class NXTBeeSend {
 		//nb = new NXTBee(); // default 9600 baud
 		nb = new NXTBee(115200);
 		
-		int len;
-		byte[] b = {'H', 'e', 'l', 'l', 'o', '!', 0};
+		//int len;
+		//byte[] b = {'H', 'e', 'l', 'l', 'o', '!', 0};
 		
 		Thread t = new Thread(nb);
 		t.setDaemon(true);

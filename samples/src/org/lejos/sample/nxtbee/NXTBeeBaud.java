@@ -1,12 +1,9 @@
-package org.lejos.sample.NXTBeeBaud;
+package org.lejos.sample.nxtbee;
 
-import lejos.nxt.*;
-
-import java.io.*;
-
-import lejos.nxt.addon.*;
+import lejos.nxt.Button;
+import lejos.nxt.LCD;
+import lejos.nxt.addon.NXTBee;
 import lejos.nxt.comm.RConsole;
-import lejos.nxt.comm.RS485;
 import lejos.util.Delay;
 
 /**

@@ -1,4 +1,4 @@
-package org.lejos.sample.NXTBeeReceive;
+package org.lejos.sample.nxtbee;
 
 
 import lejos.nxt.*;
