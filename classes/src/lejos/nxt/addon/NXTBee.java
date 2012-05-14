@@ -3,7 +3,6 @@ package lejos.nxt.addon;
 
 import java.io.*;
 
-import lejos.nxt.comm.LCP;
 import lejos.nxt.comm.RConsole;
 import lejos.nxt.comm.RS485;
 import lejos.util.Delay;
@@ -285,17 +284,10 @@ public class NXTBee implements Runnable  {
 		return bytesRead;
 	}
 	
-	@Override
 	/**
 	 * Start the data reading thread which keeps the circular buffer full of data
 	 */
 	public void run() {
-		int replyLen = 0;
-		int byteReady = 0;
-		boolean wantReply = false;
-		
-		byte[] readBuf = new byte[100];
-
 		while(true) {
 			if(keepRunning) {
 				waitForData(readTimeout);
@@ -406,12 +398,8 @@ public class NXTBee implements Runnable  {
 			
 			if(debug) RConsole.println("waitForOK: read total " + bytesRead + " bytes");
 			
-			if( (replyBuf[0] == 'O') && (replyBuf[1] == 'K') ) {
-				return true;
-			} else {
-				return false;
-			}
-
+			return (replyBuf[0] == 'O') && (replyBuf[1] == 'K');
+			
 		} catch (Exception e) {
 			if(debug) RConsole.println("checkReplyOK: Exception " + e);
 			return false;
