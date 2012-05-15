@@ -7,7 +7,6 @@ import geometry_msgs.PoseStamped;
 import geometry_msgs.Quaternion;
 import geometry_msgs.TransformStamped;
 import nav_msgs.Odometry;
-import sensor_msgs.Imu;
 import tf.tfMessage;
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Publisher;
@@ -73,17 +72,22 @@ public class OdometrySensor extends Sensor {
 		
 		double x = p.getX() / 100;
 		double y = p.getY() /100;
+		
+		tf = node.getTopicMessageFactory().newFromType(tfMessage._TYPE);
 
 		// transform for robot in the world
 	    tr.getHeader().setFrameId(WORLD_FRAME); 
 	    tr.getHeader().setStamp(node.getCurrentTime());
 	    tr.setChildFrameId(ROBOT_FRAME);
 	    
+	    tr.getTransform().getTranslation().setX(x);
+	    tr.getTransform().getTranslation().setY(y);
 		tr.getTransform().getTranslation().setZ(0);
 		
 		tr.getTransform().setRotation(q);
 	    
-	    tf.getTransforms().add(tr);
+		java.util.List<TransformStamped> trs = tf.getTransforms();
+		trs.add(tr);
 	    
 	    od.getHeader().setStamp(node.getCurrentTime());
 	    od.getHeader().setFrameId(WORLD_FRAME);
