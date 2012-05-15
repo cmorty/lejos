@@ -1,0 +1,1 @@
+include 'nxt_lejos_bumper_car', 'nxt_lejos_monitor', 'nxt_lejos_speech_control'
