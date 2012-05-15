@@ -1,0 +1,4 @@
+- svn:
+    local-name: nxt_lejos_apps
+    uri: https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/ros/nxt_lejos_apps/
+    version: default
