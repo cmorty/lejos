@@ -38,6 +38,9 @@ public final class Math
 	// dividing by 2 for some kind of safety margin
 	private static final double ROUND_DOUBLE_MAX = Long.MAX_VALUE >> 1;
 	private static final double ROUND_DOUBLE_MIN = -ROUND_DOUBLE_MAX;
+	
+	private static int FLOAT_NAN_THRESHOLD = 0x7F800000;
+	private static long DOUBLE_NAN_THRESHOLD = 0x7ff0000000000000L;
 
 	// Used to generate random numbers.
 	private static Random RAND;
@@ -158,13 +161,14 @@ public final class Math
 		if (a == b && a != 0)
 			return a;
 		
-		// handle NaN and negative/positive zero
 		int ra = Float.floatToRawIntBits(a);
 		int rb = Float.floatToRawIntBits(b);
 		
-		if (ra > rb)
-			return b;
-		return a;
+		// handle NaN
+		if (((ra | rb) & Integer.MAX_VALUE) > FLOAT_NAN_THRESHOLD)
+			return Float.NaN;		
+		// handle negative/positive zero
+		return ra < rb ? a : b;
 	}
 
 	/**
@@ -180,13 +184,14 @@ public final class Math
 		if (a == b && a != 0)
 			return a;
 		
-		// handle NaN and negative/positive zero
 		long ra = Double.doubleToRawLongBits(a);
 		long rb = Double.doubleToRawLongBits(b);
 		
-		if (ra > rb)
-			return b;
-		return a;
+		// handle NaN
+		if (((ra | rb) & Long.MAX_VALUE) > DOUBLE_NAN_THRESHOLD)
+			return Double.NaN;
+		// handle negative/positive zero
+		return ra < rb ? a : b;
 	}
 
 	/**
@@ -218,13 +223,14 @@ public final class Math
 		if (a == b && a != 0)
 			return a;
 		
-		// handle NaN and negative/positive zero
 		int ra = Float.floatToRawIntBits(a);
 		int rb = Float.floatToRawIntBits(b);
 		
-		if (ra < rb)
-			return b;
-		return a;
+		// handle NaN
+		if (((ra | rb) & Integer.MAX_VALUE) > FLOAT_NAN_THRESHOLD)
+			return Float.NaN;
+		// handle negative/positive zero
+		return ra > rb ? a : b;
 	}
 
 	/**
@@ -240,13 +246,14 @@ public final class Math
 		if (a == b && a != 0)
 			return a;
 		
-		// handle NaN and negative/positive zero
 		long ra = Double.doubleToRawLongBits(a);
 		long rb = Double.doubleToRawLongBits(b);
 		
-		if (ra < rb)
-			return b;
-		return a;
+		// handle NaN
+		if (((ra | rb) & Long.MAX_VALUE) > DOUBLE_NAN_THRESHOLD)
+			return Double.NaN;
+		// handle negative/positive zero
+		return ra > rb ? a : b;
 	}
 
 	/*========================= rounding functions =========================*/ 
@@ -260,12 +267,13 @@ public final class Math
 		if (a > 0.0)
 			return (a > ROUND_DOUBLE_MAX) ? a : (double)(long)a;
 		
-		if (a < ROUND_DOUBLE_MIN)
+		// Using !>= instead of < also catches NaN
+		if (!(a >= ROUND_DOUBLE_MIN))
 			return a;
 			
 		// if b==a, there were no decimal places (also handles negative zero)
-		double b = (long) a;
-		return b == a ? a : (b - 1.0);
+		double b = (long)a;
+		return (b == a) ? a : (b - 1.0); 
 	}
 
 	/**
@@ -278,12 +286,13 @@ public final class Math
 			// using double negative such that a==-0.3 yields negative zero
 			return (a < ROUND_DOUBLE_MIN) ? a : -(double)(long)(-a);
 		
-		if (a > ROUND_DOUBLE_MAX)
+		// Using !<= instead of > also catches NaN
+		if (!(a <= ROUND_DOUBLE_MAX))
 			return a;
 
 		// if b==a, there were no decimal places (also handles negative zero)
 		double b = (long)a;
-		return (b == a) ? a : (b + 1.0); 
+		return b == a ? a : (b + 1.0); 
 	}
 
 	/**
