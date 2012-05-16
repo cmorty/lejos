@@ -22,6 +22,8 @@ import org.lejos.ros.sensors.SoundSensor;
 import org.lejos.ros.sensors.TouchSensor;
 import org.lejos.ros.sensors.UltrasonicSensor;
 import org.ros.message.MessageListener;
+
+import geometry_msgs.PoseStamped;
 import geometry_msgs.PoseWithCovarianceStamped;
 import geometry_msgs.Twist;
 import nxt_lejos_msgs.DNSCommand;
@@ -68,6 +70,7 @@ public class ROSProxy implements NodeMain {
 	private static final byte CALIBRATE_GYRO = 30;
 	private static final byte IMU = 31;
 	private static final byte BATTERY = 32;
+	private static final byte GOTO = 33;
 	
 	private NXTConnector conn = new NXTConnector();
 	
@@ -206,7 +209,19 @@ public class ROSProxy implements NodeMain {
             	    	}
             	    });
                     
-                    // Create an odometry sensor to publish the ofdometry data
+            		//Subscription to goal topic
+                    Subscriber<PoseStamped> subscriberGoal =
+            	        node.newSubscriber("goal", "geometry_msgs/PoseStamped");
+                    subscriberGoal.addMessageListener(new MessageListener<PoseStamped>() {
+            	    	@Override
+            	    	public void onNewMessage(PoseStamped message) { 
+            	    		//System.out.println("Going to " + message);
+            	            goTo((float) message.getPose().getPosition().getX() * 100, (float) message.getPose().getPosition().getY() * 100, 
+            	    				(float) Math.toDegrees(quatToHeading(message.getPose().getOrientation().getZ(), message.getPose().getOrientation().getW())));	            	    		
+            	    	}
+            	    });
+                    
+                    // Create an odometry sensor to publish the odometry data
                     odometrySensor = new OdometrySensor(this,node,frequency);
 		                
 				} else {
@@ -529,6 +544,22 @@ public class ROSProxy implements NodeMain {
 		try {
 			dos.writeByte(ROTATE);
 			dos.writeFloat(angle);
+			dos.flush();
+		} catch (IOException e) {
+			System.err.println("IO Exception");
+			System.exit(1);
+		}
+	}
+	
+	/*
+	 * Make the robot go to a destination pose
+	 */
+	private void goTo(float x, float y, float heading) {
+		try {
+			dos.writeByte(GOTO);
+			dos.writeFloat(x);
+			dos.writeFloat(y);
+			dos.writeFloat(heading);
 			dos.flush();
 		} catch (IOException e) {
 			System.err.println("IO Exception");
