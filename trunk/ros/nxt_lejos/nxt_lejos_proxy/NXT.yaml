@@ -9,7 +9,7 @@ nxt_robot:
     name: pilot
     port: PORT_AC
     desired_frequency: 10.0
-    track_width: 17.5
+    track_width: 16.0
     wheel_diameter: 5.6
     reverse: true
   - type: laser
