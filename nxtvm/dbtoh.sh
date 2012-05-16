@@ -2,12 +2,12 @@
 
 to_upper()
 {
-	echo "$1" | tr '[:lower:]' '[:upper:]'
+	printf "%s" "$1" | tr '[:lower:]' '[:upper:]'
 }
 
 convert_class()
 {
-	local TMP="$(to_upper "_${1//./_}")"
+	local TMP=$(to_upper "_${1//./_}")
 	local LINE
 
 	echo "/**"
@@ -36,7 +36,7 @@ convert_class()
 
 convert_signature()
 {
-	local TMP="$(to_upper "_${1//./_}")"
+	local TMP=$(to_upper "_${1//./_}")
 	local LINE
 
 	echo "/**"
@@ -68,7 +68,7 @@ convert_signature()
 
 IN="$2"
 OUT="$3"
-OUTNAME="$(basename -- "$OUT")"
+OUTNAME=$(basename -- "$OUT")
 
 
 case "$1" in
