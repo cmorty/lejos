@@ -3,7 +3,8 @@
 # the arm toolchain used to build the leJOS firmware.
 # Note: The particular version of the gcc and the associated libs has been
 # selected to give the best size/performance of leJOS. Newer versions of
-# the tools seem to produce larger and slower code. 
+# the tools seem to produce larger and slower code.
+SCRIPTDIR=$(dirname -- "$0") 
 ROOT=$(pwd)
 SRCDIR=$ROOT/src
 BUILDDIR=$ROOT/build
@@ -72,6 +73,12 @@ ensure_source $NEWLIB_URL
 unpack_source $(basename -- "$GCC_URL")
 unpack_source $(basename -- "$BINUTILS_URL")
 unpack_source $(basename -- "$NEWLIB_URL")
+
+#
+# Stage 0: Patching gcc
+#
+cat "$SCRIPTDIR/gcc01.patch" | patch -p0 -d "$SRCDIR/$GCC_DIR" || die
+cat "$SCRIPTDIR/gcc02.patch" | patch -p0 -d "$SRCDIR/$GCC_DIR" || die
 
 #
 # Stage 1: Build binutils
