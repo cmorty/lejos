@@ -12,16 +12,17 @@ import lejos.robotics.mapping.SVGMapLoader;
 import lejos.util.Delay;
 
 import geometry_msgs.Point;
-import tf.tfMessage;
 import visualization_msgs.Marker;
 import org.ros.namespace.GraphName;
 import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
+import org.ros.node.parameter.ParameterTree;
 import org.ros.node.topic.Publisher;
 
-public class PublishMap implements NodeMain {	
-	String mapFileName = "Floor.svg";
+public class PublishMap implements NodeMain {
+	private ParameterTree params;
+	String mapFileName;
 	Marker marker;
 	long seq=0;
 
@@ -37,6 +38,10 @@ public class PublishMap implements NodeMain {
 
 	@Override
 	public void onStart(ConnectedNode node) {
+		
+		params = node.getParameterTree();
+		
+		mapFileName = params.getString("map_file_name");
 		
 		marker = node.getTopicMessageFactory().newFromType(Marker._TYPE);
 				
@@ -67,9 +72,9 @@ public class PublishMap implements NodeMain {
 				marker.getScale().setX(0.05);
 				marker.getScale().setY(0.05);
 				marker.getScale().setZ(0.05);
-				marker.getColor().setR(1.0f);
+				marker.getColor().setR(0.0f);
 				marker.getColor().setG(0.0f);
-				marker.getColor().setB(1.0f);
+				marker.getColor().setB(0.0f);
 				marker.getColor().setA(1.0f);
 				
 				Point p1 = node.getTopicMessageFactory().newFromType(Point._TYPE);
