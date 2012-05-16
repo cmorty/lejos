@@ -1,6 +1,7 @@
 package java.lang;
 
 import lejos.nxt.Button;
+import lejos.nxt.Sound;
 
 public class MathTest {
     
@@ -72,7 +73,8 @@ public class MathTest {
     private static void emergencyExit(String s)
     {
     	System.out.println(s);
-    	Button.ESCAPE.waitForPress();
+    	Sound.buzz();
+    	Button.waitForAnyPress();
     }
     
     
@@ -223,6 +225,8 @@ public class MathTest {
         t.testMaxFloat();
         t.testMaxDouble();
         System.out.println("OK");
+        Sound.beepSequenceUp();
+    	Button.waitForAnyPress();
     }
 
 
