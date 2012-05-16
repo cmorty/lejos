@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import lejos.geom.Point;
 import lejos.nxt.Battery;
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LightSensor;
@@ -71,6 +72,7 @@ public class ROSResponder {
 	private static final byte CALIBRATE_GYRO = 30;
 	private static final byte IMU = 31;
 	private static final byte BATTERY = 32;
+	private static final byte GOTO = 33;
 	
 	private static DataInputStream dis;
 	private static DataOutputStream dos;
@@ -379,6 +381,21 @@ public class ROSResponder {
 							compassZero = 0;
 							compassZero = (compassReader.getReading() - p.getHeading());
 						}
+						break;
+					case GOTO:
+						x = dis.readFloat();
+						y = dis.readFloat();
+						heading = dis.readFloat();
+						
+						Point dest = new Point(x,y);
+						Pose pose = posep.getPose();
+						
+						robot.rotate(pose.relativeBearing(dest));
+						
+						robot.travel(pose.distanceTo(dest));
+						
+						robot.rotate(heading - posep.getPose().getHeading());
+						
 						break;
 					}
 				} catch (IOException e) {
