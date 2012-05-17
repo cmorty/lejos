@@ -60,22 +60,23 @@ public class PublishMap implements NodeMain {
 			SVGMapLoader mapLoader = new SVGMapLoader(is);
 			LineMap map = mapLoader.readLineMap();
 			Line[] lines = map.getLines();
+					
+			marker.getHeader().setFrameId("/world");
+			marker.getHeader().setStamp(node.getCurrentTime());
+			marker.setNs("line_map");
+			marker.setId(0);
+			marker.setType(Marker.LINE_LIST);
+			marker.setAction(Marker.ADD);
+			marker.getScale().setX(0.05);
+			marker.getScale().setY(0.05);
+			marker.getScale().setZ(0.05);
+			marker.getColor().setR(0.0f);
+			marker.getColor().setG(0.0f);
+			marker.getColor().setB(0.0f);
+			marker.getColor().setA(1.0f);
+			
 			for(int i=0;i<lines.length;i++) {
 				Line line = lines[i];
-				
-				marker.getHeader().setFrameId("/world");
-				marker.getHeader().setStamp(node.getCurrentTime());
-				marker.setNs("line_map");
-				marker.setId(0);
-				marker.setType(Marker.LINE_LIST);
-				marker.setAction(Marker.ADD);
-				marker.getScale().setX(0.05);
-				marker.getScale().setY(0.05);
-				marker.getScale().setZ(0.05);
-				marker.getColor().setR(0.0f);
-				marker.getColor().setG(0.0f);
-				marker.getColor().setB(0.0f);
-				marker.getColor().setA(1.0f);
 				
 				Point p1 = node.getTopicMessageFactory().newFromType(Point._TYPE);
 				p1.setX(line.x1 / 100);
@@ -96,6 +97,7 @@ public class PublishMap implements NodeMain {
 			String messageType = "visualization_msgs/Marker";
 		    Publisher<Marker> topic = node.newPublisher("map", messageType);
 		    Delay.msDelay(1000);
+		    topic.setLatchMode(true);
 		    topic.publish(marker);
 		    
 		} catch (FileNotFoundException e1) {

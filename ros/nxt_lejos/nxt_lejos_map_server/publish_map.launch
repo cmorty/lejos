@@ -5,7 +5,7 @@ Launches the PublishMap program, which publishes a line map as markers.
 	<param name="map_file_name" value="$(find nxt_lejos_map_server)/Floor.svg"/>
 	<node pkg="nxt_lejos_map_server" 
 	type="nxt_lejos_map_server" 
-	args="org.lejos.ros.nodes.PublishMap" 
+	args="org.lejos.ros.nodes.PublishOccupancyMap" 
 	name="nxt_lejos_map_server" 
 	output="screen" />     
 </launch>
