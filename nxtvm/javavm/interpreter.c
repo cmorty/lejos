@@ -71,7 +71,51 @@ static byte* do_goto ( byte* pc, int aCond)
 }
 
 #if FP_ARITHMETIC
+#ifdef USE_OWN_FCMP
+// The following routines implement floating point compare without
+// using the run time library compare functions
+#define FNAN_MASK 0x7fffffff
+#define FNAN_THRESHOLD 0x7f800000
 
+STACKWORD do_fcmp(JINT f1, JINT f2, STACKWORD def)
+{
+ if ((f1 & FNAN_MASK) > FNAN_THRESHOLD || (f2 & FNAN_MASK) >
+FNAN_THRESHOLD)
+   return def;
+
+ if (f1 < 0)
+   f1 = 0x80000000 - f1;
+ if (f2 < 0)
+   f2 = 0x80000000 - f2;
+
+ if (f1 > f2)
+   return 1;
+ if (f1 < f2)
+   return -1;
+ return 0;
+}
+
+#define DNAN_MASK      0x7fffffffffffffffLL
+#define DNAN_THRESHOLD 0x7ff0000000000000LL
+#define DINVERT        0x8000000000000000LL
+
+STACKWORD do_dcmp(LLONG f1, LLONG f2, STACKWORD def)
+{
+ if ((f1 & DNAN_MASK) > DNAN_THRESHOLD || (f2 & DNAN_MASK) >
+DNAN_THRESHOLD)
+   return def;
+
+ if (f1 < 0)
+   f1 = DINVERT - f1;
+ if (f2 < 0)
+   f2 = DINVERT - f2;
+ if (f1 > f2)
+   return 1;
+ if (f1 < f2)
+   return -1;
+ return 0;
+}
+#else
 STACKWORD do_fcmp (JFLOAT f1, JFLOAT f2, STACKWORD def)
 {
   STACKWORD res;
@@ -104,6 +148,7 @@ STACKWORD do_dcmp (double f1, double f2, STACKWORD def)
   return res;
 }
 
+#endif
 #endif
 
 #if LONG_ARITHMETIC
