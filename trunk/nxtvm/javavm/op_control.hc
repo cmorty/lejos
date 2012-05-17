@@ -87,26 +87,46 @@ OPCODE(OP_RET)
 #if FP_ARITHMETIC
 
 OPCODE(OP_DCMPL)
+#ifdef USE_OWN_FCMP
+  pop_jlong(&l2);
+  pop_jlong(&l1);
+  push_word( do_dcmp (l1.lnum, l2.lnum, -1));
+#else
   pop_jdouble(&d2);
   pop_jdouble(&d1);
   push_word( do_dcmp (d1.dnum, d2.dnum, -1));
+#endif
   DISPATCH;
 
 OPCODE(OP_DCMPG)
+#if USE_OWN_FCMP
+  pop_jlong(&l2);
+  pop_jlong(&l1);
+  push_word( do_dcmp (l1.lnum, l2.lnum, 1));
+#else
   pop_jdouble(&d2);
   pop_jdouble(&d1);
   push_word( do_dcmp (d1.dnum, d2.dnum, 1));
+#endif
   DISPATCH;
 
 OPCODE(OP_FCMPL)
   tempStackWord = pop_word();
+#if USE_OWN_FCMP
+  just_set_top_word( do_fcmp (word2jint(get_top_word()), word2jint(tempStackWord), -1));
+#else
   just_set_top_word( do_fcmp (word2jfloat(get_top_word()), word2jfloat(tempStackWord), -1));
+#endif
   DISPATCH;
 
 OPCODE(OP_FCMPG)
   // TBD: no distinction between opcodes
   tempStackWord = pop_word();
+#if USE_OWN_FCMP
+  just_set_top_word( do_fcmp (word2jint(get_top_word()), word2jint(tempStackWord), 1));
+#else
   just_set_top_word( do_fcmp (word2jfloat(get_top_word()), word2jfloat(tempStackWord), 1));
+#endif
   DISPATCH;
   
 #endif // FP_ARITHMETIC
