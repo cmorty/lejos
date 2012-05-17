@@ -29,7 +29,7 @@ CFLAGS = $(BASE_ABI_FLAGS) -mthumb \
 	-ffunction-sections -fdata-sections \
 	-DSVN_REV=$(SVN_REV) -DVERSION_NUMBER=$(VERSION_NUMBER)
 
-LDFLAGS = -cref --gc-sections
+LDFLAGS = $(LIB_ABI_FLAGS) -nostdlib -nodefaultlibs -Wl,-cref,--gc-sections
 
 ALL_ELF := $(RAM_TARGET) $(ROM_TARGET) $(SAMBA_TARGET)
 ALL_BIN := $(ALL_ELF:.elf=.bin)
@@ -97,7 +97,7 @@ $(SAMBA_LDSCRIPT): $(LDSCRIPT_SOURCE)
 
 %.elf.map %.elf: %.ld $(C_OBJECTS) $(S_OBJECTS)
 	@echo "Linking $@ using linker script $<"
-	$(LD) $(LDFLAGS) -T $< -Map $@.map -o $@ $(C_OBJECTS) $(S_OBJECTS) $(LIBM) $(LIBC) $(LIBGCC)
+	$(CC) $(LDFLAGS) -Wl,-T,$<,-Map,$@.map -o $@ $(C_OBJECTS) $(S_OBJECTS) -lm -lc -lgcc
 
 %.bin: %.elf
 	@echo "Generating binary file $@ from $<"
