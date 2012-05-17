@@ -357,12 +357,12 @@ i2c_doio(i2c_port *p)
       // Take SCL High
       *AT91C_PIOA_SODR = p->scl_pin;
       p->state = I2C_RXDATA3;
+      break;
+    case I2C_RXDATA3:
       // Receive a bit.
       p->bits <<= 1;
       if(*AT91C_PIOA_PDSR & p->sda_pin)
         p->bits |= 1;
-      break;
-    case I2C_RXDATA3:
       // Take SCL Low
       *AT91C_PIOA_CODR = p->scl_pin;
       p->delay = I2C_MAX_STRETCH;
