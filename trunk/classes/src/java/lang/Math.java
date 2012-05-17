@@ -39,9 +39,6 @@ public final class Math
 	private static final double ROUND_DOUBLE_MAX = Long.MAX_VALUE >> 1;
 	private static final double ROUND_DOUBLE_MIN = -ROUND_DOUBLE_MAX;
 	
-	private static int FLOAT_NAN_THRESHOLD = 0x7F800000;
-	private static long DOUBLE_NAN_THRESHOLD = 0x7ff0000000000000L;
-
 	// Used to generate random numbers.
 	private static Random RAND;
 
@@ -158,17 +155,19 @@ public final class Math
 		if (a > b)
 			return b;
 		// early out for non-zero values, NaN falls through
-		if (a == b && a != 0)
-			return a;
+		if (a == b)
+		{
+			if (a != 0)
+				return a;
 		
-		int ra = Float.floatToRawIntBits(a);
-		int rb = Float.floatToRawIntBits(b);
+			// handle negative/positive zero
+			int ra = Float.floatToRawIntBits(a);
+			int rb = Float.floatToRawIntBits(b);		
+			return ra < rb ? a : b;
+		}
 		
-		// handle NaN
-		if (((ra | rb) & Integer.MAX_VALUE) > FLOAT_NAN_THRESHOLD)
-			return Float.NaN;		
-		// handle negative/positive zero
-		return ra < rb ? a : b;
+		// either a or b must be NaN
+		return Float.NaN;		
 	}
 
 	/**
@@ -181,17 +180,19 @@ public final class Math
 		if (a > b)
 			return b;
 		// early out for non-zero values, NaN falls through
-		if (a == b && a != 0)
-			return a;
+		if (a == b)
+		{
+			if (a != 0)
+				return a;
+			
+			// handle negative/positive zero
+			long ra = Double.doubleToRawLongBits(a);
+			long rb = Double.doubleToRawLongBits(b);
+			return ra < rb ? a : b;
+		}
 		
-		long ra = Double.doubleToRawLongBits(a);
-		long rb = Double.doubleToRawLongBits(b);
-		
-		// handle NaN
-		if (((ra | rb) & Long.MAX_VALUE) > DOUBLE_NAN_THRESHOLD)
-			return Double.NaN;
-		// handle negative/positive zero
-		return ra < rb ? a : b;
+		// either a or b must be NaN
+		return Double.NaN;
 	}
 
 	/**
@@ -220,17 +221,19 @@ public final class Math
 		if (a < b)
 			return b;
 		// early out for non-zero values, NaN falls through
-		if (a == b && a != 0)
-			return a;
+		if (a == b)
+		{
+			if (a != 0)
+				return a;
+			
+			// handle negative/positive zero
+			int ra = Float.floatToRawIntBits(a);
+			int rb = Float.floatToRawIntBits(b);
+			return ra > rb ? a : b;			
+		}
 		
-		int ra = Float.floatToRawIntBits(a);
-		int rb = Float.floatToRawIntBits(b);
-		
-		// handle NaN
-		if (((ra | rb) & Integer.MAX_VALUE) > FLOAT_NAN_THRESHOLD)
-			return Float.NaN;
-		// handle negative/positive zero
-		return ra > rb ? a : b;
+		// either a or b must be NaN
+		return Float.NaN;
 	}
 
 	/**
@@ -243,17 +246,19 @@ public final class Math
 		if (a < b)
 			return b;
 		// early out for non-zero values, NaN falls through
-		if (a == b && a != 0)
-			return a;
+		if (a == b)
+		{
+			if (a != 0)
+				return a;
+			
+			// handle negative/positive zero
+			long ra = Double.doubleToRawLongBits(a);
+			long rb = Double.doubleToRawLongBits(b);
+			return ra > rb ? a : b;
+		}
 		
-		long ra = Double.doubleToRawLongBits(a);
-		long rb = Double.doubleToRawLongBits(b);
-		
-		// handle NaN
-		if (((ra | rb) & Long.MAX_VALUE) > DOUBLE_NAN_THRESHOLD)
-			return Double.NaN;
-		// handle negative/positive zero
-		return ra > rb ? a : b;
+		// either a or b must be NaN
+		return Double.NaN;
 	}
 
 	/*========================= rounding functions =========================*/ 
