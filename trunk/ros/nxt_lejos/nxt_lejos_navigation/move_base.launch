@@ -1,4 +1,11 @@
 <launch>
+
+  <param name="map_file_name" value="$(find nxt_lejos_map_server)/Floor.svg"/>
+  <node pkg="nxt_lejos_map_server" 
+	type="nxt_lejos_map_server" 
+	args="org.lejos.ros.nodes.PublishOccupancyMap" 
+	name="nxt_lejos_map_server" 
+	output="screen" />
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <rosparam file="$(find nxt_lejos_navigation)/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find nxt_lejos_navigation)/costmap_common_params.yaml" command="load" ns="local_costmap" />
