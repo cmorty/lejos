@@ -7,7 +7,7 @@ if "%OS%" == "Windows_NT" goto :winnt
 	goto :eof
 
 :append_jar
-	set "TMP_CP=%TMP_CP%;%~1"
+	set "TMP_CP=%TMP_CP%;%TMP_JAR%"
 	goto :eof
 
 :build_classpath
@@ -19,7 +19,8 @@ if "%OS%" == "Windows_NT" goto :winnt
 
 	set "TMP_CP="
 	for /R "%~2" %%i in (*.jar) do (
-		call :append_jar "%%%%i"
+		set "TMP_JAR=%%i"
+		call :append_jar
 	)
 	set "%~1=%TMP_CP:~1%"
 	goto :eof
