@@ -1,11 +1,16 @@
 TrajectoryPlannerROS:
   max_vel_x: 0.2
   min_vel_x: 0.1
-  max_rotational_vel: 0.5
+  max_rotational_vel: 0.8
   min_in_place_rotational_vel: 0.3
 
-  acc_lim_th: 3.2
-  acc_lim_x: 2.5
-  acc_lim_y: 2.5
+  acc_lim_th: 100.0
+  acc_lim_x: 100.0
+  acc_lim_y: 100.0
 
   holonomic_robot: false
+  publish_cost_grid_pc: true
+  global_frame_id: /world
+  
+  
+  

@@ -1,11 +1,15 @@
 local_costmap:
   global_frame: /world
   robot_base_frame: /robot
-  update_frequency: 2
+  update_frequency: 5
   publish_frequency: 2
   static_map: false
   rolling_window: true
-  width: 6.0
-  height: 6.0
+  width: 1.0
+  height: 1.0
   resolution: 0.1
+
+   
+  
+  
   
