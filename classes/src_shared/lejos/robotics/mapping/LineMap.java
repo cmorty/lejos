@@ -153,7 +153,8 @@ public class LineMap implements RangeMap, Transmittable {
     File mapFile = new File(fileName);
     FileOutputStream fos = new FileOutputStream(mapFile);
     PrintStream ps = new PrintStream(fos);
-    ps.println("<svg width=\"" + boundingRect.width + "\" height=\"" + boundingRect.height + "\" xmlns=\"http://www.w3.org/2000/svg\">");
+    ps.println("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + boundingRect.width + "px\" height=\""
+            + boundingRect.height + "px\" viewBox=\""+boundingRect.x+" "+boundingRect.y+" "+boundingRect.width+" "+boundingRect.height+"\">");
     ps.println("<g>");
     for(int i=0;i<lines.length;i++) {
       ps.println("<line stroke=\"#000000\" x1=\"" + lines[i].x1 + "\" y1=\"" + lines[i].y1 + "\" x2=\"" + lines[i].x2 + "\" y2=\"" + lines[i].y2 + "\"/>");
