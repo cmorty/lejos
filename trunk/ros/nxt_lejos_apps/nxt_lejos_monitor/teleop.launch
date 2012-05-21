@@ -1,0 +1,12 @@
+<!--
+Launch nxt_lejos_monitor.
+-->
+
+<launch>
+<node pkg="nxt_lejos_monitor" 
+	type="nxt_lejos_monitor" 
+	args="org.lejos.ros.nodes.KeyboardTeleop" 
+	name="nxt_lejos_teleop" 
+	output="screen" /> 	   
+</launch>
+
