@@ -27,9 +27,7 @@ public class LightSensor implements LampLightDetector, SensorConstants
 	 */
 	public LightSensor(ADSensorPort port)
 	{
-		this.port = port;
-		port.setTypeAndMode(TYPE_LIGHT_ACTIVE,
-                            MODE_PCTFULLSCALE);
+		this(port, true);
 	}
 	
 	/**
