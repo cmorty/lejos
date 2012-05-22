@@ -30,6 +30,7 @@ public class LightSensor implements LampLightDetector, SensorConstants
 		this.port = port;
 		port.setTypeAndMode(TYPE_LIGHT_ACTIVE,
                             MODE_PCTFULLSCALE);
+		floodlight = true;
 	}
 	
 	/**
