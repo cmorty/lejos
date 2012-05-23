@@ -275,6 +275,7 @@ class LogChartFrame extends JFrame {
             System.out.println("Finalizing chart");  
             loggingJFreeChart.setNotify(true); 
             customChartPanel.getLoggingChartPanel().setChartDirty();
+            tmm.dataInputStreamEOF();
         }
 
 //        *  The string format/structure of each string field passed by NXTDataLogger is:<br>
@@ -324,7 +325,7 @@ class LogChartFrame extends JFrame {
         }
 
 		public void tunneledMessageReceived(byte[] message) {
-			// do nothing
+			tmm.processMessage(message);
 		}
     }
     
@@ -909,7 +910,7 @@ class LogChartFrame extends JFrame {
         isNXTConnected=this.connectionManager.connect(jTextFieldNXTName.getText());
         if (isNXTConnected) {
             jTextFieldNXTName.setText(this.connectionManager.getConnectedNXTName());
-            activateTunnelManager(this.connectionManager.getOutputStream());
+            tmm.setDataOutputStream(new DataOutputStream(this.connectionManager.getOutputStream()));
             
             new Thread(new Runnable() {
             	private DataLogger dataLogger = null;
@@ -920,7 +921,6 @@ class LogChartFrame extends JFrame {
                     try {
                         lpm= new LoggerProtocolManager(connectionManager.getInputStream(), connectionManager.getOutputStream());
                         lpm.addLoggerListener(loggerHook);
-                        lpm.addLoggerListener(tmm);
                     }
                     catch (IOException e) {
                         System.out.println(THISCLASS+" IOException in makeConnection():" + e);
@@ -944,20 +944,6 @@ class LogChartFrame extends JFrame {
         return isNXTConnected;
     }
     
-    /**
-     * TODO gives the passthrough data manager the DOS to the NXT. The manager decides what plugins to load based on
-     * the plug_in_ID from the nxt.
-     * 
-     * @param outputStream to the NXT
-     */
-    private void activateTunnelManager(OutputStream outputStream) {
-		// Set the DOS in the manager object
-    	tmm.setDataOutputStream(new DataOutputStream(outputStream));
-    	
-    	
-    	
-	}
-
 
 	private void populateSampleData() {
         float value=0, value2=0;

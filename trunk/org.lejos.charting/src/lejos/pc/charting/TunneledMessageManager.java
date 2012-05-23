@@ -13,7 +13,7 @@ import lejos.util.EndianTools;
  * @author Kirk P Thompson
  *
  */
-class TunneledMessageManager implements LoggerListener{
+class TunneledMessageManager {
 	private static final int CMD_INIT_HANDLER = 0;
 	private static final int CMD_SET_PLUGIN_NAME = 2;
 	private static final int CMD_DELIVER_PACKET = 3;
@@ -45,7 +45,7 @@ class TunneledMessageManager implements LoggerListener{
 	 * 
 	 * @param message
 	 */
-	private void processMessage(byte[] message){
+	void processMessage(byte[] message){
 		int command = message[0] & 0xff;
 		int handlerTypeID = message[1] & 0xff;
 		int handlerID=0;
@@ -128,25 +128,8 @@ class TunneledMessageManager implements LoggerListener{
 //		System.out.println("tunnelTheMessage: sent"); 
 	}
 
-	public void logLineAvailable(DataItem[] logDataItems) {
-		// ignore
-	}
-
-	public void dataInputStreamEOF() {
+	void dataInputStreamEOF() {
 		// iterate and notify AbstractTunneledMessagePanels that the connection is severed
 		eGuiManager.dataInputStreamEOF();
-	}
-
-	public void logFieldNamesChanged(String[] logFields) {
-		// ignore
-	}
-
-	public void logCommentReceived(int timestamp, String comment) {
-		// ignore
-	}
-
-	public void tunneledMessageReceived(byte[] message) {
-		// Process a passthrough message
-		processMessage(message);
 	}
 }
