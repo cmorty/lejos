@@ -26,7 +26,7 @@ import lejos.util.Delay;
  * <li>Try to keep your datatypes the same across <code>writeLog()</code> method calls to avoid the protocol
  * overhead that is incurred when 
  * switching datatypes. For instance, every time you change between <code>writeLog(int)</code> and <code>writeLog(long)</code>, a 
- * synchronization message must be sent to change the datatype on the receiver (<code>lejos.pc.charting.DataLogger</code>).
+ * synchronization message must be sent to change the datatype on the receiver (<code>lejos.pc.charting.LoggerProtocolManager</code>).
  * <li>Use the the <code>writeLog()</code> method with the smallest datatype that fits your data. Less data means better 
  * throughput overall. Note that this implementation always use 4 bytes for datatypes <code>boolean</code>, <code>short</code>, 
  * <code>int</code>, and <code>float</code> and 8 bytes for <code>long</code> and <code>double</code>.
