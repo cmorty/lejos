@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * <p>
  * The <code>NXTDataLogger</code> instance must be real-time mode via <code>startRealtimeLog()</code>.
  * <p>
- * Example showing how to use <code>PIDTuner</code>: <pre>
+ * Example showing how to use <code>PIDTuner</code> with a PIDController instance: <pre>
  *    NXTDataLogger dlog = new NXTDataLogger();
  *    NXTConnection conn = Bluetooth.waitForConnection(5000, NXTConnection.PACKET);
  *    try {
