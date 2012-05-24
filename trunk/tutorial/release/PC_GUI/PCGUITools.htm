@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8" /><title>PC GUI Tools</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" /><title>PC GUI Tools</title><!-- METADATA -->
 
-<!-- METADATA -->
+
 <meta name="title" content="PC GUI Tools" />
 <meta name="DC.Title" content="PC GUI Tools" />
 <meta name="description" content="PC GUI Tools" />
@@ -12,17 +12,16 @@
 <meta http-equiv="content-language" content="en" />
 <meta name="DC.Language" scheme="RFC1766" content="English" />
 <meta name="distribution" content="global" />
-<meta name="resource-type" content="document" />
-<!-- SEARCH ENGINE -->
-<meta name="robots" content="all" />
-<!-- AUTHOR METADATA -->
+<meta name="resource-type" content="document" /><!-- SEARCH ENGINE -->
+
+<meta name="robots" content="all" /><!-- AUTHOR METADATA -->
+
 <meta name="Author" content="Roger Glassey" />
-<meta name="Author" content="Lawrie Griffiths" />
-<!-- CSS -->
-<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
-<!-- ICON -->
-<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-</head>
+<meta name="Author" content="Lawrie Griffiths" /><!-- CSS -->
+
+<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" /><!-- ICON -->
+
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" /></head>
 <body>
 <a id="top" name="top"></a><!-- N1: HEADER -->
 <table class="n1t1" cellpadding="0" cellspacing="0">
@@ -252,13 +251,15 @@ in other documents, reports, presentations, etc.<br />
 lejos.util.NXTDataLogger</a> class running on the NXT. NXT
 Charting Logger is launched by using the NXJChartingLogger shell script
 or .BAT file from the &lt;LEJOS_HOME&gt;\bin directory.</p>
-<p>Use the Connect/Disconnect button (shown in the connected state above) to Connect/Disconnect&nbsp;to the NXT running&nbsp;NXTDataLogger.&nbsp;</p><p>You
+<p>Use the Connect/Disconnect button (shown in the connected state
+above) to Connect/Disconnect&nbsp;to the NXT
+running&nbsp;NXTDataLogger.&nbsp;</p><p>You
 can specify a filename and folder/directory where you want the data
 logged saved to as tab-delimited data. You can&nbsp;leave this empty to
 just log to the Data Log tab without saving the data. This data can
 always be copied (select and CTRL+C) and pasted as well. If you select
 to log to an existing file, you will be asked to overwrite or append
-the data as shown in this image:</p><p>:<img style="width: 520px; height: 124px;" alt="file whack or append chicken test" src="NXTChartingLogger_3.png" /></p><p>The dynamic chart control commands are:</p>
+the data as shown in this image:</p><p>:<img style="width: 520px; height: 124px;" alt="file whack or append chicken test" src="NXTChartingLogger_3.png" /></p><h5>Chart control</h5><p>The dynamic chart control commands are:</p>
 <ul>
 <li>Zooming</li>
 <ul>
@@ -288,14 +289,16 @@ visibility</li>
 delta display. While in this mode, move the mouse (while holding the
 shift key) to measure domain distances</li>
 </ul>
-<p>
-The chart options tab:</p><p>&nbsp;<img style="width: 623px; height: 199px;" alt="Chart Options" src="NXTChartingLogger_2.png" /><br />allows you to adjust many things about the chart:<br /></p><ul><li>Chart Title.</li></ul><ul><li>Axis labels.</li><li>Pause/Resume
+<h5>
+The Chart Options Tab</h5><p>&nbsp;<img style="width: 623px; height: 199px;" alt="Chart Options" src="NXTChartingLogger_2.png" /><br />The chart options tab allows you to adjust many things about the chart:<br /></p><ul><li>Chart Title.</li></ul><ul><li>Axis labels.</li><li>Pause/Resume
 of incoming data. Use the button on the lower right. The charting
 logger uses a caching input stream that buffers up to 500,000 bytes to
 help ensure the NXT does not block on the writeLog() methods of the
 NXTDataLogger class. When you pause, this buffer will continue to allow
 the NXT to send data without blolcking so you can&nbsp;examine detail
-areas of the chart, etc. When the buffer is filled, thewriteLog() methods will block until the buffer begins to be emptied (by un-pausing of course). </li><li>Visibility of comment markers. Default is on.</li><li>Domain
+areas of the chart, etc. When the buffer is filled, thewriteLog()
+methods will block until the buffer begins to be emptied (by un-pausing
+of course). </li><li>Visibility of comment markers. Default is on.</li><li>Domain
 scrolling. When enabled (default), the chart will scroll when new data
 is received. When disabled, all data is displayed on the chart as it
 resizes the doman scale to fit the data. Note that this affects
