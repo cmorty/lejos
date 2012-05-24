@@ -5,7 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * This class provides the PC side of the <code>lejos.util.NXTDataLogger</code> counterpart running on the NXT. 
+ * This class provides the file writer on PC side of the <code>lejos.util.NXTDataLogger</code> 
+ * counterpart running on the NXT. 
  * One instance per log session. The session ends when the NXT ends the connection.
  * 
  * @see LoggerComms
