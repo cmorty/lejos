@@ -16,10 +16,13 @@ public class GyroTest {
 		Gyroscope gyro = new GyroSensor(SensorPort.S1);
 		float minValue = 0, maxValue = 0;
 		
+		gyro.recalibrateOffset();
+		
 		LCD.drawString("Gyro Test:", 0, 0);
 		LCD.drawString("Min:", 0, 2);
 		LCD.drawString("Max:", 0, 3);
 		LCD.drawString("Current:", 0, 4);
+		
 		
 		while(!Button.ESCAPE.isDown()) {
 			float value = gyro.getAngularVelocity();
