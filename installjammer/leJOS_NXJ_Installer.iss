@@ -7,7 +7,7 @@
 #endif
 
 #ifndef MyAppVersion
-  #define MyAppVersion "0.9.1beta-2"
+  #define MyAppVersion "0.9.1beta-3"
 #endif
 #define MinFantomVersion "1,1,3"
 
