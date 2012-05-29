@@ -1,0 +1,23 @@
+/* file: mps.css */
+
+span.wrapper td {font-family: Verdana, Arial, Helvetica, sans-serif}
+span.title { color: #5a4abd; font-size: 18px; font-weight: bold; font-family: verdana, sans-serif }
+span.body { color: #000000; font-size: 13px; font-family: verdana, sans-serif }
+ul, ol, blockquote { color: #000000; font-size: 13px; font-family: verdana, sans-serif }
+h1 { color: #5a4abd; font-size: 14px; font-weight: bold; font-family: verdana, sans-serif }
+h2, h3, h4, h5, h6 { color: #5a4abd; font-size: 13px; font-weight: bold; font-family: verdana, sans-serif }
+
+a:link{ text-decoration: none; color: #333366; font-size: 13px; font-weight: bold; font-family: verdana, sans-serif}
+a:visited { text-decoration: none; color: #333366; font-size: 13px; font-weight: bold; font-family: verdana, sans-serif}
+a:active { text-decoration: none; color: #333366; font-size: 13px; font-weight: bold; font-family: verdana, sans-serif}
+
+span.copyright { color: #000000; font-size: 11px; font-family: verdana, sans-serif }
+span.date      { color: #cccccc; font-size: 11px; font-family: verdana, sans-serif }
+span.byline { color: #000000; font-size: 13px; font-family: verdana, sans-serif }
+
+code,tt,pre {font-family: courier, "courier new", monaco; font-size: 12px; color: #000000}
+
+hr { color: #cccccc; }
+
+span.lejos { color: #808080; font-size: 16px; font-weight: bold; font-family: verdana, sans-serif }
+span.remark { background-color: lightgray; }

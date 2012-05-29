@@ -1,0 +1,33 @@
+The majority of the code of lejos NXT is issued under a Mozilla
+Public License v1 - see the LICENSE file. This is the license
+that lejos has always been issued under, as it originally included 
+Kekoa Proudfoot's librcx code, which was issued under that license.
+
+The libnxt project created by David Anderson is issued under the GPL v2
+license - see the COPYING file in the libnxt directory.
+
+The Apache Jakarta Project Byte Code Enginnering Library, bcel5.2.jar 
+(renamed as bcel.jar) is issued under the Apache Software License v2. 
+The jar file includes the license.
+
+The Apache Commons CLI library, commons-cli-1.0.jar (renamed as commons-cli.jar)
+is issued under the Apache Software License v1.1 license. 
+The jar file includes the license.
+
+Another jar file, 3rdparty/lib/cpptasks.jar, is issued under the 
+Apache Software License v2. The jar file includes the license.
+
+The Bluecove Bluetooth library, see  3rdparty/lib/bluecove.jar is issued 
+under the GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1. The source for
+this project is included in 3rdparty/lib, and the source zip file
+includes the license.
+
+The Bluecove-GPL library is used on Linux. The jar file and source is
+included in 3rdparty/lib. This uses the GNU GENERAL PUBLIC LICENSE Version 3.
+
+The JFreeChart and JCommon library are issued under the
+GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1. The source of these
+libraries is included.
+
+See the ACKNOWLEDGMENTS file for acknowledgment of authors
+and organisations that have contributed to this project.

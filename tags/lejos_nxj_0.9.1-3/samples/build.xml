@@ -1,0 +1,288 @@
+<!--
+  ==================================================
+  Buildfile for building samples
+  ==================================================
+
+
+  === NOTE ===
+  Dear fellow leJOS user: Don't use this build.xml as a template for your
+  project. Instead, use the org.lejos.example project as a template for
+  your projects.
+-->
+<project name="samples" default="help" basedir=".">
+
+	<!-- set properties for this build -->
+	<property environment="env" />
+	<property file="build.properties" />
+	
+	<!-- check whether nxj.home is correct -->
+	<available file="${nxj.home}/lib/pc" property="lejos.pc.exists" />
+	<available file="${nxj.home}/lib/nxt" property="lejos.nxt.exists" />
+	<fail unless="lejos.pc.exists" message="nxj.home variable incorrect, ${nxj.home}/lib/pc does not exist" />
+	<fail unless="lejos.nxt.exists" message="nxj.home variable incorrect, ${nxj.home}/lib/nxt does not exist" />
+
+	<!-- define the search paths -->
+	<path id="lejos.pc">
+		<fileset dir="${nxj.home}/lib/pc">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<path id="lejos.nxt">
+		<fileset dir="${nxj.home}/lib/nxt">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+	<condition property="d32Flag" value="-d32" else="-Dblank.dummy.arg=">
+		<and>
+			<os family="mac" />
+		</and>
+	</condition>
+
+	<loadfile property="sample.list" srcfile="build.properties">
+		<filterchain>
+			<tokenfilter>
+				<linetokenizer includedelims="true" />
+				<containsregex pattern="^\s*sample\.[^\.]+\.main\s*=" />
+				<replaceregex pattern="^\s*sample\." replace="  " />
+				<replaceregex pattern="\.main\s*=\s*" replace=" = " />
+			</tokenfilter>
+		</filterchain>
+	</loadfile>
+
+
+	<target name="help">
+		<echo>Here's the list of available samples:
+${sample.list}
+
+For the final steps (linking, uploading to the brick) you have to
+run one of the following:
+  ant upload
+  ant uploadandrun
+
+Some samples can also be run on the PC
+  ant runonpc
+
+If you don't want to enter the number of the sample every time, use
+the paraneter -Dsample.id=&lt;XYZ&gt; with ant, e.g.
+  ant -Dsample.id=rtc uploadandrun
+  ant -Dsample.id=svgml runonpc
+</echo>
+	</target>
+	
+	<target name="sample.chose" unless="sample.id">
+		<echo>This is the list of samples:
+${sample.list}
+
+</echo>
+		<input message="Please enter the identifier of the sample to build/upload/run: " addproperty="sample.id" />
+	</target>
+	
+	<macrodef name="init-sample">
+		<attribute name="id"/>
+		<sequential>
+			<fail unless="sample.@{id}.main" message="sample with number &quot;@{id}&quot; does not exist." />
+			<property name="main.class" value="${sample.@{id}.main}" />
+			<condition property="main.runonpc" value="yes">
+				<and>
+					<isset property="sample.@{id}.runonpc" />
+					<istrue value="${sample.@{id}.runonpc}"/>
+				</and>
+			</condition>
+			<!-- evil hack to apply a regexp to ${main.class}, ant sucks! -->
+			<!-- <pathconvert property="main.class.short">
+				<path path="${main.class}" />
+				<mapper>
+					<regexpmapper from="([^\.]*)$$" to="\1"/>
+				</mapper>
+			</pathconvert> -->
+			<property name="output.nxj" value="${build.dir}/@{id}.nxj" />
+			<property name="output.nxd" value="${build.dir}/@{id}.nxd" />
+			<property name="output.txt" value="${build.dir}/@{id}.txt" />
+		</sequential>
+	</macrodef>
+	
+	<target name="sample.init" depends="compile, sample.chose">
+		<init-sample id="${sample.id}" />
+		<echo>Selected sample with id ${sample.id},
+main class ${main.class}</echo>
+	</target>
+
+	<target name="clean" description="cleans the build folder">
+		<delete dir="${build.dir}" />
+	</target>
+	
+	<target name="compile" description="generate pccomm jar">
+		<mkdir dir="${classes.dir}" />
+		<javac
+			srcdir="${source.dir}"
+			includes="${source.include}"
+			excludes="${source.exclude}"
+			encoding="${source.encoding}"
+			source="${source.version}"
+			target="${target.version}"
+			destdir="${classes.dir}"
+			debug="true"
+			includeAntRuntime="false"
+			includeJavaRuntime="false"
+ 		>
+			<bootclasspath refid="lejos.nxt" />
+			<!-- enable warnings -->
+			<compilerarg value="-Xlint:${source.warn}" />
+		</javac>
+	</target>
+	
+	<target name="link" depends="sample.init, compile">
+		<java classname="lejos.pc.tools.NXJLink" failonerror="true" outputproperty="linker.output">
+			<sysproperty key="nxj.home" file="${nxj.home}"/>
+			<classpath refid="lejos.pc" />
+			<arg value="--bootclasspath" />
+			<arg pathref="lejos.nxt" />
+			<arg value="--classpath" />
+			<arg path="${classes.dir}" />
+			<arg value="--writeorder" />
+			<arg value="LE" />
+			<arg value="-o" />
+			<arg file="${output.nxj}" />
+			<arg value="-od" />
+			<arg file="${output.nxd}" />
+			<arg value="-v" />
+			<arg value="${main.class}" />
+		</java>
+		<echo>${linker.output}</echo>
+		<echo file="${output.txt}">${linker.output}</echo>
+	</target>
+	
+	<target name="debuglink" depends="sample.init, compile">
+		<java classname="lejos.pc.tools.NXJLink" failonerror="true" outputproperty="linker.output">
+			<sysproperty key="nxj.home" file="${nxj.home}"/>
+			<classpath refid="lejos.pc" />
+			<arg value="--bootclasspath" />
+			<arg pathref="lejos.nxt" />
+			<arg value="--classpath" />
+			<arg path="${classes.dir}" />
+			<arg value="--writeorder" />
+			<arg value="LE" />
+			<arg value="-o" />
+			<arg file="${output.nxj}" />
+			<arg value="-od" />
+			<arg file="${output.nxd}" />
+			<arg value="-v" />
+			<arg value="-gr" />
+			<arg value="${main.class}" />
+		</java>
+		<echo>${linker.output}</echo>
+		<echo file="${output.txt}">${linker.output}</echo>
+	</target>
+	
+	<target name="upload" depends="link">
+		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
+			<sysproperty key="nxj.home" file="${nxj.home}"/>
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="${output.nxj}" />
+		</java>
+	</target>
+	
+	<target name="debugupload" depends="debuglink">
+		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
+			<sysproperty key="nxj.home" file="${nxj.home}"/>
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="${output.nxj}" />
+		</java>
+	</target>
+	
+	<target name="uploadandrun" depends="link">
+		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
+			<sysproperty key="nxj.home" file="${nxj.home}"/>
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-r" />
+			<arg file="${output.nxj}" />
+		</java>
+	</target>
+	
+	<target name="debuguploadandrun" depends="debuglink">
+		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
+			<sysproperty key="nxj.home" file="${nxj.home}"/>
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-r" />
+			<arg file="${output.nxj}" />
+		</java>
+	</target>
+	
+	<target name="console" depends="debuguploadandrun">
+		<sleep seconds="4" />
+		<java classname="lejos.pc.tools.NXJConsole" fork="true" failonerror="true">
+			<sysproperty key="nxj.home" file="${nxj.home}"/>
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-di" />
+			<arg file="${output.nxd}" />
+		</java>
+	</target>
+	
+	<target name="consoleviewer" depends="debuguploadandrun">
+		<sleep seconds="4" />
+		<java classname="lejos.pc.tools.NXJConsoleViewer" fork="true" failonerror="true">
+			<sysproperty key="nxj.home" file="${nxj.home}"/>
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<arg value="-di" />
+			<arg file="${output.nxd}" />
+		</java>
+	</target>
+	
+	<target name="debugtool">
+		<echo>
+This tool let's you resolve the numbers displayed by the NXT in
+case of an Exception into meaningfull class and method names.
+This tool even let's you find out in which line of your program
+the Exception happened. Consider the following example:
+			
+  Exception: 28
+   at: 20(11) 
+   at: 21(1) 
+   at: 22(9)
+
+In the following, use 28 as the class number, 20 as the method
+number, and 11 as the PC value. It will tell you, which
+Exception has been thrown, in which method, and in which line.
+		</echo>	
+		<input
+			message="Class number:"
+			addproperty="class"
+		/>
+		<input
+			message="Method number:"
+			addproperty="method"
+		/>
+		<input
+			message="PC value:"
+			addproperty="pc"
+		/>
+		<java classname="lejos.pc.tools.NXJDebugTool">
+			<sysproperty key="nxj.home" file="${nxj.home}"/>
+			<classpath refid="lejos.pc" />
+			<arg value="-di" />
+			<arg file="${output.nxd}" />
+			<arg value="-c" />
+			<arg value="-m" />
+			<arg value="${class}" />
+			<arg value="${method}" />
+			<arg value="${pc}" />
+		</java>
+	</target>
+	
+	<target name="runonpc" depends="sample.init, compile">
+		<fail unless="main.runonpc" message="Sample cannot be run on PC" />
+		<java classname="${main.class}" fork="true" failonerror="true">
+			<sysproperty key="nxj.home" file="${nxj.home}"/>
+			<jvmarg value="${d32Flag}" />
+			<classpath refid="lejos.pc" />
+			<classpath path="${classes.dir}" />
+		</java>
+	</target>
+</project>

@@ -1,0 +1,413 @@
+<!--
+  ==================================================
+  Buildfile for release of leJOS NXJ
+  ==================================================
+-->
+<project name="leJOS NXJ release" default="release" basedir=".">
+
+	<!-- Setting up the global properties for the build -->
+	<property file="build.properties" />
+	<property prefix="vars.classes"  file="${project.classes}/build.properties" />
+	<property prefix="vars.jtools"   file="${project.jtools}/build.properties" />
+	<property prefix="vars.pccomms"  file="${project.pccomms}/build.properties" />
+	<property prefix="vars.pctools"  file="${project.pctools}/build.properties" />
+	<property prefix="vars.scripts"  file="${project.scripts}/build.properties" />
+	<property prefix="vars.startup"  file="${project.startup}/build.properties" />
+	<property prefix="vars.charting" file="${project.charting}/build.properties" />
+
+	<property prefix="vars.samples"   file="${project.samples}/build.properties" />
+	<property prefix="vars.pcsamples" file="${project.pcsamples}/build.properties" />
+	<property prefix="vars.example"   file="${project.example}/build.properties" />
+	<property prefix="vars.pcexample" file="${project.pcexample}/build.properties" />
+
+	<property prefix="vars.nxtvm"      file="${project.nxtvm}/build.properties" />
+	<property prefix="vars.libnxt"     file="${project.libnxt}/build.properties" />
+	<property prefix="vars.jfantom"    file="${project.jfantom}/build.properties" />
+	<property prefix="vars.flashwrite" file="${project.flashwrite}/build.properties" />
+
+	<!-- for consistency reasons -->
+	<property prefix="vars.release" file="build.properties" />
+	<property name="project.release" location="." />
+
+	
+	<path id="pc.3rdparty">
+		<fileset dir="${project.jtools}/3rdparty">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${project.pccomms}/3rdparty">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${project.pctools}/3rdparty">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${project.charting}/3rdparty">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<macrodef name="copy-project">
+		<attribute name="project" />
+		<attribute name="todir" />
+		<sequential>
+			<copy todir="@{todir}">
+				<fileset file="${project.@{project}}/${vars.@{project}.classes.jar}" />
+			</copy>
+			<basename file="${project.@{project}}/${vars.@{project}.classes.src.zip}" property="tmp.copy-project.@{project}" />
+			<zip destfile="@{todir}/${tmp.copy-project.@{project}}">
+				<zipfileset src="${project.@{project}}/${vars.@{project}.classes.src.zip}" />
+				<zipfileset file="README-src.txt" fullpath="README.txt" />
+			</zip>
+		</sequential>
+	</macrodef>
+	<macrodef name="buildcopy-project">
+		<attribute name="project" />
+		<attribute name="type" />
+		<sequential>
+			<echo message="*** entering @{project} project" />
+			<ant inheritAll="false" dir="${project.@{project}}" antfile="build.xml">
+				<target name="clean" />
+				<target name="classes.jar" />
+				<target name="classes.src.zip" />
+			</ant>
+			<echo message="*** copying JARs and sources" />
+			<copy-project project="@{project}" todir="${shared.dir}/lib/@{type}" />
+			<echo message="*** leaving @{project} project" />
+		</sequential>
+	</macrodef>
+	<macrodef name="buildcopy-project2">
+		<attribute name="project" />
+		<attribute name="type" />
+		<sequential>
+			<buildcopy-project project="@{project}" type="@{type}" />
+			<copy todir="${shared.dir}/lib/@{type}/3rdparty">
+				<fileset dir="${project.@{project}}/3rdparty/lib">
+					<include name="*.jar" />
+					<include name="*-src.zip" />
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+	<macrodef name="copyfile-linereplace">
+		<attribute name="from" />
+		<attribute name="to" />
+		<attribute name="replace" />
+		<attribute name="with" />
+		<attribute name="ignore" />
+		<sequential>
+			<loadfile property="tmp.copyfile.@{from}" srcfile="@{from}">
+				<filterchain>
+					<linecontainsregexp>
+						<regexp pattern="@{replace}"/>
+					</linecontainsregexp>	
+				</filterchain>
+			</loadfile>
+			<fail unless="tmp.copyfile.@{from}" message="File @{from} does not contain given regexp." />
+			<copy file="@{from}" tofile="@{to}" overwrite="true">
+				<filterchain>
+					<tokenfilter>
+						<linetokenizer/>
+						<replaceregex pattern="@{replace}" replace="@{with}"/>
+					</tokenfilter>
+					<linecontainsregexp negate="true">
+						<regexp pattern="@{ignore}"/>
+					</linecontainsregexp>
+				</filterchain>
+			</copy>
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="copy-nxtproject">
+		<attribute name="id"/>
+		<attribute name="todir"/>
+		<sequential>
+			<copy todir="@{todir}">
+				<fileset dir="${project.@{id}}"
+					includes="${vars.@{id}.dist.include}"
+					excludes="build.properties,.classpath,${vars.@{id}.dist.exclude}"
+				/>
+			</copy>
+			<copyfile-linereplace from="${project.@{id}}/.classpath" to="@{todir}/.classpath"
+				replace="&lt;classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/classes.*&gt;"
+				with="&lt;classpathentry kind=&quot;con&quot; path=&quot;org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/nxt&quot;/&gt;"
+				ignore="classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/"
+			/>
+			<copyfile-linereplace from="${project.@{id}}/build.properties" to="@{todir}/build.properties"
+				replace="^\s*nxj.home\s*=.*" with="nxj.home=${env.NXJ_HOME}"
+				ignore="don't match anything please"
+			/>
+		</sequential>
+	</macrodef>
+	<macrodef name="copy-pcproject">
+		<attribute name="id"/>
+		<attribute name="todir"/>
+		<sequential>
+			<copy todir="@{todir}">
+				<fileset dir="${project.@{id}}"
+					includes="${vars.@{id}.dist.include}"
+					excludes="build.properties,.classpath,${vars.@{id}.dist.exclude}"
+				/>
+			</copy>
+			<copyfile-linereplace from="${project.@{id}}/.classpath" to="@{todir}/.classpath"
+				replace="&lt;classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/pccomms.*&gt;"
+				with="&lt;classpathentry kind=&quot;con&quot; path=&quot;org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/pc&quot;/&gt;"
+				ignore="classpathentry\s.*kind=&quot;src&quot;\s.*path=&quot;/"
+			/>
+			<copyfile-linereplace from="${project.@{id}}/build.properties" to="@{todir}/build.properties"
+				replace="^\s*nxj.home\s*=.*" with="nxj.home=${env.NXJ_HOME}"
+				ignore="don't match anything please"
+			/>
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="copy-source">
+		<attribute name="id" />
+		<attribute name="todir" />
+		<sequential>
+			<basename file="${project.@{id}}" property="tmp.copy-source.@{id}" />
+			<copy todir="@{todir}/${tmp.copy-source.@{id}}">
+				<fileset
+					dir="${project.@{id}}"
+					includes="${vars.@{id}.dist.include}"
+					excludes="${vars.@{id}.dist.exclude}"
+				/>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<!-- release leJOS NXJ -->
+	<target name="release" description="releases leJOS NXJ" depends="clean, dist.unix, dist.win, dist.source, dist.samples">
+		<!-- notify -->
+		<echo message="The packed distribution can be found in ${dist.dir} now." />
+	</target>
+
+	<!-- cleans the distribution -->
+	<target name="clean" description="clean up all generated files">
+		<!-- delete transient release folders -->
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+
+	<target name="subproject.scripts">
+		<echo message="*** entering scripts project" />
+		<ant inheritAll="false" dir="${project.scripts}" antfile="build.xml">
+			<target name="clean" />
+			<target name="all" />
+		</ant>
+		<copy todir="${unix.dir}/bin">
+			<fileset dir="${project.scripts}/${vars.scripts.linux.dir}" />
+		</copy>
+		<copy todir="${windows.dir}/bin">
+			<fileset dir="${project.scripts}/${vars.scripts.windows.dir}" />
+		</copy>
+		<echo message="*** leaving scripts project" />
+	</target>
+
+	<target name="subproject.classes">
+		<buildcopy-project project="classes" type="nxt" />
+		<ant inheritAll="false" dir="${project.classes}" antfile="build.xml">
+			<target name="docs" />
+		</ant>
+		<copy todir="${shared.dir}/docs/nxt">
+			<fileset dir="${project.classes}/${vars.classes.docs.dir}" />
+		</copy>
+	</target>
+
+	<target name="subproject.jtools">
+		<buildcopy-project2 project="jtools" type="pc" />
+	</target>
+
+	<target name="subproject.pccomms">
+		<buildcopy-project2 project="pccomms" type="pc" />
+		<copy todir="${shared.dir}/lib/pc/native">
+			<fileset dir="${project.pccomms}/native">
+				<exclude name="linux/**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="subproject.pctools" depends="subproject.pccomms, subproject.jtools">
+		<buildcopy-project2 project="pctools" type="pc" />
+	</target>
+
+	<target name="subproject.charting" depends="subproject.pccomms, subproject.pctools">
+		<buildcopy-project2 project="charting" type="pc" />
+	</target>
+
+	<target name="subproject.startup" depends="subproject.classes, subproject.pctools">
+		<echo message="*** entering startup project" />
+		<ant inheritAll="false" dir="${project.startup}" antfile="build.xml">
+			<target name="clean" />
+			<target name="link" />
+		</ant>
+		<copy todir="${shared.dir}/bin">
+			<fileset file="${project.startup}/${vars.startup.startup.bin}" />
+			<fileset file="${project.startup}/${vars.startup.startup.debug}" />
+		</copy>
+		<echo message="*** leaving startup project" />
+	</target>
+
+	<target name="subproject.nxtvm">
+		<!-- TODO move binary image to nxtvm project -->
+		<copy file="${project.snapshot}/bin/lejos_nxt_rom.bin" todir="${shared.dir}/bin" />
+	</target>
+	
+	<target name="subproject.samples">
+		<echo message="*** entering samples project" />
+		<ant inheritAll="false" dir="${project.samples}" antfile="build.xml">
+			<property name="nxj.home" location="${shared.dir}"/>
+			<property name="sample.id" value="map"/>
+			<target name="clean" />
+			<target name="link" />
+		</ant>
+		<copy file="${project.samples}/${vars.samples.build.dir}/map.nxj"
+			tofile="${shared.dir}/bin/MapTest.nxj" />
+		<copy file="${project.samples}/${vars.samples.build.dir}/map.nxd"
+			tofile="${shared.dir}/bin/MapTest.nxd" />
+		<copy-nxtproject id="samples" todir="${samples.dir}/samples" />
+		<echo message="*** leaving samples project" />
+	</target>
+
+	<target name="subproject.example">
+		<copy-nxtproject id="example" todir="${samples.dir}/org.lejos.example" />
+	</target>
+	
+	<target name="subproject.pcsamples">
+		<copy-pcproject id="pcsamples" todir="${samples.dir}/pcsamples" />
+	</target>
+	
+	<target name="subproject.pcexample">
+		<copy-pcproject id="pcexample" todir="${samples.dir}/org.lejos.pcexample" />		
+	</target>
+	
+	<!-- creates the PC API doc -->
+	<target name="pc.doc" depends="" description="generate the platform API doc">
+		<mkdir dir="${shared.dir}/docs/pc" />
+		<javadoc
+			destdir="${shared.dir}/docs/pc"
+			source="1.5"
+			encoding="utf-8"
+			charset="utf-8"
+			locale="en_US"
+			author="true"
+			access="protected"
+			windowtitle="leJOS NXJ PC-API documentation"
+			classpathref="pc.3rdparty"
+			verbose="false"
+		>
+			<packageset
+				dir="${project.jtools}/${vars.jtools.source.dir}"
+				includes="${vars.jtools.docs.include}"
+				excludes="${vars.jtools.docs.exclude}"
+			/>
+			<packageset
+				dir="${project.pccomms}/${vars.pccomms.source.dir}"
+				includes="${vars.pccomms.docs.include}"
+				excludes="${vars.pccomms.docs.exclude}"
+			/>
+			<packageset
+				dir="${project.pctools}/${vars.pctools.source.dir}"
+				includes="${vars.pctools.docs.include}"
+				excludes="${vars.pctools.docs.exclude}"
+			/>
+			<packageset
+				dir="${project.charting}/${vars.charting.source.dir}"
+				includes="${vars.pctools.docs.include}"
+				excludes="${vars.pctools.docs.exclude}"
+			/>
+		</javadoc>
+	</target>
+
+	<target name="shared" depends="subproject.classes, subproject.jtools, subproject.pccomms, subproject.pctools, subproject.charting, subproject.startup, subproject.samples, subproject.pcsamples, subproject.example, subproject.pcexample, subproject.nxtvm, pc.doc">
+		<zip destfile="${shared.dir}/samples.zip">
+			<fileset dir="${samples.dir}" />
+		</zip>
+	</target>
+
+	<!-- copies the lejos sources -->
+	<target name="dist.source" description="copies the lejos sources">
+
+		<copy-source todir="${source.dir}" id="classes" />
+		<copy-source todir="${source.dir}" id="jtools" />
+		<copy-source todir="${source.dir}" id="pccomms" />
+		<copy-source todir="${source.dir}" id="pctools" />
+		<copy-source todir="${source.dir}" id="scripts" />
+		<copy-source todir="${source.dir}" id="startup" />
+		<copy-source todir="${source.dir}" id="charting" />
+		
+		<copy-source todir="${source.dir}" id="samples" />
+		<copy-source todir="${source.dir}" id="pcsamples" />
+		<copy-source todir="${source.dir}" id="example" />
+		<copy-source todir="${source.dir}" id="pcexample" />
+
+		<copy-source todir="${source.dir}" id="nxtvm" />
+		<copy-source todir="${source.dir}" id="libnxt" />
+		<copy-source todir="${source.dir}" id="jfantom" />
+		<copy-source todir="${source.dir}" id="flashwrite" />
+		
+		<!-- last but not least -->
+		<copy-source todir="${source.dir}" id="release" />
+		
+		<mkdir dir="${dist.dir}" />
+		<tar destfile="${dist.dir}/${lejos.source.version}.tar.gz" compression="gzip" longfile="gnu">
+			<tarfileset dir="${source.dir}" prefix="${lejos.source.version}" />
+		</tar>
+	</target>
+
+	<!-- copies the lejos sources -->
+	<target name="dist.samples" description="copies the lejos samples" depends="subproject.samples, subproject.pcsamples, subproject.example, subproject.pcexample">
+		<mkdir dir="${dist.dir}" />
+		<zip destfile="${dist.dir}/${lejos.samples.version}.zip">
+			<zipfileset dir="${samples.dir}" prefix="${lejos.samples.version}" />
+		</zip>
+	</target>
+
+	<!-- packages the linux distribution -->
+	<target name="dist.unix" description="packages the linux distribution" depends="shared, subproject.scripts">
+		<copy todir="${unix.dir}">
+			<fileset dir="${shared.dir}" />
+			<fileset dir="${sup.dir}" />
+		</copy>
+		<copy-source id="libnxt" todir="${unix.dir}/build"/>
+		<fixcrlf srcdir="${unix.dir}" eol="lf">
+			<include name="**/*.bat" />
+			<include name="**/*.txt" />
+			<include name="**/*.xml" />
+			<include name="**/*.htm" />
+			<include name="**/*.html" />
+		</fixcrlf>
+		<!-- tar & gzip leJOS Unix distribution -->
+		<mkdir dir="${dist.dir}" />
+		<tar destfile="${dist.dir}/${lejos.unix.version}.tar.gz" compression="gzip" longfile="gnu">
+			<tarfileset dir="${unix.dir}" prefix="${lejos.unix.version}" filemode="755">
+				<include name="bin/nxj*" />
+			</tarfileset>
+			<tarfileset dir="${unix.dir}" prefix="${lejos.unix.version}">
+				<exclude name="bin/nxj*" />
+			</tarfileset>
+		</tar>
+	</target>
+
+	<!-- packages the windows distribution -->
+	<target name="dist.win" description="packages the windows distribution" depends="shared, subproject.scripts">
+		<copy todir="${windows.dir}">
+			<fileset dir="${shared.dir}" />
+			<fileset dir="${sup.dir}">
+				<!-- TODO include or not to include? -->
+				<exclude name="build/**" />
+			</fileset>
+		</copy>
+		<fixcrlf srcdir="${windows.dir}" eol="crlf">
+			<include name="**/*.bat" />
+			<include name="**/*.txt" />
+			<include name="**/*.xml" />
+			<include name="**/*.htm" />
+			<include name="**/*.html" />
+		</fixcrlf>
+		<!-- zip leJOS windows distribution -->
+		<mkdir dir="${dist.dir}" />
+		<zip destfile="${dist.dir}/${lejos.windows.version}.zip">
+			<zipfileset dir="${windows.dir}" prefix="${lejos.windows.version}" />
+		</zip>
+	</target>
+
+</project>

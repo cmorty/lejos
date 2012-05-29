@@ -1,0 +1,128 @@
+<!--
+  ==================================================
+  Buildfile for building classes.jar for NXT
+  ==================================================
+-->
+<project name="leJOS NXT Java classes" default="all" basedir=".">
+	
+	<property file="build.properties" />
+	
+	<path id="3rdparty">
+		<fileset dir="3rdparty">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+		
+	<target name="prepare">
+  		<mkdir dir="${build.dir}" />
+		<!-- copy DB files from nxtvm project -->
+		<copy todir="${resource.dir}/js/tinyvm">
+			<fileset dir="../nxtvm/javavm">
+				<include name="*.db"/>
+			</fileset>
+		</copy>
+	</target>
+	
+ 	<!-- compiles the classes -->
+  	<target name="classes" description="compile classes" depends="prepare">
+  		<!--
+  			Ant is NOT suitable for incremental compilation.
+  			It doesn't keep track of inlined constants and possibly
+  			other things. So we simply delete the output folder.
+  		--> 
+		<delete dir="${classes.dir}" />
+		<mkdir dir="${classes.dir}" />
+  		<javac
+  			srcdir="${source.dir}"
+  			includes="${source.include}"
+  			excludes="${source.exclude}"
+  			encoding="${source.encoding}"
+  			source="${source.version}"
+			target="${target.version}"
+			destdir="${classes.dir}"
+			debug="true"
+			includeAntRuntime="false"
+			includeJavaRuntime="false"
+  			classpathref="3rdparty"
+			verbose="false"
+		>
+			<!-- enable warnings -->
+			<compilerarg value="-Xlint:${source.warn}" />
+		</javac>
+  	</target>
+	
+ 	<!-- creates the classes jar -->
+	<target name="classes.jar" description="generate jar of classes" depends="prepare,classes">
+		<jar destfile="${classes.jar}">
+			<fileset
+				dir="${classes.dir}"
+			/>
+			<fileset
+				dir="${resource.dir}"
+				includes="${resource.include}"
+				excludes="${resource.exclude}"
+			/>
+		</jar>
+	</target>
+	
+ 	<!-- creates the classes jar -->
+	<target name="classes.src.zip" description="generate zip of sources" depends="prepare">
+		<zip
+			destfile="${classes.src.zip}"
+			basedir="${source.dir}"
+			includes="${source.include}"
+			excludes="${source.exclude}"
+		/>
+	</target>
+	
+	<!-- generate javadocs -->
+	<target name="docs" description="generate javadocs" depends="prepare">
+		<delete dir="${docs.dir}" />
+		<mkdir dir="${docs.dir}" />
+		<javadoc
+			destdir="${docs.dir}"
+			source="${source.version}"
+			encoding="${source.encoding}"
+			charset="utf-8"
+			locale="en_US"
+			author="true"
+			access="protected"
+			windowtitle="leJOS NXJ API documentation"
+			classpathref="3rdparty"
+			verbose="false"
+		>
+			<arg value="-quiet"/>
+			
+			<packageset
+				dir="${source.dir}"
+				includes="${docs.include}"
+				excludes="${docs.exclude}"
+			/>
+		</javadoc>
+	</target>
+	
+	<!-- zip the javadocs -->
+	<target name="docs.zip" description="generate zip of javadocs" depends="docs">
+    	<zip
+			destfile="${docs.zip}"
+    		basedir="${docs.dir}"
+    	/>
+	</target>
+	
+	<!-- zip the project -->
+	<target name="dist.zip" description="generate zip of sources">
+    	<zip
+    		destfile="${dist.zip}"
+    		basedir="${basedir}"
+    		includes="${dist.include}"
+    		excludes="${dist.exclude}"
+    	/>
+	</target>
+	
+	<target name="all" description="classes.jar, docs.zip and source.zip" depends="classes.jar, classes.src.zip, docs.zip, dist.zip" />
+		
+	<!-- delete everything generated -->
+	<target name="clean" description="clean up all generated files">
+		<delete dir="${build.dir}" />
+	</target>
+</project>

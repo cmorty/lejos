@@ -1,0 +1,340 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		
+	<title>The leJOS NXJ Menu System</title>
+	
+	<!-- METADATA -->
+	<meta name="title" content="The leJOS NXJ Menu System" />
+	<meta name="DC.Title" content="The leJOS NXJ Menu System" />
+	<meta name="description" content="The leJOS NXJ Menu System" />
+	<meta name="DC.Description" content="The leJOS NXJ Menu System" />
+	<meta name="keywords" content="Java, leJOS, leJOS project, NXJ, NXJ Tutorial" />
+	<meta name='VW96.objecttype' content='Document' />
+	<meta http-equiv='content-language' content='en' />
+	<meta name='DC.Language' scheme='RFC1766' content='English' />
+	<meta name='distribution' content='global' />
+	<meta name='resource-type' content='document' />
+
+	<!-- SEARCH ENGINE -->
+	<meta name='robots' content='all' />
+
+	<!-- AUTHOR METADATA -->
+	<meta name='Author' content='Lawrie Griffiths' />
+	<meta name='Author' content='Roger Glassey' />
+		
+	<!-- CSS -->
+	<link rel="stylesheet" href="../r_css/lejos-tutorial.css" type="text/css" />
+
+	<!-- ICON -->
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+	<a id="top" name="top"></a>
+	<!-- N1: HEADER -->
+	<table class="n1t1" cellpadding="0" cellspacing="0">
+   		<tr>
+      		<td><img src="../r_media/images/tutorial_header1.jpg"/></td>
+      		<td align="right"><img src="../r_media/images/tutorial_header2.jpg"/></td>
+   		</tr>
+	</table>
+	
+	<!-- N2: CONTENTS -> NAVIGATION SYSTEMS AND CONTENTS -->
+	<table class="n2t1" cellpadding="0" cellspacing="0">
+    	<tr>
+      		<td class="n2t1r1c1">
+				<!-- LEFT NAVIGATION SYSTEM -->
+				<div class="nolinkLESSON">The leJOS NXJ Menu System</div>
+				<div class="linkAHEAD"><a href="#1">Main menu</a></div>
+				<div class="linkAHEAD"><a href="#2">Files menu</a></div>
+				<div class="linkAHEAD"><a href="#3">Bluetooth menu</a></div>
+				<div class="linkAHEAD2"><a href="#3.1">Power On/Off</a></div>
+				<div class="linkAHEAD2"><a href="#3.2">Search/Pair</a></div>
+				<div class="linkAHEAD2"><a href="#3.3">Devices</a></div>
+				<div class="linkAHEAD2"><a href="#3.4">Visibility</a></div>
+				<div class="linkAHEAD2"><a href="#3.5">Change Pin</a></div>
+				<div class="linkAHEAD"><a href="#4">Sound menu</a></div>
+				<div class="linkAHEAD"><a href="#5">System menu</a></div>
+				<div class="linkAHEAD"><a href="#6">Version menu</a></div>
+      		</td>
+      		<td>
+				<!-- BREADCRUMBS -->
+				<div id="BreadCrumbs">
+					<a href="../index.htm" target="_top">Home Page</a> &gt;
+			        <a href="#">The leJOS NXJ Menu System</a>
+				</div>
+				<!-- NAVIGATION TOOL -->
+				<div class="NavBit">
+                    <a target="_top" href="../Preliminaries/UsingIDEs.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;<a href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;<a href="../MotorTutorial/ControllingMotors.htm">Next&nbsp;&raquo;</a>
+				</div>
+					
+				<!-- CONTENT AREA -->
+					
+				<!-- CONTENT TITLE -->
+				<div id="PageTitle">The leJOS NXJ Menu System</div>
+				
+				<a name="1"></a>
+				<h4>Main menu</h4>
+      			<p>When leJOS NXJ starts, it displays the leJOS NXJ logo for 3 seconds and then displays the main menu:</p>
+      			<img src="default.jpg"/>
+      			<p>The top line shows the battery voltage icon,the name of the NXT, indicators for active USB and Bluetooth connections, and the Bluetooth power icon. In this example, the
+				power is on, but USB and Bluetooth are not connected. </p>
+      			<p>It then shows a graphic menu of icons. The selected icon is raised in the center and its name is displayed.
+      			   You can use the keys to navigate the menu:</p>
+      			<table border="1" cellpadding="7" cellspacing="0" width="553">
+        			<col width="35"/> <col width="36"/> <col width="118"/> <col width="306"/> 
+        			<tbody>
+          				<tr valign="top">
+            				<td colspan="2" width="85">
+            					<p>Key</p>
+            				</td>
+            				<td width="118">
+            					<p>Name</p>
+            				</td>
+            				<td width="306">
+            					<p>Use</p>
+            				</td>
+          				</tr>
+          				<tr valign="top">
+            				<td width="35">
+            					<p>
+            					<img  style="border: 0px solid ; width: 26px; height: 30px;" alt="Left Button"  src="left.gif" name="graphics5" align="left"/>. </p>
+            				</td>
+            				<td width="36">
+            					<p>
+            					<img  title="Right Button"  style="border: 0px solid ; width: 28px; height: 30px;" alt="" src="right.gif" name="graphics1" align="left"/><br/>
+            					</p>
+            				</td>
+            				<td width="118">
+            					<p>Left,Right </p>
+            				</td>
+            				<td width="306">
+            					<p>Move left or right</p>
+            				</td>
+          				</tr>
+          				<tr valign="top">
+            				<td colspan="2" width="85">
+            					<p>
+            					<img  style="border: 0px solid ; width: 31px; height: 31px;"  alt="Enter Button" src="enter.gif" name="graphics2" align="left"/><br clear="left"/>
+            					<br/>
+            					</p>
+            				</td>
+            				<td width="118">
+            					<p>Enter</p>
+            				</td>
+            				<td width="306">
+            					<p>Select the menu item</p>
+            				</td>
+          				</tr>
+          				<tr valign="top">
+            				<td colspan="2" width="85">
+            					<p>
+            					<img  style="border: 0px solid ; width: 28px; height: 15px;" alt=""  src="escape.gif" name="graphics3" align="left"/>
+            					<br  clear="left"/>
+            					<br/>
+            					</p>
+            				</td>
+            				<td width="118">
+            					<p>Escape</p>
+            				</td>
+            				<td width="306">
+            					<p>Quit a submenu and return to higher level menu.
+            					<br/>If on a top level menu, shut down the NXT. </p>
+            				</td>
+          				</tr>
+        			</tbody>
+      			</table>
+
+      			<p>Pressing Enter when "Run Default" is displayed will run the default program if one is set. The default program can be set from the Files menu.
+      			Note that if you set the "Auto Run" option from the System menu, the default program will run automatically on start up,
+      			instead of this menu. </p>
+      			
+      			<a href="#top">Back to top</a>
+      			<p/>
+      			
+      			<a name="#2"></a>
+      			<h4>Files menu</h4>
+      			<p>Pressing the right button will display the Files icon:</p>
+      			<p/>
+      			<img src="files.jpg"/>
+      			<p>Selecting "Files" will show a list of files using the TextMenu class.</p>
+      			
+      			<img src="filelist.jpg"/>
+      			
+      			<p> You can move through the menu using the left and right buttons.
+      			It will scroll up and down if there are more files than will fit on the screen and it will wrap round when you reach the top or bottom of the list.</p>
+      			
+      			<p>When you select a particular file with the Enter button, the file submenu is displayed:</p>
+      			<img src="file.jpg"/>
+      			
+      			<p>For any file a "Delete File" option is available. For program files (.nxj), you can execute the program or set it as the default program. For sound files, you can play the sound sample.</p>
+      			<p/>
+      			<a href="#top">Back to top</a>
+      			<p/>
+      				
+      			<a name="#3"></a>
+      			<h4>Bluetooth menu</h4>
+      			<p>Pressing the right arrow from the Files menu icon, displays the Bluetooth menu icon: </p>
+      			<img src="bluetooth.jpg"/>
+      			
+      			<a name="#3.1"></a>
+      			<h5>Power On/Off</h5>
+
+      			<p>Pressing ENTER shows the Power On/Power Off Bluetooth submenu. This is the version when the power is on:</p>
+      			<img src="bluetoothon.jpg"/>
+      			
+      			<p>The status lines at the top show if power is on or off to the Bluetooth chip,  and whether the device is visible to Bluetooth searches.</p>
+      			
+      			<p>Switching the power off to the Bluetooth chip, increases battery life, but no Bluetooth capability is available until the power is switched back on.</p>
+      			<p>Press ENTER to switch the power off or back on.</p>
+						
+      			<a name="#3.2"></a>
+      			<h5>Search/Pair</h5>
+      			
+      			<p>Pressing the right Button from the Power On/Off submenu, shows the Search/Pair submenu. </p>
+      			
+      			<img src="search.jpg"/>
+      			<p>Pressing Enter starts a Bluetooth inquiry. The display is cleared and the first line displays &#8220;Searching&#8230;&#8221;. This takes about 10 seconds.</p>
+      			<p>When the search is finished a menu of all the Bluetooth devices found, is displayed:</p>
+      			
+      			<img src="found.jpg"/>
+      			<p>All discoverable devices that support an SPP profile are displayed. This includes other NXT, GPS devices, mobile phones etc.</p>
+      			<p>Selecting one of the devices gives the following display:</p>
+
+      			<img src="pair.jpg"/>
+      			<p>Pressing Enter lets you pair the selected device with your NXT and adds it to the list of known devices. 
+      			This makes connecting to the device from leJOS programs much easier.</p> 
+      			
+      			<p>When you press Enter to pair the device, a submenu is displayed for you to enter the pin for
+      			the selected device. You may need to go to the selected device and Enter the pin on that device as well.</p> 
+      			
+      			<img src="pairpin.jpg"/>  			
+				
+				<p>To enter the 4 digit pin on the NXT, press the left and right buttons to increment or decrement the current digit, and Press Enter to go on to the next one.
+				When you press Enter on the last digit, the pairing will take place.  The current digit has is displayed in a box to highlight it.</p>
+				
+				<a name="#3.3"></a>
+      			<h5>Devices</h5>
+      			
+      			<p>Pressing the right button from the Search/Pair submenu icon, takes you to the Devices submenu icon:</p>
+      			
+      			<img src="devices.jpg"/>
+      			
+      			<p>Pressing enter shows the devices currently in the Known Devices list for your NXT:</p>
+      			
+      			<img src="devicelist.jpg"/>
+
+      			<p>Selecting a specific device will show details of it:</p>
+      			
+      			<img src="device.jpg"/>
+      			
+     			<p>The first line gives the name and the second the address. </p>
+      			<p >Press Enter to remove the device from the Known devices list.</p>
+				
+				<a name="#3.4"></a>
+      			<h5>Visibility</h5>
+      			
+      			<p>Pressing the right button from the Devices submenu, shows the Visibility submenu:</p>
+      			
+      			<img src="visibility.jpg"/>
+      			
+				<p>Pressing Enter on the Visibility submenu switches visibility of the NXT device to Bluetooth inquiries on and off.
+				The status is shown on the Visibility line at the top of the screen.</p>
+				
+      			<a name="#3.5"></a>
+      			<h5>Change Pin</h5>
+      			
+      			<p>Pressing ENTER from the Visibility submenu, displays the Change Pin submenu:</p>
+      			
+      			<img src="pin.jpg"/>
+      			
+      			<p>Press Enter to get the Enter NXT Pin submenu:</p>
+      			
+      			<img src="changepin.jpg"/>
+      			
+      			<p>This lets you change the pin for your NXT. The pin is required when you pair your NXT from another device.
+      			It is preset to 1234.</p>
+      			
+      			<p>To enter the 4 digit pin, press the left and right buttons to increment or decrement the current digit, and Press Enter to go on to the next one.
+				When you press Enter on the last digit, the pairing will take place. The current digit has is displayed in a box to highlight it.</p>
+      			
+      			<p><a href="#top">Back to top</a></p>
+      						
+				<a name="#4"></a>
+      			<h4>Sound</h4>
+      			<p/>
+      			<img src="sound.jpg"/>
+      			
+    			<p>Press the right button from the Bluetooth menu item, displays the Sound menu icon:</p>
+      			
+      			<p>Press Enter and the Volume submenu is displayed. Click the Enter key to increase the main volume.
+      			After 10 it wraps round to mute (sound off). Presing it again increases the sound from level 1 upwards.</p>
+				
+				<img src="volume.jpg"/>
+				
+				<p>Press the right button from the Volume submenu and the Key Click submenu is displayed.</p>
+				
+				<img src="keyclick.jpg"/>
+				
+				<p>This sets the volume of the sound when a key is clicked. It works the same as the Volume submenu.</p>
+				
+				<a name="#5"></a>
+      			<h4>System menu</h4>
+      			
+      			<p>Pressing the right button from the Sound menu icon, displays the System menu icon: </p>
+      			<img src="system.jpg"/>
+      			
+      			<p>Selecting this shows information about the current state of the NXT brick, and allows you to
+      			format (wipe clean) the file system.</p>
+      			<img src="systeminfo.jpg"/>
+      			
+      			<p>This submenu shows some information about the status of the NXT, and allows you to change some of these variables.</p>
+      			
+      			<p>The free flash memory and free RAM are displayed in bytes. An "R" after the battery voltage indicates that a rechargable 
+      			battery pack is in use.</p>
+      			
+      			<p>Press Enter to format the file system and wipe out all files. A submenu of Yes and No is diaplayed, defaulted to No,
+      			to confirm the operation. Press the left or right arrows to select Yes, and then press Enter to format the filesystem.</p>
+      			
+      			<p>Pressing right arrow when the Format submenu is diaplayed, shows the sleep time submenu:</p>
+      			
+      			<img src="sleep.jpg"/>
+      			
+      			<p>Press Enter to increment the sleep time. It is in minutes. The maxiumum value is 10 minutes.
+      			Pressing Enter when 10 is displayed, sets the sleep timer off. Pressing Enter again starts incrementing it
+      			starting at 1.</p>
+      			
+      			<p>Pressing the right button when the Sleep time submenu is displayed, takes you to the Auto Run submenu:</p>
+      			
+      			<img src="autorun.jpg"/>
+      			
+      			<p>Auto run defaults to off. It can only be switched on if a default program has been defined.
+      			When it is on the default program will be run automatically on start up, instead of this menu.
+      			You can disable this and cause the menu to be displayed by pressing the left button during start up.</p>
+
+      			<p><a href="#top">Back to top</a></p>
+      			
+      			<a name="#6"></a>
+      			<h4>Version</h4>
+      			<p>Pressing the right button from the System menu icon, displays the Version menu icon:</p>
+      			<img src="version.jpg"/>
+      			
+      			<p>Selecting this item, displays the version of the firmware and the menu.</p>
+      			<img src="versioninfo.jpg"/>
+      			
+      			<p>This menu is for information only.</p>
+				
+      			<a href="#top">Back to top</a>  
+      			<p/>			
+      			<div class="NavBit"> 
+      				<a target="_top"  href="../Preliminaries/UsingIDEs.htm">&laquo;&nbsp;Previous</a>&nbsp;&#8226;&nbsp;
+      				<a  href="../index.htm">TOC</a>&nbsp;&#8226;&nbsp;
+      				<a  href="../MotorTutorial/ControllingMotors.htm">Next&nbsp;&raquo;</a> 
+      			</div>
+      		</td>
+    	</tr>
+	</table>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>lejos</groupId>
+        <artifactId>lejos-parent</artifactId>
+        <version>0.9-SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>pcexample</artifactId>
+
+    <name>PC Example</name>
+    <description>Simple example project to be run on the PC.</description>
+
+    <scm>
+        <connection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/org.lejos.${project.artifactId}</connection>
+        <developerConnection>scm:svn:https://lejos.svn.sourceforge.net/svnroot/lejos/trunk/org.lejos.${project.artifactId}</developerConnection>
+    </scm>
+    <url>http://lejos.sourceforge.net/</url>
+    
+    <packaging>jar</packaging>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+
+        <plugins>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <optimize>true</optimize>
+                </configuration>
+            </plugin>
+
+        </plugins>
+        
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>lejos</groupId>
+            <artifactId>classes</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>
