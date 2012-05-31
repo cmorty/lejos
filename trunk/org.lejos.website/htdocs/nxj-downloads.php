@@ -108,7 +108,11 @@
 						  	<em>leJOS_NXJ_&lt;version&gt;_win32.zip</em>: Archive for manual installation on Windows<br />
 						  	<em>leJOS_NXJ_&lt;version&gt;_win32_setup.exe</em>: Installer for automatic installation on Windows<br />
 						  	<em>leJOS_NXJ_&lt;version&gt;_samples.zip</em>: Sample projects, for all platforms<br />
-						  	<em>leJOS_NXJ_&lt;version&gt;_source.tar.gz</em>: leJOS NXJ sources, for all platforms
+						  	<em>leJOS_NXJ_&lt;version&gt;_source.tar.gz</em>: leJOS NXJ sources, for all platforms<br />
+						  	<br/>
+						  	The leJOS NXJ sources are not required to write and debug Java programs with leJOS. They are only required by people who
+						  	want to modify and rebuild leJOS NXJ itself. Also, the samples are already included in the archives for manual installation
+						  	as well as the Windows Installer. 
 						  </td>
 						</tr>
 						
