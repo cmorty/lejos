@@ -149,5 +149,5 @@ $(VM_PREFIX)interpreter.o: $(VM_DIR)/interpreter.c $(ALL_HEAD)
 
 %.asm: %
 	@echo "Disassembling $< to $@"
-	$(OBJDUMP) -z -d $< >$@
+	$(OBJDUMP) -z -x -d $< >$@
 
