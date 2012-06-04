@@ -5,7 +5,7 @@ package lejos.robotics;
  * DO NOT EDIT THE VERSION IN pccomms AS IT WILL BE OVERWRITTEN WHEN THE PROJECT IS BUILT.
  */
 
-/**  Abstraction for Gryoscope defines minimal implementation
+/**  Abstraction for Gyroscope defines minimal implementation
  * 
  * @author Kirk P. Thompson 4/7/2011
  */
