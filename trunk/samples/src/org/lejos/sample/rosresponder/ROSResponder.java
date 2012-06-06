@@ -166,6 +166,7 @@ public class ROSResponder {
 				compass = new CompassHTSensor(port);
 			} else if (type == GYRO) {
 				gyro = new GyroSensor(port);
+				gyro.recalibrateOffset();
 			} else if (type == ACCEL) {
 				accel = new AccelMindSensor(port);
 			} else if (type == TOUCH) {
@@ -198,7 +199,7 @@ public class ROSResponder {
 						reading = (compass.getDegrees() - compassZero) % 360;
 						break;
 					case GYRO:
-						reading = gyro.getAngularVelocity() - gyroZero;
+						reading = gyro.getAngularVelocity();
 						break;
 					case ACCEL:
 						reading = accel.getXAccel();
@@ -270,6 +271,9 @@ public class ROSResponder {
 						float linear = dis.readFloat();
 						float angular = dis.readFloat();
 						
+						angularVelocity = angular;
+						linearVelocity = linear;
+						
 						if (angular == 0 && linear != 0) { // Straight line
 							robot.setTravelSpeed(Math.abs(linear * 100));
 							boolean forward = (linear > 0);
@@ -294,8 +298,6 @@ public class ROSResponder {
 							robot.stop();
 						}
 						
-						angularVelocity = angular;
-						linearVelocity = linear;
 						break;
 					case CONFIGURE_SENSOR:
 						byte sType = dis.readByte();
@@ -322,24 +324,41 @@ public class ROSResponder {
 						tm.start();
 						break;
 					case FORWARD:
+						linearVelocity = (float) (robot.getTravelSpeed() / 100);
+						angularVelocity = 0;
 						robot.forward();
-						break;
+						linearVelocity = 0;
 					case BACKWARD:
+						linearVelocity = (float) (robot.getTravelSpeed() / 100);
+						angularVelocity = 0;
 						robot.backward();
+						linearVelocity = 0;
 						break;
 					case ROTATE_LEFT:
+						angularVelocity = (float) Math.toRadians(robot.getRotateSpeed()); 
+						linearVelocity = 0;
 						robot.rotateLeft();
+						angularVelocity = 0;
 						break;
 					case ROTATE_RIGHT:
+						angularVelocity = (float) Math.toRadians(robot.getRotateSpeed()); 
+						linearVelocity = 0;
 						robot.rotateRight();
+						angularVelocity = 0;
 						break;
 					case TRAVEL:
+						linearVelocity = (float) (robot.getTravelSpeed() / 100);
+						angularVelocity = 0;
 						float distance = dis.readFloat();
 						robot.travel(distance);
+						linearVelocity = 0;
 						break;
 					case ROTATE:
+						angularVelocity = (float) Math.toRadians(robot.getRotateSpeed()); 
+						linearVelocity = 0;
 						float angle = dis.readFloat();
 						robot.rotate(angle);
+						angularVelocity = 0;
 						break;
 					case SET_TRAVEL_SPEED:
 						float speed = dis.readFloat();
@@ -350,6 +369,8 @@ public class ROSResponder {
 						robot.setRotateSpeed(rotateSpeed);
 						break;
 					case STOP:
+						linearVelocity = 0;
+						angularVelocity = 0;
 						robot.stop();
 						break;
 					case SHUT_DOWN:
@@ -390,11 +411,18 @@ public class ROSResponder {
 						Point dest = new Point(x,y);
 						Pose pose = posep.getPose();
 						
+						angularVelocity = (float) Math.toRadians(robot.getRotateSpeed()); 
+						linearVelocity = 0;
 						robot.rotate(pose.relativeBearing(dest));
 						
+						angularVelocity = 0;
+						linearVelocity = (float) (robot.getTravelSpeed() / 100);			
 						robot.travel(pose.distanceTo(dest));
 						
+						linearVelocity = 0;
+						angularVelocity = (float) Math.toRadians(robot.getRotateSpeed());
 						robot.rotate(heading - posep.getPose().getHeading());
+						angularVelocity = 0;
 						
 						break;
 					}
