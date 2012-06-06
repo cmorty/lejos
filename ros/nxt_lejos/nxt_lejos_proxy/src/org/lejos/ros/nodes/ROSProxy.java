@@ -323,7 +323,7 @@ public class ROSProxy implements NodeMain {
 						break;
 					case GYRO:
 						floatValue = dis.readFloat();
-						gyroSensor.publish(start, floatValue);
+						gyroSensor.publish(start, Math.toRadians(floatValue));
 						if (imuSensor != null) imuSensor.publish(start,0f);
 						break;
 					case LIGHT:
