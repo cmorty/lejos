@@ -17,7 +17,7 @@ public class GyroSensor extends Sensor {
 	@Override
 	public void publishMessage(double value) {
 		message.getHeader().setStamp(node.getCurrentTime());
-		message.getAngularVelocity().setX(value);
+		message.getAngularVelocity().setZ(value);
 		topic.publish(message);
 	}
 }

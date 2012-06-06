@@ -63,6 +63,8 @@ public class OdometrySensor extends Sensor {
 	    double s3 = Math.sin(bank/2);
 	    double c1c2 = c1*c2;
 	    double s1s2 = s1*s2;
+	    
+	    System.out.println("Angular: " + angularVelocity + ", linear: " + linearVelocity);
 	   	
 		Quaternion q = node.getTopicMessageFactory().newFromType(Quaternion._TYPE);
 		q.setW(c1c2*c3 - s1s2*s3);
@@ -98,7 +100,20 @@ public class OdometrySensor extends Sensor {
 	    od.getPose().getPose().getPosition().setZ(0);
 	    
 	    od.getPose().getPose().setOrientation(q);
+	    
+	    double[] cov = { // Copied from turtle bot
+	    		/* 1e-3,*/ 0, 0, 0, 0, 0,
+	    		0, 1e-3, 0, 0, 0, 0,
+	    		0, 0, 1e6, 0, 0, 0,
+	    		0, 0, 0, 1e6, 0, 0,
+	    		0, 0, 0, 0, 1e6, 0,
+	    		0, 0, 0, 0, 0, 1e3, 0};
+	    
+	    //od.getPose().setCovariance(cov);
+	    
+	    //od.getPose().getCovariance()[0] = 1e-3;
 
+	    //System.out.println("Setting covariance to " + cov);
 	    od.getTwist().getTwist().getLinear().setX(linearVelocity);
 	    od.getTwist().getTwist().getLinear().setY(0);
 	    od.getTwist().getTwist().getLinear().setZ(0);
@@ -106,6 +121,8 @@ public class OdometrySensor extends Sensor {
 	    od.getTwist().getTwist().getAngular().setX(0);
 	    od.getTwist().getTwist().getAngular().setY(0);	    
 	    od.getTwist().getTwist().getAngular().setZ(angularVelocity);
+	    
+	    //od.getTwist().setCovariance(cov);
 	    
 	    poseStamped.getHeader().setStamp(node.getCurrentTime());	    
 	    poseStamped.getHeader().setFrameId(WORLD_FRAME);
