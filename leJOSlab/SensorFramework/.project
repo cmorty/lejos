@@ -3,6 +3,7 @@
 	<name>SensorFramework</name>
 	<comment></comment>
 	<projects>
+		<project>classes</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
