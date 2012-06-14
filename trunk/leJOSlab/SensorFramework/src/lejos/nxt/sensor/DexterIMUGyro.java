@@ -2,7 +2,6 @@ package lejos.nxt.sensor;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
-import lejos.nxt.vecmath.Vector3f;
 
 public class DexterIMUGyro extends I2CSensor implements SensorVectorDataProvider {
 	

@@ -1,6 +1,5 @@
 package lejos.nxt.sensor;
 
-import lejos.nxt.vecmath.Vector3f;
 
 /**
  * Thes class extracts cextrcts a single axis from a vector returned by a Triaxis sensor,

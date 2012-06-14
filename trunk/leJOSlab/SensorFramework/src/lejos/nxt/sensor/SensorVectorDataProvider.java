@@ -1,6 +1,6 @@
 package lejos.nxt.sensor;
 
-import lejos.nxt.vecmath.Vector3f;
+
 
 /**
  * @author Aswin Bouwmeester
