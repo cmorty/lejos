@@ -6,7 +6,9 @@ import javax.swing.SwingUtilities;
 
 /**
  * Passthrough message plug-in manager. Manages GUI (<code>AbstractTunneledMessagePanel</code>) 
- * loading/unloading/message routing
+ * loading/unloading/message routing.
+ * 
+ * TODO This class is where dynamic loading of "plug-in" panels should be implemented.
  * 
  * @author Kirk P. Thompson
  *

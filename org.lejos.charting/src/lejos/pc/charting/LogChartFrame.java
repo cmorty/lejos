@@ -301,13 +301,19 @@ class LogChartFrame extends JFrame {
                 }
             }
             sb.append("\n");
-            try {
-                // clear the data log text area
-                dataLogTextArea.getDocument().remove(0, dataLogTextArea.getDocument().getLength());
-            } catch (BadLocationException e) {
-                // TODO what to do here? I'm pretty sure the try(...) code should never throw this...
-            }
             LogChartFrame.this.logDataQueue.add(sb.toString());
+            
+            // spawn a copy if there was data in the chart and the headers changed. This is useful when the
+            // appendColumn is used to build the intial columns/headers and there is no data but each
+            // append will trigger logFieldNamesChanged()
+            if (customChartPanel.getLoggingChartPanel().hasData()) {
+            	try {
+                    customChartPanel.getLoggingChartPanel().spawnChartCopy();
+                } catch (OutOfMemoryError e2) {
+                    JOptionPane.showMessageDialog(LogChartFrame.this, "Not enough memory to create chart!", "Houston, we have a problem...",
+                        JOptionPane.ERROR_MESSAGE);
+                }
+            }
             
             // set the chartable series headers/labels
             customChartPanel.setSeries(chartLabels.toString().split("!"));  
@@ -927,6 +933,15 @@ class LogChartFrame extends JFrame {
                         return;
                     }
                     dataLogger = new DataLogger(lpm, theLogFile, fileAction==1);
+
+                    // clear the data log text area 
+                    try {
+                        // TODO may need to save this in a popup window
+                        dataLogTextArea.getDocument().remove(0, dataLogTextArea.getDocument().getLength());
+                    } catch (BadLocationException e) {
+                        // TODO what to do here? I'm pretty sure the try(...) code should never throw this...
+                    }
+                    
                     // if the log file field is empty, the PC logger will handle it. we need to make sure the title is appropo
                     // start the logger
                     try {
