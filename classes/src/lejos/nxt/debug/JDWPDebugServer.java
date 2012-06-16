@@ -728,8 +728,8 @@ public final class JDWPDebugServer extends Thread implements JDWPConstants {
 						break;
 					case LONG_TAG:
 					case DOUBLE_TAG:
-						ps.writeInt(memPeekInt(0, offset + 4));
 						ps.writeInt(memPeekInt(0, offset));
+						ps.writeInt(memPeekInt(0, offset + 4));
 						break;
 					}
 				}
@@ -757,8 +757,8 @@ public final class JDWPDebugServer extends Thread implements JDWPConstants {
 					break;
 				case LONG_TAG:
 				case DOUBLE_TAG:
-					memPut(0, offset + 4, VM.VM_INT, in.readInt());
 					memPut(0, offset, VM.VM_INT, in.readInt());
+					memPut(0, offset + 4, VM.VM_INT, in.readInt());
 					break;
 				default:
 					memPut(0, offset, VM.VM_INT, in.readInt());
@@ -1006,8 +1006,8 @@ public final class JDWPDebugServer extends Thread implements JDWPConstants {
 					break;
 				case VM.VM_LONG:
 				case VM.VM_DOUBLE:
-					memPut(0, val.addr + 4, VM.VM_INT, in.readInt());
 					memPut(0, val.addr, VM.VM_INT, in.readInt());
+					memPut(0, val.addr + 4, VM.VM_INT, in.readInt());
 					break;
 				}
 			} catch (NoSuchFieldError e) {
@@ -1113,8 +1113,8 @@ public final class JDWPDebugServer extends Thread implements JDWPConstants {
 			ps.writeInt(memPeekInt(0, val.addr));
 			break;
 		case 8:
-			ps.writeInt(memPeekInt(0, val.addr + 4));
 			ps.writeInt(memPeekInt(0, val.addr));
+			ps.writeInt(memPeekInt(0, val.addr + 4));
 			break;
 		}
 	}
