@@ -56,7 +56,8 @@ class LoggingChart extends ChartPanel{
     private Object lockObj1 = new Object(); 
     private int domainAxisLimitMode=DAL_UNLIMITED;
     private int domainAxisLimitValue=0;
-    private boolean emptyChart=true;
+    private boolean emptyChart=true; // this is set to true on first data add. do use this for charts 
+    								 //that are created in the same instance lifescycle
     private boolean scrollDomain=true; // domain will scroll, otherwise, autoFit all series
     
     private Range[] yExtents=new Range[RANGE_AXIS_COUNT];
@@ -240,6 +241,23 @@ class LoggingChart extends ChartPanel{
     
     boolean isEmptyChart() {
         return this.emptyChart;
+    }
+    
+    /**
+     * 
+     * @return If any data has been added to the data series (using timestap series)
+     */
+    boolean hasData(){
+        boolean retval=false;
+    	if(getChart().getXYPlot().getDataset()!=null) {
+    		try {
+    		System.out.println("series 0 item count=" + getChart().getXYPlot().getDataset().getItemCount(0));
+        	retval = (getChart().getXYPlot().getDataset().getItemCount(0)>0);
+    		} catch (IllegalArgumentException e) {
+    			// do nothing
+    		}
+        }
+    	return retval;
     }
     
     @Override

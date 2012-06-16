@@ -8,7 +8,7 @@ import lejos.util.EndianTools;
 
 
 /**
- * Passthrough message manager. Get's DOS. routes message packets to appropriate handlers.
+ * Passthrough message manager. Get's DOS. Routes message packets to appropriate handlers.
  * 
  * @author Kirk P Thompson
  *
@@ -100,7 +100,7 @@ class TunneledMessageManager {
 	}
 	
 	/**
-	 * Send a command to the lejos.util.LogMessageManager.
+	 * Send a command to the lejos.util.LogMessageManager running on the NXT.
 	 * 
 	 * @param typeID
 	 * @param msg the sub-message (i.e. from LogMessageTypeHandler)
