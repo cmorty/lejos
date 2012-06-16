@@ -7,9 +7,11 @@ import java.io.IOException;
 import lejos.nxt.comm.NXTConnection;
 
 /** 
- * Defines the [minimum] required functionality for a data logger implementation.
+ * Defines the [minimum] required functionality for a data logger implementation. This is implemented
+ * by the <code>NXTDataLogger</code> class.
  * 
  * @author Kirk P. Thompson
+ * @see NXTDataLogger
  */
 public interface Logger {
     // Starts realtime logging. Must be called before any writeLog() methods. Resets startCachingLog() state
@@ -90,7 +92,8 @@ public interface Logger {
      /** 
       * Set the data set header information for the data log and chart series. The first column in the data log 
       * is always a system timestamp
-      * (element 0) so <u>your</u> first <code>writeLog()</code> item would be column 1, element 2 is column 2, so on and so forth. 
+      * (element 0) so <u>your</u> first <code>writeLog()</code> item would be column 1, element 2 is column 2, 
+      * so on and so forth. 
       * The items per log row
       * must match the number of headers you define in this method. 
       * <p>
@@ -114,18 +117,48 @@ public interface Logger {
       * @param columnDefs The array of <code>LogColumn</code> instances to use for the data log column definitions
       * @see LogColumn
       * @see #finishLine
+      * @see #getColumns
       * @see #startCachingLog
       * @see #startRealtimeLog(NXTConnection)
+      * @see #appendColumn
       * @throws UnsupportedOperationException if <code>setColumns</code> is called more than once in cached mode.
       */
     void setColumns(LogColumn[] columnDefs) throws UnsupportedOperationException; 
     
-    // Log a comment. Displayed as event marker on domain axis of chart and after the current line in the log. 
-    // Ignored in cache mode.
-     /** 
-      * Log a text comment to the data log.  
-      * Ignored in cache mode.
-      * Only one comment per line. (i.e. before <code>finishLine()</code> is called)
+    /**
+     * Append a <code>LogColumn</code> header information instance for the data log and chart series. This adds the
+     * new colunn definition to the header. The same rules
+     * that the <code>setColumns()</code> method specifies apply to this method as well.
+     * <p>
+     * If using the NXT ChartingLogger tool, the chart
+     * will be reset to only reflect any  new data sent after this call since the series are effectively redefined.
+     * 
+     * @param columnDef
+     * @throws UnsupportedOperationException if <code>setColumns</code> is called more than once in cached mode.
+     * @see #setColumns
+     */
+    void appendColumn(LogColumn columnDef) throws UnsupportedOperationException; 
+    
+    /**
+     * Return the previously set column definitions as an array of <code>LogColumn</code> instances. Will return
+     * <code>null</code> if no column definitions have been set.
+     * 
+     * @return The array of column definitions set by <code>setColumns()</code>. <code>null</code> if not
+     * set.
+     * @see #setColumns
+     * @see LogColumn
+     */
+    LogColumn[] getColumns(); 
+    
+    /** 
+     * Log a text comment to the data log.  Displayed as event marker on domain axis of chart and after
+     * the current line in the log.
+     * Calling this method in cache mode does nothing as commenting is not supported in that mode.
+     * <P>
+     * Only one comment per line (i.e. before <code>finishLine()</code> is called) is allowed so only the last
+     * comment set per line will be transmitted and displayed. The comment is actually sent during the  
+     * <code>finishLine()</code> method execution.
+     * 
      * @param comment The comment
      */
     void writeComment(String comment);

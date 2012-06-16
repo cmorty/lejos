@@ -270,13 +270,9 @@ public class NXTDataLogger implements Logger{
         this.passedNXTConnection=connection;
         startRealtimeLog(connection.openDataOutputStream(), connection.openDataInputStream());
     }
-
-    
-    /** 
-     * Stop the logging session and close down the connection and data streams. After this method is called, you must call
-     * one of the logging mode start methods to begin a new logging session.
-     * @see #startRealtimeLog(NXTConnection)
-     * @see #startCachingLog
+ 
+    /* (non-Javadoc)
+     * @see lejos.util.Logger#stopLogging()
      */
     public synchronized void stopLogging() {
         cleanConnection();
@@ -310,12 +306,8 @@ public class NXTDataLogger implements Logger{
         setColumnsCount=0;
     }
 
-    /** 
-     * Sends the log cache. Valid only for caching (deferred) logging using startCachingLog(). 
-     * @param out A valid <code>DataOutputStream</code>
-     * @param in A valid <code>DataInputStream</code>
-     * @throws IOException if the data streams are not valid
-     * @throws IllegalStateException if <code>startCachingLog()</code> has not been called
+    /* (non-Javadoc)
+     * @see lejos.util.Logger#sendCache(java.io.DataOutputStream, java.io.DataInputStream)
      */
     public void sendCache(DataOutputStream out, DataInputStream in) throws IOException {
         if (logmodeState!=LMSTATE_CACHE) throw new IllegalStateException("wrong mode");
@@ -327,8 +319,10 @@ public class NXTDataLogger implements Logger{
         // set to allow state protocol data sends
         logmodeState=LMSTATE_REAL;
         
-        // TODO this provides the basis to talk to Roger's logger (lejos.pc.tools.DataViewComms.startDownload()). It expects a handshake:
-        // I receive a 15 and then send the number of floats it needs to capture. It then iterates to read the floats  out of its
+        // TODO this provides the basis to talk to Roger's logger (lejos.pc.tools.DataViewComms.startDownload()). 
+        // It expects a handshake:
+        // I receive a 15 and then send the number of floats it needs to capture. It then iterates to read the 
+        // floats out of its
         // dis and outputs the values to the GUI.
         //System.out.println("itm cnt=" + byteQueue.byteCount()/lineBytes*columnDefs.length);
         
@@ -354,12 +348,8 @@ public class NXTDataLogger implements Logger{
         logmodeState=LMSTATE_CACHE;
     }
 
-    /** 
-     * Sends the log cache using passed <code>NXTConnection</code> to retrieve the data streams. The
-     * connection must already be established.  Valid only for caching (deferred) logging using <code>startCachingLog()</code>.
-     * @param connection A connected <code>NXTConnection</code> instance
-     * @throws IOException if the data streams are not valid
-     * @throws IllegalStateException if <code>startCachingLog()</code> has not been called
+    /* (non-Javadoc)
+     * @see lejos.util.Logger#sendCache(lejos.nxt.comm.NXTConnection)
      */
     public void sendCache(NXTConnection connection) throws IOException{
         this.passedNXTConnection=connection;
@@ -383,7 +373,7 @@ public class NXTDataLogger implements Logger{
     
     /** 
      * Close the current open connection. The data stream is flushed and closed. After calling this method, 
-     *   another connection must be established or data streams re-created.
+     * another connection must be established or data streams re-created.
      */
     private void cleanConnection() {
         // Send ATTENTION request and remote FLUSH command
@@ -461,15 +451,8 @@ public class NXTDataLogger implements Logger{
         this.disableWriteState=false;
     }
 
-    /** 
-     * Finish the row and start a new one. 
-     * <p>
-     * The Column count is set by calling
-     * <code>setColumns()</code> and you must ensure that you call the appropriate <code>writeLog()</code> method the same number of 
-     * times as that column count before this method is called.
-     * 
-     * @throws IllegalStateException if all the columns defined with <code>setColumns()</code> per row have not been logged. 
-     * @see #setColumns
+    /* (non-Javadoc)
+     * @see lejos.util.Logger#finishLine()
      */
     public synchronized void finishLine() {
         if (this.currColumnPosition!=((this.itemsPerLine)&0xff)) throw new IllegalStateException("too few cols ");
@@ -537,72 +520,31 @@ public class NXTDataLogger implements Logger{
         sendCommand(command);
     }
 
-    /** 
-    * Write a <code>boolean</code> value as an <code>int</code> 1 (<code>true</code>) or 0 (<code>false</code>) to the log. 
-    * In realtime logging mode, if an <code>IOException</code> occurs, the connection
-    * and data streams are silently closed down and no exception is thrown from this method.
-    * 
-    * @param datapoint The <code>boolean</code> value to log.
-    * @throws IllegalStateException if the column datatype for the column position this method was called for does not match
-    * the datatype that was set in <code>setColumns()</code>, the column position exceeds the total column count (i.e.
-    * <code>finishLine()</code> was not called after last column logged), or the column
-    * definitions have not been set with <code>setColumns()</code>.
-    * @throws OutOfMemoryError if in cache mode and memory is exhausted.
-    * @see #setColumns
-    * @see #finishLine
-    */
+
+    /* (non-Javadoc)
+     * @see lejos.util.Logger#writeLog(boolean)
+     */
     public synchronized void writeLog(boolean datapoint) {
         writeInt(datapoint ? 1 : 0, DT_BOOLEAN);
     }
 
-    /** 
-    * Write a <code>byte</code> value to the log. 
-    * In realtime logging mode, if an <code>IOException</code> occurs, the connection
-    * and data streams are silently closed down and no exception is thrown from this method.
-    * 
-    * @param datapoint The <code>byte</code> value to log.
-    * @throws IllegalStateException if the column datatype for the column position this method was called for does not match
-    * the datatype that was set in <code>setColumns()</code>, the column position exceeds the total column count (i.e.
-    * <code>finishLine()</code> was not called after last column logged), or the column
-    * definitions have not been set with <code>setColumns()</code>.
-    * @throws OutOfMemoryError if in cache mode and memory is exhausted.
-    * @see #setColumns
-    * @see #finishLine
-    */
+    /* (non-Javadoc)
+     * @see lejos.util.Logger#writeLog(byte)
+     */
     public synchronized void writeLog(byte datapoint) {
         writeInt(datapoint, DT_BYTE);
     }
-    
-    /** 
-    * Write a <code>short</code> value to the log. 
-    * In realtime logging mode, if an <code>IOException</code> occurs, the connection
-    * and data streams are silently closed down and no exception is thrown from this method.
-    * 
-    * @param datapoint The <code>short</code> value to log.
-    * @throws IllegalStateException if the column datatype for the column position this method was called for does not match
-    * the datatype that was set in <code>setColumns()</code>, the column position exceeds the total column count (i.e.
-    * <code>finishLine()</code> was not called after last column logged), or the column
-    * definitions have not been set with <code>setColumns()</code>.
-    * @throws OutOfMemoryError if in cache mode and memory is exhausted.
-    * @see #setColumns
-    * @see #finishLine
-    */
+
+    /* (non-Javadoc)
+     * @see lejos.util.Logger#writeLog(short)
+     */
     public synchronized void writeLog(short datapoint) {
         writeInt(datapoint, DT_SHORT);
     }
 
-    /** 
-      * Write an <code>int</code> to the log. In realtime logging mode, if an <code>IOException</code> occurs, the connection
-      * and data streams are silently closed down and no exception is thrown from this method.
-      * 
-      * @param datapoint The <code>int</code> value to log.
-      * @throws IllegalStateException if the column datatype for the column position this method was called for does not match
-      * the datatype that was set in <code>setColumns()</code>, the column position exceeds the total column count (i.e.
-      * <code>finishLine()</code> was not called after last column logged), or the column
-      * definitions have not been set with <code>setColumns()</code>.
-      * @see #setColumns
-      * @see #finishLine
-      */
+    /* (non-Javadoc)
+     * @see lejos.util.Logger#writeLog(int)
+     */
     public synchronized void writeLog(int datapoint) {
         writeInt(datapoint, DT_INTEGER);
     }
@@ -615,18 +557,10 @@ public class NXTDataLogger implements Logger{
             cleanConnection();
         }
     } 
-    /** 
-    * Write an <code>long</code> to the log. In realtime logging mode, if an <code>IOException</code> occurs, the connection
-    * and data streams are silently closed down and no exception is thrown from this method.
-    * 
-    * @param datapoint The <code>long</code> value to log.
-    * @throws IllegalStateException if the column datatype for the column position this method was called for does not match
-    * the datatype that was set in <code>setColumns()</code>, the column position exceeds the total column count (i.e.
-    * <code>finishLine()</code> was not called after last column logged), or the column
-    * definitions have not been set with <code>setColumns()</code>.
-    * @see #setColumns
-    * @see #finishLine
-    */
+
+    /* (non-Javadoc)
+     * @see lejos.util.Logger#writeLog(long)
+     */
     public synchronized void writeLog(long datapoint) {
         checkWriteState(DT_LONG);  
         try {
@@ -636,18 +570,9 @@ public class NXTDataLogger implements Logger{
         }
     }
     
-    /** 
-    * Write an <code>float</code> to the log. In realtime logging mode, if an <code>IOException</code> occurs, the connection
-    * and data streams are silently closed down and no exception is thrown from this method.
-    * 
-    * @param datapoint The <code>float</code> value to log.
-    * @throws IllegalStateException if the column datatype for the column position this method was called for does not match
-    * the datatype that was set in <code>setColumns()</code>, the column position exceeds the total column count (i.e.
-    * <code>finishLine()</code> was not called after last column logged), or the column
-    * definitions have not been set with <code>setColumns()</code>.
-    * @see #setColumns
-    * @see #finishLine
-    */
+    /* (non-Javadoc)
+     * @see lejos.util.Logger#writeLog(float)
+     */
     public synchronized void writeLog(float datapoint) {
         checkWriteState(DT_FLOAT);
         try {
@@ -658,18 +583,9 @@ public class NXTDataLogger implements Logger{
         }
     }
     
-    /** 
-    * Write an <code>double</code> to the log. In realtime logging mode, if an <code>IOException</code> occurs, the connection
-    * and data streams are silently closed down and no exception is thrown from this method.
-    * 
-    * @param datapoint The <code>double</code> value to log.
-    * @throws IllegalStateException if the column datatype for the column position this method was called for does not match
-    * the datatype that was set in <code>setColumns()</code>, the column position exceeds the total column count (i.e.
-    * <code>finishLine()</code> was not called after last column logged), or the column
-    * definitions have not been set with <code>setColumns()</code>.
-    * @see #setColumns
-    * @see #finishLine
-    */
+    /* (non-Javadoc)
+     * @see lejos.util.Logger#writeLog(double)
+     */
     public synchronized void writeLog(double datapoint) {
         checkWriteState(DT_DOUBLE);
         try {
@@ -680,12 +596,9 @@ public class NXTDataLogger implements Logger{
         }
     }
 
-    /** 
-     * Log a text comment. Displayed as event marker on domain axis of NXT Charting Logger chart and after the current line in the log. 
-     * Ignored in cache mode.
-     * Only one comment per line. (i.e. before <code>finishLine()</code> is called)
-    * @param comment The comment
-    */
+    /* (non-Javadoc)
+     * @see lejos.util.Logger#writeComment(java.lang.String)
+     */
     public synchronized void writeComment(String comment){
         // return if user logging in cache mode
         if (logmodeState!=LMSTATE_REAL) return;
@@ -753,37 +666,7 @@ public class NXTDataLogger implements Logger{
         }
     }
 
-     /** 
-      * Set the data set header information for the data log and chart series. The first column in the data log 
-      * is always a system timestamp
-      * (element 0) so <u>your</u> first <code>writeLog()</code> item would be column 1, element 2 is column 2, so on and so forth. 
-      * The items per log row
-      * must match the number of headers you define in this method. 
-      * <p>
-      * This method must be called after the <code>startCachingLog()</code>
-      * or either of the <code>startRealtimeLog()</code> methods is called or an <code>IllegalStateException</code> will be 
-      * thrown in the <code>writeLog()</code> methods.
-      * <p>
-      * The number and datatype of <code>writeLog()</code> calls per log row must match the number of columns and the datatypes
-      * you define here. You must
-      * end each log row with <code>finishLine()</code> or an <code>IllegalStateException</code> will be thrown on the
-      * next <code>writeLog()</code> call. If using the NXT ChartingLogger tool, the chart
-      * will only reflect the new data sent after this call since the series are redefined.
-      * <p>
-      * In realtime mode, if headers are set during logging with the <code>writeLog()</code> methods, the log will reflect 
-      * the changes from that point on. In cached mode, if headers are set during logging with the <code>writeLog()</code> 
-      * methods, an <code>UnsupportedOperationException</code> is thrown.
-      * <P>
-      * If length of the passed array is 
-      * zero or if length > 255, the method does nothing and returns immediately. 
-      * 
-      * @param columnDefs The array of <code>LogColumn</code> instances to use for the data log column definitions
-      * @see LogColumn
-      * @see #finishLine
-      * @see #startCachingLog
-      * @see #startRealtimeLog(NXTConnection)
-      * @throws UnsupportedOperationException if <code>setColumns</code> is called more than once in cached mode.
-      */
+
     // sets the header names, datatypes, count, chartable attribute, range axis ID (for multiple axis charting)
     // This is mandatory and implies a new log structure when called
     /* (non-Javadoc)
@@ -792,7 +675,9 @@ public class NXTDataLogger implements Logger{
     public synchronized void setColumns(LogColumn[] columnDefs){
         if (columnDefs.length==0) return;
         if (columnDefs.length>255) return;
-        if (this.setColumnsCount>1&&logmodeState==LMSTATE_CACHE) throw new UnsupportedOperationException("already called");
+        if (this.setColumnsCount>0 && logmodeState==LMSTATE_CACHE) {
+        	throw new UnsupportedOperationException("already called");
+        }
         LogColumn[] tempColumnDefs = new LogColumn[columnDefs.length+1];
         // set default ms domain column
         tempColumnDefs[0] = new LogColumn("milliseconds", LogColumn.DT_INTEGER, 1);
@@ -809,6 +694,35 @@ public class NXTDataLogger implements Logger{
 //        System.out.println("lineBytes=" + lineBytes);
     }
     
+    /* (non-Javadoc)
+     * @see lejos.util.Logger#appendColumn(lejos.util.LogColumn)
+     */
+    public void appendColumn(LogColumn columnDef) throws UnsupportedOperationException {
+    	// get the column defs without timestamp column
+    	LogColumn[] tempColumnDefs = getColumns();
+    	if (tempColumnDefs==null) {
+    		tempColumnDefs = new LogColumn[1];
+    		tempColumnDefs[0] = columnDef;
+    		setColumns(tempColumnDefs);
+    		return;
+    	}
+    	LogColumn[] tempColumnDefs2 = new LogColumn[tempColumnDefs.length + 1];
+        System.arraycopy(tempColumnDefs, 0, tempColumnDefs2, 0, tempColumnDefs.length);
+        tempColumnDefs2[tempColumnDefs.length] = columnDef;
+        setColumns(tempColumnDefs2);
+	}
+
+	/* (non-Javadoc)
+	 * @see lejos.util.Logger#getColumns()
+	 */
+	public LogColumn[] getColumns() {
+		if (this.columnDefs==null) return null;
+		// remove the timestamp column before returning
+		LogColumn[] tempColumnDefs = new LogColumn[this.columnDefs.length - 1];
+        System.arraycopy(columnDefs, 1, tempColumnDefs, 0, columnDefs.length - 1);
+        return tempColumnDefs;
+	}
+	
     private void sendHeaders(){
         this.currColumnPosition=1;
         byte[] command = {COMMAND_SETHEADERS,0};        
@@ -846,6 +760,5 @@ public class NXTDataLogger implements Logger{
     	}
     
     }
-
 }
 
