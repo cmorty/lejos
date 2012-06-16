@@ -232,10 +232,10 @@ public class PIDController {
     private long cycleTime=0;               // used to calc the time between each call (dt) to doPID()
     private int setpoint;                   // The setpoint to strive for
     private int error;                      // proportional term
-    private int integral = 0;               // integral term
+    private float integral = 0f;               // integral term
     private float derivative;               // derivitive term
-    private int integralHighLimit = 0;
-    private int integralLowLimit = 0;
+    private float integralHighLimit = 0f;
+    private float integralLowLimit = 0f;
     private boolean integralLimited = false;
     private boolean disableIntegral = false;
     private float power = 0;
@@ -299,18 +299,18 @@ public class PIDController {
 	            this.setpoint = (int)value;
                 break;
             case PIDController.PID_I_LIMITLOW:
-                this.integralLowLimit = (int)value;
-                this.integralLimited = (this.integralLowLimit!=0);    
+                this.integralLowLimit = value;
+                this.integralLimited = (this.integralLowLimit!=0f);    
                 break; 
             case PIDController.PID_I_LIMITHIGH:
-                this.integralHighLimit = (int)value;
-                this.integralLimited = (this.integralHighLimit!=0);
+                this.integralHighLimit = value;
+                this.integralLimited = (this.integralHighLimit!=0f);
                 break; 
             default:
                 return;
         }
         // zero the Ki accumulator
-        integral = 0;
+        integral = 0f;
     }
 
     /** Get PID controller parameters.
@@ -468,7 +468,7 @@ public class PIDController {
             new LogColumn("SP",LogColumn.DT_INTEGER),
             new LogColumn("MV",LogColumn.DT_INTEGER),
             new LogColumn("PV",LogColumn.DT_INTEGER),
-            new LogColumn("Integral",LogColumn.DT_INTEGER),
+            new LogColumn("Integral",LogColumn.DT_FLOAT),
             new LogColumn("Kp*error",LogColumn.DT_FLOAT),
             new LogColumn("Kd*derivative",LogColumn.DT_FLOAT,2),
             new LogColumn("error",LogColumn.DT_INTEGER),
