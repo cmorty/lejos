@@ -19,7 +19,7 @@ import lejos.util.EndianTools;
  * @see lejos.util.NXTDataLogger 
  * @author Kirk P. Thompson
  */
-@SuppressWarnings("javadoc")
+
 public class LoggerProtocolManager {
     private static final byte ATTENTION1 = (byte)0xff;
     private static final byte ATTENTION2 = (byte)0xab;
@@ -43,7 +43,7 @@ public class LoggerProtocolManager {
     private HashSet<LoggerListener> listeners = new HashSet<LoggerListener>();
     private int elementsPerLine = 1;
     private InputStream nXTInputStream;
-    private OutputStream nXTOutputStream;
+    //private OutputStream nXTOutputStream;
 	private volatile boolean pauseInput;
     
     /**
@@ -70,7 +70,7 @@ public class LoggerProtocolManager {
             throw new IOException("lejos.pc.charting.LoggerComms OutputStream is null");
         }
         this.nXTInputStream=is;
-        this.nXTOutputStream=os;
+        //this.nXTOutputStream=os;
     }
 
     private void dbg(String msg){
@@ -367,7 +367,7 @@ public class LoggerProtocolManager {
      * @param timeStamp
      * @param comment
      */
-    private void notifyCommentRecieved(int timeStamp, String comment) {
+    private synchronized void notifyCommentRecieved(int timeStamp, String comment) {
         // notify all listeners that a new comment is available
         for (LoggerListener listener: this.listeners) {
             listener.logCommentReceived(timeStamp, comment);
@@ -378,7 +378,7 @@ public class LoggerProtocolManager {
      * Notify of headers change
      * @param fieldNames
      */
-    private void notifyHeaderChange(String[] fieldNames) {
+    private synchronized void notifyHeaderChange(String[] fieldNames) {
         // notify all listeners of new header label event
         for (LoggerListener listener: this.listeners) {
             listener.logFieldNamesChanged(fieldNames);
@@ -388,7 +388,7 @@ public class LoggerProtocolManager {
     /**
      * Notify all listeners of EOF event and clear the listener list. This is [basically] the end of life for this instance
      */
-    private void notifyISEOF() {
+    private synchronized void notifyISEOF() {
         for (LoggerListener listener: this.listeners) {
             listener.dataInputStreamEOF();
         }
@@ -396,7 +396,11 @@ public class LoggerProtocolManager {
         this.listeners.clear();
     }
     
-    private void notifyPassthrough(byte[] message){
+    /**
+     * Notify that passthrough/tunnled message recieved and pass the message
+     * @param message
+     */
+    private synchronized void notifyPassthrough(byte[] message){
         // pass the bytes back through the registered callback         
          for (LoggerListener listener: this.listeners) {
              listener.tunneledMessageReceived(message);
