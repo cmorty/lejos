@@ -32,9 +32,9 @@ import lejos.util.Delay;
  * 
  * @version 0.1
  * @author Lasse S. Lauesen - BrickIt.dk - lasse@brickit.dk
- * 
+ * @deprecated This driver is terribly broken! New driver cooming soon. 
  */
-
+@Deprecated
 public class DexterWifiSensor {
 
 	public final static int 	BAUD0_9600 = 0,
