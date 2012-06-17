@@ -174,7 +174,8 @@ public abstract class RectangularShape implements Shape, Cloneable {
         return new Rectangle((int) x1, (int) y1,(int) (x2 - x1), (int) (y2 - y1));
     }
     
-    public Object clone() {
+    @Override
+	public Object clone() {
         try {
             return super.clone();
         } catch (CloneNotSupportedException e) {
