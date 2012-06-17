@@ -34,7 +34,7 @@ public abstract class Line2D implements Shape, Cloneable {
 		/**
 		 * Creates a zero length line at (0,0)
 		 */
-		public Float() {};
+		public Float() {}
 		
 		/**
 		 * Create a line from (x1,y1) to (x2,y2)
@@ -87,12 +87,12 @@ public abstract class Line2D implements Shape, Cloneable {
 	
 		@Override
         public double getX1() {
-            return (double) x1;
+            return x1;
         }
 
 		@Override
         public double getY1() {
-            return (double) y1;
+            return y1;
         }
 
 		@Override
@@ -102,12 +102,12 @@ public abstract class Line2D implements Shape, Cloneable {
 
 		@Override
         public double getX2() {
-            return (double) x2;
+            return x2;
         }
 
 		@Override
         public double getY2() {
-            return (double) y2;
+            return y2;
         }
 
 		@Override
@@ -151,7 +151,7 @@ public abstract class Line2D implements Shape, Cloneable {
 		/**
 		 * Create a zero length line at (0,0) with double coordinates
 		 */
-		public Double() {};
+		public Double() {}
 		
 		/**
 		 * Create a line from (x1,y1) to (x2,y2) with double coordinate
@@ -377,6 +377,7 @@ public abstract class Line2D implements Shape, Cloneable {
 		return getBounds2D().getBounds();
 	}
 	
+	@Override
     public Object clone() {
         try {
             return super.clone();

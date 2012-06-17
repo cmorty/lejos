@@ -47,18 +47,18 @@ public class Point extends Point2D {
 
 	@Override
 	public double getX() {
-		return (double) x;
+		return x;
 	}
 
 	@Override
 	public double getY() {
-		return (double) y;
+		return y;
 	}
 
 	@Override
 	public void setLocation(double x, double y) {
-		this.x = (int) x;
-		this.y = (int) y;
+		this.x = (int)Math.floor(x+0.5);
+		this.y = (int)Math.floor(y+0.5);
 	}
 	
 	/**

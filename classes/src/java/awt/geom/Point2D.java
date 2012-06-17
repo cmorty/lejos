@@ -39,12 +39,12 @@ public abstract class Point2D implements Cloneable {
 
 		@Override
 		public double getX() {
-			return (double) x;
+			return x;
 		}
 
 		@Override
 		public double getY() {
-			return (double) y;
+			return y;
 		}
 
 		@Override
@@ -248,7 +248,8 @@ public abstract class Point2D implements Cloneable {
 	    return super.equals(obj);
     }
     
-    public Object clone() {
+    @Override
+	public Object clone() {
         try {
             return super.clone();
         } catch (CloneNotSupportedException e) {

@@ -8,7 +8,7 @@ import java.awt.geom.*;
  * @author Lawrie Griffiths
  *
  */
-public class Rectangle extends Rectangle2D implements Shape {
+public class Rectangle extends Rectangle2D {
 	/**
 	 * The height of the rectangle
 	 */
@@ -70,6 +70,7 @@ public class Rectangle extends Rectangle2D implements Shape {
 	 * Get the x coordinate as a double
 	 * @return the x coordinate
 	 */
+	@Override
 	public double getX() {
 		return x;
 	}
@@ -78,6 +79,7 @@ public class Rectangle extends Rectangle2D implements Shape {
 	 * Get the y coordinate as a double
 	 * @return the y coordinate
 	 */
+	@Override
 	public double getY() {
 		return y;
 	}
@@ -86,6 +88,7 @@ public class Rectangle extends Rectangle2D implements Shape {
 	 * Get the width as a double
 	 * @return the width
 	 */
+	@Override
 	public double getWidth() {
 		return width;
 	}
@@ -94,6 +97,7 @@ public class Rectangle extends Rectangle2D implements Shape {
 	 * Get the height as a double
 	 * @return the height
 	 */
+	@Override
 	public double getHeight() {
 		return height;
 	}
@@ -122,6 +126,7 @@ public class Rectangle extends Rectangle2D implements Shape {
 	 * Test if the rectangle is empty
 	 * @return true iff the rectangle is empty
 	 */
+	@Override
 	public boolean isEmpty() {
 		return (width <= 0 || height <= 0);
 	}
@@ -172,6 +177,7 @@ public class Rectangle extends Rectangle2D implements Shape {
                 (tw < tx || tw > rx) && (th < ty || th > ry));
 	}
 	
+	@Override
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, width, height);
 	}
@@ -237,6 +243,8 @@ public class Rectangle extends Rectangle2D implements Shape {
     }
     
     private static int doubleToInt(double x, boolean high) {
+    	//Manual clipping not needed: Cast to int also returns MIN/MAX_VALUE for small/large values
+    	//Keep it for performance?
         if (x <= Integer.MIN_VALUE) return Integer.MIN_VALUE;  
         if (x >= Integer.MAX_VALUE) return Integer.MAX_VALUE;
 
@@ -248,7 +256,8 @@ public class Rectangle extends Rectangle2D implements Shape {
      * 
      * @param obj the object
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if (obj instanceof Rectangle) {
             Rectangle r = (Rectangle)obj;
             return ((x == r.x) && (y == r.y) &&
@@ -295,6 +304,7 @@ public class Rectangle extends Rectangle2D implements Shape {
         return "Rectangle[x=" + x + ",y=" + y + ",width=" + width + ",height=" + height + "]";
     }
     
+	@Override
 	public int outcode(double x, double y) {
         int out = 0;
         if (this.width <= 0) {

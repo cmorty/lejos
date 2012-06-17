@@ -78,22 +78,22 @@ public abstract class Rectangle2D extends RectangularShape {
 		
 		@Override
 		public double getX() {
-			return (double) x;
+			return x;
 		}
 
 		@Override
 		public double getY() {
-			return (double) y;
+			return y;
 		}
 		
 		@Override
 		public double getWidth() {
 			
-			return (double) width;
+			return width;
 		}
 		@Override
 		public double getHeight() {
-			return (double) height;
+			return height;
 		}
 
 		@Override
@@ -140,7 +140,8 @@ public abstract class Rectangle2D extends RectangularShape {
             this.height = (float) h;
         }
 	    
-	    public int outcode(double x, double y) {
+	    @Override
+		public int outcode(double x, double y) {
 	        int out = 0;
 	        if (this.width <= 0) {
 	            out |= OUT_LEFT | OUT_RIGHT;
@@ -248,7 +249,8 @@ public abstract class Rectangle2D extends RectangularShape {
             this.height = r.getHeight();
         }
 		
-	    public int outcode(double x, double y) {
+	    @Override
+		public int outcode(double x, double y) {
 	        int out = 0;
 	        if (this.width <= 0) {
 	            out |= OUT_LEFT | OUT_RIGHT;
