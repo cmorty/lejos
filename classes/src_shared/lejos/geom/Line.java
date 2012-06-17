@@ -75,10 +75,10 @@ public class Line extends Line2D.Float {
   public double segDist(Line seg) {
 	  if(this.intersectsLine(seg))
 		  return 0;
-	  double a = Line.ptSegDist(this.getX1(), this.getY1(), this.getX2(), this.getY2(), seg.getX1(), seg.getY1());
-	  double b = Line.ptSegDist(this.getX1(), this.getY1(), this.getX2(), this.getY2(), seg.getX2(), seg.getY2());
-	  double c = Line.ptSegDist(seg.getX1(), seg.getY1(), seg.getX2(), seg.getY2(), this.getX1(), this.getY1());
-	  double d = Line.ptSegDist(seg.getX1(), seg.getY1(), seg.getX2(), seg.getY2(), this.getX2(), this.getY2());
+	  double a = Line2D.ptSegDist(this.getX1(), this.getY1(), this.getX2(), this.getY2(), seg.getX1(), seg.getY1());
+	  double b = Line2D.ptSegDist(this.getX1(), this.getY1(), this.getX2(), this.getY2(), seg.getX2(), seg.getY2());
+	  double c = Line2D.ptSegDist(seg.getX1(), seg.getY1(), seg.getX2(), seg.getY2(), this.getX1(), this.getY1());
+	  double d = Line2D.ptSegDist(seg.getX1(), seg.getY1(), seg.getX2(), seg.getY2(), this.getX2(), this.getY2());
 	  
 	  double minDist = a;
 	  minDist = (b<minDist?b:minDist);
@@ -121,10 +121,12 @@ public class Line extends Line2D.Float {
     return (float) Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
   }
   
+  @Override
   public Point getP1() {
 	  return new Point(x1,y1);
   }
   
+  @Override
   public Point getP2() {
 	  return new Point(x2,y2);
   }
