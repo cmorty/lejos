@@ -14,7 +14,7 @@ public interface SensorVectorDataProvider {
 		 * 
 		 * @return the minumum delay in milliseconds
 		 */
-		int getRefreshRate();
+		int getMinimumFetchInterval();
 		
 		/**
 		 * The value is what the sensor reads and returns
