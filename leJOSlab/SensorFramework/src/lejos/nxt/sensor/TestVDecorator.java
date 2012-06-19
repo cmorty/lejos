@@ -46,7 +46,7 @@ public class TestVDecorator {
 			time=(System.nanoTime()-time)/1000000;
 			LCD.drawString("Value: "+value, 0, 5);
 			LCD.drawString("dt: "+time, 0, 6);
-			Delay.msDelay(integrated.getRefreshRate());
+			Delay.msDelay(integrated.getMinimumFetchInterval());
 		}
 	}
 
