@@ -1,0 +1,2 @@
+ColorRecognitionFilter for ColorSensor:
+converts the RGB samples returned by the ColorSensor to color indexes 
