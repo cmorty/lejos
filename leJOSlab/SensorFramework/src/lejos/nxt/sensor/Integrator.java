@@ -17,7 +17,7 @@ public class Integrator extends SensorDataBuffer{
 	}
 	
 	/**
-	 * (Re)sets the current value of the integrator.
+	 * Sets the current value of the integrator to the specified value.
 	 * @param value
 	 * The value 
 	 */

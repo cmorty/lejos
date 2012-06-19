@@ -196,7 +196,7 @@ public class DexterIMUGyro extends I2CSensor implements SensorVectorDataProvider
 		return "1.0";
 	}
 	
-	public int getRefreshRate() {
+	public int getMinimumFetchInterval() {
 		return (int) Math.ceil(1000.0f/(float)sampleRate.getRate());
 	}
 

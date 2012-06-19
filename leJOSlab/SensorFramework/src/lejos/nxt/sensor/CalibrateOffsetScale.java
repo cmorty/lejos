@@ -9,12 +9,12 @@ import lejos.util.Delay;
  *
  */
 public class CalibrateOffsetScale implements SensorDataProvider{
-	protected SensorDataProvider source;
-	protected float offsetCorrection=0;
-	protected float scaleCorrection=1;
+	private SensorDataProvider source;
+	private float offsetCorrection=0;
+	private float scaleCorrection=1;
 	private float lowRaw=0, lowCorrected=0;
 	private float highRaw=1, highCorrected=1;
-	protected int defaultSampleSize=10;
+	private int defaultSampleSize=10;
 	
 	
 	/**
@@ -27,8 +27,8 @@ public class CalibrateOffsetScale implements SensorDataProvider{
 		this.source=source;
 	}
 
-	public int getRefreshRate() {
-		return source.getRefreshRate();
+	public int getMinimumFetchInterval() {
+		return source.getMinimumFetchInterval();
 	}
 
 	public float fetchData() {
@@ -86,9 +86,10 @@ public class CalibrateOffsetScale implements SensorDataProvider{
 	}
 
 	/**
-	 * Calculates new offset and scale correction values
+	 * Calculates new offset and scale correction values. Call after calling calibrateLow() and (optionally) calibrateHigh().
 	 */
 	private void calculateOffsetScale() {
+		// TODO: correct for using non zero low values. 
 		offsetCorrection=lowRaw-lowCorrected;
 		scaleCorrection=highCorrected/(highRaw-offsetCorrection);
 	}
@@ -103,10 +104,10 @@ public class CalibrateOffsetScale implements SensorDataProvider{
 	private float sample(int sampleSize) {
 		StatisticsFilter stat=new StatisticsFilter(source);
 		stat.setSampleSize(sampleSize);
-		stat.setStatistic(StatisticsFilter.mean);
+		stat.setStatistic(StatisticsFilter.MEAN);
 		for (int i=1;i<sampleSize;i++) {
 			stat.fetchData();
-			Delay.msDelay(getRefreshRate());
+			Delay.msDelay(getMinimumFetchInterval());
 		}
 		return stat.fetchData();
 	}
