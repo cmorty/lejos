@@ -6,6 +6,7 @@ package lejos.nxt.sensor;
  * @author Kirk P. Thompson
  *
  */
+@Deprecated
 public interface SensorValueProvider {
 	/**
 	 * The refresh rate is the minumum delay between calls to query the sensor value. 
