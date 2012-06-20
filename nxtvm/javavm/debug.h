@@ -43,6 +43,7 @@ typedef struct S_Debug
 typedef struct S_SteppingRequest{
 	Object _super;
 	JINT stepDepth;
+        JINT stepFrame;
 	JINT methodId;
 	REFERENCE stepPCs;
 } SteppingRequest;
@@ -50,10 +51,6 @@ typedef struct S_SteppingRequest{
 #define STEP_DEPTH_INTO 0
 #define STEP_DEPTH_OVER 1
 #define STEP_DEPTH_OUT 2
-
-#define STEP_MODE_INTO 0
-#define STEP_MODE_EXEC 1
-#define STEP_MODE_OUT 2
 
 extern byte debugEventOptions[];
 extern void set_debug(Debug *_debug);
@@ -79,6 +76,6 @@ extern boolean debug_single_step(Thread * thread,
 
 extern void init_debug();
 
-extern boolean check_stepping(MethodRecord* method, byte *pc, byte mode, MethodRecord* newMethod, byte *newPc);
+extern boolean check_stepping(MethodRecord* method, byte *pc);
 
 #endif // _DEBUG_H

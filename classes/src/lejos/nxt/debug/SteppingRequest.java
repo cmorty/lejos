@@ -8,12 +8,14 @@ package lejos.nxt.debug;
  */
 class SteppingRequest {
 	int stepDepth;
+	int stepFrame;
 	int method;
 	int[] stepPCs;
 	
-	SteppingRequest(int stepDepth, int method, int[] stepPCs) {
+	SteppingRequest(int stepDepth, int frame, int method, int[] stepPCs) {
 		super();
 		this.stepDepth = stepDepth;
+		this.stepFrame = frame;
 		this.method = method;
 		this.stepPCs = stepPCs;
 	}

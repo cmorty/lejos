@@ -112,7 +112,8 @@ public class NXJDebugProxy implements NXTCommLogListener {
 		// else{
 		// System.err.println("WARNING: we are not using a debug data file. Debugging capabilicies will be strongly restricted.");
 		// }
-
+		// Following line is very useful if using the remote console to see debug output.
+		//try{Thread.sleep(10000);} catch(Exception e){/*ignore*/}
 		final NXTConnector connector = new NXTConnector();
 
 		connector.addLogListener(this);

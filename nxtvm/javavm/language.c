@@ -439,11 +439,6 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   // and jump to the start of the new code
   curPc = get_code_ptr(methodRecord);
 
-  // check for STEP_INTO
-  if(is_stepping(currentThread)){
-  	check_stepping(methodRecord, curPc, STEP_MODE_INTO, methodRecord, curPc);
-  }
-
   return true;
 }
 
@@ -505,12 +500,6 @@ void do_return (int numWords)
   {
     push_word_cur (*(++fromStackPtr));
   }  
-
-  if(is_stepping(currentThread)){
-  	// we have do make a difference here between the reference location (which is the location of the RETURN command)
-  	// and the new location which will be outside the returned method.
-  	check_stepping(oldMethod, oldPc, STEP_MODE_OUT, stackFrame->methodRecord, curPc);
-  }
 }
 
 /**

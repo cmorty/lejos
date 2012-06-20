@@ -125,77 +125,47 @@ boolean debug_single_step(Thread * thread, const int methodRecord, const int pc)
  * Checks whether to stop because of stepping
  *
  * method and pc point to the triggering location.
- * newMethod and newPc point to the new location.
- *
  */
-boolean check_stepping(MethodRecord* method, byte *pc, byte mode,
-		MethodRecord* newMethod, byte *newPc)
+boolean check_stepping(MethodRecord* method, byte *pc)
 {
 	if (currentThread->debugData)
 	{
+		// Now check the location
 		SteppingRequest *request =
 				(SteppingRequest*) ref2obj(currentThread->debugData);
-
-		// first perform a basic check of the event and step depth combinations
-		//
-		//  Logical Table:
-		// MODE\DEPTH | INTO | OVER  |  OUT  |
-		// -----------+------+-------+-------+
-		// INTO       | true | false | false |
-		// -----------+------+-------+-------+
-		// EXEC       | true | true  | false |
-		// -----------+------+-------+-------+
-		// OUT        | true | true  | true  |
-
-		/*if (mode == STEP_MODE_OUT
-				|| (request->stepDepth != STEP_DEPTH_OUT
-						&& (mode == STEP_MODE_INTO ? request->stepDepth == STEP_DEPTH_INTO :
-								true)))*/
-		switch (mode) {
-		case STEP_MODE_OUT:
-			break;
-		case STEP_MODE_EXEC:
-			if (request->stepDepth == STEP_DEPTH_OUT)
-				return false;
-			break;
-		case STEP_MODE_INTO:
-			if (request->stepDepth != STEP_DEPTH_INTO)
-				return false;
-			break;
-		}
+		int methodNo = get_method_no(method);
+		int bppc = get_offset(method,pc);
+		JINT *pcList = jint_array(request->stepPCs);
+		int curFrame = currentThread->stackFrameIndex;
+		int stepFrame = request->stepFrame;
+		int depth = request->stepDepth;
+		printf("s: %u (%u)\n",depth,request->stepDepth);
+		if (curFrame > stepFrame)
 		{
-			printf("s: %u (%u)",mode,request->stepDepth);
-			// Now check the location
-			int methodNo = get_method_no(method);
-			int bppc = get_offset(method,pc);
-			JINT *pcList = jint_array(request->stepPCs);
-
-			// in STEP_MODE_INTO, we  always have to halt if a method gets executed.
-			if (mode != STEP_MODE_INTO && methodNo != request->methodId)
-				return false;
-
-			// all valid pcs are stored in the pcList.
-			if (mode == STEP_MODE_EXEC)
+			if (depth != STEP_DEPTH_INTO) return false;
+		}
+		else if (curFrame == stepFrame)
+		{
+			if (depth == STEP_DEPTH_OUT) return false;
+                       	if (methodNo == request->methodId)
 			{
+				// All valid pcs are in the list, ignore them
 				int i;
 				for (i = 0; i < get_array_length(ref2obj(request->stepPCs)); ++i)
-				{
 					if (bppc == pcList[i])
-					{
 						return false;
-					}
-				}
 			}
-			// After the step we are still in the breakpoint state.
-			// If we stop on a BREAKPOINT instruction, the program should not stop again on resume.
-			if (*pc == OP_BREAKPOINT)
-			{
-				set_thread_debug_state(currentThread, BREAKPOINT, null);
-			}
-			int currentMethodNo = get_method_no(newMethod);
-			int currentBppc = get_offset(newMethod,newPc);
-			return debug_single_step(currentThread, currentMethodNo, currentBppc);
 		}
+		else
+			if (curFrame == 0) return false;
+		// After the step we are still in the breakpoint state.
+		// If we stop on a BREAKPOINT instruction, the program should not stop again on resume.
+		if (*pc == OP_BREAKPOINT)
+		{
+			set_thread_debug_state(currentThread, BREAKPOINT, null);
+		}
+printf("M %d %d\n", methodNo, bppc);
+		return debug_single_step(currentThread, methodNo, bppc);
 	}
 	return false;
 }
