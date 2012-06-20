@@ -587,7 +587,7 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
   case updateThreadFlags_4Ljava_3lang_3Thread_2II_5I:
     ((Thread *)p0)->flags |= paramBase[1];
     ((Thread *)p0)->flags &= ~paramBase[2];
-printf("m %x %d\n", p0, ((Thread *)p0)->flags);
+//printf("m %x %d\n", p0, ((Thread *)p0)->flags);
     push_word(((Thread *)p0)->flags);
     break;
     

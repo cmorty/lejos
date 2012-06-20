@@ -91,9 +91,9 @@ class EventRequest {
 			System.out.println("Event sent");
 		}
 		// don not resume threads until after we have sent the event to avoid
-// potential
+		// potential
 		// issues with new events occurring before we have finished processing
-// this one.
+		// this one.
 		if (sp < 2) {
 			monitor.resumeProgram();
 		}
@@ -131,27 +131,19 @@ class EventRequest {
 	}
 
 	private boolean process(DebugInterface monitor, PacketStream dst) {
-		if (monitor.typ != nxtEventKind)
+	    // Processing of an event. My understanding is that the correct way to process filters
+	    // is to perform the processing in the order in which the filters have been set. But
+	    // currently we do not have a list of filters and so the order is not maintained. For
+	    // now I have attempted to process the filters in an order that makes most sense and
+	    // which enables them to be used to do things like set a breakpoint which firs after
+	    // n times past a given point, filter on a single thread, handle an exception at a
+	    // certain location etc. However it is likely that this approach may not work in all
+	    // circumstances.
+	    if (monitor.typ != nxtEventKind)
 			return false;
-
-		// process count filter
-		if (countFilter == currentCount) {
-			currentCount = 0;
-		} else if (countFilter > 0) {
-			currentCount++;
-			return false;
-		}
-
-		// process thread filter
-		if (threadFilter != null && monitor.thread != threadFilter)
-			return false;
-		
 		// process location filter
-		// If there is a BREAKPOINT request for a location the program stopps at 
-		// because of a SINGLE_STEP event, the BREAKPOINT event will trigger, too.
-		if (nxtEventKind == DebugInterface.DBG_BREAKPOINT && methodFilter != -1 && (methodFilter != monitor.method || pcFilter != monitor.pc))
-			return false;
-
+		if (methodFilter >= 0 && (methodFilter != monitor.method || pcFilter != monitor.pc))
+		    return false;
 		// process exception filter
 		if (nxtEventKind == DebugInterface.DBG_EXCEPTION) {
 			if (exceptionFilter != null && !exceptionFilter.isInstance(monitor.exception))
@@ -160,7 +152,13 @@ class EventRequest {
 			if (monitor.method2 >= 0 ? (exceptionFlags & 1) == 0 : (exceptionFlags & 2) == 0)
 				return false;
 		}
+		// process thread filter
+		if (threadFilter != null && monitor.thread != threadFilter)
+			return false;
 
+		// process count filter
+        if (countFilter > 0 && ++currentCount != countFilter)
+            return false;
 		// We passed all filters, now write our data
 		// System.out.println("Write event");
 		dst.writeByte(eventKind);
@@ -215,7 +213,7 @@ class EventRequest {
 //		case JDWPConstants.EVENT_SINGLE_STEP:
 		case JDWPConstants.EVENT_BREAKPOINT:
 			// The breakpoint event is used for all events of a thread stopping
-// at a specified location
+		    // at a specified location
 			nxtEventKind = DebugInterface.DBG_BREAKPOINT;
 			setBreakpoint = true;
 			break;
@@ -230,7 +228,7 @@ class EventRequest {
 		case JDWPConstants.EVENT_CLASS_PREPARE:
 		case JDWPConstants.EVENT_CLASS_UNLOAD:
 			return 0;// These events are never ever sent in tinyvm, since it has
-// no class loader architecture. just ignore them.
+			         // no class loader architecture. just ignore them.
 		default:
 			return JDWPConstants.INVALID_EVENT_TYPE;
 		}
@@ -239,11 +237,11 @@ class EventRequest {
 		int modCount = in.readInt();
 		for (int i = 0; i < modCount; i++) {
 			// The use of multiple filters of the same kind does not make much
-// sense.
+		    // sense.
 			// Additionally, filter processing has to be fast and the filters
-// should not need to many classes and methods.
+		    // should not need to many classes and methods.
 			// So, for most of the filters we only allow one filter per filter
-// kind.
+		    // kind.
 			int kind = in.readUnsignedByte();
 			switch (kind) {
 			case 1:// count filter
@@ -269,7 +267,7 @@ class EventRequest {
 				break;
 			case 7:// Location filter
 					// Ignore class information as we don't need it to
-// understand the method id.
+			        // understand the method id.
 				in.readByte();
 				in.readClassId();
 
@@ -331,30 +329,30 @@ class EventRequest {
 			int bppc = frame.pc - codeOffset;
 			// currently cut out, as I'm first trying to get the MIN stepping
 			// working
-		if (stepSize == STEP_SIZE_LINE) {
-			PacketStream ps = new PacketStream(listener, JDWPConstants.CSET_NXT, JDWPConstants.NXT_STEP_LINE_INFO);
-
-			ps.writeMethodId(method.getMethodNumber());
-			ps.writeShort(bppc);// internally, relative pcs are shorts
-
-			ps.send();
-			ps.waitForReply();
-
-			int nPCs = ps.readInt();
-			if (nPCs == 0) {
-				stepSize = STEP_SIZE_MIN;
-				return;
-			}
-			stepInfo = new int[nPCs];
-			for (int i = 0; i < nPCs; i++) {
-				int lpc = ps.readUnsignedShort();
-				stepInfo[i] = lpc;
-			}
-		}
-		if (stepSize == STEP_SIZE_MIN) {
-			stepInfo = new int[] { bppc };
-		}
-			JDWPDebugServer.setThreadRequest(threadFilter, new SteppingRequest(stepDepth, method.getMethodNumber(), stepInfo));
+    		if (stepSize == STEP_SIZE_LINE) {
+    			PacketStream ps = new PacketStream(listener, JDWPConstants.CSET_NXT, JDWPConstants.NXT_STEP_LINE_INFO);
+    
+    			ps.writeMethodId(method.getMethodNumber());
+    			ps.writeShort(bppc);// internally, relative pcs are shorts
+    
+    			ps.send();
+    			ps.waitForReply();
+    
+    			int nPCs = ps.readInt();
+    			if (nPCs == 0) {
+    				stepSize = STEP_SIZE_MIN;
+    				return;
+    			}
+    			stepInfo = new int[nPCs];
+    			for (int i = 0; i < nPCs; i++) {
+    				int lpc = ps.readUnsignedShort();
+    				stepInfo[i] = lpc;
+    			}
+    		}
+    		if (stepSize == STEP_SIZE_MIN) {
+    			stepInfo = new int[] { bppc };
+    		}
+    		JDWPDebugServer.setThreadRequest(threadFilter, new SteppingRequest(stepDepth, thread.stackFrameIndex & 0xff, method.getMethodNumber(), stepInfo));
 		}
 	}
 

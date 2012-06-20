@@ -251,7 +251,7 @@ static STACKWORD *array_helper(unsigned int idx, Object *obj, int sz)
 #define UNUSED_OPCODE(op) 
 #define MULTI_OPCODE(op)
 #define DISPATCH1 {  goto *(&&CHECK_EVENT + dispatchTable[*pc++]); }
-#define DISPATCH {  goto *(&&CHECK_EVENT + dispatch[*pc++]); }
+#define DISPATCH {  goto *(&&CHECK_EVENT + dispatchTable[*pc++]); }
 #define DISPATCH_OPCODE(op) goto *(&&CHECK_EVENT + dispatch[(byte) op])
 #define DISPATCH_CHECKED {instruction_hook(); DISPATCH1;}
 #define START_DISPATCH goto *(&&CHECK_EVENT + dispatch[*pc++]);
@@ -614,7 +614,7 @@ static DISPATCH_LABEL forceCheck[] =
   	// TODO: This won't be reached always as most instructions don't check for events if they can't trigger one.
   	// On the other hand, patching this into the dispatch code would lead to massive code duplication with FAST_DISPATCH active.
 
-  	if(check_stepping(current_stackframe()->methodRecord, pc, STEP_MODE_EXEC, current_stackframe()->methodRecord, pc)){
+  	if(check_stepping(current_stackframe()->methodRecord, pc)){
   		// This will at this point directly lead back up to the event checker.
   		// The succeeding debugger should have scheduled a SWITCH_THREAD by now.
   	 	DISPATCH_CHECKED;

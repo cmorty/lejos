@@ -1,6 +1,7 @@
 package lejos.nxt.debug;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -13,6 +14,8 @@ import lejos.nxt.VM.VMMethods;
 import lejos.nxt.VM.VMValue;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
+import lejos.nxt.comm.RConsole;
+import lejos.nxt.comm.USB;
 
 /**
  * 
@@ -185,8 +188,10 @@ public final class JDWPDebugServer extends Thread implements JDWPConstants {
 
 	static void main(String[] args) {
 		// enable following to have the output display on the remote console
-		// RConsole.openUSB(0);
-		// System.setOut(new PrintStream(RConsole.getPrintStream()));
+		//RConsole.openUSB(0);
+		//System.setOut(new PrintStream(RConsole.getPrintStream()));
+	    // Following enables firmware debug to be sent to the remote console.
+		//USB.usbEnable(2);
 		
 		LCD.drawString("Listening...", 0, 0);
 		DebugInterface monitor = DebugInterface.get();
