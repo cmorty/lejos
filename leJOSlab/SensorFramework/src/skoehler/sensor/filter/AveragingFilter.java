@@ -2,6 +2,12 @@ package skoehler.sensor.filter;
 
 import skoehler.sensor.api.VectorData;
 
+/**
+ * Provides the widget dohicky, etc. //TODO kpt inserted javadoc placholder. Need real.
+ * 
+ * @author Sven
+ *
+ */
 public class AveragingFilter extends AbstractFilter {
 	
 	private final int axisCount;

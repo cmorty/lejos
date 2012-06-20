@@ -7,30 +7,27 @@ import skoehler.sensor.api.VectorData;
  * E.g. an averaging filter of length 5 causes a group delay of 2 samples.
  * This filter can be used to delay without filtering.
  */
-public class DelayFilter implements VectorData {
-	
-	private final VectorData source;
+public class DelayFilter extends AbstractFilter {
+
 	private final int axisCount;
 	private final float[] buffer;
 	private int currentPos;
 	
 	public DelayFilter(VectorData source, int length) {
+		super(source);
 		if (length < 1)
 			throw new IllegalArgumentException();
 		
 		this.axisCount = source.getAxisCount();
-		this.source = source;
 		this.buffer = new float[this.axisCount * length];
 	}
 
-	public int getQuantity() {
-		return this.source.getQuantity();
-	}
-
+	@Override
 	public int getAxisCount() {
 		return this.axisCount;
 	}
 
+	@Override
 	public void fetchSamples(float[] dst, int off) {
 		int pos = this.currentPos;
 		for (int i=0; i<this.axisCount; i++)
