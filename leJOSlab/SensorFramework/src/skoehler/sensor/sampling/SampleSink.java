@@ -3,28 +3,50 @@ package skoehler.sensor.sampling;
 import skoehler.sensor.api.VectorData;
 
 public class SampleSink implements VectorData {
+    
+    private final VectorData source;
+    private float[] buffer;
+    
+    public SampleSink(VectorData source) {
+        int ac = source.getAxisCount();
+        this.source = source;
+        this.buffer = new float[ac];
+        
+        //TODO implement means to start/stop thread, set priority, etc.
+        Thread t = new Thread() {
+                public void run() {
+                    try {
+                        SampleSink.this.sampleThread();
+                    } catch (InterruptedException e) {
+                        // nothing, thread was asked to terminate
+                    }
+                };
+            };
+        t.start();
+    }
 
-	//TODO implement
-	
-	/* This class will spawn a Thread and will drain a chain of filters originating at a
-	 * SamplingThread. It will always provide the last samples computed of that chain.
-	 * Dataflow will be like this:
-	 * Accelerometer -> SamplingThread -> AveragingFilter -> SampleSink -> user application 
-	 */
+    public int getQuantity() {
+        return source.getQuantity();
+    }
 
-	public int getQuantity() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public int getAxisCount() {
+        return this.buffer.length;
+    }
 
-	public int getAxisCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public synchronized void fetchSamples(float[] dst, int off) {
+        System.arraycopy(this.buffer, 0, dst, off, this.buffer.length);
+    }
+    
+    //TODO implement checks for overflow/underflow
 
-	public void fetchSamples(float[] dst, int off) {
-		// TODO Auto-generated method stub
-		
-	}
-	
+    void sampleThread() throws InterruptedException {
+        float[] buf = new float[this.buffer.length];
+        while (!Thread.interrupted()) {
+            this.source.fetchSamples(buf, 0);
+
+            synchronized (this) {
+                System.arraycopy(buf, 0, this.buffer, 0, buf.length);
+            }
+        }
+    }
 }
