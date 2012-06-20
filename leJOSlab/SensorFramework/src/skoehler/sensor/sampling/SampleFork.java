@@ -67,11 +67,11 @@ public class SampleFork {
         t.start();
     }
     
-    VectorData getOutput1() {
+    public VectorData getOutput1() {
         return this.out1;
     }
     
-    VectorData getOutput2() {
+    public VectorData getOutput2() {
         return this.out2;
     }
 
