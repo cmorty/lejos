@@ -7,7 +7,7 @@ public class SamplingThread implements VectorData {
     private final VectorData source;
     private final int interval;
     private final int axisCount;
-    private float[] buffer;
+    private final float[] buffer;
     private int bufSize;
     private int bufPos;
     
@@ -23,13 +23,14 @@ public class SamplingThread implements VectorData {
         
         //TODO implement means to start/stop thread, set priority, etc.
         Thread t = new Thread() {
+                @Override
                 public void run() {
                     try {
                         SamplingThread.this.sampleThread();
                     } catch (InterruptedException e) {
                         // nothing, thread was asked to terminate
                     }
-                };
+                }
             };
         t.start();
     }
@@ -57,6 +58,7 @@ public class SamplingThread implements VectorData {
         System.arraycopy(this.buffer, pos, dst, off, this.axisCount);
         this.bufPos = (pos + this.axisCount) % this.buffer.length;
         this.bufSize -= this.axisCount;
+        this.notifyAll();
     }
     
     //TODO implement checks for overflow/underflow
@@ -81,6 +83,7 @@ public class SamplingThread implements VectorData {
                 int pos = (this.bufPos + this.bufSize) % this.buffer.length;
                 System.arraycopy(buf, 0, this.buffer, pos, this.axisCount);
                 this.bufSize += this.axisCount;
+                this.notifyAll();
             }
         }
     }
