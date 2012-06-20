@@ -2,32 +2,29 @@ package skoehler.sensor.filter;
 
 import skoehler.sensor.api.VectorData;
 
-public class AveragingFilter implements VectorData {
+public class AveragingFilter extends AbstractFilter {
 	
-	private final VectorData source;
 	private final int axisCount;
 	private final float[] buffer;
 	private final float[] sum;
 	private int currentPos;
 	
 	public AveragingFilter(VectorData source, int length) {
+		super(source);
 		if (length < 1)
 			throw new IllegalArgumentException();
 		
 		this.axisCount = source.getAxisCount();
-		this.source = source;
 		this.buffer = new float[this.axisCount * length];
 		this.sum = new float[this.axisCount];
 	}
 
-	public int getQuantity() {
-		return this.source.getQuantity();
-	}
-
+	@Override
 	public int getAxisCount() {
 		return this.axisCount;
 	}
 
+	@Override
 	public void fetchSamples(float[] dst, int off) {
 		//TODO this filter might develop an offset over time, but is very fast.
 		//Probably offer an offset free alternative.
