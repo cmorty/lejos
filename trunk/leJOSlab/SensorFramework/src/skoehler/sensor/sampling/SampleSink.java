@@ -5,7 +5,7 @@ import skoehler.sensor.api.VectorData;
 public class SampleSink implements VectorData {
     
     private final VectorData source;
-    private float[] buffer;
+    private final float[] buffer;
     
     public SampleSink(VectorData source) {
         int ac = source.getAxisCount();
@@ -14,13 +14,10 @@ public class SampleSink implements VectorData {
         
         //TODO implement means to start/stop thread, set priority, etc.
         Thread t = new Thread() {
+                @Override
                 public void run() {
-                    try {
-                        SampleSink.this.sampleThread();
-                    } catch (InterruptedException e) {
-                        // nothing, thread was asked to terminate
-                    }
-                };
+                    SampleSink.this.sampleThread();
+                }
             };
         t.start();
     }
@@ -39,7 +36,7 @@ public class SampleSink implements VectorData {
     
     //TODO implement checks for overflow/underflow
 
-    void sampleThread() throws InterruptedException {
+    void sampleThread() {
         float[] buf = new float[this.buffer.length];
         while (!Thread.interrupted()) {
             this.source.fetchSamples(buf, 0);
