@@ -5,7 +5,7 @@ import skoehler.sensor.api.VectorData;
 /**
  * Common base for VectorData implementations
  * 
- * @author Kirk p> Thompson
+ * @author Kirk P. Thompson
  *
  */
 public abstract class AbstractFilter implements VectorData{

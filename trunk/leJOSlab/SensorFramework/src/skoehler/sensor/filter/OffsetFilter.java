@@ -2,31 +2,34 @@ package skoehler.sensor.filter;
 
 import skoehler.sensor.api.VectorData;
 
-public class OffsetFilter implements VectorData {
+/**
+ * Provides the widget dohicky, etc. //TODO kpt inserted javadoc placholder. Need real.
+ * 
+ * @author Sven
+ *
+ */
+public class OffsetFilter extends AbstractFilter {
 	
-	private final VectorData source;
 	private final float[] offsets;
 	private final float[] buffer;
 	
 	public OffsetFilter(VectorData source, float[] offsets) {
+		super(source);
 		int ac = source.getAxisCount();
 		if (offsets.length < ac)
 			throw new IllegalArgumentException();
 		
-		this.source = source;
 		this.buffer = new float[ac];
 		this.offsets = new float[ac];
 		System.arraycopy(offsets, 0, this.offsets, 0, ac);
 	}
 
-	public int getQuantity() {
-		return this.source.getQuantity();
-	}
-
+	@Override
 	public int getAxisCount() {
 		return this.buffer.length;
 	}
 
+	@Override
 	public void fetchSamples(float[] dst, int off) {
 		this.source.fetchSamples(this.buffer, 0);
 		int len = this.buffer.length;
