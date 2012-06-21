@@ -1,10 +1,16 @@
 package skoehler.sensor.sampling;
 
 import skoehler.sensor.api.VectorData;
+import skoehler.sensor.filter.AbstractFilter;
 
-public class SamplingThread implements VectorData {
+/**
+ * Provides the widget dohicky, etc. //TODO kpt inserted javadoc placholder. Need real.
+ * 
+ * @author Sven
+ *
+ */
+public class SamplingThread extends AbstractFilter {
     
-    private final VectorData source;
     private final int interval;
     private final int axisCount;
     private final float[] buffer;
@@ -12,11 +18,11 @@ public class SamplingThread implements VectorData {
     private int bufPos;
     
     public SamplingThread(VectorData source, int buffersize, int interval) {
-        if (buffersize < 1)
+        super(source);
+    	if (buffersize < 1)
             throw new IllegalArgumentException();
             
         int ac = source.getAxisCount();
-        this.source = source;
         this.interval = interval;
         this.axisCount = ac;
         this.buffer = new float[ac * buffersize];
@@ -35,15 +41,13 @@ public class SamplingThread implements VectorData {
         t.start();
     }
 
-	public int getQuantity() {
-	    return source.getQuantity();
-	}
-
+	@Override
 	public int getAxisCount() {
 	    return this.axisCount;
 	}
 
-    public synchronized void fetchSamples(float[] dst, int off) {
+    @Override
+	public synchronized void fetchSamples(float[] dst, int off) {
         while (this.bufSize <= 0) {
             try {
                 this.wait();

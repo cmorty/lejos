@@ -1,15 +1,21 @@
 package skoehler.sensor.sampling;
 
 import skoehler.sensor.api.VectorData;
+import skoehler.sensor.filter.AbstractFilter;
 
-public class SampleSink implements VectorData {
+/**
+ * Provides the widget dohicky, etc. //TODO kpt inserted javadoc placholder. Need real.
+ * 
+ * @author Sven
+ *
+ */
+public class SampleSink extends AbstractFilter {
     
-    private final VectorData source;
     private final float[] buffer;
     
     public SampleSink(VectorData source) {
+    	super(source);
         int ac = source.getAxisCount();
-        this.source = source;
         this.buffer = new float[ac];
         
         //TODO implement means to start/stop thread, set priority, etc.
@@ -22,15 +28,13 @@ public class SampleSink implements VectorData {
         t.start();
     }
 
-    public int getQuantity() {
-        return source.getQuantity();
-    }
-
-    public int getAxisCount() {
+    @Override
+	public int getAxisCount() {
         return this.buffer.length;
     }
 
-    public synchronized void fetchSamples(float[] dst, int off) {
+    @Override
+	public synchronized void fetchSamples(float[] dst, int off) {
         System.arraycopy(this.buffer, 0, dst, off, this.buffer.length);
     }
     
