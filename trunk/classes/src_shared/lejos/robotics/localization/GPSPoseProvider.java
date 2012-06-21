@@ -93,8 +93,9 @@ public class GPSPoseProvider implements PoseProvider {
 		yDiff *= 100;
 		
 		// If no move provider, try to obtain heading from GPS. Note: Holux doesn't return anything.
-		if(mp != null)
-			heading = l.getCourse();
+		if(mp != null) 
+			heading = l.getCourse(); // TODO: Use convertAzimuth() on heading?
+		
 		
 		// TODO: Translate to relative coords using originPose. See setPose()
 		
@@ -117,6 +118,24 @@ public class GPSPoseProvider implements PoseProvider {
 		originPose = aPose;
 	}
 
+	/**
+	 * <p>Converts from the WGS84 azimuth produced by Coordinates.azimuthTo() into standard coordinates that
+	 * increase counter-clockwise, with 0 degrees as east.</p>
+	 * 
+	 * @param azimuth The azimuth produced by Coordinates.azimuthTo()
+	 * @return heading, in degrees of standard coordinate system
+	 */
+	public static double convertAzimuth(double azimuth) {
+		azimuth = 360 - azimuth; // make angle increase counter-clockwise
+		azimuth += 90; // adjust 90 degrees so that North = 90 degrees.
+		
+		// Normalize between 0 to 360:
+		while (azimuth < 0) azimuth += 360;
+		while(azimuth >= 360) azimuth -= 360;
+		
+		return azimuth;
+	}
+	
 	/**
 	 * This listener updates the heading based on the MoveProvider and resets the heading
 	 * value based on GPS coordinates after a straight travel is performed.
@@ -149,6 +168,7 @@ public class GPSPoseProvider implements PoseProvider {
 					// TODO: Only update if travel is certain distance? Such as some factor of QualifiedCoordinates.getHorizontalAccuracy()
 					// Calculate heading and reset global heading:
 					heading = from.azimuthTo(to);
+					heading = convertAzimuth(heading); // convert to standard coordinate system
 				} catch (LocationException e) {
 					e.printStackTrace();
 				} catch (InterruptedException e) {

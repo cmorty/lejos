@@ -108,18 +108,23 @@ public class Coordinates{
 	}
 
   /**
-     * Calculates the azimuth between the two points according to 
-     * the ellipsoid model of WGS84. The azimuth is relative to true north. 
-     * The Coordinates object on which this method is called is considered 
+     * <p>Calculates the azimuth between the two points according to 
+     * the ellipsoid model of WGS84. The azimuth is relative to true north.</p> 
+     * 
+     * <p>The Coordinates object on which this method is called is considered 
      * the origin for the calculation and the Coordinates object passed 
-     * as a parameter is the destination which the azimuth is calculated to. 
-     * When the origin is the North pole and the destination 
+     * as a parameter is the destination which the azimuth is calculated to.</p>
+     * 
+     *  <p>The azimuth (in degrees) increases <b>clockwise</b>. On this coordinate system, north is 0 degrees, 
+     *  east is 90 degrees, south is 180 degrees, and west is 270 degrees.</p>
+     *  
+     * <p>When the origin is the North pole and the destination 
      * is not the North pole, this method returns 180.0. 
      * When the origin is the South pole and the destination is not 
      * the South pole, this method returns 0.0. If the origin is equal 
-     * to the destination, this method returns 0.0. 
-     * The implementation shall calculate the result as exactly as it can. 
-     * However, it is required that the result is within 1 degree of the correct result.
+     * to the destination, this method returns 0.0.</p> 
+     * <p>The implementation shall calculate the result as exactly as it can. 
+     * However, it is required that the result is within 1 degree of the correct result.</p>
      *
      */
 	public double azimuthTo(Coordinates to){
@@ -130,7 +135,7 @@ public class Coordinates{
 			// Perhaps it keeps a reference to last to coordinate. If values are the same, then doesn't recalculate.
 			calculateDistanceAndAzimuth(getLatitude(), getLongitude(), to.getLatitude(), to.getLongitude());
 			while (calculatedAzimuth < 0) calculatedAzimuth += 360;
-			while(calculatedAzimuth > 360) calculatedAzimuth -= 360;
+			while(calculatedAzimuth >= 360) calculatedAzimuth -= 360;
 			return calculatedAzimuth;
 		}
 	}
