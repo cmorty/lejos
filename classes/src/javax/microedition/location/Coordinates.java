@@ -455,7 +455,7 @@ UNTESTED as of April 7, 2009 - BB
      * the correct result.
 	 * 
 	 * @param to the point to calculate the geodetic to
-	 * @return the distance
+	 * @return the distance in meters
 	 */
 	public double distance(Coordinates to){
 		if(to == null){
