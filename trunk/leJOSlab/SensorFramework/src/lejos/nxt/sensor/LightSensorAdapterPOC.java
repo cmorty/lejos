@@ -3,7 +3,9 @@ package lejos.nxt.sensor;
 import lejos.nxt.ADSensorPort;
 
 /**
- * adapter class lejos.nxt.LightSensor to SensorDataProvider
+ * Adapter POC class lejos.nxt.LightSensor-to-SensorDataProvider via 
+ * <code>getLightSensorDataProvider()</code> method.
+ * 
  * @author Kirk
  *
  */
@@ -21,15 +23,14 @@ public class LightSensorAdapterPOC extends lejos.nxt.LightSensor{
 		}
 
 		public float fetchData() {
-			// TODO Auto-generated method stub
 			return LightSensorAdapterPOC.this.getLightValue();
 		}
 		
 	}
 	
 	/**
-	 * create instance of LightSensorAdapterPOC. Sets up instance of private class LightSensorAdapter
-	 * to pass bak via factory method getLightSensorDataProvider()
+	 * create instance of LightSensorAdapterPOC. This sets up instance of private class LightSensorAdapter
+	 * to pass back via factory method getLightSensorDataProvider()
 	 * @param port
 	 */
 	public LightSensorAdapterPOC(ADSensorPort port){
@@ -38,7 +39,7 @@ public class LightSensorAdapterPOC extends lejos.nxt.LightSensor{
 	}
 	
 	/**
-	 * @return the LightSensor wrapped as SensorDataProvider
+	 * @return this LightSensor wrapped as SensorDataProvider
 	 */
 	public SensorDataProvider getLightSensorDataProvider(){
 		return lsa;
