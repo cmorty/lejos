@@ -271,8 +271,8 @@ DISPATCH_LABEL *checkEvent;
 #define START_DISPATCH \
   DISPATCH_NEXT:\
   old_pc=pc;\
-  dispatch_opcode = *pc++;	\
-  DISPATCH_SPECIFIED:		\
+  dispatch_opcode = *pc++;  \
+  DISPATCH_SPECIFIED:    \
   switch(dispatch_opcode) {
 #define END_DISPATCH }
 #define DISPATCH_EVENTS CHECK_EVENT: instruction_hook();
@@ -611,17 +611,17 @@ static DISPATCH_LABEL forceCheck[] =
   assert( currentThread != null, INTERPRETER3);
 
   if(is_stepping(currentThread)){
-  	// TODO: This won't be reached always as most instructions don't check for events if they can't trigger one.
-  	// On the other hand, patching this into the dispatch code would lead to massive code duplication with FAST_DISPATCH active.
+    // TODO: This won't be reached always as most instructions don't check for events if they can't trigger one.
+    // On the other hand, patching this into the dispatch code would lead to massive code duplication with FAST_DISPATCH active.
 
-  	if(check_stepping(current_stackframe()->methodRecord, pc)){
-  		// This will at this point directly lead back up to the event checker.
-  		// The succeeding debugger should have scheduled a SWITCH_THREAD by now.
-  	 	DISPATCH_CHECKED;
-  	}else{
-  		// Just set gMakeRequest to true, so we will meet here again after the next instruction
-  		FORCE_STEP_CHECK();
-  	}
+    if(check_stepping(current_stackframe()->methodRecord, pc)){
+      // This will at this point directly lead back up to the event checker.
+      // The succeeding debugger should have scheduled a SWITCH_THREAD by now.
+       DISPATCH_CHECKED;
+    }else{
+      // Just set gMakeRequest to true, so we will meet here again after the next instruction
+      FORCE_STEP_CHECK();
+    }
   }
 
   //-----------------------------------------------

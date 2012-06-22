@@ -15,8 +15,8 @@
  */
 typedef struct S_Debug
 {
-  Object _super;	     // Superclass object storage
-  JINT typ;                  // type of debug event
+  Object _super;       // Superclass object storage
+  JINT typ;            // type of debug event
   REFERENCE exception;
   REFERENCE thread;
   JINT method;
@@ -41,11 +41,11 @@ typedef struct S_Debug
 #define DBG_EVENT_IGNORE 2
 
 typedef struct S_SteppingRequest{
-	Object _super;
-	JINT stepDepth;
-        JINT stepFrame;
-	JINT methodId;
-	REFERENCE stepPCs;
+  Object _super;
+  JINT stepDepth;
+  JINT stepFrame;
+  JINT methodId;
+  REFERENCE stepPCs;
 } SteppingRequest;
 
 #define STEP_DEPTH_INTO 0
@@ -55,7 +55,7 @@ typedef struct S_SteppingRequest{
 extern byte debugEventOptions[];
 extern void set_debug(Debug *_debug);
 boolean debug_event(int event, Throwable *exception, const Thread *thread,
-		const int method, const int pc, const int method2, const int pc2);
+    const int method, const int pc, const int method2, const int pc2);
 extern boolean debug_exception(Throwable * exception,
                           const Thread * thread,
                           const int methodRecord,

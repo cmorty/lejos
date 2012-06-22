@@ -117,8 +117,8 @@ HANDLER_FOUND:
     catchMethodNo = catchOffset = -1;
   // do we have a debugger that wants to handle this?
   if (allowDebug && debug_exception (exception, currentThread,
-  			         exceptionMethodNo, exceptionOffset,
-			         catchMethodNo, catchOffset))
+                                     exceptionMethodNo, exceptionOffset,
+                                     catchMethodNo, catchOffset))
   {
     set_thread_debug_state(currentThread, EXCEPTIONBP, (Object *)exception);
     return EXEC_EXCEPTION;

@@ -83,7 +83,7 @@ extern void set_thread_debug_state(Thread *thread, int debugState, Object *data)
 #define get_sync(obj) (get_class_index((Object *)(obj)) == JAVA_LANG_CLASS ? staticSyncBase + ((ClassRecord *)(obj) - get_class_base()) : &(((Object *)(obj))->sync))
 #define is_daemon(T)             ((T)->flags & THREAD_DAEMON)
 #define is_system(T)             ((T)->flags & THREAD_SYSTEM)
-#define is_stepping(T)        	 ((T)->flags & THREAD_STEPPING)
+#define is_stepping(T)           ((T)->flags & THREAD_STEPPING)
 
 /**
  * Sets thread state to SLEEPING.
@@ -97,7 +97,7 @@ static inline void sleep_thread (const FOURBYTES time)
   #endif
 
   currentThread->state = SLEEPING;
-  currentThread->sleepUntil = get_sys_time() + time; 	
+  currentThread->sleepUntil = get_sys_time() + time; 
 }
 
 static inline int get_thread_priority(Thread *thread)
