@@ -552,31 +552,31 @@ int dispatch_native(TWOBYTES signature, STACKWORD * paramBase)
     store_word_ns((byte *)(memory_base[p0] + paramBase[1]), paramBase[2],paramBase[3]);
     break;
   case notifyEvent_4ILjava_3lang_3Thread_2_5Z:
-  	push_word(debug_event(paramBase[1], NULL, (Thread*) ref2obj(paramBase[2]), 0, 0, 0, 0));
-  	break;
+    push_word(debug_event(paramBase[1], NULL, (Thread*) ref2obj(paramBase[2]), 0, 0, 0, 0));
+    break;
   case setThreadRequest_4Ljava_3lang_3Thread_2Llejos_3nxt_3debug_3SteppingRequest_2_5V:
-  	{
-  		Thread *th = (Thread*) ref2obj(p0);
-  		th->debugData = (REFERENCE) paramBase[1];
-  		// currently we only get stepping requests
-  		if(paramBase[1])
-  			th->flags |= THREAD_STEPPING;
-  		else
-  			th->flags &= ~THREAD_STEPPING;
-  	}
-  	break;
+    {
+      Thread *th = (Thread*) ref2obj(p0);
+      th->debugData = (REFERENCE) paramBase[1];
+      // currently we only get stepping requests
+      if(paramBase[1])
+        th->flags |= THREAD_STEPPING;
+      else
+        th->flags &= ~THREAD_STEPPING;
+    }
+    break;
   case isStepping_4Ljava_3lang_3Thread_2_5Z:
     {
-    	Thread *th = (Thread*) ref2obj(p0);
-    	push_word(is_stepping(th));
+      Thread *th = (Thread*) ref2obj(p0);
+      push_word(is_stepping(th));
     }
     break;
   case setBreakpointList_4_1Llejos_3nxt_3debug_3Breakpoint_2I_5V:
-  	breakpoint_set_list((Breakpoint**) array_start(p0), paramBase[1]);
-  	break;
+    breakpoint_set_list((Breakpoint**) array_start(p0), paramBase[1]);
+    break;
   case enableBreakpoint_4Llejos_3nxt_3debug_3Breakpoint_2Z_5V:
-  	breakpoint_enable((Breakpoint*) word2ptr(p0), (boolean) paramBase[1]);
-  	break;
+    breakpoint_enable((Breakpoint*) word2ptr(p0), (boolean) paramBase[1]);
+    break;
   case firmwareExceptionHandler_4Ljava_3lang_3Throwable_2II_5V:
     firmware_exception_handler((Throwable *)p0, paramBase[1], paramBase[2]);
     break;

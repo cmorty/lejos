@@ -279,12 +279,12 @@ boolean switch_thread(FOURBYTES now)
 
       #if DEBUG_THREADS
       printf ("Checking state of thread %d(%d)(s=%d,p=%d,i=%d,d=%d)\n",
-      	(int)candidate,
-      	(int)candidate->threadId,
-      	(int)candidate->state,
-      	(int)candidate->priority,
-      	(int)candidate->interruptState,
-      	(int)candidate->flags
+      (int)candidate,
+      (int)candidate->threadId,
+      (int)candidate->state,
+      (int)candidate->priority,
+      (int)candidate->interruptState,
+      (int)candidate->flags
              );
       #endif
       
@@ -334,47 +334,45 @@ boolean switch_thread(FOURBYTES now)
             // Only avoid priority inversion if we don't already have a thread to run.
             else if (currentThread == null)
             {
-            	Thread *pOwner;
-            	int j;
-            	
-            	// Track down who owns this monitor and run them instead.            	
-            	// Could be 'waiting' in a native method, or we could be deadlocked!
+              Thread *pOwner;
+              int j;
+            
+              // Track down who owns this monitor and run them instead.         
+              // Could be 'waiting' in a native method, or we could be deadlocked!
 find_next:
-            	if (candidate->threadId != threadId)
-            	{
-                    for (j=MAX_PRIORITY-1; j >= 0; j--)
+              if (candidate->threadId != threadId)
+              {
+                for (j=MAX_PRIORITY-1; j >= 0; j--)
+                {
+                  pOwner = threadQ[j];
+                  if (!pOwner)
+                    continue;
+                      
+                  do {
+                    // Remember threadQ[j] is the last thread on the queue
+                    pOwner = word2ptr(pOwner->nextThread);
+                    if (pOwner->threadId == threadId)
                     {
-                      pOwner = threadQ[j];
-                      if (!pOwner)
-                        continue;
-                        
-                      do {
-                        // Remember threadQ[j] is the last thread on the queue
-                        pOwner = word2ptr(pOwner->nextThread);
-                        if (pOwner->threadId == threadId)
-                        {
-            		      if (pOwner->state >= RUNNING)
-            		      {
-            			    currentThread = pOwner;
-            			    goto done_pi;
-            			  }
-            			  
-            		      // if owner is waiting too, iterate down.
-            		      if (pOwner->state == MON_WAITING)
-            		      {
-            			    threadId = get_thread_id(pOwner->sync);
-            			    if (threadId != NO_OWNER)
-            				  goto find_next;
-            		      }
-                        }
-                      } while (pOwner != threadQ[j]);
-                    }                   
-                    // If we got here, we're in trouble, just drop through.
-            	}
+                      if (pOwner->state >= RUNNING)
+                      {
+                        currentThread = pOwner;
+                        goto done_pi;
+                      }
+                      // if owner is waiting too, iterate down.
+                      if (pOwner->state == MON_WAITING)
+                      {
+                        threadId = get_thread_id(pOwner->sync);
+                        if (threadId != NO_OWNER)
+                          goto find_next;
+                      }
+                    }
+                  } while (pOwner != threadQ[j]);
+                }                   
+                  // If we got here, we're in trouble, just drop through.
+              }
             }
 done_pi:
-		break;
-	    ;
+            break;
 #endif // PI_AVOIDANCE
           
           }
@@ -403,9 +401,9 @@ done_pi:
       #endif
             candidate->state = RUNNING;
             if (candidate->interruptState != INTERRUPT_CLEARED)
-          	candidate->interruptState = INTERRUPT_GRANTED;
+                candidate->interruptState = INTERRUPT_GRANTED;
             #ifdef SAFE
-  	    candidate->sleepUntil = JNULL;
+            candidate->sleepUntil = JNULL;
             #endif // SAFE
           }
           break;
@@ -418,7 +416,7 @@ done_pi:
         #if DEBUG_THREADS
         printf ("Starting thread %d: %d\n", (int) candidate, candidate->threadId);
         #endif
-            currentThread = candidate;	// Its just easier this way.
+            currentThread = candidate; // Its just easier this way.
             
             empty_stacks();
             candidate->state = RUNNING;
@@ -453,7 +451,7 @@ done_pi:
       
       if (!(candidate->flags & THREAD_DAEMON))
       {
-      	// May or may not be running but it could do at some point
+        // May or may not be running but it could do at some point
 #if DEBUG_THREADS
 printf ("Found a non-daemon thread %d: %d(%d)\n", (int) candidate, (int)candidate->threadId, (int) candidate->state);
 #endif
@@ -601,7 +599,7 @@ int monitor_wait(Object *obj, const FOURBYTES time)
   currentThread->sync = sync;
   // Might be an alarm set too.
   if (time != 0)
-    currentThread->sleepUntil = get_sys_time() + time; 	
+    currentThread->sleepUntil = get_sys_time() + time;
   else
     currentThread->sleepUntil = 0;
   
@@ -748,7 +746,7 @@ void join_thread(Thread *thread, const FOURBYTES time)
   currentThread->waitingOn = ptr2ref (thread);
   // Might be an alarm set too.
   if (time > 0)
-    currentThread->sleepUntil = get_sys_time() + time; 	
+    currentThread->sleepUntil = get_sys_time() + time;
   else
     currentThread->sleepUntil = 0;
   // Change our state
@@ -820,9 +818,9 @@ void set_thread_priority(Thread *thread, const FOURBYTES priority)
 
   if (thread->state == NEW)
   {
-  	// Not fully initialized
-  	thread->priority = priority;
-  	return;
+    // Not fully initialized
+    thread->priority = priority;
+    return;
   }
 
   dequeue_thread(thread);

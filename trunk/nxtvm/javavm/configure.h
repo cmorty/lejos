@@ -2,7 +2,7 @@
 #ifndef _CONFIGURE_H
 #define _CONFIGURE_H
 
-#define FIXED_STACK_SIZE		0
+#define FIXED_STACK_SIZE                 0
 
 #if FIXED_STACK_SIZE
 

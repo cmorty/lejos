@@ -13,12 +13,12 @@
 
 typedef struct S_Breakpoint
 {
-	Object _super;
-	JINT methodId;
-	JINT pc;
-	JINT refCount;
-	JBOOLEAN enabled;
-	byte opcode;
+  Object _super;
+  JINT methodId;
+  JINT pc;
+  JINT refCount;
+  JBOOLEAN enabled;
+  byte opcode;
 } Breakpoint;
 
 #define breakpoint_get_method(bp) (get_method_record(get_class_record(0), ((Breakpoint*)bp)->methodId))
