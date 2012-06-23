@@ -175,7 +175,7 @@ public class Navigator implements WaypointListener
       addWaypoint(destination);
       _interrupted = false;
       _keepGoing = true;
-      followPath(_path);
+      followPath();
       
 //      // Block until done
 //      while(isMoving()) {
