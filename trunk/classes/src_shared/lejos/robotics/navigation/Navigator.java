@@ -171,7 +171,7 @@ public class Navigator implements WaypointListener
     */
    public void goTo(Waypoint destination)
    {
-	   if(_path.isEmpty()) _singleStep = false;
+	  //if(_path.isEmpty()) _singleStep = false;
       addWaypoint(destination);
       _interrupted = false;
       _keepGoing = true;
