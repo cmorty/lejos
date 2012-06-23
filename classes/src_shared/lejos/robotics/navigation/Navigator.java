@@ -165,8 +165,8 @@ public class Navigator implements WaypointListener
     * Starts the robot moving toward the destination.
     * If no path exists, a new one is created consisting of the destination,
     * otherwise the destination is added to the path.  This method is non-blocking, and is 
-    * equivalent to 
-     <code>add(Waypoint);   followPath(); </code>
+    * equivalent to <code>{@linkplain #addWaypoint(Waypoint) addWaypoint(destination);}
+    * {@linkplain #followPath() followPath();}</code>
     * @param destination  the waypoint to be reached
     */
    public void goTo(Waypoint destination)
@@ -236,6 +236,8 @@ public class Navigator implements WaypointListener
    
    /**
     * Adds a  Waypoint  to the end of the path. 
+    * Call {@link #followPath()} to start moving the along the current path.
+    * 
     * @param aWaypoint  to be added
     */
    public void addWaypoint(Waypoint aWaypoint)
@@ -249,7 +251,9 @@ public class Navigator implements WaypointListener
    }
 
    /**
-    * Constructs an new Waypoint from the parameters and adds it to the end of the path. 
+    * Constructs an new Waypoint from the parameters and adds it to the end of the path.
+    * Call {@link #followPath()} to start moving the along the current path.
+    * 
     * @param x coordinate of the waypoint
     * @param y coordinate of the waypoint
     */
@@ -260,6 +264,8 @@ public class Navigator implements WaypointListener
 
    /**
     * Constructs an new Waypoint from the parameters and adds it to the end of the path. 
+    * Call {@link #followPath()} to start moving the along the current path.
+    * 
     * @param x coordinate of the waypoint
     * @param y coordinate of the waypoint
     * @param heading the heading of the robot when it reaches the waypoint
