@@ -1,4 +1,4 @@
-package org.lejos.sample.nxt2wifi;
+package org.lejos.sample.nxt2wifiserver;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
