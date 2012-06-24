@@ -99,8 +99,8 @@ public class TCPServer {
 			InputStream in = wifi.getInputStream(TCPSERVER_SOCKET);
 			OutputStream out = wifi.getOutputStream(TCPSERVER_SOCKET);
 			
-			DataInputStream dis = new DataInputStream(in);
-			DataOutputStream dos = new DataOutputStream(out);
+			//DataInputStream dis = new DataInputStream(in);
+			//DataOutputStream dos = new DataOutputStream(out);
 			
 			String msg;
 			// start the echo server
