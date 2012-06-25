@@ -3,6 +3,7 @@ package lejos.nxt.sensor.api;
 /**
  * Base SI units to be returned by 
  * @author Kirk
+ * @deprecated
  *
  */
 public interface SensorSIUnits {
