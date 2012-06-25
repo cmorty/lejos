@@ -5,6 +5,11 @@ package skoehler.sensor.api;
  * single-axis data access?
  */
 public interface ScalarData extends VectorData {
-	int getQuantity();
+
+	/**
+	 * Samples are returned in the default unit of the quantity returned by {@link #getQuantity()}.
+	 * Take a look {@link Quantities} to see which unit is the default unit.
+	 * @return a single sample
+	 */
 	float fetchSample();
 }
