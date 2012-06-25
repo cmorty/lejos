@@ -15,7 +15,7 @@ import lejos.util.Delay;
  * @author Aswin
  *
  */
-public class TestDecorator{
+public class TestScalarSensor{
 	int counter=0;
 	// set the sensor of choice (or use DummySensor)
 	SensorDataProvider sensor=new LightSensor(SensorPort.S1);
@@ -25,11 +25,11 @@ public class TestDecorator{
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		TestDecorator test=new TestDecorator();
+		TestScalarSensor test=new TestScalarSensor();
 
 	}
 	
-	public TestDecorator() {
+	public TestScalarSensor() {
 		float time;
 		float value;
 		CalibrateOffsetScale filter=new CalibrateOffsetScale(sensor);

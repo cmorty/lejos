@@ -8,7 +8,7 @@ import lejos.nxt.sensor.api.SensorVectorDataProvider;
 import lejos.nxt.sensor.filter.CalibrateOffsetScale;
 import lejos.nxt.sensor.filter.ExtractAxis;
 import lejos.nxt.sensor.filter.Integrator;
-import lejos.nxt.sensor.sensor.DexterIMUGyro;
+import lejos.nxt.sensor.sensor.DiIMUGyro;
 import lejos.util.Delay;
 
 
@@ -23,21 +23,21 @@ import lejos.util.Delay;
  * @author Aswin
  *
  */
-public class TestVDecorator {
+public class TestTriaxisSensor {
 	int counter=0;
 	// set the sensor of choice (or use DummySensor)
-	SensorVectorDataProvider sensor=new DexterIMUGyro(SensorPort.S1);
+	SensorVectorDataProvider sensor=new DiIMUGyro(SensorPort.S1);
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		TestVDecorator test=new TestVDecorator();
+		TestTriaxisSensor test=new TestTriaxisSensor();
 
 	}
 	
-	public TestVDecorator() {
+	public TestTriaxisSensor() {
 		float time;
 		float value;
 		ExtractAxis justOne =new ExtractAxis(sensor);
