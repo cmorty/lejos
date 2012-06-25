@@ -1,5 +1,10 @@
 package lejos.nxt.sensor.api;
 
+/**
+ * @author ?
+ * @deprecated
+ *
+ */
 public class SensorProviderUnit {
 	/**
 	 * metre
