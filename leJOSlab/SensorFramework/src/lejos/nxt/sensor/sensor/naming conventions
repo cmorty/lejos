@@ -1,0 +1,17 @@
+Naming conventions for sensors
+
+- first two characters represent vendor
+	Lc, Lego company
+	Ms, MindSensors
+	Ht, Hitechnic
+	Di, Dexter Industries
+	Mi, Micro infinity
+- class of sensor
+	Gyro
+	Accel
+	IMU
+	Light
+	US
+- Optional, subclass of sensor in case of composite sensors
+	see class of sensor
+- Optional, version number of sensor (the hardware)
