@@ -6,7 +6,7 @@ import skoehler.sensor.filter.AveragingFilter;
 import skoehler.sensor.filter.OmissionFilter;
 import skoehler.sensor.sampling.SamplingThread;
 
-public class Test {
+public class AveragingTest {
 
 	/**
 	 * @param args
