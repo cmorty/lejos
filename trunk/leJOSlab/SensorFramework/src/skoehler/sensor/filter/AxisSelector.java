@@ -25,7 +25,7 @@ public class AxisSelector extends AbstractScalarData {
 	}
 
 	public float fetchSample() {
-		this.source.fetchSamples(this.buffer, 0);
+		this.source.fetchSample(this.buffer, 0);
 		return this.buffer[this.axis];
 	}
 

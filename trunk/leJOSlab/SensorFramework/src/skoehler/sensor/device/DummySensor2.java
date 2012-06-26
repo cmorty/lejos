@@ -19,7 +19,7 @@ public class DummySensor2 implements VectorData {
 		return 1;
 	}
 
-	public void fetchSamples(float[] dst, int off) {
+	public void fetchSample(float[] dst, int off) {
 		int y = x;
 		if (y > 100)
 			y = 200-y;

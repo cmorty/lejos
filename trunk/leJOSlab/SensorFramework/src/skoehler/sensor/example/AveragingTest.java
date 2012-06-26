@@ -1,4 +1,4 @@
-package skoehler.sensor.examples;
+package skoehler.sensor.example;
 
 import skoehler.sensor.api.VectorData;
 import skoehler.sensor.device.DummySensor2;
@@ -25,7 +25,7 @@ public class AveragingTest {
 		float[] buf = new float[1];
 		while (true)
 		{
-			x4.fetchSamples(buf, 0);
+			x4.fetchSample(buf, 0);
 			System.out.println(buf[0]);
 		}
 	}

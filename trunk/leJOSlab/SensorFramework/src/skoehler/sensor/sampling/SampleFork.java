@@ -33,7 +33,7 @@ public class SampleFork {
                 return ac;
             }
             
-            public void fetchSamples(float[] dst, int off) {
+            public void fetchSample(float[] dst, int off) {
                 SampleFork.this.fetchSamples1(dst, off);
             }
         };
@@ -48,7 +48,7 @@ public class SampleFork {
                 return ac;
             }
             
-            public void fetchSamples(float[] dst, int off) {
+            public void fetchSample(float[] dst, int off) {
                 SampleFork.this.fetchSamples2(dst, off);
             }
         };
@@ -116,7 +116,7 @@ public class SampleFork {
     void sampleThread() throws InterruptedException {
         float[] buf = new float[this.axisCount];
         while (!Thread.interrupted()) {
-            this.source.fetchSamples(buf, 0);
+            this.source.fetchSample(buf, 0);
 
             synchronized (this) {
                 while (this.bufSize1 >= this.buffer.length || this.bufSize2 >= this.buffer.length)

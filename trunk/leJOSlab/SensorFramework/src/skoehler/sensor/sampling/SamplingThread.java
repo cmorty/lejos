@@ -47,7 +47,7 @@ public class SamplingThread extends AbstractFilter {
 	}
 
     @Override
-	public synchronized void fetchSamples(float[] dst, int off) {
+	public synchronized void fetchSample(float[] dst, int off) {
         while (this.bufSize <= 0) {
             try {
                 this.wait();
@@ -78,7 +78,7 @@ public class SamplingThread extends AbstractFilter {
                     break;
                 Thread.sleep(t1 - t2);
             }
-            this.source.fetchSamples(buf, 0);
+            this.source.fetchSample(buf, 0);
 
             synchronized (this) {
                 while (this.bufSize >= this.buffer.length)

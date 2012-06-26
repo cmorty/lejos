@@ -22,7 +22,7 @@ public abstract class AbstractScalarData extends AbstractFilter implements Scala
 	}
 
 	@Override
-	public final void fetchSamples(float[] dst, int off) {
+	public final void fetchSample(float[] dst, int off) {
 		dst[off] = this.fetchSample();
 	}
 

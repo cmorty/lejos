@@ -22,9 +22,9 @@ public class OmissionFilter extends AbstractFilter{
     }
 
     @Override
-	public void fetchSamples(float[] dst, int off) {
+	public void fetchSample(float[] dst, int off) {
         for (int i=0; i<=this.omission; i++)
-            this.source.fetchSamples(dst, off);
+            this.source.fetchSample(dst, off);
     }
 
 }

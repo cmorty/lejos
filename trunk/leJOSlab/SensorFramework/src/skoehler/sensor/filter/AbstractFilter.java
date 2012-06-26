@@ -21,6 +21,6 @@ public abstract class AbstractFilter implements VectorData{
 
 	public abstract int getAxisCount();
 
-	public abstract void fetchSamples(float[] dst, int off);
+	public abstract void fetchSample(float[] dst, int off);
 	
 }

@@ -20,5 +20,5 @@ public interface VectorData {
 	 * @param dst destination array 
 	 * @param off index of first value 
 	 */
-	void fetchSamples(float[] dst, int off);
+	void fetchSample(float[] dst, int off);
 }

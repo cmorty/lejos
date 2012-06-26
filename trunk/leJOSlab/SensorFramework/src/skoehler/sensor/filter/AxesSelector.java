@@ -32,8 +32,8 @@ public class AxesSelector extends AbstractFilter {
 	}
 
 	@Override
-	public void fetchSamples(float[] dst, int off) {
-		this.source.fetchSamples(this.buffer, 0);
+	public void fetchSample(float[] dst, int off) {
+		this.source.fetchSample(this.buffer, 0);
 		for (int i=0; i<this.axes.length; i++)
 			dst[off + i] = this.buffer[this.axes[i]];
 	}

@@ -30,8 +30,8 @@ public class OffsetFilter extends AbstractFilter {
 	}
 
 	@Override
-	public void fetchSamples(float[] dst, int off) {
-		this.source.fetchSamples(this.buffer, 0);
+	public void fetchSample(float[] dst, int off) {
+		this.source.fetchSample(this.buffer, 0);
 		int len = this.buffer.length;
 		for (int i=0; i<len; i++)
 			dst[off + i] = this.buffer[i] + this.offsets[i];
