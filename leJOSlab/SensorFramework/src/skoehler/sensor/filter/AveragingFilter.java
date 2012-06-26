@@ -31,14 +31,14 @@ public class AveragingFilter extends AbstractFilter {
 	}
 
 	@Override
-	public void fetchSamples(float[] dst, int off) {
+	public void fetchSample(float[] dst, int off) {
 		//TODO this filter might develop an offset over time, but is very fast.
 		//Probably offer an offset free alternative.
 		int pos = this.currentPos;
 		for (int i=0; i<this.axisCount; i++)
 			this.sum[i] -= this.buffer[pos + i];
 		
-		this.source.fetchSamples(this.buffer, pos);
+		this.source.fetchSample(this.buffer, pos);
 		
 		for (int i=0; i<this.axisCount; i++)
 			this.sum[i] += this.buffer[pos + i];

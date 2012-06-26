@@ -28,12 +28,12 @@ public class DelayFilter extends AbstractFilter {
 	}
 
 	@Override
-	public void fetchSamples(float[] dst, int off) {
+	public void fetchSample(float[] dst, int off) {
 		int pos = this.currentPos;
 		for (int i=0; i<this.axisCount; i++)
 			dst[off + i] = this.buffer[pos + i];
 		
-		this.source.fetchSamples(this.buffer, pos);
+		this.source.fetchSample(this.buffer, pos);
 		this.currentPos = (pos + this.axisCount) % this.buffer.length;
 	}
 

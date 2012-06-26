@@ -14,7 +14,7 @@ public class DummySensor implements VectorData {
 		return 3;
 	}
 
-	public void fetchSamples(float[] dst, int off) {
+	public void fetchSample(float[] dst, int off) {
 		dst[off+0] = 0;
 		dst[off+1] = 0;
 		dst[off+2] = -Constants.G;

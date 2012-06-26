@@ -34,7 +34,7 @@ public class SampleSink extends AbstractFilter {
     }
 
     @Override
-	public synchronized void fetchSamples(float[] dst, int off) {
+	public synchronized void fetchSample(float[] dst, int off) {
         System.arraycopy(this.buffer, 0, dst, off, this.buffer.length);
     }
     
@@ -43,7 +43,7 @@ public class SampleSink extends AbstractFilter {
     void sampleThread() {
         float[] buf = new float[this.buffer.length];
         while (!Thread.interrupted()) {
-            this.source.fetchSamples(buf, 0);
+            this.source.fetchSample(buf, 0);
 
             synchronized (this) {
                 System.arraycopy(buf, 0, this.buffer, 0, buf.length);
