@@ -5,8 +5,7 @@ package lejos.nxt.sensor.sensor;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.addon.DIMUGyro;
-import lejos.nxt.sensor.api.SensorVectorDataProvider;
-import lejos.nxt.vecmath.Vector3f;
+import lejos.nxt.sensor.api.*;
 
 /**
  * @author Aswin
@@ -30,10 +29,6 @@ public class DiIMUGyro extends DIMUGyro implements SensorVectorDataProvider {
 		return 2;
 	}
 
-	/**
-	 * Returns turnrate (in rad/s)
-	 * @see lejos.nxt.sensor.api.SensorVectorDataProvider#fetchData(lejos.nxt.vecmath.Vector3f)
-	 */
 	public void fetchData(Vector3f data) {
 		super.fetchAllRate(buf);
 		data.set(buf[0],buf[1],buf[2]);

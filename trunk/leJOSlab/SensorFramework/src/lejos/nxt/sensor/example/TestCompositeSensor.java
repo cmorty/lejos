@@ -27,7 +27,7 @@ public class TestCompositeSensor {
 	 */
 	public TestCompositeSensor() {
 		MiCruizcore sensor=new MiCruizcore(SensorPort.S1);
-		SensorDataProvider direction=sensor.getDataProvider(SensorQuantities.AZIMUTH);
+		SensorDataProvider direction=sensor.getDataProvider(SensorQuantities.ROTATION);
 		while(!Button.ESCAPE.isDown()) {
 			LCD.clear();
 			LCD.drawString("direction: "+Math.toDegrees(direction.fetchData()), 0, 0);

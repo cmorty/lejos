@@ -5,8 +5,7 @@ package lejos.nxt.sensor.sensor;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.addon.DIMUAccel;
-import lejos.nxt.sensor.api.SensorVectorDataProvider;
-import lejos.nxt.vecmath.Vector3f;
+import lejos.nxt.sensor.api.*;
 
 
 /**

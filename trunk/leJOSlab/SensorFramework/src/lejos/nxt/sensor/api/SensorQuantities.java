@@ -13,7 +13,7 @@ public interface SensorQuantities {
 	/**
 	 * Distance between sensor and some object (in cm)
 	 */
-	public static final int RANGE=1;
+	public static final int LENGTH=1;
 	/**
 	 * rate of turn (in rad/sec)
 	 */
@@ -23,12 +23,9 @@ public interface SensorQuantities {
 	 */
 	public static final int ACCELERATION=3;
 	/**
-	 * Tilt (in rad) to front (or tilt to left?)
+	 * Rotation, or angle between robot and some reference axis 
 	 */
-	public static final int TILT=4;
-	/**
-	 * Azimuth (direction), the angle (in rad) the sensor makes with some reference line in the XY-plane
-	 */
-	public static final int AZIMUTH=5;
+	public static final int ROTATION=4;
+
 	// TODO: add some more
 }

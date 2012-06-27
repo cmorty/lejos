@@ -1,8 +1,6 @@
 package lejos.nxt.sensor.filter;
 
-import lejos.nxt.vecmath.Vector3f;
-import lejos.nxt.sensor.api.SensorDataProvider;
-import lejos.nxt.sensor.api.SensorVectorDataProvider;
+import lejos.nxt.sensor.api.*;
 
 /**
  * Thes class extracts a single axis from a vector returned by a Triaxis sensor,

@@ -2,8 +2,7 @@ package lejos.nxt.sensor.sensor;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.addon.AccelHTSensor;
-import lejos.nxt.sensor.api.SensorVectorDataProvider;
-import lejos.nxt.vecmath.Vector3f;
+import lejos.nxt.sensor.api.*;
 
 /**
  * Class to access the HiTechnic NXT Acceleration / Tilt Sensor (NAC1040)

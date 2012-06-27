@@ -1,6 +1,5 @@
 package lejos.nxt.sensor.api;
 
-import lejos.nxt.vecmath.Vector3f;
 
 
 
