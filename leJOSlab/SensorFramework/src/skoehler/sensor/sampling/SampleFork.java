@@ -51,20 +51,7 @@ public class SampleFork {
             public void fetchSample(float[] dst, int off) {
                 SampleFork.this.fetchSamples2(dst, off);
             }
-        };
-        
-        //TODO implement means to start/stop thread, set priority, etc.
-        Thread t = new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        SampleFork.this.sampleThread();
-                    } catch (InterruptedException e) {
-                        // nothing, thread was asked to terminate
-                    }
-                }
-            };
-        t.start();
+        };        
     }
     
     public VectorData getOutput1() {
@@ -75,8 +62,8 @@ public class SampleFork {
         return this.out2;
     }
 
-    void fetchSamples1(float[] dst, int off) {
-        while (this.bufSize1 <= 0) {
+    synchronized void fetchSamples1(float[] dst, int off) {
+        while (this.bufSize1 <= 0 && this.bufSize2 >= this.buffer.length) {
             try {
                 this.wait();
             } catch (InterruptedException e) {
@@ -86,15 +73,22 @@ public class SampleFork {
             }
         }
 
-        int pos = this.bufPos1;
-        System.arraycopy(this.buffer, pos, dst, off, this.axisCount);
-        this.bufPos1 = (pos + this.axisCount) % this.buffer.length;
+        if (this.bufSize1 <= 0)
+        {
+            this.source.fetchSample(this.buffer, this.bufPos2);
+            this.bufSize1 += this.axisCount;
+            this.bufSize2 += this.axisCount;
+            this.notifyAll();
+        }
+
+        System.arraycopy(this.buffer, this.bufPos1, dst, off, this.axisCount);
+        this.bufPos1 = (this.bufPos1 + this.axisCount) % this.buffer.length;
         this.bufSize1 -= this.axisCount;
         this.notifyAll();
     }
     
-    void fetchSamples2(float[] dst, int off) {
-        while (this.bufSize2 <= 0) {
+    synchronized void fetchSamples2(float[] dst, int off) {
+        while (this.bufSize2 <= 0 && this.bufSize1 >= this.buffer.length) {
             try {
                 this.wait();
             } catch (InterruptedException e) {
@@ -103,31 +97,19 @@ public class SampleFork {
                 throw new RuntimeException();
             }
         }
+        
+        if (this.bufSize2 <= 0)
+        {
+            this.source.fetchSample(this.buffer, this.bufPos2);
+            this.bufSize1 += this.axisCount;
+            this.bufSize2 += this.axisCount;
+            this.notifyAll();
+        }
 
-        int pos = this.bufPos2;
-        System.arraycopy(this.buffer, pos, dst, off, this.axisCount);
-        this.bufPos2 = (pos + this.axisCount) % this.buffer.length;
+        System.arraycopy(this.buffer, this.bufPos2, dst, off, this.axisCount);
+        this.bufPos2 = (this.bufPos2 + this.axisCount) % this.buffer.length;
         this.bufSize2 -= this.axisCount;
-        this.notifyAll();
     }
     
     //TODO implement checks for overflow/underflow
-
-    void sampleThread() throws InterruptedException {
-        float[] buf = new float[this.axisCount];
-        while (!Thread.interrupted()) {
-            this.source.fetchSample(buf, 0);
-
-            synchronized (this) {
-                while (this.bufSize1 >= this.buffer.length || this.bufSize2 >= this.buffer.length)
-                    this.wait();
-
-                int pos = (this.bufPos1 + this.bufSize1) % this.buffer.length;
-                System.arraycopy(buf, 0, this.buffer, pos, this.axisCount);
-                this.bufSize1 += this.axisCount;
-                this.bufSize2 += this.axisCount;
-                this.notifyAll();
-            }
-        }
-    }
 }
