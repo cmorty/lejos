@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/classes"/>
-	<classpathentry kind="lib" path="C:/Users/Aswin/snapshot/lib/nxt/classes.jar">
-		<accessrules>
-			<accessrule kind="discouraged" pattern="**/internal/**"/>
-		</accessrules>
-	</classpathentry>
+	<classpathentry kind="con" path="org.lejos.nxt.ldt.LEJOS_LIBRARY_CONTAINER/nxt"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
