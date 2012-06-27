@@ -18,6 +18,7 @@ public class SampleFork {
         if (buffersize < 1)
             throw new IllegalArgumentException();
             
+        final int q = source.getQuantity();
         final int ac = source.getAxisCount();
         this.source = source;
         this.axisCount = ac;
@@ -26,7 +27,7 @@ public class SampleFork {
         out1 = new VectorData() {
             
             public int getQuantity() {
-                return source.getQuantity();
+                return q;
             }
             
             public int getAxisCount() {
@@ -41,7 +42,7 @@ public class SampleFork {
         out2 = new VectorData() {
             
             public int getQuantity() {
-                return source.getQuantity();
+                return q;
             }
             
             public int getAxisCount() {
@@ -109,6 +110,7 @@ public class SampleFork {
         System.arraycopy(this.buffer, this.bufPos2, dst, off, this.axisCount);
         this.bufPos2 = (this.bufPos2 + this.axisCount) % this.buffer.length;
         this.bufSize2 -= this.axisCount;
+        this.notifyAll();
     }
     
     //TODO implement checks for overflow/underflow
