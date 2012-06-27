@@ -75,7 +75,7 @@ public class SampleFork {
 
         if (this.bufSize1 <= 0)
         {
-            this.source.fetchSample(this.buffer, this.bufPos2);
+            this.source.fetchSample(this.buffer, this.bufPos1);
             this.bufSize1 += this.axisCount;
             this.bufSize2 += this.axisCount;
             this.notifyAll();
