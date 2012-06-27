@@ -1,6 +1,7 @@
 package lejos.nxt.sensor.sensor;
 
 import lejos.nxt.ADSensorPort;
+import lejos.nxt.sensor.api.SensorDataProvider;
 
 /**
  * Adapter POC class lejos.nxt.LightSensor-to-SensorDataProvider 

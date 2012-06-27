@@ -1,4 +1,4 @@
-package lejos.nxt.sensor;
+package lejos.nxt.sensor.api;
 
 /**
  * A 3-element vector that is represented by single-precision floating point 
@@ -10,4 +10,10 @@ package lejos.nxt.sensor;
  */
 public class Vector3f {
 	public float x=0,y=0,z=0;
+	
+	public void set(float x, float y, float z) {
+		this.x=x;
+		this.y=y;
+		this.z=z;
+	}
 }

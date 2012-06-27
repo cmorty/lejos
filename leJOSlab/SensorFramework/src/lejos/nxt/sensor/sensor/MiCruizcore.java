@@ -5,10 +5,7 @@ package lejos.nxt.sensor.sensor;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.addon.CruizcoreGyro;
-import lejos.nxt.sensor.api.SensorDataProvider;
-import lejos.nxt.sensor.api.SensorQuantities;
-import lejos.nxt.sensor.api.SensorVectorDataProvider;
-import lejos.nxt.vecmath.Vector3f;
+import lejos.nxt.sensor.api.*;
 
 /**
  * @author Aswin
@@ -49,7 +46,7 @@ public class MiCruizcore extends CruizcoreGyro implements SensorVectorDataProvid
 	
 	
 	/**
-	 * returns azymuth (direction) (in rad);
+	 * returns rotation (in rad);
 	 * @return
 	 */
 	public float fetchData() {
@@ -64,7 +61,7 @@ public class MiCruizcore extends CruizcoreGyro implements SensorVectorDataProvid
 	 * reference to a SensorDataProvider
 	 */
 	public SensorDataProvider getDataProvider(int quantity) {
-		if (quantity!=AZIMUTH) throw new IllegalArgumentException("Invalid quantity");
+		if (quantity!=ROTATION) throw new IllegalArgumentException("Invalid quantity");
 		return azimuth;
 	}
 

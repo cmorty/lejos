@@ -5,8 +5,7 @@ package lejos.nxt.sensor.sensor;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.addon.AccelMindSensor;
-import lejos.nxt.sensor.api.SensorVectorDataProvider;
-import lejos.nxt.vecmath.Vector3f;
+import lejos.nxt.sensor.api.*;
 
 /**
  * Class to access the MindSensors Acceleration sensor (V2 and V3)
