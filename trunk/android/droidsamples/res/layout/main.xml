@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    
+	<Button android:id="@+id/button1"
+		android:text="@string/AccelDemo"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"/>
+		
+	<Button android:id="@+id/button2"
+		android:text="@string/BTSend"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+	
+	<Button android:id="@+id/button3"
+		android:text="@string/RCNavigation"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+	
+	<Button android:id="@+id/button4"
+		android:text="@string/RemotePilot"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+
+	<Button android:id="@+id/button5"
+		android:text="@string/SensorTest"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+			
+	<Button android:id="@+id/button6"
+		android:text="@string/TachoCount"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+	
+	<Button android:id="@+id/button7"
+		android:text="@string/TiltDemo"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+		
+	<TextView  
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content" 
+	    android:id="@+id/messageText"
+	    android:textAppearance="?android:attr/textAppearanceMedium"
+    	android:layout_marginTop="10dip"
+    	android:layout_marginBottom="10dip"
+    	/>			
+</LinearLayout>
