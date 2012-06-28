@@ -1,6 +1,7 @@
 package lejos.robotics.navigation;
 
 import java.util.ArrayList;
+
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.pathfinding.Path;
@@ -173,15 +174,7 @@ public class Navigator implements WaypointListener
    {
       addWaypoint(destination);
       followPath();
-      
-//      // Block until done
-//      while(isMoving()) {
-//    	  try {
-//			Thread.sleep(5);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-//      }
+ 
    }
 
    /**
@@ -430,10 +423,12 @@ public class Navigator implements WaypointListener
                 _path.remove(0);
                 _sequenceNr++; 
              }
+             callListeners();
              _keepGoing = ! _path.isEmpty();
              if(_singleStep)_keepGoing = false;
-//             RConsole.println("NAV calling Listeners");
-             callListeners(); 
+
+//             callListeners();  *** if called here,  sets _keepGoing = true - very strange
+
              
           }
    
