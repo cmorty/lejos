@@ -6,7 +6,7 @@ import lejos.nxt.SensorPort;
 import lejos.nxt.Sound;
 import lejos.nxt.sensor.api.SensorVectorDataProvider;
 import lejos.nxt.sensor.filter.CalibrateOffsetScale;
-import lejos.nxt.sensor.filter.ExtractAxis;
+import lejos.nxt.sensor.filter.ToScalar;
 import lejos.nxt.sensor.filter.Integrator;
 import lejos.nxt.sensor.sensor.DiIMUGyro;
 import lejos.util.Delay;
@@ -40,7 +40,7 @@ public class TestTriaxisSensor {
 	public TestTriaxisSensor() {
 		float time;
 		float value;
-		ExtractAxis justOne =new ExtractAxis(sensor);
+		ToScalar justOne =new ToScalar(sensor);
 		justOne.setAxis("Z");
 		CalibrateOffsetScale calibrated = new CalibrateOffsetScale(justOne);
 		calibrate(calibrated);

@@ -7,7 +7,7 @@ import lejos.nxt.sensor.api.*;
  * 
  * @author Aswin Bouwmeester
  */
-public class ExtractAxis implements SensorDataProvider {
+public class ToScalar implements SensorDataProvider {
 	private SensorVectorDataProvider	source;
 	private String										axis	= "X";
 	private Vector3f									buf		= new Vector3f();
@@ -18,15 +18,15 @@ public class ExtractAxis implements SensorDataProvider {
 	 * @param source
 	 *          The source where the filter gets its data from
 	 */
-	public ExtractAxis(SensorVectorDataProvider source) {
+	public ToScalar(SensorVectorDataProvider source) {
 		this.source = source;
 	}
 
 	public float fetchData() {
 		source.fetchData(buf);
-		if (axis == "X")
+		if (axis.equals("X"))
 			return buf.x;
-		if (axis == "Y")
+		if (axis.equals("Y"))
 			return buf.y;
 		return buf.z;
 	}
@@ -52,7 +52,7 @@ public class ExtractAxis implements SensorDataProvider {
 	 */
 	public void setAxis(String axis) {
 		axis = axis.toUpperCase();
-		if ("XYZ".indexOf(axis) == 0)
+		if ("XYZ".indexOf(axis) == -1)
 			throw new IllegalArgumentException("Invalid axis");
 		this.axis = axis;
 	}
