@@ -242,7 +242,7 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 						if(chosen == null) 
 							LeJOSNXJUtil.error("No suitable connector");
 						else {
-							Map<?, ?> connectorArgs = chosen.defaultArguments();
+							Map<String, Connector.Argument> connectorArgs = chosen.defaultArguments();
 							Connector.IntegerArgument portArg = (IntegerArgument) connectorArgs.get("port");
 							portArg.setValue(port);
 							
