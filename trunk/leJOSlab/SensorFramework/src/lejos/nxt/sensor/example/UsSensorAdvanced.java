@@ -47,7 +47,7 @@ public class UsSensorAdvanced {
 		
 		// convert position to position relative to robot;
 		Align toPosition=new Align(rangeVector);
-		toPosition.setSensorOrientation(0, 0, 45);
+		toPosition.addRotation("Z", 45);
 		
 		// Show distance to obstacle;
 		while (!Button.ESCAPE.isDown()) {
