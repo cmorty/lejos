@@ -34,6 +34,7 @@ import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.AttachingConnector;
 import com.sun.jdi.connect.Connector;
+import com.sun.jdi.connect.Connector.Argument;
 import com.sun.jdi.connect.Connector.IntegerArgument;
 
 public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDelegate {
@@ -242,7 +243,7 @@ public class LaunchNXTConfigDelegate extends AbstractJavaLaunchConfigurationDele
 						if(chosen == null) 
 							LeJOSNXJUtil.error("No suitable connector");
 						else {
-							Map<String, Connector.Argument> connectorArgs = chosen.defaultArguments();
+							Map<String, Argument> connectorArgs = chosen.defaultArguments();
 							Connector.IntegerArgument portArg = (IntegerArgument) connectorArgs.get("port");
 							portArg.setValue(port);
 							
