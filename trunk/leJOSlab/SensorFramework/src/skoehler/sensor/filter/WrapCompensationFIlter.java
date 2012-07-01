@@ -29,6 +29,7 @@ public class WrapCompensationFIlter extends AbstractFilter {
 		this.wraps = new int[ac];
 		this.limits = new float[ac];
 		this.buffer = new float[2 * ac];
+		System.arraycopy(wrap, 0, this.wraps, 0, ac);
 	}
 
 	@Override
