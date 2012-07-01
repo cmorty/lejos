@@ -12,11 +12,11 @@ import lejos.nxt.sensor.api.SensorDataProvider;
  * 
  */
 public class StatisticsFilter implements SensorDataProvider {
-	static final int MEAN = 0;
-	static final int MEDIAN = 1;
-	static final int MIN = 2;
-	static final int MAX = 3;
-	static final int SUM = 4;
+	public static final int MEAN = 0;
+	public static final int MEDIAN = 1;
+	public static final int MIN = 2;
+	public static final int MAX = 3;
+	public static final int SUM = 4;
 
 	private SensorDataProvider source;
 	private int statistic = 0;
