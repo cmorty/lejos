@@ -586,7 +586,7 @@ class LoggingChart extends ChartPanel{
      * @return The number of series created
      */
     int setSeries(String[] seriesNames){
-        // don't allow empty range (length==1 means only domain series defined)
+        // don't allow empty range (length==1 means only domain series (timestamp) defined)
         if (seriesNames.length<2) return 0;
         
         // ************* Clear/init any series, etc. 

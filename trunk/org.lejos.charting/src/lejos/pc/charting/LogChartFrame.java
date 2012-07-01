@@ -314,6 +314,7 @@ class LogChartFrame extends JFrame {
                         JOptionPane.ERROR_MESSAGE);
                 }
             }
+            LogChartFrame.this.requestFocus();
             
             // set the chartable series headers/labels
             customChartPanel.setSeries(chartLabels.toString().split("!"));  
