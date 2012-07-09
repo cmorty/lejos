@@ -2,9 +2,8 @@ package lejos.robotics.navigation;
 
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.RegulatedMotorListener;
-import lejos.nxt.Motor;
-import lejos.nxt.comm.RConsole;
-import lejos.nxt.comm.RConsole;
+
+
 
 import java.util.ArrayList;
 /*
@@ -955,8 +954,6 @@ public class DifferentialPilot implements RegulatedMotorListener,
 			if (_inside == _left) _leftDirection = -1;
 			else _rightDirection = -1;
 		}
-		RConsole.println("steer +rate "+  turnRate+" inside V "+insideSpeed+"  DV "+insideDV +" "+outsideDV
-				+" L,R dir  "+_leftDirection+" "+_rightDirection);
 	}
 
 	/**
