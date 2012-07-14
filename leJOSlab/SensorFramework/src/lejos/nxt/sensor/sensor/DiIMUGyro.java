@@ -11,7 +11,7 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class DiIMUGyro extends DIMUGyro implements SensorVectorDataProvider {
+public class DiIMUGyro extends DIMUGyro implements SampleProviderVector {
 	float[] buf=new float[3];
 
 	/**
@@ -29,7 +29,7 @@ public class DiIMUGyro extends DIMUGyro implements SensorVectorDataProvider {
 		return 2;
 	}
 
-	public void fetchData(Vector3f data) {
+	public void fetchSample(Vector3f data) {
 		super.fetchAllRate(buf);
 		data.set(buf[0],buf[1],buf[2]);
 	}

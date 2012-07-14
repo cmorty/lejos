@@ -1,7 +1,7 @@
 package lejos.nxt.sensor.sensor;
 
 import lejos.nxt.ADSensorPort;
-import lejos.nxt.sensor.api.SensorDataProvider;
+import lejos.nxt.sensor.api.SampleProvider;
 
 /**
  * Adapter POC class lejos.nxt.LightSensor-to-SensorDataProvider via 
@@ -13,7 +13,7 @@ import lejos.nxt.sensor.api.SensorDataProvider;
 public class LightSensorAdapterPOC extends lejos.nxt.LightSensor{
 	private LightSensorAdapter lsa;
 	
-	private class LightSensorAdapter implements SensorDataProvider {
+	private class LightSensorAdapter implements SampleProvider {
 
 		public LightSensorAdapter() {
 			// do nothing for now...
@@ -23,7 +23,7 @@ public class LightSensorAdapterPOC extends lejos.nxt.LightSensor{
 			return 4;
 		}
 
-		public float fetchData() {
+		public float fetchSample() {
 			return LightSensorAdapterPOC.this.getLightValue();
 		}
 		
@@ -42,7 +42,7 @@ public class LightSensorAdapterPOC extends lejos.nxt.LightSensor{
 	/**
 	 * @return this LightSensor wrapped as SensorDataProvider
 	 */
-	public SensorDataProvider getLightSensorDataProvider(){
+	public SampleProvider getLightSensorDataProvider(){
 		return lsa;
 	}
 	

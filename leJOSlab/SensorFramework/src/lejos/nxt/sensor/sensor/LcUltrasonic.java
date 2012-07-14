@@ -10,7 +10,7 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class LcUltrasonic extends UltrasonicSensor implements SensorDataProvider{
+public class LcUltrasonic extends UltrasonicSensor implements SampleProvider{
 
 	public LcUltrasonic(I2CPort port) {
 		super(port);
@@ -22,7 +22,7 @@ public class LcUltrasonic extends UltrasonicSensor implements SensorDataProvider
 		return 30;
 	}
 
-	public float fetchData() {
+	public float fetchSample() {
 		return getDistance();
 	}
 

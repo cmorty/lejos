@@ -2,7 +2,7 @@ package lejos.nxt.sensor.sensor;
 
 import lejos.nxt.ADSensorPort;
 import lejos.nxt.SensorConstants;
-import lejos.nxt.sensor.api.SensorDataProvider;
+import lejos.nxt.sensor.api.SampleProvider;
 import lejos.robotics.Color;
 
 /*
@@ -15,7 +15,7 @@ import lejos.robotics.Color;
  * sensor can be calibrated to low and high values.
  * 
  */
-public class LightSensor implements SensorConstants, SensorDataProvider {
+public class LightSensor implements SensorConstants, SampleProvider {
 	// TODO: setting the flood light does not work
 	ADSensorPort		port;
 	private boolean	floodlight	= false;
@@ -46,7 +46,7 @@ public class LightSensor implements SensorConstants, SensorDataProvider {
 		port.setTypeAndMode((floodlight ? TYPE_LIGHT_ACTIVE : TYPE_LIGHT_INACTIVE), MODE_PCTFULLSCALE);
 	}
 
-	public float fetchData() {
+	public float fetchSample() {
 		return port.readRawValue();
 	}
 

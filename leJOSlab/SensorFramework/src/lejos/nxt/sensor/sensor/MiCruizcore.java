@@ -16,7 +16,7 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class MiCruizcore extends CruizcoreGyro implements SensorVectorDataProvider,SensorDataProvider,SensorQuantities {
+public class MiCruizcore extends CruizcoreGyro implements SampleProviderVector,SampleProvider,SensorQuantities {
 
 	Accel accel=new Accel();
 	Gyro gyro=new Gyro();
@@ -38,10 +38,10 @@ public class MiCruizcore extends CruizcoreGyro implements SensorVectorDataProvid
 
 	/**
 	 *  Returns acceleration (in m/s2) over three axes
-	 * @see lejos.nxt.sensor.api.SensorVectorDataProvider#fetchData(Vector3f)
+	 * @see lejos.nxt.sensor.api.SampleProviderVector#fetchSample(Vector3f)
 	 */
-	public void fetchData(Vector3f data) {
-	  accel.fetchData(data);
+	public void fetchSample(Vector3f data) {
+	  accel.fetchSample(data);
 	}
 	
 	
@@ -49,8 +49,8 @@ public class MiCruizcore extends CruizcoreGyro implements SensorVectorDataProvid
 	 * returns rotation (in rad);
 	 * @return
 	 */
-	public float fetchData() {
-		return azimuth.fetchData();
+	public float fetchSample() {
+		return azimuth.fetchSample();
 	}
 	
 	/**
@@ -60,7 +60,7 @@ public class MiCruizcore extends CruizcoreGyro implements SensorVectorDataProvid
 	 * @return
 	 * reference to a SensorDataProvider
 	 */
-	public SensorDataProvider getDataProvider(int quantity) {
+	public SampleProvider getDataProvider(int quantity) {
 		if (quantity!=ROTATION) throw new IllegalArgumentException("Invalid quantity");
 		return azimuth;
 	}
@@ -72,7 +72,7 @@ public class MiCruizcore extends CruizcoreGyro implements SensorVectorDataProvid
 	 * @return
 	 * reference to a SensorDataProvider
 	 */
-	public SensorVectorDataProvider getVectorDataProvider(int quantity) {
+	public SampleProviderVector getVectorDataProvider(int quantity) {
 		if (quantity==TURNRATE)return gyro;
 		if (quantity==ACCELERATION)return accel;
 		throw new IllegalArgumentException("Invalid quantity");
@@ -81,7 +81,7 @@ public class MiCruizcore extends CruizcoreGyro implements SensorVectorDataProvid
 	
 	
 	
-	private class Gyro implements SensorVectorDataProvider {
+	private class Gyro implements SampleProviderVector {
 
 		public int getMinimumFetchInterval() {
 			return getMinimumFetchInterval();
@@ -90,7 +90,7 @@ public class MiCruizcore extends CruizcoreGyro implements SensorVectorDataProvid
 		/* Returns rate of turn (in Rad/s)
 		 * @see lejos.nxt.sensor.api.SensorVectorDataProvider#fetchData(lejos.nxt.vecmath.Vector3f)
 		 */
-		public void fetchData(Vector3f data) {
+		public void fetchSample(Vector3f data) {
 			data.x=Float.NaN;
 			data.y=Float.NaN;
 			data.z=(float) Math.toRadians(getRate()/100.0f);
@@ -98,13 +98,13 @@ public class MiCruizcore extends CruizcoreGyro implements SensorVectorDataProvid
 		
 	}
 
-	private class Accel implements SensorVectorDataProvider {
+	private class Accel implements SampleProviderVector {
 
 		public int getMinimumFetchInterval() {
 			return getMinimumFetchInterval();
 		}
 
-		public void fetchData(Vector3f data) {
+		public void fetchSample(Vector3f data) {
 			int[] buf=getAccel();
 			// assuming 2 G range
 			data.x=buf[0]*9.81f/1000.0f;
@@ -114,7 +114,7 @@ public class MiCruizcore extends CruizcoreGyro implements SensorVectorDataProvid
 		
 	}
 	
-	private class Azimuth implements SensorDataProvider {
+	private class Azimuth implements SampleProvider {
 
 		public int getMinimumFetchInterval() {
 			return getMinimumFetchInterval();
@@ -123,7 +123,7 @@ public class MiCruizcore extends CruizcoreGyro implements SensorVectorDataProvid
 		/* Returns rate of turn (in Rad/s)
 		 * @see lejos.nxt.sensor.api.SensorVectorDataProvider#fetchData(lejos.nxt.vecmath.Vector3f)
 		 */
-		public float fetchData() {
+		public float fetchSample() {
 			return (float) Math.toRadians(getAngle()/100.0f);
 		}
 		
