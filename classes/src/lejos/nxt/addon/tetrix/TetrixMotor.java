@@ -1,12 +1,14 @@
 package lejos.nxt.addon.tetrix;
 
+import lejos.robotics.DCMotor;
+
 /** 
  * Tetrix basic DC motor abstraction without encoder support. The default power at instantiation is 100%.
  * <p>Use <code>{@link TetrixMotorController#getBasicMotor}</code> to retrieve a <code>TetrixMotor</code> instance.
  * 
  * @author Kirk P. Thompson
  */
-public class TetrixMotor implements lejos.robotics.DCMotor{
+public class TetrixMotor implements DCMotor{
     TetrixMotorController mc;
     int channel;
     

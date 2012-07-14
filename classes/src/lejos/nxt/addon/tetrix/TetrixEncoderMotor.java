@@ -1,7 +1,6 @@
 package lejos.nxt.addon.tetrix;
 
 import lejos.robotics.Encoder;
-
 import lejos.util.Delay;
 
 
@@ -32,7 +31,7 @@ public class TetrixEncoderMotor extends TetrixMotor implements Encoder{
    
     synchronized void waitRotateComplete() {
         while (isMoving()) {
-            Delay.msDelay(100);
+            Delay.msDelay(50);
         }
     }
     
@@ -46,7 +45,7 @@ public class TetrixEncoderMotor extends TetrixMotor implements Encoder{
      */
     public void rotate(int degrees, boolean immediateReturn){
         mc.doCommand(TetrixMotorController.CMD_ROTATE, degrees, channel);
-        if (!immediateReturn) waitRotateComplete();
+        if (!immediateReturn) mc.waitRotateComplete(channel);
     }
     
     /**
@@ -59,7 +58,7 @@ public class TetrixEncoderMotor extends TetrixMotor implements Encoder{
      */
     public void rotateTo(int limitAngle, boolean immediateReturn){
         mc.doCommand(TetrixMotorController.CMD_ROTATE_TO, limitAngle, channel);
-        if (!immediateReturn) waitRotateComplete();
+        if (!immediateReturn) mc.waitRotateComplete(channel);
     }
 
     /**
