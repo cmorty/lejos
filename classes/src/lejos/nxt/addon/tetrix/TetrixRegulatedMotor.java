@@ -136,16 +136,6 @@ public class TetrixRegulatedMotor extends TetrixEncoderMotor implements Regulate
         return speed;
     }
     
-//    /**
-//     * Return the current rotational speed calculated from the encoder position every 100 ms. This will
-//     * likely differ from what was specified in <code>setSpeed</code>.
-//     * 
-//     * @return The current rotational speed in deg/sec
-//     */
-//    public int getRotationSpeed() {
-//        return Math.round(.01f * mc.doCommand(TetrixMotorController.CMD_GETSPEED, 0, channel));
-//    }
-    
     /**
      * NOT IMPLEMENTED as the TEXTRIX motor controller does not support this command.
      * @return Always 924 degrees/sec
