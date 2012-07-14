@@ -6,7 +6,7 @@ package lejos.nxt.sensor.api;
 /**
  * @author Aswin Bouwmeester
  */
-public interface SensorVectorDataProvider {
+public interface SampleProviderVector {
 	
 
 	/**
@@ -21,6 +21,6 @@ public interface SensorVectorDataProvider {
 		 * The value is what the sensor reads and returns
 		 * @return the unit quantity read by the sensor
 		 */
-		void fetchData(Vector3f data);
+		void fetchSample(Vector3f data);
 
 }

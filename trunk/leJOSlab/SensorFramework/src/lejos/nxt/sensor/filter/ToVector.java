@@ -9,8 +9,8 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class ToVector implements SensorVectorDataProvider{
-	private SensorDataProvider	source;
+public class ToVector implements SampleProviderVector{
+	private SampleProvider	source;
 	private String										axis	= "X";
 	private float									buf		;
 
@@ -20,16 +20,16 @@ public class ToVector implements SensorVectorDataProvider{
 	 * @param source
 	 *          The source where the filter gets its data from
 	 */
-	public ToVector(SensorDataProvider source) {
+	public ToVector(SampleProvider source) {
 		this.source = source;
 	}
 
-	public void fetchData(Vector3f data) {
+	public void fetchSample(Vector3f data) {
 		// also support not to override non-selected axes? 
 		data.x=0;
 		data.y=0;
 		data.z=0;
-		buf=source.fetchData();
+		buf=source.fetchSample();
 		if (axis.equals("X")) 
 			data.x=buf;
 		if (axis.equals("Y"))

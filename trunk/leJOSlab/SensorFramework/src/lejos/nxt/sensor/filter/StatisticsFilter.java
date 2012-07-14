@@ -1,6 +1,6 @@
 package lejos.nxt.sensor.filter;
 
-import lejos.nxt.sensor.api.SensorDataProvider;
+import lejos.nxt.sensor.api.SampleProvider;
 
 /**
  * Sensor Data Provider that applies a statitical filter on sensory data.
@@ -11,14 +11,14 @@ import lejos.nxt.sensor.api.SensorDataProvider;
  * @author Aswin Bouwmeester
  * 
  */
-public class StatisticsFilter implements SensorDataProvider {
+public class StatisticsFilter implements SampleProvider {
 	public static final int MEAN = 0;
 	public static final int MEDIAN = 1;
 	public static final int MIN = 2;
 	public static final int MAX = 3;
 	public static final int SUM = 4;
 
-	private SensorDataProvider source;
+	private SampleProvider source;
 	private int statistic = 0;
 	private int sampleSize = 5;
 	private int actualSize = 0;
@@ -31,12 +31,12 @@ public class StatisticsFilter implements SensorDataProvider {
 	 * @param source
 	 *          The source where the filter gets its data from
 	 */
-	public StatisticsFilter(SensorDataProvider source) {
+	public StatisticsFilter(SampleProvider source) {
 		this.source = source;
 	}
 
-	public float fetchData() {
-		add(source.fetchData());
+	public float fetchSample() {
+		add(source.fetchSample());
 		switch (statistic) {
 			case (MEAN):
 				return getMean();

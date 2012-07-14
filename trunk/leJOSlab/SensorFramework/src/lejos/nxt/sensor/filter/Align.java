@@ -14,12 +14,12 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class Align implements SensorVectorDataProvider {
+public class Align implements SampleProviderVector {
 	Matrix3f rotateAxis=new Matrix3f(1,0,0,0,1,0,0,0,1);
-	private SensorVectorDataProvider	source;
+	private SampleProviderVector	source;
 	
 	
-	public Align(SensorVectorDataProvider source) {
+	public Align(SampleProviderVector source) {
 		this.source=source;
 	}
 
@@ -28,8 +28,8 @@ public class Align implements SensorVectorDataProvider {
 	}
 
 
-	public void fetchData(Vector3f data) {
-		source.fetchData(data);
+	public void fetchSample(Vector3f data) {
+		source.fetchSample(data);
 		rotateAxis.transform(data);
 	}
 	

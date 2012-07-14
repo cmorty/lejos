@@ -6,7 +6,7 @@ package lejos.nxt.sensor.api;
  * @author Kirk P. Thompson
  *
  */
-public interface SensorDataProvider {
+public interface SampleProvider {
 
 	/**
 	 * The refresh rate is the minumum delay between calls to query the sensor value. 
@@ -20,6 +20,6 @@ public interface SensorDataProvider {
 	 * The value is what the sensor reads and returns
 	 * @return the unit quantity read by the sensor
 	 */
-	float fetchData();
+	float fetchSample();
 	
 }

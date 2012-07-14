@@ -4,7 +4,7 @@ import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import lejos.nxt.Sound;
-import lejos.nxt.sensor.api.SensorVectorDataProvider;
+import lejos.nxt.sensor.api.SampleProviderVector;
 import lejos.nxt.sensor.filter.CalibrateOffsetScale;
 import lejos.nxt.sensor.filter.ToScalar;
 import lejos.nxt.sensor.filter.Integrator;
@@ -26,7 +26,7 @@ import lejos.util.Delay;
 public class TestTriaxisSensor {
 	int counter=0;
 	// set the sensor of choice (or use DummySensor)
-	SensorVectorDataProvider sensor=new DiIMUGyro(SensorPort.S1);
+	SampleProviderVector sensor=new DiIMUGyro(SensorPort.S1);
 
 	/**
 	 * @param args
@@ -47,7 +47,7 @@ public class TestTriaxisSensor {
 		Integrator integrated=new Integrator(calibrated);
 		while (!Button.ESCAPE.isDown()) {
 			time=System.nanoTime();
-			value=integrated.fetchData();
+			value=integrated.fetchSample();
 			time=(System.nanoTime()-time)/1000000;
 			LCD.drawString("Value: "+value, 0, 5);
 			LCD.drawString("dt: "+time, 0, 6);

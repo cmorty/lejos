@@ -16,4 +16,10 @@ public class Vector3f {
 		this.y=y;
 		this.z=z;
 	}
+
+	public void scale(float multiplier) {
+		this.x*=multiplier;
+		this.y*=multiplier;
+		this.z*=multiplier;
+	}
 }
