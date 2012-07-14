@@ -53,12 +53,12 @@ public class UsSensorAdvanced {
 		while (!Button.ESCAPE.isDown()) {
 			LCD.clear();
 			LCD.drawString("Distance",0,0);
-			if (bufferedRange.fetchData()==255){
+			if (bufferedRange.fetchSample()==255){
 				LCD.drawString("OutOfRange", 0, 1);
 			}
 			else {
-				LCD.drawString("to sensor: "+bufferedRange.fetchData(), 0, 1);
-				toPosition.fetchData(obstacle);
+				LCD.drawString("to sensor: "+bufferedRange.fetchSample(), 0, 1);
+				toPosition.fetchSample(obstacle);
 				LCD.drawString("to front: "+obstacle.x, 0, 2);
 				LCD.drawString("to left: "+obstacle.y, 0, 3);
 			}

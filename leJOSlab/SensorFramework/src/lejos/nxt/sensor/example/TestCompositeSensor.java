@@ -3,7 +3,7 @@ package lejos.nxt.sensor.example;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
-import lejos.nxt.sensor.api.SensorDataProvider;
+import lejos.nxt.sensor.api.SampleProvider;
 import lejos.nxt.sensor.api.SensorQuantities;
 import lejos.nxt.sensor.sensor.MiCruizcore;
 import lejos.util.Delay;
@@ -27,10 +27,10 @@ public class TestCompositeSensor {
 	 */
 	public TestCompositeSensor() {
 		MiCruizcore sensor=new MiCruizcore(SensorPort.S1);
-		SensorDataProvider direction=sensor.getDataProvider(SensorQuantities.ROTATION);
+		SampleProvider direction=sensor.getDataProvider(SensorQuantities.ROTATION);
 		while(!Button.ESCAPE.isDown()) {
 			LCD.clear();
-			LCD.drawString("direction: "+Math.toDegrees(direction.fetchData()), 0, 0);
+			LCD.drawString("direction: "+Math.toDegrees(direction.fetchSample()), 0, 0);
 			Delay.msDelay(direction.getMinimumFetchInterval());
 		}
 		

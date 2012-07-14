@@ -1,6 +1,6 @@
 package lejos.nxt.sensor.filter;
 
-import lejos.nxt.sensor.api.SensorDataProvider;
+import lejos.nxt.sensor.api.SampleProvider;
 
 /**
  * Integrates sensor data over time. Usefull for example to:
@@ -14,7 +14,7 @@ public class Integrator extends SensorDataBuffer{
 	long lastTime=0;
 
 	
-	public Integrator(SensorDataProvider source) {
+	public Integrator(SampleProvider source) {
 		super(source);
 	}
 	

@@ -28,7 +28,7 @@ public class UsSensorSimple {
 		range.setStatistic(StatisticsFilter.MEDIAN);
 		range.setSampleSize(5);
 		while (!Button.ESCAPE.isDown()) {
-			LCD.drawString("Range: "+range.fetchData(), 0, 0);
+			LCD.drawString("Range: "+range.fetchSample(), 0, 0);
 			Delay.msDelay(range.getMinimumFetchInterval());
 		}
 

@@ -1,6 +1,6 @@
 package lejos.nxt.sensor.filter;
 
-import lejos.nxt.sensor.api.SensorDataProvider;
+import lejos.nxt.sensor.api.SampleProvider;
 import lejos.util.Delay;
 
 /**
@@ -9,8 +9,8 @@ import lejos.util.Delay;
  * @author Aswin Bouwmeester
  *
  */
-public class CalibrateOffsetScale implements SensorDataProvider{
-	private SensorDataProvider source;
+public class CalibrateOffsetScale implements SampleProvider{
+	private SampleProvider source;
 	private float offsetCorrection=0;
 	private float scaleCorrection=1;
 	private float lowRaw=0, lowCorrected=0;
@@ -24,7 +24,7 @@ public class CalibrateOffsetScale implements SensorDataProvider{
 	 * Object that serves as a data source for the decorator.
 	 * A source can be a sensor driver or another decorator.
 	 */
-	public CalibrateOffsetScale(SensorDataProvider source) {
+	public CalibrateOffsetScale(SampleProvider source) {
 		this.source=source;
 	}
 
@@ -32,8 +32,8 @@ public class CalibrateOffsetScale implements SensorDataProvider{
 		return source.getMinimumFetchInterval();
 	}
 
-	public float fetchData() {
-		return (source.fetchData()-offsetCorrection)*scaleCorrection;
+	public float fetchSample() {
+		return (source.fetchSample()-offsetCorrection)*scaleCorrection;
 	}
 	
 	/**
@@ -107,10 +107,10 @@ public class CalibrateOffsetScale implements SensorDataProvider{
 		stat.setSampleSize(sampleSize);
 		stat.setStatistic(StatisticsFilter.MEAN);
 		for (int i=1;i<sampleSize;i++) {
-			stat.fetchData();
+			stat.fetchSample();
 			Delay.msDelay(getMinimumFetchInterval());
 		}
-		return stat.fetchData();
+		return stat.fetchSample();
 	}
 
 }

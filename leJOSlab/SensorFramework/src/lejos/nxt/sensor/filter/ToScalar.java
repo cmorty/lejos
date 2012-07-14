@@ -7,8 +7,8 @@ import lejos.nxt.sensor.api.*;
  * 
  * @author Aswin Bouwmeester
  */
-public class ToScalar implements SensorDataProvider {
-	private SensorVectorDataProvider	source;
+public class ToScalar implements SampleProvider {
+	private SampleProviderVector	source;
 	private String										axis	= "X";
 	private Vector3f									buf		= new Vector3f();
 
@@ -18,12 +18,12 @@ public class ToScalar implements SensorDataProvider {
 	 * @param source
 	 *          The source where the filter gets its data from
 	 */
-	public ToScalar(SensorVectorDataProvider source) {
+	public ToScalar(SampleProviderVector source) {
 		this.source = source;
 	}
 
-	public float fetchData() {
-		source.fetchData(buf);
+	public float fetchSample() {
+		source.fetchSample(buf);
 		if (axis.equals("X"))
 			return buf.x;
 		if (axis.equals("Y"))

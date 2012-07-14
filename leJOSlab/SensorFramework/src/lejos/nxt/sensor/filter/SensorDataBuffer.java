@@ -1,6 +1,6 @@
 package lejos.nxt.sensor.filter;
 
-import lejos.nxt.sensor.api.SensorDataProvider;
+import lejos.nxt.sensor.api.SampleProvider;
 import lejos.util.Delay;
 
 /**
@@ -10,8 +10,8 @@ import lejos.util.Delay;
  * @author Aswin Bouwmeester
  * 
  */
-public class SensorDataBuffer implements SensorDataProvider {
-	private SensorDataProvider	source;
+public class SensorDataBuffer implements SampleProvider {
+	private SampleProvider	source;
 	private int									refreshRate;
 	protected float							currentValue;
 	private boolean							running	= true;
@@ -21,7 +21,7 @@ public class SensorDataBuffer implements SensorDataProvider {
 	 * as a data source for the decorator. A source can be a sensor driver or
 	 * another decorator.
 	 */
-	public SensorDataBuffer(SensorDataProvider source) {
+	public SensorDataBuffer(SampleProvider source) {
 		this.source = source;
 		this.refreshRate = source.getMinimumFetchInterval();
 		Runner runner = new Runner();
@@ -32,7 +32,7 @@ public class SensorDataBuffer implements SensorDataProvider {
 	/*
 	 * Fetches the data from the buffer
 	 */
-	public float fetchData() {
+	public float fetchSample() {
 		return currentValue;
 	}
 
@@ -84,7 +84,7 @@ public class SensorDataBuffer implements SensorDataProvider {
 	 * @return data value from the sensor
 	 */
 	protected float fetchAndProcess() {
-		return source.fetchData();
+		return source.fetchSample();
 	}
 
 	/**

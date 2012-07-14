@@ -3,7 +3,7 @@ package lejos.nxt.sensor.example;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
-import lejos.nxt.sensor.api.SensorDataProvider;
+import lejos.nxt.sensor.api.SampleProvider;
 import lejos.nxt.sensor.filter.CalibrateOffsetScale;
 import lejos.nxt.sensor.filter.SensorDataBuffer;
 import lejos.nxt.sensor.sensor.LightSensor;
@@ -18,7 +18,7 @@ import lejos.util.Delay;
 public class TestScalarSensor{
 	int counter=0;
 	// set the sensor of choice (or use DummySensor)
-	SensorDataProvider sensor=new LightSensor(SensorPort.S1);
+	SampleProvider sensor=new LightSensor(SensorPort.S1);
 
 	/**
 	 * @param args
@@ -41,7 +41,7 @@ public class TestScalarSensor{
 //		filter.setSampleSize(5);
 		while (!Button.ESCAPE.isDown()) {
 			time=System.nanoTime();
-			value=buffer.fetchData();
+			value=buffer.fetchSample();
 			time=(System.nanoTime()-time)/1000000;
 			LCD.drawString("Value: "+value, 0, 5);
 			LCD.drawString("dt: "+time, 0, 6);

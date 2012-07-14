@@ -6,7 +6,7 @@ package lejos.nxt.sensor.example;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
-import lejos.nxt.sensor.api.SensorDataProvider;
+import lejos.nxt.sensor.api.SampleProvider;
 import lejos.nxt.sensor.filter.SensorDataBuffer;
 import lejos.nxt.sensor.filter.StatisticsFilter;
 import lejos.nxt.sensor.sensor.LightSensor;
@@ -28,7 +28,7 @@ public class MovingAverage {
 	
 	public MovingAverage(){ 
 	// instantiate sensor driver
-	SensorDataProvider sensor=new LightSensor(SensorPort.S1);
+	SampleProvider sensor=new LightSensor(SensorPort.S1);
 	
 	// Instantiate statistics filter, configure it to return the mean of last 10 samples
 	StatisticsFilter stat=new StatisticsFilter(sensor);
@@ -41,7 +41,7 @@ public class MovingAverage {
 
 	// Show average light coditions over the past second
 	while (!Button.ESCAPE.isDown()) {
-		LCD.drawString("Value: "+buffer.fetchData(), 0, 0);
+		LCD.drawString("Value: "+buffer.fetchSample(), 0, 0);
 		Delay.msDelay(buffer.getMinimumFetchInterval());
 	}
 }
