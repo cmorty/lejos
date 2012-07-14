@@ -13,7 +13,7 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class DiImuAccel extends DIMUAccel implements SensorVectorDataProvider {
+public class DiImuAccel extends DIMUAccel implements SampleProviderVector {
 	float buf[]=new float[3];
 
 	/**
@@ -34,7 +34,7 @@ public class DiImuAccel extends DIMUAccel implements SensorVectorDataProvider {
 	/* Provide acceleration in (m/s2) over three axes
 	 * @see lejos.nxt.sensor.api.SensorVectorDataProvider#fetchData(lejos.nxt.vecmath.Vector3f)
 	 */
-	public void fetchData(Vector3f data) {
+	public void fetchSample(Vector3f data) {
 		fetchAllAccel(buf);
 		data.set(buf[0],buf[1],buf[2]);
 	}

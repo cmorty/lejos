@@ -12,7 +12,7 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class MsAccelV3 extends AccelMindSensor implements SensorVectorDataProvider {
+public class MsAccelV3 extends AccelMindSensor implements SampleProviderVector {
 	int buf[]=new int[3];
 
 	/**
@@ -40,7 +40,7 @@ public class MsAccelV3 extends AccelMindSensor implements SensorVectorDataProvid
 	/* Provide acceleration in (m/s2) over three axes
 	 * @see lejos.nxt.sensor.api.SensorVectorDataProvider#fetchData(lejos.nxt.vecmath.Vector3f)
 	 */
-	public void fetchData(Vector3f data) {
+	public void fetchSample(Vector3f data) {
 		getAllAccel(buf, 0);
 		data.set(buf[0]*9810f,buf[1]*9810f,buf[2]*9810f);
 	}
