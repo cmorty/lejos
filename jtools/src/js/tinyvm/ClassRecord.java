@@ -853,7 +853,7 @@ public class ClassRecord implements WritableData
       catch (IOException e)
       {
          throw new TinyVMException("Class " + className2
-            + " (file " + className + ".class) not found in CLASSPATH " + aCP);
+            + " (file " + className + ".class) not found in classpath " + aCP, e);
       }
 
       ClassRecord pCR = new ClassRecord();
@@ -873,7 +873,8 @@ public class ClassRecord implements WritableData
       
       String actualName = pCR.iCF.getClassName();
       if (!actualName.equals(className2))
-          throw new TinyVMException("found class "+actualName+" instead of requested "+className2);
+          throw new TinyVMException("Found class "+actualName+" instead of requested "+className2
+        		+ ", check the classpath for errors");
       
       pCR.iType = TinyVMType.T_REFERENCE;
       pCR.iNumDims = 0;
