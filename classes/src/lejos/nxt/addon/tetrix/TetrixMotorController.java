@@ -101,7 +101,7 @@ public class TetrixMotorController extends I2CSensor {
     // I2C buffer
     private byte[] buf = new byte[12];
     
-    private int limitangle=0;
+    private int[] limitangle = {0,0};
 
     /**
      * Instantiate a HiTechnic TETRIX Motor Controller connected to the given <code>port</code> and daisy chain position.
@@ -403,7 +403,7 @@ public class TetrixMotorController extends I2CSensor {
             value *= 4;
         } else return;
         
-        this.limitangle = Math.round(value * .25f) ;
+        this.limitangle[channel] = Math.round(value * .25f) ;
         
         // set the encoder position
         EndianTools.encodeIntBE(value, buf, 0);
@@ -554,7 +554,7 @@ public class TetrixMotorController extends I2CSensor {
                 }
                 break;
             case CMD_GETLIMITANGLE:
-                commandRetVal = limitangle;
+                commandRetVal = limitangle[channel];
                 break;
             default:
                 throw new IllegalArgumentException("Invalid Command");
