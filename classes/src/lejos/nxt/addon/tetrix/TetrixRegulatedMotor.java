@@ -18,7 +18,7 @@ public class TetrixRegulatedMotor extends TetrixEncoderMotor implements Regulate
     
     RegulatedMotorListener listener;
     
-    public TetrixRegulatedMotor(TetrixMotorController mc, int channel) {
+    TetrixRegulatedMotor(TetrixMotorController mc, int channel) {
     	super(mc, channel);
         super.setRegulate(true);
     }
