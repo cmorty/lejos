@@ -204,7 +204,7 @@ public class NXTCommFactory {
 				ConfigManager.loadPropFile(ConfigManager.CONFIG_BTCACHE, props);
 			}
 		} catch (IOException e) {
-			throw new NXTCommException("Cannot read nxj.cache file", e);
+			throw new NXTCommException("Cannot read nxj.cache file: " + e.getMessage(), e);
 		}
 		return props;
 	}
@@ -223,7 +223,7 @@ public class NXTCommFactory {
 		if (isAndroid(osi)) {
 			FileOutputStream fos = new FileOutputStream(ANDROID_CACHEFILE);
 			try	{
-				props.store(fos, comment);
+				if (props != null) props.store(fos, comment);
 			} finally {
 				fos.close();
 			}

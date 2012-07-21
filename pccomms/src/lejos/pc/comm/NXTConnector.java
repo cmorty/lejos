@@ -163,7 +163,7 @@ public class NXTConnector extends NXTCommLoggable
 					debug("No NXTs found in cache file");
 				}
 			} catch (NXTCommException ex) {
-				log("Failed to load cache file");
+				log("Failed to load cache file: " + ex.getMessage());
 			}
 		
 			// If none found, do a Bluetooth inquiry
@@ -181,7 +181,7 @@ public class NXTConnector extends NXTCommLoggable
 				for(int i=0;i<nxtInfos.length;i++) {
 					log("Name " + i + " = " + nxtInfos[i].name);
 					log("Address " + i + " = " + nxtInfos[i].deviceAddress);
-					props.put("NXT_" + nxtInfos[i].deviceAddress, nxtInfos[i].name);
+					if (props != null) props.put("NXT_" + nxtInfos[i].deviceAddress, nxtInfos[i].name);
 				}
 				
 				debug("Saving cached names");
