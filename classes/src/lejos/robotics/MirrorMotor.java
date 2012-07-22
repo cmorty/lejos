@@ -109,7 +109,7 @@ public class MirrorMotor implements RegulatedMotor, RegulatedMotorListener {
 	}
 
 	public void stop(boolean immediateReturn) {
-		regMotor.stop();
+		regMotor.stop(immediateReturn);
 	}
 
 	public void waitComplete() {
