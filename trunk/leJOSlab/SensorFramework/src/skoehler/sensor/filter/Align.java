@@ -4,6 +4,14 @@ import lejos.nxt.sensor.api.Matrix3f;
 import lejos.nxt.sensor.api.Vector3f;
 import skoehler.sensor.api.VectorData;
 
+/**
+ * Rotates spatial sample data in 1,2, or 3 dimensions. <P>
+ * This class can be used to convert samples taken in one coordinate frame (for example sensor frame)
+ * to another coordinate frame (for example robot frame). The differences in orientation between the
+ * two frames is specified as a serie of rotations using the addRotation() method.  
+ * @author Aswin
+ *
+ */
 public class Align extends AbstractFilter{
 	Matrix3f rotateAxis=new Matrix3f(1,0,0,0,1,0,0,0,1);
 	Vector3f v=new Vector3f();
@@ -28,11 +36,12 @@ public class Align extends AbstractFilter{
 	 */
 	public void addRotation(String axis, int angle) {
 		axis = axis.toUpperCase();
+		double a=Math.toRadians(angle);
 		if ("XYZ".indexOf(axis) == -1)
 			throw new IllegalArgumentException("Invalid axis");
-		if (axis.equals("X")) addXRotation(Math.toRadians(angle));
-		if (axis.equals("Y")) addYRotation(Math.toRadians(angle));
-		if (axis.equals("Z")) addZRotation(Math.toRadians(angle));
+		if (axis.equals("X")) addXRotation(a);
+		if (axis.equals("Y")) addYRotation(a);
+		if (axis.equals("Z")) addZRotation(a);
 	}
 
 	@Override
@@ -40,6 +49,9 @@ public class Align extends AbstractFilter{
 		return 3;
 	}
 
+	/** Fetches a sample from the source and rotates it
+	 * @see skoehler.sensor.filter.AbstractFilter#fetchSample(float[], int)
+	 */
 	@Override
 	public void fetchSample(float[] dst, int off) {
 		source.fetchSample(sample, 0);
@@ -60,19 +72,25 @@ public class Align extends AbstractFilter{
 	}
 		
 	private void addXRotation(double a) {
-		Matrix3f r=new Matrix3f(1,0,0,0,cos(a),-sin(a),0,sin(a),cos(a));
+		Matrix3f r=new Matrix3f(1,			0,			0,
+														0,			cos(a),	sin(a),
+														0,			-sin(a),	cos(a));
 		r.mul(rotateAxis);
 		rotateAxis=r;
 	}
 	
 	private void addYRotation(double a) {
-		Matrix3f r=new Matrix3f(cos(a),0,sin(a),0,1,0,-sin(a),0,cos(a));
+		Matrix3f r=new Matrix3f(cos(a),	0,			-sin(a),
+														0,			1,			0,
+														sin(a),	0,			cos(a));
 		r.mul(rotateAxis);
 		rotateAxis=r;
 	}
 
 	private void addZRotation(double a) {
-		Matrix3f r=new Matrix3f(cos(a),-sin(a),0,sin(a),cos(a),0,0,0,1);
+		Matrix3f r=new Matrix3f(cos(a),	sin(a),	0,	
+														-sin(a),cos(a),	0,
+														0,			0,			1);
 		r.mul(rotateAxis);
 		rotateAxis=r;
 	}
@@ -95,7 +113,27 @@ public class Align extends AbstractFilter{
 	 * cosinus of angle
 	 */
 	private float cos(double angle) {
-		return (float)Math.sin(angle);
+		return (float)Math.cos(angle);
+	}
+	
+	public void printMatrix() {
+		printMatrix(rotateAxis);
+	}
+	
+	/**
+	 * Used for debugging. Outputs the elements of a matrix
+	 * @param m
+	 */
+	private void printMatrix (Matrix3f m) {
+		System.out.println();
+		System.out.println(fmt(m.m00) + " " + fmt(m.m01) + " " + fmt(m.m02));
+		System.out.println(fmt(m.m10) + " " + fmt(m.m11) + " " + fmt(m.m12));
+		System.out.println(fmt(m.m20) + " " + fmt(m.m21) + " " + fmt(m.m22));
+	}
+	
+	private String fmt(float in) {
+		String tmp=Float.toString(in)+"00000";
+		return tmp.substring(0, 4);
 	}
 
 }
