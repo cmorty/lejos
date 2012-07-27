@@ -794,7 +794,7 @@ public class LCPProxy implements NodeMain {
 
 	@Override
 	public GraphName getDefaultNodeName() {
-		return new GraphName("nxt_lejos_ros/lcp_proxy");
+		return GraphName.of("nxt_lejos_ros/lcp_proxy");
 	}
 
 	@Override

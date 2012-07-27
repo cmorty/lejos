@@ -707,7 +707,7 @@ public class ROSProxy implements NodeMain {
 
 	@Override
 	public GraphName getDefaultNodeName() {
-		return new GraphName("nxt_lejos/nxt_lejos_proxy");
+		return GraphName.of("nxt_lejos/nxt_lejos_proxy");
 	}
 	
 	@Override
