@@ -134,7 +134,7 @@ public class PublishOccupancyMap implements NodeMain {
 				}
 			}
 			
-			grid.setData(data);
+			//grid.setData(data);
 			 
 			String messageType = "nav_msgs/OccupancyGrid";
 		    Publisher<OccupancyGrid> topic = node.newPublisher("map", messageType);
@@ -154,7 +154,7 @@ public class PublishOccupancyMap implements NodeMain {
 
 	@Override
 	public GraphName getDefaultNodeName() {
-		return new GraphName("nxt_lejos/nxt_lejos_map_server");
+		return GraphName.of("nxt_lejos/nxt_lejos_map_server");
 	}
 
 	@Override

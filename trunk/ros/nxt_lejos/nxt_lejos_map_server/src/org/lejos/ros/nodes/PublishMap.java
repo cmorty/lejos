@@ -112,7 +112,7 @@ public class PublishMap implements NodeMain {
 
 	@Override
 	public GraphName getDefaultNodeName() {
-		return new GraphName("nxt_lejos/nxt_lejos_map_server");
+		return GraphName.of("nxt_lejos/nxt_lejos_map_server");
 	}
 
 	@Override
