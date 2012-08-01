@@ -529,6 +529,7 @@ public class LCP {
 				} else {
 					String msg = (cmd[4] == 0 ? inBox.get(0) : inBox.remove(0));
 					int msgLen = msg.length();
+					//FIXME according to datasheet, length includes null-terminatur
 					reply[4] = (byte) (msgLen > 58 ? 58 : msgLen);
 					for(int i=0;i<58 && i<msgLen;i++) {
 						reply[5+i] = (byte) msg.charAt(i);
@@ -540,6 +541,7 @@ public class LCP {
 		}
 		case MESSAGE_WRITE: {
 			if (listener != null) {
+				//FIXME according to datasheet, length includes null-terminatur which should be stripped
 				listener.messageReceived(cmd[2], new String(cmd,4,cmd[3]));
 			}
 			break;
