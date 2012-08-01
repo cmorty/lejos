@@ -636,42 +636,37 @@ public class NXTCommand implements NXTProtocol {
 		return sendRequest(request, 3);
 	}
 	
-	private int strlen(byte[] message, int off, int maxlen)
-	{
-		for (int i=0; i<maxlen; i++)
-			if (message[off+i] == 0)
-				return i;
-		return maxlen;
-	}
-	
 	/**
+	 * Read message.
 	 * @param remoteInbox 0-9
 	 * @param localInbox 0-9
 	 * @param remove True clears the message from the remote inbox.
-	 * @return the message as an array of bytes, excluding the null-terminator
+	 * @return the message as an array of bytes, excluding the trailing null-terminator
 	 */
 	public byte[] messageRead(byte remoteInbox, byte localInbox, boolean remove) throws IOException {
 		byte [] request = {DIRECT_COMMAND_REPLY, MESSAGE_READ, remoteInbox, localInbox, (remove ? (byte) 1 : (byte) 0)};
 		byte [] reply = nxtComm.sendRequest(request, 64);
-		int len1 = reply[4] & 0xFF;
-		//TODO if (len1 > 5+reply.length) throw exception
-		int len2 = strlen(reply, 5, len1);
-		byte[] message = new byte[len2];
-		System.arraycopy(reply, 5, message, 0, len2);
+		int size = reply[4] & 0xFF; //size includes null terminator 
+		// check whether length is in range and for null-terminator
+		if (size < 1 || size > 5 + reply.length || reply[4+size] != 0)
+			throw new LCPException("protocol error");
+		byte[] message = new byte[size-1];
+		System.arraycopy(reply, 5, message, 0, size-1);
 		return message;
 	}
 	
 	/**
 	 * Sends a message to an inbox on the NXT for storage(?)
 	 * For future reference, message size must be capped at 59 for USB.
+	 * A null terminator is automatically appended and should not be included in the message.
 	 * UNTESTED
-	 * @param message String to send. If message does not contain a null terminator, one is automatically appended.
+	 * @param message String to send.
 	 * @param inbox Inbox Number 0 - 9
 	 * @return the status (0 = success)
 	 */
 	public byte messageWrite(byte [] message, byte inbox) throws IOException {
 		//TODO check range of number, throw exception if message is too large
-		int len = strlen(message, 0, message.length);
+		int len = message.length;
 		byte[] request = new byte[5 + len];
 		request[0] = DIRECT_COMMAND_NOREPLY;
 		request[1] = MESSAGE_WRITE;
