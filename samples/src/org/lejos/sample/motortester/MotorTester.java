@@ -141,7 +141,7 @@ public class MotorTester implements CommandListener {
         } else if (connType == 3) { // NXTMMX
         	SensorPort port = SensorPort.getInstance(motorPort);
         	NXTMMX mmx = new NXTMMX(port);
-        	motor = new MMXRegulatedMotor(mmx, NXTMMX.MMX_MOTOR_1);
+        	motor = mmx.getBasicMotor(NXTMMX.MOTOR_M1);
         } else if (connType == 4) { // RCMMMX
           SensorPort port = SensorPort.getInstance(motorPort);
           RCXMotorMultiplexer mmx = new RCXMotorMultiplexer(port);
