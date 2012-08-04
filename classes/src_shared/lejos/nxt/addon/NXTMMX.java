@@ -310,7 +310,7 @@ public class NXTMMX extends I2CSensor {
      * 
      * @param motorID The motor ID number. This is indicated on the NXTMMX Motor Controller and is
      * represented using <code> {@link #MOTOR_M1}</code> or <code> {@link #MOTOR_M2}</code>.
-     * @return The <code>MMXRegulatedMotor</code> instance 
+     * @return The <code>MMXMotor</code> instance 
      * @throws IllegalArgumentException if invalid <code>motorID</code>
      * @throws UnsupportedOperationException if <code>motorID</code> has already been used for a 
      * <code>MMXRegulatedMotor</code> motor instance.
