@@ -21,8 +21,8 @@ public class NXTMMXSample {
 	public static void main(String[] args) {
 		NXTMMX mux = new NXTMMX(SensorPort.S1);
 		
-		MMXRegulatedMotor cat = new MMXRegulatedMotor(mux, NXTMMX.MMX_MOTOR_1);
-		MMXRegulatedMotor dog = new MMXRegulatedMotor(mux, NXTMMX.MMX_MOTOR_2);
+		MMXRegulatedMotor cat = mux.getRegulatedMotor(NXTMMX.MOTOR_M1);
+		MMXRegulatedMotor dog = mux.getRegulatedMotor(NXTMMX.MOTOR_M2);
 		
 	    // add a listener to tell us when cat starts and stops
         RegulatedMotorListener rml = new RegulatedMotorListener(){
