@@ -17,8 +17,8 @@ public class OmissionFilter extends AbstractFilter{
     }
 
     @Override
-	public int getAxisCount() {
-        return this.source.getAxisCount();
+	public int getElementCount() {
+        return this.source.getElementCount();
     }
 
     @Override

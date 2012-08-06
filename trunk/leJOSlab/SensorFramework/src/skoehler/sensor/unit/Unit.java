@@ -37,7 +37,7 @@ public class Unit {
 		
 		float f = to.factor / from.factor;
 		float o = to.offset - f * from.offset;
-		int ac = source.getAxisCount();
+		int ac = source.getElementCount();
 		
 		if (o == 0f)
 		{

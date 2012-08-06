@@ -19,7 +19,7 @@ public class SampleFork {
             throw new IllegalArgumentException();
             
         final int q = source.getQuantity();
-        final int ac = source.getAxisCount();
+        final int ac = source.getElementCount();
         this.source = source;
         this.axisCount = ac;
         this.buffer = new float[ac * buffersize];
@@ -30,7 +30,7 @@ public class SampleFork {
                 return q;
             }
             
-            public int getAxisCount() {
+            public int getElementCount() {
                 return ac;
             }
             
@@ -45,7 +45,7 @@ public class SampleFork {
                 return q;
             }
             
-            public int getAxisCount() {
+            public int getElementCount() {
                 return ac;
             }
             

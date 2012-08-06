@@ -45,7 +45,7 @@ public class Align extends AbstractFilter{
 	}
 
 	@Override
-	public int getAxisCount() {
+	public int getElementCount() {
 		return 3;
 	}
 

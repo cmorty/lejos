@@ -28,7 +28,7 @@ public class SampleLogger extends AbstractFilter{
 	public SampleLogger(VectorData source, NXTDataLogger log, String legend) {
 		super(source);
 		LogColumn col;
-		axisCount=source.getAxisCount();
+		axisCount=source.getElementCount();
 		this.log=log;
 		if (axisCount==1) {
 			col=new LogColumn(legend,LogColumn.DT_FLOAT);
@@ -41,7 +41,7 @@ public class SampleLogger extends AbstractFilter{
 	}
 
 	@Override
-	public int getAxisCount() {
+	public int getElementCount() {
 		return axisCount;
 	}
 

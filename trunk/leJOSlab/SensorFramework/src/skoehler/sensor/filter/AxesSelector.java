@@ -15,7 +15,7 @@ public class AxesSelector extends AbstractFilter {
 	
 	public AxesSelector(VectorData source, int[] axes) {
 		super(source);
-		int ac = source.getAxisCount();
+		int ac = source.getElementCount();
 		for (int i=0; i<axes.length; i++)
 			if (axes[i] < 0 || axes[i] >= ac)
 				throw new IllegalArgumentException();
@@ -27,7 +27,7 @@ public class AxesSelector extends AbstractFilter {
 
 
 	@Override
-	public int getAxisCount() {
+	public int getElementCount() {
 		return this.axes.length;
 	}
 

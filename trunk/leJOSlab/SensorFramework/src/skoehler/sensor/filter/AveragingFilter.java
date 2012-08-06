@@ -20,13 +20,13 @@ public class AveragingFilter extends AbstractFilter {
 		if (length < 1)
 			throw new IllegalArgumentException();
 		
-		this.axisCount = source.getAxisCount();
+		this.axisCount = source.getElementCount();
 		this.buffer = new float[this.axisCount * length];
 		this.sum = new float[this.axisCount];
 	}
 
 	@Override
-	public int getAxisCount() {
+	public int getElementCount() {
 		return this.axisCount;
 	}
 

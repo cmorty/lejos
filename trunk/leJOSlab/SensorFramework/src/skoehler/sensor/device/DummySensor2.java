@@ -15,7 +15,7 @@ public class DummySensor2 implements VectorData {
 		return Quantities.LENGTH;
 	}
 
-	public int getAxisCount() {
+	public int getElementCount() {
 		return 1;
 	}
 

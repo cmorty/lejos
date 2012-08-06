@@ -26,7 +26,7 @@ public abstract class AbstractFilter implements VectorData{
 	/* (non-Javadoc)
 	 * @see skoehler.sensor.api.VectorData#getAxisCount()
 	 */
-	public abstract int getAxisCount();
+	public abstract int getElementCount();
 
 	/* (non-Javadoc)
 	 * @see skoehler.sensor.api.VectorData#fetchSamples(float[], int)

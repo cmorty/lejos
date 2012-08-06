@@ -12,7 +12,7 @@ public class SampleBuffer extends AbstractFilter{
 
 	public SampleBuffer(VectorData source) {
 		super(source);
-		axisCount=getAxisCount();
+		axisCount=getElementCount();
 		buffer=new float[axisCount];
 		Runner runner = new Runner();
 		runner.setDaemon(true);
@@ -47,8 +47,8 @@ public class SampleBuffer extends AbstractFilter{
 	}
 
 	@Override
-	public int getAxisCount() {
-		return source.getAxisCount();
+	public int getElementCount() {
+		return source.getElementCount();
 	}
 
 	@Override

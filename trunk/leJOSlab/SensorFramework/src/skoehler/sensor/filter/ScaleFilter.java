@@ -15,7 +15,7 @@ public class ScaleFilter extends AbstractFilter{
 	
 	public ScaleFilter(VectorData source, float[] factors) {
 		super(source);
-		int ac = source.getAxisCount();
+		int ac = source.getElementCount();
 		if (factors.length < ac)
 			throw new IllegalArgumentException();
 		
@@ -26,7 +26,7 @@ public class ScaleFilter extends AbstractFilter{
 
 
 	@Override
-	public int getAxisCount() {
+	public int getElementCount() {
 		return this.buffer.length;
 	}
 

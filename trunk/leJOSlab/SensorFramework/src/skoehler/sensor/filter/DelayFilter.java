@@ -18,12 +18,12 @@ public class DelayFilter extends AbstractFilter {
 		if (length < 1)
 			throw new IllegalArgumentException();
 		
-		this.axisCount = source.getAxisCount();
+		this.axisCount = source.getElementCount();
 		this.buffer = new float[this.axisCount * length];
 	}
 
 	@Override
-	public int getAxisCount() {
+	public int getElementCount() {
 		return this.axisCount;
 	}
 

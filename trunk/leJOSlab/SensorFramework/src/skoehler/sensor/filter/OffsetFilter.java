@@ -15,7 +15,7 @@ public class OffsetFilter extends AbstractFilter {
 	
 	public OffsetFilter(VectorData source, float[] offsets) {
 		super(source);
-		int ac = source.getAxisCount();
+		int ac = source.getElementCount();
 		if (offsets.length < ac)
 			throw new IllegalArgumentException();
 		
@@ -25,7 +25,7 @@ public class OffsetFilter extends AbstractFilter {
 	}
 
 	@Override
-	public int getAxisCount() {
+	public int getElementCount() {
 		return this.buffer.length;
 	}
 

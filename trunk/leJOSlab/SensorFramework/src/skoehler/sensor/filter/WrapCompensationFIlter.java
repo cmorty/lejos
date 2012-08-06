@@ -22,7 +22,7 @@ public class WrapCompensationFIlter extends AbstractFilter {
 	 */
 	public WrapCompensationFIlter(VectorData source, float[] wrap) {
 		super(source);
-		int ac = this.getAxisCount();
+		int ac = this.getElementCount();
 		if (wrap.length < ac)
 			throw new IllegalArgumentException();
 
@@ -33,8 +33,8 @@ public class WrapCompensationFIlter extends AbstractFilter {
 	}
 
 	@Override
-	public int getAxisCount() {
-		return this.source.getAxisCount();
+	public int getElementCount() {
+		return this.source.getElementCount();
 	}
 
 	@Override

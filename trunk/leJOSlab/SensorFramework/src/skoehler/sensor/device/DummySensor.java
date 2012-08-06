@@ -10,7 +10,7 @@ public class DummySensor implements VectorData {
 		return Quantities.ACCELERATION;
 	}
 
-	public int getAxisCount() {
+	public int getElementCount() {
 		return 3;
 	}
 
