@@ -24,14 +24,11 @@ public class UsSensorSimple {
 
 	public UsSensorSimple() {
 		LcUltrasonic sensor=new LcUltrasonic(SensorPort.S1);
-		StatisticsFilter range=new StatisticsFilter(sensor);
-		range.setStatistic(StatisticsFilter.MEDIAN);
-		range.setSampleSize(5);
+		int wait=(int) (1000/sensor.getSampleRate());
+		StatisticsFilter range=new StatisticsFilter(sensor,StatisticsFilter.MEDIAN,5);
 		while (!Button.ESCAPE.isDown()) {
-			LCD.drawString("Range: "+range.fetchSample(), 0, 0);
-			Delay.msDelay(range.getMinimumFetchInterval());
+			LCD.drawString("Range: "+range.fetchSample()+"  ", 0, 0);
+			Delay.msDelay(wait);
 		}
-
 	}
-	
 }

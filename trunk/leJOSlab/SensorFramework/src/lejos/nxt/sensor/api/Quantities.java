@@ -5,7 +5,7 @@ package lejos.nxt.sensor.api;
  * @author Aswin
  *
  */
-public interface SensorQuantities {
+public interface Quantities {
 	/**
 	 * Raw data from analogue sensors (in the range of 0-1023)
 	 */
@@ -26,6 +26,14 @@ public interface SensorQuantities {
 	 * Rotation, or angle between robot and some reference axis 
 	 */
 	public static final int ROTATION=4;
+	/**
+	 * Magnetic field
+	 */
+	public static final int	MAGNETIC_FIELD	= 5;
+	/**
+	 * Angle in radians
+	 */
+	static final int	ANGLE	= 6;
 
 	// TODO: add some more
 }

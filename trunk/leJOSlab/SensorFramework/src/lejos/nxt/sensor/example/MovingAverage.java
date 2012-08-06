@@ -7,9 +7,8 @@ import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import lejos.nxt.sensor.api.SampleProvider;
-import lejos.nxt.sensor.filter.SensorDataBuffer;
-import lejos.nxt.sensor.filter.StatisticsFilter;
-import lejos.nxt.sensor.sensor.LightSensor;
+import lejos.nxt.sensor.filter.*;
+import lejos.nxt.sensor.sensor.*;
 import lejos.util.Delay;
 
 /**
@@ -28,21 +27,18 @@ public class MovingAverage {
 	
 	public MovingAverage(){ 
 	// instantiate sensor driver
-	SampleProvider sensor=new LightSensor(SensorPort.S1);
+	SampleProvider sensor=new LcLight(SensorPort.S1);
 	
 	// Instantiate statistics filter, configure it to return the mean of last 10 samples
-	StatisticsFilter stat=new StatisticsFilter(sensor);
-	stat.setStatistic(StatisticsFilter.MEAN);
-	stat.setSampleSize(10);
+	StatisticsFilter stat=new StatisticsFilter(sensor,StatisticsFilter.MEAN,10);
 	
-	// Instantiate buffer, configure it to fetch a new sample every 100 msec
-	SensorDataBuffer buffer=new SensorDataBuffer(stat);
-	buffer.setRefreshRate(100);
-
+	// Instantiate buffer, configure it to fetch a new sample at 10 Hertz
+	SampleBuffer buffer=new SampleBuffer(stat,10);
+	
 	// Show average light coditions over the past second
 	while (!Button.ESCAPE.isDown()) {
 		LCD.drawString("Value: "+buffer.fetchSample(), 0, 0);
-		Delay.msDelay(buffer.getMinimumFetchInterval());
+		Delay.msDelay(100);
 	}
 }
 

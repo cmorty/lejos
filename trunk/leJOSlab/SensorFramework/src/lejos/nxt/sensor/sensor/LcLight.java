@@ -1,7 +1,7 @@
 package lejos.nxt.sensor.sensor;
 
 import lejos.nxt.ADSensorPort;
-import lejos.nxt.sensor.api.SampleProvider;
+import lejos.nxt.sensor.api.*;
 
 /**
  * Adapter POC class lejos.nxt.LightSensor-to-SensorDataProvider 
@@ -19,12 +19,24 @@ public class LcLight extends lejos.nxt.LightSensor implements SampleProvider{
 		super(port);
 	}
 	
-	public int getMinimumFetchInterval() {
-		return 4;
-	}
-
+	
 	public float fetchSample() {
 		return this.getLightValue();
+	}
+
+
+	public int getQuantity() {
+		return Quantities.RAW;
+	}
+
+
+	public int getElemensCount() {
+		return 1;
+	}
+
+
+	public void fetchSample(float[] dst, int off) {
+		dst[off]=fetchSample();
 	}
 	
 }
