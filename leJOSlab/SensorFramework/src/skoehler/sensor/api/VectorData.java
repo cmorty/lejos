@@ -8,13 +8,13 @@ import skoehler.sensor.filter.AveragingFilter;
  */
 public interface VectorData {
 	int getQuantity();
-	int getAxisCount();
+	int getElementCount();
 	
 	/**
 	 * Intentionally, this does not use Vector3f. See {@link AveragingFilter} for an example why.
 	 * Samples are returned in the default unit of the quantity returned by {@link #getQuantity()}.
 	 * Take a look {@link Quantities} to see which unit is the default unit.
-	 * This method writes as many samples as this sensor has axes (see {@link #getAxisCount()})
+	 * This method writes as many samples as this sensor has axes (see {@link #getElementCount()})
 	 * to the given destination array.
 	 * 
 	 * @param dst destination array 

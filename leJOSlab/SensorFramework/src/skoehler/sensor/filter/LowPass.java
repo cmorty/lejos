@@ -22,14 +22,14 @@ public class LowPass extends AbstractFilter{
 	 */
 	public LowPass(VectorData source, float timeConstant) {
 		super(source);
-		axisCount=source.getAxisCount();
+		axisCount=source.getElementCount();
 		smoothed=new float[axisCount];
 		lastTime=System.currentTimeMillis();
 		this.timeConstant=timeConstant;
 	}
 
 	@Override
-	public int getAxisCount() {
+	public int getElementCount() {
 		return axisCount;
 	}
 

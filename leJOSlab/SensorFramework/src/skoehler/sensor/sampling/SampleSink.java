@@ -15,7 +15,7 @@ public class SampleSink extends AbstractFilter {
     
     public SampleSink(VectorData source) {
     	super(source);
-        int ac = source.getAxisCount();
+        int ac = source.getElementCount();
         this.buffer = new float[ac];
         
         //TODO implement means to start/stop thread, set priority, etc.
@@ -29,7 +29,7 @@ public class SampleSink extends AbstractFilter {
     }
 
     @Override
-	public int getAxisCount() {
+	public int getElementCount() {
         return this.buffer.length;
     }
 

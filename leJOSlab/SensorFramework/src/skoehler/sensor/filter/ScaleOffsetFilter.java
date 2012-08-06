@@ -16,7 +16,7 @@ public class ScaleOffsetFilter extends AbstractFilter {
 	
 	public ScaleOffsetFilter(VectorData source, float[] factors, float[] offsets) {
 		super(source);
-		int ac = source.getAxisCount();
+		int ac = source.getElementCount();
 		if (offsets.length < ac)
 			throw new IllegalArgumentException();
 		
@@ -29,7 +29,7 @@ public class ScaleOffsetFilter extends AbstractFilter {
 
 
 	@Override
-	public int getAxisCount() {
+	public int getElementCount() {
 		return this.buffer.length;
 	}
 

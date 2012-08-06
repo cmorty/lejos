@@ -16,7 +16,7 @@ public class AxisSelector extends AbstractScalarData {
 	
 	public AxisSelector(VectorData source, int axis) {
 		super(source);
-		int ac = source.getAxisCount();
+		int ac = source.getElementCount();
 		if (axis < 0 || axis >= ac)
 			throw new IllegalArgumentException();
 		

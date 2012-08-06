@@ -22,7 +22,7 @@ public class SamplingThread extends AbstractFilter {
     	if (buffersize < 1)
             throw new IllegalArgumentException();
             
-        int ac = source.getAxisCount();
+        int ac = source.getElementCount();
         this.interval = interval;
         this.axisCount = ac;
         this.buffer = new float[ac * buffersize];
@@ -42,7 +42,7 @@ public class SamplingThread extends AbstractFilter {
     }
 
 	@Override
-	public int getAxisCount() {
+	public int getElementCount() {
 	    return this.axisCount;
 	}
 

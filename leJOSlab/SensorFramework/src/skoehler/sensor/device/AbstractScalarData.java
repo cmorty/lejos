@@ -17,7 +17,7 @@ public abstract class AbstractScalarData extends AbstractFilter implements Scala
 	}
 
 	@Override
-	public final int getAxisCount() {
+	public final int getElementCount() {
 		return 1;
 	}
 

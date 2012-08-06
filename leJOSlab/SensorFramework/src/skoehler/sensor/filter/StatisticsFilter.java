@@ -33,7 +33,7 @@ public class StatisticsFilter extends AbstractFilter{
 
 	public StatisticsFilter(VectorData source) {
 		super(source);
-		axisCount=source.getAxisCount();
+		axisCount=source.getElementCount();
 		sampleBuffer=new float[axisCount];
 		reset();
 	}
@@ -64,7 +64,7 @@ public class StatisticsFilter extends AbstractFilter{
 
 
 	@Override
-	public int getAxisCount() {
+	public int getElementCount() {
 		return axisCount;
 	}
 

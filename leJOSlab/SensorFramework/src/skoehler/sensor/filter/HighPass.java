@@ -23,7 +23,7 @@ public class HighPass extends AbstractFilter{
 	 */
 	public HighPass(VectorData source, float timeConstant) {
 		super(source);
-		axisCount=source.getAxisCount();
+		axisCount=source.getElementCount();
 		smoothed=new float[axisCount];
 		previous=new float[axisCount];
 		lastTime=System.currentTimeMillis();
@@ -31,7 +31,7 @@ public class HighPass extends AbstractFilter{
 	}
 
 	@Override
-	public int getAxisCount() {
+	public int getElementCount() {
 		return axisCount;
 	}
 
