@@ -9,8 +9,6 @@ import skoehler.sensor.api.VectorData;
  */
 public class DummySensor2 implements VectorData {
 	
-	private int x;
-
 	public int getQuantity() {
 		return Quantities.LENGTH;
 	}
@@ -20,11 +18,10 @@ public class DummySensor2 implements VectorData {
 	}
 
 	public void fetchSample(float[] dst, int off) {
-		int y = x;
+		int y = (int)(System.currentTimeMillis() % 200);
 		if (y > 100)
 			y = 200-y;
 		dst[off] = y;
-		x = (x +1) % 200;
 	}
 
 }
