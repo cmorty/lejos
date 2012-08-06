@@ -29,24 +29,20 @@ public class UsSensorAdvanced {
 	}
 
 	public UsSensorAdvanced() {
-		Vector3f obstacle=new Vector3f();
+		float[] obstacle=new float[3];
+		
+		// instantiate US sensor
 		LcUltrasonic sensor=new LcUltrasonic(SensorPort.S1);
 
-		// add statistics filter (median, N=5) to remove incidental out-of-range values 
-		StatisticsFilter range=new StatisticsFilter(sensor);
-		range.setStatistic(StatisticsFilter.MEDIAN);
-		range.setSampleSize(5);
+		// Filter out incidental out of range values using a statistics filter
+		StatisticsFilter range=new StatisticsFilter(sensor,StatisticsFilter.MEDIAN,5);
 		
-		// buffer value, so that it can be used in multiple data streams, and to always have fresh samples
-		SensorDataBuffer bufferedRange=new SensorDataBuffer(range);
-		bufferedRange.setRefreshRate(range.getMinimumFetchInterval());
+		// buffer the sample, so that it can be used in multiple data streams
+		SampleBuffer bufferedRange=new SampleBuffer(range,sensor.getSampleRate());
 		
-		// convert range to position relative to sensor;
-		ToVector rangeVector=new ToVector(bufferedRange);
-		rangeVector.setAxis("X");
-		
-		// convert position to position relative to robot;
-		Align toPosition=new Align(rangeVector);
+		// convert range to the position of the detected obstacle (relative to robot);
+		Align toPosition=new Align(bufferedRange);
+		// the sensor is pointing 45 degrees to the left instead of straight ahead
 		toPosition.addRotation("Z", 45);
 		
 		// Show distance to obstacle;
@@ -57,10 +53,10 @@ public class UsSensorAdvanced {
 				LCD.drawString("OutOfRange", 0, 1);
 			}
 			else {
-				LCD.drawString("to sensor: "+bufferedRange.fetchSample(), 0, 1);
-				toPosition.fetchSample(obstacle);
-				LCD.drawString("to front: "+obstacle.x, 0, 2);
-				LCD.drawString("to left: "+obstacle.y, 0, 3);
+				LCD.drawString("range: "+bufferedRange.fetchSample(), 0, 1);
+				toPosition.fetchSample(obstacle,0);
+				LCD.drawString("to front: "+obstacle[0], 0, 2);
+				LCD.drawString("to left: "+obstacle[1], 0, 3);
 			}
 			Delay.msDelay(100);
 		}

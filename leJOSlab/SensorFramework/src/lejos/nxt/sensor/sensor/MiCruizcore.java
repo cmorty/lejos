@@ -16,11 +16,11 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class MiCruizcore extends CruizcoreGyro implements SampleProviderVector,SampleProvider,SensorQuantities {
+public class MiCruizcore extends CruizcoreGyro implements MultipleSampleProvider {
 
-	Accel accel=new Accel();
-	Gyro gyro=new Gyro();
-	Azimuth azimuth=new Azimuth();
+	private static final int[] QUANTITIES={Quantities.ACCELERATION, Quantities.ROTATION, Quantities.ANGLE};
+	@SuppressWarnings("synthetic-access")
+	private final SampleProvider[] providers={new Accel(),new Gyro(),new Azimuth()};
 	
 	/**
 	 * @param port
@@ -29,42 +29,7 @@ public class MiCruizcore extends CruizcoreGyro implements SampleProviderVector,S
 		super(port);
 	}
 
-	/* (non-Javadoc)
-	 * @see lejos.nxt.sensor.api.SensorVectorDataProvider#getMinimumFetchInterval()
-	 */
-	public int getMinimumFetchInterval() {
-		return 10;
-	}
-
-	/**
-	 *  Returns acceleration (in m/s2) over three axes
-	 * @see lejos.nxt.sensor.api.SampleProviderVector#fetchSample(Vector3f)
-	 */
-	public void fetchSample(Vector3f data) {
-	  accel.fetchSample(data);
-	}
 	
-	
-	/**
-	 * returns rotation (in rad);
-	 * @return
-	 */
-	public float fetchSample() {
-		return azimuth.fetchSample();
-	}
-	
-	/**
-	 * Returns a data provider for scalar data
-	 * @param quantity 
-	 * This sensor only supports AZIMUTH as scalar quantity
-	 * @return
-	 * reference to a SensorDataProvider
-	 */
-	public SampleProvider getDataProvider(int quantity) {
-		if (quantity!=ROTATION) throw new IllegalArgumentException("Invalid quantity");
-		return azimuth;
-	}
-
 	/**
 	 * Returns a data provider for vector data
 	 * @param quantity 
@@ -72,63 +37,86 @@ public class MiCruizcore extends CruizcoreGyro implements SampleProviderVector,S
 	 * @return
 	 * reference to a SensorDataProvider
 	 */
-	public SampleProviderVector getVectorDataProvider(int quantity) {
-		if (quantity==TURNRATE)return gyro;
-		if (quantity==ACCELERATION)return accel;
-		throw new IllegalArgumentException("Invalid quantity");
+	public SampleProvider getSampleProvider(int quantity) {
+		for (int i=0;i<QUANTITIES.length;i++)
+			if (quantity==QUANTITIES[i]) return providers[i];
+		return null;
 	}
 
 	
 	
 	
-	private class Gyro implements SampleProviderVector {
+	private class Gyro implements SampleProvider {
 
-		public int getMinimumFetchInterval() {
-			return getMinimumFetchInterval();
-		}
-
+	
 		/* Returns rate of turn (in Rad/s)
 		 * @see lejos.nxt.sensor.api.SensorVectorDataProvider#fetchData(lejos.nxt.vecmath.Vector3f)
 		 */
-		public void fetchSample(Vector3f data) {
-			data.x=Float.NaN;
-			data.y=Float.NaN;
-			data.z=(float) Math.toRadians(getRate()/100.0f);
+		public void fetchSample(float[] data, int off) {
+			data[off]=fetchSample();
+		}
+
+		public int getQuantity() {
+			return Quantities.TURNRATE;
+		}
+
+		public int getElemensCount() {
+			return 1;
+		}
+
+		public float fetchSample() {
+			return (float) Math.toRadians(getRate()/100.0f);
 		}
 		
 	}
 
-	private class Accel implements SampleProviderVector {
+	private class Accel implements SampleProvider {
 
-		public int getMinimumFetchInterval() {
-			return getMinimumFetchInterval();
-		}
 
-		public void fetchSample(Vector3f data) {
+		public void fetchSample(float[] data, int off) {
 			int[] buf=getAccel();
 			// assuming 2 G range
-			data.x=buf[0]*9.81f/1000.0f;
-			data.y=buf[1]*9.81f/1000.0f;
-			data.z=buf[2]*9.81f/1000.0f;
+			for (int i=0;i<3;i++)
+				data[i+off]=buf[0]*9.81f/1000.0f;
+		}
+
+		public int getQuantity() {
+			return Quantities.ACCELERATION;
+		}
+
+		public int getElemensCount() {
+			return 3;
+		}
+
+		public float fetchSample() {
+			return getAccel()[0]*9.81f/1000.0f;
 		}
 		
 	}
 	
 	private class Azimuth implements SampleProvider {
 
-		public int getMinimumFetchInterval() {
-			return getMinimumFetchInterval();
-		}
-
-		/* Returns rate of turn (in Rad/s)
-		 * @see lejos.nxt.sensor.api.SensorVectorDataProvider#fetchData(lejos.nxt.vecmath.Vector3f)
-		 */
 		public float fetchSample() {
 			return (float) Math.toRadians(getAngle()/100.0f);
 		}
+
+		public int getQuantity() {
+			return Quantities.ANGLE;
+		}
+
+		public int getElemensCount() {
+			return 1;
+		}
+
+		public void fetchSample(float[] dst, int off) {
+			dst[off]=fetchSample();
+		}
 		
 	}
-	
-	
+
+	public int[] getSupportedQuantities() {
+		return new int[]{Quantities.ACCELERATION, Quantities.ROTATION, Quantities.ANGLE};
+	}
+
 	
 }

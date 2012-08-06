@@ -10,20 +10,40 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class LcUltrasonic extends UltrasonicSensor implements SampleProvider{
+public class LcUltrasonic extends UltrasonicSensor implements SampleProvider, SensorInfo{
 
 	public LcUltrasonic(I2CPort port) {
 		super(port);
 	}
 
-	public int getMinimumFetchInterval() {
-		// Hmm, not visible;
-		//return DELAY_DATA_OTHER;
-		return 30;
-	}
 
 	public float fetchSample() {
 		return getDistance();
+	}
+
+
+	public int getQuantity() {
+		return Quantities.LENGTH;
+	}
+
+
+	public int getElemensCount() {
+		return 1;
+	}
+
+
+	public void fetchSample(float[] dst, int off) {
+		dst[off]=fetchSample();
+	}
+
+
+	public float getSampleRate() {
+		return 20;
+	}
+
+
+	public float getMaximumRange() {
+		return 254;
 	}
 
 }
