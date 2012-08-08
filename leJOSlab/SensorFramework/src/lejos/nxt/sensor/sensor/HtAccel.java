@@ -9,7 +9,7 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class HtAccel extends AccelHTSensor implements SampleProviderVector{
+public class HtAccel extends AccelHTSensor implements SampleProvider{
 	int buf[]=new int[3];
 
 	public HtAccel(I2CPort port) {
@@ -20,17 +20,23 @@ public class HtAccel extends AccelHTSensor implements SampleProviderVector{
 		super(port,address);
 	}
 
-	public int getMinimumFetchInterval() {
-		return 10;
+	public int getQuantity() {
+		return Quantities.ACCELERATION;
 	}
 
-	
-	/* Provide acceleration in (m/s2) over three axes
-	 * @see lejos.nxt.sensor.api.SensorVectorDataProvider#fetchData(lejos.nxt.vecmath.Vector3f)
-	 */
-	public void fetchSample(Vector3f data) {
+	public int getElemensCount() {
+		return 3;
+	}
+
+	public void fetchSample(float[] dst, int off) {
 		getAllAccel(buf, 0);
-		data.set(buf[0]*9.81f/200.0f,buf[1]*9.81f/200.0f,buf[2]*9.81f/200.0f);
+		for (int i=0;i<3;i++) 
+			dst[i+off]=buf[i]*(9.81f/200.0f);
+	}
+
+	public float fetchSample() {
+		getAllAccel(buf, 0);
+		return buf[0]*(9.81f/200.0f);
 	}
 
 }
