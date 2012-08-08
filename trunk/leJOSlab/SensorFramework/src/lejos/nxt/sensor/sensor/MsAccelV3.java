@@ -23,6 +23,7 @@ public class MsAccelV3 extends I2CSensor implements SampleProvider {
 	private int range=2;
   private static byte ACCEL = 0x45;
   private static byte REGRANGE = 0x41;
+  private static float MULTIPLIER=0.00981f;
 
 
 	/**
@@ -39,12 +40,12 @@ public class MsAccelV3 extends I2CSensor implements SampleProvider {
 	public MsAccelV3(I2CPort port, int address) {
 		super(port, address, I2CPort.HIGH_SPEED, TYPE_LOWSPEED);
 		sendData(REGRANGE, (byte) (49+range));
-    Delay.msDelay(150);	}
+    Delay.msDelay(50);	}
 
 	public void fetchSample(float[] data, int off) {
 		getData(ACCEL, buf, 6);
 		for (int i=0;i<3;i++) 
-	   data[i+off]=EndianTools.decodeShortLE(buf, i*2)*9810f;
+	   data[i+off]=EndianTools.decodeShortLE(buf, i*2)*MULTIPLIER;
 	}
 
 	public int getQuantity() {
@@ -55,11 +56,6 @@ public class MsAccelV3 extends I2CSensor implements SampleProvider {
 		return 3;
 	}
 
-
-	public float fetchSample() {
-		fetchSample(dummy, 0);
-		return buf[0]*9810f;
-	}
 	
 	@Override
 	public String getVendorID() {
@@ -102,5 +98,10 @@ public class MsAccelV3 extends I2CSensor implements SampleProvider {
   public float[] getRanges() {
   	return RANGES;
   }
+
+	public float fetchSample() {
+		getData(ACCEL, buf, 2);
+	  return EndianTools.decodeShortLE(buf, 0)*MULTIPLIER;
+	}
   
 }

@@ -12,6 +12,7 @@ import lejos.util.NXTDataLogger;
  */
 public class SampleLogger extends AbstractFilter{
 	NXTDataLogger log;
+	private boolean	finishLine=false;
 
 	/**
 	 * Constructor of the SampleLogger
@@ -39,6 +40,13 @@ public class SampleLogger extends AbstractFilter{
 
 	
 
+	public SampleLogger(SampleProvider source, NXTDataLogger log, String legend, boolean finishLine){
+	this(source,log, legend);
+	this.finishLine=finishLine;
+	}
+
+
+
 	/** 
 	 * This method fetches a sample from the source and writes its value(s) to the log
 	 */
@@ -47,6 +55,7 @@ public class SampleLogger extends AbstractFilter{
 		for (int i=0;i<elements;i++) {
 			log.writeLog(dst[off+i]);
 		}
+		if (finishLine) log.finishLine();
 		
 	}
 	
