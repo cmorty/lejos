@@ -3,7 +3,7 @@ package lejos.nxt.sensor.filter;
 import lejos.nxt.sensor.api.*;
 
 /**
- * Common base for SampleData implementations
+ * Common base for SampleProvider implementations
  * 
  * @author Kirk P. Thompson
  *
@@ -20,7 +20,6 @@ public abstract class AbstractFilter implements SampleProvider{
 	public AbstractFilter(SampleProvider source){
 		this.source = source;
 		elements=source.getElemensCount();
-		buf=new float[elements];
 	}
 	
 	public int getQuantity() {
@@ -32,6 +31,8 @@ public abstract class AbstractFilter implements SampleProvider{
 	}
 
 	public float fetchSample() {
+		if (buf==null)
+			buf=new float[elements];
 		fetchSample(buf,0);
 		return buf[0];
 	}
