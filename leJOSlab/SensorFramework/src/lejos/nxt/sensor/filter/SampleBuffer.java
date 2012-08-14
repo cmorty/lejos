@@ -49,15 +49,12 @@ public class SampleBuffer extends AbstractFilter {
 	
 
 
-	public void fetchSample(float[] dst, int off) {
+	public synchronized void fetchSample(float[] dst, int off) {
 		for (int axis=0;axis<elements;axis++) 
 			dst[axis+off]=buffer[axis];
 	}
 	
 	
-	protected void fetchFromSource(float[] buf) {
-		source.fetchSample(buf,0);
-	}
 	/**
 	 * Seperate thread to continuously update the buffer with most recent sensor
 	 * data at fixed interval.
@@ -74,7 +71,7 @@ public class SampleBuffer extends AbstractFilter {
 				time = 0;
 				if (running) {
 					time = System.currentTimeMillis();
-					fetchFromSource(buffer);
+					source.fetchSample(buffer,0);
 					time = System.currentTimeMillis() - time;
 				}
 				Delay.msDelay((long) ((1000/sampleRate) - time));
