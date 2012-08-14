@@ -10,7 +10,7 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class Integrator extends SampleBuffer{
+public class Integrator extends AbstractFilter{
 	long lastTime=0;
 	private float[]	currentValue;
 
@@ -29,19 +29,20 @@ public class Integrator extends SampleBuffer{
 	public void resetTo(float value) {
 		for (int i=0;i<elements;i++)
 			currentValue[i]=value;
+		lastTime=0;
 	}
 
 
-	@Override
-	protected void fetchFromSource(float dst[]) {
-		super.fetchFromSource(dst);
+
+	public void fetchSample(float dst[],int off) {
+		source.fetchSample(dst, off);
 		long now=System.nanoTime();
 		if (lastTime==0) lastTime=now;
 		double dt=(now-lastTime)*Math.pow(10,-9);
 		lastTime=now;
 		for (int i=0;i<elements;i++) {
 			currentValue[i]+=dst[i]*dt;
-			dst[i]=currentValue[i];
+			dst[i+off]=currentValue[i];
 		}
 	}
 
