@@ -20,14 +20,14 @@ import java.util.ArrayList;
  * The laser must have the ability to pulse on and off within a 10 ms period. This class pulses the light on and off to
  * test if a bright spot occurs only when the laser is on.</p>
  * 
- * @author Andy Shaw
+ * @author Andy Shaw and Brian Bagnall
  *
  */
 public class LaserBeaconLocator implements BeaconLocator
 {
 	private double gear_ratio = 1; // Degrees to rotate motor to achieve 1 degree movement
 	private RegulatedMotor motor=null;
-	private LightSensor ls;
+	private LaserSensor ls;
 	private int baseTacho;
     private static final int SCAN_ANGLE = 180; // 1/2 the scan angle. 180 will do 360 sweep all around
     //private static final int HIT_THRESHOLD = 10;
@@ -42,11 +42,10 @@ public class LaserBeaconLocator implements BeaconLocator
      * @param motor The motor to rotate the sensor. 
      * @param gearRatio Degrees to rotate motor to achieve 1 degree movement. If motor gear has 12 teeth and scanner 36, gearRatio = 3
      */
-	public LaserBeaconLocator(SensorPort port, RegulatedMotor motor, double gearRatio) {
-		// TODO: When Dexter Laser out, make class/interface for that and use it instead. 
+	public LaserBeaconLocator(LaserSensor ls, RegulatedMotor motor, double gearRatio) {
 		this.gear_ratio = gearRatio;
 		setScanSpeed(this.speed);
-		ls = new LightSensor(port);
+		this.ls = ls;
 		this.motor = motor;
 		baseTacho = motor.getTachoCount();
 		reset();
@@ -73,7 +72,7 @@ public class LaserBeaconLocator implements BeaconLocator
 	
 	private void reset()
 	{
-        ls.setFloodlight(false);
+        ls.setLaser(false);
 		stop();
 		motor.setSpeed(motor_return_speed);
 		motor.rotateTo(baseTacho);
@@ -113,7 +112,7 @@ public class LaserBeaconLocator implements BeaconLocator
             if (newVal > val1) val1 = newVal;
             Delay.msDelay(1);
         }
-        ls.setFloodlight(true);
+        ls.setLaser(true);
         Delay.msDelay(10);
         int val2 = ls.readNormalizedValue();
 
@@ -123,7 +122,7 @@ public class LaserBeaconLocator implements BeaconLocator
             if (newVal > val2) val2 = newVal;
             Delay.msDelay(1);
         }
-        ls.setFloodlight(false);
+        ls.setLaser(false);
         return val2 - val1;
         
     }
@@ -248,9 +247,9 @@ public class LaserBeaconLocator implements BeaconLocator
             rotateTo(d);
             while (motor.isMoving())
                 Delay.msDelay(1);
-            ls.setFloodlight(true);
+            ls.setLaser(true);
             Delay.msDelay(2000);
-            ls.setFloodlight(false);
+            ls.setLaser(false);
         }
         rotateTo(0);
         while (motor.isMoving())
