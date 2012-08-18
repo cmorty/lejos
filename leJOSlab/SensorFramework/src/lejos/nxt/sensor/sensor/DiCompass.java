@@ -100,8 +100,7 @@ public class DiCompass extends I2CSensor implements SampleProvider, SensorInfo, 
 	 * @param ret
 	 */
 	private void fetch(float[] ret, int offset) {
-		// The order of data registers seems to be X,Z,Y. I do not know if this is
-		// typical for my sensor of that this is common to all sensors (Aswin).
+		// The order of data registers seems to be X,Z,Y. (Aswin).
 		getData(REG_MAGNETO, buf, 6);
 		ret[0 + offset] = EndianTools.decodeShortBE(buf, 0) * multiplier;
 		ret[1 + offset] = EndianTools.decodeShortBE(buf, 4) * multiplier;
@@ -252,7 +251,7 @@ public class DiCompass extends I2CSensor implements SampleProvider, SensorInfo, 
 		return Quantities.MAGNETIC_FIELD;
 	}
 
-	public int getElemensCount() {
+	public int getElementsCount() {
 		return 3;
 	}
 

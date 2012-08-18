@@ -6,6 +6,7 @@ Naming conventions for sensors
 	Ht, Hitechnic
 	Di, Dexter Industries
 	Mi, Micro infinity
+	Cu, Custom build sensors
 - class of sensor
 	Gyro
 	Accel

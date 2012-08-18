@@ -27,7 +27,7 @@ public class LcUltrasonic extends UltrasonicSensor implements SampleProvider, Se
 	}
 
 
-	public int getElemensCount() {
+	public int getElementsCount() {
 		return 1;
 	}
 

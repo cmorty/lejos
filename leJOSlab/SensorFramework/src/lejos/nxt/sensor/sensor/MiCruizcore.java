@@ -60,7 +60,7 @@ public class MiCruizcore extends CruizcoreGyro implements MultipleSampleProvider
 			return Quantities.TURNRATE;
 		}
 
-		public int getElemensCount() {
+		public int getElementsCount() {
 			return 1;
 		}
 
@@ -84,7 +84,7 @@ public class MiCruizcore extends CruizcoreGyro implements MultipleSampleProvider
 			return Quantities.ACCELERATION;
 		}
 
-		public int getElemensCount() {
+		public int getElementsCount() {
 			return 3;
 		}
 
@@ -104,7 +104,7 @@ public class MiCruizcore extends CruizcoreGyro implements MultipleSampleProvider
 			return Quantities.ANGLE;
 		}
 
-		public int getElemensCount() {
+		public int getElementsCount() {
 			return 1;
 		}
 

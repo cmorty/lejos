@@ -1,34 +1,23 @@
 package lejos.nxt.sensor.example;
 
-import lejos.nxt.Button;
-import lejos.nxt.LCD;
-import lejos.nxt.SensorPort;
+import lejos.nxt.*;
+import lejos.nxt.sensor.api.SampleProvider;
 import lejos.nxt.sensor.filter.StatisticsFilter;
 import lejos.nxt.sensor.sensor.LcUltrasonic;
 import lejos.util.Delay;
 
-/**
- * Tis example shows how to use median values to effectively remove incidental out-of-range values
- * from the US sensor
- * @author Aswin
- *
- */
 public class UsSensorSimple {
-
-	/**
-	 * @param args
-	 */
+	
 	public static void main(String[] args) {
-		UsSensorSimple test=new UsSensorSimple();
-	}
+		
+		// Define the sample processing chain
+		SampleProvider sensor=new LcUltrasonic(SensorPort.S1);
+		SampleProvider range=new StatisticsFilter(sensor,StatisticsFilter.MEDIAN,5);
 
-	public UsSensorSimple() {
-		LcUltrasonic sensor=new LcUltrasonic(SensorPort.S1);
-		int wait=(int) (1000/sensor.getSampleRate());
-		StatisticsFilter range=new StatisticsFilter(sensor,StatisticsFilter.MEDIAN,5);
+		// Use the sample
 		while (!Button.ESCAPE.isDown()) {
-			LCD.drawString("Range: "+range.fetchSample()+"  ", 0, 0);
-			Delay.msDelay(wait);
-		}
+			System.out.println(range.fetchSample());
+			Delay.msDelay(50);
+		}	
 	}
 }

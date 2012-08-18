@@ -16,7 +16,7 @@ public interface SampleProvider {
 	 * Returns the number of values that are in a sample.
 	 * @return
 	 */
-	int getElemensCount();
+	int getElementsCount();
 	
 	/**
 	 * Fetches a sample from the source and processes it

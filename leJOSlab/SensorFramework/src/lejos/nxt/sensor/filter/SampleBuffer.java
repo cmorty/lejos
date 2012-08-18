@@ -17,6 +17,7 @@ public class SampleBuffer extends AbstractFilter {
 	float[] buffer;
 	boolean	running	= true;
 	float	sampleRate=20;
+	boolean newSampleAvailable=false;
 
 	public SampleBuffer(SampleProvider source) {
 		this(source,20);
@@ -31,27 +32,15 @@ public class SampleBuffer extends AbstractFilter {
 		runner.start();
 	}
 	
-	/**
-	 * Pauzes refreshing of the buffer
-	 */
-	public void pauze() {
-		running = false;
-	}
 
-	/**
-	 * Resumes refreshing of the buffer
-	 */
-	public void resume() {
-		running = true;
+	public boolean isNewSampleAvailable() {
+		return newSampleAvailable;
 	}
-	
-	
-	
-
 
 	public synchronized void fetchSample(float[] dst, int off) {
 		for (int axis=0;axis<elements;axis++) 
 			dst[axis+off]=buffer[axis];
+		newSampleAvailable=false;
 	}
 	
 	
@@ -72,6 +61,7 @@ public class SampleBuffer extends AbstractFilter {
 				if (running) {
 					time = System.currentTimeMillis();
 					source.fetchSample(buffer,0);
+					newSampleAvailable=true;
 					time = System.currentTimeMillis() - time;
 				}
 				Delay.msDelay((long) ((1000/sampleRate) - time));
