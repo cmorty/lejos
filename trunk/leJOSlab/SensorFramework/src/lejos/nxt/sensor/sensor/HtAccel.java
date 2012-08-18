@@ -24,7 +24,7 @@ public class HtAccel extends AccelHTSensor implements SampleProvider{
 		return Quantities.ACCELERATION;
 	}
 
-	public int getElemensCount() {
+	public int getElementsCount() {
 		return 3;
 	}
 

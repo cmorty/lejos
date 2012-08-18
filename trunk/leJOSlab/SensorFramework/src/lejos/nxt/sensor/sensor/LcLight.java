@@ -30,7 +30,7 @@ public class LcLight extends lejos.nxt.LightSensor implements SampleProvider{
 	}
 
 
-	public int getElemensCount() {
+	public int getElementsCount() {
 		return 1;
 	}
 

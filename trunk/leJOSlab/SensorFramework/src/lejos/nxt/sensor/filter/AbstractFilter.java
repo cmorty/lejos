@@ -19,14 +19,14 @@ public abstract class AbstractFilter implements SampleProvider{
 	 */
 	public AbstractFilter(SampleProvider source){
 		this.source = source;
-		elements=source.getElemensCount();
+		elements=source.getElementsCount();
 	}
 	
 	public int getQuantity() {
 		return source.getQuantity();
 	}
 
-	public  int getElemensCount() {
+	public  int getElementsCount() {
 		return elements;
 	}
 

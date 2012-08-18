@@ -20,7 +20,7 @@ public class MsAccelV3 extends I2CSensor implements SampleProvider {
 	
 	private byte[] buf=new byte[6];
 	private float[] dummy=new float[3];
-	private int range=2;
+	private int range=1;
   private static byte ACCEL = 0x45;
   private static byte REGRANGE = 0x41;
   private static float MULTIPLIER=0.00981f;
@@ -52,7 +52,7 @@ public class MsAccelV3 extends I2CSensor implements SampleProvider {
 		return Quantities.ACCELERATION;
 	}
 
-	public int getElemensCount() {
+	public int getElementsCount() {
 		return 3;
 	}
 

@@ -33,12 +33,20 @@ public class LowPass extends AbstractFilter{
 	 */
 	public void fetchSample(float[] dst, int off) {
 		source.fetchSample(dst,off);
-		float dt=(float) ((System.currentTimeMillis()-lastTime)/1000.0);
-		lastTime=System.currentTimeMillis();
-		float a=dt/(timeConstant+dt);
-		for (int axis=0;axis<elements;axis++) {
-			smoothed[axis]=smoothed[axis]+a*(dst[off+axis]-smoothed[axis]);
-			dst[axis+off]=smoothed[axis];
+		if (lastTime==0) {
+			for (int axis=0;axis<elements;axis++) {
+				smoothed[axis]=(dst[off+axis]);
+				lastTime=System.currentTimeMillis();
+			}
+		}
+		else {
+			float dt=(float) ((System.currentTimeMillis()-lastTime)/1000.0);
+			lastTime=System.currentTimeMillis();
+			float a=dt/(timeConstant+dt);
+			for (int axis=0;axis<elements;axis++) {
+				smoothed[axis]=smoothed[axis]+a*(dst[off+axis]-smoothed[axis]);
+				dst[axis+off]=smoothed[axis];
+			}
 		}
 	}
 
