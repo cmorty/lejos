@@ -13,11 +13,26 @@ import lejos.nxt.sensor.api.*;
 public class Integrator extends AbstractFilter{
 	long lastTime=0;
 	private float[]	currentValue;
+	private int	quantity=Quantities.UNDEFINED;
 
 	
 	public Integrator(SampleProvider source) {
 		super(source);
 		currentValue=new float[elements];
+		switch(source.getQuantity()){
+			case Quantities.ACCELERATION:
+				quantity=Quantities.VELOCITY;
+				break;
+			case Quantities.VELOCITY:
+				quantity=Quantities.LENGTH;
+				break;
+			case Quantities.TURNRATE:
+				quantity=Quantities.ANGLE;
+				break;
+				default:
+					quantity=Quantities.UNDEFINED;
+					break;
+		}
 	}
 	
 	
@@ -44,6 +59,11 @@ public class Integrator extends AbstractFilter{
 			currentValue[i]+=dst[i]*dt;
 			dst[i+off]=currentValue[i];
 		}
+	}
+	
+	@Override
+	public int getQuantity() {
+		return quantity;
 	}
 
 	
