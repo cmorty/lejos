@@ -15,7 +15,6 @@
 
 int fd;														// File description
 char *fileName = "/dev/i2c-0";								// Name of the port we will be using
-unsigned char buf[10];
 
 JNIEXPORT void JNICALL Java_lejos_nxt_SensorPort_i2cEnableById
   (JNIEnv *env, jclass cls, jint id, jint mode)
@@ -42,10 +41,12 @@ JNIEXPORT jint JNICALL Java_lejos_nxt_SensorPort_i2cStartById
 	printf("Unable to get bus access to talk to slave\n");
 	exit(1);
   }
-  if ((write(fd, buf, wlen)) != wlen) {	// Send the register to read from
-	printf("Error writing to i2c slave\n");
+  char *jb = (char *) (*env)->GetByteArrayElements(env, buf, 0); 
+  if ((write(fd, jb, wlen)) != wlen) {	// Send the register to read from
+	printf("Error writing to i2c slave - %s\n",strerror(errno));
 	exit(1);
   }
+  (*env)->ReleaseByteArrayElements(env, buf, (jbyte *) jb, 0);
   return wlen;
 }
 
