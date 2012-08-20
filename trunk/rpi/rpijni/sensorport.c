@@ -7,22 +7,39 @@
 #include "lejos_nxt_SensorPort.h"
 #include "lejos_nxt_NXTEvent.h"
 
+int fd;														// File description
+char *fileName = "/dev/i2c-0";								// Name of the port we will be using
+unsigned char buf[10];
+
 JNIEXPORT void JNICALL Java_lejos_nxt_SensorPort_i2cEnableById
   (JNIEnv *env, jclass cls, jint id, jint mode)
 {
   printf("Enabling port %d in mode %d\n",id,mode);
+  if ((fd = open(fileName, O_RDWR)) < 0) {					// Open port for reading and writing
+	printf("Failed to open i2c port\n");
+	exit(1);
+  }
 }
 
 JNIEXPORT void JNICALL Java_lejos_nxt_SensorPort_i2cDisableById
   (JNIEnv *env, jclass cls, jint id) 
 {
   printf("Disabling port %d\n",id);
+  close(fd);
 }
 
 JNIEXPORT jint JNICALL Java_lejos_nxt_SensorPort_i2cStartById
   (JNIEnv *env, jclass cls, jint id, jint addr, jbyteArray buf, jint offset, jint wlen, jint rlen)
 {
   printf("Writing %d bytes on port %d at address %d\n",wlen,id,addr);
+  if (ioctl(fd, I2C_SLAVE, addr) < 0) {	// Set the port options and set the address of the device we wish to speak to
+	printf("Unable to get bus access to talk to slave\n");
+	exit(1);
+  }
+  if ((write(fd, buf, wlen)) != wlen) {	// Send the register to read from
+	printf("Error writing to i2c slave\n");
+	exit(1);
+  }
   return wlen;
 }
 
@@ -30,6 +47,12 @@ JNIEXPORT jint JNICALL Java_lejos_nxt_SensorPort_i2cCompleteById
   (JNIEnv *env, jclass cls, jint id, jbyteArray buf, jint offset, jint rlen) 
 {
   printf("Reading %d bytes from port %d\n",rlen,id);
+  if (rlen > 0) {
+  	if (read(fd, buf, rlen) != rlen) {								// Read back data into buf[]
+		printf("Unable to read from slave\n");
+		exit(1);
+	}
+  }
   return rlen;
 }
 
