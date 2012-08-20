@@ -1263,8 +1263,8 @@ public class SensorPort implements LegacySensorPort, I2CPort, ListenerCaller
     			return ret;
     		
             // No need to wait for high speed ports
-            if (!i2cHighSpeed)
-                i2cEvent.waitEvent(I2C_IO_COMPLETE << iPortId, NXTEvent.WAIT_FOREVER);
+            //if (!i2cHighSpeed) - remove waiting on RPi
+            //    i2cEvent.waitEvent(I2C_IO_COMPLETE << iPortId, NXTEvent.WAIT_FOREVER);
 		}
 		catch(InterruptedException e)
 		{
