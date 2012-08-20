@@ -37,3 +37,39 @@ JNIEXPORT jint JNICALL Java_lejos_nxt_SensorPort_i2cStatusById
 {
   return 0;
 }
+
+JNIEXPORT void JNICALL Java_lejos_nxt_SensorPort_setPowerTypeById
+  (JNIEnv *env, jclass cls, jint id, jint typ) 
+{
+}
+
+JNIEXPORT jint JNICALL Java_lejos_nxt_SensorPort_readSensorValue
+  (JNIEnv *env, jclass cls, jint id)
+{
+  return 0;
+}
+
+JNIEXPORT void JNICALL Java_lejos_nxt_SensorPort_setSensorPinMode
+  (JNIEnv *env, jclass cls, jint id, jint pin , jint mode) 
+{
+}
+
+JNIEXPORT void JNICALL Java_lejos_nxt_SensorPort_setSensorPin
+  (JNIEnv *env, jclass cls, jint id, jint pin, jint val)
+{
+}
+
+JNIEXPORT jint JNICALL Java_lejos_nxt_SensorPort_getSensorPin
+  (JNIEnv *env, jclass cls, jint id, jint pin) 
+{
+}
+
+JNIEXPORT jint JNICALL Java_lejos_nxt_SensorPort_readSensorPin
+  (JNIEnv *env, jclass cls, jint id, jint pin)
+{
+}
+
+
+
+
+
