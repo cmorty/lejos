@@ -33,7 +33,7 @@ JNIEXPORT jint JNICALL Java_lejos_nxt_SensorPort_i2cCompleteById
 }
 
 JNIEXPORT jint JNICALL Java_lejos_nxt_SensorPort_i2cStatusById
-  (JNIEnv *, jclass, jint)
+  (JNIEnv *env, jclass cls, jint id)
 {
   return 0;
 }
