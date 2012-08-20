@@ -63,11 +63,13 @@ JNIEXPORT void JNICALL Java_lejos_nxt_SensorPort_setSensorPin
 JNIEXPORT jint JNICALL Java_lejos_nxt_SensorPort_getSensorPin
   (JNIEnv *env, jclass cls, jint id, jint pin) 
 {
+  return 0;
 }
 
 JNIEXPORT jint JNICALL Java_lejos_nxt_SensorPort_readSensorPin
   (JNIEnv *env, jclass cls, jint id, jint pin)
 {
+  return 0;
 }
 
 JNIEXPORT jint JNICALL Java_lejos_nxt_NXTEvent_registerEvent
