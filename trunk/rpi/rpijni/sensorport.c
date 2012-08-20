@@ -56,10 +56,12 @@ JNIEXPORT jint JNICALL Java_lejos_nxt_SensorPort_i2cCompleteById
 {
   printf("Reading %d bytes from port %d\n",rlen,id);
   if (rlen > 0) {
-  	if (read(fd, buf, rlen) != rlen) {								// Read back data into buf[]
+    char *jb = (char *) (*env)->GetByteArrayElements(env, buf, 0);
+  	if (read(fd, jb, rlen) != rlen) {	// Read back data into buf[]
 		printf("Unable to read from slave\n");
 		exit(1);
 	}
+	(*env)->ReleaseByteArrayElements(env, buf, (jbyte *) jb, 0);
   }
   return rlen;
 }
