@@ -5,6 +5,7 @@
 #include <errno.h>
 
 #include "lejos_nxt_SensorPort.h"
+#include "lejos_nxt_NXTEvent.h"
 
 JNIEXPORT void JNICALL Java_lejos_nxt_SensorPort_i2cEnableById
   (JNIEnv *env, jclass cls, jint id, jint mode)
@@ -68,6 +69,25 @@ JNIEXPORT jint JNICALL Java_lejos_nxt_SensorPort_readSensorPin
   (JNIEnv *env, jclass cls, jint id, jint pin)
 {
 }
+
+JNIEXPORT jint JNICALL Java_lejos_nxt_NXTEvent_registerEvent
+  (JNIEnv *env, jobject obj)
+ {
+   return 0;
+ }
+ 
+ JNIEXPORT jint JNICALL Java_lejos_nxt_NXTEvent_unregisterEvent
+  (JNIEnv *env, jobject obj)
+ {
+   return 0;
+ }
+ 
+ JNIEXPORT jint JNICALL Java_lejos_nxt_NXTEvent_changeEvent
+  (JNIEnv *env, jobject obj, jint x, jint y) 
+ {
+   return 0;
+ }
+ 
 
 
 
