@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "lejos_nxt_SensorPort.h"
 #include "lejos_nxt_NXTEvent.h"
