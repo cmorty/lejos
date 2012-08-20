@@ -37,11 +37,12 @@ JNIEXPORT jint JNICALL Java_lejos_nxt_SensorPort_i2cStartById
   (JNIEnv *env, jclass cls, jint id, jint addr, jbyteArray buf, jint offset, jint wlen, jint rlen)
 {
   printf("Writing %d bytes on port %d at address %d\n",wlen,id,addr);
-  if (ioctl(fd, I2C_SLAVE, addr) < 0) {	// Set the port options and set the address of the device we wish to speak to
+  if (ioctl(fd, I2C_SLAVE, (addr >> 1)) < 0) {	// Set the port options and set the address of the device we wish to speak to
 	printf("Unable to get bus access to talk to slave\n");
 	exit(1);
   }
   char *jb = (char *) (*env)->GetByteArrayElements(env, buf, 0); 
+  printf("First byte is %d\n",*jb);
   if ((write(fd, jb, wlen)) != wlen) {	// Send the register to read from
 	printf("Error writing to i2c slave - %s\n",strerror(errno));
 	exit(1);
