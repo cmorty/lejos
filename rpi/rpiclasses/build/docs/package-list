@@ -1,0 +1,13 @@
+lejos.geom
+lejos.nxt
+lejos.nxt.addon
+lejos.nxt.rcxcomm
+lejos.nxt.remote
+lejos.robotics
+lejos.robotics.localization
+lejos.robotics.mapping
+lejos.robotics.navigation
+lejos.robotics.objectdetection
+lejos.robotics.pathfinding
+lejos.robotics.subsumption
+lejos.util
