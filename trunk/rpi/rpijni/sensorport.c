@@ -10,7 +10,7 @@
 JNIEXPORT void JNICALL Java_lejos_nxt_SensorPort_i2cEnableById
   (JNIEnv *env, jclass cls, jint id, jint mode)
 {
-  printf("Enabling port %d in mode %d/n",id,mode);
+  printf("Enabling port %d in mode %d\n",id,mode);
 }
 
 JNIEXPORT void JNICALL Java_lejos_nxt_SensorPort_i2cDisableById
