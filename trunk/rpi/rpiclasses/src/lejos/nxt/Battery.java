@@ -1,5 +1,4 @@
 package lejos.nxt;
-import lejos.nxt.remote.*;
 
 /**
  * Dummy battery class.
