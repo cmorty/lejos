@@ -9,7 +9,7 @@ import lejos.util.Delay;
  * @author Aswin
  *
  */
-public class SampleBuffer extends AbstractFilter {
+public class AutoSampler extends AbstractFilter {
 	
 	//TODO: add synchronisation
 	//TODO: add functionality to add listeners
@@ -19,11 +19,11 @@ public class SampleBuffer extends AbstractFilter {
 	float	sampleRate=20;
 	boolean newSampleAvailable=false;
 
-	public SampleBuffer(SampleProvider source) {
+	public AutoSampler(SampleProvider source) {
 		this(source,20);
 	}
 	
-	public SampleBuffer(SampleProvider source, float sampleRate) {
+	public AutoSampler(SampleProvider source, float sampleRate) {
 		super(source);
 		this.sampleRate=sampleRate;
 		buffer=new float[elements];
