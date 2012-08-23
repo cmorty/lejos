@@ -28,9 +28,13 @@ public class OffsetFeedback extends AbstractFilter {
 	 */
 	public OffsetFeedback(SampleProvider source, String calibrate, float[] reference, float speed) {
 		super(source);
-		CalibrationManager calman=new CalibrationManager();
-		calman.setCurrent(calibrate);
-		offset=calman.getOffset();
+		CalibrationManager calMan=new CalibrationManager();
+		if (calMan.setCurrent(calibrate) == false) {
+			calMan.add(calibrate, source.getElementsCount());
+			calMan.save();
+		}
+		calMan.setCurrent(calibrate);
+		offset=calMan.getOffset();
 		this.speed=speed;
 		this.reference=reference;
 		endSpeed=speed;
