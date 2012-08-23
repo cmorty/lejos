@@ -16,23 +16,10 @@ public class Integrator extends AbstractFilter{
 	private int	quantity=Quantities.UNDEFINED;
 
 	
-	public Integrator(SampleProvider source) {
+	public Integrator(SampleProvider source, int newQuantity) {
 		super(source);
 		currentValue=new float[elements];
-		switch(source.getQuantity()){
-			case Quantities.ACCELERATION:
-				quantity=Quantities.VELOCITY;
-				break;
-			case Quantities.VELOCITY:
-				quantity=Quantities.LENGTH;
-				break;
-			case Quantities.TURNRATE:
-				quantity=Quantities.ANGLE;
-				break;
-				default:
-					quantity=Quantities.UNDEFINED;
-					break;
-		}
+		quantity=newQuantity;
 	}
 	
 	
