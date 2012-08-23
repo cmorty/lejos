@@ -25,7 +25,7 @@ public class TestCompositeSensor {
 	 */
 	public TestCompositeSensor() {
 		MiCruizcore sensor=new MiCruizcore(SensorPort.S1);
-		SampleProvider direction=sensor.getSampleProvider(Quantities.ANGLE);
+		SampleProvider direction=sensor.getAngleProvider();
 		while(!Button.ESCAPE.isDown()) {
 			LCD.clear();
 			LCD.drawString("direction: "+Math.toDegrees(direction.fetchSample()), 0, 0);
