@@ -1,6 +1,7 @@
 package lejos.nxt.sensor.api;
 
 
+
 /**
  * A 3-element vector that is represented by single-precision floating point 
  * x,y,z coordinates. <p>
@@ -121,6 +122,56 @@ public final float dot(Vector3f v1)
     if( vDot < -1.0) vDot = -1.0;
     if( vDot >  1.0) vDot =  1.0;
     return((float) (Math.acos( vDot )));
- } 
+ }
+
+public void set(float[] f) {
+	x=f[0];
+	y=f[1];
+	z=f[2];
+	}
+
+public void set(Vector3f v) {
+	x=v.x;
+	y=v.y;
+	z=v.z;
+	
+}
+
+public void add(Vector3f v) {
+	// TODO Auto-generated method stub
+	x+=v.x;
+	y+=v.y;
+	z+=v.z;
+} 
+/**
+ * Sets the value of this vector to the scalar multiplication
+ * of tuple t1.
+ * @param s the scalar value
+ * @param t1 the source tuple
+ */
+public final void scale(float s, Vector3f t1)
+{
+this.x = s*t1.x;
+this.y = s*t1.y;
+this.z = s*t1.z;
+}
+
+
+
+
+/**
+ * Sets the value of this tuple to the scalar multiplication
+ * of tuple t1 and then adds tuple t2 (this = s*t1 + t2).
+ * @param s the scalar value
+ * @param t1 the tuple to be scaled and added
+ * @param t2 the tuple to be added without a scale
+ */
+public final void scaleAdd(float s, Vector3f t1, Vector3f t2)
+{
+this.x = s*t1.x + t2.x;
+this.y = s*t1.y + t2.y;
+this.z = s*t1.z + t2.z;
+}
+
 
 }

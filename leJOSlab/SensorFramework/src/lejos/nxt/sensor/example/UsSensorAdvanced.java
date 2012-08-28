@@ -38,7 +38,7 @@ public class UsSensorAdvanced {
 		StatisticsFilter range=new StatisticsFilter(sensor,StatisticsFilter.MEDIAN,5);
 		
 		// buffer the sample, so that it can be used in multiple data streams
-		SampleBuffer bufferedRange=new SampleBuffer(range,sensor.getSampleRate());
+		AutoSampler bufferedRange=new AutoSampler(range,sensor.getSampleRate());
 		
 		// convert range to the position of the detected obstacle (relative to robot);
 		Align toPosition=new Align(bufferedRange);

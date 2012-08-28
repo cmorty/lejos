@@ -38,12 +38,13 @@ public abstract class AbstractFilter implements SampleProvider{
 	}
 	
 	/**
-	 * Utility method to format floats to 4 characters
+	 * Utility method to format floats to 4 characters, used for testing
 	 * @param in
 	 * @return
 	 * Formatted float value
 	 */
 	protected String fmt(float in) {
+		//TODO: remove method 
 		String tmp=Float.toString(in)+"00000";
 		return tmp.substring(0, 4);
 	}

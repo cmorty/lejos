@@ -33,7 +33,7 @@ public class MovingAverage {
     	StatisticsFilter stat=new StatisticsFilter(sensor,StatisticsFilter.MEAN,10);
     	
     	// Instantiate buffer, configure it to fetch a new sample at 10 Hertz
-    	SampleBuffer buffer=new SampleBuffer(stat,10);
+    	AutoSampler buffer=new AutoSampler(stat,10);
     	
     	// Show average light coditions over the past second
     	while (!Button.ESCAPE.isDown()) {

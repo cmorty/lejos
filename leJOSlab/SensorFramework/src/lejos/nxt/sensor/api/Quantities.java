@@ -34,6 +34,21 @@ public interface Quantities {
 	 * Angle in radians
 	 */
 	static final int	ANGLE	= 6;
+	
+	
+	/**
+	 * Unknows or undefined quantity
+	 */
+	public static final int	UNDEFINED	= -1;
+	/**
+	 * Velocity in m/s
+	 */
+	public static final int	VELOCITY	= 7;
+
+	/**
+	 * Direction Cosine Matrix (rotation matrix)
+	 */
+	public static final int	DCM	= 8;
 
 	// TODO: add some more
 }
