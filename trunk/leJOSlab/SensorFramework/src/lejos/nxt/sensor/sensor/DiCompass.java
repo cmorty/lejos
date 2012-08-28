@@ -29,7 +29,7 @@ public class DiCompass extends I2CSensor implements SampleProvider, SensorInfo, 
 	// default configuration
 	int														measurementMode			= MODE_NORMAL;
 	int														range								= 6;
-	int														rate								= 4;
+	int														rate								= 6;
 	int														operatingMode				= CONTINUOUS;
 
 	// sensor register adresses

@@ -83,23 +83,23 @@ public class CalibrateSensors {
 	 * <p>
 	 * It is suggested to use the name of the sensor driver
 	 */
-	String					NAME							= "test2";
+	String					NAME							= "DiCompass";
 
 	/**
 	 * Indicates type of calibration If true both offset and scale are calibrated,
 	 * if false just offset calibration is done
 	 */
-	boolean					CALIBRATEFORSCALE	= false;
+	boolean					CALIBRATEFORSCALE	= true;
 
 	/**
 	 * Port of the sensor to calibrate
 	 */
-	SensorPort			port							= SensorPort.S3;
+	SensorPort			port							= SensorPort.S4;
 
 	/**
 	 * Driver for the sensor to calibrate
 	 */
-	SampleProvider	sensor						= new CuADXL345(port);
+	SampleProvider	sensor						= new DiCompass(port);
 
 	public static void main(String[] args) {
 		try {
@@ -156,7 +156,7 @@ public class CalibrateSensors {
 
 		// lowpass and buffer the sample
 		sense = new LowPass(sensor, timeConstant);
-		sense = new SampleBuffer(sense, 40);
+		sense = new AutoSampler(sense, 40);
 		// Get a second sample stream to show both uncalibrated and calibrated
 		// values on screen
 		sense2 = new Calibrate(sense, NAME);

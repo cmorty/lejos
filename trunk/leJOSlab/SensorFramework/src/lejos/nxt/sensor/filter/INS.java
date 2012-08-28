@@ -89,8 +89,8 @@ public class INS {
 
 	// tuning and debugging
 	private static float						alpha							= 0.01f; 						//aplha is used for the low pass filter that keeps track of the filter frequency.
-	private float										Frequency					= 0; 								// holds the frequency the filter is actually running at.
 	private float										targetFrequency		= 60; 							// The Target frequency the filter runs at.
+	private float										Frequency					= targetFrequency; 	// holds the frequency the filter is actually running at.
 	
 	// utility members
 	private float										dt								= 0; 								//holds the time interval between filter iterations.

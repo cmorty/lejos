@@ -3,9 +3,13 @@ package lejos.nxt.sensor.sensor;
 import lejos.nxt.sensor.api.*;
 
 public class DummySensor implements SampleProvider{
+	static float[] values={3,7,7,1,2,2,14};
+	int index=-1;
 
 	public float fetchSample() {
-		return (float)Math.random()*15.0f;
+		index++;
+		if (index==values.length) index=0;
+		return values[index];
 	}
 
 	public int getQuantity() {
