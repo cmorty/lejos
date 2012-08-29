@@ -93,7 +93,7 @@ public class MirrorMotor implements RegulatedMotor, RegulatedMotorListener {
 	}
 
 	public void rotateTo(int angle, boolean immediateReturn) {
-		rotateTo(-angle, immediateReturn);// REVERSED
+		regMotor.rotateTo(-angle, immediateReturn);// REVERSED
 	}
 
 	public void setAcceleration(int acceleration) {
