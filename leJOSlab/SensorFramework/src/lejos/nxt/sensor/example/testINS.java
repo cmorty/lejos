@@ -20,8 +20,9 @@ public class testINS {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		SensorPort			port							= SensorPort.S3;
+		
 		SampleProvider accel, gyro, compass, angle;
+		
 		SensorPort.S3.i2cEnable(I2CPort.HIGH_SPEED);
 		SensorPort.S4.i2cEnable(I2CPort.HIGH_SPEED);
 		
@@ -29,31 +30,37 @@ public class testINS {
 		NXTDataLogger log=null;
 		//log=connect();
 		
-		CuADXL345 accelSensor=new CuADXL345(port);
+		CuADXL345 accelSensor=new CuADXL345(SensorPort.S3);
 		accelSensor.setSampleRate(200);
 		accel=new Calibrate(accelSensor,"ADXL345");
+		accel=new AutoSampler(accel,200);
 		
-		CuITG3200 gyroSensor=new CuITG3200(port);
+		CuITG3200 gyroSensor=new CuITG3200(SensorPort.S3);
 		gyroSensor.setSampleRate(200);
 		gyro=new Calibrate(gyroSensor,"ITG3200");
+		gyro=new AutoSampler(gyro,200);
 		
 		DiCompass compassSensor=new DiCompass(SensorPort.S4);
 		compassSensor.setSampleRate(75);
 		compass=new Calibrate(compassSensor,"DiCompass");
+		compass=new AutoSampler(compass,75);
+		
 		
 		INS attitude= new INS(gyro,accel,compass);
-		attitude.setTargetFrequency(60);
+		attitude.setTargetFrequency(0);
 		attitude.start();
 		angle=attitude.getAngleProvider();
 		//angle=new SampleLogger(angle,log,"Angle",true);
-		angle=new DisplaySample(angle,0,0);
 
 		
 		float[] sample=new float[angle.getElementsCount()];
 		
 		while (!Button.ESCAPE.isDown()) {
 			angle.fetchSample(sample, 0);
-			LCD.drawString("Speed:"+attitude.getFrequency(),0,3);
+			LCD.clear();
+			for (int i=0;i<3;i++)
+				LCD.drawInt((int) Math.toDegrees(sample[i]),0,i);
+			LCD.drawString("Speed:"+attitude.getFrequency(),0,4);
 			Delay.msDelay(100);
 		}
 	}

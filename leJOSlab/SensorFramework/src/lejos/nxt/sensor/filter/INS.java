@@ -736,7 +736,7 @@ public SampleProvider getDCMProvider() {
 	}
 	
 	public void waitUntilDeltaT(long deltaT) {
-		Delay.nsDelay(Math.max(0,deltaT - System.nanoTime()+lastTime));
+		Delay.msDelay((long) (Math.max(0,(lastTime + deltaT - System.nanoTime())*Math.pow(10,-6))));
 		lastTime=System.nanoTime();
 	}
 }
