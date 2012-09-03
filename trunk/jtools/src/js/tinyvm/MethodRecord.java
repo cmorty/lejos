@@ -288,7 +288,16 @@ public class MethodRecord implements WritableData
       CodeUtilities pUtils = new CodeUtilities(iMethod.getName().toString(),
          aClassFile, aBinary);
       
-      pUtils.processCalls(aCode, aClassFile, aBinary);
+      try 
+      {
+         pUtils.processCalls(aCode, aClassFile, aBinary);
+      }
+      catch (TinyVMException e)
+      {
+         Signature s = aBinary.iSignatures.elementAt(this.iSignatureId);
+         throw new TinyVMException("Error processing method "+s+" of class "+this.iClassRecord.getName(), e);
+         //TODO unfortunately, this method is recursive hence the exception chain gets very long. Not sure how to workaround that.
+      }
    }
    
    public boolean isCalled()
