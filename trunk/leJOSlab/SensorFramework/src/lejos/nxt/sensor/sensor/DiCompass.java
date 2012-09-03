@@ -81,7 +81,7 @@ public class DiCompass extends I2CSensor implements SampleProvider, SensorInfo, 
 	public void fetchSample(float[] ret, int offset) {
 		// get raw data
 		switch (operatingMode) {
-			case 2:
+			case (SINGLE):
 				fetchSingleMeasurementMode(ret, offset);
 				break;
 			case (CONTINUOUS):

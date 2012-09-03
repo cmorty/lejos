@@ -3,6 +3,7 @@ package lejos.nxt.sensor.api;
 
 
 
+
 public class Matrix3f {
 	/**
 	 * The first matrix element in the first row.
@@ -209,38 +210,195 @@ public class Matrix3f {
 		r.set(x, y, z);
 	}
 
-	/**
-	 * Sets the specified row of this matrix3f to the Vector provided.
-	 * 
-	 * @param row
-	 *          the row number to be modified (zero indexed)
-	 * @param v
-	 *          the replacement row
-	 */
-	public final void setRow(int row, Vector3f v) {
-		switch (row) {
-			case 0:
-				this.m00 = v.x;
-				this.m01 = v.y;
-				this.m02 = v.z;
-				break;
+  /**
+   * Sets the specified row of this matrix3f to the three values provided.
+   * @param row the row number to be modified (zero indexed)
+   * @param x the first column element
+   * @param y the second column element
+   * @param z the third column element
+   */
+  public final void setRow(int row, float x, float y, float z)
+  {
+switch (row) {
+case 0:
+    this.m00 = x;
+    this.m01 = y;
+    this.m02 = z;
+    break;
 
-			case 1:
-				this.m10 = v.x;
-				this.m11 = v.y;
-				this.m12 = v.z;
-				break;
+case 1:
+    this.m10 = x;
+    this.m11 = y;
+    this.m12 = z;
+    break;
 
-			case 2:
-				this.m20 = v.x;
-				this.m21 = v.y;
-				this.m22 = v.z;
-				break;
+case 2:
+    this.m20 = x;
+    this.m21 = y;
+    this.m22 = z;
+    break;
 
-			default:
-				throw new ArrayIndexOutOfBoundsException("Matrix3f");
-		}
-	}
+default:
+  throw new ArrayIndexOutOfBoundsException("Matrix3f");
+}
+  }
+
+  /**
+   * Sets the specified row of this matrix3f to the Vector provided.
+   * @param row the row number to be modified (zero indexed)
+   * @param v the replacement row
+   */
+  public final void setRow(int row, Vector3f v)
+  {
+switch (row) {
+case 0:
+    this.m00 = v.x;
+    this.m01 = v.y;
+    this.m02 = v.z;
+    break;
+
+case 1:
+    this.m10 = v.x;
+    this.m11 = v.y;
+    this.m12 = v.z;
+    break;
+
+case 2:
+    this.m20 = v.x;
+    this.m21 = v.y;
+    this.m22 = v.z;
+    break;
+
+default:
+  throw new ArrayIndexOutOfBoundsException("Matrix3f");
+}
+  }
+
+  /**
+   * Sets the specified row of this matrix3f to the three values provided.
+   * @param row the row number to be modified (zero indexed)
+   * @param v the replacement row
+   */
+  public final void setRow(int row, float v[])
+  {
+switch (row) {
+case 0:
+    this.m00 = v[0];
+    this.m01 = v[1];
+    this.m02 = v[2];
+    break;
+
+case 1:
+    this.m10 = v[0];
+    this.m11 = v[1];
+    this.m12 = v[2];
+    break;
+
+case 2:
+    this.m20 = v[0];
+    this.m21 = v[1];
+    this.m22 = v[2];
+    break;
+
+default:
+  throw new ArrayIndexOutOfBoundsException("Matrix3f");
+}
+  }
+
+  /**
+   * Sets the specified column of this matrix3f to the three values provided.
+   * @param column the column number to be modified (zero indexed)
+   * @param x the first row element
+   * @param y the second row element
+   * @param z the third row element
+   */
+  public final void setColumn(int column, float x, float y, float z)
+  {
+switch (column) {
+case 0:
+    this.m00 = x;
+    this.m10 = y;
+    this.m20 = z;
+    break;
+
+case 1:
+    this.m01 = x;
+    this.m11 = y;
+    this.m21 = z;
+    break;
+
+case 2:
+    this.m02 = x;
+    this.m12 = y;
+    this.m22 = z;
+    break;
+
+default:
+  throw new ArrayIndexOutOfBoundsException("Matrix3f");
+}
+  }
+
+  /**
+   * Sets the specified column of this matrix3f to the vector provided.
+   * @param column the column number to be modified (zero indexed)
+   * @param v the replacement column
+   */
+  public final void setColumn(int column, Vector3f v)
+  {
+switch (column) {
+case 0:
+    this.m00 = v.x;
+    this.m10 = v.y;
+    this.m20 = v.z;
+    break;
+
+case 1:
+    this.m01 = v.x;
+    this.m11 = v.y;
+    this.m21 = v.z;
+    break;
+
+case 2:
+    this.m02 = v.x;
+    this.m12 = v.y;
+    this.m22 = v.z;
+    break;
+
+default:
+  throw new ArrayIndexOutOfBoundsException("Matrix3f");
+}
+  }
+
+  /**
+   * Sets the specified column of this matrix3f to the three values provided.
+   * @param column the column number to be modified (zero indexed)
+   * @param v the replacement column
+   */
+  public final void setColumn(int column, float v[])
+  {
+switch (column) {
+case 0:
+    this.m00 = v[0];
+    this.m10 = v[1];
+    this.m20 = v[2];
+    break;
+
+case 1:
+    this.m01 = v[0];
+    this.m11 = v[1];
+    this.m21 = v[2];
+    break;
+
+case 2:
+    this.m02 = v[0];
+    this.m12 = v[1];
+    this.m22 = v[2];
+    break;
+
+default:
+  throw new ArrayIndexOutOfBoundsException("Matrix3f");
+}
+  }
 
 	/**
 	 * Sets the value of this matrix to its transpose.
@@ -307,6 +465,80 @@ public class Matrix3f {
       }
 
   }
+
+  /**
+   * Copies the matrix values in the specified row into the array parameter. 
+   * @param row  the matrix row
+   * @param v    the array into which the matrix row values will be copied 
+   */  
+  public final void getRow(int row, float v[]) {
+      if( row == 0 ) {
+         v[0] = m00; 
+         v[1] = m01;
+         v[2] = m02;
+      } else if(row == 1) {
+         v[0] = m10;
+         v[1] = m11;
+         v[2] = m12;
+      } else if(row == 2) {
+         v[0] = m20;
+         v[1] = m21;
+         v[2] = m22;
+      } else {
+        throw new ArrayIndexOutOfBoundsException("Matrix3f");
+      }
+
+  }
+
+  /**
+   * Copies the matrix values in the specified column into the vector 
+   * parameter.
+   * @param column  the matrix column
+   * @param v    the vector into which the matrix row values will be copied
+   */  
+  public final void getColumn(int column, Vector3f v) {
+      if( column == 0 ) {
+         v.x = m00;
+         v.y = m10;
+         v.z = m20;
+      } else if(column == 1) {
+         v.x = m01;
+         v.y = m11;
+         v.z = m21;
+      }else if(column == 2){
+         v.x = m02;
+         v.y = m12;
+         v.z = m22;
+      } else {
+        throw new ArrayIndexOutOfBoundsException("Matrix3f");
+      }
+
+  }
+
+  /**  
+   * Copies the matrix values in the specified column into the array 
+   * parameter.
+   * @param column  the matrix column
+   * @param v    the array into which the matrix row values will be copied
+   */  
+  public final void getColumn(int column, float v[]) {
+      if( column == 0 ) {
+         v[0] = m00;
+         v[1] = m10;
+         v[2] = m20;
+      } else if(column == 1) {
+         v[0] = m01;
+         v[1] = m11;
+         v[2] = m21;
+      }else if(column == 2) {
+         v[0] = m02;
+         v[1] = m12;
+         v[2] = m22;
+      }else {
+        throw new ArrayIndexOutOfBoundsException("Matrix3f");
+      }
+  }
+
   
   /**
    * Sets this Matrix3f to identity.

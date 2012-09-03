@@ -33,17 +33,17 @@ public class testINS {
 		CuADXL345 accelSensor=new CuADXL345(SensorPort.S3);
 		accelSensor.setSampleRate(200);
 		accel=new Calibrate(accelSensor,"ADXL345");
-		accel=new AutoSampler(accel,200);
+		//accel=new AutoSampler(accel,200);
 		
 		CuITG3200 gyroSensor=new CuITG3200(SensorPort.S3);
 		gyroSensor.setSampleRate(200);
 		gyro=new Calibrate(gyroSensor,"ITG3200");
-		gyro=new AutoSampler(gyro,200);
+		//gyro=new AutoSampler(gyro,200);
 		
 		DiCompass compassSensor=new DiCompass(SensorPort.S4);
 		compassSensor.setSampleRate(75);
 		compass=new Calibrate(compassSensor,"DiCompass");
-		compass=new AutoSampler(compass,75);
+		//compass=new AutoSampler(compass,75);
 		
 		
 		INS attitude= new INS(gyro,accel,compass);
