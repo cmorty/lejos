@@ -383,7 +383,6 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
    int processMethod (int aMethodIndex, boolean aSpecial, boolean aInterface)
       throws TinyVMException
    {
-      //TODO findMethod may return null, throw Exception in findMethod
       MethodRecord pMethod = findMethod (aMethodIndex, aSpecial, aInterface);
       ClassRecord pTopClass = pMethod.getClassRecord();
       if (aSpecial)
@@ -397,14 +396,12 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          //    + ", " + pMethodIndex);
          return (pClassIndex << 8) | (pMethodIndex & 0xFF);
       }
-      else
-      {
-         int pNumParams = pMethod.getNumParameterWords() - 1;
-         assert pNumParams < TinyVMConstants.MAX_PARAMETER_WORDS: "Check: number of parameters not to high";
-         int pSignature = pMethod.getSignatureId();
-         assert pSignature < TinyVMConstants.MAX_SIGNATURES: "Check: signature in range";
-         return (pNumParams << TinyVMConstants.M_ARGS_SHIFT) | pSignature;
-      }
+      
+      int pNumParams = pMethod.getNumParameterWords() - 1;
+      assert pNumParams < TinyVMConstants.MAX_PARAMETER_WORDS: "Check: number of parameters not to high";
+      int pSignature = pMethod.getSignatureId();
+      assert pSignature < TinyVMConstants.MAX_SIGNATURES: "Check: signature in range";
+      return (pNumParams << TinyVMConstants.M_ARGS_SHIFT) | pSignature;
    }
 
    /**
@@ -429,6 +426,7 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
          .getConstant(pMethodEntry.getNameAndTypeIndex());
       Signature pSig = new Signature(pNT.getName(iCF.getConstantPool()), pNT
          .getSignature(iCF.getConstantPool()));
+      String orgClassName = className;
       if (className.startsWith("["))
       {
           // For arrays we use the methods contained in Object
@@ -447,10 +445,8 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
         pMethod = pClassRecord.getSpecialMethodRecord(pSig);
       else
         pMethod = pClassRecord.getVirtualMethodRecord(pSig);
-      //TODO throw Exception if pMethod is null (method not found)
-      // logging is not sufficient, since other stuff will break
-      //if (pMethod == null)
-          // _logger.log(Level.INFO, "Failed to find " + pSig + " class " + className);
+      if (pMethod == null)
+          throw new TinyVMException("Failed to find method " + pSig + " in class " + orgClassName);
       return pMethod;
    }
    
@@ -882,29 +878,32 @@ public class CodeUtilities implements OpCodeConstants, OpCodeInfo
                markStaticField((aCode[i] & 0xFF) << 8 | (aCode[i + 1] & 0xFF));
                i += 2;
                break;
-            case OP_INVOKEINTERFACE:
+            case OP_INVOKEINTERFACE: {
                // Opcode is changed:
                // _logger.log(Level.INFO, "Interface");
-               MethodRecord pMeth0 = findMethod((aCode[i] & 0xFF) << 8
+               MethodRecord pMeth = findMethod((aCode[i] & 0xFF) << 8
                   | (aCode[i + 1] & 0xFF), false, true); 
-               if (pMeth0 != null) pMeth0.getClassRecord().markMethod(pMeth0, true);
+               pMeth.getClassRecord().markMethod(pMeth, true);
                i += 4;
                break;
-            case OP_INVOKEVIRTUAL:
+            }
+            case OP_INVOKEVIRTUAL: {
                // Opcode is changed:
-               MethodRecord pMeth1 = findMethod((aCode[i] & 0xFF) << 8
+               MethodRecord pMeth = findMethod((aCode[i] & 0xFF) << 8
                   | (aCode[i + 1] & 0xFF), false, false); 
-               if (pMeth1 != null) pMeth1.getClassRecord().markMethod(pMeth1, true);
+               pMeth.getClassRecord().markMethod(pMeth, true);
                i += 2;
                break;
+            }
             case OP_INVOKESPECIAL:
-            case OP_INVOKESTATIC:
+            case OP_INVOKESTATIC: {
                // Opcode is changed:
-               MethodRecord pMeth2 = findMethod((aCode[i] & 0xFF) << 8
+               MethodRecord pMeth = findMethod((aCode[i] & 0xFF) << 8
                   | (aCode[i + 1] & 0xFF), true, false); 
-               if (pMeth2 != null) pMeth2.getClassRecord().markMethod(pMeth2, true);
+               pMeth.getClassRecord().markMethod(pMeth, true);
                i += 2;
                break;
+            }
             case OP_LOOKUPSWITCH:
                {
                    while( (i % 4) != 0)
