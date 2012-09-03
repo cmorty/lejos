@@ -48,8 +48,8 @@ public class INS {
 	protected float									magnetoP					= 0.055f; 				//The P factor of the filter. Determines how strong the correction by the accelerometer is.
 	
 	// filter status
-	protected Matrix3f							attitude					= new Matrix3f(1,0,0,0,1,0,0,0,1); 	//direction cosine matrix that holds the attitude of the sensor.
-	protected Matrix3f							attitudeT					= new Matrix3f(1,0,0,0,1,0,0,0,1); 	//Transpose of the attitude matrix.
+	protected RotationMatrix				attitude					= new RotationMatrix(); 	//direction cosine matrix that holds the attitude of the sensor.
+	protected RotationMatrix				attitudeT					= new RotationMatrix(); 	//Transpose of the attitude matrix.
 	protected boolean								running						= false; 														//Indicates that the filter is running.
 
 	
@@ -66,7 +66,6 @@ public class INS {
 	protected SampleProvider				gyro							= null; 						//holds the gyro object
 	private float[]									rateSample				= new float[3];
 	private Vector3f								rate							= new Vector3f(); 	//The vector that holds the reading from the gyro
-	private Matrix3f								movement					= new Matrix3f(1,0,0,0,1,0,0,0,1);
 	
 
 	//magnetometer and associated data
@@ -99,9 +98,6 @@ public class INS {
 	private Vector3f								zRow							= new Vector3f();
 	private Vector3f								northB						= new Vector3f();
 	private Vector3f								northW						= new Vector3f();
-	private Vector3f 								xRowOrt						= new Vector3f();
-	private Vector3f 								yRowOrt						= new Vector3f();
-	private Vector3f 								zRowOrt						= new Vector3f();
 	Vector3f 												temp							= new Vector3f();
 	private Timer										timer							= new Timer();
 	
@@ -225,20 +221,13 @@ public class INS {
 	 * <li>Calculate error between DCM and accelerometer (X and Y axis)</li>
 	 * <li>Calculate error between DCM and magnetometer ( Z axis)</li>
 	 * <li>Calculate correction term (P+I) from these errors to be used in the next iteration</li>
-	 */
+	 */ 
 	private void update() {
 		fetchSamples();
 		dt = timer.getDeltaT();
 		rate.scale(dt);
 		rate.add(piCorrection);
-		movement.m01= -rate.z;
-		movement.m02= rate.y;
-		movement.m10= rate.z;
-		movement.m12= -rate.x;
-		movement.m20= -rate.y;
-		movement.m21= rate.x;
-		attitude.mul(movement);
-		normalize();
+		attitude.addSmallRotation(rate);
 		if (newAccelData) 
 			calculateAccelError();
 		if (newMagnetoData) 
@@ -271,6 +260,7 @@ public class INS {
 		northW.normalize();
 		transformB(northW, northB);
 		//northB.normalize();
+		attitude.getRow(0, xRow);
 		magnetoError.cross(northB,xRow);
 	}
 
@@ -302,28 +292,6 @@ public class INS {
 		piCorrection.add(iCorrection);
 	}
 	
-	/**
-	 * Removes numerical errors in the DCM that build up over time. <p>
-	 * 
-	 * Small numerical errors are inserted in the matrix with each update of the matrix. This method removes (part) of these errors by
-	 *  making the matrix (more) orthogonal again.
-	 */
-	private void normalize() {
-		attitude.getRow(0,xRow);
-		attitude.getRow(1,yRow);
-		float error = xRow.dot(yRow)/2.0f;
-		if (Math.abs(error) > 0.01) {
-			xRowOrt.scaleAdd(-error,yRow,xRow);
-			yRowOrt.scaleAdd(-error,xRow,yRow);
-			zRowOrt.cross(xRowOrt,yRowOrt);
-			xRowOrt.normalize();
-			yRowOrt.normalize();
-			zRowOrt.normalize();
-			attitude.setRow(0, xRowOrt);
-			attitude.setRow(1, yRowOrt);
-			attitude.setRow(2, zRowOrt);
-		}
-	}
 	
 // methods to start, stop and pause the filter
 	
@@ -519,7 +487,7 @@ public SampleProvider getDCMProvider() {
 	 * @return
 	 * returns the pitch, the rotation around the Y axis. 
 	 */
-	float getPitch() {
+	public float getPitch() {
 		return (float)-Math.asin(attitude.m20);
 	}
 
@@ -530,7 +498,7 @@ public SampleProvider getDCMProvider() {
 	 * returns the roll, the rotation around the X axis. 
 	 */
 
-	float getRoll() {
+	public float getRoll() {
 		return (float)Math.atan2(attitude.m21, attitude.m22);
 	}
 
@@ -540,7 +508,7 @@ public SampleProvider getDCMProvider() {
 	 * @return
 	 * returns the yaw, the rotation around the Z axis. 
 	 */
-	float getYaw() {
+	public float getYaw() {
 		return (float)Math.atan2(attitude.m10, attitude.m00);
 	}
 	
@@ -568,13 +536,6 @@ public SampleProvider getDCMProvider() {
 	
 // getters and setters	
 	
-	
-	/**
-	 * Returns the nagnetic field strength that is calculated by the filter
-	 */
-	public float getFieldStrength() {
-		return fieldStrength;
-	}
 	
 	/**
 	 * Gives an indication of the iteration speed of the filter

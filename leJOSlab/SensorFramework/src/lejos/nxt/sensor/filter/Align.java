@@ -11,13 +11,14 @@ import lejos.nxt.sensor.api.*;
  *
  */
 public class Align extends AbstractFilter{
-	Matrix3f rotateAxis=new Matrix3f(1,0,0,0,1,0,0,0,1);
+	RotationMatrix rotateAxis=new RotationMatrix();
 	Vector3f v=new Vector3f();
 	float[] sample=new float[3];
 
 
 	public Align(SampleProvider source) {
 		super(source);
+		elements=3;
 	}
 	
 	/**
@@ -33,19 +34,10 @@ public class Align extends AbstractFilter{
 	 * 
 	 */
 	public void addRotation(String axis, int angle) {
-		axis = axis.toUpperCase();
-		double a=Math.toRadians(angle);
-		if ("XYZ".indexOf(axis) == -1)
-			throw new IllegalArgumentException("Invalid axis");
-		if (axis.equals("X")) addXRotation(a);
-		if (axis.equals("Y")) addYRotation(a);
-		if (axis.equals("Z")) addZRotation(a);
+		rotateAxis.addRotation(axis, angle, true);
 	}
 
 
-	public int getElementsCount() {
-		return 3;
-	}
 
 	/** Fetches a sample from the source and rotates it
 	 */
@@ -64,54 +56,9 @@ public class Align extends AbstractFilter{
 	 * Resets the to coordinate systems te be aligned.
 	 */
 	public void reset() {
-		rotateAxis=new Matrix3f(1,0,0,0,1,0,0,0,1);	
+		rotateAxis.setIdentity();	
 	}
 		
-	private void addXRotation(double a) {
-		Matrix3f r=new Matrix3f(1,			0,			0,
-														0,			cos(a),	sin(a),
-														0,			-sin(a),	cos(a));
-		r.mul(rotateAxis);
-		rotateAxis=r;
-	}
-	
-	private void addYRotation(double a) {
-		Matrix3f r=new Matrix3f(cos(a),	0,			-sin(a),
-														0,			1,			0,
-														sin(a),	0,			cos(a));
-		r.mul(rotateAxis);
-		rotateAxis=r;
-	}
-
-	private void addZRotation(double a) {
-		Matrix3f r=new Matrix3f(cos(a),	sin(a),	0,	
-														-sin(a),cos(a),	0,
-														0,			0,			1);
-		r.mul(rotateAxis);
-		rotateAxis=r;
-	}
-	
-	
-	/**
-	 * Returns sinus, Just to get more readable code
-	 * @param angle (in radians)
-	 * @return
-	 * sinus of angle
-	 */
-	private float sin(double angle) {
-		return (float)Math.sin(angle);
-	}
-	
-	/**
-	 * Returns cosinus, Just to get more readable code
-	 * @param angle (in radians)
-	 * @return
-	 * cosinus of angle
-	 */
-	private float cos(double angle) {
-		return (float)Math.cos(angle);
-	}
-	
 	protected void printMatrix() {
 		printMatrix(rotateAxis);
 	}
