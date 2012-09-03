@@ -441,12 +441,12 @@ public final class String implements CharSequence, Comparable<String>
 		return characters.length == 0;
 	}
 	
-	public int lastIndexOf(char ch)
+	public int lastIndexOf(int ch)
 	{
 		return lastIndexOf(ch, characters.length - 1);
 	}
 	
-	public int lastIndexOf(char ch, int fromIndex)
+	public int lastIndexOf(int ch, int fromIndex)
 	{
 		int max = characters.length;
 		char v[] = characters;
