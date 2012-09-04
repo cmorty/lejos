@@ -6,8 +6,6 @@ package lejos.nxt.sensor.api;
  *
  */
 public class RotationMatrix extends Matrix3f {
-	private int orthoFrequency=100;
-	private int count=0;
 	public RotationMatrix() {
 		super();
 		setIdentity();
@@ -41,9 +39,10 @@ public class RotationMatrix extends Matrix3f {
 	}
 
 	/**
-	 * Restores the orthogonality of the matrix. 
+	 * Restores the orthogonality of the matrix when error > 0. 
 	 */
 	public void orthoNormalize() {
+		if (Math.abs(m00*m10+m01*m11+m02*m12)>0.0) {
 		Vector3f c1Old=new Vector3f(), c2Old=new Vector3f(), c3Old=new Vector3f();
 		Vector3f c1New=new Vector3f(), c2New=new Vector3f(), c3New=new Vector3f();
 		getColumn(0,c1Old);
@@ -60,8 +59,7 @@ public class RotationMatrix extends Matrix3f {
 		setColumn(0,c1New);
 		setColumn(1,c2New);
 		setColumn(2,c3New);
-		
-		count=0;
+		}
 	}
 	
 	
@@ -72,7 +70,7 @@ public class RotationMatrix extends Matrix3f {
 														0,			-sin(a),	cos(a));
 		if (inverse) r.transpose();
 		this.mul(r);
-		if (++count==orthoFrequency) orthoNormalize();
+		orthoNormalize();
 	}
 	
 	private void addYRotation(double a, boolean inverse) {
@@ -81,7 +79,7 @@ public class RotationMatrix extends Matrix3f {
 														sin(a),	0,			cos(a));
 		if (inverse) r.transpose();
 		this.mul(r);
-		if (++count==orthoFrequency) orthoNormalize();
+		orthoNormalize();
 	}
 
 	private void addZRotation(double a, boolean inverse) {
@@ -90,7 +88,7 @@ public class RotationMatrix extends Matrix3f {
 														0,			0,			1);
 		if (inverse) r.transpose();
 		this.mul(r);
-		if (++count==orthoFrequency) orthoNormalize();
+		orthoNormalize();
 	}
 	
 	RotationMatrix movement=null;
@@ -108,7 +106,7 @@ public class RotationMatrix extends Matrix3f {
 		movement.m20= -rotate.y;
 		movement.m21= rotate.x;
 		this.mul(movement);
-		if (++count==orthoFrequency) orthoNormalize();
+		orthoNormalize();
 	}
 	
 	public void invert() {
