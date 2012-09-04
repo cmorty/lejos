@@ -2,19 +2,24 @@ package lejos.nxt.sensor.filter;
 
 import lejos.nxt.sensor.api.SampleProvider;
 
-/**
- * This class provides a feedback loop for offset correction. To be used together with the calibrate class.
- * <p>
- * @author Aswin
- *
- */
-public class OffsetFeedback extends AbstractFilter {
+public class OffsetCorrection extends AbstractFilter {
 	float speed=0, endSpeed=0;
 	float[] offset; 
 	float[] reference;
 	float error;
 	int n=0;
-
+	
+	
+	public OffsetCorrection(SampleProvider source) {
+		this(source,new float[]{0,0,0});
+	}
+	
+	public OffsetCorrection(SampleProvider source, float[] reference) {
+		this(source,reference,0.1f);
+	}
+	
+	
+	
 	/**
 	 * Constructor
 	 * @param source
@@ -26,18 +31,8 @@ public class OffsetFeedback extends AbstractFilter {
 	 * @param speed
 	 * Speed to update offset value
 	 */
-	public OffsetFeedback(SampleProvider source, String calibrate, float[] reference, float speed) {
-		super(source);
-		CalibrationManager calMan=new CalibrationManager();
-		if (calMan.setCurrent(calibrate) == false) {
-			calMan.add(calibrate, source.getElementsCount());
-			calMan.save();
-		}
-		calMan.setCurrent(calibrate);
-		offset=calMan.getOffset();
-		this.speed=speed;
-		this.reference=reference;
-		endSpeed=speed;
+	public OffsetCorrection(SampleProvider source, float[] reference, float speed) {
+		this(source,reference,1f,.0001f);
 	}
 
 	/**
@@ -53,32 +48,27 @@ public class OffsetFeedback extends AbstractFilter {
 	 * @param endSpeed
 	 * End speed to update offset value
 	 */
-	public OffsetFeedback(SampleProvider source, String calibrate, float[] reference, float speed, float endSpeed) {
-		this(source,calibrate,reference,speed);
+	public OffsetCorrection(SampleProvider source, float[] reference, float speed, float endSpeed) {
+		super(source);
+		offset=new float[elements];
+		this.speed=speed;
+		this.reference=reference;
 		this.endSpeed=endSpeed;
 	}
 
-	
 
 	public void fetchSample(float[] dst, int off) {
 		source.fetchSample(dst, off);
 		for (int i=0;i<elements;i++) {
 			error=dst[i+off]-reference[i];
 			offset[i]=offset[i]*(1.0f-speed)+error*speed;
+			dst[i+off]-=offset[i];
 		}
+		
 		if (endSpeed<speed) {
 			speed*=0.97f;
 			if (speed<endSpeed) speed=endSpeed;
-			System.out.print(n++);
-			System.out.print(',');
-			System.out.println(speed);
 		}
 		
 	}
-	
-	public void setSpeed(float speed) {
-		this.speed=speed;
-		endSpeed=speed;
-	}
-
 }
