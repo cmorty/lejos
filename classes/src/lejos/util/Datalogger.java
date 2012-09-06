@@ -77,6 +77,7 @@ public class Datalogger
     InputStream is = null;
     String[] items ={" USB", " Bluetooth"};
     TextMenu tm = new TextMenu(items, 2, "Transmit using");
+    while(Button.readButtons()==0);
     int s = tm.select();
     LCD.clear();
     if (s == 0)
