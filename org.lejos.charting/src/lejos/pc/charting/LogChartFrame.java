@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -43,6 +44,7 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.MenuElement;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -55,11 +57,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.BadLocationException;
 
-import lejos.util.EndianTools;
-
 import org.jfree.chart.JFreeChart;
-import javax.swing.JToggleButton;
-import javax.swing.ImageIcon;
 
 
 /** The main GUI window for NXT Charting Logger.
@@ -128,8 +126,8 @@ class LogChartFrame extends JFrame {
     private JCheckBox showCommentsCheckBox = new JCheckBox();
     private Timer updateLogTextAreaTimer;
     private JCheckBox scrollDomainCheckBox = new JCheckBox();
-    private ExtensionGUIManager eGuiManager = new ExtensionGUIManager(jTabbedPane1);
-    private TunneledMessageManager tmm = new TunneledMessageManager(eGuiManager);
+    private ExtensionGUIManager eGuiManager;
+    private TunneledMessageManager tmm ;
     private LoggerProtocolManager lpm;
     private JToggleButton tglbtnpauseplay;
     
@@ -151,6 +149,9 @@ class LogChartFrame extends JFrame {
         
         // manage Range axis label fields state
         for (int i=0;i<4;i++) manageAxisLabel(i);
+        
+        this.eGuiManager = new ExtensionGUIManager(jTabbedPane1);
+        this.tmm = new TunneledMessageManager(eGuiManager);
     }
 
 
