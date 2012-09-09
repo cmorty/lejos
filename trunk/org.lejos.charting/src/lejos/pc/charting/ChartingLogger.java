@@ -36,9 +36,11 @@ public class ChartingLogger {
         } catch (Exception e){
             appIcon = frame.getIconImage();
         }
+        
         frame.setIconImage(appIcon);
         frame.pack();
         frame.setVisible(true);
+        frame.requestFocus();
     }
     
     private class MyWindowListener extends WindowAdapter {
