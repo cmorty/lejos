@@ -82,6 +82,8 @@ public class INS {
 	// sampleProviders
 	SampleProvider 									angleProvider			=	null;	
 	SampleProvider 									dcmProvider				= null;	
+	SampleProvider 									rateProvider			= null;	
+	
 
 	// properties of the earth magnetic field
 	protected float									fieldStrength			= 0f;
@@ -94,7 +96,6 @@ public class INS {
 	// utility members
 	private float										dt								= 0; 								//holds the time interval between filter iterations.
 	private Vector3f								xRow							= new Vector3f();
-	private Vector3f								yRow							= new Vector3f();
 	private Vector3f								zRow							= new Vector3f();
 	private Vector3f								northB						= new Vector3f();
 	private Vector3f								northW						= new Vector3f();
@@ -468,9 +469,7 @@ public SampleProvider getDCMProvider() {
 			}
 			
 		}
-	
-	
-	
+		
 
 	/**
 	 * Returns the Direction Cosine Matix (DCM) of the filter
@@ -534,9 +533,7 @@ public SampleProvider getDCMProvider() {
 	}
 
 	
-// getters and setters	
-	
-	
+
 	/**
 	 * Gives an indication of the iteration speed of the filter
 	 * @return 
@@ -546,6 +543,7 @@ public SampleProvider getDCMProvider() {
 		return Frequency;
 	}
 
+//getters and setters	
 
 	/**
 	 * @return 
@@ -647,7 +645,7 @@ public SampleProvider getDCMProvider() {
 
 
 	/**
-	 * This inner class is responsible for  iteration  the filter in its own thread
+	 * This inner class is responsible for iterating the filter in its own thread
 	 * @author Aswin
 	 *
 	 */

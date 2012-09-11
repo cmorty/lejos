@@ -5,8 +5,14 @@ import lejos.nxt.sensor.api.*;
 /**
  * Rotates spatial sample data in 1,2, or 3 dimensions. <P>
  * This class can be used to convert samples taken in one coordinate frame (for example sensor frame)
- * to another coordinate frame (for example robot frame). The differences in orientation between the
- * two frames is specified as a serie of rotations using the addRotation() method.  
+ * to another coordinate frame (for example robot frame). The difference in orientation between the
+ * two frames is specified as a series of rotations that is needed to align the source (sensor) frame 
+ * to the target (robot) frame using the addRotation() method.   <P>
+ * 
+ * For example. If a robot has an US sensor attached that is pointing to the left then the filter should be configured using
+ * addRotation("Z",-45), as one needs to rotate the sensor clockwise around its Z axis with 45 degrees to align it with the robot.
+ * As a result a measured range of 100cm will be translated in a range of {70.7, 70,7, 0}. 
+ * This indicates that the object is 70.7 cm in front of the robot and 70.7 cm to the left of the robot.
  * @author Aswin
  *
  */
@@ -23,18 +29,18 @@ public class Align extends AbstractFilter{
 	
 	/**
 	 * Adds a rotation the the rotation matrix. <p>
-	 * The alignment of a sensor can be expressed as a series of rotations of the sensor where the sensor starts of aligned with the robot.
-	 * Each rotation is a rotation around one of the sensor axis. The position of a sensor that points backwards in an upward angle of 45 degrees for example
-	 * can be described with two subsequent rotations. The first rotation is 180 degrees around the Z-axis, the second rotation is 45 degrees around the Y-axis. <br>
+	 * The alignment of a sensor can be expressed as a series of rotations of the sensor where the sensor starts of at its mounting position and 
+	 * ends up aligned with the robot.
+	 * Each rotation is a rotation around one of the sensor axis. <br>
 	 * Please note that the order of rotations does matter. Also note that this class uses the right hand system for rotations.
 	 * @param axis
 	 * The axis that the sensor has rotated around: X, Y or Z.
 	 * @param angle
-	 * The angle of rotation expressed in degrees. A positive angle means a counter clockwise rotation.
+	 * The angle of rotation expressed in degrees. A positive angle means a counter clockwise rotation when looking into the axis.
 	 * 
 	 */
 	public void addRotation(String axis, int angle) {
-		rotateAxis.addRotation(axis, angle, true);
+		rotateAxis.addRotation(axis, angle, false);
 	}
 
 
@@ -53,7 +59,7 @@ public class Align extends AbstractFilter{
 	}
 	
 	/**
-	 * Resets the to coordinate systems te be aligned.
+	 * Reset aligns the source and target coordinate systems.
 	 */
 	public void reset() {
 		rotateAxis.setIdentity();	
