@@ -19,7 +19,7 @@ import lejos.pc.comm.NXTSamba;
  */
 public class NXJFlashUpdate {
 
-	private static final int MAX_FIRMWARE_PAGES = 416;
+	private static final int MAX_FIRMWARE_PAGES = 420;
 	private static final int TOTAL_PAGES = 1024;
 	private static final int SETTINGS_PAGES = 1;
 	private static final int DIRECTORY_PAGES = 2;
