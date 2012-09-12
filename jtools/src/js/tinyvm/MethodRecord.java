@@ -210,12 +210,11 @@ public class MethodRecord implements WritableData
    {
       return IOUtilities.adjustedSize(2 + // signature
          2 + // exception table offset
-         2 + // code offset
+         4 + // flags and code offset
          1 + // number of locals
          1 + // max. operands
          1 + // number of parameters
-         1 + // number of exception handlers
-         1, // flags
+         1,  // number of exception handlers
          2);
    }
 
@@ -226,12 +225,11 @@ public class MethodRecord implements WritableData
          aOut.writeU2(iSignatureId);
          aOut.writeU2(iExceptionTable == null? 0 : iExceptionTable.getOffset());
          iCodeStart = (iCodeSequence == null? 0 : iCodeSequence.getOffset());
-         aOut.writeU2(iCodeSequence == null? 0 : iCodeSequence.getOffset());
+         aOut.writeU4(iFlags << 24 | iCodeStart);
          aOut.writeU1(iNumLocals);
          aOut.writeU1(iNumOperands);
          aOut.writeU1(iNumParameters);
          aOut.writeU1(iNumExceptionHandlers);
-         aOut.writeU1(iFlags);
          IOUtilities.writePadding(aOut, 2);
       }
       catch (IOException e)

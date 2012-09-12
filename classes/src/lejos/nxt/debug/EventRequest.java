@@ -325,7 +325,7 @@ class EventRequest {
 			VM.VMThread thread = VM.getVM().getVMThread(threadFilter);
 			VM.VMStackFrame frame = thread.getStackFrames().get(0);
 			VM.VMMethod method = frame.getVMMethod();
-			int codeOffset = (method.codeOffset & 0xFFFF) + VM.getVM().getImage().address;
+			int codeOffset = method.getCodeOffset() + VM.getVM().getImage().address;
 			int bppc = frame.pc - codeOffset;
 			// currently cut out, as I'm first trying to get the MIN stepping
 			// working

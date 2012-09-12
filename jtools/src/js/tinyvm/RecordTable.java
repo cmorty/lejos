@@ -36,7 +36,30 @@ public class RecordTable<T extends WritableData> extends WritableDataWithOffset 
     * Length of output.
     */
    private int _length;
+   
 
+   private void init(String name, boolean allowDuplicates, boolean align)
+   {
+       assert name != null: "Precondition: name != null";
+       _name = name;
+       _duplicates = allowDuplicates;
+       _align = align;
+       _list = new ArrayList<T>();
+       _length = -1;
+   }
+   /**
+    * Constructor.
+    * 
+    * @param name description of this record table
+    * @param allowDuplicates allow duplicates?
+    * @param align align output?
+    */
+   public RecordTable (String name, boolean allowDuplicates, boolean align, int maxOffset)
+   {
+      super(maxOffset);
+      init(name, allowDuplicates, align);
+   }
+   
    /**
     * Constructor.
     * 
@@ -46,13 +69,7 @@ public class RecordTable<T extends WritableData> extends WritableDataWithOffset 
     */
    public RecordTable (String name, boolean allowDuplicates, boolean align)
    {
-      assert name != null: "Precondition: name != null";
-
-      _name = name;
-      _duplicates = allowDuplicates;
-      _align = align;
-      _list = new ArrayList<T>();
-      _length = -1;
+       init(name, allowDuplicates, align);
    }
 
    //
@@ -201,9 +218,7 @@ public class RecordTable<T extends WritableData> extends WritableDataWithOffset 
    {
       // _logger.log(Level.INFO, "init offset of " + _name + ": " +
       // startOffset);
-
       super.initOffset(startOffset);
-
       for (Iterator<T> iter = _list.iterator(); iter.hasNext();)
       {
          WritableData element = iter.next();

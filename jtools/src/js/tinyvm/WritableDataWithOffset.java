@@ -6,7 +6,20 @@ public abstract class WritableDataWithOffset implements WritableData
     * Offset.
     */
    private int _offset = -1;
+   /**
+    * Maximum allowed offset
+    */
+   private final int _maxOffset;
 
+   public WritableDataWithOffset(int maxOffset)
+   {
+       _maxOffset = maxOffset;
+   }
+   
+   public WritableDataWithOffset()
+   {
+       this(TinyVMConstants.MAX_OFFSET);
+   }
    /**
     * Init offset.
     * 
@@ -17,7 +30,7 @@ public abstract class WritableDataWithOffset implements WritableData
    {
       assert startOffset != -1: "Precondition: aStart != -1";
 
-      if (startOffset < 0 || startOffset > 0xFFFF)
+      if (startOffset < 0 || startOffset > _maxOffset)
       {
          throw new TinyVMException("Offset out of range (" + startOffset + ")");
       }
@@ -34,12 +47,12 @@ public abstract class WritableDataWithOffset implements WritableData
    {
       assert _offset != -1: "Precondition: _offset != -1";
 
-      if (_offset < 0 || _offset > 0xFFFF)
+      if (_offset < 0 || _offset > _maxOffset)
       {
          throw new TinyVMException("Offset out of range (" + _offset + ")");
       }
 
-      assert _offset >= 0 && _offset <= 0xFFFF: "Postcondition: result >=0 && result <= 0xFFFF";
+      assert _offset >= 0 && _offset <= _maxOffset: "Postcondition: result >=0 && result <= 0xFFFF";
       return _offset;
    }
 }

@@ -32,7 +32,7 @@ public class Binary
    RecordTable<RecordTable<ExceptionRecord>> iExceptionTables = new RecordTable<RecordTable<ExceptionRecord>>("exceptions", false, true);
    RecordTable<RecordTable<InstanceFieldRecord>> iInstanceFieldTables = new RecordTable<RecordTable<InstanceFieldRecord>>("instance fields",
       true, true);
-   final RecordTable<CodeSequence> iCodeSequences = new RecordTable<CodeSequence>("code", true, true);
+   final RecordTable<CodeSequence> iCodeSequences = new RecordTable<CodeSequence>("code", true, true, TinyVMConstants.MAX_CODE_OFFSET);
    RecordTable<ConstantValue> iConstantValues = new RecordTable<ConstantValue>("constant values", true,
       true);
    final RecordTable<EntryClassIndex> iEntryClassIndices = new RecordTable<EntryClassIndex>(

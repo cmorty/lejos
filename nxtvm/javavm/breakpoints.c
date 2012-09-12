@@ -164,7 +164,7 @@ int check_breakpoint(MethodRecord* method, byte *pc)
       set_thread_debug_state(currentThread, BREAKPOINT, null);
       debug_breakpoint(currentThread,
           method - get_method_table(get_class_record(0)),
-          ptr2word(pc - (get_binary_base() + method->codeOffset)));
+          get_offset(method, pc));
     }
   }
   return -1;

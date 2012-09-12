@@ -106,7 +106,8 @@ typedef struct S_MethodRecord
   TWOBYTES signatureId;
   // Offset to table of exception information
   TWOBYTES exceptionTable;
-  TWOBYTES codeOffset;
+  // The code info contains a 1 byte set of flags and a 3 byte PC
+  FOURBYTES codeInfo;
   // Number of 32-bit locals (long is counted as 2 locals).
   byte numLocals;
   // Maximum size of local operand stack, in 32-bit words.
@@ -116,7 +117,6 @@ typedef struct S_MethodRecord
   byte numParameters;
   // Number of exception handlers
   byte numExceptionHandlers;
-  byte mflags;
 } MethodRecord;
 
 typedef struct S_ExceptionRecord
@@ -233,10 +233,10 @@ extern void dispatch_java(byte classIndex, byte sig, byte *retAddr, byte *btAddr
 #define is_initialized_idx(IDX_)    (get_init_state_idx(IDX_) & C_INITIALIZED)
 #define is_initialized(CREC_)       (get_init_state(CREC_) & C_INITIALIZED)
 
-#define is_synchronized(MREC_)      (((MREC_)->mflags & M_SYNCHRONIZED) != 0)
-#define is_static(MREC_)      (((MREC_)->mflags & M_STATIC) != 0)
-#define is_native(MREC_)            (((MREC_)->mflags & M_NATIVE) != 0)
-#define get_code_ptr(MREC_)         (get_binary_base() + (MREC_)->codeOffset)
+#define is_synchronized(MREC_)      (((MREC_)->codeInfo & (M_SYNCHRONIZED<<24)) != 0)
+#define is_static(MREC_)      (((MREC_)->codeInfo & (M_STATIC << 24)) != 0)
+#define is_native(MREC_)            (((MREC_)->codeInfo & (M_NATIVE << 24)) != 0)
+#define get_code_ptr(MREC_)         (get_binary_base() + ((MREC_)->codeInfo & 0xffffff))
 
 #define __get_static_fields_base()  (get_binary_base() + get_master_record()->staticFieldsOffset)
 #define get_static_fields_base()    (staticFieldsBase)

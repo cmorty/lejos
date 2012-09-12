@@ -10,6 +10,11 @@ public class CodeSequence extends WritableDataWithOffset
 {
    private byte[] iBytes;
 
+   public CodeSequence()
+   {
+       super(TinyVMConstants.MAX_CODE_OFFSET);
+   }
+   
    public void setBytes (byte[] aBytes)
    {
       iBytes = aBytes;
