@@ -327,8 +327,8 @@ boolean dispatch_special (MethodRecord *methodRecord, byte *retAddr)
   printf ("dispatch_special: %d, %d\n", 
           (int) methodRecord, (int) retAddr);
   printf ("-- signature id = %d\n", methodRecord->signatureId);
-  printf ("-- code offset  = %d\n", methodRecord->codeOffset);
-  printf ("-- flags        = %d\n", methodRecord->mflags);
+  printf ("-- code offset  = %d\n", methodRecord->codeInfo & 0xffffff);
+  printf ("-- flags        = %d\n", methodRecord->codeInfo >> 24);
   printf ("-- num params   = %d\n", methodRecord->numParameters);
   printf ("-- stack ptr    = %d\n", (int) get_stack_ptr());
   printf ("-- max stack ptr= %d\n", (int) (currentThread->stackArray + (get_array_size(currentThread->stackArray))*2));
@@ -520,7 +520,6 @@ create_stack_trace(Thread *thread, Object *ignore)
   StackFrame *topFrame = ((StackFrame *)array_start(thread->stackFrameArray)) + frameCnt;
   StackFrame *stackFrame = topFrame;
   MethodRecord *methodBase = get_method_table(get_class_record(0));
-  byte *pcBase = get_binary_base() + 2;
 
   // Ignore frames if required.
   if (ignore)
@@ -542,7 +541,7 @@ create_stack_trace(Thread *thread, Object *ignore)
   data = jint_array(stackArray);
   for(i = 0; i < frameCnt; i++)
   {
-    data[i] = ((stackFrame->methodRecord - methodBase) << 16) | (stackFrame->pc - pcBase - stackFrame->methodRecord->codeOffset);
+    data[i] = ((stackFrame->methodRecord - methodBase) << 16) | (get_offset(stackFrame->methodRecord, stackFrame->pc) - 2);
     stackFrame--;
   }
   // restore correct pc

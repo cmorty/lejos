@@ -745,7 +745,7 @@ public class ClassRecord implements WritableData
             String pName = pField.getName().toString();
             StaticFieldRecord pRec = iStaticFields.get(pName);
             StaticValue pValue = iStaticValues.get(pName);
-            if (pValue.getAlignment() == align && (iBinary.useAll() || pRec.used()))
+            if (pValue.getAlignment() == align && pRec.used())
             {
                 aStaticState.add(pValue);
                 aStaticFields.add(pRec);

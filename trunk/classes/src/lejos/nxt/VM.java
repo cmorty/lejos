@@ -537,18 +537,17 @@ public final class VM
     {
         public short signature;
         public short exceptionTable;
-        public short codeOffset;
+        public int codeInfo;
         public byte numLocals;
         public byte maxOperands;
         public byte numParameters;
         public byte numExceptionHandlers;
-        public byte mflags;
 
         // Flag values
         public static final byte M_NATIVE = 1;
         public static final byte M_SYNCHRONIZED = 2;
         public static final byte M_STATIC = 4;
-
+        
         private VMMethod(int addr)
         {
             super(addr, METHOD_LEN);
@@ -566,6 +565,16 @@ public final class VM
         public int getMethodNumber()
         {
             return (address - METHOD_BASE)/((METHOD_LEN + METHOD_ALIGNMENT - 1) & ~(METHOD_ALIGNMENT - 1));
+        }
+        
+        public int getCodeOffset()
+        {
+            return codeInfo & 0xffffff;
+        }
+        
+        public byte getFlags()
+        {
+            return (byte) (codeInfo >> 24); 
         }
     }
 
