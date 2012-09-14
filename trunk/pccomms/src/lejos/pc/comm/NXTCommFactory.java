@@ -201,7 +201,7 @@ public class NXTCommFactory {
 					fis.close();
 				}
 			} else {
-				ConfigManager.loadPropFile(ConfigManager.CONFIG_BTCACHE, props);
+				ConfigManager.loadPropertiesFile(ConfigManager.CONFIG_BTCACHE, props);
 			}
 		} catch (IOException e) {
 			throw new NXTCommException("Cannot read nxj.cache file: " + e.getMessage(), e);
@@ -228,7 +228,7 @@ public class NXTCommFactory {
 				fos.close();
 			}
 		} else {
-			ConfigManager.savePropFile(ConfigManager.CONFIG_BTCACHE, props);
+			ConfigManager.savePropertiesFile(ConfigManager.CONFIG_BTCACHE, props);
 		}
 	}
 

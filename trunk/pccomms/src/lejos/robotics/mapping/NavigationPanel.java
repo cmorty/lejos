@@ -272,7 +272,7 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 	
 	protected void loadProperties() {
 		try {
-			ConfigManager.loadPropFile(ConfigManager.CONFIG_NAVPANEL, props);
+			ConfigManager.loadPropertiesFile(ConfigManager.CONFIG_NAVPANEL, props);
 		} catch (IOException ioe) {
 			log("Error loading properties file: " + ioe.getMessage());
 		}
@@ -281,7 +281,7 @@ public abstract class NavigationPanel extends JPanel implements MapApplicationUI
 	protected void saveProperties() {
 		mapPanel.saveColors(props);
 		try {
-			ConfigManager.savePropFile(ConfigManager.CONFIG_NAVPANEL, props);
+			ConfigManager.savePropertiesFile(ConfigManager.CONFIG_NAVPANEL, props);
 		} catch (IOException ioe) {
 			log("Failed to store properties");
 		}
