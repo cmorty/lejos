@@ -29,6 +29,10 @@ public class ConfigManager {
 	
 	public static final String DOM_OUTPUT_ENCODING = "UTF-8";
 	
+	/**
+	 * Returns the path (in form of a File object) of the config file specified
+	 * or <code>null</code> if the folder for config files cannot be determined.
+	 */
 	public static File getConfigFile(String name) {
 		String userHome = System.getProperty("user.home");
 		if (userHome == null)
@@ -36,7 +40,12 @@ public class ConfigManager {
 		
 		return new File(userHome+File.separator+".config"+File.separator+"leJOS NXJ", name);
 	}
-	
+
+	/**
+	 * Opens a config file and returns a fileinputstream or returns <code>null</code> if the config
+	 * file does not exist.
+	 * @throws FileNotFoundException if the file cannot be opened for reading
+	 */
 	public static FileInputStream openConfigInputStream(String name) throws FileNotFoundException {
 		File f = getConfigFile(name);
 		if (f == null || !f.exists())
@@ -45,6 +54,12 @@ public class ConfigManager {
 		return new FileInputStream(f);
 	}
 	
+	/**
+	 * Opens a config file for writing and returns a fileoutputstream.
+	 * The parent folder of the config file and the config file itself are created if necessary.
+	 * The method returns <code>null</code> if the folder for config files cannot be determined.
+	 * @throws FileNotFoundException if the file cannot be opened for writing
+	 */
 	public static FileOutputStream openConfigOutputStream(String name) throws FileNotFoundException {
 		File f = getConfigFile(name);
 		if (f == null)
@@ -82,9 +97,10 @@ public class ConfigManager {
 	 * Open and parse a XML file and return its DOM.
 	 * 
 	 * @param filename The XML file to parse
-	 * @return The DOM. null if file could not be parsed, opened, or error.
-	 * @throws SAXException 
-	 * @throws ParserConfigurationException 
+	 * @return The DOM or <code>null</code> if file does not exist.
+	 * @throws IOException on error
+	 * @throws SAXException on error
+	 * @throws ParserConfigurationException on error 
 	 */
 	public static Document loadDOM(String filename) throws IOException, SAXException, ParserConfigurationException {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -119,8 +135,9 @@ public class ConfigManager {
 	 * 
 	 * @param doc The valid DOM
 	 * @param filename the XML filename
-	 * @return true on success, false otherwise
-	 * @throws TransformerException 
+	 * @return true on success, false if the folder for config files cannot be determined.
+	 * @throws IOException on error
+	 * @throws TransformerException on error 
 	 */
 	public static boolean saveDOM(Document doc, String filename) throws IOException, TransformerException {
 		// Use a Transformer for output
