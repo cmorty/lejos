@@ -2,6 +2,7 @@ package lejos.internal.config;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -13,7 +14,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -29,7 +29,7 @@ public class ConfigManager {
 	
 	public static final String DOM_OUTPUT_ENCODING = "UTF-8";
 	
-	public static File getPropFile(String name) {
+	public static File getConfigFile(String name) {
 		String userHome = System.getProperty("user.home");
 		if (userHome == null)
 			return null;
@@ -37,12 +37,27 @@ public class ConfigManager {
 		return new File(userHome+File.separator+".config"+File.separator+"leJOS NXJ", name);
 	}
 	
-	public static boolean loadPropFile(String name, Properties dst) throws IOException {
-		File propsFile = getPropFile(name);
-		if (propsFile == null || !propsFile.exists())
-			return false;
+	public static FileInputStream openConfigInputStream(String name) throws FileNotFoundException {
+		File f = getConfigFile(name);
+		if (f == null || !f.exists())
+			return null;
 		
-		FileInputStream fis =new FileInputStream(propsFile);
+		return new FileInputStream(f);
+	}
+	
+	public static FileOutputStream openConfigOutputStream(String name) throws FileNotFoundException {
+		File f = getConfigFile(name);
+		if (f == null)
+			return null;
+		
+		f.getParentFile().mkdirs();
+		return new FileOutputStream(f);
+	}
+	
+	public static boolean loadPropertiesFile(String name, Properties dst) throws IOException {
+		FileInputStream fis = openConfigInputStream(name);
+		if (fis == null)
+			return false;		
 		try {
 			dst.load(fis);
 		} finally {
@@ -51,17 +66,14 @@ public class ConfigManager {
 		return true;
 	}
 
-	public static boolean savePropFile(String name, Properties src) throws IOException {
-		File propsFile = getPropFile(name);
-		if (propsFile == null)
+	public static boolean savePropertiesFile(String name, Properties src) throws IOException {
+		FileOutputStream fos = openConfigOutputStream(name);
+		if (fos == null)
 			return false;
-		
-		propsFile.getParentFile().mkdirs();
-		FileOutputStream out = new FileOutputStream(propsFile);
 		try {
-			src.store(out, "Automatic save");					
+			src.store(fos, "Automatic save");					
 		} finally {
-			out.close();
+			fos.close();
 		}
 		return true;
 	}
@@ -71,39 +83,32 @@ public class ConfigManager {
 	 * 
 	 * @param filename The XML file to parse
 	 * @return The DOM. null if file could not be parsed, opened, or error.
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
 	 */
-	public static Document getDOM(String filename) {
+	public static Document loadDOM(String filename) throws IOException, SAXException, ParserConfigurationException {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		dbf.setNamespaceAware(true);
 	    dbf.setValidating(false);
-	    Document doc = null;	    
-		DocumentBuilder db = null;
+		
+		DocumentBuilder db = dbf.newDocumentBuilder();
 		
 		try {
-			db = dbf.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-			return null;
-		} 
-		
-		OutputStreamWriter errorWriter;
-		try {
-			errorWriter = new OutputStreamWriter(System.err, DOM_OUTPUT_ENCODING);
+			OutputStreamWriter errorWriter = new OutputStreamWriter(System.err, DOM_OUTPUT_ENCODING);
 			db.setErrorHandler(new SAXErrorHandler (new PrintWriter(errorWriter, true)));
 		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-			return null;
+			// this should never happen, as encoding should be a valid constant
+			throw new RuntimeException("internal error", e1);
 		}
 		
-		File theFile = getPropFile(filename);
-		if (theFile==null) return null;
+	    Document doc;	    
+		FileInputStream fis = openConfigInputStream(filename);
+		if (fis==null)
+			return null;		
 		try {
-			doc = db.parse(theFile);
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+			doc = db.parse(fis);
+		} finally {
+			fis.close();
 		}
 		
 		return doc;
@@ -115,35 +120,23 @@ public class ConfigManager {
 	 * @param doc The valid DOM
 	 * @param filename the XML filename
 	 * @return true on success, false otherwise
+	 * @throws TransformerException 
 	 */
-	public static boolean saveDOM(Document doc, String filename) throws IOException {
+	public static boolean saveDOM(Document doc, String filename) throws IOException, TransformerException {
 		// Use a Transformer for output
 	    TransformerFactory tFactory = TransformerFactory.newInstance();
-	    Transformer transformer = null;
-		try {
-			transformer = tFactory.newTransformer();
-		} catch (TransformerConfigurationException e) {
-			e.printStackTrace();
+	    Transformer transformer = tFactory.newTransformer();
+	    
+		FileOutputStream fos = openConfigOutputStream(filename);
+		if (fos == null)
 			return false;
-		}
-		
-		File theFile = getPropFile(filename);
-		if (theFile==null || transformer==null) {
-			return false;
-		}
-		theFile.getParentFile().mkdirs();
-		
-		FileOutputStream fos = new FileOutputStream(theFile);
-	    DOMSource source = new DOMSource(doc);
-	    StreamResult result = new StreamResult(fos);
 	    try {
+		    DOMSource source = new DOMSource(doc);
+		    StreamResult result = new StreamResult(fos);
 			transformer.transform(source, result);
-		} catch (TransformerException e) {
-			e.printStackTrace();
 		} finally {
 			fos.close();
 		}
-
 		return true;
 	}
 }
