@@ -65,7 +65,10 @@ public class ConfigManager {
 		if (f == null)
 			return null;
 		
-		f.getParentFile().mkdirs();
+		File p = f.getParentFile();
+		if (!p.mkdirs())
+			throw new FileNotFoundException("unable to create directory "+p);
+		
 		return new FileOutputStream(f);
 	}
 	
