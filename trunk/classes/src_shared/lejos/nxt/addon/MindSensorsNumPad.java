@@ -238,10 +238,13 @@ public class MindSensorsNumPad extends I2CSensor {
 	public static String maskToString(int x)
 	{
 		StringBuilder sb = new StringBuilder(12);
-		int len = KEYMAP.length();
-		for (int i=0; i<len; i++)
+		for (int i=0; i<10; i++)
 			if ((x & (1 << i)) != 0)
-				sb.append(KEYMAP.charAt(i));
+				sb.append((char)('0'+i));
+		if ((x & ID_STAR) != 0)
+			sb.append('*');
+		if ((x & ID_HASH) != 0)
+			sb.append('#');
 		return sb.toString();
 	}
 }
