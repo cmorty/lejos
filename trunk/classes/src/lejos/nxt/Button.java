@@ -150,7 +150,7 @@ public class Button implements ListenerCaller
 	}
 
 	/**
-	 * This method discards and events.
+	 * This method discards any events.
 	 * In contrast to {@link #readButtons()}, this method doesn't beep if a button is pressed.
 	 */
 	public static void discardEvents()
@@ -162,7 +162,23 @@ public class Button implements ListenerCaller
 	 * Waits for some button to be pressed or released.
 	 * Which buttons have been released or pressed is returned as a bitmask.
 	 * The lower eight bits (bits 0 to 7) indicate, which buttons have been pressed.
-	 * Bits 8 to 15 indicate which buttons have neem released.
+	 * Bits 8 to 15 indicate which buttons have been released.
+	 * 
+	 * @return the bitmask 
+	 * @see #ID_ENTER
+	 * @see #ID_LEFT
+	 * @see #ID_RIGHT
+	 * @see #ID_ESCAPE
+	 */
+	public static int waitForAnyEvent() {
+		return Button.waitForAnyEvent(0);
+	}
+	
+	/**
+	 * Waits for some button to be pressed or released.
+	 * Which buttons have been released or pressed is returned as a bitmask.
+	 * The lower eight bits (bits 0 to 7) indicate, which buttons have been pressed.
+	 * Bits 8 to 15 indicate which buttons have been released.
 	 * 
 	 * @param timeout The maximum number of milliseconds to wait
 	 * @return the bitmask 
