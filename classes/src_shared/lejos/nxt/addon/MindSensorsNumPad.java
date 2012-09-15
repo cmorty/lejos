@@ -16,6 +16,7 @@ public class MindSensorsNumPad extends I2CSensor {
 	// instance variables
 	private static final int NP_ADDRESS = 0xB4; // Default Address
 	private static final int NP_DATA_REG = 0x00; // Data Register
+	private static final int POLL_INTERVAL = 10;
 	
 	// Indexes of 0123456789*# in #9630825*714
 	private static final String IDXMAP = "\04\12\06\03\13\07\02\11\05\01\10\00";
@@ -23,18 +24,19 @@ public class MindSensorsNumPad extends I2CSensor {
 	
 	private final byte[] ioBuf = new byte[2];
 	private int curButtons;
-	
+
+	// some day, we will throw exception and get ride of this ERROR constant.
 	public static final int ERROR = -1;
-	public static final int ID_0 = (1 << 0);
-	public static final int ID_1 = (1 << 2);
-	public static final int ID_2 = (1 << 3);
-	public static final int ID_3 = (1 << 3);
-	public static final int ID_4 = (1 << 4);
-	public static final int ID_5 = (1 << 5);
-	public static final int ID_6 = (1 << 6);
-	public static final int ID_7 = (1 << 7);
-	public static final int ID_8 = (1 << 8);
-	public static final int ID_9 = (1 << 9);
+	public static final int ID_KEY0 = (1 << 0);
+	public static final int ID_KEY1 = (1 << 1);
+	public static final int ID_KEY2 = (1 << 2);
+	public static final int ID_KEY3 = (1 << 3);
+	public static final int ID_KEY4 = (1 << 4);
+	public static final int ID_KEY5 = (1 << 5);
+	public static final int ID_KEY6 = (1 << 6);
+	public static final int ID_KEY7 = (1 << 7);
+	public static final int ID_KEY8 = (1 << 8);
+	public static final int ID_KEY9 = (1 << 9);
 	public static final int ID_STAR = (1 << 10);
 	public static final int ID_HASH = (1 << 11);
 
@@ -69,7 +71,10 @@ public class MindSensorsNumPad extends I2CSensor {
 		// sendGroup(0x5C, "\013\040\014");
 		// sendGroup(0x7D, "\234\145\214");
 		
-		this.curButtons = this.readButtonsRaw();
+		int k = this.readButtonsRaw();
+		if (k == ERROR)
+			k = 0;
+		this.curButtons = k;
 	}
 
 	private void sendGroup(int reg, String data) {
@@ -83,7 +88,7 @@ public class MindSensorsNumPad extends I2CSensor {
 	/**
 	 * Returns a Bitmask. Bits 0 to 9 correspond to the Number Keys 0 to 9.
 	 * Bit 10 corresponds to the star and Bit 11 to the hash key.
-	 * @return the bitmask
+	 * @return the bitmask, or {@link #ERROR} if an I2C error has occured
 	 */
 	public int readButtons() {
 		int k = readButtonsRaw();
@@ -133,7 +138,11 @@ public class MindSensorsNumPad extends I2CSensor {
 		int oldDown = curButtons;
 		while (true)
 		{
-			int newDown = curButtons = readButtonsRaw();
+			int newDown = readButtonsRaw();
+			if (newDown == ERROR)
+				newDown = oldDown;
+			
+			curButtons = newDown;
 			if (oldDown != newDown)
 			{
 				int pressed = newDown & (~oldDown);
@@ -144,8 +153,8 @@ public class MindSensorsNumPad extends I2CSensor {
 			long toWait = end - System.currentTimeMillis();
 			if (toWait <= 0)
 				return 0;
-			if (toWait > 10)
-				toWait = 10;
+			if (toWait > POLL_INTERVAL)
+				toWait = POLL_INTERVAL;
 			Delay.msDelay(toWait);
 			
 			oldDown = newDown;
@@ -176,7 +185,11 @@ public class MindSensorsNumPad extends I2CSensor {
 		int oldDown = curButtons;
 		while (true)
 		{
-			int newDown = curButtons = this.readButtonsRaw();
+			int newDown = readButtonsRaw();
+			if (newDown == ERROR)
+				newDown = oldDown;
+			
+			curButtons = newDown;
 			int pressed = newDown & (~oldDown);
 			if (pressed != 0)
 				return rawToOrdered(pressed);
@@ -184,8 +197,8 @@ public class MindSensorsNumPad extends I2CSensor {
 			long toWait = end - System.currentTimeMillis();
 			if (toWait <= 0)
 				return 0;
-			if (toWait > 10)
-				toWait = 10;
+			if (toWait > POLL_INTERVAL)
+				toWait = POLL_INTERVAL;
 			Delay.msDelay(toWait);
 			
 			oldDown = newDown;
