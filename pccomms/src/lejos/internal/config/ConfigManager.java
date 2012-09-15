@@ -34,20 +34,13 @@ public class ConfigManager {
 	 * or <code>null</code> if the folder for config files cannot be determined.
 	 */
 	public static File getConfigFile(String name) {
-		String path = getPath();
-		if (path == null)
-			return null;
-		
-		return new File(path, name);
-	}
-	
-	private static String getPath() {
 		String userHome = System.getProperty("user.home");
 		if (userHome == null)
 			return null;
-		return userHome+File.separator+".config"+File.separator+"leJOS NXJ";
+		
+		return new File(userHome+File.separator+".config"+File.separator+"leJOS NXJ", name);
 	}
-	
+
 	/**
 	 * Opens a config file and returns a fileinputstream or returns <code>null</code> if the config
 	 * file does not exist.
@@ -73,10 +66,8 @@ public class ConfigManager {
 			return null;
 		
 		File p = f.getParentFile();
-		if (!p.mkdirs())
-			if (!new File(getPath()).exists()) {
-				throw new FileNotFoundException("unable to create directory "+p);
-			}
+		if (!p.isDirectory() && !p.mkdirs())
+			throw new FileNotFoundException("unable to create directory "+p);
 		
 		return new FileOutputStream(f);
 	}
