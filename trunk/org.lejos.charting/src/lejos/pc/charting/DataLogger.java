@@ -19,7 +19,6 @@ public class DataLogger {
     private FileWriter fw;
     private boolean fileAppend;
     private DataLoggerCallback loggerCallback;
-    private LoggerProtocolManager lpm;
     
     /** Internal Logger callback implementation to manage the logging events used to save the data
      */
@@ -42,7 +41,6 @@ public class DataLogger {
                 System.out.print("!** dataInputStreamEOF IOException in fw.close()");
                 e.printStackTrace();
             }
-            lpm.removeLoggerListener(loggerCallback);
         }
 
         public void logFieldNamesChanged(String[] logFields) {
@@ -111,9 +109,8 @@ public class DataLogger {
             return;
         }
                 
-        this.lpm=lpm;
         loggerCallback = new DataLoggerCallback();
-        this.lpm.addLoggerListener(loggerCallback);
+        lpm.addLoggerListener(loggerCallback);
     }
 
     private void dbg(String msg){
