@@ -20,7 +20,7 @@ public class MindSensorsNumPad extends I2CSensor {
 	
 	// Indexes of 0123456789*# in #9630825*714
 	private static final String IDXMAP = "\04\12\06\03\13\07\02\11\05\01\10\00";
-	private static final String KEYMAP = "0123456789*#";
+	// private static final String KEYMAP = "0123456789*#";
 	
 	private final byte[] ioBuf = new byte[2];
 	private int curButtons;
