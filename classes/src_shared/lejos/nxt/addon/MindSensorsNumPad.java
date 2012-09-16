@@ -212,7 +212,7 @@ public class MindSensorsNumPad extends I2CSensor {
 		for (int i=0; i<len; i++)
 		{
 			int j = IDXMAP.charAt(i);
-			r |= ((x >> j) & 1) * (1 << i);
+			r |= ((x >> j) & 1) << i;
 		}
 		return r;
 	}
