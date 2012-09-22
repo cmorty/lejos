@@ -13,6 +13,7 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -146,6 +147,8 @@ public class ConfigManager {
 		// Use a Transformer for output
 	    TransformerFactory tFactory = TransformerFactory.newInstance();
 	    Transformer transformer = tFactory.newTransformer();
+	    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	    //transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 	    
 		FileOutputStream fos = openConfigOutputStream(filename);
 		if (fos == null)
