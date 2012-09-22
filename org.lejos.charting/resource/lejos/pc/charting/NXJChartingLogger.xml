@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- NXJChartingLogger config 9/14/2012 KPT -->
+<logger configVersion="1.0">
+	<settings>
+		<user>
+			<NXTname>NXT</NXTname>
+			<fileExtension>.txt</fileExtension>
+			<filePath></filePath>
+		</user>
+	</settings>
+	<extensions>
+		<!-- Use <additionalPath> to specify an additional classpath where your 
+			extension class is -->
+		<additionalPath>.</additionalPath>
+
+		<plugin tabLabel="PID Tuning" tabHoverText="PID Tuning Interface"
+			class="lejos.pc.charting.extensions.PanelPIDTune" />
+		<plugin tabLabel="Drive" tabHoverText="Robot Driver interface"
+			class="lejos.pc.charting.extensions.PanelRobotDrive" />
+		<plugin tabLabel="Debug Out" tabHoverText="Debug Output Console"
+			class="lejos.pc.charting.extensions.PanelDebugConsole" />
+	</extensions>
+</logger>

@@ -1,4 +1,5 @@
-package lejos.pc.charting;
+package lejos.pc.charting.extensions;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -48,8 +49,8 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 	}
 	private ToggleButtonListener tbl = new ToggleButtonListener();
 	
-	public PanelRobotDrive(int handlerID, ExtensionGUIManager extensionGUIManager) {
-		super(handlerID, extensionGUIManager);
+	public PanelRobotDrive(int handlerID, MessageSender messageSender) {
+		super(handlerID, messageSender);
 		
 		JSlider sliderPower = getBoundSlider(4,5); //new JSlider();
 		sliderPower.setToolTipText("Power Percentage");
@@ -199,7 +200,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 		panel_1.add(lblValue1, gbc_lblValue1);
 		this.registerCommandCallback(26, 27);// for setting the label
 		
-		JFormattedTextField jftfValue1 = getBoundTextField(18, 19, CommandManager.DT_DECIMAL);
+		JFormattedTextField jftfValue1 = getBoundTextField(18, 19, AbstractTunneledMessagePanel.DT_DECIMAL);
 		jftfValue1.setHorizontalAlignment(SwingConstants.TRAILING);
 		GridBagConstraints gbc_jftfValue1 = new GridBagConstraints();
 		gbc_jftfValue1.fill = GridBagConstraints.HORIZONTAL;
@@ -218,7 +219,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 		panel_1.add(lblValue2, gbc_lblValue2);
 		this.registerCommandCallback(28, 29);// for setting the label
 		
-		JFormattedTextField jftfValue2 = getBoundTextField(20, 21, CommandManager.DT_DECIMAL);
+		JFormattedTextField jftfValue2 = getBoundTextField(20, 21, AbstractTunneledMessagePanel.DT_DECIMAL);
 		jftfValue2.setHorizontalAlignment(SwingConstants.TRAILING);
 		GridBagConstraints gbc_jftfValue2 = new GridBagConstraints();
 		gbc_jftfValue2.insets = new Insets(0, 0, 5, 0);
@@ -236,7 +237,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 		panel_1.add(lblValue3, gbc_lblValue3);
 		this.registerCommandCallback(30, 31);// for setting the label
 		
-		JFormattedTextField jftfValue3 = getBoundTextField(22, 23, CommandManager.DT_DECIMAL);
+		JFormattedTextField jftfValue3 = getBoundTextField(22, 23, AbstractTunneledMessagePanel.DT_DECIMAL);
 		jftfValue3.setHorizontalAlignment(SwingConstants.TRAILING);
 		GridBagConstraints gbc_jftfValue3 = new GridBagConstraints();
 		gbc_jftfValue3.insets = new Insets(0, 0, 5, 0);
@@ -254,7 +255,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 		panel_1.add(lblValue4, gbc_lblValue4);
 		this.registerCommandCallback(32, 33);// for setting the label
 		
-		JFormattedTextField jftfValue4 = getBoundTextField(24, 25, CommandManager.DT_DECIMAL);
+		JFormattedTextField jftfValue4 = getBoundTextField(24, 25, AbstractTunneledMessagePanel.DT_DECIMAL);
 		jftfValue4.setHorizontalAlignment(SwingConstants.TRAILING);
 		GridBagConstraints gbc_jftfValue4 = new GridBagConstraints();
 		gbc_jftfValue4.fill = GridBagConstraints.HORIZONTAL;
@@ -268,7 +269,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 	 * @see lejos.pc.charting.AbstractTunneledMessagePanel#getHandlerTypeID()
 	 */
 	@Override
-	protected int getHandlerTypeID() {
+	public int getHandlerTypeID() {
 		return TYPE_ROBOT_DRIVE;
 	}
 
@@ -321,7 +322,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 	}
 	
 	@Override
-	protected void init(){
+	public void init(){
 		super.init();
 		btnCommand1.setText("Command 1");
 		btnCommand2.setText("Command 2");
@@ -336,7 +337,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 		}
 	}
 	@Override
-	protected boolean requestFocusOnMessage() {
+	public boolean requestFocusOnMessage() {
 		return true;
 	}
 }
