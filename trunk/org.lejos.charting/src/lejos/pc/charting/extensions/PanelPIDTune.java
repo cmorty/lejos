@@ -1,4 +1,4 @@
-package lejos.pc.charting;
+package lejos.pc.charting.extensions;
 
 import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
@@ -29,8 +29,8 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 	private JFormattedTextField textRampThreshold;
 	private JCheckBox chckbxFreezeIntegral;
 
-	public PanelPIDTune(int handlerID, ExtensionGUIManager extensionGUIManager) {
-		super(handlerID, extensionGUIManager);
+	public PanelPIDTune(int handlerID, MessageSender messageSender) {
+		super(handlerID, messageSender);
 	}
 	
 	@Override
@@ -45,7 +45,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		add(panelLimits);
 		panelLimits.setLayout(null);
 
-		textMVLimitLow = getBoundTextField(14, 15, CommandManager.DT_DECIMAL);
+		textMVLimitLow = getBoundTextField(14, 15, AbstractTunneledMessagePanel.DT_DECIMAL);
 		textMVLimitLow.setBounds(65, 27, 60, 20);
 		panelLimits.add(textMVLimitLow);
 
@@ -64,11 +64,11 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		lblIntegralLimit.setBounds(10, 54, 53, 14);
 		panelLimits.add(lblIntegralLimit);
 
-		textMVLimitHigh = getBoundTextField(12, 13, CommandManager.DT_DECIMAL);
+		textMVLimitHigh = getBoundTextField(12, 13, AbstractTunneledMessagePanel.DT_DECIMAL);
 		textMVLimitHigh.setBounds(136, 27, 60, 20);
 		panelLimits.add(textMVLimitHigh);
 		
-		textIntegralLimitLow = getBoundTextField(16, 17, CommandManager.DT_DECIMAL);
+		textIntegralLimitLow = getBoundTextField(16, 17, AbstractTunneledMessagePanel.DT_DECIMAL);
 		textIntegralLimitLow.setBounds(65, 51, 60, 20);
 		panelLimits.add(textIntegralLimitLow);
 		
@@ -77,7 +77,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		lblMvLimit.setBounds(10, 30, 53, 14);
 		panelLimits.add(lblMvLimit);
 
-		textIntegralLimitHigh = getBoundTextField(18, 19, CommandManager.DT_DECIMAL);
+		textIntegralLimitHigh = getBoundTextField(18, 19, AbstractTunneledMessagePanel.DT_DECIMAL);
 		textIntegralLimitHigh.setBounds(136, 51, 60, 20);
 		panelLimits.add(textIntegralLimitHigh);
 		
@@ -89,7 +89,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		add(panelPIDConstants);
 		panelPIDConstants.setLayout(null);
 
-		textKp = getBoundTextField(0, 1, CommandManager.DT_DECIMAL);
+		textKp = getBoundTextField(0, 1, AbstractTunneledMessagePanel.DT_DECIMAL);
 		textKp.setBounds(30, 22, 60, 20);
 		panelPIDConstants.add(textKp);
 		textKp.setToolTipText("Enter the Kp value");
@@ -102,7 +102,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		lblKp.setBounds(10, 25, 19, 14);
 		panelPIDConstants.add(lblKp);
 		
-		textKi = getBoundTextField(2, 3, CommandManager.DT_DECIMAL);
+		textKi = getBoundTextField(2, 3, AbstractTunneledMessagePanel.DT_DECIMAL);
 		textKi.setBounds(30, 47, 60, 20);
 		panelPIDConstants.add(textKi);
 		
@@ -115,7 +115,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		lblKi.setBounds(10, 50, 19, 14);
 		panelPIDConstants.add(lblKi);
 		
-		textKd = getBoundTextField(4, 5, CommandManager.DT_DECIMAL);
+		textKd = getBoundTextField(4, 5, AbstractTunneledMessagePanel.DT_DECIMAL);
 		textKd.setBounds(30, 73, 60, 20);
 		panelPIDConstants.add(textKd);
 		
@@ -133,7 +133,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		lblLoopDelay.setBounds(135, 62, 103, 14);
 		add(lblLoopDelay);
 
-		textDelay = getBoundTextField(22, 23, CommandManager.DT_INTEGER);
+		textDelay = getBoundTextField(22, 23, AbstractTunneledMessagePanel.DT_INTEGER);
 		textDelay.setBounds(242, 59, 60, 20);
 		add(textDelay);
 
@@ -142,7 +142,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		lblDeadband.setBounds(163, 90, 75, 14);
 		add(lblDeadband);
 
-		textDeadband = getBoundTextField(10, 11, CommandManager.DT_DECIMAL);
+		textDeadband = getBoundTextField(10, 11, AbstractTunneledMessagePanel.DT_DECIMAL);
 		textDeadband.setBounds(242, 86, 60, 20);
 		add(textDeadband);
 		
@@ -151,7 +151,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		lblSetpointsp.setBounds(149, 36, 89, 14);
 		add(lblSetpointsp);
 
-		textSetPoint = getBoundTextField(20, 21, CommandManager.DT_DECIMAL);
+		textSetPoint = getBoundTextField(20, 21, AbstractTunneledMessagePanel.DT_DECIMAL);
 		textSetPoint.setBounds(242, 32, 60, 20);
 		add(textSetPoint);
 		
@@ -160,11 +160,11 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		lblRampExponent.setBounds(135, 117, 103, 14);
 		add(lblRampExponent);
 
-		textRampExponent = getBoundTextField(6, 7, CommandManager.DT_DECIMAL);
+		textRampExponent = getBoundTextField(6, 7, AbstractTunneledMessagePanel.DT_DECIMAL);
 		textRampExponent.setBounds(242, 113, 60, 20);
 		add(textRampExponent);
 		
-		textRampThreshold = getBoundTextField(8, 9, CommandManager.DT_DECIMAL);
+		textRampThreshold = getBoundTextField(8, 9, AbstractTunneledMessagePanel.DT_DECIMAL);
 		textRampThreshold.setBounds(242, 141, 60, 20);
 		add(textRampThreshold);
 		
@@ -179,7 +179,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 	 * @see lejos.pc.charting.AbstractTunneledMessagePanel#getHandlerTypeID()
 	 */
 	@Override
-	protected final int getHandlerTypeID() {
+	public final int getHandlerTypeID() {
 		return TYPE_PID_TUNER; 
 	}
 
@@ -189,7 +189,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		
 	}
 	@Override
-	protected boolean requestFocusOnMessage() {
+	public boolean requestFocusOnMessage() {
 		return false;
 	}
 }

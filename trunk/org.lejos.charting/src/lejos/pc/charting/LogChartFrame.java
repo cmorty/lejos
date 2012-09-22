@@ -69,7 +69,6 @@ class LogChartFrame extends JFrame {
     private static final int MAXDOMAIN_TIME_LIMIT = 30000;
     private static final int MINDOMAIN_LIMIT= 10;
     private final static float DOMLIMIT_POW = 2.4f;
-    
     private JButton jButtonConnect = new JButton();
     private JPanel UIPanel = new JPanel();
     private JPanel connectionPanel = new JPanel();
@@ -669,7 +668,7 @@ class LogChartFrame extends JFrame {
         
         jTextFieldNXTName.setBounds(new Rectangle(5, 40, 165, 20));
         jTextFieldNXTName.setToolTipText("The name or Address of the NXT. Leave empty and the first one found will be used.");
-
+        jTextFieldNXTName.setText(ConfigurationManager.getConfigItem(ConfigurationManager.CONFIG_NXTNAME, ""));
         jTextFieldNXTName.requestFocus();
         
         jTextAreaStatus.setLineWrap(true);
@@ -681,9 +680,13 @@ class LogChartFrame extends JFrame {
         dataLogTextArea.setFont(new Font("Tahoma", 0, 11));
         dataLogTextArea.setBackground(SystemColor.window);
 
-        FQPathTextArea.setBounds(new Rectangle(5, 170, 185, 40));
+        FQPathTextArea.setBounds(new Rectangle(5, 170, 185, 30));
         FQPathTextArea.setLineWrap(true);
-        FQPathTextArea.setText(getCanonicalName(new File(".", "")));
+//        FQPathTextArea.setText(getCanonicalName(new File(".", "")));
+        FQPathTextArea.setText(
+        	ConfigurationManager.getConfigItem(
+        			ConfigurationManager.CONFIG_FILE_PATH, getCanonicalName(new File(".", ""))
+        ));
         FQPathTextArea.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         FQPathTextArea.setRows(2);
 
@@ -801,7 +804,8 @@ class LogChartFrame extends JFrame {
         axis4LabelTextField.getDocument().addDocumentListener(notifier);
         
         logFileTextField.setBounds(new Rectangle(10, 145, 180, 20));
-        logFileTextField.setText("NXTData.txt");
+        logFileTextField.setText("NXTData" + ConfigurationManager.getConfigItem(ConfigurationManager.CONFIG_FILE_EXTENSION, ".txt"));
+        
         logFileTextField.setPreferredSize(new Dimension(180, 20));
         logFileTextField.setToolTipText("File name. Leave empty to not log to file.");
         statusScrollPane.setOpaque(false);
@@ -815,7 +819,7 @@ class LogChartFrame extends JFrame {
         jLabel5.setToolTipText(jTextFieldNXTName.getToolTipText());
         jLabel5.setHorizontalTextPosition(SwingConstants.RIGHT);
         jLabel5.setHorizontalAlignment(SwingConstants.LEFT);
-
+        
         connectionPanel.add(jTextFieldNXTName, null);
         connectionPanel.add(jButtonConnect, null);
         connectionPanel.add(jLabel5, null);
@@ -916,6 +920,7 @@ class LogChartFrame extends JFrame {
         if (fileAction==2) return false; // return if closed or cancel
         // get the NXT to connect to and try to connect
         isNXTConnected=this.connectionManager.connect(jTextFieldNXTName.getText());
+        ConfigurationManager.setConfigItem(ConfigurationManager.CONFIG_NXTNAME, jTextFieldNXTName.getText());
         if (isNXTConnected) {
             jTextFieldNXTName.setText(this.connectionManager.getConnectedNXTName());
             tmm.setDataOutputStream(new DataOutputStream(this.connectionManager.getOutputStream()));
@@ -1083,9 +1088,12 @@ class LogChartFrame extends JFrame {
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         int returnVal = jfc.showOpenDialog(this);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
-            FQPathTextArea.setText(getCanonicalName(jfc.getSelectedFile()));
+        	String newPath = getCanonicalName(jfc.getSelectedFile());
+            FQPathTextArea.setText(newPath);
             jfc.setCurrentDirectory(jfc.getSelectedFile());
-            System.out.println("folder set to \"" + getCanonicalName(jfc.getSelectedFile()) + "\"");
+            
+            System.out.println("folder set to \"" + newPath + "\"");
+            ConfigurationManager.setConfigItem(ConfigurationManager.CONFIG_FILE_PATH, newPath);
         }           
     }
     

@@ -1,4 +1,4 @@
-package lejos.pc.charting;
+package lejos.pc.charting.extensions;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -40,51 +40,91 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 * Use this type to always receive the data package. Basically equivalent to
 	 * broadcast address.
 	 */
-	public static final int TYPE_ALWAYS_RECEIVE = 0;
+	protected static final int TYPE_ALWAYS_RECEIVE = 0;
 	/**
-	 * Use this type to ID as PID Tuner. Use <code>PIDTuner</code> to run your
+	 * Reserved for PID Tuner. Use <code>PIDTuner</code> to run your
 	 * <code>LoggerPIDTune</code> implementation.
+	 * @see #getHandlerTypeID
 	 */
-	public static final int TYPE_PID_TUNER = 1;
+	protected static final int TYPE_PID_TUNER = 1;
 	/**
-	 * Use this type to ID as simple robot drive
+	 * Reserved for simple robot drive
+	 * @see #getHandlerTypeID
 	 */
-	public static final int TYPE_ROBOT_DRIVE = 2;
+	protected static final int TYPE_ROBOT_DRIVE = 2;
 	/**
-	 * Use this type to ID as debug console
+	 * Reserved for debug console
+	 * @see #getHandlerTypeID
 	 */
-	public static final int TYPE_DEBUG_CONSOLE = 3;
+	protected static final int TYPE_DEBUG_CONSOLE = 3;
+	/**
+	 * Use for unformatted input. Data will be encoded and sent as a String of US-ASCII.
+	 * @see #getBoundTextField
+	 */
+	public static final int DT_CHAR = 3;
+	/**
+	 * Use for Integer formatted numbers. Data will be encoded and sent as an int.
+	 * @see #getBoundTextField
+	 */
+	public static final int DT_INTEGER = 2;
+	/**
+	 * Use for Decimal formatted numbers (i.e. float). Data will be encoded and sent as a float.
+	 * @see #getBoundTextField
+	 */
+	public static final int DT_DECIMAL = 1;
 	
 	/**
 	 * Use for GET or SET to ignore
 	 */
-	public static final int  CMD_IGNORE = 256;
+	protected static final int CMD_IGNORE = 256;
 	
 	private JLabel lblPluginName = new JLabel("label goes here");
 	private int handlerID = 0;
 	private int handlerTypeID = TYPE_ALWAYS_RECEIVE;
-	private ExtensionGUIManager extensionGUIManager;
+	private MessageSender messageSender;
 	private ArrayList<CommandManager> arraylistFieldManager = new ArrayList<CommandManager>();
 	private NumberFormat formatterInteger =  NumberFormat.getIntegerInstance();
 	private DecimalFormat formatterDecimal =  (DecimalFormat)NumberFormat.getInstance();
 	private volatile boolean skipPropertyEvent=false;
-	JButton btnRefreshData;
+	private JButton btnRefreshData;
 	
-	public AbstractTunneledMessagePanel(int handlerID, ExtensionGUIManager extensionGUIManager) {
+	
+	
+	/**
+	 * Create instance used internally. Logger internal ExtensionGUIManager uses this pass reference to its
+	 * messageSender instance so subclasses must pass these params to super.
+	 * 
+	 * @param handlerID handler ID (unique for each plug-in type) defined by lejos.util.LogMessageTypeHandler implementation
+	 * 	and sent from NXT.
+	 * @param messageSender internal use for message transfer
+	 */
+	public AbstractTunneledMessagePanel(int handlerID, MessageSender messageSender) {
 		formatterDecimal.setMinimumFractionDigits(1);
 		formatterDecimal.setMaximumFractionDigits(7);
-		this.extensionGUIManager = extensionGUIManager;
+		this.messageSender = messageSender;
 		this.handlerID= handlerID;	
 		this.handlerTypeID = getHandlerTypeID();
 		initGUI();
 	}
 	
+	
 	/**
-	 * Called when session connection is closed form NXT
+	 *  Have your implementation set to <code>true</code> to show the "Poll NXT" button or <code>false</code>
+	 *  to hide it. Default is <code>true</code>.
+	 * 
+	 * @param visible Visibility state. <code>true</code> is visible.
 	 */
-	void connectionClosed(){
-		disableRegisteredFields();
+	public void setButtonRefreshDataVisible(boolean visible){
+		btnRefreshData.setVisible(visible);
 	}
+	
+//	/**
+//	 * Called when session connection is closed from NXT
+//	 */
+//	void connectionClosed(){
+//		disableRegisteredFields();
+//	}
+	
 	/**
 	 * User Input/message output manager. Sends data on lost focus & enter. Does validations via
 	 * <code>JFormattedTextField</code>, etc.
@@ -93,18 +133,6 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 * 
 	 */
 	final class CommandManager {
-		/**
-		 * Use for Decimal formatted numbers (i.e. float). Data will be encoded and sent as a float.
-		 */
-		static final int DT_DECIMAL = 1;
-		/**
-		 * Use for Integer formatted numbers. Data will be encoded and sent as an int.
-		 */
-		static final int DT_INTEGER = 2;
-		/**
-		 * Use for unformatted input. Data will be encoded and sent as a String of US-ASCII.
-		 */
-		static final int DT_CHAR = 3;
 		private static final int DT_SELECTED_BOOLEAN = 4;
 		private static final int DT_CUSTOM_MESSAGE = 5;
 		private static final int DT_MOMENTARY_BOOLEAN = 6;
@@ -187,7 +215,7 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 		 * @param datatype
 		 */
 		CommandManager(JFormattedTextField fieldObject, int GETcommandID, int SETcommandID, int datatype) {
-			if (datatype<DT_DECIMAL || datatype>DT_CHAR) {
+			if (datatype<AbstractTunneledMessagePanel.DT_DECIMAL || datatype>AbstractTunneledMessagePanel.DT_CHAR) {
 				throw new IllegalArgumentException("CommandManager: Datatype must be DT_DECIMAL,DT_INTEGER, or DT_CHAR");
 			}
 			this.GETcommandID = GETcommandID;
@@ -340,7 +368,7 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 			byte[] value = new byte[4];
 			
 			switch (this.datatype) {
-			case DT_DECIMAL:
+			case AbstractTunneledMessagePanel.DT_DECIMAL:
 				int fval=0;
 				try {
 					fval = Float.floatToIntBits(
@@ -356,10 +384,10 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 				//System.out.println("DT_DECIMAL: " + fieldObject.getText() + ", value=" + fieldObject.getValue());
 				EndianTools.encodeIntBE(fval, value, 0);
 				break;
-			case DT_INTEGER:
+			case AbstractTunneledMessagePanel.DT_INTEGER:
 				EndianTools.encodeIntBE(((Long)((JFormattedTextField)commandObject).getValue()).intValue(), value, 0);
 				break;
-			case DT_CHAR:
+			case AbstractTunneledMessagePanel.DT_CHAR:
 				byte[] strVal = null;
 				try {
 					strVal = ((JFormattedTextField)commandObject).getText().getBytes("US-ASCII");
@@ -414,22 +442,22 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 * @param GETcommandID The GET command ID as specified in the handler type protocol
 	 * @param datatype The datatype code for formatting. See <code>CommandManager</code> constants.
 	 * @return A <code>JFormattedTextField</code> instance
-	 * @see CommandManager#DT_DECIMAL
-	 * @see CommandManager#DT_INTEGER
-	 * @see CommandManager#DT_CHAR
+	 * @see #DT_DECIMAL
+	 * @see #DT_INTEGER
+	 * @see #DT_CHAR
 	 */
 	protected final JFormattedTextField getBoundTextField(int SETcommandID, int GETcommandID, int datatype) {
-		if (datatype<CommandManager.DT_DECIMAL || datatype>CommandManager.DT_CHAR) {
+		if (datatype<AbstractTunneledMessagePanel.DT_DECIMAL || datatype>AbstractTunneledMessagePanel.DT_CHAR) {
 			throw new IllegalArgumentException("Datatype must be DT_DECIMAL,DT_INTEGER, or DT_CHAR");
 		}
 		
 		JFormattedTextField textfield;
 		int alignment = SwingConstants.RIGHT;
 		switch (datatype) {
-		case CommandManager.DT_DECIMAL:
+		case AbstractTunneledMessagePanel.DT_DECIMAL:
 			textfield = new JFormattedTextField(formatterDecimal);
 			break;
-		case CommandManager.DT_INTEGER:
+		case AbstractTunneledMessagePanel.DT_INTEGER:
 			textfield = new JFormattedTextField(formatterInteger);
 			break;
 		default:
@@ -584,33 +612,51 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 * Sets the name label displayed in the GUI panel.
 	 * @param label The label
 	 */
-	protected void setPlugInLabel(String label) {
+	public void setPlugInLabel(String label) {
 		lblPluginName.setText(label);
 	}
 
 	/**
-	 * Must provide the well defined handler Type ID. See the constants for
-	 * <code>LogMessageTypeHandler</code>. The type ID is used by the PC-side
+	 * Yo must provide a well-defined handler Type ID. See the constants for
+	 * <code>LogMessageTypeHandler</code> for examples of seeded values. 
+	 * <p>
+	 * The type ID is used by the PC-side
 	 * NXT Charting Logger to load the appropriate message handler in
 	 * the tabbed pane and route the message to the corresponding PC-side
 	 * message handler type (in conjunction with <code>getHandlerID()</code>).
 	 * 
-	 * @return The handler type ID.
-	 */
-	abstract protected int getHandlerTypeID();
-
-	/**
-	 * Provides the [unique] handler ID passed in the constructor. 
-	 * This ID is used to route the message to the
-	 * corresponding message handler and tabbed pane and to ensure that
-	 * messages are routed back to the correct
-	 * <code>lejos.util.LogMessageTypeHandler</code> concrete subclass instance.
+	 * <p>
+	 * [user_home]/.config/LeJOS/NXJChartingLogger.xml. Example:
+	 * <p>
+	 * &lt;extensions&gt;<br />
+	 * &nbsp;&nbsp;&nbsp;&nbsp; ....<br />
+ 	 * &nbsp;&nbsp;&nbsp; &nbsp;&lt;plugin
+ 	 * tabLabel="PID Tuning" tabHoverText="PID Tuning
+	 * Interface"<br />
+	 * &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;
+	 * &nbsp;class="lejos.pc.charting.extensions.PanelPIDTune"/&gt;<br />
+	 * &nbsp;&lt;/extensions&gt;
+	 * <p>
 	 * 
-	 * @return The handler instance ID.
+	 * @return The handler type ID.
+	 * @see #TYPE_PID_TUNER
+	 * @see #TYPE_ROBOT_DRIVE
+	 * @see #TYPE_DEBUG_CONSOLE
 	 */
-	protected final int getHandlerID() {
-		return handlerID;
-	}
+	public abstract int getHandlerTypeID();
+
+//	/**
+//	 * Provides the [unique] handler ID passed in the constructor. 
+//	 * This ID is used to route the message to the
+//	 * corresponding message handler and tabbed pane and to ensure that
+//	 * messages are routed back to the correct
+//	 * <code>lejos.util.LogMessageTypeHandler</code> concrete subclass instance.
+//	 * 
+//	 * @return The handler instance ID.
+//	 */
+//	final int getHandlerID() {
+//		return handlerID;
+//	}
 
 	/**
 	 * Process the message sent from NXT via <code>CommandManager</code>. The message will contain
@@ -620,6 +666,8 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 * Must be able to handle
 	 * <code>typeID=LogMessageTypeHandler.TYPE_ALWAYS_RECEIVE</code> in some way
 	 * even if that means just ignoring it.
+	 * <p>
+	 * This is used by the implementation only and should not be used directly.
 	 * 
 	 * @param message
 	 *            The data packet received by (PC-side) NXT Charting Logger from
@@ -628,14 +676,14 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 *            the TYPE_ID that was sent from NXTDataLogger
 	 */
 
-	synchronized final void processMessage(byte[] message, int typeID) {
+	public synchronized final void processMessage(byte[] message, int typeID) {
 		// ignores broadcast messages
 		if (typeID==TYPE_ALWAYS_RECEIVE) return;
 		
 //		System.out.println("AbstractTunneledMessagePanel.processMessage: message[0]=" + message[0] + ", getHandlerID()=" + getHandlerID() );
 		
 		// Skip processing if not for me
-		if (getHandlerID() != (message[0] & 0xff)) return; // byte 0 => handler ID
+		if (handlerID != (message[0] & 0xff)) return; // byte 0 => handler ID
 		
 		// parse the command
 		int command = message[1] & 0xff;
@@ -659,17 +707,17 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	}
 	
 	/**
-	 * Tunnel a Type handler-specific protocol message to the PC. This method
-	 * builds the Handler ID, command value and message into a packet that is
-	 * sent through the logger protocol <code>COMMAND_PASSTHROUGH</code> via
-	 * <code>writePassthroughMessage()</code>.
+	 * Send a command to the lejos.util.LogMessageManager running on the NXT.
+	 * <P>
+	 * This is a convenience method that calls <code>sendMessage(int command, byte[] msg, int len, int off)</code>.
 	 * 
 	 * @param command
 	 *            The handler type-specific protocol command
 	 * @param msg
 	 *            array of bytes containing handler type-specific data to send
+	 * @see #sendMessage(int, byte[], int, int)
 	 */
-	protected final void sendMessage(int command, byte[] msg){
+	private final void sendMessage(int command, byte[] msg){
 		if (msg==null) {
 			msg = new byte[0];
 		}
@@ -677,10 +725,11 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	}
 	
 	/**
-	 * Tunnel a Type handler-specific protocol message to the PC. This method
+	 * Send a command to the lejos.util.LogMessageManager running on the NXT.
+	 * <p>
+	 * Tunnel a Type handler-specific protocol message to the NXT. This method
 	 * builds the Handler ID, command value and message into a packet that is
-	 * sent through the logger protocol <code>COMMAND_PASSTHROUGH</code> via
-	 * <code>writePassthroughMessage()</code>.
+	 * sent to the lejos.util.LogMessageManager running on the NXT.
 	 * 
 	 * @param command
 	 *            The handler type-specific protocol command
@@ -691,7 +740,7 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 * @param off
 	 *            starting at element <code>off</code> in <code>msg</code> array
 	 */
-	protected final void sendMessage(int command, byte[] msg, int len, int off) {
+	private final void sendMessage(int command, byte[] msg, int len, int off) {
 		if (msg==null) {
 			System.out.println("** sendMessage: NULL MESSAGE. cmd=" + command);
 			msg = new byte[0];
@@ -702,10 +751,9 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 		System.arraycopy(msg, off, buf, 2, len); // aggregate it all in one array
 		//System.out.println("AbstractTunneledMessagePanel.sendMessage: command=" + command);
 		// Will be packed into a common header for CMD_DELIVER_PACKET.
-		extensionGUIManager.sendControlPacket(handlerTypeID, buf);
+		messageSender.sendMessage(handlerTypeID, buf);
 	}
 	
-	// TODO firm up javadoc
 	/**
 	 * Called by <code>CommandManager</code> for DT_CUSTOM_MESSAGE type for a command SET from the NXT. 
 	 * Your implementation must use customMessage constructor of <code>CommandManager</code>. Implement as 
@@ -717,6 +765,11 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 */
 	protected abstract void customSETMessage(int command, byte[] message);
 	
+	/**
+	 * Utility method to decode a US-ASCII based byte array (as sent by NXT) into a string.
+	 * @param array
+	 * @return The decoded string
+	 */
 	protected String decodeString(byte[] array){
 		String theString = null;
 		try {
@@ -739,7 +792,7 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 * Query the remote handler to send all defined values. Used in init().
 	 * @see #init
 	 */
-	void pollForRemoteHandlerValues(){
+	private void pollForRemoteHandlerValues(){
 		disableRegisteredFields();  
 		for (CommandManager item : arraylistFieldManager) {
 			requestValueMessage(item);
@@ -757,7 +810,7 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 		buf[1] = (byte) (fieldItem.getGETCommandID() & 0xff); // set the handler-specific command value
 		// Will be packed into a common header for CMD_DELIVER_PACKET.
 		//System.out.println("AbstractTunneledMessagePanel.requestValueMessage: command=" + fieldItem.getGETCommandID());
-		extensionGUIManager.sendControlPacket(handlerTypeID, buf);	
+		messageSender.sendMessage(handlerTypeID, buf);
 	}
 	
 	/**
@@ -768,7 +821,7 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 * 
 	 * @see #pollForRemoteHandlerValues
 	 */
-	protected void init(){
+	public void init(){
 		setPlugInLabel("");
 		pollForRemoteHandlerValues();
 	}
@@ -777,7 +830,7 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 * Called by <code>ExtensionGUIManager</code> when NXT logging session connection ends. This
 	 * disables all registered inputs in the panel. Can be overridden if that behavior is unwanted.
 	 */
-	protected void dataInputStreamEOF(){
+	public void dataInputStreamEOF(){
 		disableRegisteredFields();
 	}
 	
@@ -787,14 +840,14 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 	 * 
 	 * @return <code>true</code> to request focus for the panel
 	 */
-	protected abstract boolean requestFocusOnMessage();
+	public abstract boolean requestFocusOnMessage();
 	
 	/**
 	 * Allows your implementation to hide the poll button. Default return value is <code>true</code> to keep it 
 	 * shown.
 	 * @return <code>false</code> to hide the "Poll NXT" button
 	 */
-	protected boolean showPollButton() {
+	public boolean showPollButton() {
 		return true;
 	}
 }

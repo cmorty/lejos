@@ -1,4 +1,5 @@
-package lejos.pc.charting;
+package lejos.pc.charting.extensions;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
@@ -15,9 +16,8 @@ import java.awt.event.ActionEvent;
 public class PanelDebugConsole extends AbstractTunneledMessagePanel {
 	private JTextArea textAreaConsole;
 	
-	public PanelDebugConsole(int handlerID,
-			ExtensionGUIManager extensionGUIManager) {
-		super(handlerID, extensionGUIManager);
+	public PanelDebugConsole(int handlerID, MessageSender messageSender) {
+		super(handlerID, messageSender);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(12, 23, 498, 138);
@@ -44,7 +44,7 @@ public class PanelDebugConsole extends AbstractTunneledMessagePanel {
 	 * @see lejos.pc.charting.AbstractTunneledMessagePanel#getHandlerTypeID()
 	 */
 	@Override
-	protected int getHandlerTypeID() {
+	public int getHandlerTypeID() {
 		return TYPE_DEBUG_CONSOLE;
 	}
 
@@ -71,7 +71,7 @@ public class PanelDebugConsole extends AbstractTunneledMessagePanel {
 	}
 
 	@Override
-	protected boolean requestFocusOnMessage() {
+	public boolean requestFocusOnMessage() {
 		return false;
 	}
 	
@@ -91,7 +91,7 @@ public class PanelDebugConsole extends AbstractTunneledMessagePanel {
 	}
 	
 	@Override
-	protected boolean showPollButton() {
+	public boolean showPollButton() {
 		return false;
 	}
 }
