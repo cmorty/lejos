@@ -41,7 +41,7 @@
   			    <compilerarg value="-std=gnu99"/>
   			    <compilerarg value="-fPIC"/>
   				<fileset dir=".">
-  					<include name="main_jlibnxt.c"/>
+  					<include name="jlibnxt.c"/>
   				</fileset>
 				<libset dir="." libs="usb"/>
 				<includepath>
