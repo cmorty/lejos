@@ -3,7 +3,7 @@ JNI_INCLUDE ?= $(JAVA_HOME)/include
 JNI_INCLUDE_LINUX ?= $(JNI_INCLUDE)/linux
 
 CFLAGS ?= 
-CFLAGS += -std=gnu99 -Wall -fPIC -I$(JNI_INCLUDE) -I$(JNI_INCLUDE_LINUX)
+CFLAGS += -std=c99 -Wall -fPIC -I$(JNI_INCLUDE) -I$(JNI_INCLUDE_LINUX)
 
 LDFLAGS ?=
 LDFLAGS += -shared -lusb 
