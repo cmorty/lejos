@@ -38,7 +38,7 @@
   			    rtti="true"
   				name="gcc">
   			    <compilerarg value="-Wall"/>
-  			    <compilerarg value="-std=gnu99"/>
+  			    <compilerarg value="-std=c99"/>
   			    <compilerarg value="-fPIC"/>
   				<fileset dir=".">
   					<include name="jlibnxt.c"/>
