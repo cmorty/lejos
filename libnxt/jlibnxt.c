@@ -54,8 +54,7 @@ static int initialised = 0;
 /* Create the device address string. We use the same format as the
  * Lego Fantom device driver.
  */
-static
-void create_address(struct usb_device *dev, char *address)
+static void create_address(struct usb_device *dev, char *address)
 {
   // Do the easy one first. There is only one Samba device
   if (dev->descriptor.idVendor == VENDOR_ATMEL &&
@@ -136,9 +135,7 @@ static long nxt_find_nth(int idx, char *address)
 
 
 // Version of open that works with lejos NXJ firmware.
-static
-long
-nxt_open(long hdev)
+static long nxt_open(long hdev)
 {
   struct usb_dev_handle *hdl;
   struct usb_device *dev = (struct usb_device *)hdev;
@@ -203,9 +200,7 @@ static void nxt_close(long hhdl)
 
 
 // Implement 20sec timeout write, and return amount actually written
-static
-int
-nxt_write_buf(long hdl, char *buf, int len)
+static int nxt_write_buf(long hdl, char *buf, int len)
 {
   int ret = usb_bulk_write((struct usb_dev_handle *)hdl, 0x1, buf, len, 20000);
   return ret;
@@ -213,34 +208,31 @@ nxt_write_buf(long hdl, char *buf, int len)
 
 
 // Implement 20 second timeout read, and return amount actually read
-static
-int
-nxt_read_buf(long hdl, char *buf, int len)
+static int nxt_read_buf(long hdl, char *buf, int len)
 {
   int ret = usb_bulk_read((struct usb_dev_handle *)hdl, 0x82, buf, len, 20000);
   return ret;
 }
 
-static char samba_serial_no[] = {4, 3, '1', 0};
-int nxt_serial_no(long hdev, char *serno, int maxlen)
-{
-  struct usb_device *dev = (struct usb_device *)hdev;
-  struct usb_dev_handle *hdl;
-  // If the device is in samba mode it will not have a serial number so we
-  // return "1" to be in line with the Lego Fantom driver.
-  if (dev->descriptor.idVendor == VENDOR_ATMEL &&
-         dev->descriptor.idProduct == PRODUCT_SAMBA)
-  {
-    memcpy(serno, samba_serial_no, sizeof(samba_serial_no));
-    return sizeof(samba_serial_no);
-  }
-  hdl = usb_open(dev);
-  if (!hdl) return 0;
-  int len = usb_get_string(hdl, dev->descriptor.iSerialNumber, 0, serno, maxlen);
-  usb_close(hdl);
-  return len;
-}
-
+//const char samba_serial_no[] = {4, 3, '1', 0};
+//static int nxt_serial_no(long hdev, char *serno, int maxlen)
+//{
+//  struct usb_device *dev = (struct usb_device *)hdev;
+//  struct usb_dev_handle *hdl;
+//  // If the device is in samba mode it will not have a serial number so we
+//  // return "1" to be in line with the Lego Fantom driver.
+//  if (dev->descriptor.idVendor == VENDOR_ATMEL &&
+//         dev->descriptor.idProduct == PRODUCT_SAMBA)
+//  {
+//    memcpy(serno, samba_serial_no, sizeof(samba_serial_no));
+//    return sizeof(samba_serial_no);
+//  }
+//  hdl = usb_open(dev);
+//  if (!hdl) return 0;
+//  int len = usb_get_string(hdl, dev->descriptor.iSerialNumber, 0, serno, maxlen);
+//  usb_close(hdl);
+//  return len;
+//}
 
 
 JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find
@@ -283,11 +275,13 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
   return (jlong) 0;
 }
 
-JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *env, jobject obj, jlong nxt)  {
+JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *env, jobject obj, jlong nxt)
+{
   nxt_close( (long) nxt); 
 }
 
-JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIEnv *env, jobject obj, jlong nxt, jbyteArray data, jint offset, jint len)  {
+JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIEnv *env, jobject obj, jlong nxt, jbyteArray data, jint offset, jint len)
+{
   int ret;
   char *jb = (char *) (*env)->GetByteArrayElements(env, data, 0);  
   ret = nxt_write_buf((long) nxt, jb+offset, len);
@@ -296,13 +290,15 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIE
   return ret;
 }
 
-JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data(JNIEnv *env, jobject obj, jlong nxt, jbyteArray jdata, jint offset, jint len)  {
-   int read_len;
-   char *jb = (char *)(*env)->GetByteArrayElements(env, jdata, 0);
+JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data(JNIEnv *env, jobject obj, jlong nxt, jbyteArray jdata, jint offset, jint len)
+{
+  int read_len;
+  char *jb = (char *)(*env)->GetByteArrayElements(env, jdata, 0);
 
-   read_len = nxt_read_buf((long)nxt, jb + offset, len);
-   (*env)->ReleaseByteArrayElements(env, jdata, (jbyte *)jb, 0);
-   if (read_len == -ETIMEDOUT) read_len = 0;
-   return read_len;
+  read_len = nxt_read_buf((long)nxt, jb + offset, len);
+  (*env)->ReleaseByteArrayElements(env, jdata, (jbyte *)jb, 0);
+  if (read_len == -ETIMEDOUT) read_len = 0;
+  return read_len;
 }
+
 
