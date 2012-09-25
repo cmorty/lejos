@@ -45,7 +45,7 @@ public abstract class SampleBuffer extends AbstractFilter{
 	public void fetchSample(float[] sample, int off) {
 		source.fetchSample(sample,off);
 		for (int i=0;i<elements;i++) {
-			sampleBuffer[toPos(i,currentPos)]=sample[i+off];
+			sampleBuffer[currentPos*elements+i]=sample[i+off];
 		}
 
 		if (actualSize<bufferSize) 
@@ -55,7 +55,7 @@ public abstract class SampleBuffer extends AbstractFilter{
 
 	protected void getOldest(float[] sample, int off) {
 		for (int i=0;i<elements;i++) {
-			sample[i+off]=sampleBuffer[toPos(i,currentPos)];
+			sample[i+off]=sampleBuffer[currentPos*elements+i];
 		}
 	}
 

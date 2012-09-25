@@ -9,13 +9,13 @@ import lejos.nxt.sensor.api.SampleProvider;
  * @author Sven
  *
  */
-public class Add extends AbstractFilter {
+public class AdditionFilter extends AbstractFilter {
 	
 	private final float[] offsets;
 	private final float[] buffer;
 	
 	
-	public Add(SampleProvider source, float offset) {
+	public AdditionFilter(SampleProvider source, float offset) {
 		super(source);
 		
 		this.buffer = new float[elements];
@@ -25,7 +25,7 @@ public class Add extends AbstractFilter {
 	}
 
 	
-	public Add(SampleProvider source, float[] offsets) {
+	public AdditionFilter(SampleProvider source, float[] offsets) {
 		super(source);
 		if (offsets.length < elements)
 			throw new IllegalArgumentException();

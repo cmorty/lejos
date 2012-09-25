@@ -16,13 +16,13 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class Align extends AbstractFilter{
+public class AlignFilter extends AbstractFilter{
 	RotationMatrix rotateAxis=new RotationMatrix();
 	Vector3f v=new Vector3f();
 	float[] sample=new float[3];
 
 
-	public Align(SampleProvider source) {
+	public AlignFilter(SampleProvider source) {
 		super(source);
 		elements=3;
 	}

@@ -17,7 +17,7 @@ public class MaximumFilter extends SampleBuffer {
 			if (oldest[i] == max[i] || buf[i] > max[i]) {
 				max[i]=Float.NEGATIVE_INFINITY;
 				for (int j=0;j<actualSize;j++) {
-					max[i]=Math.max(sampleBuffer[toPos(i,j)],max[i]);
+					max[i]=Math.max(sampleBuffer[j*elements+i],max[i]);
 				}
 				sample[i+off]=max[i];
 			}

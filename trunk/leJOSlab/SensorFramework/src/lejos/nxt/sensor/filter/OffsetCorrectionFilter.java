@@ -2,7 +2,16 @@ package lejos.nxt.sensor.filter;
 
 import lejos.nxt.sensor.api.SampleProvider;
 
-public class OffsetCorrection extends AbstractFilter {
+/**
+ * The offsetCorrectionFilter calculates and applies an offset correction for samples. 
+ * It does so by monitoring sample values and comparing these to an expected value. 
+ * The difference between the two is used to slowly update the offset correction term. 
+ * Before a sample is passed on it is corrected using the offset correction term. <p>
+ *  
+ * @author Aswin
+ *
+ */
+public class OffsetCorrectionFilter extends AbstractFilter {
 	float speed=0, endSpeed=0;
 	float[] offset; 
 	float[] reference;
@@ -10,11 +19,11 @@ public class OffsetCorrection extends AbstractFilter {
 	int n=0;
 	
 	
-	public OffsetCorrection(SampleProvider source) {
+	public OffsetCorrectionFilter(SampleProvider source) {
 		this(source,new float[]{0,0,0});
 	}
 	
-	public OffsetCorrection(SampleProvider source, float[] reference) {
+	public OffsetCorrectionFilter(SampleProvider source, float[] reference) {
 		this(source,reference,0.1f);
 	}
 	
@@ -24,14 +33,12 @@ public class OffsetCorrection extends AbstractFilter {
 	 * Constructor
 	 * @param source
 	 * Source for sample
-	 * @param calibrate
-	 * Name of the calibration set to use for offset feedback
 	 * @param reference
 	 * Array off reference values to calculate offset against (offset=sampleValue-referenceValue)
 	 * @param speed
 	 * Speed to update offset value
 	 */
-	public OffsetCorrection(SampleProvider source, float[] reference, float speed) {
+	public OffsetCorrectionFilter(SampleProvider source, float[] reference, float speed) {
 		this(source,reference,1f,.0001f);
 	}
 
@@ -39,8 +46,6 @@ public class OffsetCorrection extends AbstractFilter {
 	 * Constructor
 	 * @param source
 	 * Source for sample
-	 * @param calibrate
-	 * Name of the calibration set to use for offset feedback
 	 * @param reference
 	 * Array off reference values to calculate offset against (offset=sampleValue-referenceValue)
 	 * @param speed
@@ -48,7 +53,7 @@ public class OffsetCorrection extends AbstractFilter {
 	 * @param endSpeed
 	 * End speed to update offset value
 	 */
-	public OffsetCorrection(SampleProvider source, float[] reference, float speed, float endSpeed) {
+	public OffsetCorrectionFilter(SampleProvider source, float[] reference, float speed, float endSpeed) {
 		super(source);
 		offset=new float[elements];
 		this.speed=speed;
