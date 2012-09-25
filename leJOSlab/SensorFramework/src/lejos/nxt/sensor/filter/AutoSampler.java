@@ -16,6 +16,8 @@ public class AutoSampler extends AbstractFilter {
 	float[] buffer;
 	boolean	running	= true;
 	float	sampleRate;
+	int	interval;
+
 	boolean newSampleAvailable=false;
 
 	/**
@@ -26,7 +28,7 @@ public class AutoSampler extends AbstractFilter {
 	 */
 	public AutoSampler(SampleProvider source, float sampleRate) {
 		super(source);
-		this.sampleRate=sampleRate;
+		setSampleRate(sampleRate);
 		buffer=new float[elements];
 		Runner runner = new Runner();
 		runner.setDaemon(true);
@@ -54,18 +56,20 @@ public class AutoSampler extends AbstractFilter {
 	 */
 	private class Runner extends Thread {
 
+
 		@Override
 		public void run() {
-			long time;
+			long nextTime=System.currentTimeMillis();
+			long currentTime;
 			while (true) {
-				time = 0;
+				nextTime += interval;
 				if (running) {
-					time = System.currentTimeMillis();
 					source.fetchSample(buffer,0);
 					newSampleAvailable=true;
-					time = System.currentTimeMillis() - time;
 				}
-				Delay.msDelay((long) ((1000/sampleRate) - time));
+				currentTime=System.currentTimeMillis();
+				if (currentTime<nextTime)
+					Delay.msDelay(nextTime-currentTime);
 			}
 		}
 
@@ -77,6 +81,7 @@ public class AutoSampler extends AbstractFilter {
 
 	public void setSampleRate(float rate) {
 		sampleRate=rate;
+		interval=(int) (1000/sampleRate);
 	}
 
 
