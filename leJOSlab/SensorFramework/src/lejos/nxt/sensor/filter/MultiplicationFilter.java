@@ -9,13 +9,13 @@ import lejos.nxt.sensor.api.SampleProvider;
  * @author Sven
  *
  */
-public class Multiply extends AbstractFilter{
+public class MultiplicationFilter extends AbstractFilter{
 	
 	private final float[] factors;
 	private final float[] buffer;
 	
 	
-	public Multiply(SampleProvider source, float factor) {
+	public MultiplicationFilter(SampleProvider source, float factor) {
 		super(source);
 		this.buffer = new float[elements];
 		this.factors = new float[elements];
@@ -23,7 +23,7 @@ public class Multiply extends AbstractFilter{
 			factors[i]=factor;
 	}
 	
-	public Multiply(SampleProvider source, float[] factors) {
+	public MultiplicationFilter(SampleProvider source, float[] factors) {
 		super(source);
 		if (factors.length < elements)
 			throw new IllegalArgumentException();

@@ -8,7 +8,7 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class LowPass extends AbstractFilter{
+public class LowPassFilter extends AbstractFilter{
 	float[] smoothed;
 	long lastTime;
 	float timeConstant;
@@ -20,7 +20,7 @@ public class LowPass extends AbstractFilter{
 	 * @param timeConstant
 	 * The cut-off frequency for the filter
 	 */
-	public LowPass(SampleProvider source, float timeConstant) {
+	public LowPassFilter(SampleProvider source, float timeConstant) {
 		super(source);
 		smoothed=new float[elements];
 		lastTime=System.currentTimeMillis();

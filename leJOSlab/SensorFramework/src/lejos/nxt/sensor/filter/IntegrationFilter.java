@@ -10,13 +10,13 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class Integrator extends AbstractFilter{
+public class IntegrationFilter extends AbstractFilter{
 	long lastTime=0;
 	private float[]	currentValue;
 	private int	quantity=Quantities.UNDEFINED;
 
 	
-	public Integrator(SampleProvider source, int newQuantity) {
+	public IntegrationFilter(SampleProvider source, int newQuantity) {
 		super(source);
 		currentValue=new float[elements];
 		quantity=newQuantity;

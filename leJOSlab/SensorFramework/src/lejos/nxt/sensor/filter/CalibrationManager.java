@@ -213,7 +213,7 @@ public class CalibrationManager {
 	 * @author Aswin
 	 * 
 	 */
-	private class CalibrationSet {
+	protected class CalibrationSet {
 		String	name;
 		int			elements;
 		float[]	offset;

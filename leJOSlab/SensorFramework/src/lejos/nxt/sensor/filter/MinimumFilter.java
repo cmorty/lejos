@@ -17,7 +17,7 @@ public class MinimumFilter extends SampleBuffer {
 			if (oldest[i] == min[i] || buf[i] < min[i]) {
 				min[i] = Float.POSITIVE_INFINITY;
 				for (int j = 0; j < actualSize; j++) {
-					min[i] = Math.min(sampleBuffer[toPos(i, j)], min[i]);
+					min[i] = Math.min(sampleBuffer[j*elements+i], min[i]);
 				}
 			}
 			sample[i + off] = min[i];

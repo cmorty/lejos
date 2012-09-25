@@ -10,7 +10,7 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class Azimuth extends AbstractFilter{
+public class AzimuthFilter extends AbstractFilter{
 	float[] m=new float[3];
 	SampleProvider accelerometer=null;
 	float[] t;
@@ -20,7 +20,7 @@ public class Azimuth extends AbstractFilter{
 	 * @param source
 	 * SampleProvider that provides magnetic field strength over X, Y and Z
 	 */
-	public Azimuth(SampleProvider source) {
+	public AzimuthFilter(SampleProvider source) {
 		super(source);
 		elements=1;
 	}
@@ -31,7 +31,7 @@ public class Azimuth extends AbstractFilter{
 	 * @param accelerometer
 	 * ampleProvider that provides acceleration over  X, Y and Z
 	 */
-	public Azimuth(SampleProvider source, SampleProvider accelerometer) {
+	public AzimuthFilter(SampleProvider source, SampleProvider accelerometer) {
 		this(source);
 		this.accelerometer=accelerometer;
 		t=new float[3];

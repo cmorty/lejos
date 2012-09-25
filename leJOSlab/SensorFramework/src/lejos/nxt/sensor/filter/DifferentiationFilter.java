@@ -2,13 +2,13 @@ package lejos.nxt.sensor.filter;
 
 import lejos.nxt.sensor.api.SampleProvider;
 
-public class Differentiator extends AbstractFilter {
+public class DifferentiationFilter extends AbstractFilter {
 	float[] previous;
 	float[] sample;
 	long lastTime=0;
 	
 
-	public Differentiator(SampleProvider source) {
+	public DifferentiationFilter(SampleProvider source) {
 		super(source);
 		previous=new float[elements];
 		sample=new float[elements];

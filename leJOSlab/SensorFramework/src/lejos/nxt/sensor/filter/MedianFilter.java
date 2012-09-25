@@ -11,15 +11,16 @@ public class MedianFilter extends SampleBuffer {
 	@Override
 	public void fetchSample(float[] sample, int off) {
 		float current, smallest, value;
-		int n;
+		int n,halfWay;
 		super.fetchSample(sample, off);
 		for (int i=0;i<elements;i++) {
 			current=Float.NEGATIVE_INFINITY;
 			n=0;
-			while(n<=Math.floor(actualSize/2.0)) {
+			halfWay=actualSize/2;
+			while(n<=halfWay) {
 			smallest=Float.POSITIVE_INFINITY;
 			for (int j=0;j<actualSize;j++) {
-				value=sampleBuffer[toPos(i,j)];
+				value=sampleBuffer[currentPos*elements+i];
 				if (value==smallest) 
 					n++;
 				else 

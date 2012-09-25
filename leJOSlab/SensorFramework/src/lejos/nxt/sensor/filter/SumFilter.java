@@ -2,6 +2,9 @@ package lejos.nxt.sensor.filter;
 
 import lejos.nxt.sensor.api.SampleProvider;
 
+// TODO: think about the build up of numerical errors over time
+
+
 public class SumFilter extends SampleBuffer {
 	float[] sum;
 	float[] buf;
