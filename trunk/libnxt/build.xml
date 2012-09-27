@@ -12,8 +12,10 @@
 	    <pathelement location="../release/lejos_nxj/3rdparty/lib/cpptasks.jar"/>
 	  </classpath>
 	</typedef>
+	<taskdef resource="cpptasks.tasks"/>
+	<typedef resource="cpptasks.types"/>
 	-->
-	
+	    	
 	<!-- cleans all compilation artifacts -->
 	<target name="clean" description="cleans all compilation artifacts">
 		<delete>
@@ -39,14 +41,9 @@
   				name="gcc">
   			    <compilerarg value="-Wall"/>
   			    <compilerarg value="-std=c99"/>
-  			    <compilerarg value="-fPIC"/>
-  				<fileset dir=".">
-  					<include name="jlibnxt.c"/>
-  				</fileset>
-				<libset dir="." libs="usb"/>
-				<includepath>
-					<pathelement location="."/>
-				</includepath>
+  			    <!-- added by cpptasks: <compilerarg value="-fPIC"/> -->
+  				<fileset file="jlibnxt.c"/>
+				<libset libs="usb"/>
   				<includepath if="jni.include.dir">
 					<pathelement location="${jni.include.dir}" />
   				</includepath>
