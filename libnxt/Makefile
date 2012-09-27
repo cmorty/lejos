@@ -2,7 +2,7 @@ JAVA_HOME ?= JAVA_HOME_not_set
 JNI_INCLUDE ?= $(JAVA_HOME)/include
 JNI_INCLUDE_LINUX ?= $(JNI_INCLUDE)/linux
 
-CFLAGS ?= 
+CFLAGS ?= -O2 -pipe
 CFLAGS += -std=c99 -Wall -fPIC -I$(JNI_INCLUDE) -I$(JNI_INCLUDE_LINUX)
 
 LDFLAGS ?=

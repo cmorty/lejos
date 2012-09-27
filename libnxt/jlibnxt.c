@@ -40,6 +40,9 @@
 #endif
 
 
+typedef struct usb_device usb_device_t;
+typedef struct usb_dev_handle usb_dev_handle_t;
+
 
 enum nxt_usb_ids {
   VENDOR_LEGO   = 0x0694,
@@ -94,7 +97,7 @@ static void create_address(struct usb_device *dev, char *address)
 /* Return a handle to the nth NXT device, or null if not found/error
  * Also return a dvice address string that contains all of the details of
  * this device. This string can be used later to re-locate the device  */
-static long nxt_find_nth(int idx, char *address)
+static usb_device_t *nxt_find_nth(int idx, char *address)
 {
   struct usb_bus *busses, *bus;
   address[0] = '\0';
@@ -113,7 +116,7 @@ static long nxt_find_nth(int idx, char *address)
   busses = usb_get_busses();
   for (bus = busses; bus != NULL; bus = bus->next)
     {
-      struct usb_device *dev;
+      usb_device_t *dev;
 
       for (dev = bus->devices; dev != NULL; dev = dev->next)
         {
@@ -126,7 +129,7 @@ static long nxt_find_nth(int idx, char *address)
               // Now create the address string we use the same format as the
               // Lego Fantom driver
               create_address(dev, address);
-              return (long) dev;
+              return dev;
             }
         }
     }
@@ -135,13 +138,12 @@ static long nxt_find_nth(int idx, char *address)
 
 
 // Version of open that works with lejos NXJ firmware.
-static long nxt_open(long hdev)
+static usb_dev_handle_t *nxt_open(usb_device_t *dev)
 {
-  struct usb_dev_handle *hdl;
-  struct usb_device *dev = (struct usb_device *)hdev;
+  usb_dev_handle_t *hdl;
   int ret, interf;
   char buf[64];
-  hdl = usb_open((struct usb_device *) hdev);
+  hdl = usb_open(dev);
   if (!hdl) return 0;
   
   // If we are in SAMBA mode we need interface 1, otherwise 0
@@ -180,14 +182,13 @@ static long nxt_open(long hdev)
   while (usb_bulk_read(hdl, 0x82, buf, sizeof(buf), 1) > 0)
     ;
 
-  return (long) hdl;
+  return hdl;
 }
 
 // Version of close that uses interface 0
-static void nxt_close(long hhdl)
+static void nxt_close(usb_dev_handle_t *hdl)
 {
   char buf[64];
-  struct usb_dev_handle *hdl = (struct usb_dev_handle *) hhdl;
   // Discard any data that is left in the buffer
   while (usb_bulk_read(hdl, 0x82, buf, sizeof(buf), 1) > 0)
     ;
@@ -200,17 +201,17 @@ static void nxt_close(long hhdl)
 
 
 // Implement 20sec timeout write, and return amount actually written
-static int nxt_write_buf(long hdl, char *buf, int len)
+static int nxt_write_buf(usb_dev_handle_t *hdl, char *buf, int len)
 {
-  int ret = usb_bulk_write((struct usb_dev_handle *)hdl, 0x1, buf, len, 20000);
+  int ret = usb_bulk_write(hdl, 0x1, buf, len, 20000);
   return ret;
 }
 
 
 // Implement 20 second timeout read, and return amount actually read
-static int nxt_read_buf(long hdl, char *buf, int len)
+static int nxt_read_buf(usb_dev_handle_t *hdl, char *buf, int len)
 {
-  int ret = usb_bulk_read((struct usb_dev_handle *)hdl, 0x82, buf, len, 20000);
+  int ret = usb_bulk_read(hdl, 0x82, buf, len, 20000);
   return ret;
 }
 
@@ -261,7 +262,7 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
   (JNIEnv *env, jobject obj, jstring jnxt)
 {
   const char* nxt = (*env)->GetStringUTFChars(env, jnxt, 0);
-  long dev;
+  usb_device_t *dev;
   char name[MAX_SERNO];
   int cnt = 0;
   while((dev = nxt_find_nth(cnt, name)) != 0)
@@ -272,19 +273,19 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
     }
     cnt++;
   }
-  return (jlong) 0;
+  return 0;
 }
 
 JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *env, jobject obj, jlong nxt)
 {
-  nxt_close( (long) nxt); 
+  nxt_close( (usb_dev_handle_t*) nxt);
 }
 
 JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIEnv *env, jobject obj, jlong nxt, jbyteArray data, jint offset, jint len)
 {
   int ret;
   char *jb = (char *) (*env)->GetByteArrayElements(env, data, 0);  
-  ret = nxt_write_buf((long) nxt, jb+offset, len);
+  ret = nxt_write_buf((usb_dev_handle_t*) nxt, jb + offset, len);
   (*env)->ReleaseByteArrayElements(env, data, (jbyte *) jb, 0);
   if (ret == -ETIMEDOUT) ret = 0;
   return ret;
@@ -295,7 +296,7 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data(JNIE
   int read_len;
   char *jb = (char *)(*env)->GetByteArrayElements(env, jdata, 0);
 
-  read_len = nxt_read_buf((long)nxt, jb + offset, len);
+  read_len = nxt_read_buf((usb_dev_handle_t*) nxt, jb + offset, len);
   (*env)->ReleaseByteArrayElements(env, jdata, (jbyte *)jb, 0);
   if (read_len == -ETIMEDOUT) read_len = 0;
   return read_len;
