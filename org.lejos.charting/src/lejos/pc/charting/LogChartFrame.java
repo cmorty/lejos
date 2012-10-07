@@ -1017,9 +1017,9 @@ class LogChartFrame extends JFrame {
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         
 //        // emulate a CMD_INIT_HANDLER command from the NXT lejos.util.LogMessageManager
-        byte[] buf = {0,3,-1,-1,1};
-        EndianTools.encodeShortBE(1, buf, 2);
-        tmm.processMessage(buf);
+//        byte[] buf = {0,3,-1,-1,1};
+//        EndianTools.encodeShortBE(1, buf, 2);
+//        tmm.processMessage(buf);
        
 //        
 //        // emulate a CMD_DELIVER_PACKET command from the NXT lejos.util.LogMessageManager
