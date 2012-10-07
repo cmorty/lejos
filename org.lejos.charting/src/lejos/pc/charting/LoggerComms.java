@@ -1,12 +1,11 @@
 package lejos.pc.charting;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTCommLogListener;
 import lejos.pc.comm.NXTConnector;
+import lejos.util.Delay;
 
 
 /**
@@ -23,9 +22,13 @@ import lejos.pc.comm.NXTConnector;
  * @see CachingInputStream
  * @author Kirk P. Thompson
  */
-@SuppressWarnings("javadoc")
-public class LoggerComms {
+public class LoggerComms extends AbstractConnectionManager{
     private static final int MAX_IS_BUFFER_SIZE = 500000;
+    private final String THISCLASS;
+    
+    private NXTConnector conn;
+    private boolean isConnConnected = false;
+    private boolean isEOF=true;
     
 	/** 
      * Used to get more details from <code>NXTConnector</code> for the Status pane. Notice that the GUI
@@ -42,15 +45,7 @@ public class LoggerComms {
             throwable.printStackTrace();
         }
     }
-    private final String THISCLASS;
-    
-    private NXTConnector conn;
-    private InputStream in = null;
-    private OutputStream out = null;
-    private boolean isConnConnected = false;
-    private boolean isEOF=true;
-    private String connectedNXTName=null;
-    
+   
     // constructor
     /** Create a LoggerComms instance
      */
@@ -71,7 +66,8 @@ public class LoggerComms {
      * @see lejos.util.NXTDataLogger
      * 
      */
-    public boolean connect(String NXT){
+    @Override
+	public boolean connect(String NXT){
         this.conn = new NXTConnector();
         this.conn.setDebug(true);
         this.conn.addLogListener(new ll());
@@ -81,7 +77,7 @@ public class LoggerComms {
         isConnConnected = conn.connectTo(NXT, null, NXTCommFactory.ALL_PROTOCOLS);
         // ref the DIS/DOS to class vars
         if (this.isConnConnected) {
-        	this.connectedNXTName = conn.getNXTInfo().name;
+        	this.connectedDeviceName = conn.getNXTInfo().name;
             this.in = new CachingInputStream(this.conn.getInputStream(), MAX_IS_BUFFER_SIZE); 
             this.out = this.conn.getOutputStream();
             this.isEOF=false; // used to flag EOF
@@ -89,38 +85,11 @@ public class LoggerComms {
         return this.isConnConnected;
     }
 
-    /** Is there a current valid connection?
-     * @return <code>true</code> if so
-     */
-    public boolean isConnected(){
-        return this.isConnConnected;
-    }
-
-    /** Return the name of the NXT last successfully connected to.
-     * @return name of the NXT
-     */
-    public String getConnectedNXTName() {
-        return this.connectedNXTName;
-    }
-    
-    /** Return the <code>InputStream</code> from the NXT.
-     * @return the <code>InputStream</code>
-     */
-    public InputStream getInputStream() {
-        return this.in;
-    }
-    
-    /** Return the <code>OutputStream</code> to the NXT.
-     * @return the <code>OutputStream</code>
-     */
-    public OutputStream getOutputStream() {
-        return this.out;
-    }
-    
-    /** Flush the streams, close the connection and clean up. 
-     * @see #connect
-     */
-    public void closeConnection(){
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ConnectionProvider#closeConnection()
+	 */
+    @Override
+	public void closeConnection(){
         if (this.isEOF) return;
         this.isEOF=true;
         int maxQueuedBytes=0;
@@ -139,7 +108,7 @@ public class LoggerComms {
         try {
             if (this.out!=null) {
                 this.out.flush();
-                doWait(100);
+                Delay.msDelay(100);
                 this.out.close();
                 this.out=null;
             }
@@ -160,13 +129,9 @@ public class LoggerComms {
         System.gc();
         dbg("Connection teardown complete. maxQueuedBytes was " + maxQueuedBytes);
     }
-
-    private void doWait(long milliseconds) {
-         try {
-             Thread.sleep(milliseconds);
-         } catch (InterruptedException e) {
-             //Thread.currentThread().interrupt();
-         }
-    }
     
+    @Override
+	public boolean isConnected(){
+    	return this.isConnConnected;
+    }
 }

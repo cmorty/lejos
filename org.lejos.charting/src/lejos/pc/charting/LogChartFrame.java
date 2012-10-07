@@ -85,7 +85,7 @@ class LogChartFrame extends JFrame {
     private CustomChartPanel customChartPanel = new CustomChartPanel();
     private JFreeChart loggingJFreeChart= customChartPanel.getLoggingChartPanel().getChart();
     
-    private final LoggerComms connectionManager;
+    private final ConnectionProvider connectionManager;
     
     private boolean isNXTConnected = false;
     private File theLogFile; 
@@ -132,7 +132,7 @@ class LogChartFrame extends JFrame {
     
     /** Default constructor
      */
-    public LogChartFrame() {
+    public LogChartFrame(ConnectionProvider connectionProvider) {
         try {
             jbInit();
         } catch (Exception e) {
@@ -141,7 +141,7 @@ class LogChartFrame extends JFrame {
         System.out.println("Hooking into System.out..");
         System.setOut(new redirector(System.out));
         System.out.println("creating connectionManager instance");
-        this.connectionManager = new LoggerComms();
+        this.connectionManager = connectionProvider;
         
         String[] thisClass = this.getClass().getName().split("[\\s\\.]");
         THISCLASS=thisClass[thisClass.length-1];
@@ -922,7 +922,7 @@ class LogChartFrame extends JFrame {
         isNXTConnected=this.connectionManager.connect(jTextFieldNXTName.getText());
         ConfigurationManager.setConfigItem(ConfigurationManager.CONFIG_NXTNAME, jTextFieldNXTName.getText());
         if (isNXTConnected) {
-            jTextFieldNXTName.setText(this.connectionManager.getConnectedNXTName());
+            jTextFieldNXTName.setText(this.connectionManager.getConnectedName());
             tmm.setDataOutputStream(new DataOutputStream(this.connectionManager.getOutputStream()));
             
             new Thread(new Runnable() {
