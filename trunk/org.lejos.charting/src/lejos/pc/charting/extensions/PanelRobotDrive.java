@@ -21,6 +21,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import java.awt.Font;
 
 /**
  * Simple robot driver panel implementation.
@@ -52,17 +53,21 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 	public PanelRobotDrive(int handlerID, MessageSender messageSender) {
 		super(handlerID, messageSender);
 		
+		Font stdFont = new Font("Dialog", Font.PLAIN, 12);
+		
 		JSlider sliderPower = getBoundSlider(4,5); //new JSlider();
 		sliderPower.setToolTipText("Power Percentage");
 		sliderPower.setValue(0);
 		sliderPower.setPaintLabels(true);
 		sliderPower.setMajorTickSpacing(25);
 		sliderPower.setPaintTicks(true);
+		sliderPower.setFont(stdFont);
 		sliderPower.setOrientation(SwingConstants.VERTICAL);
-		sliderPower.setBounds(173, 22, 50, 134);
+		sliderPower.setBounds(173, 22, 55, 134);
 		add(sliderPower);
 		
 		JLabel lblPower = new JLabel("Power");
+		lblPower.setFont(stdFont);
 		lblPower.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPower.setBounds(170, 154, 53, 16);
 		add(lblPower);
@@ -164,20 +169,26 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 		
 		
 		btnCommand1 = super.getBoundButton("Command 1", 6, true);
+		btnCommand1.setFont(stdFont);
 		panel.add(btnCommand1);
 		this.registerCommandCallback(10, 11);// for setting the label
 		
 		btnCommand2 = super.getBoundButton("Command 2", 7, true);
+		btnCommand2.setFont(stdFont);
 		panel.add(btnCommand2);
 		this.registerCommandCallback(12, 13);// for setting the label
 		
 		btnCommand3 = super.getBoundButton("Command 3", 8, true);
+		btnCommand3.setFont(stdFont);
 		panel.add(btnCommand3);
 		this.registerCommandCallback(14, 15);// for setting the label
 		
 		btnCommand4 = super.getBoundButton("Command 4", 9, true);
+		btnCommand4.setFont(stdFont);
 		panel.add(btnCommand4);
 		super.registerCommandCallback(16, 17);// for setting the label
+		
+		
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(409, 22, 193, 114);
@@ -190,6 +201,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 		panel_1.setLayout(gbl_panel_1);
 		
 		lblValue1 = new JLabel("Value 1");
+		lblValue1.setFont(stdFont);
 		lblValue1.setPreferredSize(new Dimension(32, 16));
 		GridBagConstraints gbc_lblValue1 = new GridBagConstraints();
 		gbc_lblValue1.anchor = GridBagConstraints.EAST;
@@ -210,6 +222,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 		panel_1.add(jftfValue1, gbc_jftfValue1);
 		
 		lblValue2 = new JLabel("Value 2");
+		lblValue2.setFont(stdFont);
 		GridBagConstraints gbc_lblValue2 = new GridBagConstraints();
 		gbc_lblValue2.anchor = GridBagConstraints.EAST;
 		gbc_lblValue2.fill = GridBagConstraints.VERTICAL;
@@ -229,6 +242,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 		panel_1.add(jftfValue2, gbc_jftfValue2);
 		
 		lblValue3 = new JLabel("Value 3");
+		lblValue3.setFont(stdFont);
 		GridBagConstraints gbc_lblValue3 = new GridBagConstraints();
 		gbc_lblValue3.anchor = GridBagConstraints.EAST;
 		gbc_lblValue3.insets = new Insets(0, 0, 5, 5);
@@ -247,6 +261,7 @@ public class PanelRobotDrive extends AbstractTunneledMessagePanel {
 		panel_1.add(jftfValue3, gbc_jftfValue3);
 		
 		lblValue4 = new JLabel("Value 4");
+		lblValue4.setFont(stdFont);
 		GridBagConstraints gbc_lblValue4 = new GridBagConstraints();
 		gbc_lblValue4.anchor = GridBagConstraints.EAST;
 		gbc_lblValue4.insets = new Insets(0, 0, 0, 5);

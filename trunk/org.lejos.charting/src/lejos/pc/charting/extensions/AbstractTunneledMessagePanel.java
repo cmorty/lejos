@@ -26,6 +26,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import lejos.util.EndianTools;
+import java.awt.Font;
 
 /**
  * Base class for logger extension GUI plug-ins for utilizing the tunneled message functionality
@@ -592,17 +593,20 @@ public abstract class AbstractTunneledMessagePanel extends JPanel {
 		setPreferredSize(new Dimension(621, 177));
 		setMinimumSize(new Dimension(621, 177));
 		setLayout(null);
-
+		Font stdFont = new Font("Dialog", Font.PLAIN, 12);
+		
 		btnRefreshData = new JButton("Poll NXT");
+		btnRefreshData.setFont(stdFont);
 		btnRefreshData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				pollForRemoteHandlerValues();
 			}
 		});
-		btnRefreshData.setBounds(522, 143, 89, 23);
+		btnRefreshData.setBounds(520, 143, 91, 23);
 		add(btnRefreshData);
+		lblPluginName.setFont(stdFont);
 
-		lblPluginName.setBounds(9, 3, 598, 14);
+		lblPluginName.setBounds(9, 3, 598, 16);
 		add(lblPluginName);
 	}
 
