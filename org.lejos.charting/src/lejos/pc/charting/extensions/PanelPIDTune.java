@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
+import java.awt.Font;
 
 /**
  * PID tuning implementation. Utilized by <code>lejos.util.PIDTuner</code>.
@@ -36,11 +37,12 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 	@Override
 	protected final void initGUI() {
 		super.initGUI();
-
+		Font stdFont = new Font("Dialog", Font.PLAIN, 12);
+		
 		JPanel panelLimits = new JPanel();
 		panelLimits.setBorder(new TitledBorder(UIManager
 				.getBorder("TitledBorder.border"), "Limits",
-				TitledBorder.LEADING, TitledBorder.TOP, null, null));
+				TitledBorder.LEADING, TitledBorder.TOP, stdFont, null));
 		panelLimits.setBounds(329, 32, 205, 82);
 		add(panelLimits);
 		panelLimits.setLayout(null);
@@ -50,18 +52,21 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		panelLimits.add(textMVLimitLow);
 
 		JLabel lblLow = new JLabel("Low");
+		lblLow.setFont(stdFont);
 		lblLow.setHorizontalAlignment(SwingConstants.CENTER);
 		lblLow.setBounds(72, 11, 46, 14);
 		panelLimits.add(lblLow);
 
 		JLabel lblHigh = new JLabel("High");
+		lblHigh.setFont(stdFont);
 		lblHigh.setHorizontalAlignment(SwingConstants.CENTER);
-		lblHigh.setBounds(143, 11, 46, 14);
+		lblHigh.setBounds(143, 11, 46, 15);
 		panelLimits.add(lblHigh);
 
 		JLabel lblIntegralLimit = new JLabel("Integral:");
+		lblIntegralLimit.setFont(stdFont);
 		lblIntegralLimit.setToolTipText("To control Integral windup");
-		lblIntegralLimit.setBounds(10, 54, 53, 14);
+		lblIntegralLimit.setBounds(10, 54, 53, 15);
 		panelLimits.add(lblIntegralLimit);
 
 		textMVLimitHigh = getBoundTextField(12, 13, AbstractTunneledMessagePanel.DT_DECIMAL);
@@ -73,6 +78,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		panelLimits.add(textIntegralLimitLow);
 		
 		JLabel lblMvLimit = new JLabel("MV:");
+		lblMvLimit.setFont(stdFont);
 		lblMvLimit.setToolTipText("To control MV (output) limiting");
 		lblMvLimit.setBounds(10, 30, 53, 14);
 		panelLimits.add(lblMvLimit);
@@ -84,22 +90,23 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		JPanel panelPIDConstants = new JPanel();
 		panelPIDConstants.setBorder(new TitledBorder(UIManager
 				.getBorder("TitledBorder.border"), "PID Constants",
-				TitledBorder.LEADING, TitledBorder.TOP, null, null));
+				TitledBorder.LEADING, TitledBorder.TOP, stdFont, null));
 		panelPIDConstants.setBounds(11, 32, 103, 101);
 		add(panelPIDConstants);
-		panelPIDConstants.setLayout(null);
 
 		textKp = getBoundTextField(0, 1, AbstractTunneledMessagePanel.DT_DECIMAL);
 		textKp.setBounds(30, 22, 60, 20);
 		panelPIDConstants.add(textKp);
 		textKp.setToolTipText("Enter the Kp value");
+		panelPIDConstants.setLayout(null);
 
 		JLabel lblKp = new JLabel("Kp:");
+		lblKp.setBounds(10, 25, 19, 14);
+		lblKp.setFont(stdFont);
 		lblKp.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblKp.setToolTipText("<html>The Proportional gain constant. Larger values typically<br>" +
 				"mean faster response since the larger the error, the<br>larger the proportional " +
 				"term compensation.</html>");
-		lblKp.setBounds(10, 25, 19, 14);
 		panelPIDConstants.add(lblKp);
 		
 		textKi = getBoundTextField(2, 3, AbstractTunneledMessagePanel.DT_DECIMAL);
@@ -107,12 +114,13 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		panelPIDConstants.add(textKi);
 		
 		JLabel lblKi = new JLabel("Ki:", SwingConstants.LEADING);
+		lblKi.setBounds(10, 50, 19, 14);
+		lblKi.setFont(stdFont);
 		lblKi.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblKi.setToolTipText("<html>Larger values imply steady state errors are eliminated more<br>" +
 				"quickly. The trade-off is larger overshoot: any negative error integrated<br>" +
 				"during transient response must be integrated away by positive error before<br>" +
 				"reaching steady state.</html>");
-		lblKi.setBounds(10, 50, 19, 14);
 		panelPIDConstants.add(lblKi);
 		
 		textKd = getBoundTextField(4, 5, AbstractTunneledMessagePanel.DT_DECIMAL);
@@ -120,17 +128,20 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		panelPIDConstants.add(textKd);
 		
 		JLabel lblKd = new JLabel("Kd:");
-		lblKd.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblKd.setBounds(10, 76, 19, 14);
+		lblKd.setFont(stdFont);
+		lblKd.setHorizontalAlignment(SwingConstants.RIGHT);
 		panelPIDConstants.add(lblKd);
 
-		chckbxFreezeIntegral = getBoundChkbox("Freeze Integral", 24, 25);
-		chckbxFreezeIntegral.setBounds(11, 140, 123, 23);
+		chckbxFreezeIntegral = new JCheckBox("Freeze Integral") ; //getBoundChkbox("Freeze Integral", 24, 25);
+		chckbxFreezeIntegral.setBounds(10, 141, 118, 23);
+		chckbxFreezeIntegral.setFont(stdFont);
 		add(chckbxFreezeIntegral);
 		
 		JLabel lblLoopDelay = new JLabel("Loop Delay (ms):");
+		lblLoopDelay.setFont(stdFont);
 		lblLoopDelay.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblLoopDelay.setBounds(135, 62, 103, 14);
+		lblLoopDelay.setBounds(122, 62, 116, 16);
 		add(lblLoopDelay);
 
 		textDelay = getBoundTextField(22, 23, AbstractTunneledMessagePanel.DT_INTEGER);
@@ -138,6 +149,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		add(textDelay);
 
 		JLabel lblDeadband = new JLabel("Deadband:");
+		lblDeadband.setFont(stdFont);
 		lblDeadband.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblDeadband.setBounds(163, 90, 75, 14);
 		add(lblDeadband);
@@ -147,6 +159,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		add(textDeadband);
 		
 		JLabel lblSetpointsp = new JLabel("SetPoint (SP):");
+		lblSetpointsp.setFont(stdFont);
 		lblSetpointsp.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblSetpointsp.setBounds(149, 36, 89, 14);
 		add(lblSetpointsp);
@@ -156,6 +169,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		add(textSetPoint);
 		
 		JLabel lblRampExponent = new JLabel("Ramp Exponent:");
+		lblRampExponent.setFont(stdFont);
 		lblRampExponent.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblRampExponent.setBounds(135, 117, 103, 14);
 		add(lblRampExponent);
@@ -169,8 +183,9 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		add(textRampThreshold);
 		
 		JLabel lblRampThreshold = new JLabel("Ramp Threshold:");
+		lblRampThreshold.setFont(stdFont);
 		lblRampThreshold.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblRampThreshold.setBounds(135, 145, 103, 14);
+		lblRampThreshold.setBounds(122, 145, 116, 14);
 		add(lblRampThreshold);
 	}
 

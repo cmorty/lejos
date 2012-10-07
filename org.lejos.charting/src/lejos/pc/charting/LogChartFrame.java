@@ -49,6 +49,8 @@ import javax.swing.MenuElement;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -56,6 +58,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.BadLocationException;
+
+import lejos.util.EndianTools;
 
 import org.jfree.chart.JFreeChart;
 
@@ -327,7 +331,7 @@ class LogChartFrame extends JFrame {
                 }
             }
             
-            // manange Range axis label fields state
+            // manage Range axis label fields state
             for (int i=0;i<4;i++) manageAxisLabel(i);
         }
 
@@ -601,6 +605,8 @@ class LogChartFrame extends JFrame {
         MenuActionListener menuItemActionListener = new MenuActionListener();
         MenuEventListener menuListener = new MenuEventListener();
         
+        Font stdFont = new Font("Dialog", Font.PLAIN, 12);
+        
         menu = new JMenu("Edit");
         menu.setMnemonic(KeyEvent.VK_E);
         menuBar.add(menu);
@@ -709,7 +715,11 @@ class LogChartFrame extends JFrame {
         chartOptionsPanel.setLayout(null);
         chartDomLimitsPanel.setBounds(new Rectangle(5, 35, 180, 135));
         chartDomLimitsPanel.setLayout(gridLayout1);
-        chartDomLimitsPanel.setBorder(BorderFactory.createTitledBorder("Domain Display Limiting"));
+        chartDomLimitsPanel.setBorder(new TitledBorder(UIManager
+				.getBorder("TitledBorder.border"), "Domain Display Limiting",
+				TitledBorder.LEADING, TitledBorder.TOP, stdFont, null));
+        
+        
         domainDisplayLimitSlider.setEnabled(false);
         domainDisplayLimitSlider.setMaximum(MAXDOMAIN_DATAPOINT_LIMIT);
         domainDisplayLimitSlider.setMinimum(MINDOMAIN_LIMIT);
@@ -720,6 +730,7 @@ class LogChartFrame extends JFrame {
                     }
                 });
         useTimeRadioButton.setText("By Time");
+        useTimeRadioButton.setFont(stdFont);
         useTimeRadioButton.setEnabled(false);
         useTimeRadioButton.setMnemonic('I');
         useTimeRadioButton.addActionListener(new ActionListener() {
@@ -728,6 +739,7 @@ class LogChartFrame extends JFrame {
                     }
                 });
         useDataPointsRadioButton.setText("By Data Points");
+        useDataPointsRadioButton.setFont(stdFont);
         ButtonGroup bg1 = new ButtonGroup();
         bg1.add(useTimeRadioButton);
         bg1.add(useDataPointsRadioButton);
@@ -740,6 +752,8 @@ class LogChartFrame extends JFrame {
                     }
                 });
         datasetLimitEnableCheckBox.setText("Enable");
+        datasetLimitEnableCheckBox.setFont(stdFont);
+        datasetLimitEnableCheckBox.setFont(stdFont);
         datasetLimitEnableCheckBox.setRolloverEnabled(true);
         datasetLimitEnableCheckBox.setMnemonic('A');
         datasetLimitEnableCheckBox.setToolTipText("Enable Domain Clipping");
@@ -749,37 +763,44 @@ class LogChartFrame extends JFrame {
                     }
                 });
         domainLimitLabel.setText(String.format("%1$,d datapoints", MAXDOMAIN_DATAPOINT_LIMIT).toString());
+        domainLimitLabel.setFont(stdFont);
         domainLimitLabel.setEnabled(false);
         gridLayout1.setRows(5);
         gridLayout1.setColumns(1);
 
         
         jLabel1.setText("Chart Title:");
+        jLabel1.setFont(stdFont);
         jLabel1.setBounds(new Rectangle(200, 10, 85, 20));
-        jLabel1.setPreferredSize(new Dimension(115, 14));
+        jLabel1.setPreferredSize(new Dimension(127, 14));
         jLabel2.setText("Range Axis 1 Label:");
-        jLabel2.setBounds(new Rectangle(200, 35, 115, 20));
-        jLabel2.setSize(new Dimension(115, 20));
+        jLabel2.setFont(stdFont);
+        jLabel2.setBounds(new Rectangle(200, 35, 127, 20));
+        jLabel2.setSize(new Dimension(127, 20));
         jLabel3.setText("Range Axis 2 Label:");
-        jLabel3.setBounds(new Rectangle(200, 60, 115, 20));
-        jLabel3.setSize(new Dimension(115, 20));
+        jLabel3.setBounds(new Rectangle(200, 60, 127, 20));
+        jLabel3.setSize(new Dimension(127, 20));
+        jLabel3.setFont(stdFont);
         jLabel4.setText("Range Axis 3 Label:");
-        jLabel4.setBounds(new Rectangle(200, 85, 115, 20));
-        jLabel4.setSize(new Dimension(115, 20));
+        jLabel4.setFont(stdFont);
+        jLabel4.setBounds(new Rectangle(200, 85, 127, 20));
+        jLabel4.setSize(new Dimension(127, 20));
         jLabel6.setText("Range Axis 4 Label:");
-        jLabel6.setBounds(new Rectangle(200, 110, 115, 20));
-        jLabel6.setSize(new Dimension(115, 20));
+        jLabel6.setFont(stdFont);
+        jLabel6.setBounds(new Rectangle(200, 110, 127, 20));
+        jLabel6.setSize(new Dimension(127, 20));
         titleLabelChangeNotifier notifier = new titleLabelChangeNotifier();
-        chartTitleTextField.setBounds(new Rectangle(315, 10, 290, 20));
+        chartTitleTextField.setBounds(new Rectangle(327, 10, 278, 20));
         chartTitleTextField.getDocument().addDocumentListener(notifier);
-        axis1LabelTextField.setBounds(new Rectangle(315, 35, 290, 20));
+        axis1LabelTextField.setBounds(new Rectangle(327, 35, 278, 20));
         axis1LabelTextField.getDocument().addDocumentListener(notifier);
-        axis2LabelTextField.setBounds(new Rectangle(315, 60, 290, 20));
+        axis2LabelTextField.setBounds(new Rectangle(327, 60, 278, 20));
         axis2LabelTextField.getDocument().addDocumentListener(notifier);
-        axis3LabelTextField.setBounds(new Rectangle(315, 85, 290, 20));
+        axis3LabelTextField.setBounds(new Rectangle(327, 85, 278, 20));
         axis3LabelTextField.getDocument().addDocumentListener(notifier);
-        axis4LabelTextField.setBounds(new Rectangle(315, 110, 290, 20));
+        axis4LabelTextField.setBounds(new Rectangle(327, 110, 278, 20));
         showCommentsCheckBox.setText("Show Comment Markers");
+        showCommentsCheckBox.setFont(stdFont);
         showCommentsCheckBox.setBounds(new Rectangle(200, 140, 185, 25));
         showCommentsCheckBox.setToolTipText("Show/Hide any comment markers on the chart");
         showCommentsCheckBox.setRolloverEnabled(true);
@@ -790,6 +811,7 @@ class LogChartFrame extends JFrame {
                 customChartPanel.setCommentsVisible(e.getStateChange()==ItemEvent.SELECTED);
             }
         });
+        scrollDomainCheckBox.setFont(stdFont);
         scrollDomainCheckBox.setText("Scroll Domain");
         scrollDomainCheckBox.setBounds(new Rectangle(10, 5, 175, 20));
         scrollDomainCheckBox.setSize(new Dimension(175, 25));
@@ -995,9 +1017,10 @@ class LogChartFrame extends JFrame {
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         
 //        // emulate a CMD_INIT_HANDLER command from the NXT lejos.util.LogMessageManager
-//        byte[] buf = {0,2,-1,-1,1};
-//        EndianTools.encodeShortBE(1, buf, 2);
-//        tmm.tunneledMessageReceived(buf);
+        byte[] buf = {0,3,-1,-1,1};
+        EndianTools.encodeShortBE(1, buf, 2);
+        tmm.processMessage(buf);
+       
 //        
 //        // emulate a CMD_DELIVER_PACKET command from the NXT lejos.util.LogMessageManager
 //		buf = new byte[10];
