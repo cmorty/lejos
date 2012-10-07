@@ -26,7 +26,7 @@ public class ChartingLogger {
     private MyWindowSizeListener wsl = new MyWindowSizeListener();
     
     public ChartingLogger() {
-        frame = new LogChartFrame();
+        frame = new LogChartFrame(new LoggerComms());
         frame.pack();
         // restore previous window state, size, location if saved
         String[] stateItems = 
