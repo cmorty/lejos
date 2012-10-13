@@ -7,13 +7,10 @@ import java.io.OutputStream;
 import lejos.nxt.comm.RConsole;
 import lejos.nxt.comm.RS485;
 import lejos.util.Delay;
-import lejos.internal.io.*;
-import java.net.Socket;
-import java.util.StringTokenizer;
 
 /**
- * Interface class for the NXT2WIFI sensor device developed by Dani Bennedetelli. The NXT2WIFI is a self-contained
- * wifi sensor that attaches to the NXT on port 4 and provides an embedded webserver and TCP/UDP connectivity. 
+ * Interface class for the NXT2WIFI sensor device developed by Danny Benedettelli. The NXT2WIFI is a self-contained
+ * wifi sensor that attaches to the NXT on port 4 and provides an embedded graphic webserver and TCP/UDP connectivity. 
  * This class provides basic wifi connection features to connect to a WPA2 network. It provides some low-level
  * data read and write methods. The recommended method for reading and writing data is to use the 
  * InputStream and OutputStream interface methds.
@@ -32,6 +29,7 @@ public class NXT2WIFI {
 	private final static byte[] CMD_PING = new byte[] {'$','?','?','?', 0x0A};
 	private final static byte[] CMD_FW = new byte[] {'$','F','W', 0x0A};
 	private final static byte[] CMD_IPADDR = new byte[] {'$','W','F','I','P', 0x0A};
+	private final static byte[] CMD_MACADDR = new byte[] {'$','M','A','C', 0x0A};
 	private final static byte[] CMD_SCANFORNETWORKS = new byte[] {'$','W','F','S','C','A','N', 0x0A};
 	private final static byte[] CMD_VERBOSE = new byte[] {'$','S','C','V', '0', 0x0A};
 	private final static byte[] CMD_DEBUG = new byte[] {'$','D','B','G', '0', 0x0A};
@@ -48,6 +46,7 @@ public class NXT2WIFI {
 	private static final int WF_SEC_WPA2_KEY =		5;
 	private static final int WF_SEC_WPA2_PASSPHRASE = 6;
 	private static final int WF_SEC_WPA_AUTO_KEY = 7;
+	private static final int WF_SEC_WPA_AUTO_PASSPHRASE = 8;
 
 	// connection status codes
 	public static final int NOT_CONNECTED = 0;
@@ -68,8 +67,8 @@ public class NXT2WIFI {
 		"Turned Off"
 	};
 	
-	private static final int AD_HOC = 1;
-	private static final int INFRASTRUCTURE = 0;
+	public static final boolean AD_HOC = true;
+	public static final boolean INFRASTRUCTURE = false;
 	
 	private static final int cmdDelay = 250;
 	
@@ -87,22 +86,12 @@ public class NXT2WIFI {
 	
 	/**
 	 * Default constructor. Assumes baud rate of 230400 and no debug output to RConsole.
-	 * @throws IOException
 	 */
-	public NXT2WIFI() throws IOException {
-		this(defaultBaudRate, false);
+	public NXT2WIFI() {
+		this(defaultBaudRate);
 	}
 	
-	
-	public NXT2WIFI(int baudrate) throws IOException {
-		this(baudrate, false);
-	}
-	
-	public NXT2WIFI(boolean runThread) throws IOException {
-		this(defaultBaudRate, runThread);	
-	}
-	
-	public NXT2WIFI(int baudrate, boolean runThread) throws IOException {
+	public NXT2WIFI(int baudrate) {
 		currentBaudrate = baudrate;
 		RS485.hsEnable(baudrate, BUFFER_LENGTH);
 
@@ -117,16 +106,28 @@ public class NXT2WIFI {
 	}
 	
 	/**
-	 * Enable or disable debug output. Output is written to the RConsole which must be opened
+	 * Enable or disable debug output on USB console. Output is written to the RConsole which must be opened
 	 * prior to calling.
 	 * @param debugMode Boolean flag if true debug output is enabled, if false it is disabled
 	 */
-	public void setDebug(boolean debugMode) {
+	public void setConsoleDebug(boolean debugMode) {
 		
 		debug = debugMode;
 		if(debug) {
 			RConsole.println("NXT2WIFI: DEBUG ENABLED at " + System.currentTimeMillis());
 		}
+	}
+	
+	/**
+	 * Enable or disable debug output on USB console. Output is written to the RConsole which must be opened
+	 * prior to calling.
+	 * @param debugMode Boolean flag if true computer debug output is enabled, if false it is disabled
+	 */
+	public void setDebug(boolean e) throws IOException {
+		if (e)
+			tryCommand("$DBG1\n","Cannot enable debug stream");
+		else
+			tryCommand("$DBGo\n","Cannot disable debug stream");
 	}
 	
 	/**
@@ -159,10 +160,10 @@ public class NXT2WIFI {
 	
 	/**
 	 * Return the current time of day and date string
-	 * @param K is the offset from GMT (positive or negative)
+	 * @param k is the offset from GMT (positive or negative)
 	 * @return YYYY-MM-DD/hh:mm:ss or exception is thrown if an error occurs
 	 */
-	String getTimeOfDay(int k) throws IOException {
+	public String getTimeOfDay(int k) throws IOException {
 		String cmd = "$GTIM?"+k+"\n";
 		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
 		Delay.msDelay(50);
@@ -260,7 +261,7 @@ public class NXT2WIFI {
 	 * Close a socket. 
 	 * @param socketID The ID of the socket to close (1-4) socketID=0 closes all sockets
 	 */
-	public void close(int socketID) throws IOException {
+	public void closeSocket(int socketID) throws IOException {
 		if( (socketID < 0) || (socketID > 4)) {
 			throw new IOException("Invalid socket number");
 		}
@@ -276,13 +277,13 @@ public class NXT2WIFI {
 	 * @return true if the sensor is attached and communicating. false if no sensor is attached.
 	 */
 	public boolean isAlive() {
-
-		RS485.hsWrite(CMD_PING, 0, CMD_PING.length);
+		send("$???\n");
+		//RS485.hsWrite(CMD_PING, 0, CMD_PING.length);
 		Delay.msDelay(50);
 		
 		String reply = readFully(false);
 				
-		if(reply.equalsIgnoreCase(RESP_PING)) {
+		if(reply.length()>3 && reply.equalsIgnoreCase(RESP_PING)) {
 			return true;
 		} else {
 			return false;
@@ -294,47 +295,26 @@ public class NXT2WIFI {
 	 * 
 	 * @return A string containing the firmware version
 	 */
-	public String firmwareVersion() {
+	public String getFirmwareVersion() {
 		
 		if(debug) RConsole.println("firmwareVersion sending CMD_FW");
-		
-		RS485.hsWrite(CMD_FW, 0, CMD_FW.length);
+		send("$FW\n");
+		//RS485.hsWrite(CMD_FW, 0, CMD_FW.length);
 		Delay.msDelay(50);
 		
 		String reply = readFully(false);
-				
+			
 		return reply;
-	}
-	
-	/**
-	 * Enable or disable verbose output on the NXT serial line
-	 * @param verbose - set to true if verbose output is required, else set to false
-	 * 
-	 */
-	public void verboseMode(boolean verbose) {		
-		byte[] cmd;
-		
-		if(verbose) {
-			cmd = CMD_VERBOSE.clone();
-			cmd[4] = '1';
-		} else {
-			cmd = CMD_VERBOSE.clone();
-			cmd[4] = '0';			
-		}
-
-		RS485.hsWrite(cmd, 0, cmd.length);
-		Delay.msDelay(50);
-		
-		String reply = readFully(false);
 	}
 	
 	/**
 	 * Return the current IP address of the device
 	 * @return A string containing the current IP address
 	 */
-	public String IPAddress() throws IOException {
+	public String getIPAddress() throws IOException {
 				
-		RS485.hsWrite(CMD_IPADDR, 0, CMD_IPADDR.length);
+		send("$WFIP\n");
+		//RS485.hsWrite(CMD_IPADDR, 0, CMD_IPADDR.length);
 		Delay.msDelay(50);
 		
 		String reply = readFully(false);
@@ -348,6 +328,31 @@ public class NXT2WIFI {
 			reply = reply.substring(5);
 		} else {
 			throw new IOException("IPAddress Malformed response: " + reply);
+		}
+		
+		return reply;
+	}
+	
+	/**
+	 * Return the current MAC address of the device
+	 * @return A string containing the current MAC address
+	 */
+	public String getMACAddress() throws IOException {
+				
+		RS485.hsWrite(CMD_MACADDR, 0, CMD_MACADDR.length);
+		Delay.msDelay(50);
+		
+		String reply = readFully(false);
+		
+		RConsole.println("Reply = " + reply);
+		
+		// we need to trim the first chunk off the reply as it should be
+		// MAC=
+		// If this is not found then throw an exception
+		if(reply.startsWith("MAC=")) {
+			reply = reply.substring(4);
+		} else {
+			throw new IOException("MACAddress Malformed response: " + reply);
 		}
 		
 		return reply;
@@ -367,8 +372,7 @@ public class NXT2WIFI {
 	 * @throws An IOException with the string text from the exception parameter
 	 */
 	private String tryCommand(String cmd, int timeout, String exception) throws IOException {
-		int i;
-		
+	
 		RConsole.println("tryCommand: cmd = " + cmd);
 		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
 
@@ -387,6 +391,116 @@ public class NXT2WIFI {
 	}
 	
 	/**
+	 * Connect to custom or default profile.
+	 * 
+	 * @param profile - true for CUSTOM, false for DEFAULT
+	 * @throws IOException if an error occurred in connecting to the network
+	 */	
+	public void connect(boolean profile) throws IOException {
+		if (profile)
+			tryCommand("$WFC1\n", "Cannot connect using CUSTOM profile");
+		else 
+			tryCommand("$WFC0\n", "Cannot connect using DEFAULT profile");
+	}
+	
+	/**
+	 * Delete custom connection profile.
+	 * @throws IOException if an error occurred in deleting the profile
+	 */	
+	public void deleteProfile() throws IOException {
+		tryCommand("$WFKD\n", "Cannot delete CUSTOM profile");
+	}		
+	
+	/**
+	 * Save custom connection profile.
+	 * @throws IOException if an error occurred in saving the profile
+	 */	
+	public void saveProfile() throws IOException {
+		tryCommand("$WFKS\n", 500, "Cannot save CUSTOM profile");
+	}	
+	
+	public void setSecurity (int mode, String passkey) throws IOException {
+		setSecurity(mode,passkey,0);
+	}	
+	
+	public void setSecurity (int mode, String passkey, int index) throws IOException {
+		String cmd = "$WFS?" + mode + ":" + passkey + ":"+ index + "\n";
+		tryCommand(cmd, 500,"Cannot set security type and passphrase");		
+	}
+	
+	public void connectToWPAAutoWithKey(String ssid, String key, boolean saveConfig) throws IOException {
+		
+		String cmd;
+		if(debug) RConsole.println("connectToWPAAuto: SSID= "+ssid+" passphrase= "+key);
+
+		if(saveConfig) {
+			deleteProfile(); 
+		}
+		
+		// Set the security type and passphrase
+		setSecurity(WF_SEC_WPA_AUTO_KEY,key);
+
+		// Set the SSID
+		setSSID(ssid);
+		
+		// Set infrastructure mode
+		setType(INFRASTRUCTURE);
+
+		if(saveConfig) {
+			saveProfile(); 
+		}
+		
+		// Connect to the wifi
+		connect(true);
+	}		
+	
+	/**
+	 * Connect to a given SSID WPA Auto network with a passphrase. This method simply initiates the connection
+	 * sequence and does not wait for the connection to complete or fail. You need to call connectionStatus()
+	 * to poll the connection to see if it succeeds or fails. Connecting can take time if the WPA2 key
+	 * needs to be re-generated and stored on the NXT2WIFI. Allow up to 30 seconds for this to complete.
+	 * 
+	 * @param ssid - SSID of the network
+	 * @param passphrase - the passphrase to use
+	 * @param saveConfig - If true then the WPA configuration is saved as the default Custom Profile on the device.
+	 * @throws IOException if an error occurred in connecting to the network
+	 */
+	public void connectToWPAAutoWithPassphrase(String ssid, String passphrase, boolean saveConfig) throws IOException {
+		
+		String cmd;
+		
+		if(debug) RConsole.println("connectToWPAAuto: SSID= "+ssid+" passphrase= "+passphrase);
+
+		if(saveConfig) {
+			// Delete the custom profile $WFKD
+			cmd = "$WFKD\n";
+			tryCommand(cmd, "Cannot delete custom profile");
+		}
+
+		// Set infrastructure mode
+		cmd = "$WFE?TYPE=0\n";
+		tryCommand(cmd, "Cannot set infrastructure mode");		
+
+		// Set the SSID
+		cmd = "$WFE?SSID=" + ssid + "\n";
+		tryCommand(cmd, "Cannot set SSID");		
+		
+		// Set the security type and passphrase
+		cmd = "$WFS?" + WF_SEC_WPA_AUTO_PASSPHRASE + ":" + passphrase + "\n";
+		tryCommand(cmd, 300, "Cannot set security type and passphrase");
+
+		if(saveConfig) {
+			// Save the profile
+			cmd = "$WFKS\n";
+			tryCommand(cmd, 400, "Cannot save profile");
+		}
+		
+		// Connect to the wifi
+		connect(true);
+
+	}	
+	
+	/**
 	 * Connect to a given SSID WPA2 network with a passphrase. This method simply initiates the connection
 	 * sequence and does not wait for the connection to complete or fail. You need to call connectionStatus()
 	 * to poll the connection to see if it succeeds or fails. Connecting can take time if the WPA2 key
@@ -397,7 +511,7 @@ public class NXT2WIFI {
 	 * @param saveConfig - If true then the WPA configuration is saved as the default Custom Profile on the device.
 	 * @throws IOException if an error occurred in connecting to the network
 	 */
-	public void connectToWPA2(String ssid, String passphrase, boolean saveConfig) throws IOException {
+	public void connectToWPA2WithPassphrase(String ssid, String passphrase, boolean saveConfig) throws IOException {
 		
 		String cmd;
 		
@@ -411,15 +525,15 @@ public class NXT2WIFI {
 		
 		// Set the security type and passphrase
 		cmd = "$WFS?";
-		String passphraseLen = "" + passphrase.length();
-		cmd = cmd + "6" + ":" + passphrase + ":" + passphraseLen + ":\n";
-		tryCommand(cmd, 20000, "Cannot set security type and passphrase");
+		cmd = cmd + WF_SEC_WPA2_PASSPHRASE + ":" + passphrase + "\n";
+		tryCommand(cmd, "Cannot set security type and passphrase");
 
 		// Set the SSID
 		cmd = "$WFE?SSID=" + ssid + "\n";
 		tryCommand(cmd, "Cannot set SSID");
 		
 		// Set infrastructure mode
+		setType(INFRASTRUCTURE);
 		cmd = "$WFE?TYPE=0\n";
 		tryCommand(cmd, "Cannot set infrastructure mode");
 
@@ -475,7 +589,7 @@ public class NXT2WIFI {
 		Delay.msDelay(50);
 		String reply = readFully(false);
 		
-		if(reply.startsWith("WFGS=") && reply.length() > 5) {
+		if(reply.length() > 5 && reply.startsWith("WFGS=") ) {
 			status = reply.charAt(5) - 48;
 		} else {
 			status = -1;
@@ -614,6 +728,32 @@ public class NXT2WIFI {
 	}
 	
 	/**
+	 * Enable the DHCP for the wifi network connection. 
+	 * @param e if true, enables DHCP, if false maintains specified IP.
+	 * @return The reply from the NXT2WIFI
+	 */	
+	public String setDHCP(boolean e) {
+		String cmd = "$WFE?DHCP="+(e?"1":"0")+"\n";
+		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
+		Delay.msDelay(50);
+		String reply = readFully(false);		
+		return reply;		
+	}	
+	
+	/**
+	 * Set the type for the wifi network connection. 
+	 * @param e if true is adhoc network, false is infrastructure
+	 * @return The reply from the NXT2WIFI
+	 */	
+	public String setType(boolean e) {
+		String cmd = "$WFE?TYPE="+(e?"1":"0")+"\n";
+		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
+		Delay.msDelay(50);
+		String reply = readFully(false);		
+		return reply;		
+	}	
+	
+	/**
 	 * Set the NetBIOS name of the wifi network. 
 	 * @param name The NetBIOS name to set.
 	 * @return The reply from the NXT2WIFI
@@ -742,6 +882,24 @@ public class NXT2WIFI {
 		if(dotCount == 3 && digitCount > 0 && digitCount <= 3) return true;
 		return false;
 	}
+	
+	private int send(byte[] out, int len) {
+		int written = 0;
+		int bo = 1;
+		//RConsole.println("Send to Flyport: "+out);
+		while (written<len && bo>0) {
+			bo = RS485.hsWrite(out, written, len);
+			written += bo;
+			Delay.msDelay(1);
+		}
+		//bo = RS485.hsWrite(terminator, written+1, 1);
+		//written += bo;
+		return written;
+	}
+	
+	private int send(String out) {
+		return send(out.getBytes(),out.length());
+	}
 		
 	/**
 	 * Class for reading from the NXT2WIFI, returns a standard Java InputStream that can be
@@ -856,6 +1014,7 @@ public class NXT2WIFI {
 		 * @return The number of bytes read
 		 *
 		 */
+		@Override
 		public int read(byte[] cbuf) throws IOException {
 			synchronized (NXT2WIFI.this){
 				return read(cbuf, 0, cbuf.length);
@@ -875,6 +1034,7 @@ public class NXT2WIFI {
 		 * @throws IOException if the stream is closed.
 		 *
 		 */
+		@Override
 		public int read(byte[] cbuf, int off, int len) throws IOException {
 			
 			synchronized(NXT2WIFI.this) {
@@ -957,6 +1117,7 @@ public class NXT2WIFI {
 		 * Close the output stream socket
 		 *
 		 */
+		@Override
 		public void close() throws IOException {
 			synchronized (NXT2WIFI.this){
 
@@ -973,6 +1134,7 @@ public class NXT2WIFI {
 		/**
 		 * Flush the stream.
 		 */
+		@Override
 		public void flush() throws IOException {
 			synchronized (NXT2WIFI.this){
 				
@@ -996,6 +1158,7 @@ public class NXT2WIFI {
 		 * @throws IOException if the stream is closed, or the write is interrupted.
 		 *
 		 */
+		@Override
 		public void write(byte[] cbuf) throws IOException {
 			this.write(cbuf, 0, cbuf.length);	
 		}
@@ -1011,6 +1174,7 @@ public class NXT2WIFI {
 		 * @return The number of bytes written (as reported by the NXT2WIFI
 		 * @throws IOException if the stream is closed, or the write is blocked
 		 */
+		@Override
 		public void write(byte[] cbuf, int off, int len) throws IOException, ArrayIndexOutOfBoundsException {
 			synchronized(NXT2WIFI.this) {
 			
@@ -1050,6 +1214,7 @@ public class NXT2WIFI {
 		 * @throws IOException if the stream is closed, or the write is interrupted.
 		 *
 		 */
+		@Override
 		public void write(int c) throws IOException {
 		
 			synchronized(NXT2WIFI.this) {
