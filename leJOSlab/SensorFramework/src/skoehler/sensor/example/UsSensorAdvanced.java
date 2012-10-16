@@ -1,12 +1,13 @@
 package skoehler.sensor.example;
 
-import skoehler.sensor.device.*;
-import skoehler.sensor.filter.*;
-import skoehler.sensor.sampling.*;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import lejos.util.Delay;
+import skoehler.sensor.device.LcUltrasonic;
+import skoehler.sensor.filter.Align;
+import skoehler.sensor.filter.StatisticsFilter;
+import skoehler.sensor.sampling.SampleBuffer;
 
 public class UsSensorAdvanced {
 
@@ -14,10 +15,10 @@ public class UsSensorAdvanced {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		UsSensorAdvanced test=new UsSensorAdvanced();
+		new UsSensorAdvanced().run();
 	}
 
-	public UsSensorAdvanced() {
+	public void run() {
 		float[] dist=new float[1];
 		float[] obstacle=new float[3];
 		LcUltrasonic sensor=new LcUltrasonic(SensorPort.S1);
