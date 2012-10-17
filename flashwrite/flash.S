@@ -7,7 +7,9 @@
 #define EFC_REG_STATUS  0x68
 #define EFC_REG_COMMAND 0x64
 #define CMD_WRITE_BASE  0x5A000001
-#define PAGE_SIZE       256
+#define page_number     (eof)
+#define page_data_start (eof+4)
+#define page_data_end   (eof+4+256)
 
 /**
  * Memory Layout:
@@ -39,12 +41,11 @@
 //pop {r0, r1, r2, r3, r4, r5, r6 }
 
 _start:
-	// place stack before program and save registers
-	adr sp, _start
-	// load some useful addresses
+	// place stack before program and save registers, but actually, we don't
+	// need a stack as we don't enable interrupts or use the stack ourselves
+	// adr sp, _start
 	ldr r6, =EFC_BASE
 	ldr r5, =ROM_BASE
-	adr r4, eof
 
 wait_loop1:
 	// wait as long as lowest bit is NOT set
@@ -53,14 +54,15 @@ wait_loop1:
 	beq wait_loop1
 
 copy_page:
-	ldr r3,	[r4], #4
+	ldr r3,	page_number
 	lsl r3, r3, #22  // r3 := (r3 & 0x3FF) << 8
 	lsr r3, r3, #14
-	add r1, r3, r5
-	add r2, r1, #PAGE_SIZE
+	add r4, r3, r5
+	adr r1, page_data_start
+	adr r2, page_data_end
 copy_loop:
-	ldr r0, [r4], #4
-	str r0, [r1], #4
+	ldr r0, [r1], #4
+	str r0, [r4], #4
 	cmp r1, r2
 	blo copy_loop
 
