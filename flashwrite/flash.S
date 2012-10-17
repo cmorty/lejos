@@ -41,9 +41,9 @@
 //pop {r0, r1, r2, r3, r4, r5, r6 }
 
 _start:
-	// place stack before program and save registers, but actually, we don't
-	// need a stack as we don't enable interrupts or use the stack ourselves
-	// adr sp, _start
+	// place stack before program and save registers. Actually, we need a stack
+	// even though we don't enable interrupts or use the stack ourselves.
+	adr sp, _start
 	ldr r6, =EFC_BASE
 	ldr r5, =ROM_BASE
 
