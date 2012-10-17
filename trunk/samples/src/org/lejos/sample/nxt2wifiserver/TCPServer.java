@@ -77,7 +77,7 @@ public class TCPServer {
 				// once we're connected allow the sensor to obtain an IP address
 				Delay.msDelay(1000);
 				
-				String ipAddr = wifi.IPAddress();
+				String ipAddr = wifi.getIPAddress();
 				
 				LCD.drawString(ipAddr, 0, 4);
 				RConsole.println("IP Address: " + ipAddr);
@@ -88,12 +88,12 @@ public class TCPServer {
 			LCD.drawString("TCP Server", 0, 0);
 
 			// Close all existing sockets
-			wifi.close(0);
+			wifi.closeSocket(0);
 		
 			// Start the TCP server
 			wifi.serverSocket(TCPSERVER_PORT, TCPSERVER_SOCKET);
 			
-			LCD.drawString(wifi.IPAddress(), 0, 1);
+			LCD.drawString(wifi.getIPAddress(), 0, 1);
 			LCD.drawString("Port " + TCPSERVER_PORT, 0, 2);
 									
 			InputStream in = wifi.getInputStream(TCPSERVER_SOCKET);
@@ -138,7 +138,7 @@ public class TCPServer {
 			LCD.clear(7);
 			LCD.drawString("Done", 0, 7);
 			
-			wifi.close(TCPSERVER_SOCKET);
+			wifi.closeSocket(TCPSERVER_SOCKET);
 			
 		} catch (IOException e) {
 			LCD.clear();

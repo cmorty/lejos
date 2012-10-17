@@ -49,7 +49,7 @@ public class ConnectWPA2 {
 			wifi.disconnectFromWifi();
 			Delay.nsDelay(500);
 			
-			wifi.connectToWPA2(MYSSID, MYPASSPHRASE, true);
+			wifi.connectToWPA2WithPassphrase(MYSSID, MYPASSPHRASE, true);
 	
 			// now poll the sensor until I get a connected status back
 			int status;
@@ -66,7 +66,7 @@ public class ConnectWPA2 {
 			// once we're connected allow the sensor to obtain an IP address
 			Delay.msDelay(3000);
 			
-			String ipAddr = wifi.IPAddress();
+			String ipAddr = wifi.getIPAddress();
 			
 			LCD.drawString(ipAddr, 0, 5);
 			RConsole.println("IP Address: " + ipAddr);		
