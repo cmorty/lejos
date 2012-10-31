@@ -3,9 +3,12 @@ package lejos.nxt.addon;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Socket;
+import java.util.HashSet;
 
 import lejos.nxt.comm.RConsole;
 import lejos.nxt.comm.RS485;
+import lejos.nxt.remote.NXTComm;
 import lejos.util.Delay;
 
 /**
@@ -19,34 +22,29 @@ import lejos.util.Delay;
  * @author mark@mastincrosbie.com
  * @version 1.0 Initial release
  * 
+ * @author dbenedettelli
+ * @author daniele@benedettelli.com
+ * @version 1.1 Revision, correction, implementation completion  
+ * 
  */
 public class NXT2WIFI {
 	
 	/** The current baudrateIndex */
 	private int currentBaudrate;
 	private final static int BUFFER_LENGTH = 100;
-
-	private final static byte[] CMD_PING = new byte[] {'$','?','?','?', 0x0A};
-	private final static byte[] CMD_FW = new byte[] {'$','F','W', 0x0A};
-	private final static byte[] CMD_IPADDR = new byte[] {'$','W','F','I','P', 0x0A};
-	private final static byte[] CMD_MACADDR = new byte[] {'$','M','A','C', 0x0A};
-	private final static byte[] CMD_SCANFORNETWORKS = new byte[] {'$','W','F','S','C','A','N', 0x0A};
-	private final static byte[] CMD_VERBOSE = new byte[] {'$','S','C','V', '0', 0x0A};
-	private final static byte[] CMD_DEBUG = new byte[] {'$','D','B','G', '0', 0x0A};
-	private final static byte[] CMD_ECHO = new byte[] {'$','S','C','E', '0', 0x0A};
 	
 	private final static String RESP_PING = "!!!";
 	
 	// WIFI_ security modes
-	private final static int WF_SEC_OPEN =			0;
-	private static final int WF_SEC_WEP_40 =		1;
-	private static final int WF_SEC_WEP_104 =		2;
-	private static final int WF_SEC_WPA_KEY =		3;
-	private static final int WF_SEC_WPA_PASSPHRASE = 4;
-	private static final int WF_SEC_WPA2_KEY =		5;
-	private static final int WF_SEC_WPA2_PASSPHRASE = 6;
-	private static final int WF_SEC_WPA_AUTO_KEY = 7;
-	private static final int WF_SEC_WPA_AUTO_PASSPHRASE = 8;
+	public final static int WF_SEC_OPEN =			0;
+	public static final int WF_SEC_WEP_40 =		1;
+	public static final int WF_SEC_WEP_104 =		2;
+	public static final int WF_SEC_WPA_KEY =		3;
+	public static final int WF_SEC_WPA_PASSPHRASE = 4;
+	public static final int WF_SEC_WPA2_KEY =		5;
+	public static final int WF_SEC_WPA2_PASSPHRASE = 6;
+	public static final int WF_SEC_WPA_AUTO_KEY = 7;
+	public static final int WF_SEC_WPA_AUTO_PASSPHRASE = 8;
 
 	// connection status codes
 	public static final int NOT_CONNECTED = 0;
@@ -70,19 +68,20 @@ public class NXT2WIFI {
 	public static final boolean AD_HOC = true;
 	public static final boolean INFRASTRUCTURE = false;
 	
-	private static final int cmdDelay = 250;
+	private static final int cmdDelay = 120; // how long to wait for a reply, in ms
 	
-	private int bufferSize = 500;
-		
-	private int readTimeout = 250; // how long to wait for a reply, in ms
+	private final int NUM_SOCKETS = 4;	// maximum number of sockets supported on the NXT2WIFI
+	public final static int TCP = 1;
+	public final static int UDP = 0;
+	private final static int INVALID = -1;
+	private final String UDP_STRING = "UDP";
+	private final String TCP_STRING = "TCP";	
 	
-	private int NUM_SOCKETS = 4;	// maximum number of sockets supported on the NXT2WIFI
-
 	private boolean socketOpen[];
+	private int socketType[];
 	
 	private static int defaultBaudRate = 230400;	// Change this to change the default baud rate
 	private boolean debug = false;	// Wait for remote console if true
-	
 	
 	/**
 	 * Default constructor. Assumes baud rate of 230400 and no debug output to RConsole.
@@ -94,677 +93,22 @@ public class NXT2WIFI {
 	public NXT2WIFI(int baudrate) {
 		currentBaudrate = baudrate;
 		RS485.hsEnable(baudrate, BUFFER_LENGTH);
-
-			// clear out any characters in the RS485 buffer
+		// clear out any characters in the RS485 buffer
 		clearReadBuffer();
 		socketOpen = new boolean[NUM_SOCKETS];
+		socketType = new int[NUM_SOCKETS];
 		int i;
-		for(i=0; i < NUM_SOCKETS; i++) 
+		for(i=0; i < NUM_SOCKETS; i++) { 
 			socketOpen[i] = false;
-		
-		if(debug) RConsole.println("NXT2WIFI initialised");
-	}
-	
-	/**
-	 * Enable or disable debug output on USB console. Output is written to the RConsole which must be opened
-	 * prior to calling.
-	 * @param debugMode Boolean flag if true debug output is enabled, if false it is disabled
-	 */
-	public void setConsoleDebug(boolean debugMode) {
-		
-		debug = debugMode;
-		if(debug) {
-			RConsole.println("NXT2WIFI: DEBUG ENABLED at " + System.currentTimeMillis());
-		}
-	}
-	
-	/**
-	 * Enable or disable debug output on USB console. Output is written to the RConsole which must be opened
-	 * prior to calling.
-	 * @param debugMode Boolean flag if true computer debug output is enabled, if false it is disabled
-	 */
-	public void setDebug(boolean e) throws IOException {
-		if (e)
-			tryCommand("$DBG1\n","Cannot enable debug stream");
-		else
-			tryCommand("$DBGo\n","Cannot disable debug stream");
-	}
-	
-	/**
-	 * Return an Input stream for receiving data from the socket. If this socket isn't opened then you'll get
-	 * garbage back. If the remote side has closed the connection then you'll get nothing from the socket.
-	 * @param socketID The socket to read data from
-	 * @return an input stream for the NXTBee
-	 */
-	public InputStream getInputStream(int socketID) throws IOException {
-		
-		if( (socketID < 0) || (socketID > NUM_SOCKETS) ) {
-			throw new IOException("Invalid Socket ID");
-		}
-	
-		return new NXT2WIFIInputStream(socketID);
-	}
-
-	/**
-	 * Return an Output stream for writing to the socket
-	 * @param socketID The socket to write data to
-	 * @return an output stream for the NXTBee
-	 */
-	public OutputStream getOutputStream(int socketID) throws IOException {
-		if( (socketID < 0) || (socketID > NUM_SOCKETS) ) {
-			throw new IOException("Invalid Socket ID");
-		}
-		
-		return new NXT2WIFIOutputStream(socketID);
-	}
-	
-	/**
-	 * Return the current time of day and date string
-	 * @param k is the offset from GMT (positive or negative)
-	 * @return YYYY-MM-DD/hh:mm:ss or exception is thrown if an error occurs
-	 */
-	public String getTimeOfDay(int k) throws IOException {
-		String cmd = "$GTIM?"+k+"\n";
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-		Delay.msDelay(50);
-		
-		String reply = readFully(false);
-		
-		String time;
-		
-		if(reply.startsWith("GTIM") && reply.length() > 5) {
-			int equalsSign = reply.indexOf('=');
-			time = reply.substring(equalsSign+1);
-		} else {
-			throw new IOException("Invalid time format");
+			socketType[i] = INVALID;
 		}
 
-		return time;
-
-	}
-		
-	/**
-	 * Start a TCP server listening on a given port. Once the socket is opened the InputStream and OutputStream
-	 * methods should be used to read/write data from the socket.
-	 * 
-	 * @param port The port to open the server on
-	 * @param socketID The socket to associate with this port (1-4)
-	 * @throws IOException if the server socket could not be opened
-	 */
-	public void serverSocket(int port, int socketID) throws IOException {
-		if( (port < 0) || (port > 65535)) {
-			throw new IOException("Invalid port number");
-		}
-		
-		if( (socketID < 1) || (socketID > 4)) {
-			throw new IOException("Invalid socket number");
-		}
-		
-		if(debug) RConsole.println("serverSocket: port="+port + " socketID=" + socketID);
-		
-		String cmd = "$TCPOS"+socketID+"?"+port+"\n";
-		String reply = tryCommand(cmd, "Failed to open TCP server socket");
-		
-		if(reply.length() <= 0) {
-			throw new IOException("Invalid reply to open TCP server socket");
-		}
-		
-		if(!reply.equalsIgnoreCase("1")) {
-			throw new IOException("Socket open failed");
-		}
-	}
-		
-
-	/**
-	 * Open a client socket to a given host on a given port. Use the InputStream and OutputStream
-	 * methods to read and write data from the connection.
-	 * 
-	 * @param host The host name or IP address to open a socket on
-	 * @param port The port of the remote host to to
-	 * @param socketID The socket to associate with the connection (1-4)
-	 * @throws IOException if the socket cannot be opened
-	 */
-	public void clientSocket(String host, int port, int socketID) throws IOException {
-		if( (port < 0) || (port > 65535)) {
-			throw new IOException("Invalid port number");
-		}
-		
-		if( (socketID < 1) || (socketID > 4)) {
-			throw new IOException("Invalid socket number");
-		}
-
-		if(debug) RConsole.println("clientSocket: host="+host + " port="+port + " socketID=" + socketID);
-
-		String cmd = "$TCPOC"+socketID+"?"+host+","+port+"\n";
-		tryCommand(cmd, "Failed to open TCP client socket");
-
+		if(debug) RConsole.println("NXT2WIFI initialized");
 	}
 	
-	/**
-	 * Send a string to a remote client on a given socket. Low-level method, recommend the 
-	 * OutputStream methods be used instead.
-	 * Assumes that the socket is open.
-	 * @param msg String to send
-	 * @param socketID Socket ID previously opened to send on
-	 */
-	public void sendString(String msg, int socketID) throws IOException {
-		if( (socketID < 1) || (socketID > 4)) {
-			throw new IOException("Invalid socket number");
-		}
-
-		String cmd = "$TCPW"+socketID+"?"+msg.length()+","+msg;
-		tryCommand(cmd, "Failed to open TCP client socket");
-		
-	}
-	
-	/**
-	 * Close a socket. 
-	 * @param socketID The ID of the socket to close (1-4) socketID=0 closes all sockets
-	 */
-	public void closeSocket(int socketID) throws IOException {
-		if( (socketID < 0) || (socketID > 4)) {
-			throw new IOException("Invalid socket number");
-		}
-
-		String cmd = "$TCPX"+socketID+"\n";
-		tryCommand(cmd, "Failed to close socket");
-		
-	}
-	
-	/**
-	 * Return true if the NXT2WIFI sensor is alive and can respond to a basic PING command
-	 * 
-	 * @return true if the sensor is attached and communicating. false if no sensor is attached.
-	 */
-	public boolean isAlive() {
-		send("$???\n");
-		//RS485.hsWrite(CMD_PING, 0, CMD_PING.length);
-		Delay.msDelay(50);
-		
-		String reply = readFully(false);
-				
-		if(reply.length()>3 && reply.equalsIgnoreCase(RESP_PING)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	/**
-	 * Return a string containing the firmware version running on the NXT2WIFI device
-	 * 
-	 * @return A string containing the firmware version
-	 */
-	public String getFirmwareVersion() {
-		
-		if(debug) RConsole.println("firmwareVersion sending CMD_FW");
-		send("$FW\n");
-		//RS485.hsWrite(CMD_FW, 0, CMD_FW.length);
-		Delay.msDelay(50);
-		
-		String reply = readFully(false);
-			
-		return reply;
-	}
-	
-	/**
-	 * Return the current IP address of the device
-	 * @return A string containing the current IP address
-	 */
-	public String getIPAddress() throws IOException {
-				
-		send("$WFIP\n");
-		//RS485.hsWrite(CMD_IPADDR, 0, CMD_IPADDR.length);
-		Delay.msDelay(50);
-		
-		String reply = readFully(false);
-		
-		RConsole.println("Reply = " + reply);
-		
-		// we need to trim the first chunk off the reply as it should be
-		// WFIP=
-		// If this is not found then throw an exception
-		if(reply.startsWith("WFIP=")) {
-			reply = reply.substring(5);
-		} else {
-			throw new IOException("IPAddress Malformed response: " + reply);
-		}
-		
-		return reply;
-	}
-	
-	/**
-	 * Return the current MAC address of the device
-	 * @return A string containing the current MAC address
-	 */
-	public String getMACAddress() throws IOException {
-				
-		RS485.hsWrite(CMD_MACADDR, 0, CMD_MACADDR.length);
-		Delay.msDelay(50);
-		
-		String reply = readFully(false);
-		
-		RConsole.println("Reply = " + reply);
-		
-		// we need to trim the first chunk off the reply as it should be
-		// MAC=
-		// If this is not found then throw an exception
-		if(reply.startsWith("MAC=")) {
-			reply = reply.substring(4);
-		} else {
-			throw new IOException("MACAddress Malformed response: " + reply);
-		}
-		
-		return reply;
-	}
-
-
-	private String tryCommand(String cmd, String exception) throws IOException {
-		return this.tryCommand(cmd, cmdDelay, exception);
-	}
-
-	
-	/**
-	 * Run a command or throw an exception
-	 * @param cmd The string to send to the NXT2WIFI 
-	 * @param timeout How long to wait for a reply (in ms)
-	 * @param exception A string to use as the exception if the command fails
-	 * @throws An IOException with the string text from the exception parameter
-	 */
-	private String tryCommand(String cmd, int timeout, String exception) throws IOException {
-	
-		RConsole.println("tryCommand: cmd = " + cmd);
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-
-		Delay.msDelay(timeout);
-		String reply = readFully(false);
-		RConsole.println("tryCommand reply <" + reply +">");
-	
-		// parse the reply to locate the '=' and extract everything from that point on as the reply
-		int equals = reply.indexOf("=");
-		equals++;
-		String ret = reply.substring(equals);
-		
-		if(debug) RConsole.println("tryCommand returning " + ret);
-		
-		return ret;
-	}
-	
-	/**
-	 * Connect to custom or default profile.
-	 * 
-	 * @param profile - true for CUSTOM, false for DEFAULT
-	 * @throws IOException if an error occurred in connecting to the network
-	 */	
-	public void connect(boolean profile) throws IOException {
-		if (profile)
-			tryCommand("$WFC1\n", "Cannot connect using CUSTOM profile");
-		else 
-			tryCommand("$WFC0\n", "Cannot connect using DEFAULT profile");
-	}
-	
-	/**
-	 * Delete custom connection profile.
-	 * @throws IOException if an error occurred in deleting the profile
-	 */	
-	public void deleteProfile() throws IOException {
-		tryCommand("$WFKD\n", "Cannot delete CUSTOM profile");
-	}		
-	
-	/**
-	 * Save custom connection profile.
-	 * @throws IOException if an error occurred in saving the profile
-	 */	
-	public void saveProfile() throws IOException {
-		tryCommand("$WFKS\n", 500, "Cannot save CUSTOM profile");
-	}	
-	
-	public void setSecurity (int mode, String passkey) throws IOException {
-		setSecurity(mode,passkey,0);
-	}	
-	
-	public void setSecurity (int mode, String passkey, int index) throws IOException {
-		String cmd = "$WFS?" + mode + ":" + passkey + ":"+ index + "\n";
-		tryCommand(cmd, 500,"Cannot set security type and passphrase");		
-	}
-	
-	public void connectToWPAAutoWithKey(String ssid, String key, boolean saveConfig) throws IOException {
-		
-		String cmd;
-		if(debug) RConsole.println("connectToWPAAuto: SSID= "+ssid+" passphrase= "+key);
-
-		if(saveConfig) {
-			deleteProfile(); 
-		}
-		
-		// Set the security type and passphrase
-		setSecurity(WF_SEC_WPA_AUTO_KEY,key);
-
-		// Set the SSID
-		setSSID(ssid);
-		
-		// Set infrastructure mode
-		setType(INFRASTRUCTURE);
-
-		if(saveConfig) {
-			saveProfile(); 
-		}
-		
-		// Connect to the wifi
-		connect(true);
-	}		
-	
-	/**
-	 * Connect to a given SSID WPA Auto network with a passphrase. This method simply initiates the connection
-	 * sequence and does not wait for the connection to complete or fail. You need to call connectionStatus()
-	 * to poll the connection to see if it succeeds or fails. Connecting can take time if the WPA2 key
-	 * needs to be re-generated and stored on the NXT2WIFI. Allow up to 30 seconds for this to complete.
-	 * 
-	 * @param ssid - SSID of the network
-	 * @param passphrase - the passphrase to use
-	 * @param saveConfig - If true then the WPA configuration is saved as the default Custom Profile on the device.
-	 * @throws IOException if an error occurred in connecting to the network
-	 */
-	public void connectToWPAAutoWithPassphrase(String ssid, String passphrase, boolean saveConfig) throws IOException {
-		
-		String cmd;
-		
-		if(debug) RConsole.println("connectToWPAAuto: SSID= "+ssid+" passphrase= "+passphrase);
-
-		if(saveConfig) {
-			// Delete the custom profile $WFKD
-			cmd = "$WFKD\n";
-			tryCommand(cmd, "Cannot delete custom profile");
-		}
-
-		// Set infrastructure mode
-		cmd = "$WFE?TYPE=0\n";
-		tryCommand(cmd, "Cannot set infrastructure mode");		
-
-		// Set the SSID
-		cmd = "$WFE?SSID=" + ssid + "\n";
-		tryCommand(cmd, "Cannot set SSID");		
-		
-		// Set the security type and passphrase
-		cmd = "$WFS?" + WF_SEC_WPA_AUTO_PASSPHRASE + ":" + passphrase + "\n";
-		tryCommand(cmd, 300, "Cannot set security type and passphrase");
-
-		if(saveConfig) {
-			// Save the profile
-			cmd = "$WFKS\n";
-			tryCommand(cmd, 400, "Cannot save profile");
-		}
-		
-		// Connect to the wifi
-		connect(true);
-
-	}	
-	
-	/**
-	 * Connect to a given SSID WPA2 network with a passphrase. This method simply initiates the connection
-	 * sequence and does not wait for the connection to complete or fail. You need to call connectionStatus()
-	 * to poll the connection to see if it succeeds or fails. Connecting can take time if the WPA2 key
-	 * needs to be re-generated and stored on the NXT2WIFI. Allow up to 30 seconds for this to complete.
-	 * 
-	 * @param ssid - SSID of the network
-	 * @param passphrase - the passphrase to use
-	 * @param saveConfig - If true then the WPA configuration is saved as the default Custom Profile on the device.
-	 * @throws IOException if an error occurred in connecting to the network
-	 */
-	public void connectToWPA2WithPassphrase(String ssid, String passphrase, boolean saveConfig) throws IOException {
-		
-		String cmd;
-		
-		if(debug) RConsole.println("connectToWPA2: SSID= "+ssid+" passphrase= "+passphrase);
-
-		if(saveConfig) {
-			// Delete the custom profile $WFKD
-			cmd = "$WFKD\n";
-			tryCommand(cmd, "Cannot delete custom profile");
-		}
-		
-		// Set the security type and passphrase
-		cmd = "$WFS?";
-		cmd = cmd + WF_SEC_WPA2_PASSPHRASE + ":" + passphrase + "\n";
-		tryCommand(cmd, "Cannot set security type and passphrase");
-
-		// Set the SSID
-		cmd = "$WFE?SSID=" + ssid + "\n";
-		tryCommand(cmd, "Cannot set SSID");
-		
-		// Set infrastructure mode
-		setType(INFRASTRUCTURE);
-		cmd = "$WFE?TYPE=0\n";
-		tryCommand(cmd, "Cannot set infrastructure mode");
-
-		if(saveConfig) {
-			// Save the profile
-			cmd = "$WFKS\n";
-			tryCommand(cmd, "Cannot save profile");
-		}
-		
-		// Connect to the wifi
-		cmd = "$WFC1\n";
-		tryCommand(cmd, "Cannot connect");
-
-	}
-	
-	/**
-	 * Create an Ad-Hoc network
-	 * Not yet implemented.
-	 */
-	public void createAdHoc(String IPAddress, String netmask, String DNS, String gateway, String SSID) throws IOException {
-				
-		// not yet implemented
-	}
-	
-	/**
-	 * Connect to the wifi defined in the custom profile stored on the device. This will attempt to re-connect to the last
-	 * known wifi settings saved in the custom profile. This allows you to rapidly re-start communications by reconnecting
-	 * to the last known good wifi.
-	 * @throws IOException if the connection fails
-	 */
-	public void reconnect() throws IOException {
-		String cmd = "$WFC1\n";
-		tryCommand(cmd, 20000, "Cannot reconnect");
-	}
-	
-	/**
-	 * Get the current connection status. Returns the following values:
-	 * NOT_CONNECTED	0 
-	 * CONNECTING	1 
-	 * CONNECTED	2 
-	 * CONNECTION_LOST 3 
-	 * CONNECTION_FAILED 4 
-	 * STOPPING	5 
-	 * TURNED_OFF	6
-	 * @return The current status, or -1 if an error occurred in parsing
-	 */
-	public int connectionStatus() {
-		
-		int status = -1;
-		
-		String cmd = "$WFGS\n";
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-		Delay.msDelay(50);
-		String reply = readFully(false);
-		
-		if(reply.length() > 5 && reply.startsWith("WFGS=") ) {
-			status = reply.charAt(5) - 48;
-		} else {
-			status = -1;
-		}
-		
-		if(debug) RConsole.println("connectionStatus returning " + status);
-		
-		return status;
-	}
-	
-	/**
-	 * Convert the connection status value into a string that can be printed
-	 * @param status - The status returned by connectionStatus
-	 * @return A string representing the connection status value
-	 * @throws IllegalArgumentException if an invalid status code is provided
-	 */
-	public String connectionStatusToString(int status) throws IllegalArgumentException {
-		
-		if(status < 0 || status > connectionStatuses.length) {
-			throw new IllegalArgumentException("Index out of range");
-		}
-		
-		return connectionStatuses[status];
-	}
-	
-	/**
-	 * Stop an in-progress connection to a wifi network. Use this if the NXT2WIFI is in the process
-	 * of connecting to a network and you want to halt that.
-	 * @returns The reply from the NXT2WIFI
-	 */
-	public String stopConnecting() {
-		String cmd = "$WFQ\n";
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-		Delay.msDelay(50);
-		String reply = readFully(false);
-		if(debug) RConsole.println("stopConnecting Reply = " + reply);
-		
-		return reply;	
-	}
-	
-	/**
-	 * Disconnect from a wireless network. 
-	 * @returns The reply string from the NXT2WIFI sensor
-	 */
-	public String disconnectFromWifi() {
-		
-		String cmd = "$WFX\n";
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-		Delay.msDelay(50);
-		String reply = readFully(false);
-		if(debug) RConsole.println("disconnectFromWifi Reply = " + reply);
-		
-		return reply;
-	}
-	
-	/**
-	 * Set an IP address manually on the NXT2WIFI. Takes the IP address in dotted-decimal format
-	 * as a string.
-	 * @param address The IP address to set. E.g. 192.168.1.23
-	 * @return The reply from the NXT2WIFI sensor
-	 */
-	public String setIPAddress(String address) {
-		String cmd = "$WFE?IPAD="+address+"\n";
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-		Delay.msDelay(50);
-		String reply = readFully(false);		
-		return reply;
-	}
-	
-	/**
-	 * Set the netmask manually on the NXT2WIFI. Takes the netmask in dotted-decimal format as a string
-	 * @param address The netmask address to use. E.g. 255.255.255.0
-	 * @return The reply from the NXT2WIFI sensor
-	 */
-	public String setMask(String address) {
-		String cmd = "$WFE?MASK="+address+"\n";
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-		Delay.msDelay(50);
-		String reply = readFully(false);		
-		return reply;
-	}
-
-	/**
-	 * Set the default gateway manually on the NXT2WIFI. Takes the gateway as a dotted-decimal format
-	 * string. E.g. 192.168.1.1
-	 * @param address The gateway address to set
-	 * @return The reply from the NXT2WIFI
-	 */
-	public String setGateway(String address) {
-		String cmd = "$WFE?GWAY="+address+"\n";
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-		Delay.msDelay(50);
-		String reply = readFully(false);		
-		return reply;
-	}
-	
-	/**
-	 * Set the DNS server manually on the NXT2WIFI. Takes the address as a dotted-decimal format
-	 * string. E.g. 192.168.1.1
-	 * @param address The DNS server address to set
-	 * @return The reply from the NXT2WIFI
-	 */
-	public String setDNS1(String address) {
-		String cmd = "$WFE?DNS1="+address+"\n";
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-		Delay.msDelay(50);
-		String reply = readFully(false);		
-		return reply;
-	}
-	
-	/**
-	 * Set the DNS server manually on the NXT2WIFI. Takes the address as a dotted-decimal format
-	 * string. E.g. 192.168.1.1
-	 * @param address The DNS server address to set
-	 * @return The reply from the NXT2WIFI
-	 */
-	public String setDNS2(String address) {
-		String cmd = "$WFE?DNS2="+address+"\n";
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-		Delay.msDelay(50);
-		String reply = readFully(false);		
-		return reply;
-	}
-	
-	/**
-	 * Set the SSID of the wifi network to connect to manually. 
-	 * @param name The name of the wifi network to connect to.
-	 * @return The reply from the NXT2WIFI
-	 */
-	public String setSSID(String name) {
-		String cmd = "$WFE?SSID="+name+"\n";
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-		Delay.msDelay(50);
-		String reply = readFully(false);		
-		return reply;
-	}
-	
-	/**
-	 * Enable the DHCP for the wifi network connection. 
-	 * @param e if true, enables DHCP, if false maintains specified IP.
-	 * @return The reply from the NXT2WIFI
-	 */	
-	public String setDHCP(boolean e) {
-		String cmd = "$WFE?DHCP="+(e?"1":"0")+"\n";
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-		Delay.msDelay(50);
-		String reply = readFully(false);		
-		return reply;		
-	}	
-	
-	/**
-	 * Set the type for the wifi network connection. 
-	 * @param e if true is adhoc network, false is infrastructure
-	 * @return The reply from the NXT2WIFI
-	 */	
-	public String setType(boolean e) {
-		String cmd = "$WFE?TYPE="+(e?"1":"0")+"\n";
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-		Delay.msDelay(50);
-		String reply = readFully(false);		
-		return reply;		
-	}	
-	
-	/**
-	 * Set the NetBIOS name of the wifi network. 
-	 * @param name The NetBIOS name to set.
-	 * @return The reply from the NXT2WIFI
-	 */
-	public String setNetbiosName(String name) {
-		String cmd = "$WFE?NAME="+name+"\n";
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-		Delay.msDelay(50);
-		String reply = readFully(false);		
-		return reply;
-	}
+///////////////////////////////////////////////////////////////////////////////
+////////////////////////// LOW LEVEL COMMUNICATION ////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Reads the all available data from the RS485 rx buffer. Assumes that the data is in binary format
@@ -783,7 +127,7 @@ public class NXT2WIFI {
 		int bytesRemaining = len;
 		int avail;
 		
-		if((off + len) > cbuf.length)
+		if((off + len) > cbuf.length) 
 			throw new ArrayIndexOutOfBoundsException();
 		
 		while(!done && (bytesRemaining > 0)){
@@ -860,13 +204,92 @@ public class NXT2WIFI {
 		//Empty buffer:
 		while (RS485.hsRead(data, 0, 1) > 0);
 		Delay.msDelay(100);
+	}	
+	
+	protected int send(byte[] out, int len) {
+		int written = 0;
+		int bo = 1;
+		//RConsole.println("Send to Flyport: "+out);
+		while (written<len && bo>0) {
+			bo = RS485.hsWrite(out, written, len);
+			written += bo;
+			Delay.msDelay(1);
+		}
+		//bo = RS485.hsWrite(terminator, written+1, 1);
+		//written += bo;
+		return written;
 	}
 	
+	protected int send(String out) {
+		return send(out.getBytes(),out.length());
+	}
+
+	private String commandWithReply(String cmd) {
+		return this.commandWithReply(cmd, cmdDelay);
+	}
+
+	/**
+	 * Run a command and get the reply 
+	 * @param cmd The string to send to the NXT2WIFI 
+	 * @param timeout How long to wait for a reply (in ms)
+	 */
+	private String commandWithReply(String cmd, int timeout) {
+	
+		if(debug) RConsole.println("tryCommand: cmd = " + cmd);
+		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
+
+		Delay.msDelay(timeout);
+		String reply = readFully(false);
+		if(debug) RConsole.println("tryCommand reply <" + reply +">");
+	
+		// parse the reply to locate the '=' and extract everything from that point on as the reply
+		int equals = reply.indexOf("=")+1;
+		String ret = reply.substring(equals);
+		
+		if(debug) RConsole.println("tryCommand returning " + ret);
+		
+		return ret;
+	}	
+	
+
+	/**
+	 * Find the "=" char in a replied string and returns the integer value.
+	 * @param str the string that contains the integer to be retrieved 
+	 * @return the integer in the reply, or -1 if failed
+	 */
+	int parseIntResult(String str) {
+		int val = -1;
+		int equalsSign = str.indexOf('=');
+		String valStr = str.substring(equalsSign+1);
+		try {
+			val = Integer.parseInt(valStr);
+		} catch (NumberFormatException e) {};
+		return val;
+	}
+	
+	/**
+	 * Find the "=" char in a replied string and returns the integer value.
+	 * @param str the string that contains the integer to be retrieved 
+	 * @return the integer in the reply, or -1 if failed
+	 */
+	String parseStringResult(String str) {
+		String valStr = "";
+		int equalsSign = str.indexOf('=');
+		valStr = str.substring(equalsSign+1);
+		return valStr;
+	}	
+
+///////////////////////////////////////////////////////////////////////////////
+//////////////////////////// UTILITIES ////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+	
+
 	/**
 	 * Returns true if a given string is in IP address dotted-decimal format
 	 * Code copied from BrickIt.dk
 	 */
-	private boolean isIP(String s){
+	private boolean checkIPFormat(String s){
 		int dotCount = 0, digitCount = 0;
 		for (char c : s.toCharArray()) {
 			if(c >= '0' && c <= '9') digitCount++;
@@ -883,23 +306,815 @@ public class NXT2WIFI {
 		return false;
 	}
 	
-	private int send(byte[] out, int len) {
-		int written = 0;
-		int bo = 1;
-		//RConsole.println("Send to Flyport: "+out);
-		while (written<len && bo>0) {
-			bo = RS485.hsWrite(out, written, len);
-			written += bo;
-			Delay.msDelay(1);
+	/**
+	 * Enable or disable debug output on LejOS USB console. Output is written to the RConsole which must be opened
+	 * prior to calling.
+	 * @param debugMode Boolean flag if true debug output is enabled, if false it is disabled
+	 */
+	public void setConsoleDebug(boolean debugMode) {
+		debug = debugMode;
+		if(debug) {
+			RConsole.println("NXT2WIFI: DEBUG ENABLED at " + System.currentTimeMillis());
 		}
-		//bo = RS485.hsWrite(terminator, written+1, 1);
-		//written += bo;
-		return written;
 	}
 	
-	private int send(String out) {
-		return send(out.getBytes(),out.length());
+	/**
+	 * Enable or disable debug output on virtual serial terminal (115200, 8N1)
+	 * @param e Boolean flag, if true computer debug output is enabled, if false it is disabled
+	 */
+	public void setTerminalDebug(boolean e) {
+		if (e)
+			commandWithReply("$DBG1\n");
+		else
+			commandWithReply("$DBG0\n");
 	}
+	
+	/**
+	 * Return the current time of day and date string
+	 * @param k is the offset from GMT (positive or negative)
+	 * @return YYYY-MM-DD/hh:mm:ss or blank string if an error occurs
+	 */
+	public String getTimeAndDate(int k) {
+		String reply = commandWithReply("$GTIM?"+k+"\n",50);
+		if(reply.startsWith("GTIM")) {
+			return parseStringResult(reply);
+		} else {
+			return "";
+		}
+	}	
+	
+	public String getTimeOfDay(int k) {
+		String reply = commandWithReply("$GTIM?"+k+"\n",50);
+		
+		if(reply.startsWith("GTIM")) {
+			int sep = reply.indexOf('/');
+			return reply.substring(sep+1);
+		} else {
+			return "";
+		}
+	}	
+	
+	public String getDate(int k) {
+		String reply = commandWithReply("$GTIM?"+k+"\n",50);
+		
+		if(reply.startsWith("GTIM")) {
+			int eq = reply.indexOf('=');
+			int sep = reply.indexOf('/');
+			return reply.substring(eq+1,sep);
+		} else {
+			return "";
+		}
+	}		
+	
+	/**
+	 * Return true if the NXT2WIFI sensor is alive and can respond to a basic PING command
+	 * 
+	 * @return true if the sensor is attached and communicating, false otherwise.
+	 */
+	public boolean isAlive() {
+		String reply = commandWithReply("???\n",50);
+				
+		if(reply.length()>3 && reply.equalsIgnoreCase(RESP_PING)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Return a string containing the firmware version running on the NXT2WIFI device
+	 * 
+	 * @return A string containing the firmware version
+	 */
+	public String getFirmwareVersion() {
+		return parseStringResult(commandWithReply("FW\n",50));
+	}	
+
+///////////////////////////////////////////////////////////////////////////////
+////////////////////////////// WEBSERVER MANAGEMENT ///////////////////////////
+///////////////////////////////////////////////////////////////////////////////	
+	
+	/**
+	 * Update a Label on the webpage
+	 * @param id the label id
+ 	 * @param data the string to be written in the label
+ 	 * @param datalen the number of bytes to be written (0 for automatic string length)
+ 	 * @return true if successful
+	 */		
+	public boolean updateWebLabel(int id, String data, int datalen) {
+		if (datalen == 0) datalen = data.length();
+		return (parseIntResult(commandWithReply("$WEBLBL"+id+"?"+datalen+","+data+"\n"))==0);
+	}
+
+	/**
+	 * Update a Button on the webpage
+	 * @param id the button id
+ 	 * @param state true for pressed, false for released
+ 	 * @return true if successful
+	 */	
+	public boolean updateWebButton(int id, boolean state) {
+		return (parseIntResult(commandWithReply("$WEBBTN"+id+"?"+(state?"1":"0")+"\n"))==0);
+	}
+
+	/**
+	 * Update a Checkbox on the webpage
+	 * @param id the checkbox id
+ 	 * @param state true for checked, false for unchecked
+ 	 * @return true if successful
+	 */	
+	public boolean updateWebCheckBox(int id, boolean state) {
+		return (parseIntResult(commandWithReply("$WEBCHK"+id+"?"+(state?"1":"0")+"\n"))==0);
+	}
+
+	/**
+	 * Update a Bar graph on the webpage
+	 * @param id the bar graph id
+ 	 * @param value the bar graph value to display (0-100)
+ 	 * @return true if successful
+	 */
+	public boolean updateWebBargraph(int id, int value) {
+		return (parseIntResult(commandWithReply("$WEBBAR"+id+"?"+value+"\n"))==0);
+	}
+
+	/**
+	 * Update a Slider on the webpage
+	 * @param id the bar graph id
+ 	 * @param value the slider position
+ 	 * @return true if successful
+	 */
+	public boolean updateWebSlider(int id, int value) {
+		return (parseIntResult(commandWithReply("$WEBLSD"+id+"?"+value+"\n"))==0);
+	}
+
+	/**
+	 * Enable/disable webserver functionality <br>
+	 * (spontaneous messages generated by events on the webpage)
+	 * @return true if successful
+	 */
+	public boolean enableWebserver(boolean en) {
+		return (parseIntResult(commandWithReply("$SRV"+(en?"1":"0")+"\n"))==0);
+	}
+
+	/**
+	 * Reset and clear all widgets on the webpage
+	 */
+	public boolean clearAllWebFields() {
+		return (parseIntResult(commandWithReply("$WEBCLR\n"))==0);
+	}	
+	
+	/**
+	 * Accepts a byte buffer filled by serial port data and returns true
+	 * if the data contains a Webpage Event Direct Command.
+	 * 0x00 0x80 0x14 [ID] [EVENT] [VAL] 
+	 * [ID] = 0...2 type of widget that generated the event 
+	 * [EVENT] = 0...255 event
+	 * [VAL] = 0...255 value of the widget
+	 * 
+	 */
+	public boolean isWebEvent(byte cmd[]) {
+		int len = cmd.length;
+		if (len<5) return false;
+		if (cmd[0]==0x00 && cmd[2]==0x14) return true;
+		else return false;
+	}		
+	
+
+///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////SOCKETS /////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////	
+	
+	/**
+	 * Return an Input stream for receiving data from the socket. If this socket isn't opened then you'll get
+	 * garbage back. If the remote side has closed the connection then you'll get nothing from the socket.
+	 * @param socketID The socket to read data from
+	 * @return an input stream for the NXT2WIFI (returns null if id is invalid)
+	 */
+	public InputStream getInputStream(int socketID) {
+		
+		if( (socketID < 1) || (socketID > NUM_SOCKETS) ) {
+			return null;
+		}
+		
+		if ( socketType[socketID]!=UDP && socketType[socketID]!=TCP) {
+			return null;
+		}
+	
+		return new NXT2WIFIInputStream(socketID,socketType[socketID]);
+	}
+
+	/**
+	 * Return an Output stream for writing to the socket
+	 * @param socketID The socket to write data to
+	 * @param kind The socket kind (0 for UDP, 1 for TCP)
+	 * @return an output stream for the NXT2WIFI
+	 */
+	public OutputStream getOutputStream(int socketID, int kind) {
+		if( (socketID < 0) || (socketID > NUM_SOCKETS) ) {
+			return null;
+		}
+		
+		return new NXT2WIFIOutputStream(socketID,kind);
+	}
+
+	private String socketTypeString(int kind) {
+		if (kind==UDP) return UDP_STRING;
+		if (kind==TCP) return TCP_STRING;
+		return "";
+	}
+	
+	/**
+	 * Start a server listening on a given port. Once the socket is opened the InputStream and OutputStream
+	 * methods should be used to read/write data from the socket.
+	 * 
+	 * @param kind 0 for UDP, 1 for TCP
+	 * @param port The port to open the server on
+	 * @param socketID The socket to associate with this port (1-4)
+	 * @return true if socket was opened successfully, false otherwise
+	 */
+	public boolean openServerSocket(int kind, int port, int socketID) {
+		if( (port < 0) || (port > 65535)) {
+			return false;
+		}
+		
+		if( (socketID < 1) || (socketID > NUM_SOCKETS)) {
+			return false;
+		}
+		
+		if(debug) RConsole.println("serverSocket: port="+port + " socketID=" + socketID);
+		
+		String cmd = "$"+socketTypeString(kind)+"OS"+socketID+"?"+port+"\n";
+		
+		if (parseIntResult(commandWithReply(cmd))>0) {
+			socketType[socketID] = kind;
+			socketOpen[socketID] = true;
+			return true;
+		} else return false;
+	}
+
+	/**
+	 * Detach remote TCP client (valid for server socket only)
+	 * @param id socket internal id 1,2,3,4 (must be a server socket)
+	 * @return true if successful, false otherwise
+	*/
+	public boolean detachClientSocket(int socketID) {
+		if( (socketID < 1) || (socketID > NUM_SOCKETS)) {
+			return false;
+		}
+		return parseIntResult(commandWithReply("$TCPD"+socketID+"\n"))>0;
+	}	
+	
+	/**
+	 * Open a client socket to a given host on a given port. Use the InputStream and OutputStream
+	 * methods to read and write data from the connection.
+	 * 
+	 * @param kind 0 for UDP, 1 for TCP
+	 * @param host The host name or IP address to open a socket on
+	 * @param port The port of the remote host to to
+	 * @param socketID The socket to associate with the connection (1-4)
+	 * @return true if successfully created, false otherwise
+	 */
+	public boolean openClientSocket(int kind, String host, int port, int socketID) {
+		if( (port < 0) || (port > 65535)) {
+			return false;
+		}
+		
+		if( (socketID < 1) || (socketID > NUM_SOCKETS)) {
+			return false;
+		}
+
+		if(debug) RConsole.println("clientSocket: host="+host + " port="+port + " socketID=" + socketID);
+
+		String cmd = "$"+socketTypeString(kind)+"OC"+socketID+"?"+host+","+port+"\n";
+		if (parseIntResult(commandWithReply(cmd))>0) {
+			socketType[socketID] = kind;
+			socketOpen[socketID] = true;
+			return true;
+		} else return false;
+	}
+	
+	/**
+	 * Open a UDP broadcast socket on a given port. Use the InputStream and OutputStream
+	 * methods to read and write data from the connection.
+	 * 
+	 * @param port The port of the remote host to to
+	 * @param socketID The socket to associate with the connection (1-4)
+	 * @return true if successfully created, false otherwise
+	 */
+	public boolean openBroadcastSocket(int port, int socketID) {
+		if( (port < 0) || (port > 65535)) {
+			return false;
+		}
+		
+		if( (socketID < 1) || (socketID > NUM_SOCKETS)) {
+			return false;
+		}
+
+		if (parseIntResult(commandWithReply("$UDPOB"+socketID+"?"+port+"\n"))>0) {
+			socketType[socketID] = UDP;
+			socketOpen[socketID] = true;
+			return true;
+		} else return false;
+	}	
+	
+	/**
+	 * Send a string to a remote client on a given socket. Low-level method, recommend the 
+	 * OutputStream methods be used instead.
+	 * Assumes that the socket is open.
+	 * @param msg String to send
+	 * @param socketID Socket ID previously opened to send on
+	 * @return the number of bytes written
+	 */
+	public int socketWrite(String msg, int socketID) {
+		if( (socketID < 1) || (socketID > NUM_SOCKETS)) return 0;
+		if (!socketOpen[socketID] || socketType[socketID]==INVALID) return 0;
+		String cmd = "$"+socketTypeString(socketType[socketID])+"W"+socketID+"?"+msg.length()+","+msg;
+		return parseIntResult(commandWithReply(cmd));
+	}
+	
+	/**
+	 * Close a socket. 
+	 * @param socketID The ID of the socket to close (1-4)
+	 */
+	public boolean closeSocket(int socketID) {
+		if( (socketID < 1) || (socketID > NUM_SOCKETS)) {
+			return false;
+		}
+		if (!socketOpen[socketID] || socketType[socketID]==INVALID) return false;
+		
+		if (parseIntResult(commandWithReply("$"+socketTypeString(socketType[socketID])+"X"+socketID+"\n"))>0) {
+			socketType[socketID] = INVALID;
+			socketOpen[socketID] = false;
+		return true;
+		} else return false;
+	}
+	
+	/**
+	 * Check UDP socket input buffer overflow. If overflow occurs, some data might be lost.
+	 *
+	 * @param socketID the socket id
+	 * @return true, if overflow occurred (, false 
+	 * @throws IOException Signals that the socket id was invalid
+	 */
+	public boolean checkUDPOverflow(int socketID) {
+		if( (socketID < 1) || (socketID > NUM_SOCKETS)) {
+			return false;
+		}		
+		return parseIntResult(commandWithReply("$UDPV"+socketID+"\n"))>0;
+	}
+
+	/**
+	 * Flush the UDP socket input buffer.
+	 * @param id socket internal id 1,2,3,4
+	 * @return true upon success
+	 * @throws IOException 
+	 */
+	public boolean flushUDPSocket(int socketID) {
+		if( (socketID < 1) || (socketID > NUM_SOCKETS)) {
+			return false;
+		}		
+		return parseIntResult(commandWithReply("$UDPF"+socketID+"\n"))>0;
+	}	
+
+	/**
+	 * Gets the MAC address of the remote TCP socket. 
+	 *
+	 * @param socketID the socket ID (1 to 4)
+	 * @return the TCP remote mac
+	 * @throws IOException Signals that the socket ID was invalid
+	 */
+	public String getTCPRemoteMAC(int socketID) {
+		if( (socketID < 1) || (socketID > NUM_SOCKETS)) {
+			return "wrong ID!";
+		}		
+		String reply = commandWithReply("$TCPSM"+socketID);
+		if(reply.startsWith("TCPSM")) {
+			return parseStringResult(reply);
+		} else return "";
+	}
+	
+	/**
+	 * Gets the IP address of the remote TCP socket. 
+	 *
+	 * @param socketID the socket ID (1 to 4)
+	 * @return the TCP remote mac
+	 */
+	public String getTCPRemoteIP(int socketID) {
+		if( (socketID < 1) || (socketID > NUM_SOCKETS)) {
+			return "wrong ID!";
+		}		
+		String reply = commandWithReply("$TCPSI"+socketID);
+		if(reply.startsWith("TCPSI")) {
+			return parseStringResult(reply);
+		} else return "";
+	}	
+	
+	/**
+	 * Close all sockets 
+	 */
+	public void closeAllSockets() {
+		for (int i = 1; i<=NUM_SOCKETS; i++) {
+			closeSocket(i);
+		}
+	}	
+	
+	/**
+	 * Close all TCP sockets 
+	 */
+	public boolean closeAllTCPSockets() {
+		boolean ret = parseIntResult(commandWithReply("$TCPX0\n"))==0;
+		for (int i = 1; i<=NUM_SOCKETS; i++) {
+			socketType[i] = INVALID;
+			socketOpen[i] = false;
+		}
+		return ret;
+	}	
+
+	/**
+	 * Close all UDP sockets 
+	 */
+	public boolean closeAllUDPSockets() {
+		boolean ret = parseIntResult(commandWithReply("$UDPX0\n"))==0;
+		for (int i = 1; i<=NUM_SOCKETS; i++) {
+			socketType[i] = INVALID;
+			socketOpen[i] = false;
+		}
+		return ret;
+	}		
+	
+///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////WIFI NETWORKING /////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////	
+	
+	/**
+	 * Connect to custom or default profile.
+	 * 
+	 * @param profile - true for CUSTOM, false for DEFAULT
+	 */	
+	public boolean connect(boolean profile) {
+		return parseIntResult(commandWithReply("$WFC"+(profile?"1":"0")+"\n"))==0;
+	}
+	
+	/**
+	 * Delete custom connection profile.
+	 */	
+	public boolean deleteProfile() {
+		return parseIntResult(commandWithReply("$WFKD\n"))==0;
+	}		
+	
+	/**
+	 * Save custom connection profile.
+	 */	
+	public boolean saveProfile() {
+		return parseIntResult(commandWithReply("$WFKS\n"))==0;
+	}	
+	
+	/**
+	 * Sets the Wi-Fi custom connection profile security. 
+	 *
+	 * @param mode the mode (see constants)
+	 * @param passkey the passphrase or the passkey
+	 * @return true, if command sent successfully
+	 */
+	public boolean setSecurity (int mode, String passkey) {
+		return setSecurity(mode,passkey,0);
+	}	
+	
+	/**
+	 * Sets the Wi-Fi custom connection profile security. 
+	 *
+	 * @param mode the mode (see constants)
+	 * @param passkey the passphrase or the passkey
+	 * @param index the WEP key index
+	 * @return true, if command sent successfully
+	 */	
+	public boolean setSecurity (int mode, String passkey, int index) {
+		return parseIntResult(commandWithReply("$WFS?" + mode + ":" + passkey + ":"+ index + "\n",500))==0;
+	}
+	
+	/**
+	 * Connect to a given SSID WPA Auto network with a passphrase. This method simply initiates the connection
+	 * sequence and does not wait for the connection to complete or fail. You need to call connectionStatus()
+	 * isConnected() or waitConnection() to poll the connection to see if it succeeds or fails. 
+	 * Connecting can take time since the WPA2 key needs to be generated at the first connection and then stored 
+	 * on the NXT2WIFI. Allow up to 30 seconds for this to complete.
+	 * 
+	 * @param ssid - SSID of the network
+	 * @param passphrase - the passphrase to use
+	 * @param saveConfig - If true then the WPA configuration is saved as the default Custom Profile on the device.
+	 * @return true if all commands were issued correctly 
+	 */	
+	public boolean connectToWPAAutoWithKey(String ssid, String key, boolean saveConfig) {
+		boolean ret = true;
+		ret &= setSecurity(WF_SEC_WPA_AUTO_KEY,key);
+		ret &= setSSID(ssid);
+		ret &= setType(INFRASTRUCTURE);
+		if(saveConfig) {
+			ret &= saveProfile(); 
+		}
+		ret &= connect(true);
+		return ret;
+	}		
+	
+	/**
+	 * Connect to a given SSID WPA2 network with a passphrase. This method simply initiates the connection
+	 * sequence and does not wait for the connection to complete or fail. You need to call connectionStatus()
+	 * isConnected() or waitConnection() to poll the connection to see if it succeeds or fails. 
+	 * Connecting can take time since the WPA2 key needs to be generated at the first connection and then stored 
+	 * on the NXT2WIFI. Allow up to 30 seconds for this to complete.
+	 * 
+	 * @param ssid - SSID of the network
+	 * @param passphrase - the passphrase to use
+	 * @param saveConfig - If true then the WPA configuration is saved as the default Custom Profile on the device.
+	 * @return true if all commands were issued correctly 
+	 */
+	public boolean connectToWPA2WithPassphrase(String ssid, String passphrase, boolean saveConfig) {
+		boolean ret = true;
+		ret &= setSecurity(WF_SEC_WPA2_KEY,passphrase);
+		ret &= setSSID(ssid);
+		ret &= setType(INFRASTRUCTURE);
+		if(saveConfig) {
+			ret &= saveProfile(); 
+		}
+		ret &= connect(true);
+		return ret;	
+	}
+	
+	/**
+	 * Create an Ad-Hoc network
+	 * Shortcut to set the custom profile. 
+	 */
+	public void createAdHoc(String IPAddress, String netmask, String DNS, String gateway, String SSID) {
+				
+		setIPAddress(IPAddress);
+		setMask(netmask);
+		setDNS1(DNS);
+		setGateway(gateway);
+		setSSID(SSID);
+	}
+	
+	
+	/**
+	 * Wait for the NXT2WIFI to get connected.
+	 *
+	 * @param timeout the timeout in milliseconds (0 means no timeout) 
+	 * @return true if connected, false if timed out 
+	 */
+	public boolean waitConnection(int timeout) {
+		long timer = System.currentTimeMillis();
+		while( !isConnected() && (timeout==0 || (System.currentTimeMillis()-timer<timeout)) ) {
+			Delay.msDelay(500);
+		}
+		return isConnected();
+	}
+	
+	/**
+	 * Checks if the device is connected.
+	 *
+	 * @return true, if is connected
+	 */
+	public boolean isConnected() {
+		return connectionStatus()==CONNECTED;
+	}
+	
+	/**
+	 * Get the current connection status. Returns the following values:
+	 * NOT_CONNECTED	0 
+	 * CONNECTING	1 
+	 * CONNECTED	2 
+	 * CONNECTION_LOST 3 
+	 * CONNECTION_FAILED 4 
+	 * STOPPING	5 
+	 * TURNED_OFF	6
+	 * @return The current status, or -1 if an error occurred in parsing
+	 */
+	public int connectionStatus() {
+		
+		int status = -1;
+		
+		String cmd = "$WFGS\n";
+		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
+		Delay.msDelay(50);
+		String reply = readFully(false);
+		
+		if(reply.length() > 5 && reply.startsWith("WFGS") ) {
+			status = parseIntResult(reply);
+		} else {
+			status = -1;
+		}
+		
+		if(debug) RConsole.println("connectionStatus returning " + status);
+		
+		return status;
+	}
+	
+	/**
+	 *  Returns true if the custom Wi-Fi profile has been previously set
+	 */
+	public boolean customExists() {
+		return parseIntResult(commandWithReply("$WFKE\n"))>0;
+	}	
+	
+	/**
+	 * Convert the connection status value into a string that can be printed
+	 * @param status - The status returned by connectionStatus
+	 * @return A string representing the connection status value
+	 * @throws IllegalArgumentException if an invalid status code is provided
+	 */
+	public String connectionStatusToString(int status) {
+		
+		if(status < 0 || status > connectionStatuses.length) {
+			return "unknown("+status+")";
+		}
+		
+		return connectionStatuses[status];
+	}
+	
+	/**
+	 * Stop an in-progress connection to a wifi network. Use this if the NXT2WIFI is in the process
+	 * of connecting to a network and you want to halt that.
+	 * @return true if successful
+	 */
+	public boolean stopConnecting() {
+		return parseIntResult(commandWithReply("$WFQ\n"))==0;
+	}
+	
+	/**
+	 * Disconnect from a wireless network. 
+	 * @return true if successful
+	 */
+	public boolean disconnect() {
+		return parseIntResult(commandWithReply("$WFX\n"))==0;
+	}
+	
+	/** Put Wi-Fi module to hibernation (power saving mode)
+	 * or turn it on (reconnection needed).
+	 * @param h true hibernate, false exit hibernation.
+	 * @return true if successful
+	 */
+	public boolean setHibernation(boolean h) {
+		return parseIntResult(commandWithReply("$"+(h?"H":"O")+"\n"))==0;		
+	}	
+	
+	/**
+	 * Set an IP address manually on the NXT2WIFI. Takes the IP address in dotted-decimal format
+	 * as a string.
+	 * @param address The IP address to set. E.g. 192.168.1.23
+	 * @return true if successful
+	 */
+	public boolean setIPAddress(String address) {
+		return parseIntResult(commandWithReply("$WFE?IPAD="+address+"\n"))==0;
+	}
+	
+	/**
+	 * Set the netmask on the NXT2WIFI. Takes the netmask in dotted-decimal format as a string
+	 * @param address The netmask address to use. E.g. 255.255.255.0
+	 * @return true if successful
+	 */
+	public boolean setMask(String address) {
+		return parseIntResult(commandWithReply("$WFE?MASK="+address+"\n"))==0;
+	}
+
+	/**
+	 * Set the default gateway on the NXT2WIFI. Takes the gateway as a dotted-decimal format
+	 * string. E.g. 192.168.1.1
+	 * @param address The gateway address to set
+	 * @return true if successful
+	 */
+	public boolean setGateway(String address) {
+		return parseIntResult(commandWithReply("$WFE?GWAY="+address+"\n"))==0;
+	}
+	
+	/**
+	 * Set the DNS server 1 on the NXT2WIFI. Takes the address as a dotted-decimal format
+	 * string. E.g. 192.168.1.1
+	 * @param address The DNS server 1 address to set
+	 * @return true if successful
+	 */
+	public boolean setDNS1(String address) {
+		return parseIntResult(commandWithReply("$WFE?DNS1="+address+"\n"))==0;
+	}
+	
+	/**
+	 * Set the DNS server 2 on the NXT2WIFI. Takes the address as a dotted-decimal format
+	 * string. E.g. 192.168.1.1
+	 * @param address The DNS server 2 address to set
+	 * @return true if successful
+	 */
+	public boolean setDNS2(String address) {
+		return parseIntResult(commandWithReply("$WFE?DNS2="+address+"\n"))==0;
+	}
+	
+	/**
+	 * Set the SSID of the wifi network to connect to. 
+	 * @param name The name of the wifi network to connect to.
+	 * @return true if successful
+	 */
+	public boolean setSSID(String name) {
+		return parseIntResult(commandWithReply("$WFE?SSID="+name+"\n"))==0;
+	}
+	
+	/**
+	 * Enable the DHCP for the wifi network connection. 
+	 * @param e if true, enables DHCP, if false maintains specified IP.
+	 * @return true if successful
+	 */	
+	public boolean setDHCP(boolean e) {
+		return parseIntResult(commandWithReply("$WFE?DHCP="+(e?"1":"0")+"\n"))==0;
+	}	
+	
+	/**
+	 * Set the type for the wifi network connection. 
+	 * @param e if true is adhoc network, false is infrastructure
+	 * @return true if successful
+	 */	
+	public boolean setType(boolean e) {
+		return parseIntResult(commandWithReply("$WFE?TYPE="+(e?"1":"0")+"\n"))==0;
+	}	
+
+	/**
+	 * Set Infrastructure type for the wifi network connection. 
+	 * @return true if successful
+	 */	
+	public boolean setInfrastructure() {
+		return setType(INFRASTRUCTURE);
+	}
+	
+	/**
+	 * Set AdHoc type for the wifi network connection. 
+	 * @return true if successful
+	 */	
+	public boolean setAdHoc() {
+		return setType(AD_HOC);
+	}	
+	
+	/**
+	 * Set the NetBIOS name of the wifi network. 
+	 * @param name The NetBIOS name to set.
+	 * @return true if successful
+	 */
+	public boolean setNetbiosName(String name) {
+		return parseIntResult(commandWithReply("$WFE?NAME="+name+"\n"))==0;
+	}
+	
+	/**
+	 * Return the current IP address of the device
+	 * @return A string containing the current IP address
+	 */
+	public String getIPAddress() {
+				
+		send("$WFIP\n");
+		//RS485.hsWrite(CMD_IPADDR, 0, CMD_IPADDR.length);
+		Delay.msDelay(50);
+		
+		String reply = readFully(false);
+		
+		RConsole.println("Reply = " + reply);
+		
+		if(reply.startsWith("WFIP=")) {
+			reply = reply.substring(5);
+		} else {
+			reply = "reply err";
+		}
+		
+		return reply;
+	}
+	
+	/**
+	 * Return the current MAC address of the device
+	 * @return A string containing the current MAC address
+	 */
+	public String getMACAddress() {
+		//RS485.hsWrite(CMD_MACADDR, 0, CMD_MACADDR.length);
+		Delay.msDelay(50);
+		
+		String reply = readFully(false);
+		
+		RConsole.println("Reply = " + reply);
+		
+		// we need to trim the first chunk off the reply as it should be
+		// MAC=
+		// If this is not found then throw an exception
+		if(reply.startsWith("MAC=")) {
+			reply = reply.substring(4);
+		} else {
+			reply = "reply err";
+		}
+		
+		return reply;
+	}
+
+	/**
+	 * Force ARP request for specified IP address
+	 * @param ip the IP for the ARP request
+	 */
+	public void sendARPRequest(String ip) {
+		send("$ARP?"+ip);
+		//TODO get reply after protocol change
+	}	
+
+///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////IO STREAM SUBCLASSES ////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 		
 	/**
 	 * Class for reading from the NXT2WIFI, returns a standard Java InputStream that can be
@@ -912,9 +1127,19 @@ public class NXT2WIFI {
 	protected class NXT2WIFIInputStream extends InputStream {
 
 		private int socketID;
+		private String type = "TCP";
 		
-		NXT2WIFIInputStream(int s) {
+		/**
+		 * Create the Input Stream on NXT2WIFI socket
+		 * @param s socket ID (1,2,3,4) 
+		 * @param kind (0 for UDP, 1 for TCP)
+		 * @return the number of bytes that can be read from this input stream without blocking.
+		 * @throws IOException if socket type is invalid
+		 */
+		NXT2WIFIInputStream(int s, int kind) {
 			socketID = s;
+			if (kind==UDP) type = UDP_STRING;
+			if (kind==TCP) type = TCP_STRING;
 		}
 		
 		/**
@@ -925,28 +1150,22 @@ public class NXT2WIFI {
 		 * @return the number of bytes that can be read from this input stream without blocking.
 		 *
 		 */
-		public int available() throws IOException {
+		public int available() {
 			synchronized (NXT2WIFI.this){
 				
-				int status;
+				int status = -1;
 				
 				if(!NXT2WIFI.this.socketOpen[socketID])
-					throw new IOException("Socket closed");
+					return 0;
 				
-				String cmd = "$TCPL" + socketID + "\n";
-				RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-				Delay.msDelay(50);
+				String reply = commandWithReply("$"+type+"L" + socketID + "\n",30);
 				
-				String reply = readFully(false);
-				
-				if(reply.startsWith("TCPL") && reply.length() > 6) {
-					int equalsSign = reply.indexOf('=');
-					String bytesAvailable = reply.substring(equalsSign+1);
-					status = Integer.parseInt(bytesAvailable);
+				if(reply.startsWith(type+"L") && reply.length() > 6) {
+					int equalsSignPos = reply.indexOf('=');
+					status = Integer.parseInt(reply.substring(equalsSignPos+1));
 				} else {
-					status = 0;
+					status = -1;
 				}
-								
 				return status;
 			}
 		}
@@ -959,13 +1178,7 @@ public class NXT2WIFI {
 		 */
 		public void close()  {
 			synchronized (NXT2WIFI.this){
-
-				String cmd = "$TCPX" + socketID + "\n";
-				RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-				Delay.msDelay(50);
-				
-				String reply = readFully(false);
-				
+				commandWithReply("$"+type+"X" + socketID + "\n",50);
 				NXT2WIFI.this.socketOpen[socketID] = false;
 			}
 		}
@@ -993,11 +1206,11 @@ public class NXT2WIFI {
 		 * @return The byte read, as an integer in the range 0 to 255 (0x00-0xff)
 		 *
 		 */
-		public int read()  throws IOException {
+		public int read() {
 			
 			synchronized (NXT2WIFI.this){
 				if(!NXT2WIFI.this.socketOpen[socketID])
-					throw new IOException("Socket closed");
+					return 0;
 				
 				byte buf[] = new byte[1];			
 				this.read(buf, 0, 1);		
@@ -1015,7 +1228,7 @@ public class NXT2WIFI {
 		 *
 		 */
 		@Override
-		public int read(byte[] cbuf) throws IOException {
+		public int read(byte[] cbuf) {
 			synchronized (NXT2WIFI.this){
 				return read(cbuf, 0, cbuf.length);
 			}
@@ -1035,15 +1248,13 @@ public class NXT2WIFI {
 		 *
 		 */
 		@Override
-		public int read(byte[] cbuf, int off, int len) throws IOException {
+		public int read(byte[] cbuf, int off, int len) {
 			
 			synchronized(NXT2WIFI.this) {
 			
 				if(!NXT2WIFI.this.socketOpen[socketID])
-					throw new IOException("Socket closed");
-					
-				String cmd = "$TCPR" + socketID + "?"+ len +"\n";
-				RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
+					return -1;
+				send("$"+type+"R" + socketID + "?"+ len +"\n");
 				Delay.msDelay(50);
 		
 				// next we read in the reply and parse the header to know how many bytes were returned
@@ -1053,8 +1264,8 @@ public class NXT2WIFI {
 				// E.g. TCPR1=1,h
 				// Always expect <len> to be 1, as we only asked for 1 byte...
 				// discard anything beyond the first character returned
-				if(!replyHeader.startsWith("TCPR")) {
-					throw new IOException("Parse error");
+				if(!replyHeader.startsWith(type+"R")) {
+					return -2;
 				}
 				
 				// Next we consume bytes until a comma is reached
@@ -1077,6 +1288,17 @@ public class NXT2WIFI {
 				return readBytesFully(true, cbuf, off, byteCount);
 			}
 		}
+		
+		/**
+		 * Flush the stream.
+		 */
+		public void flush() {
+			synchronized (NXT2WIFI.this){
+				if(!NXT2WIFI.this.socketOpen[socketID])
+					return;
+				commandWithReply("$"+type+"F" + socketID + "\n",40);
+			}
+		}		
 			
 		/**
 		 * Reset the stream. Not implemented.
@@ -1103,52 +1325,43 @@ public class NXT2WIFI {
 	protected class NXT2WIFIOutputStream extends OutputStream {
 		
 		private int socketID;
-		
-		NXT2WIFIOutputStream(int s) {
+		private String type = "TCP";		
+
+		/**
+		 * Create the Output Stream on NXT2WIFI socket
+		 * @param s socket ID (1,2,3,4) 
+		 * @param kind (0 for UDP, 1 for TCP)
+		 * @return the number of bytes that can be read from this input stream without blocking.
+		 * @throws IOException if socket type is invalid
+		 *
+		 */
+		NXT2WIFIOutputStream(int s, int kind) {
 			socketID = s;
-			NXT2WIFI.this.socketOpen[s] = true;
-		}
-		
-		void setSocketID(int s) {
-			socketID = s;
+			if (kind==UDP) type = UDP_STRING;
+			if (kind==TCP) type = TCP_STRING;
 		}
 
+//		void setSocketID(int s) {
+//			socketID = s;
+//		}		
+//		
+//		void setSocketType(int kind) {
+//			if (kind==0) type = UDP_TYPE;
+//			if (kind==1) type = TCP_TYPE;
+//		}			
+		
 		/**
 		 * Close the output stream socket
 		 *
 		 */
 		@Override
-		public void close() throws IOException {
+		public void close() {
 			synchronized (NXT2WIFI.this){
-
-				String cmd = "$TCPX" + socketID + "\n";
-				RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-				Delay.msDelay(50);
-				
-				String reply = readFully(false);
-				
+				commandWithReply("$"+type+"X" + socketID + "\n");
 				NXT2WIFI.this.socketOpen[socketID] = false;
 			}
 		}
 		
-		/**
-		 * Flush the stream.
-		 */
-		@Override
-		public void flush() throws IOException {
-			synchronized (NXT2WIFI.this){
-				
-				if(!NXT2WIFI.this.socketOpen[socketID])
-					throw new IOException("Socket closed");
-				
-				String cmd = "$TCPF" + socketID + "\n";
-				RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-				Delay.msDelay(50);
-				
-				String reply = readFully(false);				
-			}
-		}
-
 		/**
 		 * Write an array of bytes.
 		 * If the buffer allows blocking writes, this method will make a best effort
@@ -1188,7 +1401,7 @@ public class NXT2WIFI {
 				RConsole.println("write: off="+off+" len="+len);
 				
 				// build the full data packet in one array
-				String cmd = "$TCPW" + socketID + "?"+ len +",";
+				String cmd = "$"+type+"W" + socketID + "?"+ len +",";
 				
 				byte cmdBytes[] = new byte[cmd.length() + len];
 				System.arraycopy(cmd.getBytes(), 0, cmdBytes, 0, cmd.length());
