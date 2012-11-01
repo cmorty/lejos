@@ -372,9 +372,9 @@ public class NXT2WIFI {
 	 * @return true if the sensor is attached and communicating, false otherwise.
 	 */
 	public boolean isAlive() {
-		String reply = commandWithReply("???\n",50);
+		String reply = commandWithReply("$???\n",50);
 				
-		if(reply.length()>3 && reply.equalsIgnoreCase(RESP_PING)) {
+		if(reply.equalsIgnoreCase(RESP_PING)) {
 			return true;
 		} else {
 			return false;
