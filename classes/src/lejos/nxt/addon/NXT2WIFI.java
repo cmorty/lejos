@@ -1264,7 +1264,7 @@ public class NXT2WIFI {
 				// E.g. TCPR1=1,h
 				// Always expect <len> to be 1, as we only asked for 1 byte...
 				// discard anything beyond the first character returned
-				if(!replyHeader.startsWith(type+"R")) {
+				if(replyHeader.length()>3 && !replyHeader.startsWith(type+"R")) {
 					return -2;
 				}
 				
@@ -1281,11 +1281,15 @@ public class NXT2WIFI {
 					replyByteCount += (char)buf[0];
 					bytesRead = RS485.hsRead(buf, 0, 1);
 				}
-				
-				int byteCount = Integer.parseInt(replyByteCount);
-				
-				// read the remainder of the data
-				return readBytesFully(true, cbuf, off, byteCount);
+				int byteCount = 0; 
+				try {
+					byteCount = Integer.parseInt(replyByteCount);
+					// read the remainder of the data
+					return readBytesFully(true, cbuf, off, byteCount);
+				}
+				catch (Exception e) {
+					return 0;
+				}
 			}
 		}
 		
