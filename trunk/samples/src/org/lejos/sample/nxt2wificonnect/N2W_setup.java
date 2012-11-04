@@ -5,7 +5,6 @@ import java.io.IOException;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.Sound;
-import lejos.nxt.addon.NXT2WIFI;
 import lejos.nxt.comm.RConsole;
 import lejos.util.Delay;
 
@@ -33,51 +32,47 @@ public class N2W_setup {
 		LCD.clear();
 		LCD.drawString("NXT2WIFI SETUP", 0, 0);
 		LCD.drawString("IP   SETUP   MAC", 0, 7);
-		try {
-			wifi.setDebug(true); // enable debug stream on computer terminal
-			LCD.drawString("FW "+wifi.getFirmwareVersion(), 0, 1);
+		wifi.setTerminalDebug(true); // enable debug stream on computer terminal
+		LCD.drawString("FW="+wifi.getFirmwareVersion(), 0, 1);
 
-			while(!Button.ESCAPE.isDown()) {
+		while(!Button.ESCAPE.isDown()) {
 
-				// PRESS RIGHT BUTTON TO RETRIEVE MAC ADDRESS
-				if (Button.RIGHT.isDown()) {
-					String mac = wifi.getMACAddress();
-					LCD.drawString(mac+"  ", 0, 5);
-					while(Button.RIGHT.isDown()) Delay.msDelay(1);
-				}
-
-				// PRESS CENTER BUTTON TO TEST NETWORK CREATION AND CONNECTIVITY
-				if (Button.ENTER.isDown()) {
-					wifi.disconnectFromWifi();
-					//wifi.connectToWPAAutoWithPassphrase(MYSSID, MYPASSPHRASE, true);
-					wifi.connectToWPAAutoWithKey(MYSSID, MYPASSKEY, true);
-					// now poll the sensor until I get a connected status back
-					int status;
-					while( Button.ENTER.isUp() && (status = wifi.connectionStatus()) != NXT2WIFI.CONNECTED) {
-						LCD.clear(3);
-						LCD.drawString(wifi.connectionStatusToString(status), 0, 3);
-						Delay.msDelay(500);
-					}
-
-					LCD.drawString(wifi.connectionStatusToString(wifi.connectionStatus())+ "   ", 0, 3);
-					Sound.beepSequenceUp();
-					Delay.msDelay(3000);
-					String ipAddr = wifi.getIPAddress();
-
-					LCD.drawString(ipAddr, 0, 4);
-					RConsole.println("IP Address: " + ipAddr);		
-
-					while(Button.ENTER.isDown()) Delay.msDelay(1);
-				}			
-				// PRESS LEFT BUTTON TO RETRIEVE IP ADDRESS
-				if (Button.LEFT.isDown()) {
-					String ip = wifi.getIPAddress();
-					LCD.drawString(ip+"   ", 0, 4);
-					while(Button.LEFT.isDown()) Delay.msDelay(1);
-				}
+			// PRESS RIGHT BUTTON TO RETRIEVE MAC ADDRESS
+			if (Button.RIGHT.isDown()) {
+				String mac = wifi.getMACAddress();
+				LCD.drawString(mac+"  ", 0, 5);
+				while(Button.RIGHT.isDown()) Delay.msDelay(1);
 			}
-		} catch(IOException ioe) {
 
+			// PRESS CENTER BUTTON TO TEST NETWORK CREATION AND CONNECTIVITY
+			if (Button.ENTER.isDown()) {
+				wifi.disconnect();
+				//wifi.connectToWPAAutoWithPassphrase(MYSSID, MYPASSPHRASE, true);
+				wifi.connectToWPAAutoWithKey(MYSSID, MYPASSKEY, true);
+				// now poll the sensor until I get a connected status back
+				int status;
+				while( Button.ENTER.isUp() && (status = wifi.connectionStatus()) != NXT2WIFI.CONNECTED) {
+					LCD.clear(3);
+					LCD.drawString(wifi.connectionStatusToString(status), 0, 3);
+					Delay.msDelay(500);
+				}
+
+				LCD.drawString(wifi.connectionStatusToString(wifi.connectionStatus())+ "   ", 0, 3);
+				Sound.beepSequenceUp();
+				Delay.msDelay(3000);
+				String ipAddr = wifi.getIPAddress();
+
+				LCD.drawString(ipAddr, 0, 4);
+				RConsole.println("IP Address: " + ipAddr);		
+
+				while(Button.ENTER.isDown()) Delay.msDelay(1);
+			}			
+			// PRESS LEFT BUTTON TO RETRIEVE IP ADDRESS
+			if (Button.LEFT.isDown()) {
+				String ip = wifi.getIPAddress();
+				LCD.drawString(ip+"   ", 0, 4);
+				while(Button.LEFT.isDown()) Delay.msDelay(1);
+			}
 		}
 	}
 }
