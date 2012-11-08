@@ -182,7 +182,9 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1send_1data
    if (len > MAX_WRITE) len = MAX_WRITE;
    ret = nFANTOM100_iNXT_write(dev->nxtPtr, (const unsigned char *) jb + offset, len, &status);
    env->ReleaseByteArrayElements(jdata, jb, 0);
-   return ret;
+   // Lego's documentation point at NI's documentation, which was hard to find and understand.
+   // However, I believe that all errors are returned in form of negative status codes.
+   return (status < 0) ? status : ret;
 }
 
 JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1read_1data
