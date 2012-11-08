@@ -255,7 +255,7 @@ public abstract class NXTCommUSB implements NXTComm {
      * @param len
      * @param wait true if the call should block
      * @return number of bytes actually written
-     * @throws java.io.IOException
+     * @throws java.io.IOException on error
      */
     int rawWrite(byte[] buf, int offset, int len, boolean wait) throws IOException
     {
@@ -265,11 +265,11 @@ public abstract class NXTCommUSB implements NXTComm {
         int written = 0;
         while (written < len)
         {
-            int ret;
-            while ((ret = devWrite(nxtPtr, buf, offset + written, len - written)) == 0 && wait)
-                {}
-            if (ret < 0) throw new IOException("Error in write");
-            if (ret == 0) return written;
+        	int ret = devWrite(nxtPtr, buf, offset + written, len - written);
+            if (ret < 0)
+            	throw new IOException("Error in write: "+ret);
+        	if (ret == 0 && !wait)
+        		break;
             written += ret;
         }
         return written;
