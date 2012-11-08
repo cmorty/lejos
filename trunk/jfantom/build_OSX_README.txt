@@ -14,7 +14,7 @@ To build the fantom driver for OS X:
 
 	Note:  get NI-VISA (about 57mb) and not the runtime engine (5mb)
 	
-4) install the SDK from http://mindstorms.lego.com/Overview/nxtreme.aspx
+4) install the SDK from http://mindstorms.lego.com/en-us/support/files/Advanced.aspx
 
 5) set your JAVA_HOME in ./build_OSX.sh
 
