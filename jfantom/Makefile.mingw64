@@ -1,3 +1,7 @@
+# This makefile is for Linux and cygwin.
+# Install the mingw-w64 compilers and simply run the following command:
+#   make -f Makefile.mingw64
+
 ### use mingw64 32bit toolchain by default
 LEJOS_NXT_WIN32_GCC ?= i686-w64-mingw32-gcc
 LEJOS_NXT_WIN32_DLLTOOL ?= $(shell "$(LEJOS_NXT_WIN32_GCC)" -print-prog-name=dlltool)
