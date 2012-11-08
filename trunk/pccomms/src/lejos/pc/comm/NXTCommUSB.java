@@ -239,12 +239,13 @@ public abstract class NXTCommUSB implements NXTComm {
     	if (nxtPtr == 0)
     		throw new IOException("NXTComm is closed");
     	
-        int ret;
-        while((ret=devRead(nxtPtr, buf, offset, len)) == 0 && wait)
-            {}
-        if (ret < 0) throw new IOException("Error in read");
-        if (ret == 0) return 0;
-        return ret;
+        while(true) {
+        	int ret=devRead(nxtPtr, buf, offset, len);
+            if (ret < 0)
+            	throw new IOException("Error in read: "+ret);
+        	if (ret > 0 || !wait)
+        		return ret;
+        }
     }
     
     /**

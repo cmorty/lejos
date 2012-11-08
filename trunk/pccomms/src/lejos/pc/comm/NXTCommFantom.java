@@ -66,20 +66,21 @@ public class NXTCommFantom extends NXTCommUSB implements JNIClass {
 	@Override
 	int devRead(long nxt, byte[] data, int offset, int len)
     {
-        int ret;
         // The Fantom lib does not seem to detect when the USB cable is 
         // disconnected very well. It does not give an error it just times out
         // very quickly. We treat fast timeouts as a potential disconnect.
         long startTime = System.currentTimeMillis();
         int errorCnt = 0;
-        while((ret=jfantom_read_data(nxt, data, offset, len)) == 0)
+        while(true)
         {
+        	int ret=jfantom_read_data(nxt, data, offset, len);
             long now = System.currentTimeMillis();
-            if (now - startTime > MIN_TIMEOUT) return ret;
-            if (errorCnt++ > MAX_ERRORS) return -1;
+        	if (ret > 0 || now - startTime > MIN_TIMEOUT)
+        		return ret;
+            if (errorCnt++ > MAX_ERRORS)
+            	return -1;
             startTime = now;
         }
-        return ret;
     }
     
     

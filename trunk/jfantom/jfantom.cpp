@@ -22,9 +22,6 @@
 #define MAX_WRITE 512
 
 
-// Pointer type as integer
-typedef long INTPTR;
-
 #if (defined(__WIN32__) || defined(_MSC_VER))
 // Locking version for Windows
 #include <windows.h>
@@ -148,7 +145,7 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1open
          // Remember the details
          dev->hLock = hLock;
          dev->nxtPtr = nxtPtr;
-         return (jlong) (INTPTR)dev;
+         return (jlong)dev;
       }
       // Open failed release the lock
       unlockDevice(hLock);
@@ -162,7 +159,7 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1open
 JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1close
   (JNIEnv *env, jobject obj, jlong nxt)
 {
-   NXTDev *dev = (NXTDev *)(INTPTR)nxt;
+   NXTDev *dev = (NXTDev *)nxt;
    if (dev == NULL) return;
    ViStatus status=0;;
    nFANTOM100_destroyNXT( dev->nxtPtr, &status );
@@ -175,7 +172,7 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1send_1data
 {
    ViStatus status=0;
    int ret;
-   NXTDev *dev = (NXTDev *)(INTPTR)nxt;
+   NXTDev *dev = (NXTDev *)nxt;
    if (dev == NULL) return -1;
 
    jbyte *jb = env->GetByteArrayElements(jdata, 0);
@@ -183,7 +180,8 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1send_1data
    ret = nFANTOM100_iNXT_write(dev->nxtPtr, (const unsigned char *) jb + offset, len, &status);
    env->ReleaseByteArrayElements(jdata, jb, 0);
    // Lego's documentation point at NI's documentation, which was hard to find and understand.
-   // However, I believe that all errors are returned in form of negative status codes.
+   // However, I believe that all errors relevant to us are returned in form of negative status codes.
+   // Google for "LabVIEW Error Codes" or "VISA Error Codes".
    return (status < 0) ? status : ret;
 }
 
@@ -191,14 +189,15 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1read_1data
   (JNIEnv *env, jobject obj, jlong nxt, jbyteArray jdata, jint offset, jint len)
 {
    ViStatus status=0;
-   int read_len;
+   int ret;
    char *data;
-   NXTDev *dev = (NXTDev *)(INTPTR)nxt;
+   NXTDev *dev = (NXTDev *)nxt;
    if (dev == NULL) return -1;
 
    jbyte *jb = env->GetByteArrayElements(jdata, 0);
    if (len > MAX_READ) len = MAX_READ;
-   read_len = nFANTOM100_iNXT_read(dev->nxtPtr, (unsigned char *)jb + offset, len, &status);
+   ret = nFANTOM100_iNXT_read(dev->nxtPtr, (unsigned char *)jb + offset, len, &status);
    env->ReleaseByteArrayElements(jdata, jb, 0);
-   return read_len;
+   // For some reason, every read returns -1073807298 (VI_ERROR_IO), so ignore it.
+   return (status < 0 && status != -1073807298) ? status : ret;
 }
