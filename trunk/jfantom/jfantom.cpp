@@ -198,6 +198,6 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1read_1data
    if (len > MAX_READ) len = MAX_READ;
    ret = nFANTOM100_iNXT_read(dev->nxtPtr, (unsigned char *)jb + offset, len, &status);
    env->ReleaseByteArrayElements(jdata, jb, 0);
-   // For some reason, every read returns -1073807298 (VI_ERROR_IO), so ignore it.
+   // For some reason, every read returns status -1073807298 (VI_ERROR_IO), so ignore it.
    return (status < 0 && status != -1073807298) ? status : ret;
 }
