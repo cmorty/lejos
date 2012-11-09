@@ -4,11 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashSet;
 
+import lejos.nxt.Button;
+import lejos.nxt.Sound;
 import lejos.nxt.comm.RConsole;
 import lejos.nxt.comm.RS485;
 import lejos.nxt.remote.NXTComm;
+import lejos.robotics.navigation.Move;
+import lejos.robotics.navigation.MoveListener;
 import lejos.util.Delay;
 
 /**
@@ -24,7 +29,11 @@ import lejos.util.Delay;
  * 
  * @author dbenedettelli
  * @author daniele@benedettelli.com
- * @version 1.1 Revision, correction, implementation completion  
+ * @version 1.1 Revision, correction, implementation completion
+ * 
+ * @author BB
+ * @author bbagnall@mts.net
+ * @version 1.2 Added web event listener code (and coded DemoRobot sample)
  * 
  */
 public class NXT2WIFI {
@@ -54,7 +63,12 @@ public class NXT2WIFI {
 	public static final int CONNECTION_FAILED= 4;
 	public static final int STOPPING=5;
 	public static final int TURNED_OFF=6;
-		
+	
+	// Web event codes
+	public static final int WEB_CTRL_BTN = 0; 	/* Webpage Widget Button */
+	public static final int WEB_CTRL_SLD = 1; 	/* Webpage Widget Slider */
+	public static final int WEB_CTRL_CHK = 2; 	/* Webpage widget Checkbox */
+	
 	private static final String connectionStatuses[] = {
 		"Not Connected",
 		"Connecting",
@@ -121,13 +135,13 @@ public class NXT2WIFI {
 	 * @return The number of bytes read
 	 * @throws ArrayIndexOutOfBoundsException if off+len > length of the cbuf array
 	 */
-	private int readBytesFully(boolean wait, byte[] cbuf, int off, int len) throws ArrayIndexOutOfBoundsException {
+	public int readBytesFully(boolean wait, byte[] cbuf, int off, int len) throws ArrayIndexOutOfBoundsException {
 		boolean done = false;
 		int p = off;
 		int bytesRemaining = len;
 		int avail;
 		
-		if((off + len) > cbuf.length) 
+		if((off + len) > cbuf.length) // TODO: Possible bug? cbuf might only need to be len in size. -BB
 			throw new ArrayIndexOutOfBoundsException();
 		
 		while(!done && (bytesRemaining > 0)){
@@ -196,7 +210,7 @@ public class NXT2WIFI {
 	 * Clear data from the read buffer on the NXT
 	 * Code copied from BrickIt.dk
 	 */
-	private void clearReadBuffer(){
+	public void clearReadBuffer(){
 		byte[] data = new byte[] {13};
 		RS485.hsWrite(data, 0, 1);
 		Delay.msDelay(100);
@@ -279,6 +293,47 @@ public class NXT2WIFI {
 		return valStr;
 	}	
 
+///////////////////////////////////////////////////////////////////////////////
+////////////////////////////WEB EVENT CODE/////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+	private MonitorWebEvents mon = null;
+	private ArrayList<NXT2WiFiListener> listeners= new ArrayList<NXT2WiFiListener>();
+	
+	/**
+	 * Registers this class to listen for Web Events from an NXT2WiFiListener.
+	 * @param listener
+	 */
+	public void addListener(NXT2WiFiListener listener) {
+		if(mon == null) {
+			mon = new MonitorWebEvents();
+			mon.setDaemon(true);
+			mon.start();
+		}
+		
+		listeners.add(listener);
+		
+	}
+	
+	// When listener first added, create and start monitoring thread? Better to be always running and consuming?
+	private class MonitorWebEvents extends Thread {
+		byte[] cbuf = new byte[20];
+		public void run() {
+			while(true) {
+				// TODO: Read RS485 data
+				int total = readBytesFully(true, cbuf, 0, 20); // true = blocking. Why 20? Why not 7?
+				if (isWebEvent(cbuf)) { // Indicates web event
+					byte controlType = cbuf[3]; // e.g button = 0
+					byte controlID = cbuf[4]; // e.g. 1 = button 1 on page
+					byte event = cbuf[5]; // e.g. 0 = button down, 1 = button up
+					byte value = cbuf[6]; // value of the widget
+					for(NXT2WiFiListener ls:listeners) 
+						ls.webEventReceived(controlType, controlID, event, value);
+				}
+				
+			}
+		}
+	}
+	
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////// UTILITIES ////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -387,7 +442,7 @@ public class NXT2WIFI {
 	 * @return A string containing the firmware version
 	 */
 	public String getFirmwareVersion() {
-		return parseStringResult(commandWithReply("FW\n",50));
+		return parseStringResult(commandWithReply("$FW\n",50));
 	}	
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -792,14 +847,12 @@ public class NXT2WIFI {
 	}
 	
 	/**
-	 * Connect to a given SSID WPA Auto network with a passphrase. This method simply initiates the connection
+	 * Connect to a given SSID WPA Auto network with a passkey. This method simply initiates the connection
 	 * sequence and does not wait for the connection to complete or fail. You need to call connectionStatus()
 	 * isConnected() or waitConnection() to poll the connection to see if it succeeds or fails. 
-	 * Connecting can take time since the WPA2 key needs to be generated at the first connection and then stored 
-	 * on the NXT2WIFI. Allow up to 30 seconds for this to complete.
 	 * 
 	 * @param ssid - SSID of the network
-	 * @param passphrase - the passphrase to use
+	 * @param key - the passkey to use
 	 * @param saveConfig - If true then the WPA configuration is saved as the default Custom Profile on the device.
 	 * @return true if all commands were issued correctly 
 	 */	
@@ -829,7 +882,7 @@ public class NXT2WIFI {
 	 */
 	public boolean connectToWPA2WithPassphrase(String ssid, String passphrase, boolean saveConfig) {
 		boolean ret = true;
-		ret &= setSecurity(WF_SEC_WPA2_KEY,passphrase);
+		ret &= setSecurity(WF_SEC_WPA2_PASSPHRASE,passphrase);
 		ret &= setSSID(ssid);
 		ret &= setType(INFRASTRUCTURE);
 		if(saveConfig) {
