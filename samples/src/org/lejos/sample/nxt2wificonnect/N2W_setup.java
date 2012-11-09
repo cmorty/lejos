@@ -5,6 +5,7 @@ import java.io.IOException;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.Sound;
+import lejos.nxt.addon.NXT2WIFI;
 import lejos.nxt.comm.RConsole;
 import lejos.util.Delay;
 

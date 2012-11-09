@@ -36,7 +36,7 @@ public class TCPServer {
 		
 		try {
 			NXT2WIFI wifi = new NXT2WIFI();	
-			wifi.setDebug(true);				// enable verbose debug messages to the RConsole
+			wifi.setConsoleDebug(true);				// enable verbose debug messages to the RConsole
 			
 			LCD.drawString("TCP Echo Server", 0, 0);
 			LCD.drawString("Press enter", 0, 1);
@@ -54,13 +54,13 @@ public class TCPServer {
 			
 				// disconnect from any existing network
 				LCD.drawString("Disconnecting", 0, 3);
-				wifi.disconnectFromWifi();
+				wifi.disconnect();
 				Delay.nsDelay(500);
 				LCD.clear(3);
 				
 				// reconnect to previously defined network
 				LCD.drawString("Reconnect", 0, 3);
-				wifi.reconnect();
+				wifi.connect(true);
 				Delay.nsDelay(500);
 				LCD.clear(3);
 				
@@ -91,13 +91,13 @@ public class TCPServer {
 			wifi.closeSocket(0);
 		
 			// Start the TCP server
-			wifi.serverSocket(TCPSERVER_PORT, TCPSERVER_SOCKET);
+			wifi.openServerSocket(NXT2WIFI.TCP, TCPSERVER_PORT, TCPSERVER_SOCKET);
 			
 			LCD.drawString(wifi.getIPAddress(), 0, 1);
 			LCD.drawString("Port " + TCPSERVER_PORT, 0, 2);
 									
 			InputStream in = wifi.getInputStream(TCPSERVER_SOCKET);
-			OutputStream out = wifi.getOutputStream(TCPSERVER_SOCKET);
+			OutputStream out = wifi.getOutputStream(TCPSERVER_SOCKET, NXT2WIFI.TCP);
 			
 			//DataInputStream dis = new DataInputStream(in);
 			//DataOutputStream dos = new DataOutputStream(out);
