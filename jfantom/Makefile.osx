@@ -1,0 +1,41 @@
+# This makefile is for Snow Leopard.
+
+### use mingw64 32bit toolchain by default
+LEJOS_NXT_OSX_GXX ?= g++-4.0
+LEJOS_NXT_OSX_SYSVER ?= 10.4
+LEJOS_NXT_OSX_SYSROOT ?= /Developer/SDKs/MacOSX10.4u.sdk
+LEJOS_NXT_OSX_JAVAINC ?= $(LEJOS_NXT_OSX_SYSROOT)/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Headers
+LEJOS_NXT_OSX_FANTOMINC ?= $(HOME)/Downloads/Lego/fantom/includes
+
+
+#ifndef LEJOS_NXT_WIN32_FANTOMSDK
+#$(error "You have to set LEJOS_NXT_WIN32_FANTOMSDK")
+#endif
+#ifndef LEJOS_NXT_WIN32_JDK
+#$(error "You have to set LEJOS_NXT_WIN32_JDK")
+#endif
+
+.PHONY: all
+all: libjfantom.jnilib
+
+.PHONY: clean
+clean:
+	rm -f libjfantom.jnilib fakeNiSpy.dylib #jfantom.h
+
+fakeNiSpy.dylib: fakeNiSpy.cpp
+	"$(LEJOS_NXT_OSX_GXX)" -arch ppc -arch i386 -dynamiclib \
+		-mmacosx-version-min="$(LEJOS_NXT_OSX_SYSVER)" -isysroot "$(LEJOS_NXT_OSX_SYSROOT)" \
+		-o "$@" $^
+
+#jfantom.h:
+#	"$(LEJOS_NXT_WIN32_JDK)/bin/javah" -o "$@" -classpath ../pccomms/build lejos.pc.comm.NXTCommFantom 
+
+libjfantom.jnilib: jfantom.cpp | jfantom.h fakeNiSpy.dylib
+	"$(LEJOS_NXT_OSX_GXX)" -arch ppc -arch i386 -dynamiclib \
+		-mmacosx-version-min="$(LEJOS_NXT_OSX_SYSVER)" -isysroot "$(LEJOS_NXT_OSX_SYSROOT)" \
+		-dylib_file /Library/Frameworks/NiSpyLog.framework/Versions/2/NiSpyLog:fakeNiSpy.dylib \
+		-I "$(LEJOS_NXT_OSX_JAVAINC)" -I "$(LEJOS_NXT_OSX_FANTOMINC)" \
+		-framework Fantom \
+		-o "$@" $^
+
+
