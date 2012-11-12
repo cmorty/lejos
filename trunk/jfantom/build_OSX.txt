@@ -34,4 +34,7 @@ To make the linker happy, we provide the linker with a replacement for that libr
 via the -dylib_file parameter. Note, that the produced binary (libjfantom.jnilib)
 does not seem to be affected in any way (i.e. it runs, and the fake library does not
 show up in the output of otool -L or -l).
+
+Remark: one can also install NI-VISA for Mac OS X (5.1.2 at the time of writing)
+to obtain the missing NiSpyLog library.
  
