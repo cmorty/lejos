@@ -14,7 +14,7 @@ NOTE: the Makefile and this guide is for Snow Leopard only.
 3) Download the install the SDK from
    http://mindstorms.lego.com/en-us/support/files/Advanced.aspx
 
-4) set FANTOM_INC in ./build_SnowLeopard.sh
+4) set LEJOS_NXT_OSX_FANTOMINC in Makefile.osx
 
 5) run make -f Makefile.osx clean all 
 
