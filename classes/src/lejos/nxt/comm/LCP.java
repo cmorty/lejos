@@ -529,9 +529,11 @@ public class LCP {
 				} else {
 					String msg = (cmd[4] == 0 ? inBox.get(0) : inBox.remove(0));
 					int msgLen = msg.length();
-					//FIXME according to datasheet, length includes null-terminatur
-					reply[4] = (byte) (msgLen > 58 ? 58 : msgLen);
-					for(int i=0;i<58 && i<msgLen;i++) {
+					// 64 -5byte header - 1byte null terminator = 58
+					if (msgLen > 58)
+						msgLen = 58;
+					reply[4] = (byte) msgLen;
+					for(int i=0;i<msgLen;i++) {
 						reply[5+i] = (byte) msg.charAt(i);
 					}
 				}
