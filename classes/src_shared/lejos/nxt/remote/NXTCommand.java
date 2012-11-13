@@ -641,11 +641,14 @@ public class NXTCommand implements NXTProtocol {
 	 * @param remoteInbox 0-9
 	 * @param localInbox 0-9
 	 * @param remove True clears the message from the remote inbox.
-	 * @return the message as an array of bytes, excluding the trailing null-terminator
+	 * @return the message as an array of bytes, excluding the trailing null-terminator or null when queue is empty
 	 */
 	public byte[] messageRead(byte remoteInbox, byte localInbox, boolean remove) throws IOException {
 		byte [] request = {DIRECT_COMMAND_REPLY, MESSAGE_READ, remoteInbox, localInbox, (remove ? (byte) 1 : (byte) 0)};
 		byte [] reply = nxtComm.sendRequest(request, 64);
+		if (reply[2] == ErrorMessages.SPECIFIED_MAILBOX_QUEUE_IS_EMPTY)
+			return null;
+		this.checkStatusByte(reply);
 		int size = reply[4] & 0xFF; //size includes null terminator 
 		// check whether length is in range and for null-terminator
 		if (size < 1 || size > 5 + reply.length || reply[4+size] != 0)
@@ -655,6 +658,12 @@ public class NXTCommand implements NXTProtocol {
 		return message;
 	}
 	
+	private void checkStatusByte(byte[] reply) throws LCPException {
+		byte code = reply[2];
+		if (code != 0)
+			throw new LCPException(code);
+	}
+
 	/**
 	 * Sends a message to an inbox on the NXT for storage(?)
 	 * For future reference, message size must be capped at 59 for USB.
