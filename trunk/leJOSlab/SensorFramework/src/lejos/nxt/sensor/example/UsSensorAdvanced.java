@@ -41,7 +41,7 @@ public class UsSensorAdvanced {
 		AutoSampler bufferedRange=new AutoSampler(range,sensor.getSampleRate());
 		
 		// convert range to the position of the detected obstacle (relative to robot);
-		Align toPosition=new Align(bufferedRange);
+		AlignFilter toPosition=new AlignFilter(bufferedRange);
 		// the sensor is pointing 45 degrees to the left instead of straight ahead
 		toPosition.addRotation("Z", 45);
 		

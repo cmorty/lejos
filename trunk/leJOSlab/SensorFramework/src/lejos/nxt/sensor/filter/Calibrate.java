@@ -1,10 +1,12 @@
 package lejos.nxt.sensor.filter;
 
+import java.io.IOException;
+
 import lejos.nxt.Button;
 import lejos.nxt.sensor.api.*;
 
 /**
- * This filter applies calibration on a sample based on a stored calibration set
+ * This filter applies calibration on a sample based on a stored set of calibration parameters
  * @author Aswin
  *
  */
@@ -13,11 +15,23 @@ public class Calibrate extends AbstractFilter{
 
 	public Calibrate(SampleProvider source, String calibrationSet) {
 		super(source);
-		CalibrationManager calMan=new CalibrationManager();
-		if (calMan.setCurrent(calibrationSet)==false) throw new IllegalArgumentException("No such calibration set");
-		if (calMan.getElements()!=elements) throw new IllegalArgumentException("Invalid calibration set");
-		offset=calMan.getOffset();
-		scale=calMan.getScale();
+		float[] defaultOffset=new float[elements];
+		float[] defaultScale=new float[elements];
+		for (int i=0;i<elements;i++) {
+			defaultOffset[i]=0;
+			defaultScale[i]=1;
+		}
+		
+		FilterProperties props=this.getFilterProperties();
+		try{
+			props.load(calibrationSet);
+			offset=props.getPropertyArray("offset",defaultOffset);
+			scale=props.getPropertyArray("scale",defaultScale);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 
