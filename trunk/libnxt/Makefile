@@ -3,10 +3,10 @@ JNI_INCLUDE ?= $(JAVA_HOME)/include
 JNI_INCLUDE_LINUX ?= $(JNI_INCLUDE)/linux
 
 CFLAGS ?= 
-CFLAGS += -std=c99 -Wall -fPIC -I$(JNI_INCLUDE) -I$(JNI_INCLUDE_LINUX)
+CFLAGS += -std=c99 -Wall -fPIC -I "$(JNI_INCLUDE)" -I "$(JNI_INCLUDE_LINUX)"
 
 LDFLAGS ?=
-LDFLAGS += -shared -lusb 
+LDFLAGS += -s -shared -lusb -Wl,--version-script=syms.txt
 
 FILES_IN_C:=$(wildcard *.c)
 FILES_OUT_D:=$(FILES_IN_C:.c=.d)
