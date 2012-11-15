@@ -263,9 +263,7 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
     if (strcmp(name, nxt) == 0)
     {
       libusb_device_handle *ret = nxt_open( dev );
-      if (!ret)
-        libusb_unref_device(dev);
-
+      libusb_unref_device(dev);
       (*env)->ReleaseStringUTFChars(env, jnxt, nxt);
       return (jlong) ret ;
     }
