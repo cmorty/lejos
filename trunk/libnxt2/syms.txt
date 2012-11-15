@@ -1,0 +1,6 @@
+{
+	global:
+		Java_lejos_*;
+	local:
+		*;
+};
