@@ -124,7 +124,6 @@ static libusb_device *nxt_find_nth(int idx, char *address)
       create_address(dev, address);
       libusb_ref_device(dev);
       libusb_free_device_list(list, 1);
-      libusb_unref_device(dev);
       return dev;
     }
   }
@@ -270,6 +269,7 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
       (*env)->ReleaseStringUTFChars(env, jnxt, nxt);
       return (jlong) ret ;
     }
+    libusb_unref_device(dev);
     cnt++;
   }
   (*env)->ReleaseStringUTFChars(env, jnxt, nxt);
