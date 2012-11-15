@@ -1,5 +1,7 @@
 {
 	global:
+		_init;
+		_fini;
 		Java_lejos_*;
 	local:
 		*;
