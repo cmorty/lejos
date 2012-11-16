@@ -28,7 +28,7 @@ fakeNiSpy.dylib: fakeNiSpy.cpp
 #	"$(LEJOS_NXT_WIN32_JDK)/bin/javah" -o "$@" -classpath ../pccomms/build lejos.pc.comm.NXTCommFantom 
 
 libjfantom.jnilib: jfantom.cpp | jfantom.h fakeNiSpy.dylib
-	"$(LEJOS_NXT_OSX_GXX)" -arch ppc -arch i386 -dynamiclib \
+	"$(LEJOS_NXT_OSX_GXX)" -arch ppc -arch i386 -dynamiclib -O2 -Wall \
 		-mmacosx-version-min="$(LEJOS_NXT_OSX_SYSVER)" -isysroot "$(LEJOS_NXT_OSX_SYSROOT)" \
 		-dylib_file /Library/Frameworks/NiSpyLog.framework/Versions/2/NiSpyLog:fakeNiSpy.dylib \
 		-I "$(LEJOS_NXT_OSX_JAVAINC)" -I "$(LEJOS_NXT_OSX_FANTOMINC)" \
