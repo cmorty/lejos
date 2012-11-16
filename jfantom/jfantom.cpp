@@ -21,6 +21,9 @@
 #define MAX_READ 64
 #define MAX_WRITE 512
 
+#define PTR2JLONG(arg) ((jlong)(uintptr_t)(arg))
+#define JLONG2PTR(type, arg) ((type*)(intptr_t)(arg))
+
 
 #if (defined(__WIN32__) || defined(_MSC_VER))
 // Locking version for Windows
@@ -145,12 +148,14 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1open
          // Remember the details
          dev->hLock = hLock;
          dev->nxtPtr = nxtPtr;
-         return (jlong)dev;
+         env->ReleaseStringUTFChars(nxt, cstr);
+         return PTR2JLONG(dev);
       }
       // Open failed release the lock
       unlockDevice(hLock);
    }
    // failed clean things up.
+   env->ReleaseStringUTFChars(nxt, cstr);
    free(dev);
    return 0;
 }
@@ -159,7 +164,7 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1open
 JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1close
   (JNIEnv *env, jobject obj, jlong nxt)
 {
-   NXTDev *dev = (NXTDev *)nxt;
+   NXTDev *dev = JLONG2PTR(NXTDev, nxt);
    if (dev == NULL) return;
    ViStatus status=0;;
    nFANTOM100_destroyNXT( dev->nxtPtr, &status );
@@ -172,7 +177,7 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1send_1data
 {
    ViStatus status=0;
    int ret;
-   NXTDev *dev = (NXTDev *)nxt;
+   NXTDev *dev = JLONG2PTR(NXTDev, nxt);
    if (dev == NULL) return -1;
 
    jbyte *jb = env->GetByteArrayElements(jdata, 0);
@@ -190,8 +195,7 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommFantom_jfantom_1read_1data
 {
    ViStatus status=0;
    int ret;
-   char *data;
-   NXTDev *dev = (NXTDev *)nxt;
+   NXTDev *dev = JLONG2PTR(NXTDev, nxt);
    if (dev == NULL) return -1;
 
    jbyte *jb = env->GetByteArrayElements(jdata, 0);
