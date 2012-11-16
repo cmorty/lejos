@@ -39,6 +39,8 @@
 #define ETIMEDOUT 116
 #endif
 
+#define PTR2JLONG(arg) ((jlong)(uintptr_t)(arg))
+#define JLONG2PTR(type, arg) ((type*)(intptr_t)(arg))
 
 typedef struct usb_device usb_device_t;
 typedef struct usb_dev_handle usb_dev_handle_t;
@@ -269,23 +271,26 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
   {
     if (strcmp(name, nxt) == 0)
     {
-      return (jlong) nxt_open( dev ); 
+      usb_dev_handle_t *res = nxt_open( dev );
+      (*env)->ReleaseStringUTFChars(env, jnxt, nxt);
+      return PTR2JLONG(res);
     }
     cnt++;
   }
+  (*env)->ReleaseStringUTFChars(env, jnxt, nxt);
   return 0;
 }
 
 JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *env, jobject obj, jlong nxt)
 {
-  nxt_close( (usb_dev_handle_t*) nxt);
+  nxt_close(JLONG2PTR(usb_dev_handle_t, nxt));
 }
 
 JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIEnv *env, jobject obj, jlong nxt, jbyteArray data, jint offset, jint len)
 {
   int ret;
   char *jb = (char *) (*env)->GetByteArrayElements(env, data, 0);  
-  ret = nxt_write_buf((usb_dev_handle_t*) nxt, jb + offset, len);
+  ret = nxt_write_buf(JLONG2PTR(usb_dev_handle_t, nxt), jb + offset, len);
   (*env)->ReleaseByteArrayElements(env, data, (jbyte *) jb, 0);
   if (ret == -ETIMEDOUT) ret = 0;
   return ret;
@@ -293,10 +298,8 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIE
 
 JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data(JNIEnv *env, jobject obj, jlong nxt, jbyteArray jdata, jint offset, jint len)
 {
-  int read_len;
   char *jb = (char *)(*env)->GetByteArrayElements(env, jdata, 0);
-
-  read_len = nxt_read_buf((usb_dev_handle_t*) nxt, jb + offset, len);
+  int read_len = nxt_read_buf(JLONG2PTR(usb_dev_handle_t, nxt), jb + offset, len);
   (*env)->ReleaseByteArrayElements(env, jdata, (jbyte *)jb, 0);
   if (read_len == -ETIMEDOUT) read_len = 0;
   return read_len;
