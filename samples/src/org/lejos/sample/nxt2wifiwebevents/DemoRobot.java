@@ -20,9 +20,9 @@ public class DemoRobot implements NXT2WiFiListener {
 	
 	// CUSTOM WI-FI PROFILE SETTINGS
 	boolean MY_ADHOC = false;
-	String MY_SSID = "free_viruses";
+	String MY_SSID = "YOUR_ROUTER_SSID_HERE";
 	//static String MY_WPA2_KEY = "d4d3a089b20d91ef62bd6045467556a9294355bf63e936e0bb0e952f31071f55";
-	String MY_WPA2_PASS = "geocaching";
+	String MY_WPA2_PASS = "YOUR_ROUTER_PASSPHRASE_HERE";
 	boolean MY_DHCP = true;
 	
 	private NXT2WIFI wifi;
@@ -62,7 +62,7 @@ public class DemoRobot implements NXT2WiFiListener {
 	         
 	   // CONNECT USING CUSTOM PROFILE
 		if (selection == Button.ID_LEFT) {
-			// LCD.clear(); // I'm not entirely sure he means to clear the whole screen here.
+			LCD.clear();
 			LCD.drawString("Disconnecting    ",0, 3);
 			wifi.stopConnecting();
 			wifi.disconnect();
@@ -78,7 +78,7 @@ public class DemoRobot implements NXT2WiFiListener {
 				
 		// CONNECT USING DEFAULT PROFILE
 		if (selection == Button.ID_RIGHT) {
-			//LCD.clear(); // I'm not entirely sure he means to clear the whole screen here.
+			LCD.clear();
 			LCD.drawString("Disconnecting    ",0,3);
 			wifi.disconnect();
 			Delay.msDelay(500);
@@ -104,7 +104,7 @@ public class DemoRobot implements NXT2WiFiListener {
 			System.exit(0);
 		}
 		
-		LCD.clear(); // I'm not entirely sure he means to clear the whole screen here.
+		LCD.clear();
 		//LCD.clear(4); // clear line 5
 		LCD.drawString("Connected!     ",0,3);
 		Sound.beepSequenceUp();
