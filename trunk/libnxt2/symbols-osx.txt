@@ -1,0 +1,2 @@
+# OS X does not seem to have _init and _fini
+_Java_lejos_*
