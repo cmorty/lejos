@@ -40,7 +40,7 @@
 #endif
 
 #define PTR2JLONG(arg) ((jlong)(uintptr_t)(arg))
-#define JLONG2PTR(type, arg) ((type*)(intptr_t)(arg))
+#define JLONG2PTR(type, arg) ((type*)(uintptr_t)(arg))
 
 typedef struct usb_device usb_device_t;
 typedef struct usb_dev_handle usb_dev_handle_t;

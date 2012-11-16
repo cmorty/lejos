@@ -22,7 +22,7 @@
 #define MAX_WRITE 512
 
 #define PTR2JLONG(arg) ((jlong)(uintptr_t)(arg))
-#define JLONG2PTR(type, arg) ((type*)(intptr_t)(arg))
+#define JLONG2PTR(type, arg) ((type*)(uintptr_t)(arg))
 
 
 #if (defined(__WIN32__) || defined(_MSC_VER))
