@@ -40,7 +40,7 @@
 #endif
 
 #define PTR2JLONG(arg) ((jlong)(uintptr_t)(arg))
-#define JLONG2PTR(type, arg) ((type*)(intptr_t)(arg))
+#define JLONG2PTR(type, arg) ((type*)(uintptr_t)(arg))
 
 typedef struct libusb_device_descriptor libusb_device_descriptor;
 
