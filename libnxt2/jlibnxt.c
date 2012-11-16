@@ -39,6 +39,9 @@
 #define ETIMEDOUT 116
 #endif
 
+#define PTR2JLONG(arg) ((jlong)(uintptr_t)(arg))
+#define JLONG2PTR(type, arg) ((type*)(intptr_t)(arg))
+
 typedef struct libusb_device_descriptor libusb_device_descriptor;
 
 
@@ -265,7 +268,7 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
       libusb_device_handle *ret = nxt_open( dev );
       libusb_unref_device(dev);
       (*env)->ReleaseStringUTFChars(env, jnxt, nxt);
-      return (jlong) ret ;
+      return PTR2JLONG(ret);
     }
     libusb_unref_device(dev);
     cnt++;
@@ -276,13 +279,13 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
 
 JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *env, jobject obj, jlong nxt)
 {
-  nxt_close( (libusb_device_handle*) nxt);
+  nxt_close(JLONG2PTR(libusb_device_handle, nxt));
 }
 
 JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIEnv *env, jobject obj, jlong nxt, jbyteArray data, jint offset, jint len)
 {
   jbyte *jb = (*env)->GetByteArrayElements(env, data, 0);
-  int ret = nxt_write_buf((libusb_device_handle*) nxt, (unsigned char *)jb + offset, len);
+  int ret = nxt_write_buf(JLONG2PTR(libusb_device_handle, nxt), (unsigned char *)jb + offset, len);
   (*env)->ReleaseByteArrayElements(env, data, jb, 0);
   if (ret == LIBUSB_ERROR_TIMEOUT) ret = 0;
   return ret;
@@ -291,7 +294,7 @@ JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIE
 JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data(JNIEnv *env, jobject obj, jlong nxt, jbyteArray jdata, jint offset, jint len)
 {
   jbyte *jb = (*env)->GetByteArrayElements(env, jdata, 0);
-  int ret = nxt_read_buf((libusb_device_handle*) nxt, (unsigned char *)jb + offset, len);
+  int ret = nxt_read_buf(JLONG2PTR(libusb_device_handle, nxt), (unsigned char *)jb + offset, len);
   (*env)->ReleaseByteArrayElements(env, jdata, jb, 0);
   if (ret == LIBUSB_ERROR_TIMEOUT) ret = 0;
   return ret;
