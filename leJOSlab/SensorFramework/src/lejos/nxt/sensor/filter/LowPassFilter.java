@@ -49,5 +49,9 @@ public class LowPassFilter extends AbstractFilter{
 			}
 		}
 	}
+	
+	public void setTimeConstant(float timeConstant) {
+		this.timeConstant=timeConstant;
+	}
 
 }

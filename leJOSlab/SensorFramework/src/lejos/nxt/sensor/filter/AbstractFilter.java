@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import lejos.nxt.LCD;
 import lejos.nxt.sensor.api.*;
 
 /**
@@ -20,6 +19,7 @@ public abstract class AbstractFilter implements SampleProvider{
 	protected final SampleProvider source;
 	protected int elements;
 	private float[] buf;
+	private FilterProperties filterProperties=null;
 
 	/**
 	 * Create a filter passing a source to be decorated
@@ -66,14 +66,15 @@ public abstract class AbstractFilter implements SampleProvider{
 	 */
 	@SuppressWarnings("synthetic-access")
 	public FilterProperties getFilterProperties() {
-		
-		try {
-			return new FProperties();
+		if (filterProperties == null) {
+			try {
+				filterProperties=new FProperties();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return filterProperties;
 	}
 	
 	 /**
