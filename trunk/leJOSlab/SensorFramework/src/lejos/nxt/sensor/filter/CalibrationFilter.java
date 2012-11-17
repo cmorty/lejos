@@ -10,10 +10,10 @@ import lejos.nxt.sensor.api.*;
  * @author Aswin
  *
  */
-public class Calibrate extends AbstractFilter{
+public class CalibrationFilter extends AbstractFilter{
 	float[] offset, scale;
 
-	public Calibrate(SampleProvider source, String calibrationSet) {
+	public CalibrationFilter(SampleProvider source, String calibrationSet) {
 		super(source);
 		float[] defaultOffset=new float[elements];
 		float[] defaultScale=new float[elements];
