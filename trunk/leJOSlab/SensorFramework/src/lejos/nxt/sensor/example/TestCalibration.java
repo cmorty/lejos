@@ -63,7 +63,7 @@ import lejos.util.NXTDataLogger;
  * @author Aswin Bouwmeester
  * 
  */
-public class CalibrateSensors {
+public class TestCalibration {
 
 	/**
 	 * One can modify the fields below to calibrate other accelerometers,
@@ -75,25 +75,26 @@ public class CalibrateSensors {
 	 * <p>
 	 * It is suggested to use the name of the sensor driver
 	 */
-	String					NAME							= "DiCompass2";
+	String					NAME							= "MsAccelV3";
 
 	/**
 	 * Port of the sensor to calibrate
 	 */
-	SensorPort			port							= SensorPort.S1;
+	SensorPort			port							= SensorPort.S2;
 
 	/**
 	 * Driver for the sensor to calibrate
 	 */
-	SampleProvider	sensor						= new DiCompass(port);
+	SampleProvider	sensor						= new MsAccelV3(port);
 
 
 	public static void main(String[] args) {
-		CalibrateSensors c = new CalibrateSensors();
+		TestCalibration c = new TestCalibration();
 	}
 
-	public CalibrateSensors()  {
-		CalibratorFilter calibrate= new CalibratorFilter(sensor);
+	public TestCalibration()  {
+		LineairCalibrationFilter calibrate= new LineairCalibrationFilter(sensor);
+		calibrate.load(NAME);
 		float[] sample=new float[sensor.getElementsCount()];
 
 		switch (sensor.getQuantity()) {
@@ -112,7 +113,7 @@ public class CalibrateSensors {
 				calibrate.calibrateForScale(false);
 				break;
 			case Quantities.MAGNETIC_FIELD:
-				calibrate.setRange( 1); // adjust to local strength of magnetic field for true output;
+				calibrate.setRange( 2); // adjust to local strength of magnetic field for true output;
 				calibrate.setReference(0);
 				calibrate.setTimeConstant(0.1f);
 				calibrate.calibrateForOffset(true);
@@ -132,7 +133,7 @@ public class CalibrateSensors {
 
 		while (!Button.ESCAPE.isDown()) {
 			if (Button.ENTER.isDown()) {
-				calibrate.storeCalibration(NAME);
+				calibrate.store(NAME);
 				Sound.beep();
 				while (Button.ENTER.isDown());
 			}

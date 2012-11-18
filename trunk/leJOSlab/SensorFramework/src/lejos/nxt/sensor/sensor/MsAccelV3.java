@@ -80,7 +80,7 @@ public class MsAccelV3 extends I2CSensor implements SampleProvider {
   	for (int i=0;i<RANGES.length;i++) {
   		if (range==RANGES[i]) {
   			range=i;
-  	    sendData(REGRANGE, (byte) (49+range));
+  	    sendData(ACCEL, (byte) (49+range));
   	    Delay.msDelay(150);
   	    return;
   		}
