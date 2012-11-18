@@ -1,4 +1,4 @@
-package lejos.nxt.addon;
+package lejos.nxt.addon.dev;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -141,7 +141,8 @@ public class NXT2WIFI {
 		int bytesRemaining = len;
 		int avail;
 		
-		if((off + len) > cbuf.length) // TODO: Possible bug? cbuf might only need to be len in size. -BB
+		// TODO: Possible bug? cbuf might only need to be len in size. -BB
+		if((off + len) > cbuf.length) 
 			throw new ArrayIndexOutOfBoundsException();
 		
 		while(!done && (bytesRemaining > 0)){
@@ -961,6 +962,15 @@ public class NXT2WIFI {
 	}
 	
 	/**
+	 * Checks if DHCP assigned a new address.
+	 *
+	 * @return true, if DHCP address is assigned
+	 */
+	public boolean isDHCPAddressAssigned() {
+		return parseIntResult(commandWithReply("$WFAA\n"))>0;
+	}
+	
+	/**
 	 *  Returns true if the custom Wi-Fi profile has been previously set
 	 */
 	public boolean customExists() {
@@ -1116,12 +1126,9 @@ public class NXT2WIFI {
 	public String getIPAddress() {
 				
 		send("$WFIP\n");
-		//RS485.hsWrite(CMD_IPADDR, 0, CMD_IPADDR.length);
 		Delay.msDelay(50);
-		
+
 		String reply = readFully(false);
-		
-		RConsole.println("Reply = " + reply);
 		
 		if(reply.startsWith("WFIP=")) {
 			reply = reply.substring(5);
@@ -1160,9 +1167,8 @@ public class NXT2WIFI {
 	 * Force ARP request for specified IP address
 	 * @param ip the IP for the ARP request
 	 */
-	public void sendARPRequest(String ip) {
-		send("$ARP?"+ip);
-		//TODO get reply after protocol change
+	public boolean sendARPRequest(String ip) {
+		return parseIntResult(commandWithReply("$ARP\n"))==0;
 	}	
 
 ///////////////////////////////////////////////////////////////////////////////
