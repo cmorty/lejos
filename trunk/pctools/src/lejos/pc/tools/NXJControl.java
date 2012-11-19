@@ -198,6 +198,7 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	private ConsoleViewComms cvc;
 	private ConsoleViewComms[] cvcs;
 	private LCDDisplay lcd;
+	private File directoryLastUsed;
 
 	// Formatter
 	private static final NumberFormat FORMAT_FLOAT = NumberFormat.getNumberInstance();
@@ -1600,14 +1601,15 @@ public class NXJControl implements ListSelectionListener, NXTProtocol, DataViewe
 	}
 	
 	/**
-	 * Choose a file and update it
+	 * Choose a file and update it. Remember directory last used. 
 	 */
 	private void upload() {
-		JFileChooser fc = new JFileChooser();
+		JFileChooser fc = new JFileChooser(directoryLastUsed);
 		int returnVal = fc.showOpenDialog(frame);
 		
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
+			directoryLastUsed = file.getParentFile();
 			uploadFile(file);
 		}
 	}
