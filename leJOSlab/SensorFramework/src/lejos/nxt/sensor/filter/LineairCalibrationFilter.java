@@ -9,31 +9,31 @@ import lejos.util.NXTDataLogger;
 
 /**
  * This filter is used to calibrate sensors for offset and scale errors using lineair interpolation. <br> 
- * It has two modes of operation, in operational mode it calibrates a sensors by correcting samples coming from the sensor. 
- * in calibration mode the filter calculates calibration parameters based on samples from the sensor and user specified reference values.
+ * It has two modes of operation. In operational mode it corrects samples coming from the sensor. 
+ * In calibration mode the filter calculates calibration parameters from samples and user specified reference values.<p>
  * 
  * <b>Operational mode</b><br>
- * In operational mode the filter corrects incoming samples for offset and scale errors before passing it back to the program. 
- * The correction algorhithm uses calibration parameters that are calculated beforehand. 
- * These calibration parameters could be stored on the filesystem and loaded using the load() method. 
- * Or they could be calculated by the object itself using in calibration mode. 
+ * In operational mode the filter corrects incoming samples for offset and scale errors before passing it in to the program. 
+ * The correction algorhithm uses calibration parameters that must be calculated beforehand. 
+ * These calibration parameters could be stored on the filesystem and loaded using the load() method, 
+ * or they could be calculated by the object itself using in calibration mode. <p>
  * 
  * <b>How it works</b><br>
  * Correction is done using two calibration parameters, offset and scale. 
- * The offset parameter corrects for offset errors, i.e. the sample is always a fixed amount off the truth: 2 becomes 3, 6 becomes 7.
- * The scale parameter corrects for scale errors, i.e. the sample is always a fixed percentage off the thruth: 2 becomes 3, 6 becoms 9.
- * The combined correction formula is correctedValue = ( rawValue - offsetCorrection ) / scaleCorrection.
- * This calibration technique works on all sensors who's output is lineair to the input. 
+ * The offset parameter corrects for offset errors. An offset error results in a sample being a fixed amount off the truth: 2 becomes 3, 6 becomes 7. It is corrected by substracting a constant value from the sample, the offset error. One in this example.
+ * The scale parameter corrects for scale errors. As a result of a scale error a sample is always a fixed percentage off the thruth: 2 becomes 3, 6 becoms 9. It is corrected by deviding the samplewith a constant value, the scale error, 1.5 in this case.
+ * The combined correction formula is correctedValue = ( rawValue - offsetError ) / scaleError.
+ * This calibration technique works on all sensors who's output is lineair to the input. <p>
  * 
  *  <b>How to use the filter in operational mode</b><br>
  *  In operational mode it is assumed that calibration parameters are calculated beforehand by the filter itself or loaded from the file system using the load() method.
- *  Like any SampleProvider a sample is fetched from the filter using the fetchSample() method. 
+ *  Like any SampleProvider a sample is fetched from the filter using the fetchSample() method. <p>
  *  
  *  
  * 
  *  <b>Calibration mode</b><br>
  *  In calibration mode the two calibration parameters are calculated. This is done by comparing samples to a user specified reference value and/or range.
- *  Once calibration parameters are calculated they can be used immidiately or stored to the filesystem for later use using the store() method.
+ *  Once calibration parameters are calculated they can be used immidiately or stored to the filesystem for later use using the store() method.<p>
  * 
  * <b>How it works</b><br>
  * The CalibratorFiltersupports both offset and scale calibration. During calibration the filter collects minimum and maximum sample values. 
@@ -68,8 +68,8 @@ import lejos.util.NXTDataLogger;
  * The timeConstant value.
  * This is the timeConstant value of a low-pass filter that is used in calibration mode. 
  * A low pass filter is used during calibration to for two reasons. 
- * First to overcome the effects of sensor noise. These effects can seriously affect range calculation. 
- * Secondly it filters out the side effect of user manipulation when turning the sensor as part of the calibration proces.
+ * First to overcome the effects of sensor noise that could otherwise seriously affect range calculation. 
+ * Secondly it filters out the side effect of user manipulation when turning the sensor as part of the calibration proces (six way tumbling method).
  * The parameter affects the amount of smoothing of the low-pass filter.
  * The higher the value, the smoother the samples. Smoother samples are less affected by sensor noise or external shocks but take longer to settle.
  * The time constant has a default value of 0, meaning no smoothing is done by default. 
@@ -88,7 +88,7 @@ import lejos.util.NXTDataLogger;
  * @author Aswin Bouwmeester
  *
  */
-public class LineairCalibrationFilter extends LowPassFilter {
+public class LineairCalibrationFilter extends AbstractFilter {
 	private boolean	calibrateForScale		= false;
 	private boolean	calibrateForOffset	= true;
 	private float[]	reference;
@@ -100,12 +100,17 @@ public class LineairCalibrationFilter extends LowPassFilter {
 	private boolean	calibrationMode			= false;
 	NXTDataLogger		log;
 	private final FilterProperties props = this.getFilterProperties();
-	private float persistantTimeConstant=0;
+	private  LowPassFilter lowPassFilter=null;
 
 
+	public LineairCalibrationFilter(SampleProvider source, String name) {
+		this(source);
+		load(name);
+	}
 
 	public LineairCalibrationFilter(SampleProvider source) {
-		super(source, 0);
+		super(source);
+		lowPassFilter=new LowPassFilter(source,0);
 		reference = new float[elements];
 		range = new float[elements];
 		min = new float[elements];
@@ -177,10 +182,8 @@ public class LineairCalibrationFilter extends LowPassFilter {
 		System.arraycopy(rangeValues, 0, range, 0, elements);
 	}
 	
-	@Override
 	public void setTimeConstant(float timeConstant) {
-		if (!calibrationMode) this.timeConstant=timeConstant;
-		persistantTimeConstant=timeConstant;
+		lowPassFilter.setTimeConstant(timeConstant);
 	}
 
 	/**
@@ -191,7 +194,6 @@ public class LineairCalibrationFilter extends LowPassFilter {
 	 */
 	public void startCalibration() {
 		calibrationMode = true;
-		timeConstant=persistantTimeConstant;
 		for (int i = 0; i < elements; i++) {
 			min[i] = Float.POSITIVE_INFINITY;
 			max[i] = Float.NEGATIVE_INFINITY;
@@ -206,7 +208,6 @@ public class LineairCalibrationFilter extends LowPassFilter {
 	 */
 	public void stopCalibration() {
 		calibrationMode = false;
-		timeConstant=0;
 		if (log != null) log.writeComment("Stop Calibration");
 	}
 
@@ -215,7 +216,6 @@ public class LineairCalibrationFilter extends LowPassFilter {
 	 */
 	public void resumeCalibration() {
 		calibrationMode = true;
-		timeConstant=persistantTimeConstant;
 		if (log != null) log.writeComment("Resume Calibration");
 	}
 
@@ -257,14 +257,14 @@ public class LineairCalibrationFilter extends LowPassFilter {
 	 *  Fetches a sample from the sensor and updates calibration parameters when the calibration process is running.
 	 * Optionally outputs logging information to the NXTChartingLogger.
 	 */
-	@Override
 	public void fetchSample(float[] dst, int off) {
-		super.fetchSample(dst, off);
 		if (!calibrationMode) {
-		for (int i=0;i<elements;i++)
-			dst[i+off]=(dst[i+off]-offset[i])/scale[i];
+			source.fetchSample(dst, off);
+			for (int i=0;i<elements;i++)
+				dst[i+off]=(dst[i+off]-offset[i])/scale[i];
 		}
 		else {
+			lowPassFilter.fetchSample(dst, off);
 			for (int i = 0; i < elements; i++) {
 				if (min[i] > dst[i + off])
 					min[i] = dst[i + off];
@@ -275,7 +275,7 @@ public class LineairCalibrationFilter extends LowPassFilter {
 				if (calibrateForScale)
 					scale[i] = (max[i] - min[i]) / (range[i]);
 			}
-		if (log != null ) log(dst, off);
+			if (log != null ) log(dst, off);
 		}
 	}
 	
