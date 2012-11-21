@@ -3,17 +3,10 @@ package lejos.nxt.addon;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashSet;
 
-import lejos.nxt.Button;
-import lejos.nxt.Sound;
 import lejos.nxt.comm.RConsole;
 import lejos.nxt.comm.RS485;
-import lejos.nxt.remote.NXTComm;
-import lejos.robotics.navigation.Move;
-import lejos.robotics.navigation.MoveListener;
 import lejos.util.Delay;
 
 /**
@@ -29,7 +22,7 @@ import lejos.util.Delay;
  * 
  * @author dbenedettelli
  * @author daniele@benedettelli.com
- * @version 1.1 Revision, correction, implementation completion
+ * @version 1.1 Revision, correction, implementation completion, corrected bugs in readFully
  * 
  * @author BB
  * @author bbagnall@mts.net
@@ -46,7 +39,7 @@ public class NXT2WIFI {
 	
 	// WIFI_ security modes
 	public final static int WF_SEC_OPEN =			0;
-	public static final int WF_SEC_WEP_40 =		1;
+	public static final int WF_SEC_WEP_40 =			1;
 	public static final int WF_SEC_WEP_104 =		2;
 	public static final int WF_SEC_WPA_KEY =		3;
 	public static final int WF_SEC_WPA_PASSPHRASE = 4;
@@ -82,7 +75,7 @@ public class NXT2WIFI {
 	public static final boolean AD_HOC = true;
 	public static final boolean INFRASTRUCTURE = false;
 	
-	private static final int cmdDelay = 120; // how long to wait for a reply, in ms
+	private static final int cmdDelay = 100; // how long to wait for a reply, in ms
 	
 	private final int NUM_SOCKETS = 4;	// maximum number of sockets supported on the NXT2WIFI
 	public final static int TCP = 1;
@@ -124,6 +117,7 @@ public class NXT2WIFI {
 ////////////////////////// LOW LEVEL COMMUNICATION ////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
+	
 	/**
 	 * Reads the all available data from the RS485 rx buffer. Assumes that the data is in binary format
 	 * so can be used to receive both ASCII and binary data.
@@ -133,26 +127,24 @@ public class NXT2WIFI {
 	 * @param off Offset to start reading data into the cbuf array at
 	 * @param len The number of bytes to read into cbuf. Bytes are stored from cbuf[0] onwards
 	 * @return The number of bytes read
-	 * @throws ArrayIndexOutOfBoundsException if off+len > length of the cbuf array
 	 */
-	public int readBytesFully(boolean wait, byte[] cbuf, int off, int len) throws ArrayIndexOutOfBoundsException {
+	public int readBytesFully(boolean wait, byte[] cbuf, int off, int len) {
 		boolean done = false;
 		int p = off;
 		int bytesRemaining = len;
 		int avail;
-		
-		// TODO: Possible bug? cbuf might only need to be len in size. -BB
-		if((off + len) > cbuf.length) 
-			throw new ArrayIndexOutOfBoundsException();
+		long time = System.currentTimeMillis();
 		
 		while(!done && (bytesRemaining > 0)){
 			if( (avail = RS485.hsRead(cbuf, p, bytesRemaining)) > 0){
 				bytesRemaining -= avail;
 				p += avail;
+				time = System.currentTimeMillis();
 				Delay.msDelay(5);
 			}else{
-				if(!wait || (wait && p>0)){
+				if(!wait || (wait && (p>0 || System.currentTimeMillis()-time>cmdDelay ))){
 					done = true;
+					if (wait) System.out.println("timeout!");					
 				}
 			}
 			Thread.yield();
@@ -187,23 +179,26 @@ public class NXT2WIFI {
 		String response = "";
 		int bytesRead;
 		byte[] buf = new byte[1];
+		long time = System.currentTimeMillis();
 		
 		boolean done = false;
 		bytesRead = 0;
+		int br = 0;
 		
 		while(!done && (bytesRead < bytesToRead)){
-			if(RS485.hsRead(buf, 0, 1) > 0){
+			br = RS485.hsRead(buf, 0, 1);
+			if(br > 0){
 				response += (char)buf[0];
 				bytesRead++;
+				time = System.currentTimeMillis();
 				Delay.msDelay(5);
 			}else{
-				if(!wait || (wait && response.length()>0)){
+				if(!wait || (wait && ( response.length()>0 || (System.currentTimeMillis()-time>cmdDelay) ))){
 					done = true;
 				}
 			}
 			Thread.yield();
 		}
-		//RConsole.println("readFully returning " + response);
 		return response;
 	}
 
@@ -224,14 +219,12 @@ public class NXT2WIFI {
 	protected int send(byte[] out, int len) {
 		int written = 0;
 		int bo = 1;
-		//RConsole.println("Send to Flyport: "+out);
+		
 		while (written<len && bo>0) {
 			bo = RS485.hsWrite(out, written, len);
 			written += bo;
 			Delay.msDelay(1);
 		}
-		//bo = RS485.hsWrite(terminator, written+1, 1);
-		//written += bo;
 		return written;
 	}
 	
@@ -249,20 +242,14 @@ public class NXT2WIFI {
 	 * @param timeout How long to wait for a reply (in ms)
 	 */
 	private String commandWithReply(String cmd, int timeout) {
-	
-		if(debug) RConsole.println("tryCommand: cmd = " + cmd);
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
-
+		send(cmd);
 		Delay.msDelay(timeout);
 		String reply = readFully(false);
-		if(debug) RConsole.println("tryCommand reply <" + reply +">");
-	
+
 		// parse the reply to locate the '=' and extract everything from that point on as the reply
 		int equals = reply.indexOf("=")+1;
 		String ret = reply.substring(equals);
-		
-		if(debug) RConsole.println("tryCommand returning " + ret);
-		
+			
 		return ret;
 	}	
 	
@@ -310,9 +297,7 @@ public class NXT2WIFI {
 			mon.setDaemon(true);
 			mon.start();
 		}
-		
 		listeners.add(listener);
-		
 	}
 	
 	// When listener first added, create and start monitoring thread? Better to be always running and consuming?
@@ -1313,6 +1298,7 @@ public class NXT2WIFI {
 			
 				if(!NXT2WIFI.this.socketOpen[socketID])
 					return -1;
+				
 				send("$"+type+"R" + socketID + "?"+ len +"\n");
 				Delay.msDelay(50);
 		
@@ -1461,8 +1447,6 @@ public class NXT2WIFI {
 					throw new ArrayIndexOutOfBoundsException();
 				}
 				
-				RConsole.println("write: off="+off+" len="+len);
-				
 				// build the full data packet in one array
 				String cmd = "$"+type+"W" + socketID + "?"+ len +",";
 				
@@ -1477,8 +1461,7 @@ public class NXT2WIFI {
 				
 				// next we read in the reply and parse the header to know how many bytes were actually written
 				String replyHeader = readFully(true);
-				
-				if(debug) RConsole.println("write: replyHeader="+replyHeader);
+				//if(debug) RConsole.println("write: replyHeader="+replyHeader);
 				
 			}			
 		}
