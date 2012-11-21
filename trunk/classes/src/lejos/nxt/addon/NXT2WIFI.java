@@ -1,4 +1,4 @@
-package lejos.nxt.addon.dev;
+package lejos.nxt.addon;
 
 import java.io.IOException;
 import java.io.InputStream;
