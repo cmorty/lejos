@@ -1,7 +1,5 @@
 package org.lejos.sample.nxt2wificonnect;
 
-import java.io.IOException;
-
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.Sound;
@@ -60,7 +58,7 @@ public class N2W_setup {
 
 				LCD.drawString(wifi.connectionStatusToString(wifi.connectionStatus())+ "   ", 0, 3);
 				Sound.beepSequenceUp();
-				Delay.msDelay(3000);
+				while(!wifi.isDHCPAddressAssigned()) {Delay.msDelay(100);}
 				String ipAddr = wifi.getIPAddress();
 
 				LCD.drawString(ipAddr, 0, 4);
