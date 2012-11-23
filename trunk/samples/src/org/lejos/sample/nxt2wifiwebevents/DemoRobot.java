@@ -20,9 +20,9 @@ public class DemoRobot implements NXT2WiFiListener {
 	
 	// CUSTOM WI-FI PROFILE SETTINGS
 	boolean MY_ADHOC = false;
-	String MY_SSID = "YOUR_ROUTER_SSID_HERE";
+	String MY_SSID = "free_viruses";	//String MY_SSID = "YOUR_ROUTER_SSID_HERE";
 	//static String MY_WPA2_KEY = "d4d3a089b20d91ef62bd6045467556a9294355bf63e936e0bb0e952f31071f55";
-	String MY_WPA2_PASS = "YOUR_ROUTER_PASSPHRASE_HERE";
+	String MY_WPA2_PASS = "geocaching"; //String MY_WPA2_PASS = "YOUR_ROUTER_PASSPHRASE_HERE";
 	boolean MY_DHCP = true;
 	
 	private NXT2WIFI wifi;
@@ -108,9 +108,7 @@ public class DemoRobot implements NXT2WiFiListener {
 		//LCD.clear(4); // clear line 5
 		LCD.drawString("Connected!     ",0,3);
 		Sound.beepSequenceUp();
-		
-		// TODO: This didn't return actual IP first time. Gave 192.168.0.100.
-		// Ask Daniele about this.
+		while(!wifi.isDHCPAddressAssigned()) {Delay.msDelay(100);}
 		String ip = wifi.getIPAddress(); 
 		LCD.drawString(ip, 0, 4);
 		LCD.drawString("Hold ESC to Exit", 0, 5);
@@ -182,11 +180,6 @@ public class DemoRobot implements NXT2WiFiListener {
 			//}
 			//oldTachoValue[s] = tachoNow;
 		}
-		
-			
-		// flush the command replies
-		// flushRS485();
-		//wifi.clearReadBuffer(); // TODO: Ask Daniele if this is comparable to flushRS485().
 	}
 
 	// Controls steering in webEventReveived() method.
