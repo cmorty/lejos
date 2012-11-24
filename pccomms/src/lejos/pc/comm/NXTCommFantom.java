@@ -75,7 +75,10 @@ public class NXTCommFantom extends NXTCommUSB implements JNIClass {
         {
         	int ret=jfantom_read_data(nxt, data, offset, len);
             long now = System.currentTimeMillis();
-        	if (ret > 0 || now - startTime > MIN_TIMEOUT)
+            //TODO time out + ret==0 may result in return value of 0.
+            //Throw timeout exception instead. Confine java.net.Socket.setSoTimeout()
+            //TODO allow users to configure timeout (default off).
+        	if (ret != 0 || now - startTime > MIN_TIMEOUT)
         		return ret;
             if (errorCnt++ > MAX_ERRORS)
             	return -1;
