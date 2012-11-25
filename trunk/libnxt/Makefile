@@ -6,7 +6,7 @@ CFLAGS ?=
 CFLAGS += -std=c99 -Wall -fPIC -I "$(JNI_INCLUDE)" -I "$(JNI_INCLUDE_LINUX)"
 
 LDFLAGS ?=
-LDFLAGS += -s -shared -Wl,--version-script=syms.txt
+LDFLAGS += -s -shared -Wl,--version-script=symbols-gnu.txt
 
 FILES_IN_C:=$(wildcard *.c)
 FILES_OUT_D:=$(FILES_IN_C:.c=.d)
