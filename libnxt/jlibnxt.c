@@ -54,7 +54,9 @@ enum nxt_usb_ids {
 };
 
 
-static int initialised = 0;
+__attribute__((constructor)) static void ctor() {
+  usb_init();
+}
 
 /* Create the device address string. We use the same format as the
  * Lego Fantom device driver.
@@ -103,11 +105,6 @@ static usb_device_t *nxt_find_nth(int idx, char *address)
 {
   struct usb_bus *busses, *bus;
   address[0] = '\0';
-  if (!initialised)
-  {
-    usb_init();
-    initialised = 1;
-  }
   if (idx == 0)
   {
     usb_find_busses();
