@@ -29,7 +29,7 @@ clean:
 $(FILES_OUT_LIB): $(FILES_OUT_O)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc $(LDFLAGS) -o "$@" $(FILES_OUT_O)
+	gcc -o "$@" $(FILES_OUT_O) $(LDFLAGS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
