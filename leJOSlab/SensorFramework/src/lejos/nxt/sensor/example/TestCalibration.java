@@ -23,7 +23,7 @@ import lejos.util.NXTDataLogger;
  * <ol>
  * Accelerometer
  * <li>Wait till the sample settles, see the chart or display for this.</li>
- * <li>Press left</li>
+ * <li>Press sensorA</li>
  * <li>Tumble the sensor on all six sides and wait for the signal to settle on
  * each of the sides</li>
  * <li>Press enter to store calibration parameters</li>
@@ -31,7 +31,7 @@ import lejos.util.NXTDataLogger;
  * <ol>
  * Magnetometer
  * <li>Wait till the sample settles, see the chart or display for this.</li>
- * <li>Press left</li>
+ * <li>Press sensorA</li>
  * <li>Examine the NXTChartingLogger and try to get all three max lines as high
  * as possible by turning the sensor on all sides</li>
  * <li>Do the same to get the minimum lines as low as possible</li>
@@ -40,7 +40,7 @@ import lejos.util.NXTDataLogger;
  * <ol>
  * Gyro, offset only
  * <li>Wait till the sample settles, see the chart or display for this.</li>
- * <li>Press left</li>
+ * <li>Press sensorA</li>
  * <li>Keep the sensor still</li>
  * <li>Examine the NXTChartingLogger and wait till the min and max lines
  * stabilize.
@@ -50,7 +50,7 @@ import lejos.util.NXTDataLogger;
  * <ol>
  * Gyro, offset and scale
  * <li>Wait till the sample settles, see the chart or display for this.</li>
- * <li>Press left</li>
+ * <li>Press sensorA</li>
  * <li>center the sensor on a turntable</li>
  * <li>Start the turntable ;-)</li>
  * <li>Tumble the sensor on all six sides and wait for the signal to settle on

@@ -17,7 +17,7 @@ public class RotationMatrix extends Matrix3f {
 	 * The alignment of a sensor can be expressed as a series of rotations of the sensor where the sensor starts of aligned with the robot.
 	 * Each rotation is a rotation around one of the sensor axis. The position of a sensor that points backwards in an upward angle of 45 degrees for example
 	 * can be described with two subsequent rotations. The first rotation is 180 degrees around the Z-axis, the second rotation is 45 degrees around the Y-axis. <br>
-	 * Please note that the order of rotations does matter. Also note that this class uses the right hand system for rotations.
+	 * Please note that the order of rotations does matter. Also note that this class uses the sensorC hand system for rotations.
 	 * @param axis
 	 * The axis that the sensor has rotated around: X, Y or Z.
 	 * @param angle

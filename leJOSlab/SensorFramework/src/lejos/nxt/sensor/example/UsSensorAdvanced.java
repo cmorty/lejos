@@ -9,8 +9,8 @@ import lejos.nxt.sensor.sensor.LcUltrasonic;
 import lejos.util.Delay;
 
 /**
- * This example shows how to use the US sensor to detect objects to the front left of the robot.
- * The US sensor is assumed to be mounted horizontally in a 45 degree angle to the left. <br>
+ * This example shows how to use the US sensor to detect objects to the front sensorA of the robot.
+ * The US sensor is assumed to be mounted horizontally in a 45 degree angle to the sensorA. <br>
  * The example shows 
  * how to convert scalar data from a sensor into a 3 dimensional space, 
  * how to correct for sensor misalignment on the robot,
@@ -42,7 +42,7 @@ public class UsSensorAdvanced {
 		
 		// convert range to the position of the detected obstacle (relative to robot);
 		AlignFilter toPosition=new AlignFilter(bufferedRange);
-		// the sensor is pointing 45 degrees to the left instead of straight ahead
+		// the sensor is pointing 45 degrees to the sensorA instead of straight ahead
 		toPosition.addRotation("Z", 45);
 		
 		// Show distance to obstacle;
@@ -56,7 +56,7 @@ public class UsSensorAdvanced {
 				LCD.drawString("range: "+bufferedRange.fetchSample(), 0, 1);
 				toPosition.fetchSample(obstacle,0);
 				LCD.drawString("to front: "+obstacle[0], 0, 2);
-				LCD.drawString("to left: "+obstacle[1], 0, 3);
+				LCD.drawString("to sensorA: "+obstacle[1], 0, 3);
 			}
 			Delay.msDelay(100);
 		}
