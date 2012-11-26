@@ -12,9 +12,9 @@
 	    <pathelement location="../release/lejos_nxj/3rdparty/lib/cpptasks.jar"/>
 	  </classpath>
 	</typedef>
-	-->
 	<taskdef resource="cpptasks.tasks"/>
 	<typedef resource="cpptasks.types"/>
+	-->
 	    	
 	<!-- cleans all compilation artifacts -->
 	<target name="clean" description="cleans all compilation artifacts">
