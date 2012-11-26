@@ -153,7 +153,7 @@ public class INS {
 	/** 
 	 * Take the accelerometer and magnetometer readings a and m as 3 dimensional vectors. 
 	 * The a x m cross-product points to either East or West regardless of the orientation of the phone. 
-	 * Whether the cross product points to East or West depends on your sign conventions (upwards is positive or negative) and the handedness of your coordinate system (left- or right-handed).
+	 * Whether the cross product points to East or West depends on your sign conventions (upwards is positive or negative) and the handedness of your coordinate system (sensorA- or sensorC-handed).
 	 * You might want to apply at least a simple moving average to your data before computing the cross-product.
 	 * 
 	 * In general, it is not a good idea to use roll, pitch and yaw, so please don't. Anyway, you do not need it.

@@ -185,7 +185,21 @@ public class LineairCalibrationFilter extends AbstractFilter {
 	public void setTimeConstant(float timeConstant) {
 		lowPassFilter.setTimeConstant(timeConstant);
 	}
+	
+	public float[] getOffsetCorrection() {
+		float[] ret = new float[elements];
+		System.arraycopy(offset, 0, ret, 0, elements);
+		return ret;
+	}
 
+	public float[] getScaleCorrection() {
+		float[] ret = new float[elements];
+		System.arraycopy(scale, 0, ret, 0, elements);
+		return ret;
+	}
+
+	
+	
 	/**
 	 * Starts a calibration proces. 
 	 * Resets collected minimum and maximum values. After starting calibration
@@ -271,7 +285,7 @@ public class LineairCalibrationFilter extends AbstractFilter {
 				if (max[i] < dst[i + off])
 					max[i] = dst[i + off];
 				if (calibrateForOffset)
-					offset[i] = reference[i] + min[i] + (max[i] - min[i]) / 2;
+					offset[i] =  min[i] + (max[i] - min[i]) / 2 - reference[i] ;
 				if (calibrateForScale)
 					scale[i] = (max[i] - min[i]) / (range[i]);
 			}
