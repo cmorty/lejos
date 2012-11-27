@@ -32,6 +32,7 @@ public class LcUltrasonic extends I2CSensor implements SampleProvider, SensorInf
 		/* Device timing */
 		private static final int DELAY_CMD = 5;
 		private static final int DELAY_DATA_PING = 50;
+		private static final int DELAY_DATA_OTHER = 30;
 
 		private long nextCmdTime = 0;
 		private byte mode = MODE_CONTINUOUS;
@@ -105,6 +106,7 @@ public class LcUltrasonic extends I2CSensor implements SampleProvider, SensorInf
 					return byteBuff[0] & 0xff;
 				default:
 					getData(REG_DISTANCE, byteBuff, 1);
+					nextCmdTime = System.currentTimeMillis() + DELAY_DATA_OTHER;
 					return byteBuff[0] & 0xff;
 			}
 		}
