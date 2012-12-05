@@ -4,7 +4,8 @@ import lejos.nxt.sensor.api.*;
 import lejos.util.Delay;
 
 /**
- * The AutoSampler creates a seperate thread that fetches samples from a source at a fixed intervals.<p>
+ * The AutoSampler creates a separate thread that fetches samples from a source at 
+ * fixed intervals.<p>
  * 
  * @author Aswin
  *
@@ -48,7 +49,7 @@ public class AutoSampler extends AbstractFilter {
 	
 	
 	/**
-	 * Seperate thread to continuously update the buffer with most recent sensor
+	 * Separate thread to continuously update the buffer with most recent sensor
 	 * data at fixed interval.
 	 * 
 	 * @author Aswin Bouwmeester
@@ -75,10 +76,16 @@ public class AutoSampler extends AbstractFilter {
 
 	}
 
+	/**
+	 * @return rate in Hz
+	 */
 	public float getSampleRate() {
 		return sampleRate;
 	}
 
+	/**
+//	 * @param rate in Hz
+	 */
 	public void setSampleRate(float rate) {
 		sampleRate=rate;
 		interval=(int) (1000/sampleRate);
