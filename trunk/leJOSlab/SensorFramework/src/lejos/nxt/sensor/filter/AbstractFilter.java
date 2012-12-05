@@ -10,19 +10,26 @@ import java.util.StringTokenizer;
 import lejos.nxt.sensor.api.*;
 
 /**
- * Common base for SampleProvider implementations
+ * The common base for SampleProvider implementations
  * 
  * @author Kirk P. Thompson
  *
  */
 public abstract class AbstractFilter implements SampleProvider{
+	/**
+	 * The chained <code>SampleProvider</code> passed via the constructor
+	 */
 	protected final SampleProvider source;
+	/**
+	 * The number of discrete sensor or provider outputs/channels per <code>SampleProvider</code> (axes, etc.)
+	 */
 	protected int elements;
 	private float[] buf;
 	private FilterProperties filterProperties=null;
 
 	/**
-	 * Create a filter passing a source to be decorated
+	 * Create a filter passing a source to be chained via the decorator pattern.
+	 * 
 	 * @param source The source sensor/filter to be used
 	 */
 	public AbstractFilter(SampleProvider source){
@@ -47,9 +54,8 @@ public abstract class AbstractFilter implements SampleProvider{
 	
 	/**
 	 * Utility method to format floats to 4 characters, used for testing
-	 * @param in
-	 * @return
-	 * Formatted float value
+	 * @param in The value to format
+	 * @return Formatted float value
 	 */
 	protected String fmt(float in) {
 		//TODO: remove method 

@@ -5,7 +5,7 @@ import lejos.nxt.sensor.api.SampleProvider;
 public class DifferentiationFilter extends AbstractFilter {
 	float[] previous;
 	float[] sample;
-	long lastTime=0;
+	long lastTime=System.currentTimeMillis();
 	
 
 	public DifferentiationFilter(SampleProvider source) {
@@ -14,8 +14,9 @@ public class DifferentiationFilter extends AbstractFilter {
 		sample=new float[elements];
 	}
 
-	/* returns the defferential of the input signal. <P>
-	 * for example: position becomes speed
+	/** Returns the differential of the input signal. 
+	 * <P>
+	 * For example: Position becomes speed
 	 * 
 	 */
 	public void fetchSample(float[] dst, int off) {
