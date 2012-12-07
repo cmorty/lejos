@@ -7,7 +7,7 @@ import lejos.nxt.sensor.api.SampleProvider;
  * Compensates the wrap-around (e.g. from +180 to -180 or from 360 to 0 that
  * some sensors perform. Can be used for any wrap-around
  */
-public class WrapCompensationFIlter extends AbstractFilter {
+public class WrapCompensationFilter extends AbstractFilter {
 	private final float[] limits;
 	private final float[] buffer;
 	private final int[] wraps;
@@ -21,7 +21,7 @@ public class WrapCompensationFIlter extends AbstractFilter {
 	 *            for each axis: maximal value - minimal value of the sensor
 	 *            output, e.g. 360 for a sensor ranging from -180 to 180
 	 */
-	public WrapCompensationFIlter(SampleProvider source, float[] wrap) {
+	public WrapCompensationFilter(SampleProvider source, float[] wrap) {
 		super(source);
 		if (wrap.length < elements)
 			throw new IllegalArgumentException();
