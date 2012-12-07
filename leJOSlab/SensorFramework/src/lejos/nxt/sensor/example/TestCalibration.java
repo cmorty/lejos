@@ -93,7 +93,7 @@ public class TestCalibration {
 	}
 
 	public TestCalibration()  {
-		LineairCalibrationFilter calibrate= new LineairCalibrationFilter(sensor);
+		LinearCalibrationFilter calibrate= new LinearCalibrationFilter(sensor);
 		calibrate.load(NAME);
 		float[] sample=new float[sensor.getElementsCount()];
 

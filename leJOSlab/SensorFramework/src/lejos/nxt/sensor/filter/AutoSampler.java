@@ -15,13 +15,14 @@ public class AutoSampler extends AbstractFilter {
 	//TODO: add functionality to add listeners
 	
 	float[] buffer;
-	boolean	running	= true;
-	float	sampleRate;
-	int	interval;
-
+	boolean running	= true;
+	private float sampleRate;
+	int interval;
 	boolean newSampleAvailable=false;
 
 	/**
+	 * Create an instance and run at <code>sampleRate</code>.
+	 * 
 	 * @param source
 	 * A SampleProvider
 	 * @param sampleRate
@@ -31,6 +32,7 @@ public class AutoSampler extends AbstractFilter {
 		super(source);
 		setSampleRate(sampleRate);
 		buffer=new float[elements];
+		@SuppressWarnings("synthetic-access")
 		Runner runner = new Runner();
 		runner.setDaemon(true);
 		runner.start();
@@ -56,8 +58,6 @@ public class AutoSampler extends AbstractFilter {
 	 * 
 	 */
 	private class Runner extends Thread {
-
-
 		@Override
 		public void run() {
 			long nextTime=System.currentTimeMillis();
@@ -84,7 +84,7 @@ public class AutoSampler extends AbstractFilter {
 	}
 
 	/**
-//	 * @param rate in Hz
+	 * @param rate in Hz
 	 */
 	public void setSampleRate(float rate) {
 		sampleRate=rate;
@@ -92,11 +92,17 @@ public class AutoSampler extends AbstractFilter {
 	}
 
 
+	/**
+	 * Start the sampling (Default at instantiation)
+	 */
 	public void start() {
 		buffer=new float[elements];
 		running=true;
 	}
 
+	/**
+	 * Stop the sampling
+	 */
 	public void stop() {
 		running=false;
 	}
