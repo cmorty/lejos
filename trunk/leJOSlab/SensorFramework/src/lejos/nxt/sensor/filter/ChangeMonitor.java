@@ -43,10 +43,12 @@ public class ChangeMonitor extends AbstractFilter {
 		for (;i<buffer.length;i++){
 			if (Float.compare(buffer[i], dst[i+off]) != 0) break; 
 		}
-		// save for next comparison
-		System.arraycopy(dst, off, buffer, 0, elements);
-		// notify if changed
+		
+		// save new data and notify if changed
 		if (i<buffer.length) {
+			// save for next comparison
+			System.arraycopy(dst, off, buffer, 0, elements);
+			
 			if (listeners.size()==0) return;
 			for(SampleEventListener listener : listeners) {
 				listener.onValueChanged(buffer);
@@ -59,7 +61,7 @@ public class ChangeMonitor extends AbstractFilter {
 	 * @param listener A <code>SampleEventListener</code> object.
 	 */
 	public void registerListener(SampleEventListener listener){
-		if (listeners.contains(listener)) return; //ensure only one element per listener
+		if (listeners.contains(listener)) return; //ensure no duplicate listeners
 		listeners.add(listener);
 	}
 	
