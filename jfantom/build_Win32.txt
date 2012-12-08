@@ -19,4 +19,7 @@ Via Cygwin (mingw-w64 compilers):
 Via Windows SDK (Microsoft compilers):
 
 1) To be written.
-
+REM Use this batch file from a command prompt which is already setup for building x86 binaries.
+REM One possibility is to install the Windows SDK, and then chose the "Windows SDK Command Prompt" shortcut on the startmenu.
+REM The shortcut basically calls SetEnv.cmd. You might have to pass the parameter /x86 if you're on a 64bit machine.
+nmake /f Makefile.win32 LEJOS_NXT_WIN32_FANTOMSDK=<path> LEJOS_NXT_WIN32_JDK=<path> clean all

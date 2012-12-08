@@ -7,8 +7,6 @@ LEJOS_NXT_WIN32_DLLTOOL ?= $(shell "$(LEJOS_NXT_WIN32_GCC)" -print-prog-name=dll
 LEJOS_NXT_WIN32_CFLAGS ?= -m32 -O2 -Wall
 LEJOS_NXT_WIN32_DLLFLAGS ?= -mi386
 LEJOS_NXT_WIN32_FANTOMSDK ?=
-LEJOS_NXT_WIN32_FANTOMINC ?= $(LEJOS_NXT_WIN32_FANTOMSDK)/includes
-LEJOS_NXT_WIN32_FANTOMLIB ?= $(LEJOS_NXT_WIN32_FANTOMSDK)/targets/win32U/i386/msvc71/release
 LEJOS_NXT_WIN32_JDK ?=
 
 ifndef LEJOS_NXT_WIN32_FANTOMSDK
@@ -36,7 +34,7 @@ jfantom.dll: jfantom.cpp fantom.lib | jfantom.h
 	"$(LEJOS_NXT_WIN32_GCC)" $(LEJOS_NXT_WIN32_CFLAGS) \
 		-I"$(LEJOS_NXT_WIN32_JDK)/include" \
 		-I"$(LEJOS_NXT_WIN32_JDK)/include/win32" \
-		-I"$(LEJOS_NXT_WIN32_FANTOMINC)" \
+		-I"$(LEJOS_NXT_WIN32_FANTOMSDK)/includes" \
 		-shared -Wl,-s,--kill-at -o "$@" $^
 
 ### only needed for mingw32
