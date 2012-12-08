@@ -15,7 +15,7 @@ Via Cygwin (mingw-w64 compilers):
 
 
 Via Windows SDK 7.1 (Microsoft compilers)
-or Visual Studio 2012 (Microsoft compilers):
+or Visual Studio Express 2012 for Windows Desktop (Microsoft compilers):
 
 1a) Start a Windows SDK 7.1 Command Prompt (shortcut in startmenu)
     and run "setenv /x86"
@@ -28,3 +28,4 @@ or Visual Studio 2012 (Microsoft compilers):
 3) set LEJOS_NXT_WIN32_FANTOMSDK and LEJOS_NXT_WIN32_JDK environment variables
 
 4) run nmake /f Makefile.win32 clean all
+
