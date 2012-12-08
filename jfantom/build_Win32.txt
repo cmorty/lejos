@@ -6,20 +6,25 @@ Via Cygwin (mingw-w64 compilers):
 
 1) Install cygwin, including the packages mingw64-i686-gcc-g++ and make
 
-2) Install the latest Lego Fantom driver (1.1.3)
-
-3) Download the install the SDK from
+2) Download the latest SDK from
    http://mindstorms.lego.com/en-us/support/files/Advanced.aspx
 
-4) set LEJOS_NXT_WIN32_FANTOMSDK and LEJOS_NXT_WIN32_JDK environment variables
+3) set LEJOS_NXT_WIN32_FANTOMSDK and LEJOS_NXT_WIN32_JDK environment variables
 
-5) run make -f Makefile.mingw64 clean all 
+4) run make -f Makefile.mingw64 clean all 
 
 
-Via Windows SDK (Microsoft compilers):
+Via Windows SDK 7.1 (Microsoft compilers)
+or Visual Studio 2012 (Microsoft compilers):
 
-1) To be written.
-REM Use this batch file from a command prompt which is already setup for building x86 binaries.
-REM One possibility is to install the Windows SDK, and then chose the "Windows SDK Command Prompt" shortcut on the startmenu.
-REM The shortcut basically calls SetEnv.cmd. You might have to pass the parameter /x86 if you're on a 64bit machine.
-nmake /f Makefile.win32 LEJOS_NXT_WIN32_FANTOMSDK=<path> LEJOS_NXT_WIN32_JDK=<path> clean all
+1a) Start a Windows SDK 7.1 Command Prompt (shortcut in startmenu)
+    and run "setenv /x86"
+
+1b) Start a VS2012 x86 Native Tools Command Prompt (shortcut in startmenu)
+
+2) Download the latest SDK from
+   http://mindstorms.lego.com/en-us/support/files/Advanced.aspx
+
+3) set LEJOS_NXT_WIN32_FANTOMSDK and LEJOS_NXT_WIN32_JDK environment variables
+
+4) run nmake /f Makefile.win32 clean all
