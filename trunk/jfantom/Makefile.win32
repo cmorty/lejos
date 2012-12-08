@@ -22,5 +22,5 @@ jfantom.dll: fantom.lib jfantom.cpp
 	cl /LD \
 		/I "$(LEJOS_NXT_WIN32_JDK)\include" \
 		/I "$(LEJOS_NXT_WIN32_JDK)\include\win32" \
-		/I "$(LEJOS_NXT_WIN32_FANTOMSDK)/includes" \
+		/I "$(LEJOS_NXT_WIN32_FANTOMSDK)\includes" \
 		$**
