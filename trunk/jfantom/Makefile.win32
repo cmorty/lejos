@@ -1,0 +1,33 @@
+# This makefile is for use with Windows SDK or Visual Studio
+# TODO: have rule for fantom.h
+
+!ifndef TARGET_CPU
+!error TARGET_CPU is undefined.
+!endif
+!if "$(TARGET_CPU)"!="x86"
+!error Target CPU is $(TARGET_CPU) but should be x86
+!endif
+
+!ifndef LEJOS_NXT_WIN32_FANTOMSDK
+!error You have to set LEJOS_NXT_WIN32_FANTOMSDK
+!endif
+!ifndef LEJOS_NXT_WIN32_JDK
+!error You have to set LEJOS_NXT_WIN32_JDK
+!endif
+
+
+all: jfantom.dll
+
+clean:
+	del fantom.lib fantom.exp \
+		jfantom.dll jfantom.obj jfantom.lib jfantom.exp
+
+fantom.lib: $*.def
+	lib /MACHINE:$(TARGET_CPU) /DEF:$*.def
+
+jfantom.dll: fantom.lib jfantom.cpp
+	cl /LD \
+		/I "$(LEJOS_NXT_WIN32_JDK)\include" \
+		/I "$(LEJOS_NXT_WIN32_JDK)\include\win32" \
+		/I "$(LEJOS_NXT_WIN32_FANTOMSDK)/includes" \
+		$**
