@@ -17,8 +17,8 @@ import lejos.nxt.sensor.api.SampleProvider;
  * @author Kirk P. Thompson
  * @see SampleEventListener
  */
-public class ChangeMonitor extends AbstractFilter {
-	float[] buffer;
+public final class ChangeMonitor extends AbstractFilter {
+	private float[] buffer;
 	private ArrayList<SampleEventListener> listeners = new ArrayList<SampleEventListener>();
 	
 	public ChangeMonitor(SampleProvider source) {
@@ -36,6 +36,7 @@ public class ChangeMonitor extends AbstractFilter {
 	 * <code>dst[]</code> reference.
 	 * 
 	 */
+	
 	public void fetchSample(float[] dst, int off) {
 		this.source.fetchSample(dst, off);
 		int i=0;
