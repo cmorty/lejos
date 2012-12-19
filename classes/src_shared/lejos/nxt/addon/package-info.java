@@ -1,0 +1,4 @@
+/**
+ * Access to third party and legacy RCX sensors, motors and other hardware not included in the Lego NXT kit
+ */
+package lejos.nxt.addon;
