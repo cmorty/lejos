@@ -66,7 +66,7 @@ public class BarometricHTSensor extends I2CSensor {
 	}
 
 	/**
-	 * @return the temperature measured by the sensor in units of 1/10 °C.
+	 * @return the temperature measured by the sensor in units of 1/10 Â°C.
 	 */
 	public int getTemperature() {
 		final int result = Integer.MIN_VALUE;
