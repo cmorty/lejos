@@ -128,7 +128,7 @@ public class NXT2WIFI {
 	 * @param len The number of bytes to read into cbuf. Bytes are stored from cbuf[0] onwards
 	 * @return The number of bytes read
 	 */
-	public int readBytesFully(boolean wait, byte[] cbuf, int off, int len) {
+	private int readBytesFully(boolean wait, byte[] cbuf, int off, int len) {
 		boolean done = false;
 		int p = off;
 		int bytesRemaining = len;
@@ -144,7 +144,7 @@ public class NXT2WIFI {
 			}else{
 				if(!wait || (wait && (p>0 || System.currentTimeMillis()-time>cmdDelay ))){
 					done = true;
-					if (wait) System.out.println("timeout!");					
+					//if (wait) System.out.println("timeout!");					
 				}
 			}
 			Thread.yield();
@@ -305,7 +305,6 @@ public class NXT2WIFI {
 		byte[] cbuf = new byte[20];
 		public void run() {
 			while(true) {
-				// TODO: Read RS485 data
 				int total = readBytesFully(true, cbuf, 0, 20); // true = blocking. Why 20? Why not 7?
 				if (isWebEvent(cbuf)) { // Indicates web event
 					byte controlType = cbuf[3]; // e.g button = 0
@@ -1483,5 +1482,4 @@ public class NXT2WIFI {
 			}
 		}		
 	}
-
 }

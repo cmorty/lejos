@@ -15,6 +15,10 @@ public class ServerSocket {
 	private NXTConnection nxtc;
 	private final boolean isServer = true;
 	
+	protected ServerSocket() {
+		// This is a hack so DexterSocketServer can extend this class without starting a BT connection. 
+	}
+	
 	/**
 	 * Constructor. Creates a new Server Socket over a Bluetooth or USB connection
 	 * @param port The port to listen on
@@ -63,5 +67,9 @@ public class ServerSocket {
 		dos.close();
 		dis.close();
 		return new Socket();		
+	}
+	
+	public void close() {
+		// TODO: This would be a good method to implement.
 	}
 }
