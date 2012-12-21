@@ -1,7 +1,13 @@
 package lejos.nxt.addon;
 
 import java.io.IOException;
-
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import javax.net.ServerSocketFactory;
+import lejos.nxt.Button;
 import lejos.nxt.comm.RS485;
 import lejos.util.Delay;
 
@@ -36,7 +42,9 @@ import lejos.util.Delay;
  */
 @Deprecated
 public class DexterWifiSensor {
-
+	
+	private DexterWifiSensor wifi_instance = this; // Accessed by inner classes DexterServerSocketFactory and DexterServerSocket 
+	
 	public final static int 	BAUD0_9600 = 0,
 								BAUD1_19200 = 1, 
 								BAUD2_38400 = 2, 
@@ -102,7 +110,11 @@ public class DexterWifiSensor {
 /*==========================================================================
  * Public Methods: 
  *==========================================================================*/
-
+	private ServerSocketFactory dssf = new DexterServerSocketFactory();
+	public ServerSocketFactory getServerSocketFactory() {
+		return dssf;
+	}
+	
 	/**
 	 * Get the array of availabe baudrates for the sensor (in bits pr. second).
 	 * @return The array of available baudrates for the sensor.
@@ -311,7 +323,7 @@ public class DexterWifiSensor {
 		String response = null;
 		for (int attemts = 3; attemts > 0; attemts--) {
 			response = removeLeadingLineshift(commandTransaction("AT+WA="+SSID));
-			//Se if we got the OK response in the read:
+			//See if we got the OK response in the read:
 			for (int i = 0; i < response.length(); i++) {
 				if(response.substring(i).startsWith("OK\r\n")){
 					String ipInfo = parseIpTable(response);
@@ -488,6 +500,86 @@ public class DexterWifiSensor {
 			}
 		}
 		return response;
+	}
+	
+	private boolean recordData = false; // global so that next time readTCPData is called it will continue adding data.
+	private boolean escape_flag = false; // used in case buffer data breaks mid-escape sequence
+	private boolean s_char_flag = false;
+	
+	/**
+	 * Loop that looks for ESC character, then S, then parses data until ESC-E.
+	 * 	
+	 * @param buffer
+	 * @param length
+	 * @param wait
+	 * @return
+	 */
+	public int readTCPData(byte [] buffer, int length, boolean wait) {
+		// STEP 1: Get some bytes from the buffer
+		byte [] tempBuf = new byte[length];
+		int bytesRead = -1;
+		do {
+			bytesRead = RS485.hsRead(tempBuf, 0, length);
+			if(bytesRead > 0) wait = false;
+			Delay.msDelay(50); // TODO: This introduces latency when we might want to minimize latency. Ask Sven.
+		} while(wait);
+		
+		int tempIndex = 0;
+		int bufIndex = 0;
+		
+		// TODO: If ESC-ESC is sent, and only the first ESC makes it, this could screw up. Not going to worry about it
+		// right now since it would be very rare situation.
+		
+		//for(int i=0;i<bytesRead;i++)
+		//	System.out.print(tempBuf[i] + ", ");
+		//System.out.println(" PRESS ENTER");
+		//Button.ENTER.waitForPressAndRelease();
+		
+		// STEP 2: Analyze the bytes for escape character sequences and pull out raw data.
+		// This loop will copy bytes to the buffer, ignoring escape characters (except ESC-ESC). It will also
+		// ignore data not sandwiched between ESC-S and ESC-E. Will work even if tempBuffer does not contain full packet.
+		// If packet is not complete with ESC-start and ESC-end characters, it will still continue when next
+		// packet received.
+		analyze_loop:while(tempIndex < bytesRead) {
+			if(tempBuf[tempIndex] == ESC||escape_flag) {
+				if(!escape_flag) {
+					tempIndex++;
+					escape_flag = true;
+				}
+				if(tempIndex >= bytesRead) { // this means it ran out of data right after an escape sequence
+					break analyze_loop;
+				}
+				// Set mode to begin copying characters into buffer
+				if (tempBuf[tempIndex] == 'S'||s_char_flag) {
+					recordData = true; // start
+					if(!s_char_flag) {
+						tempIndex++;
+						s_char_flag = true;
+					}
+					if(tempIndex >= bytesRead) { // this means it ran out of data right after an escape sequence
+						break analyze_loop;
+					}
+					// Get connection ID. Not currently used for anything. 
+					int connID = conIdCharToInt((char)tempBuf[tempIndex]);
+					// TODO: Multiple server connections will need to use connection ID to sort out who sent data to which InputStream.
+					tempIndex++;
+				}
+				if (tempBuf[tempIndex] == 'E') {
+					recordData = false; // stop
+				}
+				escape_flag = false;
+				s_char_flag = false;
+			} 
+			
+			// Ignore data unless in recordData mode.
+			// NOTE: This WILL receive ESC character properly if ESC-ESC sent.
+			if(recordData) {
+				buffer[bufIndex++] = tempBuf[tempIndex];
+			}
+			tempIndex++;
+		}
+		
+		return bufIndex; // bufIndex will equal bytes received when done
 	}
 	
 	public String commandTransaction(String command){
@@ -697,4 +789,176 @@ public class DexterWifiSensor {
 		public void println(String m);
 	}
 	
+	private class DexterServerSocketFactory extends ServerSocketFactory {
+
+		@Override
+		public ServerSocket createServerSocket(int port) {
+			DexterServerSocket ss = null;
+			try {
+				ss = new DexterServerSocket(port, wifi_instance);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return ss;
+		}
+	}
+	
+	/**
+	 * ServerSocket for the Dexter WiFi Sensor. In order to use this, the WiFi must be connected to a WiFi router
+	 * otherwise it will throw an exception.,
+	 * 
+	 * @author BB
+	 *
+	 */
+	private class DexterServerSocket extends ServerSocket {
+		private int serverConID; //The connection ID of our TCP Server
+		private int clientConID;//The connection ID of the incoming connection.
+		private int port;
+		DexterWifiSensor wifi;
+		private boolean isClosed = true; // If any TCP connections have been established, will be false.  
+		
+		/**
+		 * 
+		 * @param port
+		 * @param wifi An instance of the wifi sensor, must be connected.
+		 * @throws IOException No connection with WiFi causes exception.
+		 */
+		public DexterServerSocket(int port, DexterWifiSensor wifi)  throws IOException {
+			// TODO: Check if connected. If not, throw exception.
+			super();
+			//Start a TCP server on the wifi sensor:
+			this.wifi = wifi;
+			this.port = port;
+			serverConID = wifi.startTCPServer(port);
+		}
+
+		public void close() {
+			wifi.closeAllConns(); 
+			this.isClosed = true;
+		}
+		
+		public boolean isClosed() {
+			return isClosed;
+		}
+		
+		public Socket accept() throws IOException {
+			String input = wifi.readFully(true); // TODO: Probably do false and loop? Because might not get CONNECT. 
+			//Sound.beepSequenceUp();
+			if(input.length() > 0){
+				//System.out.println("Received:");
+				//System.out.println(input);
+				//Search input for incoming connection to our TCP-Server:
+				int i = input.indexOf("CONNECT "+DexterWifiSensor.intToConIDChar(serverConID)); 
+					
+				if(i >= 0){
+					//Found incoming connection:
+						
+					//Get the connection id of the incoming connection:
+					clientConID = DexterWifiSensor.conIdCharToInt(input.charAt(i+10));
+					if(clientConID >= 0){
+						//We have a valid connection from a client
+						//Search for a HTTP GET command:
+						//if(input.indexOf("GET /") > 0){
+							//We have received a HTTP Get:
+							//Send webpage:
+							//LCD.drawString("Sending page...      ", 0, 5);
+							//webpage = HTTP_HEADER + "<html><body>Your first LeJOS webpage!<br/>battery = "+Battery.getVoltage()+"</body></html>";
+							//RConsole.println("Sending content:");
+							isClosed = false;
+							//String webpage = "howdy partner!";	
+							//wifi.sendTCPData(clientConID, webpage);
+							//Delay.msDelay(100);
+							//serverConID = wifi.startTCPServer(port); // TODO: really? Start TCP server again?! 
+							//}
+							
+						}
+						
+					}
+				}
+			
+				return new DexterSocket(clientConID, wifi_instance);
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * @author BB
+	 *
+	 */
+	private class DexterSocket extends Socket {
+		public static final int BUFFER_SIZE = 64; 
+		
+		private int clientConID;
+		private DexterWifiSensor wifi = null;
+		
+		DexterSocket(int clientConID, DexterWifiSensor wifi) {
+			this.clientConID = clientConID;
+			this.wifi = wifi;
+		}
+		
+		public InputStream getInputStream() {
+			// TODO: Technically there should be only one of each of these objects? Return same object each time this is called.
+			return new DexterInputStream(BUFFER_SIZE);
+			
+		}
+		
+		public OutputStream getOutputStream() {
+			return new DexterOutputStream();
+			
+		}
+		
+		private class DexterOutputStream extends OutputStream {
+
+			@Override
+			public void write(int b) throws IOException {
+				// TODO: Inefficient to send whole array with one byte each time. 
+				// Instead, just add byte to internal buffer. Override write(byte[], int, int). 
+				// Find optimal packet size for TCP/IP. Send data only when it reaches that size 
+				// or when flush() called. Flush needs to be implemented. 
+				byte [] data = {(byte)b};
+				wifi.sendTCPData(clientConID, data,0,0);
+			}
+		}
+		
+		private class DexterInputStream extends InputStream {
+
+			private byte buf[];
+			private int bufIdx = 0; // Current index of the buffer
+			private int bufSize = 0; // Current number of bytes sitting in buf (the data buffer)
+					
+			public DexterInputStream(int bufferSize) {
+				buf = new byte[bufferSize];
+			}
+			
+			@Override
+			public int read() throws IOException {
+				// Internal explanation: It reads all available bytes from wifi. Then it doesn't read anything until
+				// the buffer is used up, at which time it reads more. So in other words, if it reads 20 (or up to 64),
+				// it chews on that until all 20 read, then it retrieves more data from the WiFi.
+				if (bufIdx >= bufSize) bufSize = 0;
+				if (bufSize <= 0) {
+				   bufSize = wifi.readTCPData(buf, buf.length, true);
+		           System.out.println("bufSize " + bufSize);
+				   if (bufSize < -1) throw new IOException();
+				   if (bufSize <= 0) return -1;
+				   bufIdx = 0;
+			   }
+				return buf[bufIdx++] & 0xFF;
+			
+			}
+			
+			public int available() throws IOException {
+				if (bufIdx >= bufSize) bufSize = 0;
+			       if (bufSize == 0) {
+			    	   bufIdx = 0;
+			    	   bufSize = wifi.readTCPData(buf, buf.length, false);
+			           if (bufSize < -1) throw new IOException();
+			           if (bufSize < 0) bufSize = 0;
+			       }
+			       return bufSize - bufIdx;
+			}
+		}
+	}
+
 }

@@ -108,7 +108,7 @@ public class DemoRobot implements NXT2WiFiListener {
 		//LCD.clear(4); // clear line 5
 		LCD.drawString("Connected!     ",0,3);
 		Sound.beepSequenceUp();
-		while(!wifi.isDHCPAddressAssigned()) {Delay.msDelay(100);}
+		while(!wifi.isDHCPAddressAssigned()) {Delay.msDelay(500);}
 		String ip = wifi.getIPAddress(); 
 		LCD.drawString(ip, 0, 4);
 		LCD.drawString("Hold ESC to Exit", 0, 5);

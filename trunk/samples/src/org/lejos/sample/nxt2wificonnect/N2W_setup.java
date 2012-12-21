@@ -58,7 +58,7 @@ public class N2W_setup {
 
 				LCD.drawString(wifi.connectionStatusToString(wifi.connectionStatus())+ "   ", 0, 3);
 				Sound.beepSequenceUp();
-				while(!wifi.isDHCPAddressAssigned()) {Delay.msDelay(100);}
+				while(!wifi.isDHCPAddressAssigned()) {Delay.msDelay(500);}
 				String ipAddr = wifi.getIPAddress();
 
 				LCD.drawString(ipAddr, 0, 4);
