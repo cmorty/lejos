@@ -414,6 +414,9 @@ The kit is scheduled for launch in September 2006 but they will be releasing 100
 					target="_blank" class="esmeta">Esmeta</a> 1997-2009</td>
 			</tr>
 		</table>
+<!-- QuickLink for projecthoneypot.org, used for Anti-SPAM in forums -->
+<span style="display: none;"><a href="http://www.empoweredmenu.com/slashandburnallarou.php?languageid=52">forums</a></span>
+<!-- Google Analytics -->
 <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
 </script>
 <script type="text/javascript">
