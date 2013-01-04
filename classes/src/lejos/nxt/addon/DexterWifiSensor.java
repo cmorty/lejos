@@ -829,6 +829,8 @@ public class DexterWifiSensor {
 			//Start a TCP server on the wifi sensor:
 			this.wifi = wifi;
 			this.port = port;
+			// TODO: It's possible this will need to be called at start of accept() every time, rather than here.
+			// TODO: The previous code seems to indicate that.
 			serverConID = wifi.startTCPServer(port);
 		}
 
@@ -842,11 +844,9 @@ public class DexterWifiSensor {
 		}
 		
 		public Socket accept() throws IOException {
-			String input = wifi.readFully(true); // TODO: Probably do false and loop? Because might not get CONNECT. 
-			//Sound.beepSequenceUp();
+			String input = wifi.readFully(true); // TODO: Probably change true to false and loop? Because might not get CONNECT. 
+			
 			if(input.length() > 0){
-				//System.out.println("Received:");
-				//System.out.println(input);
 				//Search input for incoming connection to our TCP-Server:
 				int i = input.indexOf("CONNECT "+DexterWifiSensor.intToConIDChar(serverConID)); 
 					
@@ -857,26 +857,13 @@ public class DexterWifiSensor {
 					clientConID = DexterWifiSensor.conIdCharToInt(input.charAt(i+10));
 					if(clientConID >= 0){
 						//We have a valid connection from a client
-						//Search for a HTTP GET command:
-						//if(input.indexOf("GET /") > 0){
-							//We have received a HTTP Get:
-							//Send webpage:
-							//LCD.drawString("Sending page...      ", 0, 5);
-							//webpage = HTTP_HEADER + "<html><body>Your first LeJOS webpage!<br/>battery = "+Battery.getVoltage()+"</body></html>";
-							//RConsole.println("Sending content:");
-							isClosed = false;
-							//String webpage = "howdy partner!";	
-							//wifi.sendTCPData(clientConID, webpage);
-							//Delay.msDelay(100);
-							//serverConID = wifi.startTCPServer(port); // TODO: really? Start TCP server again?! 
-							//}
-							
-						}
-						
+						isClosed = false;
 					}
+						
 				}
+			}
 			
-				return new DexterSocket(clientConID, wifi_instance);
+			return new DexterSocket(clientConID, wifi_instance);
 		}
 		
 	}
