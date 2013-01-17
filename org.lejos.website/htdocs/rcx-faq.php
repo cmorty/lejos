@@ -113,11 +113,11 @@
             a Lego robot with Java!</td>
         </tr>
         <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
 
         </tr>
         <tr> 
-          <td valign="top" colspan="2"><img src="assets/images/spacer.gif" width="2" height="8" border="0" /></td>
+          <td valign="top" colspan="2"><img src="r_media/images/transparent_pixel.gif" width="2" height="8" border="0" /></td>
         </tr>
         <tr valign="top"> 
           <td>Q:</td>
@@ -133,7 +133,7 @@
         </tr>
 
 <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
         </tr>
 
 <tr valign="top"> 
@@ -148,10 +148,10 @@
 
 
         <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
         </tr>
         <tr> 
-          <td valign="top" colspan="2"><img src="assets/images/spacer.gif" width="2" height="8" border="0" /></td>
+          <td valign="top" colspan="2"><img src="r_media/images/transparent_pixel.gif" width="2" height="8" border="0" /></td>
         </tr>
         <tr valign="top"> 
           <td>Q:</td>
@@ -164,11 +164,11 @@
             &nbsp; &nbsp; <code>long free = Runtime.getRuntime().freeMemory();</code></td>
         </tr>
         <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
 
         </tr>
         <tr> 
-          <td valign="top" colspan="2"><img src="assets/images/spacer.gif" width="2" height="8" border="0" /></td>
+          <td valign="top" colspan="2"><img src="r_media/images/transparent_pixel.gif" width="2" height="8" border="0" /></td>
         </tr>
         <tr valign="top"> 
           <td>Q:</td>
@@ -184,11 +184,11 @@
         </tr>
 
         <tr> 
-          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+          <td valign="top" colspan="2" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
         </tr>
 
         <tr> 
-          <td valign="top" colspan="2"><img src="assets/images/spacer.gif" width="2" height="8" border="0" /></td>
+          <td valign="top" colspan="2"><img src="r_media/images/transparent_pixel.gif" width="2" height="8" border="0" /></td>
         </tr>
       </table>
       </div>

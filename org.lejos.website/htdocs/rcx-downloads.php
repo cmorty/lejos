@@ -103,7 +103,7 @@
 
         </tr>
         <tr> 
-          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
         </tr>
         <tr> 
           <td valign="top">Download <a href="http://prdownloads.sourceforge.net/lejos/lejos_win32_2_1_0.zip?download">version 
@@ -125,7 +125,7 @@
 
         </tr>
         <tr> 
-          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
         </tr>
         <tr> 
           <td valign="top">Download <a href="http://prdownloads.sourceforge.net/lejos/lejos_2_1_0.tar.gz?download">version 
@@ -145,7 +145,7 @@
 				
 				        </tr>
 				        <tr> 
-				          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+				          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
 				        </tr>
 				        <tr> 
 				          <td valign="top">Other releases, notes, dates and sizes are available 

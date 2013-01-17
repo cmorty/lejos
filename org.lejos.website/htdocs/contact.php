@@ -102,7 +102,7 @@
           <td><b>leJOS Forums</b></td>
         </tr>
         <tr> 
-          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
         </tr>
         <tr> 
           <td>Please contact us via the <a href="forum/">forum</a>. Go there, if you have questions, would like to report a bug,
@@ -117,7 +117,7 @@
           <td valign="top"><b>developers</b></td>
         </tr>
         <tr> 
-          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+          <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
         </tr>
         <tr> 
           <td height="88" valign="top">If you would like to contribute to this 
