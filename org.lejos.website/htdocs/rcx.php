@@ -57,7 +57,7 @@
 						<li><a href="index.php" class="menuLink">Home</a></li>
 						<li>NXT Brick
 						<ul class="menu_l1">
-							<li><a class="menuLink" href="../nxt/nxj/nxj.php" >leJOS NXJ</a>
+							<li><a class="menuLink" href="nxj.php" >leJOS NXJ</a>
 							<ul class="menu_l2">
 								<li><a href="nxt/nxj/api/index.html" class="menuLink" target="_blank">API</a></li>
 								<li><a href="nxt/pc/api/index.html" class="menuLink">PC API</a></li>
