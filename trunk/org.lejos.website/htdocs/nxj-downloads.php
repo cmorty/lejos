@@ -99,7 +99,7 @@
 						  <td valign="top" style="padding-top: 2ex"><b>leJOS NXJ for Windows, Linux, and Mac OS&nbsp;X</b></td>
 						</tr>
 						<tr> 
-						  <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+						  <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
 						</tr>
 						<tr> 
 						  <td valign="top"><br/><a href="http://sourceforge.net/projects/lejos/files/lejos-NXJ/" target="_blank">Download the file for your OS from Sourceforge.</a>
@@ -122,7 +122,7 @@
 						  	<b>Download Area at Sourceforge</b></td>
 						</tr>
 						<tr> 
-						  <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="assets/images/spacer.gif" width="2" height="2" border="0" /></td>
+						  <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
 						</tr>
 						<tr> 
 						  <td valign="top"><br />Other releases, notes, dates and sizes are available 
