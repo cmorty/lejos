@@ -42,15 +42,17 @@ public class DLights {
 	 * returns are nly useful if one needs to access the dLight directly over I2C.
 	 * 
 	 * @param lightNo
-	 *          The sequence number of the dLight (0-4).
+	 *          The sequence number of the dLight (1-4). Please note that the group number 0 is invalid for this method.
 	 * @return the I2C driver for a single dLight
 	 */
 	public DLight getDLight(int lightNo) {
+		if (1>lightNo || lightNo>4)
+			throw new IllegalArgumentException();
 		return dLights[lightNo];
 	}
 
 	/**
-	 * Enables the dLight.
+	 * Enables the dLight. <p>
 	 * 
 	 * @param lightNo
 	 *          The sequence number of the dLight (0-4).
@@ -62,8 +64,8 @@ public class DLights {
 	}
 
 	/**
-	 * Disables the dLight. Values for color and blinking pattern are not
-	 * overwritten and will still be in effect after enabling the dLight again.
+	 * Disables the dLight. The light will be off, no matter what values for color are sent to the dLight.
+	 * <p> Values for color and blinking pattern are not overwritten and will still be in effect after enabling the dLight again.
 	 * 
 	 * @param lightNo
 	 *          The sequence number of the dLight (0-4).
@@ -192,12 +194,12 @@ public class DLights {
 	 * (fully off) and 255 (fully on).
 	 * 
 	 * @param lightNo
-	 *          The sequence number of the dLight (0-4).
+	 *          The sequence number of the dLight (1-4). Please note that the group number 0 is invalid for this method.
 	 * @param rgb
 	 *          the RGB color of the LED
 	 */
 	public void getColor(int lightNo, int[] rgb) {
-		if (0>lightNo || lightNo>4)
+		if (1>lightNo || lightNo>4)
 			throw new IllegalArgumentException();
 		dLights[lightNo].getColor(rgb);
 	}
@@ -222,11 +224,11 @@ public class DLights {
 	 * has two leads broken out that can be used to drive an external LED.
 	 * 
 	 * @param lightNo
-	 *          The sequence number of the dLight (0-4).
+	 *          The sequence number of the dLight (1-4). Please note that the group number 0 is invalid for this method.
 	 * @return The return value is between 0 (fully off) and 255 (fully on).
 	 */
 	public int getExternalLED(int lightNo) {
-		if (0>lightNo || lightNo>4)
+		if (1>lightNo || lightNo>4)
 			throw new IllegalArgumentException();
 		return dLights[lightNo].getExternalLED();
 	}
