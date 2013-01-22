@@ -29,7 +29,6 @@ public class DLights {
 	 *          The I2CPort that the dLights are attached to.
 	 */
 	public DLights(I2CPort port) {
-		port.i2cEnable(I2CPort.HIGH_SPEED);
 		for (int i = 0; i < 5; i++)
 			dLights[i] = new LED(port, address[i]);
 	}
@@ -262,8 +261,7 @@ public class DLights {
 		private byte[]	buf	= new byte[4];
 
 		protected LED(I2CPort port, int address) {
-			super(port);
-			this.address = address;
+			super(port, address, I2CPort.HIGH_SPEED, TYPE_LOWSPEED);
 			setRegister(MODE1, MODE1MASK);
 			setRegister(MODE2, MODE2MASK);
 			setRegister(LEDOUT, BLINKINGOFF);

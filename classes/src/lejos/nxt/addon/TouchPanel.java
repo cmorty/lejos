@@ -3,6 +3,7 @@ package lejos.nxt.addon;
 import java.awt.Point;
 import java.util.ArrayList;
 
+//TODO move all graphics stuff out of this class, so that it can be shared by classes and pccomms 
 import javax.microedition.lcdui.Graphics;
 
 import lejos.nxt.Button;
@@ -97,9 +98,7 @@ public class TouchPanel extends I2CSensor {
 	 * @param port the port the sensor is attached to
 	 */
 	public TouchPanel(I2CPort port) {
-		super(port);
-		port.setMode(I2CPort.HIGH_SPEED);
-		this.address = TP_ADDRESS;
+		super(port, TP_ADDRESS, I2CPort.HIGH_SPEED, TYPE_LOWSPEED);
 		R1 = new VirtualButton (this,BTN_R1);
 		R2 = new VirtualButton (this,BTN_R2);
 		R3 = new VirtualButton (this,BTN_R3);
