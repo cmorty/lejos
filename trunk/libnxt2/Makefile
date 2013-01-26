@@ -7,7 +7,7 @@ CFLAGS ?=
 CFLAGS += -std=c99 -Wall -fPIC -I "$(JNI_INCLUDE)" -I "$(JNI_INCLUDE_LINUX)" -I "$(LIBUSB_INCLUDE)"
 
 LDFLAGS ?=
-LDFLAGS += -s -shared -lusb-1.0 -Wl,--version-script=symbols-gnu.txt
+LDFLAGS += -s -shared -Wl,--version-script=symbols-gnu.txt
 
 FILES_IN_C:=$(wildcard *.c)
 FILES_OUT_D:=$(FILES_IN_C:.c=.d)
@@ -30,7 +30,7 @@ clean:
 $(FILES_OUT_LIB): $(FILES_OUT_O)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc $(LDFLAGS) -o "$@" $(FILES_OUT_O)
+	gcc $(LDFLAGS) -o "$@" $(FILES_OUT_O) -lusb-1.0
 	@echo 'Finished building target: $@'
 	@echo ' '
 

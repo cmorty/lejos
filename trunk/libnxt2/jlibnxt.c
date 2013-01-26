@@ -53,14 +53,16 @@ enum nxt_usb_ids {
 };
 
 
-static libusb_context *context;
+static libusb_context *context = NULL;
 
 __attribute__((constructor)) static void ctor() {
-	libusb_init(&context);
+  //printf("%p\n", context);
+  libusb_init(&context);
+  //printf("%p\n", context);
 }
 __attribute__((destructor)) static void dtor() {
-	libusb_exit(context);
-	context = NULL;
+  libusb_exit(context);
+  context = NULL;
 }
 
 
