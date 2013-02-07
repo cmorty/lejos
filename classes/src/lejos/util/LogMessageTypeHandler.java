@@ -5,14 +5,13 @@ package lejos.util;
  * messages from <code>LogMessageManager</code>.
  * <p>
  * A corresponding protocol handler subclass of 
- * <code>lejos.pc.charting.AbstractTunneledMessagePanel</code> must be implemented on the PC-side 
+ * <code>lejos.pc.charting.extensions.AbstractTunneledMessagePanel</code> must be implemented and 
+ * configured on the PC-side 
  * NXT Charting Logger 
  * to do anything useful with the messages that are produced with subclasses of this class. 
  * <p>
- * At this time,
- * there is no mechanism to dynamically load <code>lejos.pc.charting.AbstractTunneledMessagePanel</code>
- * implementations so any new extensions will have be built into 
- * <code>lejos.pc.charting.ExtensionGUIManager.activateHandler(int, int)</code>.
+ * There are the <code>SimpleDrive</code>, <code>LoggerDebugConsole</code>, and <code>PIDTuner</code>
+ * extensions that are available.
  * 
  * @author Kirk P. Thompson, 5/4/2012
  * @version 0.1

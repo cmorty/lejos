@@ -1,7 +1,10 @@
 package lejos.util;
 
 /**
- * Create a class that implements <code>SimpleDriveProvider</code> and register it along with 
+ * Simple robot driving extension for NXT Charting Logger.
+ * <P>
+ * Create a class that implements <code>SimpleDriveProvider</code> and register it with an 
+ * instance of this class (via the constructor) along with 
  * the <code>LogMessageManager</code> singleton to enable 
  * NXT Charting Logger to display a driver interface to drive your robot.
  * 
