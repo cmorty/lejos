@@ -8,6 +8,24 @@ package lejos.util;
  * Logger PID tuning 
  * <code>lejos.pc.charting.PanelPIDTune</code> displays. Your implementation may differ so code
  * accordingly.
+ * <p>
+ * Example showing how to use <code>PIDTuner</code> with a <code>PIDTuningProvider</code> 
+ * implementation that you provide: <pre>
+ *    NXTDataLogger dlog = new NXTDataLogger();
+ *    NXTConnection conn = Bluetooth.waitForConnection(5000, NXTConnection.PACKET);
+ *    try {
+ *        dlog.startRealtimeLog(conn);
+ *    } catch (IOException e) {
+ *        // Do nothing
+ *    }
+ *       
+ *    // Test passthrough message management and PID tuning framework
+ *    LogMessageManager lmm = LogMessageManager.getLogMessageManager(dlog);
+ *    PIDTuningProvider myPIDTuner = new &lt;your class that implements PIDTuningProvider&gt;();
+ *    PIDTuner pidTuner = new PIDTuner(myPIDTuner, lmm);
+ *    pidTuner.setDisplayName("Test of my PID tuner implementation!");
+ *    ...
+ * </pre>
  * 
  * @author Kirk P. Thompson
  * @see PIDTuner
