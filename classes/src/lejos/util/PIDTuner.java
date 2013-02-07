@@ -6,7 +6,7 @@ package lejos.util;
  * <code>PIDController</code> class or your own custom PID tuning class.
  * <p>
  * You can create your own PID tuning implementation
- * by implementing <code>PIDTuner</code> in your class and passing an instance of it to the 
+ * by implementing <code>PIDTuningProvider</code> in your class and passing an instance of it to the 
  * <code>{@link PIDTuner#PIDTuner(PIDTuningProvider, LogMessageManager)}</code> constructor.
  * 
  * @author Kirk P. Thompson
@@ -21,7 +21,7 @@ public class PIDTuner extends LogMessageTypeHandler {
 	 * Create a <code>PIDTuner</code> instance using a passed implementation of <code>PIDTuningProvider</code> and
 	 * the <code>LogMessageManager</code> singleton instance. 
 	 * 
-	 * @param tuner The instantiated <code>PIDTuner</code> implementation
+	 * @param tuner The instantiated <code>PIDTuningProvider</code> implementation
 	 * @param lmm The <code>LogMessageManager</code> singleton. See {@link LogMessageManager#getLogMessageManager(NXTDataLogger)}.
 	 * @see PIDTuningProvider
 	 */
