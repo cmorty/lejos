@@ -10,7 +10,7 @@ import java.io.DataInputStream;
  * all responsiblity for closing the <code>DataInputStream</code>. 
  * <p>
  * 
- * <code>lejos.pc.charting.DataLogger</code> is the PC-side coordinator
+ * <code>lejos.pc.charting.LoggerProtocolManager</code> is the PC-side coordinator
  * 
  * @author Kirk P. Thompson
  *

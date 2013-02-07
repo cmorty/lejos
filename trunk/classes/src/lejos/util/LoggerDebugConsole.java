@@ -1,7 +1,7 @@
 package lejos.util;
 
 /**
- * Debug message handler to output messages to the NXT Charting Logger Debug Output Console.
+ * Debug message handler extension to output messages to the NXT Charting Logger Debug Output Console.
  * 
  * @author Kirk P. Thompson
  * @see LogMessageManager
