@@ -260,6 +260,52 @@ public final class Math
 		// either a or b must be NaN
 		return Double.NaN;
 	}
+	
+	/*========================= nextAfter functions ========================*/
+	
+	public static double nextAfter(double x, double y) {
+		if (x!=x || y!=y)
+			return Double.NaN;
+		if (x == y)
+			// also catches if x and y are both signed zeros
+			return y;
+		if (x == 0)
+			// y != 0 since catched earlier
+			return (y > 0) ? Double.MIN_VALUE : -Double.MIN_VALUE;
+		
+		// Note: y != x
+		long tmp = Double.doubleToRawLongBits(x);
+		int add = (y > x) ? 1 : -1;
+		if (x < 0)
+			add = -add;
+		return Double.longBitsToDouble(tmp + add);
+	}
+
+	public static float nextAfter(float x, float y) {
+		if (x!=x || y!=y)
+			return Float.NaN;
+		if (x == y)
+			// also catches if x and y are both signed zeros
+			return y;
+		if (x == 0)
+			// y != 0 since catched earlier
+			return (y > 0) ? Float.MIN_VALUE : -Float.MIN_VALUE;
+		
+		// Note: y != x
+		int tmp = Float.floatToRawIntBits(x);
+		int add = (y > x) ? 1 : -1;
+		if (x < 0)
+			add = -add;
+		return Float.intBitsToFloat(tmp + add);
+	}
+
+	public static double nextUp(double x) {
+		return nextAfter(x, Double.POSITIVE_INFINITY);
+	}
+
+	public static float nextUp(float x) {
+		return nextAfter(x, Float.POSITIVE_INFINITY);
+	}
 
 	/*========================= rounding functions =========================*/ 
 
