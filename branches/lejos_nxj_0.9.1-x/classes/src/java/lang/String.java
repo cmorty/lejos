@@ -209,7 +209,7 @@ public final class String implements CharSequence, Comparable<String>
 		for (int i=0; i<len; i++)
 		{
 			char c1 = this.characters[i];
-			char c2 = this.characters[i];
+			char c2 = str.characters[i];
 			
 			if (c1 != c2)
 				return (c1 < c2) ? -1 : 1;
