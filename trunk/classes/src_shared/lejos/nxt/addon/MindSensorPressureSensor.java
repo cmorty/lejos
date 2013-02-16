@@ -4,6 +4,10 @@ import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 import lejos.util.EndianTools;
 
+/**
+ * This class support the Digital Pneumatic Pressure Sensor (PPS58-Nx)
+ * by MindSensors.
+ */
 public class MindSensorPressureSensor extends I2CSensor {
 
 	/*
