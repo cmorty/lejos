@@ -429,7 +429,7 @@ public class LeJOSNXJUtil {
 		 * n backslashes not followed by a quote => n backslashes
 		 */
 		int len = t.length();
-		sb.append("\"");
+		sb.append('"');
 		for (int i=0; i<len; )
 		{
 			char c = t.charAt(i);
@@ -442,7 +442,7 @@ public class LeJOSNXJUtil {
 						sb.append('\\');
 					// double the number of backslashes if they are at the
 					// end of the argument or precede a quote
-					if (i==len || t.charAt(i)=='\"')
+					if (i==len || t.charAt(i)=='"')
 						for (; j<i; j++)
 							sb.append('\\');
 					break;
@@ -453,6 +453,6 @@ public class LeJOSNXJUtil {
 					i++;
 			}
 		}
-		sb.append("\"");
+		sb.append('"');
 	}
 }
