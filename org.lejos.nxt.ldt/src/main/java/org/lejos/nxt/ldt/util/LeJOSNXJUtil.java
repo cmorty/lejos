@@ -419,16 +419,14 @@ public class LeJOSNXJUtil {
 	}
 
 	private static void escapeWindowsArg(String t, StringBuilder sb) {
-		/* Escaping according to CommandLineToArgvW
-		 * http://msdn.microsoft.com/de-de/site/bb776391
+		/* Escaping of quotes and backslashes, compatible
+		 * with that Microsoft's default decoding. See
+		 * http://msdn.microsoft.com/en-us/library/a1y7w461.aspx
 		 * 
-		 * How decoding works:
+		 * How microsoft's default decoding works:
 		 * 2n backslashes + quote => n backslashes + closing quote
 		 * 2n+1 backslashes + quote => n backslashes + inner quote
 		 * n backslashes not followed by a quote => n backslashes
-		 * 
-		 * The difference between closing/inner quote is not in the docs
-		 * but it has been confirmed by testing.
 		 */
 		int len = t.length();
 		sb.append("\"");
