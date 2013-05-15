@@ -327,18 +327,24 @@ public class NXTConnector extends NXTCommLoggable
 		String addr = null;
 		String name = null;
 		
+		//TODO the behaviour for deviceURL="foo://" is not documented - but intended?
+		//TODO the behaviour for deviceURL="abc" is not documented - but intended?
 		int protocols = NXTCommFactory.ALL_PROTOCOLS;
 		if (protocolString.equals("btspp")) protocols = NXTCommFactory.BLUETOOTH;
 		if (protocolString.equals("usb")) protocols = NXTCommFactory.USB;
 		
+		//TODO there could be no // following the :
 		if (colonIndex >= 0) colonIndex +=2; // Skip "//"
 		
 		String nameString = deviceURL.substring(colonIndex+1);		
+		//TODO documentation suggest that :// is followed by name, not address
+		//TODO URLs can be ambiguous, if the name of the NXT looks like an address
 		boolean isAddress = isAddress(nameString);
 		
 		if (isAddress) {
 			addr = nameString;
 			name = "Unknown";
+			//TODO conclusion from this code: connectTo(name, addr, ...) ignores name if address is specified. Not clear from documentation.
 		} else {
 			name = nameString;
 			addr = null;
