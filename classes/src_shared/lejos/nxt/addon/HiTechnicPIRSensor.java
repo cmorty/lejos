@@ -11,6 +11,7 @@ public class HiTechnicPIRSensor extends I2CSensor {
 	private byte[] buf = new byte[1];
 	
 	public static final int ERROR = Integer.MIN_VALUE;
+	public static final int DEFAULT_DEADBAND = 12;
 
 	public HiTechnicPIRSensor(I2CPort port) {
 		super(port);
