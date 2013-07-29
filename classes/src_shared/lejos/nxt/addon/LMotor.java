@@ -1,6 +1,6 @@
 package lejos.nxt.addon;
 
-import lejos.nxt.SensorPort;
+import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 
 /*
@@ -20,7 +20,7 @@ public class LMotor extends I2CSensor{
 	protected int LSC_position; //Position where Servo has been plugged
 	
 	//Servo ID
-	private SensorPort portConnected;//What
+	private I2CPort portConnected;//What
 	protected byte SPI_PORT;//What SPI Port is connected LSC
 
 	public static final int arrMotorUnload[] = {0x01,0x02,0x04,0x08,0x20,0x40,0x80,0x100,0x200};
@@ -35,7 +35,7 @@ public class LMotor extends I2CSensor{
 	 * @param SPI_PORT the SPI port
 	 *  
 	 */
-	public LMotor(SensorPort port, int location, String name, byte SPI_PORT){
+	public LMotor(I2CPort port, int location, String name, byte SPI_PORT){
 		super(port);
 		this.name = name;
 		this.LSC_position = location;

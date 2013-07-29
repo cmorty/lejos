@@ -37,7 +37,7 @@ public class MServo extends I2CSensor{
 	 * @param location
 	 *
 	 */
-	public MServo(SensorPort port, int location){
+	public MServo(I2CPort port, int location){
 		super(port);
 		this.servoPosition = location;
 	}
@@ -53,7 +53,7 @@ public class MServo extends I2CSensor{
 	 * @param servoName
 	 *
 	 */
-	public MServo(SensorPort port, int location, String servoName){
+	public MServo(I2CPort port, int location, String servoName){
 		super(port);
 		this.servoPosition = location;
 	}
@@ -69,7 +69,7 @@ public class MServo extends I2CSensor{
 	 * @param max_angle
 	 *
 	 */
-	public MServo(SensorPort port, int location, String servoName, int min_angle, int max_angle){
+	public MServo(I2CPort port, int location, String servoName, int min_angle, int max_angle){
 		this(port,location,servoName);
 		
 		this.minAngle = min_angle;

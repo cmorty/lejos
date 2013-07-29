@@ -1,6 +1,5 @@
 package lejos.nxt.addon;
 
-import lejos.nxt.SensorPort;
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class NXTe  extends I2CSensor{
 	private final String ERROR_SPI_CONFIGURATION = "Error in SPI Configuration";
 	
 	//I2C
-	private SensorPort portConnected;
+	private I2CPort portConnected;
 	private final byte SPI_PORT[] = {0x01,0x02,0x04,0x08};//SPI Ports where you connect LSC
 	public static final byte NXTE_ADDRESS = 0x50;
 	private final byte REGISTER_IIC = (byte)0xF0;//NXTe IIC address
@@ -38,7 +37,7 @@ public class NXTe  extends I2CSensor{
 	 * 
 	 * @param port
 	 */
-	public NXTe(SensorPort port){
+	public NXTe(I2CPort port){
 		super(port, NXTE_ADDRESS, I2CPort.LEGO_MODE, TYPE_LOWSPEED_9V);
 		
 		port.setType(TYPE_LOWSPEED_9V);

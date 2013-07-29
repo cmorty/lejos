@@ -1,9 +1,7 @@
 package lejos.nxt.addon.tetrix;
 
-import lejos.nxt.Button;
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
-import lejos.nxt.SensorPort;
 
 /**
  * HiTechnic Tetrix Motor and Servo Controller factory class used to provide Motor and Servo controller abstractions.
