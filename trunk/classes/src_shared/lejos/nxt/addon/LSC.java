@@ -1,6 +1,6 @@
 package lejos.nxt.addon;
 
-import lejos.nxt.SensorPort;
+import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
 import java.util.ArrayList;
 
@@ -31,7 +31,7 @@ public class LSC extends I2CSensor {
 	
 	//I2C
 	private byte SPI_PORT;	
-	private SensorPort portConnected;
+	private I2CPort portConnected;
 	
 	/**
 	 * 
@@ -41,7 +41,7 @@ public class LSC extends I2CSensor {
 	 * @param SPI_PORT
 	 * 
 	 */
-	public LSC(SensorPort port,byte SPI_PORT){
+	public LSC(I2CPort port,byte SPI_PORT){
 		super(port);
 		this.portConnected = port;
 		this.SPI_PORT = SPI_PORT;

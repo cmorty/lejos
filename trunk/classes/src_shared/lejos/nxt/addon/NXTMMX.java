@@ -2,7 +2,6 @@ package lejos.nxt.addon;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
-import lejos.nxt.SensorPort;
 import lejos.util.Delay;
 import lejos.util.EndianTools;
 
@@ -258,7 +257,7 @@ public class NXTMMX extends I2CSensor {
 	 * Constructor for the NXTMMX
 	 * @param port - the port its plugged in to
 	 */
-    public NXTMMX(SensorPort port) {
+    public NXTMMX(I2CPort port) {
     	this(port, DEFAULT_MMX_ADDRESS);
     }
     
@@ -267,7 +266,7 @@ public class NXTMMX extends I2CSensor {
      * @param port - the sensor port its plugged in to
      * @param address The I2C address for the device
 	 */
-	public NXTMMX(SensorPort port, int address) {
+	public NXTMMX(I2CPort port, int address) {
 		super(port, address, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
 	    this.address = address;
 //	    if (!(getVendorID().equalsIgnoreCase(TetrixControllerFactory.TETRIX_VENDOR_ID) && 

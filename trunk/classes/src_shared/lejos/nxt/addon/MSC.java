@@ -69,7 +69,7 @@ public class MSC extends I2CSensor {
 	private MServo[] arrServo; //ServoController manages up to 8 RC Servos
 
 	//I2C	
-	private SensorPort portConnected;
+	private I2CPort portConnected;
 
 	/**
 	 * 
@@ -78,7 +78,7 @@ public class MSC extends I2CSensor {
 	 * @param port the NXTServo is connected to
 	 * 
 	 */
-	public MSC(SensorPort port){
+	public MSC(I2CPort port){
 		super(port);
 		port.setType(TYPE_LOWSPEED_9V);
 		this.setAddress(NXTSERVO_ADDRESS);

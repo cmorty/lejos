@@ -1,6 +1,6 @@
 package lejos.nxt.addon;
 
-import lejos.nxt.SensorPort;
+import lejos.nxt.I2CPort;
 
 /*
  * WARNING: THIS CLASS IS SHARED BETWEEN THE classes AND pccomms PROJECTS.
@@ -28,7 +28,7 @@ public class LServo extends LMotor{
 	 * @param SPI_PORT
 	 *  
 	 */
-	public LServo(SensorPort port, int location, String servoName, byte SPI_PORT){
+	public LServo(I2CPort port, int location, String servoName, byte SPI_PORT){
 		super(port,location,servoName,SPI_PORT);
 	}
 
@@ -44,7 +44,7 @@ public class LServo extends LMotor{
 	 * @param max_angle
 	 *
 	 */
-	public LServo(SensorPort port, int location, String servoName, byte SPI_PORT,int min_angle, int max_angle){
+	public LServo(I2CPort port, int location, String servoName, byte SPI_PORT,int min_angle, int max_angle){
 		super(port,location,servoName,SPI_PORT);
 		
 		this.min_angle = min_angle;
@@ -64,7 +64,7 @@ public class LServo extends LMotor{
 	 * @param init_angle
 	 *
 	 */
-	public LServo(SensorPort port, int location, String servoName, byte SPI_PORT,int min_angle, int max_angle,int init_angle){
+	public LServo(I2CPort port, int location, String servoName, byte SPI_PORT,int min_angle, int max_angle,int init_angle){
 		super(port,location,servoName,SPI_PORT);
 		
 		this.min_angle = min_angle;
