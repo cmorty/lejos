@@ -8,7 +8,7 @@ import lejos.util.EndianTools;
  * This class support the Digital Pneumatic Pressure Sensor (PPS58-Nx)
  * by MindSensors.
  */
-public class MindSensorPressureSensor extends I2CSensor {
+public class MindSensorsPressureSensor extends I2CSensor {
 
 	/*
 	 * Code contributed and tested by fussel_dlx on the forums:
@@ -22,7 +22,7 @@ public class MindSensorPressureSensor extends I2CSensor {
 	private static final int ADDRESS = 0x18; 
 	private final byte[] buf = new byte[4];
 	
-	public MindSensorPressureSensor(I2CPort port) {
+	public MindSensorsPressureSensor(I2CPort port) {
 		// also works with high speed mode
 		super(port, ADDRESS, I2CPort.LEGO_MODE, TYPE_LOWSPEED);
 	}
