@@ -32,7 +32,13 @@ public class LejosInputStreamReader extends Reader
 		this.buffer = new byte[buffersize];
 	}
 	
-	public int fillBuffer() throws IOException
+	/**
+	 * Fills byte buffer. Makes sure, that at least one decodable codepoint is in the buffer, unless EOF
+	 * is reached.
+	 * @return number of bytes of the next codepoint in the buffer (may be malformed data), or 0 if the buffer is empty and EOF is reached   
+	 * @throws IOException
+	 */
+	private int fillBuffer() throws IOException
 	{
 		int req = coder.estimateByteCount(buffer, offset, limit);
 		int len = limit - offset;
@@ -94,14 +100,16 @@ public class LejosInputStreamReader extends Reader
 			return 0;
 		
 		int origoff = off;
-		// there should always be room for two chars, so substract 1
-		int endoff = off + len - 1; 
+		int endoff = off + len; 
 		
 		int needed;
 		if (this.low > 0)
 		{
 			cbuf[off++] = this.low;
 			this.low = 0;
+			
+			if (off >= endoff)
+				return 1;
 			
 			//don't fill buffer to avoid blocking
 			needed = this.coder.estimateByteCount(buffer, offset, limit);			
@@ -110,31 +118,39 @@ public class LejosInputStreamReader extends Reader
 		{
 			//fill buffer
 			needed = this.fillBuffer();
+			if (needed <= 0)
+				return -1;
 		}
 				
-		if (off < endoff)
+		while (limit - offset >= needed)
 		{
-			while (limit - offset >= needed)
-			{				
-				int cp = this.coder.decode(buffer, offset, limit);
-				
-				if (cp < Character.MIN_SUPPLEMENTARY_CODE_POINT)
+			int cp = this.coder.decode(buffer, offset, limit);
+			this.offset += needed;
+						
+			if (cp < Character.MIN_SUPPLEMENTARY_CODE_POINT)
+			{
+				cbuf[off++] = (char)cp;
+			}
+			else
+			{
+				cp -= Character.MIN_SUPPLEMENTARY_CODE_POINT;
+				cbuf[off++] = (char)((cp >> 10) + Character.MIN_HIGH_SURROGATE);
+				char tmp = (char)((cp & 0x3F) + Character.MIN_LOW_SURROGATE);
+				if (off < endoff)
 				{
-					cbuf[off++] = (char)cp;
+					cbuf[off++] = tmp;
 				}
 				else
 				{
-					cbuf[off++] = (char)((cp >> 10) + Character.MIN_HIGH_SURROGATE);
-					cbuf[off++] = (char)((cp & 0x3F) + Character.MIN_LOW_SURROGATE);
-				}
-				
-				this.offset += needed;
-				
-				if (off >= endoff)
+					this.low = tmp;
 					break;
-				
-				needed = this.coder.estimateByteCount(buffer, offset, limit);
+				}				
 			}
+			
+			if (off >= endoff)
+				break;
+			
+			needed = this.coder.estimateByteCount(buffer, offset, limit);
 		}
 		
 		return off - origoff;
