@@ -102,6 +102,7 @@
 		<b>leJOS</b> on the new <b>LEGO Mindstorms EV3</b>.
 		Read all about the status of the port of leJOS to the new EV3 platform
 		on the <a href="/forum/viewtopic.php?t=4480">forums</a>.
+		Also watch the <a href="http://www.youtube.com/watch?v=luTdnyIElWU">youtube video</a>.
 	</td>
 </tr>
 <tr>
