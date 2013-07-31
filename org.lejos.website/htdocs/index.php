@@ -98,6 +98,14 @@
 
 <tr>
 	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
+	<td class="n3t2r"><b>August 01, 2013 2:00 AM</b><br />
+		<b>leJOS</b> on the new <b>LEGO Mindstorms EV3</b>.
+		Read all about the status of the port of leJOS to the new EV3 platform
+		on the <a href="/forum/viewtopic.php?t=4480">forums</a>.
+	</td>
+</tr>
+<tr>
+	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 	<td class="n3t2r"><b>February 06, 2012 11:30 PM</b><br />
 		<b>leJOS NXJ 0.9.1</b> is available for <a href="nxj-downloads.php">download</a>.
 		Big thanks to all leJOS developer who made that happen. This release includes many bug fixes,
