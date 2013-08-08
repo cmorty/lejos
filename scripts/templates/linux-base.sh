@@ -27,7 +27,7 @@ function my_build_cp() {
 
 	local TMP_CP=$(find "$DIR" -name "*.jar" -print0 | tr "\0" "$SEP")
 	# remove last $SEP 
-	printf "%s" ${TMP_CP%?}
+	printf "%s" "${TMP_CP%?}"
 }
 function set_java_and_javac() {
 	local VAR="$1"
@@ -71,5 +71,5 @@ case $(uname -s) in
 	Darwin) NXJ_FORCE32="-d32";;
 esac
 
-NXJ_CP_PC="$(my_build_cp "$NXJ_HOME/lib/pc")"
-NXJ_CP_NXT="$(my_build_cp "$NXJ_HOME/lib/nxt")"
+NXJ_CP_PC=$(my_build_cp "$NXJ_HOME/lib/pc")
+NXJ_CP_NXT=$(my_build_cp "$NXJ_HOME/lib/nxt")
