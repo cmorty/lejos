@@ -95,6 +95,13 @@
 
 
 <!-- NEWS#1 -->
+<tr>
+	<td class="n3t2r"><a href="http://www.amazon.com/exec/obidos/ASIN/0986832227/lejos0e-20"><img src="r_media/images/newsIcons/max_nxt_3_thumb.jpg" /></a></td>
+	<td class="n3t2r"><b>August 12, 2013 7:35 AM</b><br />
+		<b>An update</b> to <a href="http://www.amazon.com/exec/obidos/ASIN/0986832227/lejos0e-20">Maximum LEGO NXT: Building Robots with Java Brains</a> is now available. The book features updates to previous projects and some new projects, including a laser sensor and beacon localization. This is a small print run available in bookstores and on <a href="http://www.amazon.com/exec/obidos/ASIN/0986832227/lejos0e-20">Amazon</a>.
+	</td>
+</tr>
+
 
 <tr>
 	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
