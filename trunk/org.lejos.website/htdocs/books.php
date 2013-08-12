@@ -96,6 +96,31 @@
 <!-- **** BOOK LIST **** -->
 <tr>
 <td>
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0986832227/lejos0e-20">Maximum LEGO NXT: Building Robots with Java Brains<br /></a> <br /> by Brian Bagnall</p>
+<p>			
+More than two dozen fun and challenging projects using the next generation of LEGO® Mindstorms™ and the Java™ programming language are included in this guide. LEGO Mindstorms NXT 2.0 is an incredible updated kit for building and programming robots and this book introduces a diverse set of projects, building tips, programming code, complete 3-D rendered building instructions, and hundreds of illustrations to guide engineers and amateurs alike. With easy-to-follow instructions, a full chapter on building with the LEGO stud-less brick paradigm, and a complete tutorial on programming Java, this guide has been revised for the latest version of leJOS NXJ and provides more exciting projects that include Bluetooth, better navigation, and integration with new devices such as smart phones and game controllers. The projects include walking robots, laser sensors, beacon navigation, WiFi control, precise robotic arm control with a SCARA robot and omni-wheels.
+</p>
+
+<ul>
+<li>528 pages</li>
+<li>Softcover, glossy</li>
+<li>7" by 9.25"</li>
+<li>ISBN 9780986832222</li>
+<li>Available July 1, 2013</li>
+</ul>
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0986832227/lejos0e-20">Order from Amazon</a></p>
+</td>
+
+<td>
+<a href="http://www.amazon.com/exec/obidos/ASIN/0986832227/lejos0e-20"><img src="r_media/images/books/maximum_nxt_third.jpg" /></a>
+</td>
+</tr>
+
+<!-- **** END BOOK LIST -->
+
+<!-- **** BOOK LIST **** -->
+<tr>
+<td>
 <p><a href="http://www.amazon.com/exec/obidos/ASIN/0986832200/lejos0e-20">Intelligence Unleashed: Creating LEGO NXT Robots with Java<br /></a> <br /> by Brian Bagnall</p>
 <p>			
 With user-friendly instructions for the leJOS NXJ software, this accessible manual is the perfect launch into LEGO Mindstorms NXT, an incredible kit for building and programming robots. Using Java, the most popular and easy-to-use programming language available, this book helps engineers and amateurs alike design and build their own customized robots, programmed however they desire. A diverse set of projects is accompanied by building tips, programming code, complete 3D-rendered building instructions, and hundreds of illustrations. The NXT intelligent brick’s Bluetooth capabilities are introduced, as are the newest available parts, from GPS to the RFID sensor, in this useful handbook that serves as the perfect compliment to the LEGO NXT kit.
@@ -117,6 +142,7 @@ With user-friendly instructions for the leJOS NXJ software, this accessible manu
 </tr>
 
 <!-- **** END BOOK LIST -->
+
 
 	</table>
 					<div id="content">
