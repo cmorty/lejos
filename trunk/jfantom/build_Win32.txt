@@ -14,12 +14,14 @@ Via Cygwin (mingw-w64 compilers):
 4) run make -f Makefile.mingw64 clean all 
 
 
-Via Windows SDK 7.1 (Microsoft compilers)
+Via Windows SDK 7.1:
 1) Start a Windows SDK 7.1 Command Prompt (shortcut in startmenu)
    and run "setenv /x86"
 
-Via Visual Studio Express 2012 for Windows Desktop (Microsoft compilers):
+Via Visual C++ Express 2005/2008/2010:
+1) Start a Visual Studio 2005/2008/2010 Command Prompt (shortcut in startmenu)
 
+Via Visual Studio Express 2012 for Windows Desktop:
 1a) Make sure, you have Visual Studio 2012 Update 3 installed
 1b) Start a VS2012 x86 Native Tools Command Prompt (shortcut in startmenu)
 1c) run setenv_vs2012.bat from this directory
