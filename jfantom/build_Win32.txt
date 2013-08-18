@@ -15,8 +15,9 @@ Via Cygwin (mingw-w64 compilers):
 
 
 Via Windows SDK 7.1:
-1a) Start a Windows SDK 7.1 Command Prompt (shortcut in startmenu)
-1b) run "setenv /x86 /release"
+1a) Install compiler updates (http://www.microsoft.com/en-us/download/details.aspx?id=4422)
+1b) Start a Windows SDK 7.1 Command Prompt (shortcut in startmenu)
+1c) Run "setenv /x86 /release"
 
 Via Visual C++ Express 2005/2008/2010:
 1) Start a Visual Studio 2005/2008/2010 Command Prompt (shortcut in startmenu)
@@ -24,11 +25,11 @@ Via Visual C++ Express 2005/2008/2010:
 Via Visual Studio Express 2012 for Windows Desktop:
 1a) Make sure, you have Visual Studio 2012 Update 3 installed
 1b) Start a VS2012 x86 Native Tools Command Prompt (shortcut in startmenu)
-1c) run setenv_vs2012.bat from this directory
+1c) Run setenv_vs2012.bat from this directory
 
 2) Download the latest SDK from
    http://mindstorms.lego.com/en-us/support/files/Advanced.aspx
 
-3) set LEJOS_NXT_WIN32_FANTOMSDK and LEJOS_NXT_WIN32_JDK environment variables
+3) Set LEJOS_NXT_WIN32_FANTOMSDK and LEJOS_NXT_WIN32_JDK environment variables
 
 4) Run nmake /f Makefile.win32 clean all
