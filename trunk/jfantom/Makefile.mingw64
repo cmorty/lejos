@@ -35,7 +35,8 @@ jfantom.dll: jfantom.cpp fantom.lib | jfantom.h
 		-I"$(LEJOS_NXT_WIN32_JDK)/include" \
 		-I"$(LEJOS_NXT_WIN32_JDK)/include/win32" \
 		-I"$(LEJOS_NXT_WIN32_FANTOMSDK)/includes" \
-		-shared -Wl,-s,--kill-at -o "$@" $^
+		-shared -s -static-libgcc -static-libstdc++ \
+		-Wl,--kill-at,--gc-sections -o "$@" $^
 
 ### only needed for mingw32
 #		-D_JNI_IMPLEMENTATION_ \
