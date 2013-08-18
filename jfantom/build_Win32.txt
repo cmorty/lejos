@@ -15,8 +15,8 @@ Via Cygwin (mingw-w64 compilers):
 
 
 Via Windows SDK 7.1:
-1) Start a Windows SDK 7.1 Command Prompt (shortcut in startmenu)
-   and run "setenv /x86"
+1a) Start a Windows SDK 7.1 Command Prompt (shortcut in startmenu)
+1b) run "setenv /x86 /release"
 
 Via Visual C++ Express 2005/2008/2010:
 1) Start a Visual Studio 2005/2008/2010 Command Prompt (shortcut in startmenu)
