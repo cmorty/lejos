@@ -42,9 +42,11 @@ public class LoggerProtocolManager {
     private final String THISCLASS;
     private HashSet<LoggerListener> listeners = new HashSet<LoggerListener>();
     private int elementsPerLine = 1;
+    private int previousElementsPerLine = elementsPerLine;
     private InputStream nXTInputStream;
     //private OutputStream nXTOutputStream;
 	private volatile boolean pauseInput;
+    private DataItem[] dataItemArray;
     
     /**
      * Create a <code>LoggerProtocolManager</code> instance. 
@@ -126,6 +128,33 @@ public class LoggerProtocolManager {
     	}
     	this.pauseInput=doPause;
     }
+    
+    // use a preallocated of DataItem for optimization
+    private DataItem[] initDataItemArray() {
+    	boolean needInit = false;
+    	
+    	if (this.dataItemArray==null) {
+    		this.dataItemArray = new DataItem[this.elementsPerLine];
+    		needInit = true;
+    	}
+
+    	if (!needInit && elementsPerLine != previousElementsPerLine) {
+			previousElementsPerLine = elementsPerLine;
+			this.dataItemArray = new DataItem[this.elementsPerLine];
+			needInit = true;
+		}
+    	
+    	for (int i=0;i<this.dataItemArray.length;i++){
+    		if (needInit) {
+    			dataItemArray[i] = new DataItem();
+    		}
+    		dataItemArray[i].value = null;
+    		dataItemArray[i].datatype = DataItem.DT_INTEGER;
+    	}
+    	
+    	return this.dataItemArray;
+    }
+    
     /** 
      * Start listening for and processing logging data. After the NXT closes the connection (i.e. on EOF or other 
      * <code>IOException</code>), 
@@ -141,7 +170,7 @@ public class LoggerProtocolManager {
         boolean isCommand;
         byte streamedDataType = DT_INTEGER;  // also must be set as initial default in lejo.util.NXTDataLogger
         byte[] tempBytes;
-        DataItem[] readVals = new DataItem[this.elementsPerLine];
+        DataItem[] readVals = initDataItemArray();
         
         if (this.nXTInputStream==null) {
             throw new IOException("Null InputStream in startLogging()!");
@@ -191,12 +220,12 @@ public class LoggerProtocolManager {
                         notifyHeaderChange(fieldNames);
                         
                         endOfLineCycler = 0;
-                        readVals = new DataItem[this.elementsPerLine]; // set to new bounds. 
+                        readVals = initDataItemArray(); // set to new bounds. 
                         break;
                     case COMMAND_FLUSH:
                         if (endOfLineCycler>0) notifyLogLineAvailable(readVals); // send readvals[] to output
                         endOfLineCycler = 0;
-                        readVals = new DataItem[this.elementsPerLine]; // init the row holding array
+                        readVals = initDataItemArray(); // init the row holding array
                         break;
                     case COMMAND_COMMENT:
                         try {
@@ -243,8 +272,6 @@ public class LoggerProtocolManager {
                     case DT_INTEGER:
                     case DT_FLOAT:
                         // Parse an int from the 4 bytes
-                        readVals[endOfLineCycler] = new DataItem();
-                        readVals[endOfLineCycler].value = new Integer(LoggerProtocolManager.parseInt(readBytes));
                         if (streamedDataType==DT_FLOAT) {
                         	readVals[endOfLineCycler].value = new Float(LoggerProtocolManager.parseFloat(readBytes));
                         } else {
@@ -255,7 +282,6 @@ public class LoggerProtocolManager {
                     case DT_LONG:
                     case DT_DOUBLE:
                         // Parse a long or double from the 4 + 4 more bytes
-                        readVals[endOfLineCycler] = new DataItem();
                         tempBytes = new byte[8];
                         System.arraycopy(readBytes,0,tempBytes,0,4);
                         try {
@@ -272,7 +298,6 @@ public class LoggerProtocolManager {
                         readVals[endOfLineCycler].datatype=streamedDataType;
                         break;
                     case DT_STRING:
-                        readVals[endOfLineCycler] = new DataItem();
                         try {
                             readVals[endOfLineCycler].value = new String(this.parseString(readBytes));
                         } catch (EOFException e){
@@ -288,7 +313,7 @@ public class LoggerProtocolManager {
                     // send readvals[] to output and reset endOfLineCycler, readVals[]
                     notifyLogLineAvailable(readVals); 
                     endOfLineCycler = 0;
-                    readVals = new DataItem[this.elementsPerLine]; // set to new bounds. 
+                    readVals = initDataItemArray(); // set to new bounds. 
                 } else
                     endOfLineCycler++;
             } // END BLOCK: If not a command, output the data
