@@ -19,7 +19,7 @@ fantom.lib: $*.def
 	lib /MACHINE:x86 /DEF:$*.def
 
 jfantom.dll: fantom.lib jfantom.cpp
-	cl /LD \
+	cl /LD /Fe$@ \
 		/I "$(LEJOS_NXT_WIN32_JDK)\include" \
 		/I "$(LEJOS_NXT_WIN32_JDK)\include\win32" \
 		/I "$(LEJOS_NXT_WIN32_FANTOMSDK)\includes" \
