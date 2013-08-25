@@ -2,16 +2,18 @@
 To build the fantom JNI wrapper for Windows 32 Bit:
 ***************************
 
-Via Cygwin (mingw-w64 compilers):
+Via Cygwin:
+1) Install the packages mingw64-i686-gcc-g++ and make
 
-1) Install cygwin, including the packages mingw64-i686-gcc-g++ and make
+Via Ubuntu 13.04:
+1) Install the g++-mingw-w64 package
 
 2) Download the latest SDK from
    http://mindstorms.lego.com/en-us/support/files/Advanced.aspx
 
-3) set LEJOS_NXT_WIN32_FANTOMSDK and LEJOS_NXT_WIN32_JDK environment variables
+3) Set LEJOS_NXT_WIN32_FANTOMSDK and LEJOS_NXT_WIN32_JDK environment variables
 
-4) run make -f Makefile.mingw64 clean all 
+4) Run make -f Makefile.mingw64 clean all 
 
 
 Via Windows SDK 7.1:
