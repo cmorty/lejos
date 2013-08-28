@@ -196,7 +196,7 @@ class MouseManager {
                 }
             }
         } catch (Exception e) {
-            ; // ignore
+             // ignore
         }
         return retval;
     }

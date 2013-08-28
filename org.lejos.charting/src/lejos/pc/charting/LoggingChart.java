@@ -49,7 +49,7 @@ class LoggingChart extends ChartPanel{
      */
     final static int DAL_COUNT=2;
     
-    private Range domainRange;
+    //private Range domainRange;
     private volatile boolean chartDirty = false; // used by update thread to flag an event notification for repaints
     private double domainWidth=INIT_DOMAIN_WIDTH; // milli seconds defining how big to initially  make the domain scale (for sliding it)
     private SeriesDef[] seriesDefs; 
@@ -57,7 +57,7 @@ class LoggingChart extends ChartPanel{
     private int domainAxisLimitMode=DAL_UNLIMITED;
     private int domainAxisLimitValue=0;
     private boolean emptyChart=true; // this is set to true on first data add. do use this for charts 
-    								 //that are created in the same instance lifescycle
+    								 // that are created in the same instance lifescycle
     private boolean scrollDomain=true; // domain will scroll, otherwise, autoFit all series
     
     private Range[] yExtents=new Range[RANGE_AXIS_COUNT];
@@ -231,12 +231,13 @@ class LoggingChart extends ChartPanel{
         this.addMouseListener(new ml());
     }
     
-    void setDomainScrolling(boolean scrollDomain){
+    protected void setDomainScrolling(boolean scrollDomain){
         this.scrollDomain=scrollDomain;
     }
-    
+    	
     void setChartDirty() {
-        this.chartDirty=true;
+    	getChart().setNotify(true);
+    	this.chartDirty=true;
     }
     
     boolean isEmptyChart() {
@@ -245,7 +246,7 @@ class LoggingChart extends ChartPanel{
     
     /**
      * 
-     * @return If any data has been added to the data series (using timestap series)
+     * @return If any data has been added to the data series (using timestamp series)
      */
     boolean hasData(){
         boolean retval=false;
@@ -286,7 +287,7 @@ class LoggingChart extends ChartPanel{
      */
     synchronized void doRangeExtents(boolean forceExtents) {
         // ensure value (range) axis displays extents of data as it scrolls
-        // dataset cooresponds to axis one-to-one
+        // dataset corresponds to axis one-to-one
         Range yRange=null;
         XYPlot plot = getChart().getXYPlot();
         for (int i=0;i<plot.getDatasetCount();i++){
@@ -313,19 +314,21 @@ class LoggingChart extends ChartPanel{
     }
     
     @Override
+    // protect with lock so JFreeChart ChartPanel is not allowed to do concurrent calls (bug in JFree?) which causes
+    // all sorts of null pointer issues
 	public void paintComponent(Graphics g) {
         synchronized (lockObj1) {
             try {
                 super.paintComponent(g);
             } catch (NullPointerException e) {
-                ; // ignore
+                 // ignore
             }
         }
     }
     
     private synchronized void setDomainRange(Range range){
         if (range==null) return;
-        this.domainRange=range;
+        //this.domainRange=range;
         getChart().getXYPlot().getDomainAxis().setRange(range);
     }
     
@@ -339,6 +342,9 @@ class LoggingChart extends ChartPanel{
     }
 
     // required by JDeveloper to use/render in graphical GUI editor
+    /**
+	 * @throws Exception  
+	 */
     private void jbInit() throws Exception {
         setLayout(null);
         setChart(getBaselineChart());
@@ -439,7 +445,7 @@ class LoggingChart extends ChartPanel{
         domainAxis.setLowerMargin(0.0);
         domainAxis.setUpperMargin(0.0);
         domainAxis.setTickLabelsVisible(true);
-        this.domainRange= new Range(0, domainWidth);
+//        this.domainRange= new Range(0, domainWidth);
 //        domainAxis.setRange(this.domainRange);
         domainAxis.setAutoRange(false); 
         domainAxis.setAutoRangeIncludesZero(false);
@@ -496,6 +502,12 @@ class LoggingChart extends ChartPanel{
         return dataset; 
     }
     
+    /**
+     * Spawn a copy of the current chart in a new window.
+     * 
+     * @return true for success
+     * @throws OutOfMemoryError
+     */
     boolean spawnChartCopy() throws OutOfMemoryError {
         if (this.emptyChart) return false;
         dbg("Constructing chart clone: \"" + getChart().getTitle().getText() + "\"..");
@@ -516,8 +528,8 @@ class LoggingChart extends ChartPanel{
             for (int j=0;j<seriesCount;j++) {
                 // hide the series if "hidden" by user through GUI
                 if (ir.getSeriesLinesVisible(j)==null) ir.setSeriesLinesVisible(j,true); // because will return null if never defined through API
-                if (!ir.getSeriesLinesVisible(j)) {
-                    chartClone.getXYPlot().getRenderer(i).setSeriesVisible(j, false);
+                if (!ir.getSeriesLinesVisible(j).booleanValue()) {
+                    chartClone.getXYPlot().getRenderer(i).setSeriesVisible(j, new Boolean(false));
                     System.out.println("Excluding series \"" + ir.getLegendItem(i,j).getLabel() + "\"");
                     if (!(i==0 && j==0)) continue; //and don't add data if not base dataset (we need it for marker calcs)
                 }
@@ -664,7 +676,8 @@ class LoggingChart extends ChartPanel{
     }
     
     // adds XYSeries and maps axis/dataseries as per seriesDefs
-    private void addDataSets(JFreeChart chart, boolean spawnable){
+    @SuppressWarnings("null")
+	private void addDataSets(JFreeChart chart, boolean spawnable){
         DatasetAndAxis[] tempDandA;
         String[] axisLabels=null;
         
@@ -742,7 +755,7 @@ class LoggingChart extends ChartPanel{
         // etc. The domain axis is also scrolled for incoming data in this thread 
         this.chartDirty=true;
         
-        this.emptyChart=false;
+        if (this.emptyChart) this.emptyChart=false;
     }
     
     void addCommentMarker(double xVal, String comment){

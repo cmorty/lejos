@@ -59,8 +59,6 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.BadLocationException;
 
-import lejos.util.EndianTools;
-
 import org.jfree.chart.JFreeChart;
 
 
@@ -86,8 +84,7 @@ class LogChartFrame extends JFrame {
     private JScrollPane dataLogScrollPane = new JScrollPane();
 
     // make sure all non-GUI vars are below the ones added by Jdev
-    private CustomChartPanel customChartPanel = new CustomChartPanel();
-    private JFreeChart loggingJFreeChart= customChartPanel.getLoggingChartPanel().getChart();
+    private ChartModel customChartPanel = new CustomChartPanel();
     
     private final ConnectionProvider connectionManager;
     
@@ -171,14 +168,15 @@ class LogChartFrame extends JFrame {
     }
 
     private void scrollDomainCheckBox_actionPerformed(ActionEvent e) {
-        customChartPanel.getLoggingChartPanel().setDomainScrolling(scrollDomainCheckBox.isSelected());
+        customChartPanel.setDomainScrolling(scrollDomainCheckBox.isSelected());
     }
 
 
     /**This class is used to provide listener callbacks from DataLogger.
      */
     private class SelfLogger implements LoggerListener{
-        private long lastUpdate=0;
+    	private static final String SERIES_DELIM = "!";
+    	private long lastUpdate=0;
         
         public void logCommentReceived(int timestamp, String comment) {
             String theComment = String.format("%1$-1d\t%2$s\n", timestamp, comment);
@@ -200,7 +198,7 @@ class LogChartFrame extends JFrame {
             String[] seriesDef;
             // parse the column defs into a struct
             for (int i = 0; i < logFields.length; i++) {
-                seriesDef = logFields[i].split("!");
+                seriesDef = logFields[i].split(SERIES_DELIM);
                 sd[i] = new SeriesDef();
                 sd[i].name = seriesDef[0];
                 if (seriesDef.length>1) {
@@ -267,6 +265,8 @@ class LogChartFrame extends JFrame {
             if (this.lastUpdate==0) this.lastUpdate=System.currentTimeMillis()-1;
             // variable textarea update timer delay based on update rate
             int period = (int)(System.currentTimeMillis()-lastUpdate);
+            // magic numbers based on testing for non-linear update delay calc so oft-sampled data gets displayed
+            // without delay
             period=(int)(2155.1*Math.exp(-.0024*period));
             if (period<200) period=200;
             LogChartFrame.this.updateLogTextAreaTimer.setDelay(period);
@@ -277,8 +277,7 @@ class LogChartFrame extends JFrame {
             closeCurrentConnection();
             // allows user to use interactive stuff without chart glitch    
             System.out.println("Finalizing chart");  
-            loggingJFreeChart.setNotify(true); 
-            customChartPanel.getLoggingChartPanel().setChartDirty();
+            customChartPanel.setChartDirty();
             tmm.dataInputStreamEOF();
         }
 
@@ -286,7 +285,9 @@ class LogChartFrame extends JFrame {
 //        *  <code>[name]![y or n to indicate if charted]![axis ID 1-4]</code>
 //        *  <br>i.e. <pre>"MySeries!y!1"</pre>
         public void logFieldNamesChanged(String[] logFields) {
-            System.out.println("client:logFieldNamesChanged");
+            
+            
+        	System.out.println("client:logFieldNamesChanged");
             StringBuilder chartLabels = new StringBuilder();
             StringBuilder sb = new StringBuilder();
             
@@ -301,18 +302,18 @@ class LogChartFrame extends JFrame {
                     chartLabels.append(this.seriesDefs[i].name);
                     chartLabels.append(":");
                     chartLabels.append(this.seriesDefs[i].axisID);
-                    chartLabels.append("!");
+                    chartLabels.append(SERIES_DELIM);
                 }
             }
             sb.append("\n");
             LogChartFrame.this.logDataQueue.add(sb.toString());
             
             // spawn a copy if there was data in the chart and the headers changed. This is useful when the
-            // appendColumn is used to build the intial columns/headers and there is no data but each
+            // appendColumn is used to build the initial columns/headers and there is no data but each
             // append will trigger logFieldNamesChanged()
-            if (customChartPanel.getLoggingChartPanel().hasData()) {
+            if (customChartPanel.hasData()) {
             	try {
-                    customChartPanel.getLoggingChartPanel().spawnChartCopy();
+                    customChartPanel.spawnChartCopy();
                 } catch (OutOfMemoryError e2) {
                     JOptionPane.showMessageDialog(LogChartFrame.this, "Not enough memory to create chart!", "Houston, we have a problem...",
                         JOptionPane.ERROR_MESSAGE);
@@ -321,7 +322,7 @@ class LogChartFrame extends JFrame {
             LogChartFrame.this.requestFocus();
             
             // set the chartable series headers/labels
-            customChartPanel.setSeries(chartLabels.toString().split("!"));  
+            customChartPanel.setSeries(chartLabels.toString().split(SERIES_DELIM));  
             
             if (theLogFile!=null) {
                 if (theLogFile.isFile()) {
@@ -340,11 +341,11 @@ class LogChartFrame extends JFrame {
 		}
     }
     
-    private void manageAxisLabel(int AxisIndex) {
+    private void manageAxisLabel(int axisIndex) {
         JLabel tempLabel;
         JTextField tempTextField;
         
-        switch (AxisIndex){
+        switch (axisIndex){
             case 0:
                 tempLabel=jLabel2;
                 tempTextField=axis1LabelTextField;
@@ -365,17 +366,18 @@ class LogChartFrame extends JFrame {
                 return;
         }
        
-        boolean axisExists = loggingJFreeChart.getXYPlot().getRangeAxis(AxisIndex)!=null;
+        boolean axisExists = customChartPanel.axisExists(axisIndex);
         tempTextField.setEnabled(axisExists);
         tempLabel.setEnabled(axisExists);
         if (!axisExists) return;
         
-        String chartAxisLabel=loggingJFreeChart.getXYPlot().getRangeAxis(AxisIndex).getLabel();
+        String chartAxisLabel= customChartPanel.getAxisLabel(axisIndex);
+        
         String customLabel=tempTextField.getText();
         if (customLabel.equals("")) {
             tempTextField.setText(chartAxisLabel);
         } else {
-            loggingJFreeChart.getXYPlot().getRangeAxis(AxisIndex).setLabel(customLabel);
+            customChartPanel.setAxisLabel(axisIndex, customLabel);
         }
     }
     
@@ -416,8 +418,7 @@ class LogChartFrame extends JFrame {
     }
     
     private void setChartTitle(String title) {
-        loggingJFreeChart.setTitle(title); 
-        loggingJFreeChart.setNotify(true);
+    	customChartPanel.setChartTitle(title); 
         if (chartTitleTextField.getText().equals(title)) return;
         chartTitleTextField.setText(title);
     }
@@ -447,7 +448,7 @@ class LogChartFrame extends JFrame {
                 if (tempMenuItem==null) {
                     return;
                 }
-                if (customChartPanel.getLoggingChartPanel().isEmptyChart()) {
+                if (customChartPanel.isEmptyChart()) {
                     tempMenuItem.setEnabled(false);
                 } else {
                     tempMenuItem.setEnabled(true);
@@ -456,10 +457,11 @@ class LogChartFrame extends JFrame {
         }
 
         public void menuDeselected(MenuEvent e) {
-            
+            // empty
         }
 
         public void menuCanceled(MenuEvent e) {
+        	// empty
         }
     }
 
@@ -522,7 +524,7 @@ class LogChartFrame extends JFrame {
             if (e.getActionCommand().equalsIgnoreCase("Chart in New Window")) {
                 LogChartFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 try {
-                    customChartPanel.getLoggingChartPanel().spawnChartCopy();
+                    customChartPanel.spawnChartCopy();
                 } catch (OutOfMemoryError e2) {
                     JOptionPane.showMessageDialog(LogChartFrame.this, "Not enough memory to create chart!", "Houston, we have a problem...",
                         JOptionPane.ERROR_MESSAGE);
@@ -563,10 +565,9 @@ class LogChartFrame extends JFrame {
         
         private void setAxisLabel(int rangeAxisID, String title) {
             try {
-                loggingJFreeChart.getXYPlot().getRangeAxis(rangeAxisID).setLabel(title);
-                loggingJFreeChart.setNotify(true);
+                customChartPanel.setAxisLabel(rangeAxisID, title);
             } catch (NullPointerException e ) {
-                ; //ignore
+                 //ignore
             }
         }
         
@@ -600,6 +601,8 @@ class LogChartFrame extends JFrame {
                 if (enforce) theFrame.setSize(d2);
             }
         });
+        gridBagLayout1.columnWeights = new double[]{0.0, 0.0};
+        gridBagLayout1.columnWidths = new int[]{0, 0};
 
         this.getContentPane().setLayout(gridBagLayout1);
         MenuActionListener menuItemActionListener = new MenuActionListener();
@@ -908,7 +911,7 @@ class LogChartFrame extends JFrame {
                                                          0));
 
         this.getContentPane().add(jTabbedPane1, 
-                                  new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, 
+                                  new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, 
                     new Insets(0, 0, 0, 0), 0, 0));
         UIPanel.add(connectionPanel,null);
         UIPanel.add(selectFolderButton,null);
@@ -1126,16 +1129,13 @@ class LogChartFrame extends JFrame {
         domainDisplayLimitSlider.setEnabled(datasetLimitEnableCheckBox.isSelected());
         domainLimitLabel.setEnabled(datasetLimitEnableCheckBox.isSelected());
         if (datasetLimitEnableCheckBox.isSelected()) {
-            customChartPanel.getLoggingChartPanel();
 			int mode = LoggingChart.DAL_TIME;
             if (useDataPointsRadioButton.isSelected()) {
-                customChartPanel.getLoggingChartPanel();
 				mode=LoggingChart.DAL_COUNT;
             }
-            customChartPanel.getLoggingChartPanel().setDomainLimiting(mode, this.domainLimitSliderValue);
+            customChartPanel.setDomainLimiting(mode, this.domainLimitSliderValue);
         } else {
-            customChartPanel.getLoggingChartPanel();
-			customChartPanel.getLoggingChartPanel().setDomainLimiting(LoggingChart.DAL_UNLIMITED, 0);
+			customChartPanel.setDomainLimiting(LoggingChart.DAL_UNLIMITED, 0);
         }
     }
 
@@ -1149,12 +1149,10 @@ class LogChartFrame extends JFrame {
         JSlider workingSlider=(JSlider)e.getSource();
         
         String unit="ms";
-        customChartPanel.getLoggingChartPanel();
 		int mode = LoggingChart.DAL_TIME;
         int maxSliderPerMode=MAXDOMAIN_TIME_LIMIT;
         if (useDataPointsRadioButton.isSelected()) {
             unit="datapoints";
-            customChartPanel.getLoggingChartPanel();
 			mode=LoggingChart.DAL_COUNT;
             maxSliderPerMode=MAXDOMAIN_DATAPOINT_LIMIT;
         }
@@ -1168,7 +1166,7 @@ class LogChartFrame extends JFrame {
         domainLimitLabel.setText(String.format("%1$,d %2$s",working, unit));
          
         if (workingSlider.getValueIsAdjusting()) return;
-        customChartPanel.getLoggingChartPanel().setDomainLimiting(mode, working);
+        customChartPanel.setDomainLimiting(mode, working);
     }
 
     private void domainDisplayLimitRadioButton_actionPerformed(ActionEvent e) {
