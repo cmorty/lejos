@@ -129,7 +129,7 @@ public class LoggerProtocolManager {
     	this.pauseInput=doPause;
     }
     
-    // use a preallocated of DataItem for optimization
+    // use a preallocated array of DataItem for optimization
     private DataItem[] initDataItemArray() {
     	boolean needInit = false;
     	
@@ -161,6 +161,7 @@ public class LoggerProtocolManager {
      * the <code>dataInputStreamEOF()</code> method is 
      * invoked on registered <code>LoggerListener</code>s, the logging session ends, and this instance is no longer
      * connected. A new instance must be created to log again.
+     * 
      * @throws IOException if connection has not been established
      * @see LoggerListener
      */

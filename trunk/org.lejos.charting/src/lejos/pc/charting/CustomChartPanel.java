@@ -9,21 +9,18 @@ import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
+import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.event.AxisChangeEvent;
-import org.jfree.chart.event.AxisChangeListener;
 import org.jfree.chart.event.ChartChangeEvent;
-import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.event.ChartProgressEvent;
-import org.jfree.chart.event.ChartProgressListener;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -32,7 +29,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  * SpringLayout to position components but JPanel width must be adjusted if used in other classes.
  * @author Kirk P. Thompson
  */
-public class CustomChartPanel extends JPanel implements ChangeListener, AxisChangeListener, ChartProgressListener, ChartChangeListener{
+ class CustomChartPanel extends ChartModel{
     private static final int SLIDER_MAX= 10000;
     private static final float SLIDER_CURVE_POWER= 2.4f;
     private LoggingChart loggingChartPanel = new LoggingChart();
@@ -51,6 +48,9 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         }
     }
 
+    /**
+	 * @throws Exception  
+	 */
     private void jbInit() throws Exception {
         this.setLayout( null );
         this.setSize(new Dimension(738, 540));
@@ -93,7 +93,7 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         xYValueLabel.setFont(new Font("Tahoma", 0, 11));
         
         domainWidthLabel.setFocusable(false);
-        domainWidthLabel.setHorizontalAlignment(JTextField.LEFT);
+        domainWidthLabel.setHorizontalAlignment(SwingConstants.LEFT);
         domainWidthLabel.setText("Domain Scale");
         domainWidthLabel.setToolTipText("The domain axis length in ms");
 
@@ -129,15 +129,19 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         loggingChartPanel.getChart().addChangeListener(this); // to capture dataset changes to populate row count
     }
     
-    protected LoggingChart getLoggingChartPanel() {
-        return loggingChartPanel;
-    }
+//    protected LoggingChart getLoggingChartPanel() { // TODO commented 8/25/13 to find all depends
+//        return loggingChartPanel;
+//    }
     
-    public void axisChanged(AxisChangeEvent event) {
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#axisChanged(org.jfree.chart.event.AxisChangeEvent)
+	 */
+    @Override
+	public void axisChanged(AxisChangeEvent event) {
         Range domainRange = ((NumberAxis)event.getAxis()).getRange();
         double domainWidth = domainRange.getLength();
 
-        domainWidthLabel.setText(String.format("%1$-,3d ms",(long)domainWidth));
+        domainWidthLabel.setText(String.format("%1$-,3d ms",Long.valueOf((long)domainWidth)));
         
         // return if no series yet
         if (loggingChartPanel.getChart().getXYPlot().getSeriesCount()==0) return;
@@ -155,13 +159,21 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         if (!loggingChartPanel.getChart().isNotify()) loggingChartPanel.getChart().setNotify(true);
     }
     
-    public void chartProgress(ChartProgressEvent event) {
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#chartProgress(org.jfree.chart.event.ChartProgressEvent)
+	 */
+    @Override
+	public void chartProgress(ChartProgressEvent event) {
         long xval = (long)loggingChartPanel.getChart().getXYPlot().getDomainCrosshairValue();
         double yval = loggingChartPanel.getChart().getXYPlot().getRangeCrosshairValue();
-        xYValueLabel.setText(String.format("%1$,6d : %2$,7.3f", xval, yval));
+        xYValueLabel.setText(String.format("%1$,6d : %2$,7.3f", Long.valueOf(xval), Double.valueOf(yval)));
     }
     
-    public void stateChanged(ChangeEvent e) {
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#stateChanged(javax.swing.event.ChangeEvent)
+	 */
+    @Override
+	public void stateChanged(ChangeEvent e) {
         if (e.getSource()==domainScaleSlider) {
             // if not being triggered by the chart setting slider to match scale (i.e. on a zoom, resize, etc.)...
             if (sliderSetFlag) {
@@ -176,74 +188,163 @@ public class CustomChartPanel extends JPanel implements ChangeListener, AxisChan
         }
     }
 
-    public void chartChanged(ChartChangeEvent event) {
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#chartChanged(org.jfree.chart.event.ChartChangeEvent)
+	 */
+    @Override
+	public void chartChanged(ChartChangeEvent event) {
         try {
             if (event.getChart().getXYPlot().getDataset().getSeriesCount()==0) return;
-            dataRowsLabel.setText(String.format("%1$-,1d rows", event.getChart().getXYPlot().getDataset().getItemCount(0)));
+            dataRowsLabel.setText(String.format("%1$-,1d rows", Integer.valueOf(event.getChart().getXYPlot().getDataset().getItemCount(0))));
         } catch (NullPointerException e) {
-            ; // do nothing
+             // do nothing
         }
 
     }
     
-    /** Set the width of the x-axis (domain) scale centered around current midpoint of domain scale. Uses a scaled integer 1-1000 
-     * (meaning 0.1-100.0). Values outside this
-     * range will cause the method to immediately exit without doing any changes. Existing domain extents (min, max X values) define
-     * the total range. 
-     * 
-     * @param domainWidth The [scaled integer] width in % (1-1000) of range of x domain extents
-     */
-    public void setDomainScale(int domainWidth) {
-        loggingChartPanel.setDomainScale(domainWidth);
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#setChartDirty()
+	 */
+    @Override
+	public void setChartDirty(){
+    	loggingChartPanel.setChartDirty();
     }
     
-    /**Add series data to the dataset. Pass an array of <code>double</code> series values that all share the same domain value 
-     * defined in element 0. 
-    * The number of values must match the header count in setSeries().
-    * <p>
-    * Element 0 is the domain (X) series and should be a timestamp.
-    * @param seriesData the series data as <code>double</code>s
-    * @see #setSeries
-    */
-    public void addDataPoints(double[] seriesData){
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#isEmptyChart()
+	 */
+    @Override
+	public boolean isEmptyChart(){
+    	return loggingChartPanel.isEmptyChart();
+    }
+    
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#setDomainScrolling(boolean)
+	 */
+    @Override
+	public void setDomainScrolling(boolean doScrollDomain){
+    	loggingChartPanel.setDomainScrolling(doScrollDomain);
+    }
+    
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#setDomainLimiting(int, int)
+	 */
+    @Override
+	public void setDomainLimiting(int limitMode, int value){
+    	loggingChartPanel.setDomainLimiting(limitMode, value);
+    }
+    
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#hasData()
+	 */
+    @Override
+	public boolean hasData(){
+    	return loggingChartPanel.hasData();
+    }
+    
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#spawnChartCopy()
+	 */
+    @Override
+	public boolean spawnChartCopy() throws OutOfMemoryError {
+    	return loggingChartPanel.spawnChartCopy();
+    }
+    
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#addDataPoints(double[])
+	 */
+    @Override
+	public void addDataPoints(double[] seriesData){
         loggingChartPanel.addDataPoints(seriesData);
     }
 
-    /** Add a comment marker to the chart at specified domain position.
-     * @param xVal Domain value
-     * @param comment The comment text
-     * @see #setCommentsVisible
-     */
-    public void addCommentMarker(double xVal, String comment){
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#addCommentMarker(double, java.lang.String)
+	 */
+    @Override
+	public void addCommentMarker(double xVal, String comment){
         loggingChartPanel.addCommentMarker(xVal, comment);
     }
 
-    /** Control the visibility of any comment markers defined for the chart.
-     * @param visible <code>true</code> to show, <code>false</code> to hide
-     * @see #addCommentMarker
-     */
-    public void setCommentsVisible(boolean visible){
+    @Override
+	public boolean axisExists(int axisIndex){
+		JFreeChart v1 = loggingChartPanel.getChart();
+		if (v1==null) return false;
+    	XYPlot v2 = v1.getXYPlot();
+    	if (v2==null) return false;
+		return v2.getRangeAxis(axisIndex)!=null;
+	}
+    
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#setCommentsVisible(boolean)
+	 */
+    @Override
+	public void setCommentsVisible(boolean visible){
         loggingChartPanel.setCommentsVisible(visible);
     }
     
-	/** Set the passed series/header definitions as new XYseries in the dataset. Existing series and comment markers are wiped. 
-	 * Must be at least two items
-	 * in the array or any existing series is left intact and method exits with 0. First item (series 0) is set as domain label and should
-	 * be system time in milliseconds, and is always axis 0 for multi-axis charts.
-	 * <p>
-	 *  The string format/structure of each string field is:<br>
-	 *  <code>[name]:[axis ID 1-4]</code>
-	 *  <br>i.e. <pre>"MySeries:1"</pre>
-	 * @param seriesNames Array of series names
-	 * @return The number of series created
-	 * @see #addDataPoints
+	/* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#setSeries(java.lang.String[])
 	 */
-    public int setSeries(String[] seriesNames){
+    @Override
+	public int setSeries(String[] seriesNames){
     // ENHANCE change to not specify timestamp and do timestamp automatically
         return loggingChartPanel.setSeries(seriesNames);
     }
     
-    public void copyChart() {
+    /* (non-Javadoc)
+     * @see lejos.pc.charting.ChartModel#getAxisLabel(int)
+     */
+    @Override
+	public String getAxisLabel(int axisIndex){
+    	JFreeChart v1 = loggingChartPanel.getChart();
+		if (v1==null) return null;
+    	XYPlot v2 = v1.getXYPlot();
+    	if (v2==null) return null;
+    	ValueAxis v3;
+    	v3 = v2.getRangeAxis(axisIndex);
+    	if (v3==null) return null;
+    	return v3.getLabel();
+    }
+    
+    /* (non-Javadoc)
+     * @see lejos.pc.charting.ChartModel#setAxisLabel(int, java.lang.String)
+     */
+    @Override
+	public void setAxisLabel(int axisIndex, String axisLabel){
+    	JFreeChart v1 = loggingChartPanel.getChart();
+		if (v1==null) return;
+		XYPlot v2 = v1.getXYPlot();
+    	if (v2==null) return;
+    	ValueAxis v3;
+    	v3 = v2.getRangeAxis(axisIndex);
+    	if (v3==null) return;
+    	v3.setLabel(axisLabel);
+    	v1.setNotify(true);
+    }
+    
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#setChartTitle(java.lang.String)
+	 */
+    @Override
+	public void setChartTitle(String title) {
+    	loggingChartPanel.getChart().setTitle(title); 
+    	loggingChartPanel.getChart().setNotify(true);
+    }
+    
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#getChartTitle()
+	 */
+    @Override
+	public String getChartTitle() {
+    	return loggingChartPanel.getChart().getTitle().getText(); 
+    }
+    
+    /* (non-Javadoc)
+	 * @see lejos.pc.charting.ChartModel#copyChart()
+	 */
+    @Override
+	public void copyChart() {
         loggingChartPanel.doCopy();
     }
 }

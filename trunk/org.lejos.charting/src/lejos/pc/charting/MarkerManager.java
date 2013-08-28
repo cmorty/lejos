@@ -9,8 +9,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.Vector;
 
-import lejos.pc.charting.MarkerManager.CommentMarker;
-
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYPointerAnnotation;
