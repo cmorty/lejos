@@ -1,10 +1,10 @@
 # This makefile is for Linux and cygwin.
 
 ### use mingw64 32bit toolchain by default
-LEJOS_NXT_WIN32_GCC ?= i686-w64-mingw32-gcc
-LEJOS_NXT_WIN32_DLLTOOL ?= $(shell "$(LEJOS_NXT_WIN32_GCC)" -print-prog-name=dlltool)
+LEJOS_NXT_WIN32_GXX ?= i686-w64-mingw32-g++
+LEJOS_NXT_WIN32_DLLTOOL ?= $(shell "$(LEJOS_NXT_WIN32_GXX)" -print-prog-name=dlltool)
 ### soon, there might be a multilib mingw64 toolchain, so use -m32 and -mi386
-LEJOS_NXT_WIN32_CFLAGS ?= -m32 -O2 -Wall
+LEJOS_NXT_WIN32_CXXFLAGS ?= -m32 -O2 -Wall
 LEJOS_NXT_WIN32_DLLFLAGS ?= -mi386
 LEJOS_NXT_WIN32_FANTOMSDK ?=
 LEJOS_NXT_WIN32_JDK ?=
@@ -31,7 +31,7 @@ fantom.lib: fantom.def
 #	"$(LEJOS_NXT_WIN32_JDK)/bin/javah" -o "$@" -classpath ../pccomms/build lejos.pc.comm.NXTCommFantom 
 
 jfantom.dll: jfantom.cpp fantom.lib | jfantom.h 
-	"$(LEJOS_NXT_WIN32_GCC)" $(LEJOS_NXT_WIN32_CFLAGS) \
+	"$(LEJOS_NXT_WIN32_GXX)" $(LEJOS_NXT_WIN32_CXXFLAGS) \
 		-I"$(LEJOS_NXT_WIN32_JDK)/include" \
 		-I"$(LEJOS_NXT_WIN32_JDK)/include/win32" \
 		-I"$(LEJOS_NXT_WIN32_FANTOMSDK)/includes" \
