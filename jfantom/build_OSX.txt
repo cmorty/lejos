@@ -2,23 +2,48 @@
 To build the fantom JNI wrapper for OS X:
 ***************************
 
-NOTE: the Makefile and this guide is for Snow Leopard only.
+NOTE: for a release binary, you will need OS X Snow Leopard.
       Snow Leopard is the last OS X that supports building
       binaries for OS X 10.4 ppc and i386. 
+
+
+*** OS X Snow Leopard
 
 1) Install XCode from the Snow Leopard DVD.
      System Tools and Mac OS X 10.4 Support is required
      UNIX Dev Support is _not_ required
 
-3) Install the latest Lego Fantom driver (1.1.3)
+2) Install the latest Lego Fantom driver (1.1.3)
 
-4) Download the install the SDK from
+3) Download the install the SDK from
      http://mindstorms.lego.com/en-us/support/files/Advanced.aspx
 
-5) Set LEJOS_NXT_OSX_FANTOMSDK environment variable
+4) Set LEJOS_NXT_OSX_FANTOMSDK environment variable
 
-6) Run xcrun make -f Makefile.osx clean all 
+5) Run xcrun make -f Makefile.osx clean all 
 
+
+*** OS X Lion
+
+1) Install XCode (e.g. by copying Xcode.app to /Applications)
+
+2) Setup xcode-select by running
+     sudo xcode-select -switch /Applications/Xcode.app
+
+3) We have to override the default settings from Makefile.osx
+     export LEJOS_NXT_OSX_GXX=$(xcrun -find gcc)
+   and
+     export LEJOS_NXT_OSX_SYSVER=10.6
+     export LEJOS_NXT_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk
+   or
+     export LEJOS_NXT_OSX_SYSVER=10.7
+     export LEJOS_NXT_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk
+   An overview of the installed SDKs is available via the command
+     xcodebuild -sdk -version
+
+4) Edit Makefile.osx and remove -arch ppc
+
+5) Continue at 2) for Snow Leopard above
 
 
 
