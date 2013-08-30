@@ -4,7 +4,7 @@
 LEJOS_NXT_OSX_GXX ?= $(shell xcrun -find g++-4.0)
 LEJOS_NXT_OSX_SYSVER ?= 10.4
 LEJOS_NXT_OSX_SYSROOT ?= $(shell xcodebuild -version -sdk "macosx$(LEJOS_NXT_OSX_SYSVER)" Path)
-LEJOS_NXT_OSX_JAVAINC ?= $(LEJOS_NXT_OSX_SYSROOT)/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers
+LEJOS_NXT_OSX_JAVAINC ?= $(LEJOS_NXT_OSX_SYSROOT)/System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers
 LEJOS_NXT_OSX_FANTOMSDK ?=
 
 ifndef LEJOS_NXT_OSX_FANTOMSDK
