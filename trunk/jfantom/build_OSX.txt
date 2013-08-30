@@ -34,12 +34,12 @@ NOTE: for a release binary, you will need OS X Snow Leopard.
      export LEJOS_NXT_OSX_GXX=$(xcrun -find gcc)
    and
      export LEJOS_NXT_OSX_SYSVER=10.6
-     export LEJOS_NXT_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk
+     export LEJOS_NXT_OSX_SYSROOT=$(xcodebuild -version -sdk macosx10.6 Path)
    or
      export LEJOS_NXT_OSX_SYSVER=10.7
-     export LEJOS_NXT_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk
+     export LEJOS_NXT_OSX_SYSROOT=$(xcodebuild -version -sdk macosx10.7 Path)
    An overview of the installed SDKs is available via the command
-     xcodebuild -sdk -version
+     xcodebuild -version -sdk
 
 4) Edit Makefile.osx and remove -arch ppc
 
