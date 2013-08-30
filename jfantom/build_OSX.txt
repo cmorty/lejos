@@ -31,15 +31,14 @@ NOTE: for a release binary, you will need OS X Snow Leopard.
      sudo xcode-select -switch /Applications/Xcode.app
 
 3) We have to override the default settings from Makefile.osx
-     export LEJOS_NXT_OSX_GXX=$(xcrun -find gcc)
+     export LEJOS_NXT_OSX_GXX=g++
      export LEJOS_NXT_OSX_SYSVER=10.6
+     export LEJOS_NXT_OSX_ARCHFLAGS="-arch i386"
    Adjust LEJOS_NXT_OSX_SYSVER depending on what SDKs you have installed.
    An overview of the installed SDKs is available via the command
      xcodebuild -version -sdk
 
-4) Edit Makefile.osx and remove -arch ppc
-
-5) Continue at 2) for Snow Leopard above
+4) Continue at 2) for Snow Leopard above
 
 
 
