@@ -32,12 +32,8 @@ NOTE: for a release binary, you will need OS X Snow Leopard.
 
 3) We have to override the default settings from Makefile.osx
      export LEJOS_NXT_OSX_GXX=$(xcrun -find gcc)
-   and
      export LEJOS_NXT_OSX_SYSVER=10.6
-     export LEJOS_NXT_OSX_SYSROOT=$(xcodebuild -version -sdk macosx10.6 Path)
-   or
-     export LEJOS_NXT_OSX_SYSVER=10.7
-     export LEJOS_NXT_OSX_SYSROOT=$(xcodebuild -version -sdk macosx10.7 Path)
+   Adjust LEJOS_NXT_OSX_SYSVER depending on what SDKs you have installed.
    An overview of the installed SDKs is available via the command
      xcodebuild -version -sdk
 
