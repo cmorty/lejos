@@ -1,14 +1,19 @@
 # This makefile is for Mac OS X Snow Leopard.
 
 ### use mingw64 32bit toolchain by default
-LEJOS_NXT_OSX_GXX ?= $(shell xcrun -find g++-4.0)
+LEJOS_NXT_OSX_GXX ?= g++-4.0
 LEJOS_NXT_OSX_SYSVER ?= 10.4
 LEJOS_NXT_OSX_SYSROOT ?= $(shell xcodebuild -version -sdk "macosx$(LEJOS_NXT_OSX_SYSVER)" Path)
 LEJOS_NXT_OSX_JAVAINC ?= $(LEJOS_NXT_OSX_SYSROOT)/System/Library/Frameworks/JavaVM.framework/Headers
 LEJOS_NXT_OSX_FANTOMSDK ?=
+LEJOS_NXT_OSX_CFLAGS ?= -O2 -pipe -Wall -mmacosx-version-min="$(LEJOS_NXT_OSX_SYSVER)" -isysroot "$(LEJOS_NXT_OSX_SYSROOT)"
+LEJOS_NXT_OSX_ARCHFLAGS ?= -arch ppc -arch i386
 
 ifndef LEJOS_NXT_OSX_FANTOMSDK
 $(error "You have to set LEJOS_NXT_OSX_FANTOMSDK")
+endif
+ifeq "$(LEJOS_NXT_OSX_SYSROOT)" ""
+$(error "Could not detect SYSROOT. Is LEJOS_NXT_OSX_SYSVER correct?")
 endif
 
 .PHONY: all
@@ -19,17 +24,16 @@ clean:
 	rm -f libjfantom.jnilib fakeNiSpy.dylib #jfantom.h
 
 fakeNiSpy.dylib: fakeNiSpy.cpp
-	"$(LEJOS_NXT_OSX_GXX)" -arch ppc -arch i386 -dynamiclib \
-		-mmacosx-version-min="$(LEJOS_NXT_OSX_SYSVER)" -isysroot "$(LEJOS_NXT_OSX_SYSROOT)" \
-		-o "$@" $^
+	xcrun -sdk "$(LEJOS_NXT_OSX_SYSROOT)" \
+		"$(LEJOS_NXT_OSX_GXX)" $(LEJOS_NXT_OSX_ARCHFLAGS) $(LEJOS_NXT_OSX_CFLAGS) \
+		-dynamiclib -o "$@" $^
 
 #jfantom.h:
 #	"$(LEJOS_NXT_WIN32_JDK)/bin/javah" -o "$@" -classpath ../pccomms/build lejos.pc.comm.NXTCommFantom 
 
 libjfantom.jnilib: jfantom.cpp | jfantom.h fakeNiSpy.dylib
-	"$(LEJOS_NXT_OSX_GXX)" -arch ppc -arch i386 -dynamiclib -O2 -Wall \
-		-mmacosx-version-min="$(LEJOS_NXT_OSX_SYSVER)" -isysroot "$(LEJOS_NXT_OSX_SYSROOT)" \
+	xcrun -sdk "$(LEJOS_NXT_OSX_SYSROOT)" \
+		"$(LEJOS_NXT_OSX_GXX)" $(LEJOS_NXT_OSX_ARCHFLAGS) $(LEJOS_NXT_OSX_CFLAGS) \
 		-dylib_file /Library/Frameworks/NiSpyLog.framework/Versions/2/NiSpyLog:fakeNiSpy.dylib \
 		-I "$(LEJOS_NXT_OSX_JAVAINC)" -I "$(LEJOS_NXT_OSX_FANTOMSDK)/includes" \
-		-framework Fantom \
-		-o "$@" $^
+		-framework Fantom -dynamiclib -o "$@" $^
