@@ -7,6 +7,11 @@ package lejos.nxt;
 
 /**
  * Constants used to set Sensor types and modes.
+ * <p>
+ * I2C:<br>
+ * The type of the sensor is basically the overall use of the sensor port. 
+ * For i2c devices this should normally be one of TYPE_LOWSPEED (for 5v sensors) or 
+ * TYPE_LOWSPEED_9V (for 9V sensors). These names come from the Lego firmware.
  *
  */
 public interface SensorConstants {
