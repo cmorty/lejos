@@ -76,7 +76,7 @@
 
 							</ul></li>	
 						</ul></li>
-						<li><a href="http://lejos.sourceforge.net/forum/" class="menuLink" target="_blank">Forum</a></li>
+						<li><a href="forum/" class="menuLink" target="_blank">Forum</a></li>
 						<li><a class="menuLink" href="books.php">Books</a></li>
 						<li><a class="menuLink" href="links.php">Links</a></li>
 						<li><a class="menuLink" href="contact.php">Contact</a></li>

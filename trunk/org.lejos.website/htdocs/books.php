@@ -75,7 +75,7 @@
 								<li><a href="rcx-faq.php"  class="menuLink">FAQ</a></li>
 							</ul></li>	
 						</ul></li>
-						<li><a href="http://lejos.sourceforge.net/forum/" class="menuLink" target="_blank">Forum</a></li>
+						<li><a href="forum/" class="menuLink" target="_blank">Forum</a></li>
 						<li class="selected">Books</li>
 						<li><a href="links.php" class="menuLink">Links</a></li>
 						<li><a href="contact.php" class="menuLink">Contact</a></li>

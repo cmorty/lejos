@@ -73,7 +73,7 @@
 								<li><a href="rcx-faq.php"  class="menuLink">FAQ</a></li>
 							</ul></li>
 						</ul></li>
-						<li><a href="http://lejos.sourceforge.net/forum/" class="menuLink">Forum</a></li>
+						<li><a href="forum/" class="menuLink">Forum</a></li>
 						<li><a href="books.php" class="menuLink">Books</a></li>
 						<li><a href="links.php" class="menuLink">Links</a></li>
 						<li><a href="contact.php" class="menuLink">Contact</a></li>
@@ -135,7 +135,7 @@
 							<b>May 16, 2011 1:46 PM</b><br />
 <b>After a long delay, leJOS NXJ 0.9</b> is available for <a href="http://sourceforge.net/projects/lejos/files/">download</a>. We owe Lawrie Griffiths a big thanks for all the time and work he put into making this release happen. Some of the new changes include preliminary Android OS support, a new icon-based menu system, updating the Java language to support such things as generics, and nanosecond support (see the System class)! We've also added many new classes to support new sensors, as well as reworking the navigation API to accomodate different robot types, object detection, and path finding.
 
-<p>We are very interested in having everyone test this release and provide comments as this will be our last revision cycle before the big 1.0 release. If you have any suggestions, now is the time to let us know in the <a href="http://lejos.sourceforge.net/forum/">forums</a>.</p>
+<p>We are very interested in having everyone test this release and provide comments as this will be our last revision cycle before the big 1.0 release. If you have any suggestions, now is the time to let us know in the <a href="forum/">forums</a>.</p>
 
 							</td>
 						</tr>
@@ -229,7 +229,7 @@ For configuration and usage, consult the <em>leJOS NXJ</em> topic in Eclipse's <
 							<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 							<td class="n3t2r">
 							<b>November 15, 2008 11:36 AM</b><br />
-The new <b>leJOS NXJ 0.7</b> is now available for <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/downloads.php" class="simpleLink">download</a>. This version includes a Windows installer to make installation a breeze for new users (the compressed-file distribution is also still available). New features include better USB support, no more using a paper clip to upload firmware, faster garbage collection, three new GUI tools, a brand new <a href="http://lejos.sourceforge.net/nxt/nxj/tutorial/index.htm">Tutorial</a>, support for many new sensors, bug fixes and much more <a href="https://sourceforge.net/project/shownotes.php?group_id=9339&amp;release_id=639759"> (full change log)</a>. We also have preliminary packages for the incredible Monte Carlo Localization technique, plus mobile phone remote control. (These packages are still undergoing changes and are not yet supported. For the brave only!) As usual, if you find any bugs please report them to our <a href="http://lejos.sourceforge.net/forum/">forums</a>.<br />
+The new <b>leJOS NXJ 0.7</b> is now available for <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/downloads.php" class="simpleLink">download</a>. This version includes a Windows installer to make installation a breeze for new users (the compressed-file distribution is also still available). New features include better USB support, no more using a paper clip to upload firmware, faster garbage collection, three new GUI tools, a brand new <a href="http://lejos.sourceforge.net/nxt/nxj/tutorial/index.htm">Tutorial</a>, support for many new sensors, bug fixes and much more <a href="https://sourceforge.net/project/shownotes.php?group_id=9339&amp;release_id=639759"> (full change log)</a>. We also have preliminary packages for the incredible Monte Carlo Localization technique, plus mobile phone remote control. (These packages are still undergoing changes and are not yet supported. For the brave only!) As usual, if you find any bugs please report them to our <a href="forum/">forums</a>.<br />
 <br />
 							</td>
 						</tr>
@@ -240,7 +240,7 @@ The new <b>leJOS NXJ 0.7</b> is now available for <a href="http://lejos.sourcefo
 							<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 							<td class="n3t2r">
 							<b>May 06, 2008 4:58 PM</b><br />
-<b>NXJ Version 0.6</b> is available for <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/downloads.php" class="simpleLink">download</a>. Along with numerous bug fixes, this version includes: Full <b>Mac OSX support</b>, output using System.out and System.err, switch statements, Bluetooth GPS, Bluetooth keyboard (SPP not HID), preliminary javax.bluetooth API, auto-run a program and many more (see <a href="http://sourceforge.net/project/shownotes.php?release_id=597314&amp;group_id=9339" class="simpleLink">notes</a>).  Please report any bugs to the <a href="http://lejos.sourceforge.net/forum" class="simpleLink">forums</a>.
+<b>NXJ Version 0.6</b> is available for <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/downloads.php" class="simpleLink">download</a>. Along with numerous bug fixes, this version includes: Full <b>Mac OSX support</b>, output using System.out and System.err, switch statements, Bluetooth GPS, Bluetooth keyboard (SPP not HID), preliminary javax.bluetooth API, auto-run a program and many more (see <a href="http://sourceforge.net/project/shownotes.php?release_id=597314&amp;group_id=9339" class="simpleLink">notes</a>).  Please report any bugs to the <a href="forum/" class="simpleLink">forums</a>.
 <br />
 <br />
 							</td>
@@ -268,7 +268,7 @@ For configuration and usage, consult the <em>leJOS NXJ</em> topic in Eclipse's <
 							<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 							<td class="n3t2r">
 							<b>January 19, 2008 11:14 AM</b><br />
-<b>Version 0.7 of iCommand</b> is now ready for <a href="http://lejos.sourceforge.net/p_technologies/nxt/icommand/downloads.php" class="simpleLink">download</a>. Linux users who were having problems installing the previous version will have better luck with this since we forgot to include the Bluez package last time. Navigation classes are more refined in this version too. If you find bugs, please report them in the <a href="http://lejos.sourceforge.net/forum" class="simpleLink">forums</a>.
+<b>Version 0.7 of iCommand</b> is now ready for <a href="http://lejos.sourceforge.net/p_technologies/nxt/icommand/downloads.php" class="simpleLink">download</a>. Linux users who were having problems installing the previous version will have better luck with this since we forgot to include the Bluez package last time. Navigation classes are more refined in this version too. If you find bugs, please report them in the <a href="forum/" class="simpleLink">forums</a>.
 <br />
 <br />
 							</td>
@@ -279,7 +279,7 @@ For configuration and usage, consult the <em>leJOS NXJ</em> topic in Eclipse's <
 							<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 							<td class="n3t2r">
 							<b>January 8, 2008 5:34 PM</b><br />
-<b>Version 0.5 of leJOS NXJ</b> is now ready for <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/downloads.php" class="simpleLink">download</a>. This version has quite a few changes including: A garbage collector (thanks to Janusz Gorecki), I2C writes, Port 4 now works with I2C, multiple NXT brick connections through Bluetooth (thanks to Andy Shaw), returns to menu after program ends, Mindsensors NXTCam, HiTechnic Gyro sensor, support for 64-bit Linux and lots of other general improvements. Feel free to post your comments and bug reports in the <a href="http://lejos.sourceforge.net/forum" class="simpleLink">forums</a>.
+<b>Version 0.5 of leJOS NXJ</b> is now ready for <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/downloads.php" class="simpleLink">download</a>. This version has quite a few changes including: A garbage collector (thanks to Janusz Gorecki), I2C writes, Port 4 now works with I2C, multiple NXT brick connections through Bluetooth (thanks to Andy Shaw), returns to menu after program ends, Mindsensors NXTCam, HiTechnic Gyro sensor, support for 64-bit Linux and lots of other general improvements. Feel free to post your comments and bug reports in the <a href="forum/" class="simpleLink">forums</a>.
 <br />
 <br />
 							</td>
@@ -289,7 +289,7 @@ For configuration and usage, consult the <em>leJOS NXJ</em> topic in Eclipse's <
 							<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 							<td class="n3t2r">
 							<b>September 3, 2007 3:46 PM</b><br />
-New versions of <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/downloads.php" class="simpleLink">leJOS NXJ</a> and <a href="http://lejos.sourceforge.net/p_technologies/nxt/icommand/downloads.php" class="simpleLink">iCommand</a> are now available for download! The new beta version of <b>leJOS NXJ 0.4</b> features NXT to NXT Bluetooth comms, a comms proxy to talk via sockets to the outside world, greatly improved MIDP LCD UI and graphics, primitive playing of wav sound samples, a multi-level menu, and lots of other enhancements. We haven't tested everything thoroughly, so if you find any bugs, please let us know in the bugwatch threads for <a href="http://lejos.sourceforge.net/forum/viewtopic.php?p=1132#1132" class="simpleLink">leJOS NXJ</a> and <a href="http://lejos.sourceforge.net/forum/viewtopic.php?p=1133#1133" class="simpleLink">iCommand</a>.<br />
+New versions of <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/downloads.php" class="simpleLink">leJOS NXJ</a> and <a href="http://lejos.sourceforge.net/p_technologies/nxt/icommand/downloads.php" class="simpleLink">iCommand</a> are now available for download! The new beta version of <b>leJOS NXJ 0.4</b> features NXT to NXT Bluetooth comms, a comms proxy to talk via sockets to the outside world, greatly improved MIDP LCD UI and graphics, primitive playing of wav sound samples, a multi-level menu, and lots of other enhancements. We haven't tested everything thoroughly, so if you find any bugs, please let us know in the bugwatch threads for <a href="forum/viewtopic.php?p=1132#1132" class="simpleLink">leJOS NXJ</a> and <a href="forum/viewtopic.php?p=1133#1133" class="simpleLink">iCommand</a>.<br />
 <br />
 							</td>
 						</tr>
@@ -308,7 +308,7 @@ New versions of <a href="http://lejos.sourceforge.net/p_technologies/nxt/nxj/dow
 							<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 							<td class="n3t2r">
 							<b>May 31, 2007 9:43 PM</b><br />
-<b>There's been a holdup!</b> For those who have been waiting for the next release of leJOS NXJ, we'd like to apologize for the unexpected delay. Owners of <a href="http://www.variantpress.com/books/maximum-lego-nxt" class="simpleLink">Maximum LEGO NXT: Building Robots with Java Brains</a> should ignore the install instructions in the book until the next version is released (for now you can use the slightly more primitive leJOS NXJ 0.2.0). More information on this delay can be found in the forums <a href="http://lejos.sourceforge.net/forum/viewtopic.php?t=167" class="simpleLink">here</a> and <a href="http://lejos.sourceforge.net/forum/viewtopic.php?t=184" class="simpleLink">here</a>. Thanks for your patience.<br />
+<b>There's been a holdup!</b> For those who have been waiting for the next release of leJOS NXJ, we'd like to apologize for the unexpected delay. Owners of <a href="http://www.variantpress.com/books/maximum-lego-nxt" class="simpleLink">Maximum LEGO NXT: Building Robots with Java Brains</a> should ignore the install instructions in the book until the next version is released (for now you can use the slightly more primitive leJOS NXJ 0.2.0). More information on this delay can be found in the forums <a href="forum/viewtopic.php?t=167" class="simpleLink">here</a> and <a href="forum/viewtopic.php?t=184" class="simpleLink">here</a>. Thanks for your patience.<br />
 <br />
 							</td>
 						</tr>
