@@ -143,7 +143,7 @@
         </tr>
         <tr valign="top"> 
           <td>A:</td>
-          <td>There are several options. If you are good with Java you can study the <a href="http://lejos.sourceforge.net/apidocs/index.html">API</a>. You can check out the examples folder that is included with leJOS. You can also read a <a href="http://www.amazon.com/exec/obidos/ASIN/0130093645/lejos0e-20">book</a> on leJOS programming.</td>
+          <td>There are several options. If you are good with Java you can study the <a href="apidocs/index.html">API</a>. You can check out the examples folder that is included with leJOS. You can also read a <a href="http://www.amazon.com/exec/obidos/ASIN/0130093645/lejos0e-20">book</a> on leJOS programming.</td>
         </tr>
 
 
