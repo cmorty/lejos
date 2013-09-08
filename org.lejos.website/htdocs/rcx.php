@@ -124,7 +124,7 @@ run Java programs.</p>
 
 
             <ul>
-              <li><a href="http://lejos.sourceforge.net/tutorial/index.html" target="_blank">The leJOS Tutorial</a> by Matthias Paul Scholz et.al.</li>
+              <li><a href="tutorial/index.html" target="_blank">The leJOS Tutorial</a> by Matthias Paul Scholz et.al.</li>
               <li><a href="http://www.informatik.fh-muenchen.de/~schieder/usinglejos/" target="_blank">An Introduction to leJOS</a> by Reinhard Schiedermeier, Munich University of Applied Sciences</li>
 
               <li><a href="http://dudley.wellesley.edu/~anderson/robots/lejos/" target="_blank">leJOS Documentation</a> by Scott Anderson, Wellesley College</li>

@@ -175,10 +175,10 @@
 	    <p>leJOS 3 will be the final release for the RCX, incorporating all the enhancements to lejOS made since the 2.1.0 release in 2003.</p>
 	    <p>Release Candidate 2 (17<sup>th</sup> of September, 2006):</p>
             <ul>
-   				<li><a href="http://lejos.sourceforge.net/tools/lejos3/lejos.3.0.0-RC2.tar.gz" target="_blank">leJOS 3.0 RC2 for Linux</a> [3.2 m]</li>
+   				<li><a href="tools/lejos3/lejos.3.0.0-RC2.tar.gz" target="_blank">leJOS 3.0 RC2 for Linux</a> [3.2 m]</li>
 
-   				<li><a href="http://lejos.sourceforge.net/tools/lejos3/lejos.3.0.0-RC2-win32.zip" target="_blank">leJOS 3.0 RC2 for Windows</a> [3.2 m]</li>
-   				<li><a href="http://lejos.sourceforge.net/tools/lejos3/lejos.3.0.0-RC2-doc.zip" target="_blank">Documentation (including Tutorial)</a> [3.8 m]</li>
+   				<li><a href="tools/lejos3/lejos.3.0.0-RC2-win32.zip" target="_blank">leJOS 3.0 RC2 for Windows</a> [3.2 m]</li>
+   				<li><a href="tools/lejos3/lejos.3.0.0-RC2-doc.zip" target="_blank">Documentation (including Tutorial)</a> [3.8 m]</li>
             </ul>
 	    <sup>assemblied by Matthias Paul Scholz</sup>
           </td>
