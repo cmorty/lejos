@@ -80,7 +80,7 @@ Then the values can be retrieved by </p>
 <p>int getRightCount()</p>
 </li>
 </ul>
-<p>The complete API for Button Counter is <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/ButtonCounter.html">here</a></p>
+<p>The complete API for Button Counter is <a href="http://www.lejos.org/nxt/nxj/api/lejos/util/ButtonCounter.html">here</a></p>
 <a name="2"> </a>
 <h4>DataLogger</h4>
 <p>This class stores float values in an array and transmits
@@ -101,7 +101,7 @@ Transmits the data to the PC. When this method is called, a message is
 displayed on the NXT screen allowing the user to select USB or
 BlueTooth as the transmission channel</li>
 </ul>
-<p>The complete API of Datalogger is <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/Datalogger.html">here</a>.<br />
+<p>The complete API of Datalogger is <a href="http://www.lejos.org/nxt/nxj/api/lejos/util/Datalogger.html">here</a>.<br />
 </p>
 <h4><a name="nxtdl"></a></h4>
 <h4>NXTDataLogger</h4>
@@ -126,7 +126,7 @@ be called after this method is called and before the first writeLog()
 method is called.<br />
 <br />
 </li>
-<li>void setColumns(<a target="_blank" href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/LogColumn.html">LogColumn</a>[]
+<li>void setColumns(<a target="_blank" href="http://www.lejos.org/nxt/nxj/api/lejos/util/LogColumn.html">LogColumn</a>[]
 columnDefs)<br />
 Sets up the column definitions for your logging session.<br />
 <br />
@@ -159,7 +159,7 @@ and closes down the data streams and connection.</li>
 <p>To support the structured nature of the API and NXT
 Charting Logger data requirements, there is a specific order in which
 the methods must be called to set up a logging session.</p><p>An example that shows how to set up and use real-time logging:</p><hr style="width: 100%; height: 2px;" /><pre>NXTDataLogger dlog = new NXTDataLogger();<br />NXTConnection conn = Bluetooth.waitForConnection(5000, NXTConnection.PACKET);<br />try {<br />  dlog.startRealtimeLog(conn);<br />} catch (IOException e) {<br />  // Do nothing. This is hideously bad.<br />}<br /><br />dlog.setColumns(new LogColumn[] {<br />  new LogColumn("g X", LogColumn.DT_FLOAT),<br />  new LogColumn("g Y", LogColumn.DT_FLOAT), <br />  new LogColumn("pitch", LogColumn.DT_FLOAT,2),// use different range axis (2)<br />  new LogColumn("angular velocity", LogColumn.DT_FLOAT,3),// use different range axis (3)<br />  new LogColumn("heading", LogColumn.DT_FLOAT,4)// use different range axis (4)<br />});<br /><br />// code example below assumes gyro object has the illustrated methods <br />gyro.setAccScale2G();<br />float gx, gy, pitch;<br /><br />while(Button.ESCAPE.isUp()) {<br />  gx=gyro.getLastAccel(0);<br />  gy=gyro.getLastAccel(1);<br />  pitch=gyro.getLastPitch();<br />  dlog.writeLog(gx);<br />  dlog.writeLog(gy);<br />  dlog.writeLog(pitch);<br />  dlog.writeLog(gyro.getAngularVelocity());<br />  dlog.writeLog(gyro.getHeading());<br />  dlog.finishLine();<br />  Delay.msDelay(50);<br />  gyro.readAllData();<br />}<br />dlog.stopLogging();</pre><hr style="width: 100%; height: 2px;" /><p> The details and
-complete API of NXTDataLogger are <a target="_blank" href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/NXTDataLogger.html">here</a>.
+complete API of NXTDataLogger are <a target="_blank" href="http://www.lejos.org/nxt/nxj/api/lejos/util/NXTDataLogger.html">here</a>.
 </p>
 <a name="3"> </a>
 <h4>Stopwatch</h4>
@@ -177,7 +177,7 @@ construct as many instances as you need.</p>
 milliseconds.</p>
 </li>
 </ul>
-<p>The API of Stopwatch is <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/Stopwatch.html">here</a>.</p>
+<p>The API of Stopwatch is <a href="http://www.lejos.org/nxt/nxj/api/lejos/util/Stopwatch.html">here</a>.</p>
 <a name="4"> </a>
 <h4>Timer</h4>
 <p>This class is used with a Timer Listener, to which it
@@ -197,7 +197,7 @@ private thread.</p>
 <p>void stop()</p>
 </li>
 </ul>
-<p>The Timer API is <a href="http://lejos.sourceforge.net/nxt/nxj/api/lejos/util/Timer.html">here</a>.</p>
+<p>The Timer API is <a href="http://www.lejos.org/nxt/nxj/api/lejos/util/Timer.html">here</a>.</p>
 <a name="5"></a>
 <h5>Timer Listener</h5>
 <p>To use the Timer, you need a class that implements this
@@ -214,22 +214,22 @@ interface. This interface has only one method.</p>
 <p>leJOS NXJ supports several of the Java data structures.
 They are:</p>
 <ul class="BlueArrows">
-<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/ArrayList.html">ArrayList</a></li>
-<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/BitSet.html">BitSet</a></li>
-<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Hashtable.html">Hashtable</a></li>
-<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Queue.html">Queue</a></li>
-<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Stack.html">Stack</a></li>
-<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Vector.html">Vector</a></li>
-<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Enumeration.html">Enumeration</a></li>
-<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/index.html?java/util/Enumeration.html">Iterator</a></li>
+<li><a href="http://www.lejos.org/nxt/nxj/api/java/util/ArrayList.html">ArrayList</a></li>
+<li><a href="http://www.lejos.org/nxt/nxj/api/java/util/BitSet.html">BitSet</a></li>
+<li><a href="http://www.lejos.org/nxt/nxj/api/java/util/Hashtable.html">Hashtable</a></li>
+<li><a href="http://www.lejos.org/nxt/nxj/api/java/util/Queue.html">Queue</a></li>
+<li><a href="http://www.lejos.org/nxt/nxj/api/java/util/Stack.html">Stack</a></li>
+<li><a href="http://www.lejos.org/nxt/nxj/api/java/util/Vector.html">Vector</a></li>
+<li><a href="http://www.lejos.org/nxt/nxj/api/java/util/Enumeration.html">Enumeration</a></li>
+<li><a href="http://www.lejos.org/nxt/nxj/api/index.html?java/util/Enumeration.html">Iterator</a></li>
 </ul>
 <p>It also supports&nbsp;other Java utilities:</p>
 <ul class="BlueArrows">
-<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Random.html">Random</a></li>
-<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Properties.html">Properties</a></li>
-<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/StringTokenizer.html">StringTokenizer</a></li>
-<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Timer.html">Timer</a></li>
-<li><a href="http://lejos.sourceforge.net/nxt/nxj/api/java/util/Properties.html">TimerTask</a></li>
+<li><a href="http://www.lejos.org/nxt/nxj/api/java/util/Random.html">Random</a></li>
+<li><a href="http://www.lejos.org/nxt/nxj/api/java/util/Properties.html">Properties</a></li>
+<li><a href="http://www.lejos.org/nxt/nxj/api/java/util/StringTokenizer.html">StringTokenizer</a></li>
+<li><a href="http://www.lejos.org/nxt/nxj/api/java/util/Timer.html">Timer</a></li>
+<li><a href="http://www.lejos.org/nxt/nxj/api/java/util/Properties.html">TimerTask</a></li>
 </ul>
 <p><a href="#top">Back to top</a></p>
 <p> </p>
