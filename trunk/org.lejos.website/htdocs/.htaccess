@@ -1,14 +1,16 @@
 RewriteEngine on
 RewriteRule ^favicon\.ico$ /lejos.ico
 
+RewriteCond %{HTTP_HOST} !=www.lejos.org
+RewriteCond %{REQUEST_METHOD} =GET
+RewriteRule ^(.*) http://www.lejos.org/$1 [R]
+# exempt forum from redirect
+#RewriteRule ^(?!forum/)(.*) http://www.lejos.org/$1 [R]
+
+#RewriteCond %{HTTP_HOST} !=lejos.sourceforge.net
+#RewriteCond %{REQUEST_METHOD} =GET
+#RewriteRule ^forum/(.*) http://lejos.sourceforge.net/forum/$1 [R]
+
 #RewriteCond %{REMOTE_HOST} !=78.46.94.24
 #RewriteCond %{HTTP:X-Remote-Addr} !=31.19.21.11
 #RewriteRule ^forum/ /maintenance.php
-
-#RewriteCond %{HTTP_HOST} !=www.lejos.org
-#RewriteCond %{REQUEST_METHOD} =GET
-#RewriteRule ^(.*) http://www.lejos.org/$1 [R]
-
-RewriteCond %{HTTP_HOST} !=lejos.sourceforge.net
-RewriteCond %{REQUEST_METHOD} =GET
-RewriteRule ^forum/(.*) http://lejos.sourceforge.net/forum/$1 [R]
