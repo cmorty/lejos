@@ -5,9 +5,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import lejos.nxt.comm.RConsole;
 import lejos.nxt.comm.RS485;
 import lejos.util.Delay;
+//RConsole;
 
 /**
  * Interface class for the NXT2WIFI sensor device developed by Danny Benedettelli. The NXT2WIFI is a self-contained
@@ -27,6 +27,10 @@ import lejos.util.Delay;
  * @author BB
  * @author bbagnall@mts.net
  * @version 1.2 Added web event listener code (and coded DemoRobot sample)
+ * 
+ * @author dbenedettelli
+ * @author daniele@benedettelli.com
+ * @version 1.3 Revision, removed RConsole for lighter binary, fixed bug in Web Monitor that prevented other commands to be processed 
  * 
  */
 public class NXT2WIFI {
@@ -89,9 +93,9 @@ public class NXT2WIFI {
 	
 	private static int defaultBaudRate = 230400;	// Change this to change the default baud rate
 	private boolean debug = false;	// Wait for remote console if true
-	
+
 	/**
-	 * Default constructor. Assumes baud rate of 230400 and no debug output to RConsole.
+	 * Default constructor. Assumes baud rate of 230400 and no debug output to //RConsole.
 	 */
 	public NXT2WIFI() {
 		this(defaultBaudRate);
@@ -110,7 +114,7 @@ public class NXT2WIFI {
 			socketType[i] = INVALID;
 		}
 
-		if(debug) RConsole.println("NXT2WIFI initialized");
+		//if(debug) RConsole.println("NXT2WIFI initialized");
 	}
 	
 ///////////////////////////////////////////////////////////////////////////////
@@ -242,10 +246,11 @@ public class NXT2WIFI {
 	 * @param timeout How long to wait for a reply (in ms)
 	 */
 	private String commandWithReply(String cmd, int timeout) {
+		suspendWebMonitor = true;
 		send(cmd);
 		Delay.msDelay(timeout);
 		String reply = readFully(false);
-
+		suspendWebMonitor = false;
 		// parse the reply to locate the '=' and extract everything from that point on as the reply
 		int equals = reply.indexOf("=")+1;
 		String ret = reply.substring(equals);
@@ -286,6 +291,7 @@ public class NXT2WIFI {
 ///////////////////////////////////////////////////////////////////////////////
 	private MonitorWebEvents mon = null;
 	private ArrayList<NXT2WiFiListener> listeners= new ArrayList<NXT2WiFiListener>();
+	private boolean suspendWebMonitor = false;
 	
 	/**
 	 * Registers this class to listen for Web Events from an NXT2WiFiListener.
@@ -298,6 +304,7 @@ public class NXT2WIFI {
 			mon.start();
 		}
 		listeners.add(listener);
+		suspendWebMonitor = false;
 	}
 	
 	// When listener first added, create and start monitoring thread? Better to be always running and consuming?
@@ -305,16 +312,19 @@ public class NXT2WIFI {
 		byte[] cbuf = new byte[20];
 		public void run() {
 			while(true) {
-				int total = readBytesFully(true, cbuf, 0, 20); // true = blocking. Why 20? Why not 7?
-				if (isWebEvent(cbuf)) { // Indicates web event
-					byte controlType = cbuf[3]; // e.g button = 0
-					byte controlID = cbuf[4]; // e.g. 1 = button 1 on page
-					byte event = cbuf[5]; // e.g. 0 = button down, 1 = button up
-					byte value = cbuf[6]; // value of the widget
-					for(NXT2WiFiListener ls:listeners) 
-						ls.webEventReceived(controlType, controlID, event, value);
+				if (!suspendWebMonitor) {
+					readBytesFully(true, cbuf, 0, 20); // true = blocking. Why 20? Why not 7?
+					if (isWebEvent(cbuf)) { // Indicates web event
+						byte controlType = cbuf[3]; // e.g button = 0
+						byte controlID = cbuf[4]; // e.g. 1 = button 1 on page
+						byte event = cbuf[5]; // e.g. 0 = button down, 1 = button up
+						byte value = cbuf[6]; // value of the widget
+						for(NXT2WiFiListener ls:listeners) 
+							ls.webEventReceived(controlType, controlID, event, value);
+					}
+				} else {
+					Delay.msDelay(100);
 				}
-				
 			}
 		}
 	}
@@ -347,14 +357,14 @@ public class NXT2WIFI {
 	}
 	
 	/**
-	 * Enable or disable debug output on LejOS USB console. Output is written to the RConsole which must be opened
+	 * Enable or disable debug output on LejOS USB console. Output is written to the //RConsole which must be opened
 	 * prior to calling.
 	 * @param debugMode Boolean flag if true debug output is enabled, if false it is disabled
 	 */
 	public void setConsoleDebug(boolean debugMode) {
 		debug = debugMode;
 		if(debug) {
-			RConsole.println("NXT2WIFI: DEBUG ENABLED at " + System.currentTimeMillis());
+			//RConsole.println("NXT2WIFI: DEBUG ENABLED at " + System.currentTimeMillis());
 		}
 	}
 	
@@ -580,7 +590,7 @@ public class NXT2WIFI {
 			return false;
 		}
 		
-		if(debug) RConsole.println("serverSocket: port="+port + " socketID=" + socketID);
+		//if(debug) RConsole.println("serverSocket: port="+port + " socketID=" + socketID);
 		
 		String cmd = "$"+socketTypeString(kind)+"OS"+socketID+"?"+port+"\n";
 		
@@ -622,7 +632,7 @@ public class NXT2WIFI {
 			return false;
 		}
 
-		if(debug) RConsole.println("clientSocket: host="+host + " port="+port + " socketID=" + socketID);
+		//if(debug) RConsole.println("clientSocket: host="+host + " port="+port + " socketID=" + socketID);
 
 		String cmd = "$"+socketTypeString(kind)+"OC"+socketID+"?"+host+","+port+"\n";
 		if (parseIntResult(commandWithReply(cmd))>0) {
@@ -928,11 +938,11 @@ public class NXT2WIFI {
 	public int connectionStatus() {
 		
 		int status = -1;
-		
-		String cmd = "$WFGS\n";
-		RS485.hsWrite(cmd.getBytes(), 0, cmd.length());
+		suspendWebMonitor = true;
+		send("$WFGS\n");
 		Delay.msDelay(50);
 		String reply = readFully(false);
+		suspendWebMonitor = false;
 		
 		if(reply.length() > 5 && reply.startsWith("WFGS") ) {
 			status = parseIntResult(reply);
@@ -940,7 +950,7 @@ public class NXT2WIFI {
 			status = -1;
 		}
 		
-		if(debug) RConsole.println("connectionStatus returning " + status);
+		//if(debug) RConsole.println("connectionStatus returning " + status);
 		
 		return status;
 	}
@@ -1108,11 +1118,14 @@ public class NXT2WIFI {
 	 * @return A string containing the current IP address
 	 */
 	public String getIPAddress() {
-				
+		suspendWebMonitor = true;		
 		send("$WFIP\n");
 		Delay.msDelay(50);
 
 		String reply = readFully(false);
+		suspendWebMonitor = false;
+		
+//		System.out.println(">>"+reply);
 		
 		if(reply.startsWith("WFIP=")) {
 			reply = reply.substring(5);
@@ -1128,12 +1141,13 @@ public class NXT2WIFI {
 	 * @return A string containing the current MAC address
 	 */
 	public String getMACAddress() {
-		//RS485.hsWrite(CMD_MACADDR, 0, CMD_MACADDR.length);
+		suspendWebMonitor = true;	
+		send("$MAC\n");
 		Delay.msDelay(50);
 		
 		String reply = readFully(false);
-		
-		RConsole.println("Reply = " + reply);
+		suspendWebMonitor = false;	
+		////RConsole.println("Reply = " + reply);
 		
 		// we need to trim the first chunk off the reply as it should be
 		// MAC=
