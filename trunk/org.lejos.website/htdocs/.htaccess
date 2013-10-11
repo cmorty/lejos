@@ -14,3 +14,7 @@ RewriteRule ^(.*) http://www.lejos.org/$1 [R]
 #RewriteCond %{REMOTE_HOST} !=78.46.94.24
 #RewriteCond %{HTTP:X-Remote-Addr} !=31.19.21.11
 #RewriteRule ^forum/ /maintenance.php
+
+AddOutputFilterByType DEFLATE text/html text/plain text/javascript text/css
+#DeflateCompressionLevel 2
+#DeflateBufferSize 8096
