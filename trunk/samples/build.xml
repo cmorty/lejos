@@ -14,21 +14,22 @@
 	<!-- set properties for this build -->
 	<property environment="env" />
 	<property file="build.properties" />
+	<property name="nxj.home.internal" value="${nxj.home}" />
 
 	<!-- check whether nxj.home is correct -->
-	<available file="${nxj.home}/lib/pc" property="lejos.pc.exists" />
-	<available file="${nxj.home}/lib/nxt" property="lejos.nxt.exists" />
-	<fail unless="lejos.pc.exists" message="nxj.home variable incorrect, ${nxj.home}/lib/pc does not exist" />
-	<fail unless="lejos.nxt.exists" message="nxj.home variable incorrect, ${nxj.home}/lib/nxt does not exist" />
+	<available file="${nxj.home.internal}/lib/pc" property="lejos.pc.exists" />
+	<available file="${nxj.home.internal}/lib/nxt" property="lejos.nxt.exists" />
+	<fail unless="lejos.pc.exists" message="nxj.home variable incorrect, ${nxj.home.internal}/lib/pc does not exist" />
+	<fail unless="lejos.nxt.exists" message="nxj.home variable incorrect, ${nxj.home.internal}/lib/nxt does not exist" />
 
 	<!-- define the search paths -->
 	<path id="lejos.pc">
-		<fileset dir="${nxj.home}/lib/pc">
+		<fileset dir="${nxj.home.internal}/lib/pc">
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
 	<path id="lejos.nxt">
-		<fileset dir="${nxj.home}/lib/nxt">
+		<fileset dir="${nxj.home.internal}/lib/nxt">
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
@@ -123,7 +124,7 @@ main class ${main.class}</echo>
 
 	<target name="link" depends="sample.init, compile">
 		<java classname="lejos.pc.tools.NXJLink" failonerror="true" outputproperty="linker.output">
-			<sysproperty key="nxj.home" file="${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home.internal}" />
 			<classpath refid="lejos.pc" />
 			<arg value="--bootclasspath" />
 			<arg pathref="lejos.nxt" />
@@ -184,7 +185,7 @@ main class ${main.class}</echo>
 
 	<target name="upload" depends="link">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
-			<sysproperty key="nxj.home" file="${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home.internal}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="${output.nxj}" />
@@ -193,7 +194,7 @@ main class ${main.class}</echo>
 
 	<target name="debugupload" depends="debuglink">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
-			<sysproperty key="nxj.home" file="${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home.internal}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="${output.nxj}" />
@@ -202,7 +203,7 @@ main class ${main.class}</echo>
 
 	<target name="uploadandrun" depends="link">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
-			<sysproperty key="nxj.home" file="${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home.internal}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-r" />
@@ -212,7 +213,7 @@ main class ${main.class}</echo>
 
 	<target name="debuguploadandrun" depends="debuglink">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
-			<sysproperty key="nxj.home" file="${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home.internal}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-r" />
@@ -222,7 +223,7 @@ main class ${main.class}</echo>
 
 	<target name="rconsoleuploadandrun" depends="rconsolelink" description="upload and run the binary">
 		<java classname="lejos.pc.tools.NXJUpload" fork="true" failonerror="true">
-			<jvmarg value="-Dnxj.home=${nxj.home}" />
+			<jvmarg value="-Dnxj.home=${nxj.home.internal}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-r" />
@@ -233,7 +234,7 @@ main class ${main.class}</echo>
 	<target name="debug" depends="debuguploadandrun" description="Will start the Debug proxy tool, through which java debuggers can access the program running on the nxt">
 		<sleep seconds="4" />
 		<java classname="lejos.pc.tools.NXJDebugProxy" fork="true" failonerror="true">
-			<sysproperty key="nxj.home" file="${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home.internal}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-di" />
@@ -246,7 +247,7 @@ main class ${main.class}</echo>
 	<target name="console" depends="rconsoleuploadandrun">
 		<sleep seconds="4" />
 		<java classname="lejos.pc.tools.NXJConsole" fork="true" failonerror="true">
-			<sysproperty key="nxj.home" file="${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home.internal}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-di" />
@@ -257,7 +258,7 @@ main class ${main.class}</echo>
 	<target name="consoleviewer" depends="rconsoleuploadandrun">
 		<sleep seconds="4" />
 		<java classname="lejos.pc.tools.NXJConsoleViewer" fork="true" failonerror="true">
-			<sysproperty key="nxj.home" file="${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home.internal}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-di" />
@@ -285,7 +286,7 @@ Exception has been thrown, in which method, and in which line.
 		<input message="Method number:" addproperty="method" />
 		<input message="PC value:" addproperty="pc" />
 		<java classname="lejos.pc.tools.NXJDebugTool">
-			<sysproperty key="nxj.home" file="${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home.internal}" />
 			<classpath refid="lejos.pc" />
 			<arg value="-di" />
 			<arg file="${output.nxd}" />
@@ -300,7 +301,7 @@ Exception has been thrown, in which method, and in which line.
 	<target name="runonpc" depends="sample.init, compile">
 		<fail unless="main.runonpc" message="Sample cannot be run on PC" />
 		<java classname="${main.class}" fork="true" failonerror="true">
-			<sysproperty key="nxj.home" file="${nxj.home}" />
+			<sysproperty key="nxj.home" file="${nxj.home.internal}" />
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<classpath path="${classes.dir}" />

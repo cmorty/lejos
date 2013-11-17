@@ -254,7 +254,7 @@
 	<target name="subproject.samples">
 		<echo message="*** entering samples project" />
 		<ant inheritAll="false" dir="${project.samples}" antfile="build.xml">
-			<property name="nxj.home" location="${shared.dir}"/>
+			<property name="nxj.home.internal" location="${shared.dir}"/>
 			<property name="sample.id" value="map"/>
 			<target name="clean" />
 			<target name="link" />

@@ -14,21 +14,22 @@
 	<!-- set properties for this build -->
 	<property environment="env" />
 	<property file="build.properties" />
-
+	<property name="nxj.home.internal" value="${nxj.home}" />
+	
 	<!-- check whether nxj.home is correct -->
-	<available file="${nxj.home}/lib/pc" property="lejos.pc.exists" />
-	<available file="${nxj.home}/lib/nxt" property="lejos.nxt.exists" />
-	<fail unless="lejos.pc.exists" message="nxj.home variable incorrect, ${nxj.home}/lib/pc does not exist" />
-	<fail unless="lejos.nxt.exists" message="nxj.home variable incorrect, ${nxj.home}/lib/nxt does not exist" />
+	<available file="${nxj.home.internal}/lib/pc" property="lejos.pc.exists" />
+	<available file="${nxj.home.internal}/lib/nxt" property="lejos.nxt.exists" />
+	<fail unless="lejos.pc.exists" message="nxj.home variable incorrect, ${nxj.home.internal}/lib/pc does not exist" />
+	<fail unless="lejos.nxt.exists" message="nxj.home variable incorrect, ${nxj.home.internal}/lib/nxt does not exist" />
 
 	<!-- define the search paths -->
 	<path id="lejos.pc">
-		<fileset dir="${nxj.home}/lib/pc">
+		<fileset dir="${nxj.home.internal}/lib/pc">
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
 	<path id="lejos.nxt">
-		<fileset dir="${nxj.home}/lib/nxt">
+		<fileset dir="${nxj.home.internal}/lib/nxt">
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
@@ -112,7 +113,7 @@ main class ${main.class}</echo>
 	<target name="run" depends="sample.init, compile">
 		<echo>Running ${main.class}</echo>
 		<java classname="${main.class}" fork="true">
-			<sysproperty key="nxj.home" file="${nxj.home}"/>
+			<sysproperty key="nxj.home" file="${nxj.home.internal}"/>
 			<jvmarg value="${d32Flag}" />
 			<classpath refid="lejos.pc" />
 			<classpath location="${classes.dir}" />
