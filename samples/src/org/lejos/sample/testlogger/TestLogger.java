@@ -82,7 +82,11 @@ public class TestLogger {
             this.dlog.writeLog((float)(Math.random()*5-2.5));
             if (i==commentX) this.dlog.writeComment("Comment: This shows how comments can be generated on the NXT in " +
                 "realtime mode and displayed on the chart.");
-            this.dlog.finishLine();
+            try {
+                this.dlog.finishLine();
+            } catch (IOException e) {
+                doIOError();
+            }
             value+=.1f;
         }
         
@@ -104,7 +108,11 @@ public class TestLogger {
         
         for (int i=0;i<2500;i++){ 
             this.dlog.writeLog((float)Math.sin(value));
-            this.dlog.finishLine();
+            try {
+                this.dlog.finishLine();
+            } catch (IOException e) {
+                doIOError();
+            }
             value+=.1f;
         }
         System.out.println("hit key to send");
