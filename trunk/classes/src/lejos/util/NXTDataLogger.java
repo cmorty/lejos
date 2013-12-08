@@ -4,11 +4,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
 import java.util.EmptyQueueException;
 
 import lejos.nxt.comm.NXTConnection;
-
 import lejos.util.Delay;
 
 
@@ -49,10 +47,18 @@ public class NXTDataLogger implements Logger{
     private static final byte COMMAND_SETHEADERS   = 2;  
     private static final byte COMMAND_FLUSH        = 3;    
     private static final byte COMMAND_COMMENT      = 4;    
-    private static final byte COMMAND_PASSTHROUGH  = 5;   
+    private static final byte COMMAND_PASSTHROUGH  = 5; 
+    private static final byte COMMAND_CHARTTYPE    = 6;    
+    // sub-"commands" of COMMAND_CHARTTYPE. Also defined in lejos.pc.chartingChartModel
+    static final byte    CT_XY_TIMEDOMAIN = 1;
+    static final byte    CT_XY_SCATTER    = 2;
+    static final byte    CT_XYZ_BUBBLE    = 3;
+    static final byte    CT_XY_POLAR      = 4;
+    
     private static final int XORMASK = 0xff;
     private static final int FLUSH_THRESHOLD_MS = 200;
     private static final int BYTEBUF_CAPACITY_INCREMENT = 256;
+    private static final IOException EXCEPTION_IO_BAD = new IOException("null dos");
     
     private DataOutputStream dos = null;
     private DataInputStream dis = null;
@@ -60,6 +66,7 @@ public class NXTDataLogger implements Logger{
     private byte itemsPerLine=-1;
     private int currColumnPosition=1;
     private boolean initialFlush=false;
+    private byte currentChartType = CT_XY_TIMEDOMAIN; // also set as default in lejos.pc.charting.
     
     private LogColumn[] columnDefs=null;
     ByteRingQueue byteQueue = new ByteRingQueue();
@@ -81,6 +88,7 @@ public class NXTDataLogger implements Logger{
     private int currentTimeStamp=0;
     private long finishLineTS=0;
 	private LogMessageListener tunnelManager = null;
+	
     /**
      * Default constructor establishes a data logger instance in cache mode.
      * @see #startCachingLog
@@ -275,6 +283,8 @@ public class NXTDataLogger implements Logger{
      * @see lejos.util.Logger#stopLogging()
      */
     public synchronized void stopLogging() {
+     // Send ATTENTION request and remote FLUSH command
+        signalFlush();
         cleanConnection();
     }
     
@@ -376,8 +386,7 @@ public class NXTDataLogger implements Logger{
      * another connection must be established or data streams re-created.
      */
     private void cleanConnection() {
-        // Send ATTENTION request and remote FLUSH command
-        signalFlush();
+        if (dos==null || dis==null) return;
         try {
             this.dos.flush();
             // wait for the hardware to finish any "flushing". I found that without this, the last data may be lost if the program ends
@@ -408,14 +417,18 @@ public class NXTDataLogger implements Logger{
      * @param command the bytes[] to send
      */
     private final void sendCommand(byte[] command){
-        if (this.dos==null) return;
         try {
             this.dos.write(command);
         } catch (IOException e) {
             cleanConnection();
+        } catch (NullPointerException e) { // NPE when dos goes invalid (like a disconnect from ChartingLogger)
+            // ignore
         }
     }
 
+    /**
+     * @param datatype
+     */
     private void checkWriteState(int datatype){
         if (this.disableWriteState) return;
          
@@ -454,20 +467,22 @@ public class NXTDataLogger implements Logger{
     /* (non-Javadoc)
      * @see lejos.util.Logger#finishLine()
      */
-    public synchronized void finishLine() {
+    public synchronized void finishLine() throws IOException {
         if (this.currColumnPosition!=((this.itemsPerLine)&0xff)) throw new IllegalStateException("too few cols ");
         currColumnPosition=1;
         if (currentTimeStamp==0) {
             return;
         }
         
+        if (dos==null) throw EXCEPTION_IO_BAD;
+        
         // if a "slow" update, flush the buffer so shows immediate in chart & log. Suggested by Aswin 8/29/11
         if (this.finishLineTS==0) this.finishLineTS=System.currentTimeMillis();
         if ((System.currentTimeMillis()-this.finishLineTS)>FLUSH_THRESHOLD_MS) {
             try {
                 dos.flush();
-            } catch (IOException e) {
-                 // ignore
+            } catch (NullPointerException e) {
+                 throw EXCEPTION_IO_BAD;
             }
         }
         this.finishLineTS=System.currentTimeMillis();
@@ -481,6 +496,9 @@ public class NXTDataLogger implements Logger{
             this.dos.writeInt(this.currentTimeStamp);
         } catch (IOException e) {
             cleanConnection();
+            throw EXCEPTION_IO_BAD;
+        } catch (NullPointerException e) {
+            throw EXCEPTION_IO_BAD;
         }
         writeStringData(this.commentText);
         this.commentText="";
@@ -500,6 +518,25 @@ public class NXTDataLogger implements Logger{
         byte[] command = {COMMAND_DATATYPE,-1};        
         this.currentDataType = (byte)(datatype&0xff);
         command[1] = this.currentDataType; 
+        sendATTN();
+        sendCommand(command);
+    }
+    
+    /**
+     * Must be called before sendHeaders() since LoggerProtocolManager sends chartType via LoggerListener.logFieldNamesChanged()
+     * @param chartType
+     */
+    void setChartType(int chartType) {
+        // exit if already current
+        if (this.currentChartType==(chartType&0xff)) return;
+        
+        // return if user logging in cache mode
+        if (logmodeState!=LMSTATE_REAL) return;
+        
+        byte[] command = {COMMAND_CHARTTYPE,-1};        
+        this.currentChartType = (byte)(chartType&0xff);
+        System.out.println("setChartType: to " + currentChartType); // TODO remove after testing
+        command[1] = this.currentChartType; 
         sendATTN();
         sendCommand(command);
     }
@@ -550,11 +587,13 @@ public class NXTDataLogger implements Logger{
     }
     
     private void writeInt(int datapoint, byte datatype) {
-        checkWriteState(datatype); 
         try {
+            checkWriteState(datatype);
             this.dos.writeInt(datapoint);
         } catch (IOException e) {
             cleanConnection();
+        } catch (NullPointerException e) { // NPE when dos goes invalid (like a discoonect from ChartingLogger)
+            // ignore
         }
     } 
 
@@ -562,11 +601,13 @@ public class NXTDataLogger implements Logger{
      * @see lejos.util.Logger#writeLog(long)
      */
     public synchronized void writeLog(long datapoint) {
-        checkWriteState(DT_LONG);  
         try {
+            checkWriteState(DT_LONG);
             this.dos.writeLong(datapoint);
         } catch (IOException e) {
             cleanConnection();
+        } catch (NullPointerException e) { // NPE when dos goes invalid (like a disconnect from ChartingLogger)
+            // ignore
         }
     }
     
@@ -574,12 +615,13 @@ public class NXTDataLogger implements Logger{
      * @see lejos.util.Logger#writeLog(float)
      */
     public synchronized void writeLog(float datapoint) {
-        checkWriteState(DT_FLOAT);
         try {
-//            LCD.drawString("this.dos " + value + " ",0,1);
+            checkWriteState(DT_FLOAT);
             this.dos.writeFloat(datapoint);
         } catch (IOException e) {
             cleanConnection();
+        } catch (NullPointerException e) { // NPE when dos goes invalid (like a discoonect from ChartingLogger)
+            // ignore
         }
     }
     
@@ -587,12 +629,13 @@ public class NXTDataLogger implements Logger{
      * @see lejos.util.Logger#writeLog(double)
      */
     public synchronized void writeLog(double datapoint) {
-        checkWriteState(DT_DOUBLE);
         try {
-    //            LCD.drawString("this.dos " + value + " ",0,1);
+            checkWriteState(DT_DOUBLE);
             this.dos.writeDouble(datapoint);
         } catch (IOException e) {
             cleanConnection();
+        } catch (NullPointerException e) { // NPE when dos goes invalid (like a discoonect from ChartingLogger)
+            // ignore
         }
     }
 
@@ -614,7 +657,8 @@ public class NXTDataLogger implements Logger{
      * A protocol handler must be running on the PC to do anything useful with the message. The handler
      * normally uses the <code>LoggerListener</code> interface to be nofied via the <code>notifyPassthrough()</code>
      * method.
-     * 
+     * <p>
+     * Can throw a NullPointerException if dos or dis goes bad.
      * @see #finishLine()
      * @param message The message.
      */
@@ -648,12 +692,12 @@ public class NXTDataLogger implements Logger{
 	}
     
     private void writeStringData(String strData) {
-        byte[] strBytes;
+        byte[] strBytes =null;
         int residual ;
         int arrayLength;
         
-        // make sure we have an even 4 byte boundry
-        strBytes = strData.getBytes(""); 
+        // make sure we have an even 4 byte boundary
+        strBytes = strData.getBytes("US-ASCII");
         residual = (strBytes.length+1)%4;
         arrayLength = residual>0?strBytes.length+1+(4-residual):strBytes.length+1;
         byte[] tempBytes = new byte[arrayLength];
@@ -663,6 +707,8 @@ public class NXTDataLogger implements Logger{
             this.dos.write(tempBytes);
         } catch (IOException e) {
             cleanConnection();
+        } catch (NullPointerException e) { // NPE when dos goes invalid (like a disconnect from ChartingLogger)
+            // ignore
         }
     }
 

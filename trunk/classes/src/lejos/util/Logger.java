@@ -279,9 +279,12 @@ public interface Logger {
       * times as that column count before this method is called.
       * 
       * @throws IllegalStateException if all the columns defined with <code>setColumns()</code> per row have not been logged. 
+      * @throws IOException if any IOException occurred, including on any/all previous writeLog() methods since the last
+      *                     finishLine() call. If this is thrown, you must call
+      *                      one of the logging mode start methods to begin a new logging session.
       * @see #setColumns
       */
-    void finishLine() throws IllegalStateException; 
+    void finishLine() throws IllegalStateException, IOException; 
     
     // once closed, dos/dis cannot be reused. startRealtimeLog() must be called again.
      /** 

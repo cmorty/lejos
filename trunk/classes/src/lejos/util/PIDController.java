@@ -1,5 +1,7 @@
 package lejos.util;
 
+import java.io.IOException;
+
 /**
  * A generic implementation of a Proportional <tt>&lt;P&gt;</tt>, Integral <tt>&lt;I&gt;</tt>, Derivative <tt>&lt;D&gt;</tt> 
  * (PID) controller
@@ -433,7 +435,13 @@ public class PIDController {
             this.dataLogger.writeLog(error);
             this.dataLogger.writeLog(dt);
             
-            this.dataLogger.finishLine();
+            try {
+                this.dataLogger.finishLine();
+            } catch (IOException e) {
+                // kill the logger ref
+                dataLogger.stopLogging();
+                dataLogger=null;
+            }
         }
         
         // delay the difference of desired cycle time and actual cycle time
