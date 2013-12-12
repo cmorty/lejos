@@ -22,7 +22,7 @@ import lejos.util.Delay;
  * @see CachingInputStream
  * @author Kirk P. Thompson
  */
-public class LoggerComms extends AbstractConnectionManager{
+class LoggerComms extends AbstractConnectionManager{
     private static final int MAX_IS_BUFFER_SIZE = 500000;
     private final String THISCLASS;
     

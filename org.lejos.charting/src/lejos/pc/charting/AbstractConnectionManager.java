@@ -12,6 +12,9 @@ import java.io.OutputStream;
 public abstract class AbstractConnectionManager implements ConnectionProvider {
 	protected InputStream in = null;
 	protected OutputStream out = null;
+	/**
+	 * Set this as the passed parameter in your connect() method implementation. 
+	 */
 	protected String connectedDeviceName = null;
 
 	public AbstractConnectionManager() {

@@ -91,17 +91,17 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		panelPIDConstants.setBorder(new TitledBorder(UIManager
 				.getBorder("TitledBorder.border"), "PID Constants",
 				TitledBorder.LEADING, TitledBorder.TOP, stdFont, null));
-		panelPIDConstants.setBounds(11, 32, 103, 101);
+		panelPIDConstants.setBounds(11, 32, 117, 101);
 		add(panelPIDConstants);
 
 		textKp = getBoundTextField(0, 1, AbstractTunneledMessagePanel.DT_DECIMAL);
-		textKp.setBounds(30, 22, 60, 20);
+		textKp.setBounds(30, 22, 65, 20);
 		panelPIDConstants.add(textKp);
 		textKp.setToolTipText("Enter the Kp value");
 		panelPIDConstants.setLayout(null);
 
 		JLabel lblKp = new JLabel("Kp:");
-		lblKp.setBounds(10, 25, 19, 14);
+		lblKp.setBounds(10, 25, 20, 14);
 		lblKp.setFont(stdFont);
 		lblKp.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblKp.setToolTipText("<html>The Proportional gain constant. Larger values typically<br>" +
@@ -110,7 +110,7 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		panelPIDConstants.add(lblKp);
 		
 		textKi = getBoundTextField(2, 3, AbstractTunneledMessagePanel.DT_DECIMAL);
-		textKi.setBounds(30, 47, 60, 20);
+		textKi.setBounds(30, 47, 65, 20);
 		panelPIDConstants.add(textKi);
 		
 		JLabel lblKi = new JLabel("Ki:", SwingConstants.LEADING);
@@ -124,11 +124,11 @@ public final class PanelPIDTune extends AbstractTunneledMessagePanel {
 		panelPIDConstants.add(lblKi);
 		
 		textKd = getBoundTextField(4, 5, AbstractTunneledMessagePanel.DT_DECIMAL);
-		textKd.setBounds(30, 73, 60, 20);
+		textKd.setBounds(30, 73, 65, 20);
 		panelPIDConstants.add(textKd);
 		
 		JLabel lblKd = new JLabel("Kd:");
-		lblKd.setBounds(10, 76, 19, 14);
+		lblKd.setBounds(10, 76, 20, 14);
 		lblKd.setFont(stdFont);
 		lblKd.setHorizontalAlignment(SwingConstants.RIGHT);
 		panelPIDConstants.add(lblKd);
