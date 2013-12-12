@@ -29,7 +29,8 @@ import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.TextAnchor;
 
 
-/** manages the shift-click-drag domain measurement markers & delta display, and event markers, on chart in LoggingChart
+/** manages the shift-click-drag domain measurement markers & delta display, and event markers, 
+ * on chart in LoggingChart
  */
 class MarkerManager implements PlotChangeListener, RendererChangeListener, AxisChangeListener{
     private final static int DIR_BACKWARD=0;

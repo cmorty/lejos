@@ -43,7 +43,7 @@ public class DataLogger {
             }
         }
 
-        public void logFieldNamesChanged(String[] logFields) {
+        public void logFieldNamesChanged(String[] logFields, int chartType) {
             StringBuilder sb = new StringBuilder();
             String[] tempFields;
 //            dbg("!** New headers");

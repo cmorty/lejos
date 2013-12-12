@@ -16,11 +16,10 @@ import javax.swing.event.ChangeEvent;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.event.AxisChangeEvent;
 import org.jfree.chart.event.ChartChangeEvent;
+import org.jfree.chart.event.ChartChangeEventType;
 import org.jfree.chart.event.ChartProgressEvent;
-import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -32,7 +31,8 @@ import org.jfree.data.xy.XYSeriesCollection;
  class CustomChartPanel extends ChartModel{
     private static final int SLIDER_MAX= 10000;
     private static final float SLIDER_CURVE_POWER= 2.4f;
-    private LoggingChart loggingChartPanel = new LoggingChart();
+    private BaseXYChart loggingChartPanel = new LoggingChart();
+    //private JFreeChart jfreeChart = loggingChartPanel.getChart();
     private JSlider domainScaleSlider = new JSlider();
     private JLabel xYValueLabel = new JLabel();
     private JLabel domainWidthLabel = new JLabel();
@@ -62,8 +62,8 @@ import org.jfree.data.xy.XYSeriesCollection;
         loggingChartPanel.setPreferredSize(new Dimension(800, 450));
         loggingChartPanel.setMinimumSize(new Dimension(400, 200));
         loggingChartPanel.setSize(new Dimension(770, 443));
-        loggingChartPanel.getChart().getXYPlot().getDomainAxis().addChangeListener(this);
-        loggingChartPanel.getChart().addProgressListener(this);
+//        jfreeChart.getXYPlot().getDomainAxis().addChangeListener(this);
+//        jfreeChart.addProgressListener(this);
         
         domainScaleSlider.setOpaque(false);
         // .1-100
@@ -126,12 +126,9 @@ import org.jfree.data.xy.XYSeriesCollection;
                  new GridBagConstraints(0, 0, 4, 1, 1.0, 1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, 
                                         new Insets(0, 1, 0, 5), 0, 0));
         
-        loggingChartPanel.getChart().addChangeListener(this); // to capture dataset changes to populate row count
+//        jfreeChart.addChangeListener(this); // to capture dataset changes to populate row count
+        loggingChartPanel.registerListeners(this);
     }
-    
-//    protected LoggingChart getLoggingChartPanel() { // TODO commented 8/25/13 to find all depends
-//        return loggingChartPanel;
-//    }
     
     /* (non-Javadoc)
 	 * @see lejos.pc.charting.ChartModel#axisChanged(org.jfree.chart.event.AxisChangeEvent)
@@ -140,14 +137,16 @@ import org.jfree.data.xy.XYSeriesCollection;
 	public void axisChanged(AxisChangeEvent event) {
         Range domainRange = ((NumberAxis)event.getAxis()).getRange();
         double domainWidth = domainRange.getLength();
-
+//        JFreeChart theChart = event.getChart(); Does not return valid chart object sometimes 11/3/13  
+        JFreeChart theChart = loggingChartPanel.getChart();
+        
         domainWidthLabel.setText(String.format("%1$-,3d ms",Long.valueOf((long)domainWidth)));
         
         // return if no series yet
-        if (loggingChartPanel.getChart().getXYPlot().getSeriesCount()==0) return;
+        if (theChart.getXYPlot().getSeriesCount()==0) return;
         
-        double minXVal = ((XYSeriesCollection)loggingChartPanel.getChart().getXYPlot().getDataset()).getSeries(0).getMinX();
-        double maxXVal = ((XYSeriesCollection)loggingChartPanel.getChart().getXYPlot().getDataset()).getSeries(0).getMaxX();
+        double minXVal = ((XYSeriesCollection)theChart.getXYPlot().getDataset()).getSeries(0).getMinX();
+        double maxXVal = ((XYSeriesCollection)theChart.getXYPlot().getDataset()).getSeries(0).getMaxX();
         // set the flag to not update the chart because the chart is updating the slider here
         int sliderVal = (int)(domainWidth/(maxXVal-minXVal)*SLIDER_MAX);
         int working=(int)Math.pow((sliderVal*Math.pow(SLIDER_MAX, SLIDER_CURVE_POWER)), (1/(1+SLIDER_CURVE_POWER)));
@@ -156,7 +155,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 //        domainScaleSlider.setValue(sliderVal);
         domainScaleSlider.setValue(working);
         // this ensures that the mouse wheel zoom works after messing with slider and not clicking on chart
-        if (!loggingChartPanel.getChart().isNotify()) loggingChartPanel.getChart().setNotify(true);
+        if (!theChart.isNotify()) theChart.setNotify(true);
     }
     
     /* (non-Javadoc)
@@ -164,8 +163,9 @@ import org.jfree.data.xy.XYSeriesCollection;
 	 */
     @Override
 	public void chartProgress(ChartProgressEvent event) {
-        long xval = (long)loggingChartPanel.getChart().getXYPlot().getDomainCrosshairValue();
-        double yval = loggingChartPanel.getChart().getXYPlot().getRangeCrosshairValue();
+        JFreeChart theChart = event.getChart();
+        long xval = (long)theChart.getXYPlot().getDomainCrosshairValue();
+        double yval = theChart.getXYPlot().getRangeCrosshairValue();
         xYValueLabel.setText(String.format("%1$,6d : %2$,7.3f", Long.valueOf(xval), Double.valueOf(yval)));
     }
     
@@ -182,7 +182,7 @@ import org.jfree.data.xy.XYSeriesCollection;
                 int working=(int)(Math.pow(sliderVal, SLIDER_CURVE_POWER) / Math.pow(SLIDER_MAX, SLIDER_CURVE_POWER) * 
                      sliderVal);
     //                loggingChartPanel.setDomainScale(domainScaleSlider.getValue());
-                loggingChartPanel.setDomainScale(working);
+                ((LoggingChart)loggingChartPanel).setDomainScale(working);
             } 
             sliderSetFlag=true;
         }
@@ -231,7 +231,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 	 */
     @Override
 	public void setDomainLimiting(int limitMode, int value){
-    	loggingChartPanel.setDomainLimiting(limitMode, value);
+    	((LoggingChart) loggingChartPanel).setDomainLimiting(limitMode, value);
     }
     
     /* (non-Javadoc)
@@ -268,11 +268,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
     @Override
 	public boolean axisExists(int axisIndex){
-		JFreeChart v1 = loggingChartPanel.getChart();
-		if (v1==null) return false;
-    	XYPlot v2 = v1.getXYPlot();
-    	if (v2==null) return false;
-		return v2.getRangeAxis(axisIndex)!=null;
+		return loggingChartPanel.axisExists(axisIndex);
 	}
     
     /* (non-Javadoc)
@@ -287,9 +283,10 @@ import org.jfree.data.xy.XYSeriesCollection;
 	 * @see lejos.pc.charting.ChartModel#setSeries(java.lang.String[])
 	 */
     @Override
-	public int setSeries(String[] seriesNames){
+	public int setSeries(String[] seriesNames, int chartType){
     // ENHANCE change to not specify timestamp and do timestamp automatically
-        return loggingChartPanel.setSeries(seriesNames);
+        // TODO need new chart type specifier command in protocol 
+        return loggingChartPanel.setSeries(seriesNames, chartType); // TODO define series chart-type better
     }
     
     /* (non-Javadoc)
@@ -297,30 +294,15 @@ import org.jfree.data.xy.XYSeriesCollection;
      */
     @Override
 	public String getAxisLabel(int axisIndex){
-    	JFreeChart v1 = loggingChartPanel.getChart();
-		if (v1==null) return null;
-    	XYPlot v2 = v1.getXYPlot();
-    	if (v2==null) return null;
-    	ValueAxis v3;
-    	v3 = v2.getRangeAxis(axisIndex);
-    	if (v3==null) return null;
-    	return v3.getLabel();
+    	return loggingChartPanel.getAxisLabel(axisIndex);
     }
     
     /* (non-Javadoc)
      * @see lejos.pc.charting.ChartModel#setAxisLabel(int, java.lang.String)
      */
     @Override
-	public void setAxisLabel(int axisIndex, String axisLabel){
-    	JFreeChart v1 = loggingChartPanel.getChart();
-		if (v1==null) return;
-		XYPlot v2 = v1.getXYPlot();
-    	if (v2==null) return;
-    	ValueAxis v3;
-    	v3 = v2.getRangeAxis(axisIndex);
-    	if (v3==null) return;
-    	v3.setLabel(axisLabel);
-    	v1.setNotify(true);
+	public void setAxisLabel(int axisIndex, String axisLabel){ 
+        loggingChartPanel.setAxisLabel(axisIndex, axisLabel);
     }
     
     /* (non-Javadoc)
@@ -328,8 +310,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 	 */
     @Override
 	public void setChartTitle(String title) {
-    	loggingChartPanel.getChart().setTitle(title); 
-    	loggingChartPanel.getChart().setNotify(true);
+        loggingChartPanel.setChartTitle(title);
     }
     
     /* (non-Javadoc)
@@ -337,7 +318,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 	 */
     @Override
 	public String getChartTitle() {
-    	return loggingChartPanel.getChart().getTitle().getText(); 
+        return loggingChartPanel.getChartTitle();
     }
     
     /* (non-Javadoc)

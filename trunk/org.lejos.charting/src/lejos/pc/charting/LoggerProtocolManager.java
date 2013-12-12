@@ -38,6 +38,32 @@ public class LoggerProtocolManager {
     private static final byte COMMAND_FLUSH        = 3; 
     private static final byte COMMAND_COMMENT      = 4;   
     private static final byte COMMAND_PASSTHROUGH  = 5;   
+    private static final byte COMMAND_CHARTTYPE  = 6; // TODO finish implementation   
+    // sub-"commands" of COMMAND_CHARTTYPE. Also defined in lejos.pc.chartingChartModel
+    
+    
+    /**
+     * X-Y chart with Domain (x) as the timestamp. The structure of the incoming data from the NXT uses the common domain timestamp
+     *   so in effect, the chart displays each series as a line across the common domain (time). This chart type can display up to 4
+     *   independent axes.
+     *   
+     */
+    static final byte    CT_XY_TIMEDOMAIN = 1; //ChartModel.TYPE_XY_TIMEDOMAIN & 0xff;
+    /**
+     * X-Y scatter plot. Timestamp is not displayed on chart. Each series has its own x,y value pairs. Single axis only.
+     * 
+     */
+    static final byte    CT_XY_SCATTER = 2; //ChartModel.TYPE_XY_SCATTER & 0xff;
+    /**
+     * Like X-Y scatter plot but with a Z axis element that displays as a relative marker size (bubble). Single axis only.
+     * 
+     * @see #CT_XY_SCATTER
+     */
+    static final byte    CT_XYZ_BUBBLE = 3; // ChartModel.TYPE_XYZ_BUBBLE & 0xff;
+    /**
+     * Polar plot. Data set is a vector angle and radius. Single axis only.
+     */
+    static final byte    CT_XY_POLAR = 4; // ChartModel.TYPE_XY_POLAR & 0xff;
     
     private final String THISCLASS;
     private HashSet<LoggerListener> listeners = new HashSet<LoggerListener>();
@@ -47,6 +73,7 @@ public class LoggerProtocolManager {
     //private OutputStream nXTOutputStream;
 	private volatile boolean pauseInput;
     private DataItem[] dataItemArray;
+    private int chartType = CT_XY_TIMEDOMAIN; // default to ensure backwards compatibility. 
     
     /**
      * Create a <code>LoggerProtocolManager</code> instance. 
@@ -183,7 +210,7 @@ public class LoggerProtocolManager {
             try {
                 getBytes(readBytes,4);
             } catch (EOFException e) {
-                dbg("startLogging(): EOFException in getBytes(4): " + e);
+                dbg("startListen(): EOFException in getBytes(4): " + e);
                 break;
             }
             
@@ -195,7 +222,7 @@ public class LoggerProtocolManager {
                 try {
                     getBytes(readBytes,2);
                 } catch (EOFException e) {
-                    dbg("startLogging(): EOFException in getBytes(command bytes): " + e);
+                    dbg("startListen(): EOFException in getBytes(command bytes): " + e);
                     break;
                 }
                 // do valid commands
@@ -258,8 +285,12 @@ public class LoggerProtocolManager {
                             break mainloop;
                         }
                         break;
+                    case COMMAND_CHARTTYPE:
+                        this.chartType = readBytes[1];
+                        break;
                     default:
                         // allow the bytes to pass through to datatype parsers if no CASE matches (this should not happen but...)
+                    	// TODO this needs to be reconsidered if we tack on chart type command to support new chart types.
                         isCommand = false;
                 }
             }
@@ -407,7 +438,7 @@ public class LoggerProtocolManager {
     private synchronized void notifyHeaderChange(String[] fieldNames) {
         // notify all listeners of new header label event
         for (LoggerListener listener: this.listeners) {
-            listener.logFieldNamesChanged(fieldNames);
+            listener.logFieldNamesChanged(fieldNames, this.chartType); 
         }
     }
     
@@ -423,7 +454,7 @@ public class LoggerProtocolManager {
     }
     
     /**
-     * Notify that passthrough/tunnled message recieved and pass the message
+     * Notify that passthrough/tunneled message received and pass the message
      * @param message
      */
     private synchronized void notifyPassthrough(byte[] message){
@@ -457,6 +488,7 @@ public class LoggerProtocolManager {
                 if (readVal==-1) throw new EOFException();
                 readBytes[i]=(byte)readVal;
             } catch (IOException e) {
+//                e.printStackTrace();
                 throw new EOFException("getBytes: is.read(): " + e);
             }
         }

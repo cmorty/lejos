@@ -1,7 +1,7 @@
 package lejos.pc.charting;
 
 /** 
- * Change listener to notify of events when log data has been recieved, a data stream EOF has occurred, a comment has been received, and 
+ * Change listener to notify of events when log data has been received, a data stream EOF has occurred, a comment has been received, and 
  * header defs have been changed by the NXT-side <code>lejos.util.NXTDataLogger</code>.
  * @see  LoggerProtocolManager#addLoggerListener
  * @author Kirk P. Thompson
@@ -28,15 +28,24 @@ public interface LoggerListener {
 
     /** 
      * Invoked when the log field headers are initially set or changed. This is important because the number of headers
-     *  determines the column count (which affects cycling).
+     *  determines the column count (which affects cycling). 
+     *  <p>
+     *  Different chart types can be requested via the protocol
      *  <p>
      *  The string format/structure of each string field passed by NXTDataLogger is:<br>
      *  <code>[name]![y or n to indicate if charted]![axis ID 1-4]</code>
      *  <br>i.e. <pre>"MySeries!y!1"</pre>
      * @param logFields The array of header values
+     * @param chartType The type of chart/plot the charting logger needs to display. Defined in ChartModel. 
+     * //TODO firm up this description
+     * 
+     * @see LoggerProtocolManager#CT_XY_TIMEDOMAIN
+     * @see LoggerProtocolManager#CT_XY_SCATTER
+     * @see LoggerProtocolManager#CT_XYZ_BUBBLE
+     * @see LoggerProtocolManager#CT_XY_POLAR
      * @see lejos.util.LogColumn
      */
-    void logFieldNamesChanged(String[] logFields);
+    void logFieldNamesChanged(String[] logFields, int chartType);
 
     /** 
      * Invoked when a comment is logged. Comments are sent after the <code>finishLine()</code> method completes. In 

@@ -15,7 +15,7 @@ class SpawnChartPanel extends ChartPanel{
     private MarkerManager markerManager=null; // supplies the domain distance delta marker service
     private MouseManager mouseManager=null; // handles mouse events,
     
-    public SpawnChartPanel(JFreeChart chart) {
+    public SpawnChartPanel(JFreeChart chart, int chartType) {
         super(null);
         try {
             setLayout(null);
@@ -53,6 +53,7 @@ class SpawnChartPanel extends ChartPanel{
         // set up managers for comment event markers and domain measuring markers
         this.markerManager = new MarkerManager(this);
         this.mouseManager = new MouseManager(this, this.markerManager);
+        mouseManager.setChartType(chartType);
         this.markerManager.doAxisChangedRegistration();
     }
     

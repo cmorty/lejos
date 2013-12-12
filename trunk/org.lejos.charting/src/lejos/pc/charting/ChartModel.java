@@ -13,25 +13,56 @@ import org.jfree.chart.event.ChartProgressEvent;
 import org.jfree.chart.event.ChartProgressListener;
 
 /**
- * Base class for chart implementations.
+ * Base class for chart GUI implementations.
  * 
  * @author Kirk P. Thompson
  *
  */
 public abstract class ChartModel extends JPanel implements ChangeListener, AxisChangeListener, ChartProgressListener, ChartChangeListener  {
-
-	/** Add a comment marker to the chart at specified domain position.
+    /**
+     * X-Y chart with Domain (x) as the timestamp. The structure of the incoming data from the NXT uses the common domain timestamp
+     *   so in effect, the chart displays each series as a line across the common domain (time). This chart type can display up to 4
+     *   independent axes.
+     *   
+     * @see #setSeries
+     */
+    //public static final int TYPE_XY_TIMEDOMAIN = 1;
+    /**
+     * X-Y scatter plot. Timestamp is not displayed on chart. Each series has its own x,y value pairs. Single axis only.
+     * 
+     * @see #setSeries
+     */
+    //public static final int TYPE_XY_SCATTER = 2;
+    /**
+     * Like X-Y scatter plot but with a Z axis element that displays as a relative marker size (bubble). Single axis only.
+     * 
+     * @see #setSeries
+     * @see #TYPE_XY_SCATTER
+     */
+    //public static final int TYPE_XYZ_BUBBLE = 3;
+    /**
+     * Polar plot. Data set is a vector angle and radius. Single axis only.
+     * @see #setSeries
+     */
+    //public static final int TYPE_XY_POLAR = 4;
+    
+	/** Add a comment marker to the chart at specified domain position. Assumes one domain value shared/cloned
+	 * for all series. Uses series [0].
+	 * 
 	 * @param xVal Domain value
 	 * @param comment The comment text
 	 * @see #setCommentsVisible
 	 */
 	public abstract void addCommentMarker(double xVal, String comment);
 
-	/**Add series data to the dataset. Pass an array of <code>double</code> series values that all share the same domain value 
+	/**Add series data to the dataset. 
+	 * <ul>For Time-series charts:
+	 * <Li>Pass an array of <code>double</code> series values that all share the same domain value 
 	 * defined in element 0. 
 	 * The number of values must match the header count in setSeries().
+	 * </ul>
 	 * <p>
-	 * Element 0 is the domain (X) series and should be a timestamp.
+	 * Element 0 is the domain (X) series and should always be the timestamp (sent as a long).
 	 * @param seriesData the series data as <code>double</code>s
 	 * @see #setSeries
 	 */
@@ -50,6 +81,7 @@ public abstract class ChartModel extends JPanel implements ChangeListener, AxisC
 	
 	/* (non-Javadoc)
 	 * @see org.jfree.chart.event.ChartChangeListener#chartChanged(org.jfree.chart.event.ChartChangeEvent)
+	 * Used to capture dataset changes to populate row count
 	 */
 	public abstract void chartChanged(ChartChangeEvent event);
 
@@ -65,7 +97,7 @@ public abstract class ChartModel extends JPanel implements ChangeListener, AxisC
 	public abstract void copyChart();
 
 	/**
-	 * TODO define axis meaning and how many per chart type
+	 * TODO define axis meaning and how many per chart type.
 	 * 
 	 * @param axisIndex The axis index you want the label from
 	 * @return The label for given index. null if not exist.
@@ -96,7 +128,7 @@ public abstract class ChartModel extends JPanel implements ChangeListener, AxisC
 	public abstract boolean isEmptyChart();
 
 	/**
-	 * Flags to repaint the chart
+	 * Flags to request repaint the chart
 	 */
 	public abstract void setChartDirty();
 
@@ -141,10 +173,11 @@ public abstract class ChartModel extends JPanel implements ChangeListener, AxisC
 	 *  <code>[name]:[axis ID 1-4]</code>
 	 *  <br>i.e. <pre>"MySeries:1"</pre>
 	 * @param seriesNames Array of series names
+	 * @param chartType The chart type that is requested from client logger. See {@link LoggerProtocolManager}
 	 * @return The number of series created
 	 * @see #addDataPoints
 	 */
-	public abstract int setSeries(String[] seriesNames);
+	public abstract int setSeries(String[] seriesNames, int chartType);
 
 	/**
 	 * Spawn a copy of the current chart in a new window.

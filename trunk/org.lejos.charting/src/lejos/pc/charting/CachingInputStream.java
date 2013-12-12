@@ -43,6 +43,7 @@ public class CachingInputStream extends InputStream {
             this.setDaemon(true);
         }
 
+        @Override
         public void run() {
         	IOException e = null;
         	try	{
@@ -79,7 +80,7 @@ public class CachingInputStream extends InputStream {
                 try {
                     this.wait();
                 } catch (InterruptedException e) {
-                    ; // Do nothing
+                     // Do nothing
                 }
             }
             buf[(rIndex + byteCount) % buf.length] = (byte)val;
@@ -102,7 +103,7 @@ public class CachingInputStream extends InputStream {
                 try {
                     this.wait();
                 } catch (InterruptedException e) {
-                    ; // ignore
+                     // ignore
                 }
             }
 
@@ -130,6 +131,7 @@ public class CachingInputStream extends InputStream {
         }
     }
     
+    @Override
     public int read() throws IOException{
         return ir.read();
     }
