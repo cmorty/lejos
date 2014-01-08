@@ -95,6 +95,16 @@
 
 
 <!-- NEWS#1 -->
+
+<tr>
+	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
+	<td class="n3t2r"><b>January 08, 2014 5:00 PM</b><br />
+		<b>leJOS</b> on the new <b>LEGO Mindstorms EV3</b>.
+		leJOS has been out for a while on the EV3, in case you have not noticed. 
+		See how to install the latest 0.5.0-alpha version at <a href="https://sourceforge.net/p/lejos/wiki/Home/">our Wiki</a>.
+	</td>
+</tr>
+
 <tr>
 	<td class="n3t2r"><a href="http://www.amazon.com/exec/obidos/ASIN/0986832227/lejos0e-20"><img src="r_media/images/newsIcons/max_nxt_3_thumb.jpg" /></a></td>
 	<td class="n3t2r"><b>August 12, 2013 7:35 AM</b><br />
