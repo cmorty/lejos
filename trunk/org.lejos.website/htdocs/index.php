@@ -40,20 +40,29 @@
 	</head>
 	<body>	
 		<!-- Level 1: Logo -->
-		<table width="760" cellpadding="0" cellspacing="0">
+		<table width="1000" cellpadding="0" cellspacing="0">
 			<tr>
 				<td class="n1t1r1c1"><img src="r_media/images/lejosLogo.jpg" /><a name="top"></a></td>
 				<td class="n1t1r1c2"><a href="http://mindstorms.lego.com/"><img src="r_media/images/legoMindstorms.jpg" /></a></td>
 			</tr>
 		</table>
 		<!-- Level 2: MK options -->
-		<table width="760" cellpadding="0" cellspacing="0">
+		<table width="1000" cellpadding="0" cellspacing="0">
 			<tr>
 				<!-- MENU -->
 				<td rowspan="3" class="n2t1r1c1">
 					<ul class="menu">
 						<li>Home</li>
-						<li>NXT Brick
+						<li>EV3
+						<ul class="menu_l1">
+							<li><a href="ev3.php"  class="menuLink">leJOS EV3</a>
+							<ul class="menu_l2">
+							    <li><a href="http://sourceforge.net/p/lejos/wiki/Home/" class="menuLink">Wiki</a></li>
+								<li><a href="ev3/docs/" class="menuLink">API</a></li>
+								<li><a href="http://sourceforge.net/projects/lejos/files/lejos-EV3/" class="menuLink">Downloads</a></li>								
+							</ul></li>
+						</ul></li>
+					   <li>NXT Brick
 						<ul class="menu_l1">
 							<li><a href="nxj.php"  class="menuLink">leJOS NXJ</a>
 							<ul class="menu_l2">
@@ -83,8 +92,10 @@
 				<p><a href="http://www.java.net/"><img src="r_media/images/java.netButton.jpg" /></a></p>
 				</td>
 				<td valign="top">
+								<a href="ev3.php" ><img src="r_media/images/home/ev3.png" /></a>
 					<a href="nxj.php"><img src="r_media/images/home/nxtButton.jpg" /></a>&nbsp;&nbsp;&nbsp;&nbsp;
 					<a href="rcx.php" ><img src="r_media/images/home/rcxButton.jpg" /></a>
+	
 				</td>
 			</tr>
 			<tr><td><img src="r_media/images/home/lejosNews.jpg" /></td></tr>
