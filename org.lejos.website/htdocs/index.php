@@ -109,6 +109,20 @@
 
 <tr>
 	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
+	<td class="n3t2r"><b>March 08, 2014 6:30 PM</b><br />
+		<b>leJOS 0.7.0-alpha</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
+		To update 
+		<ol>
+          <li>Create a new SD card from the download.</li>
+          <li>In Eclipse use Team &gt; Switch To &gt; Other... &gt; Tags to select the new tag (in this case 0.7.0-alpha).</li>
+          <li>Rebuild DbusJava, ev3classes etc. as per the <a href="https://sourceforge.net/p/lejos/wiki/Home/">Wiki</a>.</li>
+          <li>Rebuild your projects.</li>
+        </ol>
+	</td>
+</tr>
+
+<tr>
+	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 	<td class="n3t2r"><b>February 14, 2014 5:30 PM</b><br />
 		<b>leJOS 0.6.0-alpha</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
 		To update 
