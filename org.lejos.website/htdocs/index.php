@@ -92,7 +92,7 @@
 				<p><a href="http://www.java.net/"><img src="r_media/images/java.netButton.jpg" /></a></p>
 				</td>
 				<td valign="top">
-								<a href="ev3.php" ><img src="r_media/images/home/ev3.png" /></a>
+								<a href="ev3.php" ><img src="r_media/images/home/ev3Button.png" /></a>
 					<a href="nxj.php"><img src="r_media/images/home/nxtButton.jpg" /></a>&nbsp;&nbsp;&nbsp;&nbsp;
 					<a href="rcx.php" ><img src="r_media/images/home/rcxButton.jpg" /></a>
 	
