@@ -1,11 +1,17 @@
 RewriteEngine on
+
+# have a nice favicon on all pages
 RewriteRule ^favicon\.ico$ /lejos.ico
 
+# override sourceforge's default index.html
+RewriteRule ^index.html?$ / [L,R=permanent]
+
+# redirect every request to www.lejos.org
 RewriteCond %{HTTP_HOST} !=www.lejos.org
 RewriteCond %{REQUEST_METHOD} =GET
-RewriteRule ^(.*) http://www.lejos.org/$1 [R]
+RewriteRule ^(.*) http://www.lejos.org/$1 [L,R=permanent]
 # exempt forum from redirect
-#RewriteRule ^(?!forum/)(.*) http://www.lejos.org/$1 [R]
+#RewriteRule ^(?!forum/)(.*) http://www.lejos.org/$1 [L,R]
 
 #RewriteCond %{HTTP_HOST} !=lejos.sourceforge.net
 #RewriteCond %{REQUEST_METHOD} =GET
@@ -15,6 +21,6 @@ RewriteRule ^(.*) http://www.lejos.org/$1 [R]
 #RewriteCond %{HTTP:X-Remote-Addr} !=31.19.21.11
 #RewriteRule ^forum/ /maintenance.php
 
+<ifModule mod_deflate.c>
 AddOutputFilterByType DEFLATE text/html text/plain text/javascript text/css
-#DeflateCompressionLevel 2
-#DeflateBufferSize 8096
+</ifModule>
