@@ -229,7 +229,7 @@ public class BatteryLow implements Behavior {<br>
 
 <P>The complete tune is stored in the note array at line 6 and the method to play the notes is at line 30. This behavior will take control only if the current battery level is less the voltage specified in the constructor. The takeControl() method looks a little inflated, and that's because it also displays the battery charge to the LCD display. The action() and suppress() methods are comparatively easy. Action makes a bunch of noise, then exits the program as soon as it is called. Since this behavior stops the program, there is no need to create a suppress() method. </P>
 <P>To insert this Behavior into our scheme is a trivial task. We simply alter the code of our main class as follows:</P>
-<Pimport josx.robotics.*;<BR>
+<P>import josx.robotics.*;<BR>
 <BR>
 public class BumperCar {<BR>
 &nbsp;&nbsp;&nbsp;public static void main(String [] args) {<BR>
