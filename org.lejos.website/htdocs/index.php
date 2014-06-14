@@ -111,7 +111,7 @@
 <tr>
 	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 	<td class="n3t2r"><b>April 18, 2014 3:30 PM</b><br />
-		<b>leJOS 0.8.1-beta</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
+		<b>leJOS EV3 0.8.1-beta</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
         <p>This is our first Beta release and the first release that does not require use of the Git repository</p> 
         <p>The instructions are on the <a href="https://sourceforge.net/p/lejos/wiki/Home/">Wiki</a>, and existing users should read the annoucement on the EV3 Software forum</p>
 
@@ -126,7 +126,7 @@
 <tr>
 	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 	<td class="n3t2r"><b>March 24, 2014 3:00 PM</b><br />
-		<b>leJOS 0.8.0-alpha</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
+		<b>leJOS EV3 0.8.0-alpha</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
 		To update 
 		<ol>
           <li>Create a new SD card or overwrite an existing one using Andy's new SD card installer that is introduced at this release.</li>
@@ -142,7 +142,7 @@
 <tr>
 	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 	<td class="n3t2r"><b>March 08, 2014 6:30 PM</b><br />
-		<b>leJOS 0.7.0-alpha</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
+		<b>leJOS EV3 0.7.0-alpha</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
 		To update 
 		<ol>
           <li>Create a new SD card from the download.</li>
@@ -156,7 +156,7 @@
 <tr>
 	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 	<td class="n3t2r"><b>February 14, 2014 5:30 PM</b><br />
-		<b>leJOS 0.6.0-alpha</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
+		<b>leJOS EV3 0.6.0-alpha</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
 		To update 
 		<ol>
           <li>Create a new SD card from the download.</li>
