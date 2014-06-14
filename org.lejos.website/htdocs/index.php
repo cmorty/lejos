@@ -59,7 +59,8 @@
 							<ul class="menu_l2">
 							    <li><a href="http://sourceforge.net/p/lejos/wiki/Home/" class="menuLink">Wiki</a></li>
 								<li><a href="ev3/docs/" class="menuLink">API</a></li>
-								<li><a href="http://sourceforge.net/projects/lejos/files/lejos-EV3/" class="menuLink">Downloads</a></li>								
+								<li><a href="http://sourceforge.net/projects/lejos/files/lejos-EV3/" class="menuLink">Downloads</a></li>
+								<li><a href="http://lejosnews.wordpress.com/" class="menuLink" >Blog</a></li>								
 							</ul></li>
 						</ul></li>
 					   <li>NXT Brick
@@ -106,6 +107,21 @@
 
 
 <!-- NEWS#1 -->
+
+<tr>
+	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
+	<td class="n3t2r"><b>April 18, 2014 3:30 PM</b><br />
+		<b>leJOS 0.8.1-beta</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
+        <p>This is our first Beta release and the first release that does not require use of the Git repository</p> 
+        <p>The instructions are on the <a href="https://sourceforge.net/p/lejos/wiki/Home/">Wiki</a>, and existing users should read the annoucement on the EV3 Software forum</p>
+
+<iframe width="560" height="315" src="//www.youtube.com/embed/6dqgHE8g4is" frameborder="0" allowfullscreen></iframe>
+	
+
+</td>
+
+
+</tr>
 
 <tr>
 	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
