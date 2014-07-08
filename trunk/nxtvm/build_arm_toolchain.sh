@@ -116,6 +116,7 @@ cd "$BUILDDIR/$GCC_DIR" || die
     --enable-interwork --enable-multilib --with-float=soft \
     --enable-languages="c" --with-newlib \
     --with-headers=$SRCDIR/$NEWLIB_DIR/newlib/libc/include \
+    MAKEINFO=/bin/false \
     && make $MAKEOPTS all-gcc && make install-gcc
 ) || die "Compiling/Installing gcc failed"
 
