@@ -19,7 +19,7 @@ C_OPTIMISATION_FLAGS = -Os
 #C_OPTIMISATION_FLAGS = -Os -Xassembler -aslh
 #C_OPTIMISATION_FLAGS = -O0
 
-SVN_REV := $(shell svnversion -n ../.. | grep -o "[^:]*$$" | grep -o "[0-9]*")
+SVN_REV := $(shell svnversion -c ../.. | grep -E -o "[0-9]+" | tail -n 1)
 
 CFLAGS = $(BASE_ABI_FLAGS) -mthumb \
 	-ffreestanding -fsigned-char \
