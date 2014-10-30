@@ -77,7 +77,7 @@ public class Stack<E> extends Vector<E>
 	 */
 	public boolean empty()
 	{
-		return (size() == 0);
+		return isEmpty();
 	}
 
 	public synchronized int search(Object o)
