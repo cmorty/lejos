@@ -39,7 +39,12 @@ public class NXTOutputStream extends OutputStream {
     
     @Override
     public void close() throws IOException {
-    	this.flush();
+    	try {
+    		this.flush();
+    	} finally {
+    		// this object is reused, so we have to clear the buffer
+    		this.numBytes = 0;
+    	}
     	//TODO mark stream closed
     }
 }
