@@ -179,7 +179,7 @@ public class Vector<E>
 		elementCount++;
 	}
 
-	public boolean isEmpty()
+	public synchronized boolean isEmpty()
 	{
 		return (elementCount == 0);
 	}
