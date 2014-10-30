@@ -11,7 +11,9 @@ package java.util;
 /**
  * An exception thrown by some Queue class methods
  * to indicate that the Queue is empty 
+ * @deprecated non-standard class, to be removed
  */
+@Deprecated
 public class EmptyQueueException extends RuntimeException {
 
 	////////////////////////////////////////////
