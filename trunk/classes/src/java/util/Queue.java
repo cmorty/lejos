@@ -1,92 +1,64 @@
 package java.util;
-/*
-* $Log: Queue.java,v $
-* Revision 1.2  2005/11/23 17:46:45  mpscholz
-* minor javadoc related changes
-*
-* Revision 1.1  2003/08/17 14:59:42  mpscholz
-* enhanced Vector
-* added Stack and Queue and associated exception classes
-*
-*/
 
-/////////////////////////////////////////////////////////
 /**
- * A FIFO Queue of objects. 
+ * A FIFO Queue of objects.
  */
-public class Queue<E> extends Vector<E> {
+public interface Queue<E> extends Collection<E> {
 	
-	//TODO in JDK, java.util.Queue is an interface
+	//TODO uncomment all the other methods (needs implementation in LinkedList)
 
-	////////////////////////////////////////////
-	// constants
-	////////////////////////////////////////////
-    
-	////////////////////////////////////////////
-	// fields
-	////////////////////////////////////////////
-
-	////////////////////////////////////////////
-	// constructors
-	////////////////////////////////////////////
-
-	////////////////////////////////////////////
-    /**
-     * creates a new Queue instance
-     */
-    public Queue() {
-    	// do nothing
-    } // Queue()
-
-	////////////////////////////////////////////
 	/**
-	 * pushes an object onto the Queue
-	 * @param anObject the object
-	 * @return Object the object pushed onto the Queue
+	 * Adds an element to the tail of the queue if the capacity of the queue would
+	 * not been exceeded. Otherwise, it throws an Exception.
+	 * 
+	 * @param e the element to be added to the queue
+	 * @return true
+	 * @throws IllegalStateException if the capacity would be exceeded by adding the element
 	 */
-    public E push(E anObject) {
-    	// add the object to base vector
-		addElement(anObject);
-		return anObject;
-    } // push()
+	boolean add(E e);
 
-	////////////////////////////////////////////
 	/**
-	 * fetches an object from the start of the Queue
-	 * and removes it
-	 * @return Object the object removed from the start of the stock
-	 * @throws EmptyQueueException
+	 * Returns the element at the head of the queue. The element is not removed. 
+	 * Unlike {@link #peek()}, it throws an Exception if the queue is empty. 
+	 * 
+	 * @return the head element
+	 * @throws NoSuchElementException if the queue is empty
 	 */
-    public synchronized Object pop() throws EmptyQueueException {
-		// get object
-		Object popped = peek();
-		// remove and return object
-		removeElementAt(0);
-		return popped;
-    } // pop()
+//	E element();
 
-	////////////////////////////////////////////
 	/**
-	 * fetches an object from the start of the Queue
-	 * <br>does not remove it!
-	 * @return Object the object at the start of the Queue
-	 * @throws EmptyQueueException
+	 * Adds an element to the tail of the queue if the capacity of the queue would
+	 * not been exceeded. Otherwise, it returns false.
+	 * 
+	 * @param e the element to be added to the queue
+	 * @return true if element was added, false otherwise
 	 */
-    public synchronized Object peek() throws EmptyQueueException {
-		// empty Queue?
-		if(size()==0)
-	    	throw new EmptyQueueException();
-	    // return first element
-		return elementAt(0);
-    } // peek()
+//	boolean offer(E e);
 
-	////////////////////////////////////////////
 	/**
-	 * is this Queue empty?
-	 * @return boolean true, if the Queue is empty
+	 * Returns the element at the head of the queue. The element is not removed. 
+	 * If the queue is empty, null is returned. Note that null is also returned
+	 * if the head element is null.
+	 * 
+	 * @return the head element or null if the queue is empty
 	 */
-    public boolean empty() {
-		return (size()==0);
-    } // empty()
+//	E peek();
 
-} // class Queue
+	/**
+	 * Removes and returns the element at the head of the queue.
+	 * If the queue is empty, null is returned. Note that null is also returned
+	 * if the head element is null.
+	 * 
+	 * @return the head element or null if the queue is empty
+	 */
+//	E poll();
+
+	/**
+	 * Removes and returns the element at the head of the queue.
+	 * Unlike {@link #poll()}, it throws an Exception if the queue is empty.
+	 * 
+	 * @return the head element
+	 * @throws NoSuchElementException if the queue is empty
+	 */
+//	E remove();
+}

@@ -5,7 +5,7 @@ package java.util;
  * @author Michael Mirwaldt
  *
  */
-public class LinkedList<E> extends AbstractList<E> {
+public class LinkedList<E> extends AbstractList<E> implements Queue<E> {
 	
 	//TODO review
 

@@ -5,7 +5,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Queue;
+import java.util.LinkedList;
 
 import lejos.nxt.LCD;
 import lejos.nxt.NXT;
@@ -221,7 +221,7 @@ public final class JDWPDebugServer extends Thread implements JDWPConstants {
 		instance = this;
 		this.conn = new Connection(this, conn);
 		this.monitor = monitor;
-		packetQueue = new Queue<Packet>();
+		packetQueue = new LinkedList<Packet>();
 	}
 
 	private void handleDebugEvents() {
@@ -1480,34 +1480,29 @@ public final class JDWPDebugServer extends Thread implements JDWPConstants {
 	}
 
 	Hashtable<String, Packet> waitingQueue = new Hashtable<String, Packet>();
-	protected Queue<Packet> packetQueue;
+	protected LinkedList<Packet> packetQueue;
 
 	void newPacket(Packet p) {
-
-		if (p == null) {
-			synchronized (packetQueue) {
-				packetQueue.notify();
-			}
-			return;
-		}
 		synchronized (packetQueue) {
-			packetQueue.push(p);
+			if (p != null)
+				packetQueue.add(p);
 			packetQueue.notify();
 		}
 	}
 
 	private Packet waitForPacket() {
-
+		Packet r;
 		synchronized (packetQueue) {
-			while (packetQueue.size() == 0) {
+			while (packetQueue.isEmpty()) {
 				try {
 					packetQueue.wait();
 				} catch (InterruptedException e) {
 					throw new ProxyConnectionException();
 				}
 			}
+			r = packetQueue.remove(0);
 		}
-		return ((Packet) packetQueue.pop());
+		return r;
 	}
 
 	void replyReceived(Packet p) {
