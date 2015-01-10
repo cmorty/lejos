@@ -110,6 +110,14 @@
 
 <tr>
 	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
+	<td class="n3t2r"><b>Jan 10, 2015 10:30 AM</b><br />
+		<b>leJOS EV3 0.9.0-beta</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
+        <p>The instructions are on the <a href="https://sourceforge.net/p/lejos/wiki/Home/">Wiki</a>, and existing users should read the announcement on the EV3 Software forum</p>
+	</td>
+</tr>
+
+<tr>
+	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 	<td class="n3t2r"><b>April 18, 2014 3:30 PM</b><br />
 		<b>leJOS EV3 0.8.1-beta</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
         <p>This is our first Beta release and the first release that does not require use of the Git repository</p> 
