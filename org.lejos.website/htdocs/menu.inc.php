@@ -4,7 +4,7 @@
 		<ul>
 		    <li><a href="http://sourceforge.net/p/lejos/wiki/Home/">Wiki</a></li>
 			<li><a href="ev3/docs/">API</a></li>
-			<li><a href="http://sourceforge.net/projects/lejos/ev3/files/">Downloads</a></li>
+			<li><a href="http://sourceforge.net/p/lejos/ev3/files/">Downloads</a></li>
 			<li><a href="http://lejosnews.wordpress.com/">Blog</a></li>								
 		</ul>
     </li>
