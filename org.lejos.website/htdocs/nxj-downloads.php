@@ -76,7 +76,7 @@
 						  <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
 						</tr>
 						<tr> 
-						  <td valign="top"><br/><a href="http://sourceforge.net/projects/lejos/files/lejos-NXJ/" target="_blank">Download the file for your OS from Sourceforge.</a>
+						  <td valign="top"><br/><a href="http://sourceforge.net/p/lejos/nxt/files/" target="_blank">Download the file for your OS from Sourceforge.</a>
 						  	<br /><br />
 						  	<em>leJOS_NXJ_&lt;version&gt;.tar.gz</em>: Archive for manual installation on Linux and Mac OS&nbsp;X<br />
 						  	<em>leJOS_NXJ_&lt;version&gt;_win32.zip</em>: Archive for manual installation on Windows<br />
@@ -90,7 +90,7 @@
 						  </td>
 						</tr>
 						
-
+<!-- 
 						<tr>
 						  <td valign="top" style="padding-top: 2ex"><br />
 						  	<b>Download Area at Sourceforge</b></td>
@@ -103,7 +103,7 @@
 							at the SourceForge <a href="http://sourceforge.net/projects/lejos/files/" target="_blank">download 
 							area</a>.</td>
 						</tr>
-
+ -->
 					</table>
 					</div>	
 				</td>
