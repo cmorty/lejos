@@ -86,14 +86,44 @@
 				</td>
 				<td class="n3t1r1c1">
 					<table width="100%" cellpadding="0" cellspacing="0">
+
 						<tr>
 							<td>
-								<h1 class="title">leJOS NXJ Books</h1>
+								<h1 class="title">leJOS EV3 Books</h1>
 							</td>
 							<td align="right"><a href="javascript:decreaseFontSize()"><img src="r_media/images/toolIcons/fuentemenos.gif" /></a><a href="javascript:increaseFontSize()"><img src="r_media/images/toolIcons/fuentemas.gif" /></a></td>
 						</tr>
 				
-<!-- **** BOOK LIST **** -->
+<!-- **** EV3 BOOK LIST **** -->
+<tr>
+<td>
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0986832294/lejos0e-20">Maximum LEGO EV3: Building Robots with Java Brains<br /></a> <br /> by Brian Bagnall</p>
+<p>			
+The LEGO® Mindstorms™ EV3 set is the latest in robotics technology, allowing you to build incredible motorized inventions without knowing anything about electronics. As a mass market device with hundreds of pieces and a suite of available programming tools, it can be both powerful and overwhelming. This book walks readers through an in depth introduction to the kit, laying down the fundamental principles of robotics and Java programming, while delivering dozens of spectacular robot projects. This knowledge will maximize your creativity and give your robots the abilities they need to handle almost any situation.
+</p>
+
+<ul>
+<li>464 pages</li>
+<li>Softcover, glossy</li>
+<li>7" by 9.25"</li>
+<li>ISBN 9780986832291</li>
+<li>Available September, 2014</li>
+</ul>
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/0986832294/lejos0e-20">Order from Amazon</a></p>
+</td>
+
+<td>
+<a href="http://www.amazon.com/exec/obidos/ASIN/0986832294/lejos0e-20"><img src="r_media/images/books/maximum_ev3.jpg" /></a>
+</td>
+</tr>
+
+						<tr>
+							<td>
+								<h1 class="title">leJOS NXJ Books</h1>
+							</td>
+						</tr>
+				
+<!-- **** NXT BOOK LIST **** -->
 <tr>
 <td>
 <p><a href="http://www.amazon.com/exec/obidos/ASIN/0986832227/lejos0e-20">Maximum LEGO NXT: Building Robots with Java Brains<br /></a> <br /> by Brian Bagnall</p>
