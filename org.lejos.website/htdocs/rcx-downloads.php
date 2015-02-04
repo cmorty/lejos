@@ -52,36 +52,9 @@
 		<table width="760" cellpadding="0" cellspacing="0">
 			<tr>
 				<td class="n2t1r1c1">
-					<!-- MENU -->
-					<ul class="menu">
-						<li><a href="index.php" class="menuLink">Home</a></li>
-						<li>NXT Brick
-						<ul class="menu_l1">
-							<li><a class="menuLink" href="nxj.php" >leJOS NXJ</a>
-							<ul class="menu_l2">
-								<li><a href="nxt/nxj/api/index.html" class="menuLink" target="_blank">API</a></li>
-								<li><a href="nxt/pc/api/index.html" class="menuLink" target="_blank">PC API</a></li>
-								<li><a href="nxt/nxj/tutorial/index.htm" class="menuLink" target="_blank">Tutorial</a></li>								
-								<li><a href="nxj-downloads.php" class="menuLink" >Downloads</a></li>
-							</ul></li>
-						</ul></li>
-						<li class="selected">RCX Brick
-						<ul class="menu_l1">
-							<li><a href="rcx.php" class="menuLinkSelected">leJOS RCX</a>
-							<ul class="menu_l2">
-								<li><a href="rcx/api/index.html" class="menuLink" target="_blank">API</a></li>
-								<li><a href="rcx/tutorial/index.html" class="menuLink" target="_blank">Tutorial</a></li>
-								<li class="selected">Downloads</li>
-								<li><a class="menuLink" href="rcx-faq.php" >FAQ</a></li>
-
-							</ul></li>	
-						</ul></li>
-						<li><a href="forum/" class="menuLink" target="_blank">Forum</a></li>
-						<li><a class="menuLink" href="books.php">Books</a></li>
-						<li><a class="menuLink" href="links.php">Links</a></li>
-						<li><a class="menuLink" href="contact.php">Contact</a></li>
-					</ul>
-					<!-- END MENU -->
+				<!-- MENU -->
+				<?php include 'menu.inc.php'; ?>
+				<!-- END MENU -->
 				<p><a href="http://sourceforge.net/projects/lejos/"><img src="r_media/images/sourceforgeButton.jpg" /></a></p>
 				<p><img src="r_media/images/java.netButton.jpg" /></p>
 				</td>

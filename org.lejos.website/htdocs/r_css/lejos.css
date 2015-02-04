@@ -1,6 +1,6 @@
 /*
 PROJECT: Lejos
-AUTHOR: Juan Antonio Breña Moral
+AUTHOR: Juan Antonio BreÃ±a Moral
 EMAIL: bren@juanantonio.info
 DESCRIPTION: CSS file for project: Lejos
 CREATION DATE 2007/01/13
@@ -64,25 +64,13 @@ td.n2t1r1c1{
 }
 
 ul.menu{
-	list-style: url(../r_media/images/transparent_pixel.gif);
+	list-style-type: none;
 	padding: 0px 0px 0px 0px;
 	margin: 0px 0px 0px 0px;
 }
 
-ul.menu{
-	list-style: url(../r_media/images/transparent_pixel.gif);
-	padding: 0px 0px 0px 0px;
-	margin: 0px 0px 0px 0px;
-}
-
-ul.menu_l1{
-	list-style: url(../r_media/images/transparent_pixel.gif);
-	padding: 0px 0px 0px 15px;
-	margin: 0px 0px 0px 0px;
-}
-
-ul.menu_l2{
-	list-style: url(../r_media/images/transparent_pixel.gif);
+ul.menu ul{
+	list-style-type: none;
 	padding: 0px 0px 0px 15px;
 	margin: 0px 0px 0px 0px;
 }
@@ -91,22 +79,22 @@ li.selected{
 	color: #FF6600;
 }
 
-a.menuLink{
+ul.menu a{
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: 10px;
 	font-weight: bold;
 	color: black;
 }
 
-a.menuLink:link {
+ul.menu a:link {
 	text-decoration: none;
 	color: black;
 } 
-a.menuLink:visited {
+ul.menu a:visited {
 	text-decoration: none;
 	color: black;
 } 
-a.menuLink:hover {
+ul.menu a:hover {
 	text-decoration: underline;
 	color: #FF6600;
 }

@@ -49,10 +49,10 @@
 		<!-- Level 2: MK options -->
 		<table width="1000" cellpadding="0" cellspacing="0">
 			<tr>
-				<!-- MENU -->
 				<td rowspan="3" class="n2t1r1c1">
-					<?php include 'menu.inc.php'; ?>
-					<!-- END MENU -->
+				<!-- MENU -->
+				<?php include 'menu.inc.php'; ?>
+				<!-- END MENU -->
 				<p><a href="http://sourceforge.net/projects/lejos/"><img src="r_media/images/sourceforgeButton.jpg" /></a></p>
 				<p><a href="http://www.java.net/"><img src="r_media/images/java.netButton.jpg" /></a></p>
 				</td>
