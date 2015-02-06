@@ -62,7 +62,7 @@
 					<table width="100%" cellpadding="0" cellspacing="0">
 						<tr>
 							<td>
-							<h1 class="title">Download NXJ</h1>
+							<h1 class="title">Download leJOS NXJ</h1>
 							</td>
 							<td align="right"><a href="javascript:decreaseFontSize()"><img src="r_media/images/toolIcons/fuentemenos.gif" /></a><a href="javascript:increaseFontSize()"><img src="../../../r_media/images/toolIcons/fuentemas.gif" /></a></td>
 						</tr>
@@ -87,6 +87,19 @@
 						  	The leJOS NXJ sources are not required to write and debug Java programs with leJOS. They are only required by people who
 						  	want to modify and rebuild leJOS NXJ itself. Also, the samples are already included in the archives for manual installation
 						  	as well as the Windows Installer. 
+						  </td>
+						</tr>
+						<tr>
+						  <td valign="top" style="padding-top: 2ex"><br />
+						  	<b>leJOS NXJ Eclipse Plug-in</b></td>
+						</tr>
+						<tr> 
+						  <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
+						</tr>
+						<tr> 
+						  <td valign="top"><br />You find the leJOS NXJ Plug-in on the Eclipse Marketplace
+						  	or use the following Update-Site URL in Eclipse:<br /> 
+							<a href="http://www.lejos.org/tools/eclipse/plugin/nxj/" target="_blank">http://www.lejos.org/tools/eclipse/plugin/nxj/</a>
 						  </td>
 						</tr>
 						

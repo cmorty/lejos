@@ -62,7 +62,7 @@
 					<table width="100%" cellpadding="0" cellspacing="0">
 						<tr>
 							<td>
-								<h1 class="title">Downloads LeJOS RCX</h1>
+								<h1 class="title">Downloads leJOS RCX</h1>
 							</td>
 							<td align="right"><a href="javascript:decreaseFontSize()"><img src="r_media/images/toolIcons/fuentemenos.gif" /></a><a href="javascript:increaseFontSize()"><img src="r_media/images/toolIcons/fuentemas.gif" /></a></td>
 						</tr>
@@ -138,7 +138,7 @@
 				        </tr>
         <tr> 
           <td valign="top"> 
-            <h1>leJOS 3 for the RCX (release candidate)</h1>
+            <h1>leJOS RCX 3 (release candidate)</h1>
 
           </td>
         </tr>
