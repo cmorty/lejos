@@ -62,7 +62,7 @@
 					<table width="100%" cellpadding="0" cellspacing="0">
 						<tr>
 							<td>
-								<h1 class="title">Downloads LeJOS</h1>
+								<h1 class="title">Downloads LeJOS RCX</h1>
 							</td>
 							<td align="right"><a href="javascript:decreaseFontSize()"><img src="r_media/images/toolIcons/fuentemenos.gif" /></a><a href="javascript:increaseFontSize()"><img src="r_media/images/toolIcons/fuentemas.gif" /></a></td>
 						</tr>
@@ -72,18 +72,18 @@
 					<table width="100%">
 
         <tr>
-          <td valign="top"><b>Win32 leJOS</b></td>
+          <td valign="top"><b>leJOS RCX for Win32</b></td>
 
         </tr>
         <tr> 
           <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
         </tr>
         <tr> 
-          <td valign="top">Download <a href="http://prdownloads.sourceforge.net/lejos/lejos_win32_2_1_0.zip?download">version 
+          <td valign="top">Download <a href="http://sourceforge.net/projects/rcx.lejos.p/files/lejos-win32/2.1.0/lejos_win32_2_1_0.zip/download">version 
             2.1.0</a></td>
         </tr>
         <tr> 
-          <td valign="top">Download <a href="http://prdownloads.sourceforge.net/lejos/lejos_win32_2_1_0.doc.zip?download">API 
+          <td valign="top">Download <a href="http://sourceforge.net/projects/rcx.lejos.p/files/lejos-win32/2.1.0/lejos_win32_2_1_0.doc.zip/download">API 
             docs</a></td>
 
         </tr>
@@ -94,20 +94,19 @@
           </td>
         </tr>
         <tr> 
-          <td valign="top"><b>Linux/OSX/Solaris leJOS</b></td>
+          <td valign="top"><b>leJOS RCX for Linux/OSX/Solaris</b></td>
 
         </tr>
         <tr> 
           <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
         </tr>
         <tr> 
-          <td valign="top">Download <a href="http://prdownloads.sourceforge.net/lejos/lejos_2_1_0.tar.gz?download">version 
+          <td valign="top">Download <a href="http://sourceforge.net/projects/rcx.lejos.p/files/lejos/2.1.0/lejos_2_1_0.tar.gz/download">version 
             2.1.0</a></td>
         </tr>
         <tr> 
-          <td valign="top">Download <a href="http://prdownloads.sourceforge.net/lejos/lejos_2_1_0.doc.tar.gz?download">API 
+          <td valign="top">Download <a href="http://sourceforge.net/projects/rcx.lejos.p/files/lejos/2.1.0/lejos_2_1_0.doc.tar.gz/download">API 
             docs</a></td>
-
         </tr>
         <tr> 
           <td valign="top">View <a href="rcx-installunix.php">Unix Install Notes</a><br />
@@ -122,7 +121,7 @@
 				        </tr>
 				        <tr> 
 				          <td valign="top">Other releases, notes, dates and sizes are available 
-				            at the SourceForge <a href="http://sourceforge.net/project/showfiles.php?group_id=9339" target="_blank">download 
+				            at the SourceForge <a href="http://sourceforge.net/p/lejos/rcx/files/" target="_blank">download 
 				            area</a>.<br />
 				            &nbsp;</td>
 				        </tr>
@@ -133,7 +132,7 @@
 				        	This eclipse plug-in allows you to develop java code for the LEGO RCX brick using the leJOS JVM (please see http://www.lejos.org). It offers easy configuration through a project wizard and a preference page, uses eclipse code building and adds RCX specific operations both for firmware and byte-code download. Eclipse 2 and 3 are supported.
 				        	</p>
 				        	<p>
-				        	<a href="tools/eclipse/ldt/org.lejos.ldt_1.2.0.zip">Download plugin for Eclipse IDE</a>
+				        	<a href="http://sourceforge.net/projects/rcx.lejos.p/files/eclipse/org.lejos.ldt_1.2.0.zip/download">Download plugin for Eclipse IDE</a>
 				        	</p>
 				        	</td>
 				        </tr>
@@ -148,10 +147,10 @@
 	    <p>leJOS 3 will be the final release for the RCX, incorporating all the enhancements to lejOS made since the 2.1.0 release in 2003.</p>
 	    <p>Release Candidate 2 (17<sup>th</sup> of September, 2006):</p>
             <ul>
-   				<li><a href="tools/lejos3/lejos.3.0.0-RC2.tar.gz" target="_blank">leJOS 3.0 RC2 for Linux</a> [3.2 m]</li>
+   				<li><a href="http://sourceforge.net/projects/rcx.lejos.p/files/lejos/3.0.0rc2/lejos.3.0.0-RC2.tar.gz/download" target="_blank">leJOS 3.0 RC2 for Linux</a> [3.2 m]</li>
 
-   				<li><a href="tools/lejos3/lejos.3.0.0-RC2-win32.zip" target="_blank">leJOS 3.0 RC2 for Windows</a> [3.2 m]</li>
-   				<li><a href="tools/lejos3/lejos.3.0.0-RC2-doc.zip" target="_blank">Documentation (including Tutorial)</a> [3.8 m]</li>
+   				<li><a href="http://sourceforge.net/projects/rcx.lejos.p/files/lejos-win32/3.0.0rc2/lejos.3.0.0-RC2-win32.zip/download" target="_blank">leJOS 3.0 RC2 for Windows</a> [3.2 m]</li>
+   				<li><a href="http://sourceforge.net/projects/rcx.lejos.p/files/lejos-win32/3.0.0rc2/lejos.3.0.0-RC2-doc.zip/download" target="_blank">Documentation (including Tutorial)</a> [3.8 m]</li>
             </ul>
 	    <sup>assemblied by Matthias Paul Scholz</sup>
           </td>
