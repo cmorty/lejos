@@ -121,7 +121,7 @@
 				        </tr>
 				        <tr> 
 				          <td valign="top">Other releases, notes, dates and sizes are available 
-				            at the SourceForge <a href="http://sourceforge.net/p/lejos/rcx/files/" target="_blank">download 
+				            at the SourceForge <a href="http://sourceforge.net/projects/rcx.lejos.p/files/" target="_blank">download 
 				            area</a>.<br />
 				            &nbsp;</td>
 				        </tr>

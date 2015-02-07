@@ -76,7 +76,7 @@
 						  <td valign="top" bgcolor="#FFF021" style="background-color: #FFF021"><img src="r_media/images/transparent_pixel.gif" width="2" height="2" border="0" /></td>
 						</tr>
 						<tr> 
-						  <td valign="top"><br/><a href="http://sourceforge.net/p/lejos/nxt/files/" target="_blank">Download the file for your OS from Sourceforge.</a>
+						  <td valign="top"><br/><a href="http://sourceforge.net/projects/nxt.lejos.p/files/" target="_blank">Download the file for your OS from Sourceforge.</a>
 						  	<br /><br />
 						  	<em>leJOS_NXJ_&lt;version&gt;.tar.gz</em>: Archive for manual installation on Linux and Mac OS&nbsp;X<br />
 						  	<em>leJOS_NXJ_&lt;version&gt;_win32.zip</em>: Archive for manual installation on Windows<br />
