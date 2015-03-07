@@ -2,6 +2,7 @@ package lejos.nxt.addon;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.I2CSensor;
+import lejos.util.EndianTools;
 
 /**
  * This class supports the <a href="http://www.hitechnic.com">HiTechnic</a>
@@ -48,7 +49,7 @@ public class BarometricHTSensor extends I2CSensor {
 	public long getPressureImperial() {
 		long result = Long.MIN_VALUE;
 		if (0 == getData(BAROMETRIC_PRESSURE, buffer, 2)) {
-			result = ((buffer[0] & 0xff) << 8) + buffer[1];
+			result = EndianTools.decodeUShortBE(buffer, 0);
 		}
 		return result;
 	}
@@ -69,9 +70,9 @@ public class BarometricHTSensor extends I2CSensor {
 	 * @return the temperature measured by the sensor in units of 1/10 °C.
 	 */
 	public int getTemperature() {
-		final int result = Integer.MIN_VALUE;
+		int result = Integer.MIN_VALUE;
 		if (0 == getData(BAROMETRIC_TEMPERATURE, buffer, 2)) {
-			return (buffer[0] << 2) | (buffer[1] & 0xFF);
+			result = EndianTools.decodeShortBE(buffer, 0);
 		}
 		return result;
 	}
@@ -84,8 +85,7 @@ public class BarometricHTSensor extends I2CSensor {
 	 *            (inHg).
 	 */
 	public void recalibrate(final int calibrationImperial) {
-		buffer[0] = (byte) ((calibrationImperial & 0xff00) >> 8);
-		buffer[1] = (byte) (calibrationImperial & 0x00ff);
+		EndianTools.encodeShortBE(calibrationImperial, buffer, 0);
 		super.sendData(BAROMETRIC_PRESSURE_CALIBRATION, buffer, 2);
 	}
 
@@ -97,7 +97,7 @@ public class BarometricHTSensor extends I2CSensor {
 	public int getCalibrationImperial() {
 		int result = Integer.MIN_VALUE;
 		if (0 == getData(BAROMETRIC_PRESSURE_CALIBRATION, buffer, 2)) {
-			result = ((buffer[0] & 0xff) << 8) + buffer[1];
+			result = EndianTools.decodeUShortBE(buffer, 0);
 		}
 		return result;
 	}
