@@ -23,10 +23,6 @@
 	bl    mem_init_func
 	.endm
 
-	.macro mac_string str
-	.string \str
-	.endm
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -84,7 +80,7 @@ start:
 
 skip_remap_toggle:
 
-		b    continue_boot
+	b    continue_boot
 
 
 continue_boot:
@@ -195,22 +191,22 @@ stack_init_0:
 @
 stack_init_1:
 @ Set up Interrupt stack
-                msr   CPSR_c,#0xD2 @ IRQ mode, IRQ, FIQ off
-                ldr   r0, =__irq_stack__
-                mov   sp,r0
-		bic   sp,sp,#7    @ make sure it is 8-byte aligned
+	msr   CPSR_c,#0xD2 @ IRQ mode, IRQ, FIQ off
+	ldr   r0, =__irq_stack__
+	mov   sp,r0
+	bic   sp,sp,#7    @ make sure it is 8-byte aligned
 @
 @ Set up System stack
-		msr   CPSR_c,#0xDF		@ System mode , I and F bits set (interrupts disabled)
-		ldr   r3, =__system_stack__
-		mov   sp, r3
-		bic   sp,sp,#7    @ make sure it is 8-byte aligned
+	msr   CPSR_c,#0xDF		@ System mode , I and F bits set (interrupts disabled)
+	ldr   r3, =__system_stack__
+	mov   sp, r3
+	bic   sp,sp,#7    @ make sure it is 8-byte aligned
 
 
 @ Set up initial frame pointers etc
-		mov     a2, #0							@ Second arg: fill value
-		mov	fp, a2							@ Null frame pointer
-		mov	r7, a2							@ Null frame pointer for Thumb
+	mov     a2, #0							@ Second arg: fill value
+	mov	fp, a2							@ Null frame pointer
+	mov	r7, a2							@ Null frame pointer for Thumb
 
 @ Kick into main code using interworking
 

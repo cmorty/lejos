@@ -114,7 +114,7 @@ $(VM_DIR)/specialsignatures.h: $(VM_DIR)/specialsignatures.db
 
 # default rules for compiling sources
 
-%.o: %.s
+%.o: %.S
 	@echo "Assembling $< to $@"
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
@@ -125,7 +125,7 @@ $(VM_DIR)/specialsignatures.h: $(VM_DIR)/specialsignatures.db
 
 ### special rules for compiling RAM sources
 
-%.oram: %.s
+%.oram: %.S
 	@echo "Assembling $< to $@"
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
