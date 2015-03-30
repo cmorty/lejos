@@ -54,23 +54,26 @@ public class NXJFlashUpdate {
 		mem[offset+3] = (byte) (val >>> 24);
 	}
 	
-	private int findMagicChars(byte[] mem, int offset, int radius, int align, String chars)
+	private int findMagicChars(byte[] mem, int start, int end, int align, String chars)
 	{
-		if (verifyMagicChars(mem, offset, chars))
-			return offset;
+		end -= chars.length();
 		
-		for (int j=1; j<=radius; j+=align)
+		int found = -1;
+		for (int offset=start; offset<end; offset+=align)
 		{
-			int p1 = offset+j;
-			if (verifyMagicChars(mem, p1, chars))
-				return p1;
-			
-			int p2 = offset-j;
-			if (verifyMagicChars(mem, p2, chars))
-				return p2;
+			if (verifyMagicChars(mem, offset, chars))
+			{
+				if (found < 0)
+					found = offset;
+				else
+					throw new RuntimeException("magic string found twice");
+			}
 		}
 		
-		throw new RuntimeException("magic string not found");
+		if (found < 0)
+			throw new RuntimeException("magic string not found");
+		
+		return found;
 	}
 	
 	private boolean verifyMagicChars(byte[] mem, int offset, String chars)
@@ -125,7 +128,7 @@ public class NXJFlashUpdate {
 	public byte[] createFirmwareImage(File vmName, File menuName,
 			String home) throws IOException {
 		ui.message("Building firmware image.");
-		byte[] memoryImage = new byte[MAX_FIRMWARE_PAGES * NXTSamba.PAGE_SIZE];
+		byte[] memoryImage = new byte[MAX_FIRMWARE_PAGES * NXTSamba.FLASH_PAGE_SIZE];
 		if (vmName == null)
 			vmName = new File(home, "bin" + File.separator + VM);
 		if (menuName == null)
@@ -136,14 +139,14 @@ public class NXJFlashUpdate {
 		ui.message("Menu file: " + menuName);
 		int vmLen = readWholeFile(vmName, memoryImage, 0, memoryImage.length);
 		// Round up to page and use as base for the menu location
-		int menuStart = ((vmLen + NXTSamba.PAGE_SIZE - 1) / NXTSamba.PAGE_SIZE)
-				* NXTSamba.PAGE_SIZE;
+		int menuStart = ((vmLen + NXTSamba.FLASH_PAGE_SIZE - 1) / NXTSamba.FLASH_PAGE_SIZE)
+				* NXTSamba.FLASH_PAGE_SIZE;
 		// Read the menu. Note we may read less than the full size of the menu.
 		// If so this will be caught by the overall size check below.
 		int menuLen = readWholeFile(menuName, memoryImage, menuStart, memoryImage.length - menuStart);
 		// We store the length and location of the Menu in special locations
 		// that are known to the firmware.
-		int loc = findMagicChars(memoryImage, MENU_ADDRESS_LOC, MENU_ADDRESS_SEARCH_RADIUS, 4, MENU_ADDRESS_STRING);
+		int loc = findMagicChars(memoryImage, 0, vmLen, 4, MENU_ADDRESS_STRING);
 		ui.message("Magic string found at offset 0x"+Integer.toHexString(loc));
 		storeWord(memoryImage, loc, menuStart + NXTSamba.FLASH_BASE);
 		storeWord(memoryImage, loc+4, menuLen);
@@ -169,12 +172,12 @@ public class NXJFlashUpdate {
 	 */
 	public byte[] createFilesystemImage() {
 		ui.message("Building filesystem image.");
-		byte[] fs = new byte[NXTSamba.PAGE_SIZE
+		byte[] fs = new byte[NXTSamba.FLASH_PAGE_SIZE
 				* (TOTAL_PAGES - MAX_FIRMWARE_PAGES)];
 		// First few pages are settings are directory, these must all be
 		// cleared to zero. After that we fill with a test pattern, to help
 		// spot any flash problems
-		int addr = (SETTINGS_PAGES + DIRECTORY_PAGES) * NXTSamba.PAGE_SIZE;
+		int addr = (SETTINGS_PAGES + DIRECTORY_PAGES) * NXTSamba.FLASH_PAGE_SIZE;
 		while (addr <= (fs.length - 32)) {
 			storeWord(fs, addr, addr);
 			addr += 4;
@@ -265,7 +268,7 @@ public class NXJFlashUpdate {
 	
 	private static int getPageAddr(int page)
 	{
-		return NXTSamba.FLASH_BASE + page * NXTSamba.PAGE_SIZE; 
+		return NXTSamba.FLASH_BASE + page * NXTSamba.FLASH_PAGE_SIZE; 
 	}
 
 	/**
@@ -325,7 +328,7 @@ public class NXJFlashUpdate {
 		//round up
 		int offset = 0;
 		int length = memoryImage.length;
-		int pages = (length + NXTSamba.PAGE_SIZE -1) / NXTSamba.PAGE_SIZE;
+		int pages = (length + NXTSamba.FLASH_PAGE_SIZE -1) / NXTSamba.FLASH_PAGE_SIZE;
 		
 		int page = 0;
 		int percent = -1;
@@ -339,8 +342,8 @@ public class NXJFlashUpdate {
 			nxt.writePage(first + page, memoryImage, offset, length);
 			
 			page++;
-			offset += NXTSamba.PAGE_SIZE;
-			length -= NXTSamba.PAGE_SIZE;
+			offset += NXTSamba.FLASH_PAGE_SIZE;
+			length -= NXTSamba.FLASH_PAGE_SIZE;
 		}
 		ui.progress("Writing", 100);
 		

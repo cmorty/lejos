@@ -84,11 +84,15 @@ public class NXTSamba {
      * The NXT has 256KB Flash starting at 0x100000, divided into 256byte pages.
      */
     public static final int FLASH_BASE = 0x00100000;
-    public static final int FLASH_MAX  = 0x00140000;
-    public static final int FLASH_SIZE = FLASH_MAX - FLASH_BASE;
-	public static final int PAGE_SIZE  = 256;
-	public static final int PAGE_MAX = FLASH_SIZE / PAGE_SIZE;
+	public static final int FLASH_PAGES = 1024;
+	public static final int FLASH_PAGE_SIZE = 256;
+	public static final int FLASH_SIZE = FLASH_PAGES * FLASH_PAGE_SIZE;
+    public static final int FLASH_MAX = FLASH_BASE + FLASH_SIZE;
 	
+    /**
+     * The NXT's CPU boots by executing the reboot vector at 0x00
+     */
+    private static final int REBOOT_VECTOR = 0x00;
     
     /**
      * According to the SAM7S datasheet, section 21.6 Hardware and Software Constraints,
@@ -99,18 +103,12 @@ public class NXTSamba {
     
     private static final int HELPER_STACKSIZE = 0x1000;
     private static final int HELPER_CODEADR = SAMBA_RAM_BASE + HELPER_STACKSIZE;
-    private static final int HELPER_PACKET = PAGE_SIZE + 4;
+    private static final int HELPER_PACKET_SIZE = FLASH_PAGE_SIZE + 4;
     private final byte[] helper_code;
     private final int helper_dataadr;
 
-    static
-    {
-    	assert SAMBA_RAM_BASE >= RAM_BASE;
-    	assert SAMBA_RAM_MAX <= RAM_MAX;
-    	assert HELPER_CODEADR - HELPER_STACKSIZE >= SAMBA_RAM_BASE;
-    }
-    
-	private NXTCommUSB nxtComm = null;
+
+    private NXTCommUSB nxtComm = null;
     private byte [] inputBuf = new byte[NXTCommUSB.USB_BUFSZ];
     private String version;
     
@@ -118,7 +116,7 @@ public class NXTSamba {
     {
     	this.helper_code = FlashWrite.loadCode();
     	this.helper_dataadr = HELPER_CODEADR + helper_code.length;
-    	assert helper_dataadr + HELPER_PACKET <= SAMBA_RAM_MAX;
+    	assert helper_dataadr + HELPER_PACKET_SIZE <= SAMBA_RAM_MAX;
     }
     
     /**
@@ -408,7 +406,7 @@ public class NXTSamba {
     
 	public void reboot() throws IOException
 	{
-		sendGotoCommand(FLASH_BASE);
+		sendGotoCommand(REBOOT_VECTOR);
 	}
 	
     /**
@@ -476,13 +474,13 @@ public class NXTSamba {
      */
     public void writePage(int page, byte[] data, int offset, int len) throws IOException
     {
-    	if (page < 0 || page >= PAGE_MAX)
+    	if (page < 0 || page >= FLASH_PAGES)
     		throw new IllegalArgumentException("page number out of range");
-    	if (len > PAGE_SIZE)
-    		len = PAGE_SIZE;
+    	if (len > FLASH_PAGE_SIZE)
+    		len = FLASH_PAGE_SIZE;
     	
         // Generate data chunk (32 bit int pagenum + 256 byte data)
-        byte [] buf = new byte[HELPER_PACKET];
+        byte [] buf = new byte[HELPER_PACKET_SIZE];
         System.arraycopy(data, offset, buf, 4, len);
         encodeInt(buf, 0, page);
         // And the data into ram
@@ -504,8 +502,8 @@ public class NXTSamba {
         while (len > 0)
         {
             writePage(firstPage, data, offset, len);
-            offset += PAGE_SIZE;
-            len -= PAGE_SIZE;
+            offset += FLASH_PAGE_SIZE;
+            len -= FLASH_PAGE_SIZE;
             firstPage++;
         }
     }
@@ -520,8 +518,8 @@ public class NXTSamba {
     public void readPage(int page, byte[] data, int offset) throws IOException
     {
         //System.out.println("Write page " + page);
-        int addr = FLASH_BASE + page * PAGE_SIZE;
-        readBytes(addr, data, offset, PAGE_SIZE);
+        int addr = FLASH_BASE + page * FLASH_PAGE_SIZE;
+        readBytes(addr, data, offset, FLASH_PAGE_SIZE);
     }
 
     /**
@@ -540,7 +538,7 @@ public class NXTSamba {
         {
             readPage(page, data, offset);
             page++;
-            offset += PAGE_SIZE;
+            offset += FLASH_PAGE_SIZE;
         }
     }
     
@@ -577,8 +575,6 @@ public class NXTSamba {
             	sendInitCommand(CMD_VERSION);
             	// Example version string: "v1.4 Nov 10 2004 14:49:33"
             	version = readLine().trim();            	
-            	// strip everything after the first whitespace 
-            	version = version.replaceAll("\\s.*", "");
                 
                 // Now upload the flash writer helper routine
                 writeBytes(HELPER_CODEADR, helper_code);
