@@ -1,3 +1,5 @@
+#include "AT91SAM7.h"
+#include "asmtools.h"
 @  This is the init for an AT91SAM7S64
 @ This code is entered with interrupts disabled
 @ This code should work as start code from flash or RAM.
@@ -26,22 +28,22 @@
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+	.section .rodata
+	.align 2
+global_data_label menu_address
+	.ascii "MNUA"
+global_data_label menu_length
+	.ascii "MNUL"
+global_data_label flash_start_page
+	.ascii "FLSP"
+
 
 	.text
 	.code 32
-	.align 	0
-	
-	.global start	
+	.align 2
+
+	.global start
 	.extern main
-	.global menu_address
-	.global menu_length
-	.global flash_start_page
-menu_address:
-	.ascii "MNUA"
-menu_length:
-	.ascii "MNUL"
-flash_start_page:
-	.ascii "FLSP"
 
 @ Flash is always a 1MB
 @ RAM is always at 2MB
@@ -192,21 +194,18 @@ stack_init_0:
 stack_init_1:
 @ Set up Interrupt stack
 	msr   CPSR_c,#0xD2 @ IRQ mode, IRQ, FIQ off
-	ldr   r0, =__irq_stack__
-	mov   sp,r0
+	ldr   sp, =__irq_stack__
 	bic   sp,sp,#7    @ make sure it is 8-byte aligned
 @
 @ Set up System stack
 	msr   CPSR_c,#0xDF		@ System mode , I and F bits set (interrupts disabled)
-	ldr   r3, =__system_stack__
-	mov   sp, r3
+	ldr   sp, =__system_stack__
 	bic   sp,sp,#7    @ make sure it is 8-byte aligned
 
 
 @ Set up initial frame pointers etc
-	mov     a2, #0							@ Second arg: fill value
-	mov	fp, a2							@ Null frame pointer
-	mov	r7, a2							@ Null frame pointer for Thumb
+	mov	fp, #0							@ Null frame pointer
+	mov	r7, #0							@ Null frame pointer for Thumb
 
 @ Kick into main code using interworking
 
@@ -238,20 +237,19 @@ swi_handler:
 prefetch_abort_handler:
 	b prefetch_abort_handler
 
-	.extern data_abort_pc
 	.extern data_abort_C
 
 data_abort_handler:
-	ldr r0,=data_abort_pc
-	str lr,[r0]
-	msr   CPSR_c,#0xDF		@ System mode , I and F bits set (interrupts disabled)
-	ldr r0,=data_abort_C
-	mov lr,pc
-	bx  r0
+	mov     r0, lr
+	msr     CPSR_c, #0xDF		@ System mode , I and F bits set (interrupts disabled)
+	ldr     sp, =__system_stack__
+	ldr     r1, =data_abort_C
+	mov     lr, pc
+	bx      r1
 data_abort_C_returned:
-	b data_abort_C_returned
+	b       data_abort_C_returned
 reserved_handler:
-	b reserved_handler
+	b       reserved_handler
 
 
 

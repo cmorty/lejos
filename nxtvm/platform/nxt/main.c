@@ -46,8 +46,6 @@ extern U32 __free_ram_start__;
 extern U32 __free_ram_end__;
 extern U32 __extra_ram_start__;
 extern U32 __extra_ram_end__;
-extern const U32 menu_address;
-extern const U32 menu_length;
 
 unsigned int gNextProgramSize;
 byte *gNextProgram;

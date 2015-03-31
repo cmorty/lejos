@@ -2,7 +2,7 @@
 
 	.text
 	.code 32
-	.align 0
+	.align 2
 
 @ This is not actally executed in this code stream. Instead it is
 @ copied into the reloacted vector space.

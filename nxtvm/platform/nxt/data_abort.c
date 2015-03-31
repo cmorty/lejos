@@ -2,11 +2,11 @@
 #include "AT91SAM7.h"
 #include "interpreter.h"
 #include "nxt_spi.h"
+#include "init.h"
 
-U32 data_abort_pc;
 
 void
-data_abort_C(void)
+data_abort_C(void *pc)
 {
   // Need to reset the link to the display to see any output
   nxt_spi_init();
@@ -15,7 +15,7 @@ data_abort_C(void)
   display_string("Data abort");
   display_goto_xy(0, 1);
   display_string("PC   ");
-  display_hex(data_abort_pc, 8);
+  display_hex((uintptr_t)pc, 8);
   display_goto_xy(0, 2);
   display_string("AASR ");
   display_hex(*AT91C_MC_AASR, 8);
@@ -33,7 +33,4 @@ data_abort_C(void)
   display_hex(debug_word2,8);
 
   display_force_update();
-
-  while (1) {
-  }
 }

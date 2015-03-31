@@ -1,14 +1,13 @@
 #ifndef __FLASHPROG_H__
-#  define __FLASHPROG_H__
-#  include "platform_config.h"
+#define __FLASHPROG_H__
+#include "platform_config.h"
+#include "init.h"
 
 int flash_write_page(FOURBYTES *buf, int page_num);
 int flash_read_page(FOURBYTES *buf, int page_num);
 FOURBYTES *flash_get_page_buffer(int page_num);
 int flash_write_page_buffer(FOURBYTES *buf, int page_num);
 
-// First usable page 
-extern const FOURBYTES flash_start_page;
 #define VINTPTR(addr) ((volatile FOURBYTES *)(addr))
 #define VINT(addr) (*(VINTPTR(addr)))
 
