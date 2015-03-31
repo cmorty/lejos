@@ -29,11 +29,6 @@ MEMORY
 ROM_ONLY  rom : ORIGIN = 1M, LENGTH = 64k
   ram   : ORIGIN = 2M, LENGTH = 16k
 }
-
-ROM_ONLY ROM_BASE = 1M;
-ROM_ONLY ROM_SIZE = 64k;
-RAM_BASE = 2M;
-RAM_SIZE = 16k;
 */
 
 
@@ -44,13 +39,8 @@ MEMORY
 {
 ROM_ONLY  rom : ORIGIN = 1M, LENGTH =256k
   vector_ram  : ORIGIN = 2M, LENGTH = 64
-ram         : ORIGIN = 2M + 64, LENGTH = 64K - 64
+  ram         : ORIGIN = 2M + 64, LENGTH = 64K - 64
 }
-
-ROM_ONLY ROM_BASE = 1M;
-ROM_ONLY ROM_SIZE = 256k;
-RAM_BASE = 2M;
-RAM_SIZE = 64k;
 
 SECTIONS {
 
@@ -73,23 +63,23 @@ __extra_ram_end__   = __samba_ram_end__;
  * table
  */
 .vectors : {
-    KEEP(vectors.o (*.text *.text.*))
+    KEEP(vectors.o (.text .text.*))
     . = ALIGN(16);
 } > vector_ram
 ROM_ONLY AT> rom
 SAMBA_ONLY AT> ram
 
 __vectors_ram_start__  = ADDR(.vectors);
-__vectors_ram_end__    = (ADDR(.vectors) + SIZEOF(.vectors));
+__vectors_ram_end__    = ADDR(.vectors) + SIZEOF(.vectors);
 __vectors_load_start__ = LOADADDR(.vectors);
-__vectors_load_end__ = (LOADADDR(.vectors) + SIZEOF(.vectors));
+__vectors_load_end__   = LOADADDR(.vectors) + SIZEOF(.vectors);
 
 /*
  * The initialisation code goes first, followed by the text.
  * For a ram build it goes into ram, for a rom build it goes into rom.
  */
 .init : {
-    init.o (*.text *.text.*)
+    init.o (.text .text.*)
     . = ALIGN(16);
 } 
 ROM_ONLY > rom
@@ -117,31 +107,31 @@ SAMBA_ONLY > ram
 
 .ram_text : {
     . = ALIGN(16);
-    *.oram(*.text *.text.* *.glue*)
+    *.oram(.text .text.* .glue*)
     . = ALIGN(16);
-    *.oram(*.rodata *.rodata.*)
+    *.oram(.rodata .rodata.*)
     . = ALIGN(16);
 } > ram
 ROM_ONLY AT> rom
 
-__ramtext_ram_start__ = ADDR(.ram_text);
-__ramtext_ram_end__   = ADDR(.ram_text) + SIZEOF(.ram_text);
+__ramtext_ram_start__  = ADDR(.ram_text);
+__ramtext_ram_end__    = ADDR(.ram_text) + SIZEOF(.ram_text);
 __ramtext_load_start__ = LOADADDR(.ram_text); 
-__ramtext_load_end__ = __ramtext_load_start__ + SIZEOF(.ram_text) ;
+__ramtext_load_end__   = LOADADDR(.ram_text) + SIZEOF(.ram_text);
 
 
 
 .data : {
-    * (*.data *.data.*)
+    *(.data .data.*)
     . = ALIGN(16);
 } > ram 
 ROM_ONLY AT> rom
 
 /* LOADADDR is the same as the ADDR if it is a ram build */
-__data_ram_start__ = ADDR(.data);
-__data_ram_end__   = ADDR(.data) + SIZEOF(.data);
+__data_ram_start__  = ADDR(.data);
+__data_ram_end__    = ADDR(.data) + SIZEOF(.data);
 __data_load_start__ = LOADADDR(.data); 
-__data_load_end__ = __data_load_start__ + SIZEOF(.data) ;
+__data_load_end__   = LOADADDR(.data) + SIZEOF(.data);
 
 
 /* .text is the main program area. This is stored in flash or
@@ -150,9 +140,9 @@ __data_load_end__ = __data_load_start__ + SIZEOF(.data) ;
 
 .text : {
     . = ALIGN(16);
-    * (*.text *.text.* *.glue*)
+    *(.text .text.* .glue*)
     . = ALIGN(16);
-    * (*.rodata *.rodata.*)
+    *(.rodata .rodata.*)
     . = ALIGN(16);
 }
 
@@ -160,7 +150,7 @@ ROM_ONLY > rom
 RAM_ONLY > ram
 SAMBA_ONLY > ram
 
-ROM_ONLY __rom_end__ = ADDR(.text) + SIZEOF(.text) ;
+ROM_ONLY __rom_end__ = ADDR(.text) + SIZEOF(.text);
 
 
 /*
@@ -179,40 +169,39 @@ ROM_ONLY __rom_end__ = ADDR(.text) + SIZEOF(.text) ;
  */
 
 .stack  : {
-	/* irq stack */
-	. += 0x80 ;
-	. = ALIGN(16);
-	__irq_stack__ = . ;
+    /* irq stack */
+    . += 0x80;
+    . = ALIGN(16);
+    __irq_stack__ = .;
 
-	/* system stack */
-	__system_stack_bottom__ = . ;
-	. += 0x400 ;
-	. = ALIGN(16);
-	__system_stack__ = .;
-	__system_stack_top__ = . ;
+    /* system stack */
+    __system_stack_bottom__ = .;
+    . += 0x400;
+    . = ALIGN(16);
+    __system_stack__ = .;
+    __system_stack_top__ = .;
 
 } > ram
 
 __stack_start__ = ADDR(.stack);
-__stack_end__   = (ADDR(.stack) + SIZEOF(.stack));
+__stack_end__   = ADDR(.stack) + SIZEOF(.stack);
 
 /* bss is zero initialised data */
 .bss : {
-    * (*.bss *.bss.*)
+    *(.bss .bss.*)
     . = ALIGN(16);
-    __bss_end__ = . ;
 } > ram
 
 __bss_start__ = ADDR(.bss);
-__bss_end__   = (ADDR(.bss) + SIZEOF(.bss));
+__bss_end__   = ADDR(.bss) + SIZEOF(.bss);
 
-/* end = __bss_end__ ;  used by malloc */
+/* end = __bss_end__;  used by malloc */
 
-__free_ram_start__ = __bss_end__ ;
-__free_ram_end__ = (RAM_BASE + RAM_SIZE);
+__free_ram_start__ = __bss_end__;
+__free_ram_end__   = ORIGIN(ram) + LENGTH(ram);
 
 
-REPORTME_RAM_TOP = __bss_end__ ;
+REPORTME_RAM_TOP = __bss_end__;
 REPORTME_FREE_RAM_SIZE = __free_ram_end__ - __free_ram_start__;
 ROM_ONLY REPORTME_ROM_TOP = __rom_end__;
 

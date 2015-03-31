@@ -16,8 +16,8 @@
 #define CPSR_MODE_ABORT  0x17
 #define CPSR_MODE_UNDEF  0x1B
 #define CPSR_MODE_SYSTEM 0x1F
-#define	CPSR_THUMB       (1 << 5)
-#define	CPSR_NOFIQ       (1 << 6)
-#define	CPSR_NOIRQ       (1 << 7)
+#define CPSR_THUMB       (1 << 5)
+#define CPSR_NOFIQ       (1 << 6)
+#define CPSR_NOIRQ       (1 << 7)
 
 #endif
