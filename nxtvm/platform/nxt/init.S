@@ -19,7 +19,7 @@
 	bl      mem_copy_func
 .endm
 
-.macro mem_initialise, dest, dest_end, val
+.macro  mem_initialise, dest, dest_end, val
 	ldr     r0, =\dest
 	ldr     r1, =\dest_end
 	ldr     r2, =\val
@@ -53,7 +53,7 @@ global_data_label flash_start_page
 start:
 	@ Switch to system mode and disable interrupts (IRQ and FIQ).
 	@ Should not have to do this, but lets not assume anything.
-	msr     CPSR_c, #0xDF
+	msr     CPSR_c, #CPSR_MODE_SYSTEM|CPSR_NOIRQ|CPSR_NOFIQ
 
 	@ Have zero in r0 throughout
 	@ Allows us to easily load constants via orr (has bigger range than mov)
@@ -170,12 +170,12 @@ stack_init_0:
 @
 stack_init_1:
 	@ Set up Interrupt stack
-	msr     CPSR_c, #0xD2       @ IRQ mode, IRQ, FIQ off
+	msr     CPSR_c, #CPSR_MODE_IRQ|CPSR_NOIRQ|CPSR_NOFIQ
 	ldr     sp, =__irq_stack__
 	bic     sp, sp, #7          @ make sure it is 8-byte aligned
 
 	@ Set up System stack
-	msr     CPSR_c, #0xDF       @ System mode , I and F bits set (interrupts disabled)
+	msr     CPSR_c, #CPSR_MODE_SYSTEM|CPSR_NOIRQ|CPSR_NOFIQ
 	ldr     sp, =__system_stack__
 	bic     sp, sp, #7          @ make sure it is 8-byte aligned
 
