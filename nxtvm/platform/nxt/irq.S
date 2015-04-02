@@ -14,7 +14,7 @@
 @  Macros
 @
 
-.macro   irq_wrapper_nested, C_function
+.macro  irq_wrapper_nested, C_function
 
 	@ Save registers on stack
 	sub     lr, lr, #4 @ fix up for return
@@ -57,7 +57,7 @@
 .endm
 
 
-.macro   irq_wrapper_not_nested, C_function
+.macro  irq_wrapper_not_nested, C_function
 
 	@ Save registers on stack
 	sub     lr, lr, #4 @ fix up for return
