@@ -2,7 +2,7 @@
 #include "mytypes.h"
 #include "interrupts.h"
 #include "aic.h"
-#include "AT91SAM7.h"
+#include "at91sam7.h"
 #include "uart.h"
 #include "systick.h"
 #include "stdio.h"

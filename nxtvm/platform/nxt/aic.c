@@ -6,7 +6,7 @@
  * priority.
  */
 
-#include "AT91SAM7.h"
+#include "at91sam7.h"
 
 #include "mytypes.h"
 #include "interrupts.h"
@@ -82,7 +82,7 @@ aic_initialise(void)
  * interrupt line.
  *
  * Args:
- *   vector: The peripheral ID to claim (see AT91SAM7.h for peripheral IDs)
+ *   vector: The peripheral ID to claim (see at91sam7.h for peripheral IDs)
  *   mode: The priority of this interrupt in relation to others. See aic.h
  *         for a list of defined values.
  *   isr: A pointer to the interrupt service routine function.

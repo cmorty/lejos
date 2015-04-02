@@ -5,7 +5,7 @@
  */
 
 #include "i2c.h"
-#include "AT91SAM7.h"
+#include "at91sam7.h"
 #include "interrupts.h"
 #include "aic.h"
 #include "systick.h"

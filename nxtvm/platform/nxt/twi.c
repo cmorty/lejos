@@ -17,7 +17,7 @@
 #include "mytypes.h"
 #include "twi.h"
 #include "interrupts.h"
-#include "AT91SAM7.h"
+#include "at91sam7.h"
 
 #include "systick.h"
 

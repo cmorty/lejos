@@ -6,7 +6,7 @@
  * Author: Andy Shaw
  */
 #include "mytypes.h"
-#include "AT91SAM7.h"
+#include "at91sam7.h"
 #include "hs.h"
 #include "aic.h"
 #include  <string.h>

@@ -1,5 +1,5 @@
 #include "mytypes.h"
-#include "AT91SAM7.h"
+#include "at91sam7.h"
 #include "uart.h"
 #include "bt.h"
 #include "aic.h"

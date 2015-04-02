@@ -1,4 +1,4 @@
-#include "AT91SAM7.h"
+#include "at91sam7.h"
 #include "asmtools.h"
 @
 @ This is the init for an AT91SAM7S64

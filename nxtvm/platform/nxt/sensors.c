@@ -20,7 +20,7 @@
 #include "threads.h"
 #include "classes.h"
 #include "language.h"
-#include "AT91SAM7.h"
+#include "at91sam7.h"
 #include "sensors.h"
 #include "poll.h"
 #include "nxt_avr.h"

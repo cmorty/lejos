@@ -3,7 +3,7 @@
 #include "nxt_avr.h"
 #include "aic.h"
 #include "interrupts.h"
-#include "AT91SAM7.h"
+#include "at91sam7.h"
 
 #define MA0 15
 #define MA1 1

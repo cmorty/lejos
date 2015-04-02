@@ -1,5 +1,5 @@
 #include "display.h"
-#include "AT91SAM7.h"
+#include "at91sam7.h"
 #include "interpreter.h"
 #include "nxt_spi.h"
 #include "init.h"

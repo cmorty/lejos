@@ -1,4 +1,4 @@
-#include "AT91SAM7.h"
+#include "at91sam7.h"
 #include "asmtools.h"
 
 @ Disables interrupts.

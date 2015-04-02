@@ -16,7 +16,7 @@
  */
 #include "mytypes.h"
 #include "sound.h"
-#include "AT91SAM7.h"
+#include "at91sam7.h"
 #include "aic.h"
 #include "nxt_avr.h"
 #include <string.h>

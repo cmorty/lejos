@@ -11,7 +11,7 @@
 
 #  include "poll.h"
 #  include "display.h"
-#include "AT91SAM7.h"
+#include "at91sam7.h"
 
 static inline void
 instruction_hook(void)

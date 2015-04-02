@@ -2,7 +2,7 @@
 #include "mytypes.h"
 #include "uart.h"
 #include "interrupts.h"
-#include "AT91SAM7.h"
+#include "at91sam7.h"
 
 #include "byte_fifo.h"
 
