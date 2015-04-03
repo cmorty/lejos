@@ -67,6 +67,7 @@ start:
 @ If the value at address 0 has changed to the inverted value, then
 @ there's no need to remap.
 @
+memory_remap:
 	orr     r1, r0, #AT91C_ISRAM
 	ldr     r2, [r0]
 	mvn     r3, r2
@@ -78,15 +79,13 @@ start:
 	strne   r1, [r0, #AT91C_MC_RCR]
 
 
-continue_boot:
-
 @   MC_FMR:
 @   Set up flash memory accessing and memory for 48 MHz FMCN = 50)
 @   2 wait states (FWS = 1)
 @   No special flags
 @
-
-	ldr     r1, =((72 << 16) | (1 << 8))
+setup_flash:
+	ldr     r1, =(72 << 16) | AT91C_MC_FWS_1FWS
 	str     r1, [r0, #AT91C_MC_FMR]
 
 @
@@ -94,6 +93,7 @@ continue_boot:
 @    Set MDT_MR disable bit. 
 @    Note: probably want to set this differently at some stage...
 @
+disable_watchdog:
 	orr     r1, r0, #AT91C_WDTC_WDDIS
 	str     r1, [r0, #AT91C_WDTC_WDMR]
 
@@ -104,6 +104,7 @@ continue_boot:
 @    We use the PLL to generate 18432000 / 14 * 73 = 96109714
 @    We then divide this by 2
 
+setup_clock:
 	@ Start main osc
 	ldr     r1, =0x00000601
 	str     r1, [r0, #AT91C_PMC_MOR]
@@ -168,7 +169,7 @@ stack_init_0:
 @   NB Stacks should be 8-byte aligned for APCS
 @   They should already be aligned, but we mask the values to make sure.
 @
-stack_init_1:
+stack_init:
 	@ Set up Interrupt stack
 	msr     CPSR_c, #CPSR_MODE_IRQ|CPSR_NOIRQ|CPSR_NOFIQ
 	ldr     sp, =__irq_stack__
@@ -179,6 +180,7 @@ stack_init_1:
 	ldr     sp, =__system_stack__
 	bic     sp, sp, #7          @ make sure it is 8-byte aligned
 
+jump_to_main:
 	@ Set up initial frame pointers etc
 	mov     fp, #0              @ Null frame pointer
 	mov     r7, #0              @ Null frame pointer for Thumb
@@ -204,14 +206,14 @@ main_returned:
 	.global data_abort_handler
 	.global reserved_handler
 
-
 undef_handler:
 	b       undef_handler
 swi_handler:
 	b       swi_handler
 prefetch_abort_handler:
 	b       prefetch_abort_handler
-
+reserved_handler:
+	b       reserved_handler
 
 data_abort_handler:
 	mov     r0, lr
@@ -222,8 +224,8 @@ data_abort_handler:
 	bx      r1
 data_abort_C_returned:
 	b       data_abort_C_returned
-reserved_handler:
-	b       reserved_handler
+
+
 
 
 
