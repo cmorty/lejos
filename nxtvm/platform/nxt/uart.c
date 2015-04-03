@@ -262,13 +262,13 @@ uart_init(U32 u, U32 baudRate, U32 dataBits, U32 stopBits, char parity)
   switch (u) {
   case 0:
     p->uart = AT91C_BASE_US0;
-    peripheral_id = AT91C_PERIPHERAL_ID_US0;
+    peripheral_id = AT91C_ID_US0;
     pinmask = (1 << 5) | (1 << 6);
     isr = uart_isr_entry_0;
     break;
   case 1:
     p->uart = AT91C_BASE_US1;
-    peripheral_id = AT91C_PERIPHERAL_ID_US1;
+    peripheral_id = AT91C_ID_US1;
     pinmask = (1 << 21) | (1 << 22);	// todo
     isr = uart_isr_entry_1;
     break;
@@ -337,7 +337,7 @@ uart_init(U32 u, U32 baudRate, U32 dataBits, U32 stopBits, char parity)
 
 
   /* Grab the clock we need */
-  *AT91C_PMC_PCER = (1 << AT91C_PERIPHERAL_ID_PIOA);	/* Need PIO too */
+  *AT91C_PMC_PCER = (1 << AT91C_ID_PIOA);	/* Need PIO too */
   *AT91C_PMC_PCER = (1 << peripheral_id);
 
   /* Grab the pins we need */
