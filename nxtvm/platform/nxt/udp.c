@@ -14,6 +14,7 @@
  */
 #include "types.h"
 #include "mytypes.h"
+#include "irq.h"
 #include "udp.h"
 #include "interrupts.h"
 #include "at91sam7.h"
@@ -210,8 +211,7 @@ static U8 named[] =
 };
 
 static const U8 ld[] = {0x04,0x03,0x09,0x04}; // Language descriptor
-      
-extern void udp_isr_entry(void);
+
 
 static
 void
@@ -780,7 +780,7 @@ udp_enable(int reset)
   int i_state = interrupts_get_and_disable();
   aic_mask_off(AT91C_PERIPHERAL_ID_UDP);
   aic_set_vector(AT91C_PERIPHERAL_ID_UDP, AIC_INT_LEVEL_LOWEST,
-         (U32) udp_isr_entry);
+         udp_isr_entry);
   aic_mask_on(AT91C_PERIPHERAL_ID_UDP);
   *AT91C_UDP_IER = (AT91C_UDP_EPINT0 | AT91C_UDP_RXSUSP | AT91C_UDP_RXRSM);
   reset = reset || (configured & ST_NEEDRESET);

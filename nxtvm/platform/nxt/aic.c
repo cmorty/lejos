@@ -10,6 +10,7 @@
 
 #include "mytypes.h"
 #include "interrupts.h"
+#include "irq.h"
 
 #include "aic.h"
 
@@ -17,16 +18,7 @@
 /* Shorthand for addressing the System Controller structure defined in
  * the AT91 platform package, where the AIC's registers are defined.
  */
-#define sysc ((volatile struct _AT91S_SYS *)0xFFFFF000)
-
-
-/* Default handlers for the three general kinds of interrupts that the
- * ARM core has to handle. These are defined in irq.s, and just freeze
- * the board in an infinite loop.
- */
-extern void default_isr(void);
-extern void default_fiq(void);
-extern void spurious_isr(void);
+#define sysc AT91C_BASE_AIC
 
 
 /* Initialise the Advanced Interrupt Controller.
@@ -67,10 +59,10 @@ aic_initialise(void)
   /* Set default handlers for all interrupt lines. */
   for (i = 0; i < 32; i++) {
     sysc->AIC_SMR[i] = 0;
-    sysc->AIC_SVR[i] = (U32) default_isr;
+    sysc->AIC_SVR[i] = (AT91_REG) default_isr;
   }
-  sysc->AIC_SVR[AT91C_ID_FIQ] = (U32) default_fiq;
-  sysc->AIC_SPU = (U32) spurious_isr;
+  sysc->AIC_SVR[AT91C_ID_FIQ] = (AT91_REG) default_fiq;
+  sysc->AIC_SPU = (AT91_REG) spurious_isr;
 }
 
 
@@ -88,13 +80,13 @@ aic_initialise(void)
  *   isr: A pointer to the interrupt service routine function.
  */
 void
-aic_set_vector(U32 vector, U32 mode, U32 isr)
+aic_set_vector(U32 vector, U32 mode, void (*isr)(void))
 {
   if (vector < 32) {
     int i_state = interrupts_get_and_disable();
 
     sysc->AIC_SMR[vector] = mode;
-    sysc->AIC_SVR[vector] = isr;
+    sysc->AIC_SVR[vector] = (AT91_REG) isr;
     if (i_state)
       interrupts_enable();
   }

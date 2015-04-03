@@ -1,5 +1,6 @@
 
 #include "nxt_spi.h"
+#include "irq.h"
 #include "interrupts.h"
 #include "at91sam7.h"
 
@@ -35,8 +36,6 @@ volatile U8 dirty = 0;
 volatile U8 page = 0;
 volatile const U8 *data = (U8 *) 0;
 U8 mode = 0xff;
-
-extern void spi_isr_entry(void);
 
 static void spi_set_mode(U8 m)
 {
@@ -150,7 +149,7 @@ nxt_spi_init(void)
 
   /* Install the interrupt handler */
   aic_mask_off(AT91C_ID_SPI);
-  aic_set_vector(AT91C_ID_SPI, AIC_INT_LEVEL_NORMAL, (U32)spi_isr_entry);
+  aic_set_vector(AT91C_ID_SPI, AIC_INT_LEVEL_NORMAL, spi_isr_entry);
   aic_mask_on(AT91C_ID_SPI);
   *AT91C_SPI_PTCR = AT91C_PDC_TXTEN;
 

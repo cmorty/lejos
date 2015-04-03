@@ -7,6 +7,7 @@
 #include "i2c.h"
 #include "at91sam7.h"
 #include "interrupts.h"
+#include "irq.h"
 #include "aic.h"
 #include "systick.h"
 #include "memory.h"
@@ -198,8 +199,6 @@ static volatile U32 i2c_port_busy = 0;
 // optimized to minimize the time spent processing during
 // an interrupt.
 
-
-extern void i2c_timer_isr_entry(void);
 
 // Take the clock line high but allow slave devices to extend the low clock
 // state by pulling the clock line low.
@@ -637,7 +636,7 @@ i2c_init(void)
   *AT91C_TC0_RC = ((CLOCK_FREQUENCY/2)/(2 * I2C_CLOCK))/1;
   *AT91C_TC0_IER = AT91C_TC_CPCS;
   aic_mask_off(AT91C_ID_TC0);
-  aic_set_vector(AT91C_ID_TC0, AIC_INT_LEVEL_NORMAL, (int)i2c_timer_isr_entry);
+  aic_set_vector(AT91C_ID_TC0, AIC_INT_LEVEL_NORMAL, i2c_timer_isr_entry);
   aic_mask_on(AT91C_ID_TC0);
   /* Setup timer counter 2 to drive high speed i2c */
   *AT91C_PMC_PCER = (1 << AT91C_ID_TC2);    /* Power enable */

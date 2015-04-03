@@ -16,6 +16,7 @@
 
 #include "mytypes.h"
 #include "twi.h"
+#include "irq.h"
 #include "interrupts.h"
 #include "at91sam7.h"
 
@@ -32,8 +33,6 @@
 #define TWCK (1 << 4)
 #define TWD (1 << 3)
 
-
-extern void twi_isr_entry(void);
 
 
 static enum {
@@ -184,7 +183,7 @@ twi_init(void)
   *AT91C_TWI_IDR = ~0;		/* Disable all interrupt sources */
   aic_mask_off(AT91C_ID_TWI);
   aic_set_vector(AT91C_ID_TWI, AIC_INT_LEVEL_ABOVE_NORMAL,
-		 (int)twi_isr_entry);
+		twi_isr_entry);
   aic_mask_on(AT91C_ID_TWI);
 
 

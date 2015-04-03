@@ -2,6 +2,7 @@
 
 #include "nxt_avr.h"
 #include "aic.h"
+#include "irq.h"
 #include "interrupts.h"
 #include "at91sam7.h"
 
@@ -107,8 +108,6 @@ nxt_motor_quad_decode(struct motor_struct *m, U32 value)
   }
 }
 
-
-extern void nxt_motor_isr_entry(void);
 
 void
 nxt_motor_isr_C(void)

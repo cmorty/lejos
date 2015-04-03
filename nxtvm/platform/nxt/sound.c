@@ -24,6 +24,7 @@
 #include "systick.h"
 #include "memory.h"
 #include "rconsole.h"
+#include "irq.h"
 
 // We have two possible types of PDM encoding for use when playing PCM
 // data. The first is based on the Lego firmware and encodes each 8 bit
@@ -55,8 +56,6 @@
 #define MAXRATE 22050
 #define MINRATE 2000
 #define DEFRATE 8000
-
-extern void sound_isr_entry(void);
 
 enum {
   SOUND_MODE_NONE,
@@ -193,7 +192,7 @@ void sound_init()
   aic_mask_on(AT91C_ID_SSC);
   aic_clear(AT91C_ID_SSC);
   aic_set_vector(AT91C_ID_SSC, AT91C_AIC_PRIOR_LOWEST | AT91C_AIC_SRCTYPE_INT_EDGE_TRIGGERED,
-		 (U32)sound_isr_entry); /*PG*/
+		sound_isr_entry); /*PG*/
   sample.buf_id = 0;
   sample.cur_vol = -1;
   sample.sample_buf = NULL;

@@ -7,6 +7,7 @@
 #include "byte_fifo.h"
 
 #include "aic.h"
+#include "irq.h"
 
 
 
@@ -33,9 +34,6 @@ static U8 rx_buffer[N_UARTS][RX_FIFO_SIZE];
 
 struct soft_uart uart[N_UARTS];
 
-
-extern void uart_isr_entry_0(void);
-extern void uart_isr_entry_1(void);
 
 
 int
@@ -251,7 +249,7 @@ uart_init(U32 u, U32 baudRate, U32 dataBits, U32 stopBits, char parity)
   U32 peripheral_id;
   U32 mode;
   U8 dummy;
-  U32 isr;
+  void (*isr)(void);
   U32 pinmask = 0;
   int error = 0;
 
@@ -266,13 +264,13 @@ uart_init(U32 u, U32 baudRate, U32 dataBits, U32 stopBits, char parity)
     p->uart = AT91C_BASE_US0;
     peripheral_id = AT91C_PERIPHERAL_ID_US0;
     pinmask = (1 << 5) | (1 << 6);
-    isr = (U32) uart_isr_entry_0;
+    isr = uart_isr_entry_0;
     break;
   case 1:
     p->uart = AT91C_BASE_US1;
     peripheral_id = AT91C_PERIPHERAL_ID_US1;
     pinmask = (1 << 21) | (1 << 22);	// todo
-    isr = (U32) uart_isr_entry_1;
+    isr = uart_isr_entry_1;
     break;
   default:
     return 0;

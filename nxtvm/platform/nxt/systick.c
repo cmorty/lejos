@@ -9,6 +9,7 @@
  */
 
 #include "aic.h"
+#include "irq.h"
 #include "at91sam7.h"
 #include "interrupts.h"
 #include "systick.h"
@@ -26,9 +27,6 @@ extern const int * forceswitch;
 #define LOW_PRIORITY_IRQ 10
 
 static volatile U32 systick_ms;
-
-extern void systick_isr_entry(void);
-extern void systick_low_priority_entry(void);
 
 // Systick low priority
 void
@@ -113,12 +111,12 @@ systick_init(void)
 
   aic_mask_off(LOW_PRIORITY_IRQ);
   aic_set_vector(LOW_PRIORITY_IRQ, (1 << 5) /* positive internal edge */ |
-		 AIC_INT_LEVEL_LOW, (U32) systick_low_priority_entry);
+		 AIC_INT_LEVEL_LOW, systick_low_priority_entry);
   aic_mask_on(LOW_PRIORITY_IRQ);
 
   aic_mask_off(AT91C_ID_SYS);
   aic_set_vector(AT91C_ID_SYS, (1 << 5) /* positive internal edge */ |
-		 AIC_INT_LEVEL_NORMAL, (U32) systick_isr_entry);
+		 AIC_INT_LEVEL_NORMAL, systick_isr_entry);
 
   aic_mask_on(AT91C_ID_SYS);
   *AT91C_PITC_PIMR = ((CLOCK_FREQUENCY / 16 / PIT_FREQ) - 1) | 0x03000000;	/* Enable, enable interrupts */
