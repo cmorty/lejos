@@ -6,7 +6,7 @@
  * 1) Section to be relocated should be at least 4- or even 16-byte aligned.
  * 2) Same holds for sections to be initialized.
  *
- * That will facilitate faste copying/initialization based on LDM/STM.
+ * That will facilitate fast copying/initialization based on LDM/STM.
  *
  *
  * Memory layout:
@@ -25,7 +25,7 @@
  */
 MEMORY {
   ROM : ORIGIN = 1M, LENGTH = 256k
-  RAM : ORIGIN = 2M, LENGTH =  64K
+  RAM : ORIGIN = 0M, LENGTH =  64K
 }
 
 SECTIONS {

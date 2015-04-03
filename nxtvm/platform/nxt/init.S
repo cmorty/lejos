@@ -42,10 +42,10 @@ global_data_label flash_start_page
 	.section .stack, "aw"
 	.space 0x80
 	.align 3 @ make sure it is 8-byte aligned
-global_data_label __irq_stack__
+__irq_stack__:
 	.space 0x400
 	.align 3 @ make sure it is 8-byte aligned
-global_data_label __system_stack__
+__system_stack__:
 
 
 	.text
@@ -243,11 +243,11 @@ mem_copy_func:
 	@ bail if source and dest addresses are the same
 	cmp     r0, r2
 	bxeq    lr
-mcf_16_aligned:
+mem_copy_loop:
 	cmp     r0, r1
 	ldmloia r0!, {r3-r6}
 	stmloia r2!, {r3-r6}
-	blo     mcf_16_aligned
+	blo     mem_copy_loop
 	bx      lr
 	
 
@@ -258,8 +258,8 @@ mem_init_func:
 	mov     r3, r2
 	mov     r4, r2
 	mov     r5, r2
-mif_16_loop:
+mem_init_loop:
 	cmp     r0, r1
 	stmloia r0!, {r2-r5}
-	blo     mif_16_loop
+	blo     mem_init_loop
 	bx      lr
