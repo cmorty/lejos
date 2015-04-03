@@ -16,11 +16,10 @@
 
 .macro  irq_wrapper_nested, C_function
 
-	@ Save registers on stack
-	sub     lr, lr, #4 @ fix up for return
-	stmfd   sp!, {lr}
+	@ Save spsr and lr on stack
+	push    {lr}
 	mrs     lr, spsr
-	stmfd   sp!, {lr}
+	push    {lr}
 
 	@ Acknowledge the IVR for debugging to support Protected Mode
 	ldr     lr, =0xFFFFF100
@@ -30,7 +29,7 @@
 	msr     cpsr_c, #CPSR_MODE_SYSTEM|CPSR_NOFIQ
 
 	@ push stack
-	stmfd   sp!, {r0-r12, lr}
+	push    {r0-r12, lr}
 
 	@ Call the function
 	ldr     r0, =\C_function
@@ -38,30 +37,29 @@
 	bx      r0
 
 	@ pop stack
-	ldmfd   sp!, {r0-r12, lr}
+	pop     {r0-r12, lr}
 
 	@ swich to interrupt mode and disable IRQs and FIQs
 	msr     cpsr_c, #CPSR_MODE_IRQ|CPSR_NOIRQ|CPSR_NOFIQ
 
-	@End of interrupt by doing a write to AIC_EOICR
+	@ End of interrupt by doing a write to AIC_EOICR
 	ldr     lr, =0xFFFFF130
 	str     lr, [lr]
 
-	@ Unstack the saved spsr
-	ldmfd   sp!, {lr}
+	@ Unstack the saved spsr and lr
+	pop     {lr}
 	msr     spsr_all, lr
+	pop     {lr}
 
-	@ Return from interrupt (unstacking the modified lr)
-	ldmfd   sp!, {pc}^
-
+	@ Return from interrupt
+	subs    pc, lr, #4 @ also copies spsr to cpsr
 .endm
 
 
 .macro  irq_wrapper_not_nested, C_function
 
 	@ Save registers on stack
-	sub     lr, lr, #4 @ fix up for return
-	stmfd   sp!, {r0-r12, lr}
+	push    {r0-r12, lr}
 
 	@ Acknowledge the IVR for debugging to support Protected Mode
 	ldr     lr, =0xFFFFF100
@@ -72,13 +70,15 @@
 	mov     lr, pc
 	bx      r0
 
-	@End of interrupt by doing a write to AIC_EOICR
+	@ End of interrupt by doing a write to AIC_EOICR
 	ldr     lr, =0xFFFFF130
 	str     lr, [lr]
 
-	@ Return from interrupt (unstacking the modified lr)
-	ldmfd   sp!, {r0-r12, pc}^
+	@ Restore registers
+	pop     {r0-r12, lr}
 
+	@ Return from interrupt
+	subs    pc, lr, #4 @ also copies spsr to cpsr
 .endm
 
 @
