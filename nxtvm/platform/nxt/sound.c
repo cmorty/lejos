@@ -191,7 +191,7 @@ void sound_init()
 
   aic_mask_on(AT91C_ID_SSC);
   aic_clear(AT91C_ID_SSC);
-  aic_set_vector(AT91C_ID_SSC, AT91C_AIC_PRIOR_LOWEST | AT91C_AIC_SRCTYPE_INT_EDGE_TRIGGERED,
+  aic_set_vector(AT91C_ID_SSC, AT91C_AIC_PRIOR_LOWEST | AT91C_AIC_SRCTYPE_INT_POSITIVE_EDGE,
 		sound_isr_entry); /*PG*/
   sample.buf_id = 0;
   sample.cur_vol = -1;

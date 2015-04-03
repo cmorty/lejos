@@ -1,3 +1,4 @@
+#include "at91sam7.h"
 @  This is the vector set up for an AT91SAM7
 
 	.text
@@ -20,11 +21,11 @@
 	.extern reserved_handler
 
 vectors_start:
-	ldr     pc, =start                     @ Reset Vector
-	ldr     pc, =undef_handler             @ Undefined Instruction
-	ldr     pc, =swi_handler               @ Software Interrupt
-	ldr     pc, =prefetch_abort_handler    @ Prefetch Abort
-	ldr     pc, =data_abort_handler        @ Data Abort
-	ldr     pc, =reserved_handler          @ Reserved
-	ldr     pc, vectors_start + 0xFFFFF100 @ IRQ : read the AIC
-	ldr     pc, vectors_start + 0xFFFFF104 @ FIQ : read the AIC
+	ldr     pc, =start                        @ Reset Vector
+	ldr     pc, =undef_handler                @ Undefined Instruction
+	ldr     pc, =swi_handler                  @ Software Interrupt
+	ldr     pc, =prefetch_abort_handler       @ Prefetch Abort
+	ldr     pc, =data_abort_handler           @ Data Abort
+	ldr     pc, =reserved_handler             @ Reserved
+	ldr     pc, vectors_start + AT91C_AIC_IVR @ IRQ : read the AIC
+	ldr     pc, vectors_start + AT91C_AIC_FVR @ FIQ : read the AIC

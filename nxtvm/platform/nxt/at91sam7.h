@@ -1,9 +1,18 @@
 #ifndef _AT91SAM7_H_
 #define _AT91SAM7_H_
 
-#ifndef __ASSEMBLER__
-#include "at91sam7s256.h"
+#ifdef __ASSEMBLER__
+#define __ASSEMBLY__
 #endif
+#include "at91sam7s256.h"
+
+#ifdef __ASSEMBLER__
+// add constants missing in Atmel's header file
+#define PMC_MOR  0x20
+#define PMC_MCFR 0x24
+#define PMC_PLLR 0x2C
+#endif
+
 
 #define CLOCK_FREQUENCY 48054850
 

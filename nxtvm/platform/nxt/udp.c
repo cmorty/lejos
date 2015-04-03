@@ -46,7 +46,6 @@
 // set by the hardware during the operation. The actual code comes
 // from the Atmel sample drivers.
 /// Bitmap for all status bits in CSR.
-#define AT91C_UDP_STALLSENT AT91C_UDP_ISOERROR
 #define REG_NO_EFFECT_1_ALL      AT91C_UDP_RX_DATA_BK0 | AT91C_UDP_RX_DATA_BK1 \
                                 |AT91C_UDP_STALLSENT   | AT91C_UDP_RXSETUP \
                                 |AT91C_UDP_TXCOMP

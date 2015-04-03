@@ -67,7 +67,7 @@ start:
 @ If the value at address 0 has changed to the inverted value, then
 @ there's no need to remap.
 @
-	orr     r1, r0, #0x200000
+	orr     r1, r0, #AT91C_ISRAM
 	ldr     r2, [r0]
 	mvn     r3, r2
 	str     r3, [r1]
@@ -75,7 +75,7 @@ start:
 
 	cmp     r2, r3
 	movne   r1, #1
-	strne   r1, [r0, #0xFFFFFF00]
+	strne   r1, [r0, #AT91C_MC_RCR]
 
 
 continue_boot:
@@ -87,15 +87,15 @@ continue_boot:
 @
 
 	ldr     r1, =((72 << 16) | (1 << 8))
-	str     r1, [r0, #0xFFFFFF60]
+	str     r1, [r0, #AT91C_MC_FMR]
 
 @
 @    Disable watchdog
 @    Set MDT_MR disable bit. 
 @    Note: probably want to set this differently at some stage...
 @
-	orr     r1, r0, #0x00008000
-	str     r1, [r0, #0xFFFFFD44]
+	orr     r1, r0, #AT91C_WDTC_WDDIS
+	str     r1, [r0, #AT91C_WDTC_WDMR]
 
 @
 @    Set up PLL & clock source
@@ -106,43 +106,43 @@ continue_boot:
 
 	@ Start main osc
 	ldr     r1, =0x00000601
-	str     r1, [r0, #0xFFFFFC20] @ PMC_MOR
+	str     r1, [r0, #AT91C_PMC_MOR]
 
 wait_MOSCS:
-	ldr     r1, [r0, #0xFFFFFC68] @ PMC_SR
-	tst     r1, #1
+	ldr     r1, [r0, #AT91C_PMC_SR]
+	tst     r1, #AT91C_PMC_MOSCS
 	beq     wait_MOSCS
 
 	@ set up PLL
 	ldr     r1, =0x00481C0E
-	str     r1, [r0, #0xFFFFFC2C] @ PMC_PLLR
+	str     r1, [r0, #AT91C_PMC_PLLR]
 
 wait_pll_lock:
-	ldr     r1, [r0, #0xFFFFFC68] @ PMC_SR
-	tst     r1, #4
+	ldr     r1, [r0, #AT91C_PMC_SR]
+	tst     r1, #AT91C_PMC_LOCK
 	beq     wait_pll_lock
 
 wait_MCLK_Ready0:
-	ldr     r1, [r0, #0xFFFFFC68] @ PMC_SR
-	tst     r1, #8
+	ldr     r1, [r0, #AT91C_PMC_SR]
+	tst     r1, #AT91C_PMC_MCKRDY
 	beq     wait_MCLK_Ready0
 
 	@ Set up master clock to use clock div 2
-	ldr     r1, =0x4
-	str     r1, [r0, #0xFFFFFC30] @ PMC_MCKR
+	ldr     r1, =AT91C_PMC_PRES_CLK_2
+	str     r1, [r0, #AT91C_PMC_MCKR]
 
 wait_MCLK_Ready1:
-	ldr     r1, [r0, #0xFFFFFC68] @ PMC_SR
-	tst     r1, #8
+	ldr     r1, [r0, #AT91C_PMC_SR]
+	tst     r1, #AT91C_PMC_MCKRDY
 	beq     wait_MCLK_Ready1
 
 	@ Set up master clock to use PLL clock div 2
-	ldr     r1, =0x7
-	str     r1, [r0, #0xFFFFFC30] @ PMC_MCKR
+	ldr     r1, =AT91C_PMC_CSS_PLL_CLK|AT91C_PMC_PRES_CLK_2
+	str     r1, [r0, #AT91C_PMC_MCKR]
 
 wait_MCLK_Ready2:
-	ldr     r1, [r0, #0xFFFFFC68] @ PMC_SR
-	tst     r1, #8
+	ldr     r1, [r0, #AT91C_PMC_SR]
+	tst     r1, #AT91C_PMC_MCKRDY
 	beq     wait_MCLK_Ready2
 
 
@@ -215,7 +215,7 @@ prefetch_abort_handler:
 
 data_abort_handler:
 	mov     r0, lr
-	msr     CPSR_c, #0xDF		@ System mode , I and F bits set (interrupts disabled)
+	msr     CPSR_c, #CPSR_MODE_SYSTEM|CPSR_NOIRQ|CPSR_NOFIQ
 	ldr     sp, =__system_stack__
 	ldr     r1, =data_abort_C
 	adr     lr, data_abort_C_returned

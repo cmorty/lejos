@@ -21,8 +21,8 @@
 	mrs     r0, spsr
 
 	@ Acknowledge the IVR for debugging to support Protected Mode
-	ldr     lr, =0xFFFFF100
-	str     lr, [lr]
+	mov     lr, #0
+	str     lr, [lr, #AT91C_AIC_IVR]
 
 	@ swich to system mode and enable IRQ, but not FIQ
 	msr     cpsr_c, #CPSR_MODE_SYSTEM|CPSR_NOFIQ
@@ -42,8 +42,8 @@
 	msr     cpsr_c, #CPSR_MODE_IRQ|CPSR_NOIRQ|CPSR_NOFIQ
 
 	@ End of interrupt by doing a write to AIC_EOICR
-	ldr     lr, =0xFFFFF130
-	str     lr, [lr]
+	mov     lr, #0
+	str     lr, [lr, #AT91C_AIC_EOICR]
 
 	@ Unstack the saved spsr and lr
 	msr     spsr_all, r0
@@ -60,8 +60,8 @@
 	push    {r0-r3, ip, lr}
 
 	@ Acknowledge the IVR for debugging to support Protected Mode
-	ldr     lr, =0xFFFFF100
-	str     lr, [lr]
+	mov     lr, #0
+	str     lr, [lr, #AT91C_AIC_IVR]
 
 	@ Call the function
 	ldr     r0, =\C_function
@@ -69,8 +69,8 @@
 	bx      r0
 
 	@ End of interrupt by doing a write to AIC_EOICR
-	ldr     lr, =0xFFFFF130
-	str     lr, [lr]
+	mov     lr, #0
+	str     lr, [lr, #AT91C_AIC_EOICR]
 
 	@ Restore registers
 	pop     {r0-r3, ip, lr}
