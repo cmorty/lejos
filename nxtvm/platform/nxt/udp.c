@@ -28,17 +28,16 @@
 #define EP_OUT    1
 #define EP_IN     2
 
-#define AT91C_PERIPHERAL_ID_UDP        11
 
-#define AT91C_UDP_CSR0  ((AT91_REG *)   0xFFFB0030) 
-#define AT91C_UDP_CSR1  ((AT91_REG *)   0xFFFB0034) 
-#define AT91C_UDP_CSR2  ((AT91_REG *)   0xFFFB0038) 
-#define AT91C_UDP_CSR3  ((AT91_REG *)   0xFFFB003C)
+#define AT91C_UDP_CSR0  (AT91C_UDP_CSR + 0)
+#define AT91C_UDP_CSR1  (AT91C_UDP_CSR + 1)
+#define AT91C_UDP_CSR2  (AT91C_UDP_CSR + 2)
+#define AT91C_UDP_CSR3  (AT91C_UDP_CSR + 3)
 
-#define AT91C_UDP_FDR0  ((AT91_REG *)   0xFFFB0050) 
-#define AT91C_UDP_FDR1  ((AT91_REG *)   0xFFFB0054) 
-#define AT91C_UDP_FDR2  ((AT91_REG *)   0xFFFB0058) 
-#define AT91C_UDP_FDR3  ((AT91_REG *)   0xFFFB005C) 
+#define AT91C_UDP_FDR0  (AT91C_UDP_FDR + 0)
+#define AT91C_UDP_FDR1  (AT91C_UDP_FDR + 1)
+#define AT91C_UDP_FDR2  (AT91C_UDP_FDR + 2)
+#define AT91C_UDP_FDR3  (AT91C_UDP_FDR + 3)
 
 // The following functions are used to set/clear bits in the control
 // register. This must be synchronized against the actual hardware.
@@ -777,10 +776,10 @@ udp_enable(int reset)
   }
     
   int i_state = interrupts_get_and_disable();
-  aic_mask_off(AT91C_PERIPHERAL_ID_UDP);
-  aic_set_vector(AT91C_PERIPHERAL_ID_UDP, AIC_INT_LEVEL_LOWEST,
+  aic_mask_off(AT91C_ID_UDP);
+  aic_set_vector(AT91C_ID_UDP, AIC_INT_LEVEL_LOWEST,
          udp_isr_entry);
-  aic_mask_on(AT91C_PERIPHERAL_ID_UDP);
+  aic_mask_on(AT91C_ID_UDP);
   *AT91C_UDP_IER = (AT91C_UDP_EPINT0 | AT91C_UDP_RXSUSP | AT91C_UDP_RXRSM);
   reset = reset || (configured & ST_NEEDRESET);
   configured &= ~(ST_DISABLED|ST_NEEDRESET);
