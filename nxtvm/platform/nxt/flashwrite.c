@@ -1,9 +1,11 @@
 #include "flashprog.h"
 #include "at91sam7s256.h"
+#include "lejos_nxt.h"
 
 // Timeouts in ms
 #define FLASH_TIMEOUT 20
 
+__ramfunc
 static U32 get_ms()
 {
   /* Return a timer value in ms that can be used while interrupts are disabled
@@ -13,7 +15,8 @@ static U32 get_ms()
   // We use the missed interupt count from the system timer
   return (*AT91C_PITC_PIIR & AT91C_PITC_PICNT) >> 20;
 }
- 
+
+__ramfunc
 static int wait_flash_ready()
 {
   // Wait for the flash controller to be ready or to timeout. Note although
@@ -40,8 +43,8 @@ static int wait_flash_ready()
  * -3 Bad page number
  * -4 bad flash buffer
  */
-int
-flash_write(int page_num)
+__ramfunc
+int flash_write(int page_num)
 {
   /* Write page to flash memory.
    * This function must run out of ram and while it executes no other code

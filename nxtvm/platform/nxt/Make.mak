@@ -6,15 +6,6 @@ include environment.mak
 include targetdef.mak
 include version.mak
 
-RAM_TARGET   := $(TARGET)_ram.elf
-ROM_TARGET   := $(TARGET)_rom.elf
-SAMBA_TARGET := $(TARGET)_samba.elf
-ROMBIN_TARGET := $(TARGET)_rom.bin
-
-RAM_LDSCRIPT   := $(TARGET)_ram.ld
-ROM_LDSCRIPT   := $(TARGET)_rom.ld
-SAMBA_LDSCRIPT := $(TARGET)_samba.ld
-
 C_OPTIMISATION_FLAGS = -Os
 #C_OPTIMISATION_FLAGS = -Os -Xassembler -aslh
 #C_OPTIMISATION_FLAGS = -O0
@@ -31,20 +22,17 @@ CFLAGS = $(BASE_ABI_FLAGS) -mthumb \
 
 LDFLAGS = $(LIB_ABI_FLAGS) -nostdlib -nodefaultlibs -Wl,-cref,--gc-sections
 
-ALL_ELF := $(RAM_TARGET) $(ROM_TARGET) $(SAMBA_TARGET)
-ALL_BIN := $(ALL_ELF:.elf=.bin)
-ALL_LDS := $(ALL_ELF:.elf=.ld)
-ALL_MAP := $(addsuffix .map,$(ALL_ELF))
-ALL_OBJECTS := $(C_OBJECTS) $(S_OBJECTS)
-ALL_ASM := $(addsuffix .asm,$(ALL_ELF)) $(addsuffix .asm,$(ALL_OBJECTS))
+ALL_BIN := $(TARGETS)
 ALL_HEAD := $(VM_DIR)/specialclasses.h $(VM_DIR)/specialsignatures.h
+ALL_OBJECTS := $(C_OBJECTS) $(S_OBJECTS)
+ALL_ELF := $(ALL_BIN:.bin=.elf)
+ALL_MAP := $(ALL_BIN:.bin=.map)
+ALL_ASM := $(ALL_BIN:.bin=.asm) $(ALL_OBJECTS:.o=.asm)
 
-MACRO_LDS_GEN = sed -e 's/^$(1)//' -e '/^RAM_ONLY/d' -e'/^ROM_ONLY/d' -e'/^SAMBA_ONLY/d'
-
-.SECONDARY: $(ALL_ELF) $(ALL_LDS) $(ALL_MAP) $(ALL_OBJECTS) $(ALL_HEAD)
+.SECONDARY: $(ALL_ELF) $(ALL_MAP) $(ALL_OBJECTS) $(ALL_HEAD)
 
 .PHONY: all
-all:  BuildMessage $(ROMBIN_TARGET)
+all:  BuildMessage $(TARGET)
 
 .PHONY: everything
 everything: BuildMessage $(ALL_BIN) $(ALL_ASM)
@@ -55,7 +43,7 @@ header: $(ALL_HEAD)
 .PHONY: TargetMessage
 TargetMessage:
 	@echo ""
-	@echo "Building: $(ALL_TARGETS)"
+	@echo "Building: $(TARGET)"
 	@echo ""
 	@echo "C objects: $(C_OBJECTS)"
 	@echo ""
@@ -71,8 +59,6 @@ BuildMessage: TargetMessage EnvironmentMessage
 clean:  
 	@echo "Removing All Objects"
 	@rm -f $(ALL_OBJECTS)
-	@echo "Removing generated ld scripts"
-	@rm -f $(ALL_LDS)
 	@echo "Removing target"
 	@rm -f $(ALL_ELF) $(ALL_BIN)
 	@echo "Removing map files"
@@ -82,72 +68,57 @@ clean:
 	@echo "Removing generated headers"
 	@rm -f $(ALL_HEAD)
 
+%.elf: %.lds $(C_OBJECTS) $(S_OBJECTS)
+	@echo "### Linking $@ using linker script $<"
+	$(CC) $(LDFLAGS) -Wl,-T,$<,-Map,${@:.elf=.map} -o $@ $(C_OBJECTS) $(S_OBJECTS) -lm -lc -lgcc
 
-$(RAM_LDSCRIPT): $(LDSCRIPT_SOURCE)
-	@echo "Generating $@ from template $<"
-	$(call MACRO_LDS_GEN,RAM_ONLY) $< >$@
-
-$(ROM_LDSCRIPT): $(LDSCRIPT_SOURCE)
-	@echo "Generating $@ from template $<"
-	$(call MACRO_LDS_GEN,ROM_ONLY) $< >$@
-
-$(SAMBA_LDSCRIPT): $(LDSCRIPT_SOURCE)
-	@echo "Generating $@ from template $<"
-	$(call MACRO_LDS_GEN,SAMBA_ONLY) $< >$@
-
-%.elf.map %.elf: %.ld $(C_OBJECTS) $(S_OBJECTS)
-	@echo "Linking $@ using linker script $<"
-	$(CC) $(LDFLAGS) -Wl,-T,$<,-Map,$@.map -o $@ $(C_OBJECTS) $(S_OBJECTS) -lm -lc -lgcc
+%.map: %.elf
+	@true
 
 %.bin: %.elf
-	@echo "Generating binary file $@ from $<"
+	@echo "### Generating binary file $@ from $<"
 	$(OBJCOPY) -O binary $< $@
 
 # generated headers:
 
 $(VM_DIR)/specialclasses.h: $(VM_DIR)/specialclasses.db
+	@echo "### Generating header file $@ from $<"
 	../../dbtoh.sh class $< $@ 
 
 $(VM_DIR)/specialsignatures.h: $(VM_DIR)/specialsignatures.db
+	@echo "### Generating header file $@ from $<"
 	../../dbtoh.sh signature $< $@ 
 
 
 # default rules for compiling sources
 
 %.o: %.S
-	@echo "Assembling $< to $@"
+	@echo "### Assembling $< to $@"
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
 %.o: %.c $(ALL_HEAD)
-	@echo "Compiling $< to $@"
-	$(CC) $(CFLAGS) -c -o $@ $< 
-
-
-### special rules for compiling RAM sources
-
-%.oram: %.S
-	@echo "Assembling $< to $@"
-	$(CC) $(CFLAGS) -c -o $@ $< 
-
-%.oram: %.c $(ALL_HEAD)
-	@echo "Compiling $< to $@"
+	@echo "### Compiling $< to $@"
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
 
 ### special rules for compiling JVM sources
 
 $(VM_PREFIX)%.o: $(VM_DIR)/%.c $(ALL_HEAD)
-	@echo "Compiling $< to $@"
+	@echo "### Compiling $< to $@"
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
 $(VM_PREFIX)interpreter.o: $(VM_DIR)/interpreter.c $(ALL_HEAD)
-	@echo "Compiling $< to $@"
+	@echo "### Compiling $< to $@"
 	$(CC) $(CFLAGS) -O3 -c -o $@ $< 
 
 
-### rules disassembling
+### rules for disassembling
 
-%.asm: %
-	@echo "Disassembling $< to $@"
+%.asm: %.elf
+	@echo "### Disassembling $< to $@"
+	$(OBJDUMP) -z -x -d $< >$@
+
+%.asm: %.o
+	@echo "### Disassembling $< to $@"
 	$(OBJDUMP) -z -x -d $< >$@
 

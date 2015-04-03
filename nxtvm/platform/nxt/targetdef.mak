@@ -1,19 +1,17 @@
 #
 # This file defines the source and target file names
 #
-
-# TARGET is the base name for the outputs.
-# C_RAMSOURCES are the C files that must always be located in RAM.
-# C_SOURCES are the rest of the C files
-# S_SOURCES are the assembler files
+# TARGETS is a list of available targets
+# TARGET is the default target.
+#
+# C_OBJECTS are the rest of the C files
+# S_OBJECTS are the assembler files
 
 VM_DIR := ../../javavm
 VM_PREFIX := jvm_
 
-TARGET := lejos_nxt
-
-C_RAM_OBJECTS := \
-	flashwrite.oram
+TARGETS := lejos_nxt_rom.bin # lejos_nxt_ram.bin lejos_nxt_samba.bin
+TARGET := lejos_nxt_rom.bin
 
 C_PLATFORM_OBJECTS := \
 	aic.o \
@@ -29,7 +27,8 @@ C_PLATFORM_OBJECTS := \
 	bt.o \
 	hs.o \
 	usart.o \
-        flashprog.o \
+	flashprog.o \
+	flashwrite.o \
 	printf.o
 
 C_HOOK_OBJECTS := \
@@ -61,6 +60,3 @@ S_OBJECTS := \
 	vectors.o \
 	init.o \
 	irq.o
-
-
-LDSCRIPT_SOURCE := sam7.lds

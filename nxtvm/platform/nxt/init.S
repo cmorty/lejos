@@ -39,6 +39,15 @@ global_data_label flash_start_page
 	.ascii "FLSP"
 
 
+	.section .stack, "aw"
+	.space 0x80
+	.align 3 @ make sure it is 8-byte aligned
+global_data_label __irq_stack__
+	.space 0x400
+	.align 3 @ make sure it is 8-byte aligned
+global_data_label __system_stack__
+
+
 	.text
 	.code 32
 	.align 2
@@ -151,16 +160,14 @@ wait_MCLK_Ready2:
 @ Copy the vector table
 @ Initialise memory regions
 @
-vector_copy:
-	mem_copy       __vectors_load_start__, __vectors_load_end__, __vectors_ram_start__
 data_copy:
-	mem_copy       __data_load_start__, __data_load_end__, __data_ram_start__
-ram_text_copy:
-	mem_copy       __ramtext_load_start__, __ramtext_load_end__, __ramtext_ram_start__
+	mem_copy       __relocate_lma_start__, __relocate_lma_end__, __relocate_vma_start__
 bss_init:
 	mem_initialise __bss_start__, __bss_end__, 0
-stack_init_0:
-	mem_initialise __stack_start__, __stack_end__, 0x6b617453 @ 'Stak'
+
+@stack_init_0:
+@	mem_initialise __stack_start__, __stack_end__, 0x6b617453 @ 'Stak'
+
 
 @
 @   Set up stacks etc.
@@ -173,12 +180,10 @@ stack_init:
 	@ Set up Interrupt stack
 	msr     CPSR_c, #CPSR_MODE_IRQ|CPSR_NOIRQ|CPSR_NOFIQ
 	ldr     sp, =__irq_stack__
-	bic     sp, sp, #7          @ make sure it is 8-byte aligned
 
 	@ Set up System stack
 	msr     CPSR_c, #CPSR_MODE_SYSTEM|CPSR_NOIRQ|CPSR_NOFIQ
 	ldr     sp, =__system_stack__
-	bic     sp, sp, #7          @ make sure it is 8-byte aligned
 
 jump_to_main:
 	@ Set up initial frame pointers etc
@@ -227,33 +232,17 @@ data_abort_C_returned:
 
 
 
-
-
 @ Little helper funcs
 
 
 @ mem_copy_func r0 = source start, r1 = end of source, r2 = destination
-@ Will not copy if source == destination
-@ Will try to use ldm/stm if 16-byte aligned.
+@ Will copy more than needed, if r1-r0 is not a multiple of 16.
+@ Assumes r0 and r2 are 4-byte aligned.
+@ Will not copy if r0==r1
 mem_copy_func:
 	@ bail if source and dest addresses are the same
 	cmp     r0, r2
 	bxeq    lr
-	
-	@ test if all addressed are 16-byte aligned, if so use ldm/stm copy
-	orr     r3, r1, r0
-	orr     r3, r3, r2
-	tst     r3, #15
-	beq     mcf_16_aligned
-	
-	@ else use 4-byte aligned loop
-mcf_loop:
-	cmp     r0, r1
-	ldrlo   r3, [r2], #4
-	strlo   r3, [r0], #4
-	blo     mcf_loop
-	bx      lr
-
 mcf_16_aligned:
 	cmp     r0, r1
 	ldmloia r0!, {r3-r6}
@@ -263,19 +252,9 @@ mcf_16_aligned:
 	
 
 @ mem_init_func: r0 = start address, r1 = end address, r2 is value to write
-@ If start and end addresses are multiples of 16 then we use stms to do the
-@ storing.
+@ Will init more than needed if r1-r0 is not a multiple of 16.
+@ Assumes that r0 is 4-byte aligned.
 mem_init_func:
-	orr     r3, r1, r0
-	tst     r3, #15
-	beq     mif_16_aligned
-mif_loop:
-	cmp     r0, r1
-	strlo   r2, [r0], #4
-	blo     mif_loop
-	bx      lr
-
-mif_16_aligned:
 	mov     r3, r2
 	mov     r4, r2
 	mov     r5, r2

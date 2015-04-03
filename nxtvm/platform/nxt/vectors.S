@@ -1,7 +1,7 @@
 #include "at91sam7.h"
 @  This is the vector set up for an AT91SAM7
 
-	.text
+	.section .vectors, "ax"
 	.code 32
 	.align 2
 
