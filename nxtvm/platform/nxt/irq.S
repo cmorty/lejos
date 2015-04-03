@@ -17,9 +17,8 @@
 .macro  irq_wrapper_nested, C_function
 
 	@ Save spsr and lr on stack
-	push    {lr}
-	mrs     lr, spsr
-	push    {lr}
+	push    {r0, lr}
+	mrs     r0, spsr
 
 	@ Acknowledge the IVR for debugging to support Protected Mode
 	ldr     lr, =0xFFFFF100
@@ -29,7 +28,7 @@
 	msr     cpsr_c, #CPSR_MODE_SYSTEM|CPSR_NOFIQ
 
 	@ push stack
-	push    {r0-r12, lr}
+	push    {r0-r3, ip, lr}
 
 	@ Call the function
 	ldr     r0, =\C_function
@@ -37,7 +36,7 @@
 	bx      r0
 
 	@ pop stack
-	pop     {r0-r12, lr}
+	pop     {r0-r3, ip, lr}
 
 	@ swich to interrupt mode and disable IRQs and FIQs
 	msr     cpsr_c, #CPSR_MODE_IRQ|CPSR_NOIRQ|CPSR_NOFIQ
@@ -47,9 +46,8 @@
 	str     lr, [lr]
 
 	@ Unstack the saved spsr and lr
-	pop     {lr}
-	msr     spsr_all, lr
-	pop     {lr}
+	msr     spsr_all, r0
+	pop     {r0, lr}
 
 	@ Return from interrupt
 	subs    pc, lr, #4 @ also copies spsr to cpsr
@@ -59,7 +57,7 @@
 .macro  irq_wrapper_not_nested, C_function
 
 	@ Save registers on stack
-	push    {r0-r12, lr}
+	push    {r0-r3, ip, lr}
 
 	@ Acknowledge the IVR for debugging to support Protected Mode
 	ldr     lr, =0xFFFFF100
@@ -75,7 +73,7 @@
 	str     lr, [lr]
 
 	@ Restore registers
-	pop     {r0-r12, lr}
+	pop     {r0-r3, ip, lr}
 
 	@ Return from interrupt
 	subs    pc, lr, #4 @ also copies spsr to cpsr
