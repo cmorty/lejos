@@ -7,8 +7,9 @@
 #define page_data_end   (eof+4+256)
 
 	.global _start
-	.align 2
 	.text
+	.code 32
+	.align 2
 
 /**
  * Memory Layout:
