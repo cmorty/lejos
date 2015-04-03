@@ -236,9 +236,9 @@ data_abort_C_returned:
 
 
 @ mem_copy_func r0 = source start, r1 = end of source, r2 = destination
-@ Will copy more than needed, if r1-r0 is not a multiple of 16.
-@ Assumes r0 and r2 are 4-byte aligned.
-@ Will not copy if r0==r1
+@ Will copy up to 15 bytes beyond r1 if r1-r0 is not a multiple of 16.
+@ Assumes that r0 and r2 are 4-byte aligned.
+@ Will not copy if r0==r2
 mem_copy_func:
 	@ bail if source and dest addresses are the same
 	cmp     r0, r2
@@ -249,10 +249,9 @@ mem_copy_loop:
 	stmloia r2!, {r3-r6}
 	blo     mem_copy_loop
 	bx      lr
-	
 
 @ mem_init_func: r0 = start address, r1 = end address, r2 is value to write
-@ Will init more than needed if r1-r0 is not a multiple of 16.
+@ Will init up to 15 bytes beyond r1 if r1-r0 is not a multiple of 16.
 @ Assumes that r0 is 4-byte aligned.
 mem_init_func:
 	mov     r3, r2
