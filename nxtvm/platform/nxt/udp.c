@@ -109,106 +109,107 @@ static U8 delayedEnable = 0;
 #if REMOTE_CONSOLE
 static U8 rConsole = 0;
 #endif
-// Device descriptor
-static const U8 dd[] = {
-  0x12, 
-  0x01,
-  0x00,
-  0x02,
-  0x00,
-  0x00,
-  0x00, 
-  0x08,
-  0x94,
-  0x06,
-  0x02,
-  0x00,
-  0x00,
-  0x00,
-  0x00, 
-  0x00, 
-  0x01,
-  0x01  
+
+static const usb_device_descriptor_t dd = {
+	.bLength            = sizeof(dd),
+	.bDescriptorType    = 1,
+	.bcdUSB             = USB_DESCR_WORD(0x0200),
+	.bDeviceClass       = 0,
+	.bDeviceSubClass    = 0,
+	.bDeviceProtocol    = 0,
+	.bMaxPacketSize0    = 8,
+	.idVendor           = USB_DESCR_WORD(0x0694),
+	.idProduct          = USB_DESCR_WORD(0x0002),
+	.bcdDevice          = USB_DESCR_WORD(0x0000),
+	.iManufacturer      = 0,
+	.iProduct           = 0,
+	.iSerial            = 1,
+	.bNumConfigurations = 1,
 };
 
-// Configuration descriptor
-static const U8 cfd[] = {
-  0x09,
-  0x02,
-  0x20,
-  0x00, 
-  0x01,
-  0x01, 
-  0x00,
-  0xC0,
-  0x00,
-  0x09,
-  0x04,
-  0x00,
-  0x00,
-  0x02,
-  0xFF, 
-  0xFF,
-  0xFF,
-  0x00,
-  0x07, 
-  0x05,
-  0x01,
-  0x02,
-  64,
-  0x00,
-  0x00, 
-  0x07,
-  0x05,
-  0x82,
-  0x02,
-  64,
-  0x00,
-  0x00};
+static const nxt_configuration_descriptor_t cfd = {
+	.config = {
+		.bLength             = sizeof(cfd.config),
+		.bDescriptorType     = 2,
+		.wTotalLength        = USB_DESCR_WORD(sizeof(cfd)),
+		.bNumInterfaces      = 1,
+		.bConfigurationValue = 1,
+		.iConfiguration      = 0,
+		.bmAttributes        = 0xC0,
+		.MaxPower            = 0,
+	},
+	.interface = {
+		.bLength = sizeof(cfd.interface),
+		.bDescriptorType = 4,
+		.bInterfaceNumber = 0,
+		.bAlternateSetting = 0,
+		.bNumEndpoints = 2,
+		.bInterfaceClass = 255,
+		.bInterfaceSubClass = 255,
+		.bInterfaceProtocol = 255,
+		.iInterface = 0,
+	},
+	.endpoints = {
+		{
+			.bLength = sizeof(cfd.endpoints[0]),
+			.bDescriptorType = 5,
+			.bEndpointAddress = 0x01,
+			.bmAttributes = 2,
+			.wMaxPacketSize=USB_DESCR_WORD(64),
+			.bInterval = 0,
+		}, {
+			.bLength = sizeof(cfd.endpoints[1]),
+			.bDescriptorType = 5,
+			.bEndpointAddress = 0x82,
+			.bmAttributes = 2,
+			.wMaxPacketSize=USB_DESCR_WORD(64),
+			.bInterval = 0,
+		},
+	},
+};
 
 // Serial Number Descriptor
-static U8 snd[] =
-{
-      0x1A,           // Descriptor length
-      0x03,           // Descriptor type 3 == string 
-      0x31, 0x00,     // MSD of Lap (Lap[2,3]) in UNICode
-      0x32, 0x00,     // Lap[4,5]
-      0x33, 0x00,     // Lap[6,7]
-      0x34, 0x00,     // Lap[8,9]
-      0x35, 0x00,     // Lap[10,11]
-      0x36, 0x00,     // Lap[12,13]
-      0x37, 0x00,     // Lap[14,15]
-      0x38, 0x00,     // LSD of Lap (Lap[16,17]) in UNICode
-      0x30, 0x00,     // MSD of Nap (Nap[18,19]) in UNICode
-      0x30, 0x00,     // LSD of Nap (Nap[20,21]) in UNICode
-      0x39, 0x00,     // MSD of Uap in UNICode
-      0x30, 0x00      // LSD of Uap in UNICode
+USB_DESCR_STRDEF(12) snd_t;
+static snd_t snd = {
+	.bLength = sizeof(snd),
+	.bDescriptorType = 3,
+	.data = {
+		USB_DESCR_WORD('1'),
+		USB_DESCR_WORD('2'),
+		USB_DESCR_WORD('3'),
+		USB_DESCR_WORD('4'),
+		USB_DESCR_WORD('5'),
+		USB_DESCR_WORD('6'),
+		USB_DESCR_WORD('7'),
+		USB_DESCR_WORD('8'),
+		USB_DESCR_WORD('0'),
+		USB_DESCR_WORD('0'),
+		USB_DESCR_WORD('9'),
+		USB_DESCR_WORD('0'),
+	},
 };
 
 // Name descriptor, we allow up to 16 unicode characters
-static U8 named[] =
-{
-      0x08,           // Descriptor length
-      0x03,           // Descriptor type 3 == string 
-      0x6e, 0x00,     // n
-      0x78, 0x00,     // x
-      0x74, 0x00,     // t
-      0x00, 0x00,
-      0x00, 0x00,
-      0x00, 0x00,
-      0x00, 0x00,
-      0x00, 0x00,
-      0x00, 0x00,
-      0x00, 0x00,
-      0x00, 0x00,
-      0x00, 0x00,
-      0x00, 0x00,
-      0x00, 0x00,
-      0x00, 0x00,
-      0x00, 0x00
+USB_DESCR_STRDEF(16) named_t;
+static named_t named = {
+	.bLength = USB_DESCR_STRLEN(3),
+	.bDescriptorType = 3,
+	.data = {
+		USB_DESCR_WORD('n'),
+		USB_DESCR_WORD('x'),
+		USB_DESCR_WORD('t'),
+	},
 };
 
-static const U8 ld[] = {0x04,0x03,0x09,0x04}; // Language descriptor
+// Language descriptor
+USB_DESCR_STRDEF(1) ld_t;
+static const ld_t ld = {
+	.bLength = sizeof(ld),
+	.bDescriptorType = 3,
+	.data = {
+		USB_DESCR_WORD(0x0409)
+	},
+};
 
 
 static
@@ -471,11 +472,11 @@ udp_enumerate()
     case STD_GET_DESCRIPTOR: 
       if (val == 0x100) // Get device descriptor
       {
-        udp_send_control((U8 *)dd, MIN(sizeof(dd), len));
+        udp_send_control((U8 *)&dd, MIN(sizeof(dd), len));
       }
       else if (val == 0x200) // Configuration descriptor
       {     
-        udp_send_control((U8 *)cfd, MIN(sizeof(cfd), len));
+        udp_send_control((U8 *)&cfd, MIN(sizeof(cfd), len));
         //if (len > sizeof(cfd)) udp_send_null();
       }    
       else if ((val & 0xF00) == 0x300)
@@ -483,10 +484,10 @@ udp_enumerate()
         switch(val & 0xFF)
         {
           case 0x00:
-            udp_send_control((U8 *)ld, MIN(sizeof(ld), len));
+            udp_send_control((U8 *)&ld, MIN(sizeof(ld), len));
             break;
           case 0x01:
-            udp_send_control(snd, MIN(sizeof(snd), len));
+            udp_send_control((U8 *)&snd, MIN(sizeof(snd), len));
             break;
           default:
             udp_send_stall();
@@ -660,7 +661,7 @@ udp_enumerate()
       udp_send_null();
       break;
     case VENDOR_GET_DESCRIPTOR:
-      udp_send_control((U8 *)named, MIN(named[0], len));
+      udp_send_control((U8 *)&named, MIN(named.bLength, len));
       break;
  
     case STD_SET_FEATURE_INTERFACE:
@@ -825,17 +826,17 @@ udp_set_serialno(U8 *serNo, int len)
   /* Set the USB serial number. serNo should point to a 12 character
    * Unicode string, containing the USB serial number.
    */
-  if (len == (sizeof(snd)-2)/2)
-    memcpy(snd+2, serNo, len*2);
+  if (2*len == sizeof(snd.data))
+    memcpy(snd.data, serNo, len*2);
 }
 
 void
 udp_set_name(U8 *name, int len)
 {
-  if (len <= (sizeof(named)-2)/2)
+  if (2 * len <= sizeof(named.data))
   {
-    memcpy(named+2, name, len*2);
-    named[0] = len*2 + 2;
+    memcpy(named.data, name, len*2);
+    named.bLength = USB_DESCR_STRLEN(len);
   } 
 }
 
