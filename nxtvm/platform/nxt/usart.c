@@ -52,15 +52,14 @@ usart_enable(usart *us)
 {
   AT91S_PDC *dma = us->dma;
   AT91S_USART *dev = us->dev;
-  U8 trash;
 
   dma->PDC_PTCR = (AT91C_PDC_RXTDIS | AT91C_PDC_TXTDIS); 
   dma->PDC_RPR  = (unsigned int)(us->in_buf[0]); 
   dma->PDC_RCR  = us->in_size;
   dma->PDC_RNPR = (unsigned int)(us->in_buf[1]);
   dma->PDC_RNCR = us->in_size;
-  trash = dev->US_RHR;
-  trash = dev->US_CSR;
+  dev->US_RHR;
+  dev->US_CSR;
   dma->PDC_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN; 
   dev->US_CR = AT91C_US_RXEN | AT91C_US_TXEN; 
 }

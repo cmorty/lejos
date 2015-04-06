@@ -114,7 +114,7 @@ nxt_motor_isr_C(void)
 {
   U32 i_state = interrupts_get_and_disable();
 
-  U32 pinChanges = *AT91C_PIOA_ISR;	// Acknowledge change
+  *AT91C_PIOA_ISR;	// Acknowledge change
   U32 currentPins = *AT91C_PIOA_PDSR;	// Read pins
 
   U32 pins;

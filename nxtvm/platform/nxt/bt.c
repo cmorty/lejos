@@ -27,14 +27,13 @@ usart *bt;
 	
 void bt_init(void)
 {
-  U8 trash;
   bt = NULL;
   bt_disable();
   // Configure timer 01 as trigger for ADC
   *AT91C_PMC_PCER = (1 << AT91C_ID_TC1); 
   *AT91C_TC1_CCR = AT91C_TC_CLKDIS;
   *AT91C_TC1_IDR = ~0;
-  trash = *AT91C_TC1_SR;
+  *AT91C_TC1_SR;
   *AT91C_TC1_CMR = AT91C_TC_WAVE | AT91C_TC_WAVESEL_UP_AUTO | AT91C_TC_ACPA_SET | AT91C_TC_ACPC_CLEAR | AT91C_TC_ASWTRG_SET; /* MCLK/2, wave mode 10 */
   *AT91C_TC1_RC = (CLOCK_FREQUENCY/2)/(ADC_UPDATE_RATE);
   *AT91C_TC1_RA = ((CLOCK_FREQUENCY/2)/(ADC_UPDATE_RATE))/2;

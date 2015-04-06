@@ -5,7 +5,7 @@
 #define __ramfunc __attribute__((__section__(".ramfunc")))
 
 // symbols exported by linker script
-extern void __free_ram_start__;
-extern void __free_ram_end__;
+extern int __free_ram_start__;
+extern int __free_ram_end__;
 
 #endif

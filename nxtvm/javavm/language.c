@@ -451,12 +451,12 @@ void do_return (int numWords)
 {
   StackFrame *stackFrame;
   STACKWORD *fromStackPtr;
-  byte* oldPc;
-  MethodRecord* oldMethod;
+  //byte* oldPc;
+  //MethodRecord* oldMethod;
 
   stackFrame = current_stackframe();
-  oldPc = curPc;
-  oldMethod=stackFrame->methodRecord;
+  //oldPc = curPc;
+  //oldMethod=stackFrame->methodRecord;
 
   #if DEBUG_BYTECODE
   printf ("\n------ return ----- %d ------------------\n\n",

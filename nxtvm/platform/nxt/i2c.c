@@ -495,7 +495,7 @@ i2c_doio(i2c_port *p)
 void
 i2c_timer_isr_C(void)
 {
-  U32 dummy = *AT91C_TC0_SR;
+  *AT91C_TC0_SR;
   i2c_port **ap;
   for(ap = active_list; *ap; ap++)
     i2c_doio(*ap);
@@ -619,7 +619,6 @@ i2c_init(void)
 {
   int i;
   int istate;
-  U32 dummy; 
   for (i = 0; i < I2C_N_PORTS; i++) {
     i2c_ports[i] = NULL;
   }
@@ -631,7 +630,7 @@ i2c_init(void)
     
   *AT91C_TC0_CCR = AT91C_TC_CLKDIS; /* Disable */
   *AT91C_TC0_IDR = ~0;
-  dummy = *AT91C_TC0_SR;
+  *AT91C_TC0_SR;
   *AT91C_TC0_CMR = AT91C_TC_CLKS_TIMER_DIV1_CLOCK|AT91C_TC_CPCTRG; /* MCLK/2, RC compare trigger */
   *AT91C_TC0_RC = ((CLOCK_FREQUENCY/2)/(2 * I2C_CLOCK))/1;
   *AT91C_TC0_IER = AT91C_TC_CPCS;
@@ -642,7 +641,7 @@ i2c_init(void)
   *AT91C_PMC_PCER = (1 << AT91C_ID_TC2);    /* Power enable */
   *AT91C_TC2_CCR = AT91C_TC_CLKDIS; /* Disable */
   *AT91C_TC2_IDR = ~0;
-  dummy = *AT91C_TC0_SR;
+  *AT91C_TC0_SR;
   *AT91C_TC2_CMR = AT91C_TC_CLKS_TIMER_DIV1_CLOCK|AT91C_TC_CPCTRG; /* MCLK/2, RC compare trigger */
   *AT91C_TC2_RC = ((CLOCK_FREQUENCY/2)/(2 * I2C_HS_CLOCK))/1;
   

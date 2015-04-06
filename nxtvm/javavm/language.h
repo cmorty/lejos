@@ -254,11 +254,10 @@ extern void dispatch_java(byte classIndex, byte sig, byte *retAddr, byte *btAddr
 
 static inline void initialize_binary()
 {
-  MasterRecord *mrec;
-  
-  mrec = get_master_record();
+/*
+  MasterRecord *mrec = get_master_record();
 
-/*  printf("Got master record\n");
+  printf("Got master record\n");
   printf("Base is %d\n",get_binary_base());
   printf("Offset is %d\n",(int) mrec->staticStateOffset); */
 

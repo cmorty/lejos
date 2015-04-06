@@ -38,8 +38,8 @@
 #include <string.h>
 
 
-#undef push_word()
-#undef push_ref()
+#undef push_word
+#undef push_ref
 #define push_word( a) push_word_cur( a)
 #define push_ref( a)  push_ref_cur( a)
 
