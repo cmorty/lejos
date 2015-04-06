@@ -54,7 +54,7 @@
 /// \param flags The bitmap to set to 1.
 #define UDP_SETEPFLAGS(csr, flags) \
     { \
-        volatile unsigned int reg; \
+        unsigned int reg; \
         reg = (csr) ; \
         reg |= REG_NO_EFFECT_1_ALL; \
         reg |= (flags); \
@@ -67,7 +67,7 @@
 /// \param flags The bitmap to clear to 0.
 #define UDP_CLEAREPFLAGS(csr, flags) \
     { \
-        volatile unsigned int reg; \
+        unsigned int reg; \
         reg = (csr); \
         reg |= REG_NO_EFFECT_1_ALL; \
         reg &= ~(flags); \
