@@ -15,12 +15,12 @@ GCC_VERSION=4.3.2
 GCC_URL=http://www.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.bz2
 GCC_DIR=gcc-$GCC_VERSION
 
-BINUTILS_VERSION=2.18.50
-BINUTILS_URL=http://www.mirrorservice.org/sites/sourceware.org/pub/binutils/snapshots/binutils-$BINUTILS_VERSION.tar.bz2
+BINUTILS_VERSION=2.19.1
+BINUTILS_URL=http://www.mirrorservice.org/sites/sourceware.org/pub/binutils/releases/binutils-$BINUTILS_VERSION.tar.bz2
 BINUTILS_DIR=binutils-$BINUTILS_VERSION
 
 NEWLIB_VERSION=1.16.0
-NEWLIB_URL=ftp://sources.redhat.com/pub/newlib/newlib-$NEWLIB_VERSION.tar.gz
+NEWLIB_URL=http://www.mirrorservice.org/sites/sources.redhat.com/pub/newlib/newlib-$NEWLIB_VERSION.tar.gz
 NEWLIB_DIR=newlib-$NEWLIB_VERSION
 
 echo "I will build an arm-elf cross-compiler:
