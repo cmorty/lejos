@@ -84,7 +84,7 @@ memory_remap:
 	ldr     r2, [r0]
 
 	cmp     r2, r3
-	movne   r1, #1
+	movne   r1, #AT91C_MC_RCB
 	strne   r1, [r0, #AT91C_MC_RCR]
 
 
