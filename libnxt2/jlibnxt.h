@@ -9,44 +9,58 @@ extern "C" {
 #endif
 #undef lejos_pc_comm_NXTCommLibnxt_USB_BUFSZ
 #define lejos_pc_comm_NXTCommLibnxt_USB_BUFSZ 64L
+#undef lejos_pc_comm_NXTCommLibnxt_TYPE_UNKNOWN
+#define lejos_pc_comm_NXTCommLibnxt_TYPE_UNKNOWN 0L
+#undef lejos_pc_comm_NXTCommLibnxt_TYPE_SAMBA
+#define lejos_pc_comm_NXTCommLibnxt_TYPE_SAMBA 1L
+#undef lejos_pc_comm_NXTCommLibnxt_TYPE_LEGO
+#define lejos_pc_comm_NXTCommLibnxt_TYPE_LEGO 2L
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
- * Method:    jlibnxt_find
+ * Method:    nList
  * Signature: ()[Ljava/lang/String;
  */
-JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find
+JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nList
   (JNIEnv *, jobject);
 
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
- * Method:    jlibnxt_open
+ * Method:    nOpen
  * Signature: (Ljava/lang/String;)J
  */
-JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
+JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nOpen
   (JNIEnv *, jobject, jstring);
 
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
- * Method:    jlibnxt_close
+ * Method:    nClose
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close
+JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nClose
   (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
- * Method:    jlibnxt_send_data
+ * Method:    nGetSerial
+ * Signature: (J)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nGetSerial
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     lejos_pc_comm_NXTCommLibnxt
+ * Method:    nSendData
  * Signature: (J[BII)I
  */
-JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data
+JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nSendData
   (JNIEnv *, jobject, jlong, jbyteArray, jint, jint);
 
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
- * Method:    jlibnxt_read_data
+ * Method:    nReadData
  * Signature: (J[BII)I
  */
-JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data
+JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nReadData
   (JNIEnv *, jobject, jlong, jbyteArray, jint, jint);
 
 #ifdef __cplusplus

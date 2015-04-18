@@ -9,8 +9,7 @@ CFLAGS += -std=c99 -Wall -fPIC -I "$(JNI_INCLUDE)" -I "$(JNI_INCLUDE_LINUX)" -I 
 LDFLAGS ?=
 LDFLAGS += -s -shared -Wl,--version-script=symbols-gnu.txt
 
-FILES_IN_C:=$(wildcard *.c)
-FILES_OUT_D:=$(FILES_IN_C:.c=.d)
+FILES_IN_C:=jlibnxt.c
 FILES_OUT_O:=$(FILES_IN_C:.c=.o)
 FILES_OUT_LIB:=libjlibnxt.so
 
@@ -22,23 +21,17 @@ all: $(FILES_OUT_LIB)
 # Other Targets
 clean:
 	rm -rf \
-		$(FILES_OUT_D) \
 		$(FILES_OUT_O) \
 		$(FILES_OUT_LIB)
 
 # Tool invocations
 $(FILES_OUT_LIB): $(FILES_OUT_O)
-	@echo 'Building target: $@'
-	@echo 'Invoking: GCC C Linker'
-	gcc $(LDFLAGS) -o "$@" $(FILES_OUT_O) -lusb-1.0
-	@echo 'Finished building target: $@'
-	@echo ' '
+	@echo '### Building target: $@'
+	gcc $(LDFLAGS) -o "$@" $(FILES_OUT_O) -lusb
 
-$(FILES_OUT_O): %.o: %.c
-	@echo 'Compiling file: $<'
-	@echo 'Invoking: GCC C Compiler'
+%.o: %.c
+	@echo '### Compiling $< to $@'
 	gcc $(CFLAGS) -o "$@" -c "$<"
-	@echo 'Finished compiling: $<'
 
 # we don't use .d files at the moment
 #	-MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)"

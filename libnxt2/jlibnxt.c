@@ -19,20 +19,23 @@
  * USA
  */
 
-#include <stdint.h>
 #include <stdio.h>
+#include <errno.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <errno.h>
 #include <libusb.h>
+#include <iconv.h>
 
 #include "jlibnxt.h"
 
+// add missing typedef
+typedef struct libusb_device_descriptor libusb_device_descriptor;
 
-#define MAX_DEVS 64
+#define MAX_ADDR  64
 #define MAX_SERNO 64
-#define MAX_WRITE 64
+#define MAX_WRITE lejos_pc_comm_NXTCommLibnxt_USB_BUFSZ
 
 // On windows ETIMEDOUT is not defined. The windows driver uses 116 as the value
 #ifndef ETIMEDOUT
@@ -42,264 +45,273 @@
 #define PTR2JLONG(arg) ((jlong)(uintptr_t)(arg))
 #define JLONG2PTR(type, arg) ((type*)(uintptr_t)(arg))
 
-typedef struct libusb_device_descriptor libusb_device_descriptor;
+#define VENDOR_LEGO   0x0694
+#define PRODUCT_NXT   0x0002
+#define VENDOR_ATMEL  0x03EB
+#define PRODUCT_SAMBA 0x6124
 
-
-enum nxt_usb_ids {
-  VENDOR_LEGO   = 0x0694,
-  PRODUCT_NXT   = 0x0002,
-  VENDOR_ATMEL  = 0x03EB,
-  PRODUCT_SAMBA = 0x6124
-};
-
+#define TYPE_UNKNOWN lejos_pc_comm_NXTCommLibnxt_TYPE_UNKNOWN
+#define TYPE_SAMBA   lejos_pc_comm_NXTCommLibnxt_TYPE_SAMBA
+#define TYPE_LEGO    lejos_pc_comm_NXTCommLibnxt_TYPE_LEGO
 
 static libusb_context *context = NULL;
 
-__attribute__((constructor)) static void ctor() {
-  //printf("%p\n", context);
-  libusb_init(&context);
-  //printf("%p\n", context);
+__attribute__((__constructor__))
+static void ctor() {
+	libusb_init(&context);
 }
-__attribute__((destructor)) static void dtor() {
-  libusb_exit(context);
-  context = NULL;
+__attribute__((__destructor__))
+static void dtor() {
+	libusb_exit(context);
+	context = NULL;
 }
 
+static int getType(libusb_device_descriptor *dev) {
+	if (dev->idVendor == VENDOR_ATMEL && dev->idProduct == PRODUCT_SAMBA)
+		return TYPE_SAMBA;
+	if (dev->idVendor == VENDOR_LEGO && dev->idProduct == PRODUCT_NXT)
+		return TYPE_LEGO;
 
-/* Create the device address string. We use the same format as the
+	return TYPE_UNKNOWN;
+}
+
+/**
+ * Create the device address string. We use the same format as the
  * Lego Fantom device driver.
  */
-static void create_address(libusb_device *dev, char *address)
-{
-  libusb_device_descriptor descriptor;
-  libusb_get_device_descriptor(dev, &descriptor);
+static int create_address(libusb_device *dev, char *address) {
+	uint8_t busnum = libusb_get_bus_number(dev);
+	uint8_t devnum = libusb_get_device_address(dev);
 
-  // Do the easy one first. There is only one Samba device
-  if (descriptor.idVendor == VENDOR_ATMEL &&
-       descriptor.idProduct == PRODUCT_SAMBA)
-     sprintf(address, "USB0::0x%04X::0x%04X::NI-VISA-0::1::RAW", VENDOR_ATMEL, PRODUCT_SAMBA);
-  else
-  {
-    // Do the more general case. We need to get the serial number into non
-    // unicode format.
-    //unsigned char sn_unicode[MAX_SERNO];
-    unsigned char sn_ascii[MAX_SERNO + 1];
-    libusb_device_handle *hdl;
-    libusb_open(dev, &hdl);
-    sn_ascii[0] = '0';
-    if (hdl)
-    {
-      int len = libusb_get_string_descriptor_ascii(hdl, descriptor.iSerialNumber, sn_ascii, MAX_SERNO);
-      libusb_close(hdl);
-      if (len < 0)
-        len = 0;
-      sn_ascii[len] = 0;
-    }
-    if (sn_ascii[0] != 0)
-     sprintf(address, "USB0::0x%04X::0x%04X::%s::RAW", descriptor.idVendor, descriptor.idProduct, sn_ascii);
-    else
-     sprintf(address, "USB0::0x%04X::0x%04X::000000000000::RAW", descriptor.idVendor, descriptor.idProduct);
-  }
+	libusb_device_descriptor descriptor;
+	if (libusb_get_device_descriptor(dev, &descriptor) < LIBUSB_SUCCESS) {
+		*address = 0;
+		return TYPE_UNKNOWN;
+	}
+
+	int type = getType(&descriptor);
+	snprintf(address, MAX_ADDR, "%u,%u,%d", busnum, devnum, type);
+
+	return type;
 }
 
 /* Return a handle to the nth NXT device, or null if not found/error
  * Also return a dvice address string that contains all of the details of
  * this device. This string can be used later to re-locate the device  */
-static libusb_device *nxt_find_nth(int idx, char *address)
-{
-  //struct usb_bus *busses, *bus;
-  address[0] = '\0';
+static libusb_device *find_nxt(const char *address) {
+	libusb_device **list;
+	int len = libusb_get_device_list(context, &list);
+	if (len < LIBUSB_SUCCESS)
+		return NULL;
 
-  libusb_device **list;
-  int len = libusb_get_device_list(context, &list);
-  for (int i = 0, cnt = 0; i<len; i++)
-  {
-    libusb_device *dev=list[i];
-    libusb_device_descriptor descriptor;
-    libusb_get_device_descriptor(dev, &descriptor);
+	libusb_device *dev = NULL;
+	for (int i = 0; i < len; i++) {
+		dev = list[i];
 
-    if ((descriptor.idVendor == VENDOR_LEGO &&
-            descriptor.idProduct == PRODUCT_NXT) ||
-        (descriptor.idVendor == VENDOR_ATMEL &&
-            descriptor.idProduct == PRODUCT_SAMBA))
-    {
-      if (cnt++ < idx) continue;
-      // Now create the address string we use the same format as the
-      // Lego Fantom driver
-      create_address(dev, address);
-      libusb_ref_device(dev);
-      libusb_free_device_list(list, 1);
-      return dev;
-    }
-  }
-  libusb_free_device_list(list, 1);
-  return 0;
+		char adr[MAX_ADDR];
+		int type = create_address(dev, adr);
+
+		if (type != TYPE_UNKNOWN && strcmp(address, adr) == 0) {
+			libusb_ref_device(dev);
+			break;
+		}
+	}
+	libusb_free_device_list(list, 1);
+	return dev;
 }
 
-
 // Version of open that works with lejos NXJ firmware.
-static libusb_device_handle *nxt_open(libusb_device *dev)
-{
-  libusb_device_handle *hdl;
-  int ret, interf;
-  libusb_open(dev, &hdl);
-  if (!hdl) return 0;
-  
-  libusb_device_descriptor descriptor;
-  libusb_get_device_descriptor(dev, &descriptor);
+static libusb_device_handle *nxt_open(libusb_device *dev) {
+	libusb_device_handle *hdl;
+	if (libusb_open(dev, &hdl) < LIBUSB_SUCCESS)
+		return 0;
 
-  // If we are in SAMBA mode we need interface 1, otherwise 0
-  if (descriptor.idVendor == VENDOR_ATMEL &&
-      descriptor.idProduct == PRODUCT_SAMBA) {
-	  interf = 1;
+	libusb_device_descriptor descriptor;
+	if (libusb_get_device_descriptor(dev, &descriptor) < LIBUSB_SUCCESS)
+		goto release;
 
-	  // detach cdc_acm or sam-ba kernel driver (issue in linux >=2.6.35.5)
-	  // if detach unsuccessfull, other calls will fail
-	  libusb_detach_kernel_driver(hdl, interf);
+	// If we are in SAMBA mode we need interface 1, otherwise 0
+	int interf;
+	if (getType(&descriptor) == TYPE_SAMBA) {
+		interf = 1;
 
-	  // TODO this actually also detaches other libusb clients if kernel driver name == "usbfs"
-	  // Problem: libusb-compat supplies dummy kernel driver name
-	  // and libusb-1.0 doesn't even allow for querying the kernel driver name.
-	  // Also querying driver name and detaching depending on the result
-	  // results in a race condition.
-  } else {
-	  interf = 0;
-  }
+		// detach cdc_acm or sam-ba kernel driver (issue in linux >=2.6.35.5)
+		// if detach unsuccessfull, other calls will fail
+		libusb_detach_kernel_driver(hdl, interf);
 
-  
-  ret = libusb_set_configuration(hdl, 1);
-  if (ret < 0)
-  {
-    libusb_close(hdl);
-    return 0;
-  }
-  
-  ret = libusb_claim_interface(hdl, interf);
-  if (ret < 0)
-  {
-    libusb_close(hdl);
-    return 0;
-  }
+		// TODO this actually also detaches other libusb clients if kernel driver name == "usbfs"
+		// Problem: libusb-compat supplies dummy kernel driver name
+		// and libusb-1.0 doesn't even allow for querying the kernel driver name.
+		// Also querying driver name and detaching depending on the result
+		// results in a race condition.
+	} else {
+		interf = 0;
+	}
 
-  // Discard any data that is left in the buffer
-  unsigned char buf[64];
-  while (1) {
-    int alen = 0;
-    int ret= libusb_bulk_transfer(hdl, 0x82, buf, sizeof(buf), &alen, 1);
-    if (alen == 0 || ret < 0)
-    	break;
-  }
+	if (libusb_set_configuration(hdl, 1) < LIBUSB_SUCCESS)
+		goto release;
 
-  return hdl;
+	if (libusb_claim_interface(hdl, interf) < LIBUSB_SUCCESS)
+		goto release;
+
+	// Discard any data that is left in the buffer
+	unsigned char buf[64];
+	while (1) {
+		int alen = 0;
+		int ret = libusb_bulk_transfer(hdl, 0x82, buf, sizeof(buf), &alen, 1);
+		if (alen == 0 || ret < 0)
+			break;
+	}
+
+	return hdl;
+release:
+	libusb_close(hdl);
+	return 0;
 }
 
 // Version of close that uses interface 0
-static void nxt_close(libusb_device_handle *hdl)
-{
-  // Discard any data that is left in the buffer
-  unsigned char buf[64];
-  while (1) {
-    int alen = 0;
-    int ret= libusb_bulk_transfer(hdl, 0x82, buf, sizeof(buf), &alen, 1);
-    if (alen == 0 || ret < 0)
-		break;
-  }
+static void nxt_close(libusb_device_handle *hdl) {
+	// Discard any data that is left in the buffer
+	unsigned char buf[64];
+	while (1) {
+		int alen = 0;
+		int ret = libusb_bulk_transfer(hdl, 0x82, buf, sizeof(buf), &alen, 1);
+		if (alen == 0 || ret < 0)
+			break;
+	}
 
-  // Release interface. This is a little iffy we do not know which interface
-  // we are actually using. Releasing both seems to work... but...
-  libusb_release_interface(hdl, 0);
-  libusb_release_interface(hdl, 1);
-  libusb_close(hdl);
+	// Release interface. This is a little iffy we do not know which interface
+	// we are actually using. Releasing both seems to work... but...
+//	libusb_release_interface(hdl, 0);
+//	libusb_release_interface(hdl, 1);
+	libusb_close(hdl);
 }
 
+static int nxt_get_serial(libusb_device_handle *hdl, char *rbuf) {
+	libusb_device *dev = libusb_get_device(hdl);
+
+	libusb_device_descriptor descriptor;
+	int ret = libusb_get_device_descriptor(dev, &descriptor);
+	if (ret < LIBUSB_SUCCESS)
+		return ret;
+
+	unsigned char buf[2+2*MAX_SERNO];
+	int len = libusb_get_string_descriptor(hdl, descriptor.iSerialNumber, 0, buf, sizeof(buf));
+	if (len < LIBUSB_SUCCESS)
+		return len;
+
+	if (len > 0 && len > buf[0])
+		len = buf[0];
+
+	if (len <= 2) {
+		*rbuf = 0;
+	} else {
+		char *ibuf[1] = { (char*)(buf + 2) };
+		size_t ilen[1] = { len - 2 };
+		char *obuf[1] = { rbuf };
+		size_t olen[1] = { 4 * MAX_SERNO };
+
+		iconv_t cd = iconv_open("utf8", "utf16le");
+		iconv(cd, ibuf, ilen, obuf, olen);
+		iconv_close(cd);
+		**obuf = 0;
+	}
+	return LIBUSB_SUCCESS;
+}
 
 // Implement 20sec timeout write, and return amount actually written
-static int nxt_write_buf(libusb_device_handle *hdl, unsigned char *buf, int len)
-{
-  int alen = 0;
-  int ret = libusb_bulk_transfer(hdl, 0x01, buf, len, &alen, 20000);
-  return (ret < 0) ? ret : alen;
+static int nxt_write_buf(libusb_device_handle *hdl, void *buf, int len) {
+	int alen = 0;
+	int ret = libusb_bulk_transfer(hdl, 0x01, buf, len, &alen, 20000);
+	return (ret < 0) ? ret : alen;
 }
-
 
 // Implement 20 second timeout read, and return amount actually read
-static int nxt_read_buf(libusb_device_handle *hdl, unsigned char *buf, int len)
-{
-  int alen = 0;
-  int ret = libusb_bulk_transfer(hdl, 0x82, buf, len, &alen, 20000);
-  return (ret < 0) ? ret : alen;
+static int nxt_read_buf(libusb_device_handle *hdl, void *buf, int len) {
+	int alen = 0;
+	int ret = libusb_bulk_transfer(hdl, 0x82, buf, len, &alen, 20000);
+	return (ret < 0) ? ret : alen;
 }
 
+JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nList(
+		JNIEnv *env, jobject obj) {
+	libusb_device **list;
+	int len = libusb_get_device_list(context, &list);
 
-JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1find
-  (JNIEnv *env, jobject obj)
-{
-  libusb_device *dev;
-  jstring names[MAX_DEVS];
-  int cnt = 0;
-  char name[MAX_SERNO];
-  int i = 0;
-  while((dev = nxt_find_nth(cnt, name)) != 0)
-  {
-    libusb_unref_device(dev);
-    names[cnt++] = (*env)->NewStringUTF(env, name) ;
-  }
-  if (cnt <= 0) return NULL;
+	int found = 0;
+	jstring *buf = malloc(len * sizeof(jstring));
 
-  // Now copy names in a java array
-  jclass sclass = (*env)->FindClass(env, "java/lang/String");
-  jobjectArray arr = (*env)->NewObjectArray(env, cnt, sclass, NULL);
-  for(i = 0; i < cnt; i++)
-    (*env)->SetObjectArrayElement(env, arr, i, names[i]);
-   
-  return arr;
+	for (int i = 0; i < len; i++) {
+		libusb_device *dev = list[i];
+
+		char adr[MAX_ADDR];
+		int type = create_address(dev, adr);
+
+		if (type != TYPE_UNKNOWN) {
+			buf[found++] = (*env)->NewStringUTF(env, adr);
+		}
+	}
+	libusb_free_device_list(list, 1);
+
+	// Now copy names in a java array
+	jclass sclass = (*env)->FindClass(env, "java/lang/String");
+	jobjectArray arr = (*env)->NewObjectArray(env, found, sclass, NULL);
+	for (int i = 0; i < found; i++)
+		(*env)->SetObjectArrayElement(env, arr, i, buf[i]);
+
+	free(buf);
+	return arr;
 }
 
-JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1open
-  (JNIEnv *env, jobject obj, jstring jnxt)
-{
-  const char* nxt = (*env)->GetStringUTFChars(env, jnxt, 0);
-  char name[MAX_SERNO];
+JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nOpen(JNIEnv *env,
+		jobject obj, jstring jnxt) {
+	const char* nxt = (*env)->GetStringUTFChars(env, jnxt, 0);
+	jlong r = 0;
 
-  int cnt = 0;
-  libusb_device *dev;
-  while((dev = nxt_find_nth(cnt, name)) != 0)
-  {
-    if (strcmp(name, nxt) == 0)
-    {
-      libusb_device_handle *ret = nxt_open( dev );
-      libusb_unref_device(dev);
-      (*env)->ReleaseStringUTFChars(env, jnxt, nxt);
-      return PTR2JLONG(ret);
-    }
-    libusb_unref_device(dev);
-    cnt++;
-  }
-  (*env)->ReleaseStringUTFChars(env, jnxt, nxt);
-  return 0;
+	libusb_device *dev = find_nxt(nxt);
+	if (dev != NULL) {
+		libusb_device_handle *ret = nxt_open(dev);
+		libusb_unref_device(dev);
+		r = PTR2JLONG(ret);
+	}
+
+	(*env)->ReleaseStringUTFChars(env, jnxt, nxt);
+	return r;
 }
 
-JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1close(JNIEnv *env, jobject obj, jlong nxt)
-{
-  nxt_close(JLONG2PTR(libusb_device_handle, nxt));
+JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nClose(JNIEnv *env,
+		jobject obj, jlong nxt) {
+	nxt_close(JLONG2PTR(libusb_device_handle, nxt));
 }
 
-JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1send_1data(JNIEnv *env, jobject obj, jlong nxt, jbyteArray data, jint offset, jint len)
-{
-  jbyte *jb = (*env)->GetByteArrayElements(env, data, 0);
-  int ret = nxt_write_buf(JLONG2PTR(libusb_device_handle, nxt), (unsigned char *)jb + offset, len);
-  (*env)->ReleaseByteArrayElements(env, data, jb, 0);
-  if (ret == LIBUSB_ERROR_TIMEOUT) ret = 0;
-  return ret;
+JNIEXPORT jstring JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nGetSerial(
+		JNIEnv *env, jobject obj, jlong nxt) {
+	char serial[4 * MAX_SERNO + 1];
+	int ret = nxt_get_serial(JLONG2PTR(libusb_device_handle, nxt), serial);
+	if (ret < LIBUSB_SUCCESS)
+		return NULL;
+	return (*env)->NewStringUTF(env, serial);
 }
 
-JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_jlibnxt_1read_1data(JNIEnv *env, jobject obj, jlong nxt, jbyteArray jdata, jint offset, jint len)
-{
-  jbyte *jb = (*env)->GetByteArrayElements(env, jdata, 0);
-  int ret = nxt_read_buf(JLONG2PTR(libusb_device_handle, nxt), (unsigned char *)jb + offset, len);
-  (*env)->ReleaseByteArrayElements(env, jdata, jb, 0);
-  if (ret == LIBUSB_ERROR_TIMEOUT) ret = 0;
-  return ret;
+JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nSendData(JNIEnv *env,
+		jobject obj, jlong nxt, jbyteArray data, jint offset, jint len) {
+	jbyte *jb = (*env)->GetByteArrayElements(env, data, 0);
+	int ret = nxt_write_buf(JLONG2PTR(libusb_device_handle, nxt),
+			jb + offset, len);
+	(*env)->ReleaseByteArrayElements(env, data, jb, 0);
+	if (ret == LIBUSB_ERROR_TIMEOUT)
+		ret = 0;
+	return ret;
 }
 
+JNIEXPORT jint JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nReadData(JNIEnv *env,
+		jobject obj, jlong nxt, jbyteArray jdata, jint offset, jint len) {
+	jbyte *jb = (*env)->GetByteArrayElements(env, jdata, 0);
+	int ret = nxt_read_buf(JLONG2PTR(libusb_device_handle, nxt),
+			jb + offset, len);
+	(*env)->ReleaseByteArrayElements(env, jdata, jb, 0);
+	if (ret == LIBUSB_ERROR_TIMEOUT)
+		ret = 0;
+	return ret;
+}
 
