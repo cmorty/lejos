@@ -79,45 +79,51 @@ static int getType(libusb_device_descriptor *dev) {
  * Create the device address string. We use the same format as the
  * Lego Fantom device driver.
  */
-static int create_address(libusb_device *dev, char *address) {
+static int create_address(libusb_device *dev, char *address, int *type) {
 	uint8_t busnum = libusb_get_bus_number(dev);
 	uint8_t devnum = libusb_get_device_address(dev);
 
 	libusb_device_descriptor descriptor;
-	if (libusb_get_device_descriptor(dev, &descriptor) < LIBUSB_SUCCESS) {
+	int ret = libusb_get_device_descriptor(dev, &descriptor);
+	if (ret < LIBUSB_SUCCESS) {
 		*address = 0;
-		return TYPE_UNKNOWN;
+		*type = TYPE_UNKNOWN;
+		return ret;
 	}
 
-	int type = getType(&descriptor);
-	snprintf(address, MAX_ADDR, "%u,%u,%d", busnum, devnum, type);
+	int t = getType(&descriptor);
+	snprintf(address, MAX_ADDR, "%u,%u,%d", busnum, devnum, t);
+	*type = t;
 
-	return type;
+	return LIBUSB_SUCCESS;
 }
 
 /* Return a handle to the nth NXT device, or null if not found/error
  * Also return a dvice address string that contains all of the details of
  * this device. This string can be used later to re-locate the device  */
-static libusb_device *find_nxt(const char *address) {
+static int find_nxt(const char *address, libusb_device **dev) {
 	libusb_device **list;
 	int len = libusb_get_device_list(context, &list);
 	if (len < LIBUSB_SUCCESS)
-		return NULL;
+		return len;
 
-	libusb_device *dev = NULL;
+	libusb_device *d = NULL;
 	for (int i = 0; i < len; i++) {
-		dev = list[i];
+		d = list[i];
 
+		int type;
 		char adr[MAX_ADDR];
-		int type = create_address(dev, adr);
+		create_address(d, adr, &type);
 
 		if (type != TYPE_UNKNOWN && strcmp(address, adr) == 0) {
-			libusb_ref_device(dev);
+			libusb_ref_device(d);
 			break;
 		}
 	}
 	libusb_free_device_list(list, 1);
-	return dev;
+
+	*dev = d;
+	return LIBUSB_SUCCESS;
 }
 
 // Version of open that works with lejos NXJ firmware.
@@ -244,8 +250,9 @@ JNIEXPORT jobjectArray JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nList(
 	for (int i = 0; i < len; i++) {
 		libusb_device *dev = list[i];
 
+		int type;
 		char adr[MAX_ADDR];
-		int type = create_address(dev, adr);
+		create_address(dev, adr, &type);
 
 		if (type != TYPE_UNKNOWN) {
 			buf[found++] = (*env)->NewStringUTF(env, adr);
@@ -268,13 +275,13 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nOpen(JNIEnv *env,
 	const char* nxt = (*env)->GetStringUTFChars(env, jnxt, 0);
 	jlong r = 0;
 
-	libusb_device *dev = find_nxt(nxt);
-	if (dev != NULL) {
+	libusb_device *dev;
+	int ret = find_nxt(nxt, &dev);
+	if (ret == LIBUSB_SUCCESS && dev != NULL) {
 		libusb_device_handle *ret = nxt_open(dev);
 		libusb_unref_device(dev);
 		r = PTR2JLONG(ret);
 	}
-
 	(*env)->ReleaseStringUTFChars(env, jnxt, nxt);
 	return r;
 }
