@@ -1,10 +1,11 @@
 JAVA_HOME ?= JAVA_HOME_not_set
 JNI_INCLUDE ?= $(JAVA_HOME)/include
 JNI_INCLUDE_LINUX ?= $(JNI_INCLUDE)/linux
-LIBUSB_INCLUDE ?= /usr/include/libusb-1.0
+LIBUSB_LIBS ?= $(shell pkg-config --libs libusb-1.0)
+LIBUSB_INCLUDE ?= $(shell pkg-config --cflags libusb-1.0)
 
 CFLAGS ?= 
-CFLAGS += -std=c99 -Wall -fPIC -I "$(JNI_INCLUDE)" -I "$(JNI_INCLUDE_LINUX)" -I "$(LIBUSB_INCLUDE)"
+CFLAGS += -std=c99 -Wall -fPIC -I "$(JNI_INCLUDE)" -I "$(JNI_INCLUDE_LINUX)" $(LIBUSB_INCLUDE)
 
 LDFLAGS ?=
 LDFLAGS += -s -shared -Wl,--version-script=symbols-gnu.txt
@@ -27,7 +28,7 @@ clean:
 # Tool invocations
 $(FILES_OUT_LIB): $(FILES_OUT_O)
 	@echo '### Building target: $@'
-	gcc $(LDFLAGS) -o "$@" $(FILES_OUT_O) -lusb
+	gcc $(LDFLAGS) -o "$@" $(FILES_OUT_O) $(LIBUSB_LIBS)
 
 %.o: %.c
 	@echo '### Compiling $< to $@'
