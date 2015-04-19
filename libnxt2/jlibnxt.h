@@ -41,6 +41,14 @@ JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nClose
 
 /*
  * Class:     lejos_pc_comm_NXTCommLibnxt
+ * Method:    nGetName
+ * Signature: (J)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nGetName
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     lejos_pc_comm_NXTCommLibnxt
  * Method:    nGetSerial
  * Signature: (J)Ljava/lang/String;
  */

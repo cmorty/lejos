@@ -202,7 +202,36 @@ static int nxt_get_serial(libusb_device_handle *hdl, char *rbuf) {
 		return ret;
 
 	unsigned char buf[2+2*MAX_SERNO];
-	int len = libusb_get_string_descriptor(hdl, descriptor.iSerialNumber, 0, buf, sizeof(buf));
+	int len = libusb_control_transfer(hdl, LIBUSB_ENDPOINT_IN,
+			LIBUSB_REQUEST_GET_DESCRIPTOR, (uint16_t)((LIBUSB_DT_STRING << 8) | descriptor.iSerialNumber),
+			0, buf, sizeof(buf), 1000);
+	if (len < LIBUSB_SUCCESS)
+		return len;
+
+	if (len > 0 && len > buf[0])
+		len = buf[0];
+
+	if (len <= 2) {
+		*rbuf = 0;
+	} else {
+		char *ibuf[1] = { (char*)(buf + 2) };
+		size_t ilen[1] = { len - 2 };
+		char *obuf[1] = { rbuf };
+		size_t olen[1] = { 4 * MAX_SERNO };
+
+		iconv_t cd = iconv_open("utf8", "utf16le");
+		iconv(cd, ibuf, ilen, obuf, olen);
+		iconv_close(cd);
+		**obuf = 0;
+	}
+	return LIBUSB_SUCCESS;
+}
+
+static int nxt_get_name(libusb_device_handle *hdl, char *rbuf) {
+	unsigned char buf[2+2*MAX_SERNO];
+	int len = libusb_control_transfer(hdl, 0xC0,
+			LIBUSB_REQUEST_GET_DESCRIPTOR, (uint16_t)((LIBUSB_DT_STRING << 8) | 0x00),
+			0, buf, sizeof(buf), 1000);
 	if (len < LIBUSB_SUCCESS)
 		return len;
 
@@ -289,6 +318,15 @@ JNIEXPORT jlong JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nOpen(JNIEnv *env,
 JNIEXPORT void JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nClose(JNIEnv *env,
 		jobject obj, jlong nxt) {
 	nxt_close(JLONG2PTR(libusb_device_handle, nxt));
+}
+
+JNIEXPORT jstring JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nGetName(
+		JNIEnv *env, jobject obj, jlong nxt) {
+	char serial[4 * MAX_SERNO + 1];
+	int ret = nxt_get_name(JLONG2PTR(libusb_device_handle, nxt), serial);
+	if (ret < LIBUSB_SUCCESS)
+		return NULL;
+	return (*env)->NewStringUTF(env, serial);
 }
 
 JNIEXPORT jstring JNICALL Java_lejos_pc_comm_NXTCommLibnxt_nGetSerial(
