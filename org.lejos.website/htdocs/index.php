@@ -49,10 +49,46 @@
 		<!-- Level 2: MK options -->
 		<table width="1000" cellpadding="0" cellspacing="0">
 			<tr>
-				<td rowspan="3" class="n2t1r1c1">
 				<!-- MENU -->
-				<?php include 'menu.inc.php'; ?>
-				<!-- END MENU -->
+				<td rowspan="3" class="n2t1r1c1">
+					<ul class="menu">
+						<li>Home</li>
+						<li>EV3
+						<ul class="menu_l1">
+							<li><a href="ev3.php"  class="menuLink">leJOS EV3</a>
+							<ul class="menu_l2">
+							    <li><a href="http://sourceforge.net/p/lejos/wiki/Home/" class="menuLink">Wiki</a></li>
+								<li><a href="ev3/docs/" class="menuLink">API</a></li>
+								<li><a href="https://sourceforge.net/projects/ev3.lejos.p/files/" class="menuLink">Downloads</a></li>
+								<li><a href="http://lejosnews.wordpress.com/" class="menuLink" >Blog</a></li>								
+							</ul></li>
+						</ul></li>
+					   <li>NXT Brick
+						<ul class="menu_l1">
+							<li><a href="nxj.php"  class="menuLink">leJOS NXJ</a>
+							<ul class="menu_l2">
+								<li><a href="nxt/nxj/api/index.html" class="menuLink">API</a></li>
+								<li><a href="nxt/pc/api/index.html" class="menuLink">PC API</a></li>
+								<li><a href="nxt/nxj/tutorial/index.htm" class="menuLink" target="_blank">Tutorial</a></li>
+								<li><a href="nxj-downloads.php" class="menuLink" >Downloads</a></li>
+							</ul></li>
+						</ul></li>
+						<li>RCX Brick
+						<ul class="menu_l1">
+							<li><a href="rcx.php"  class="menuLink">leJOS RCX</a>
+							<ul class="menu_l2">
+								<li><a href="rcx/api/index.html" class="menuLink">API</a></li>
+								<li><a href="rcx/tutorial/index.html" class="menuLink">Tutorial</a></li>
+								<li><a class="menuLink" href="rcx-downloads.php" >Downloads</a></li>
+								<li><a href="rcx-faq.php"  class="menuLink">FAQ</a></li>
+							</ul></li>
+						</ul></li>
+						<li><a href="forum/" class="menuLink">Forum</a></li>
+						<li><a href="books.php" class="menuLink">Books</a></li>
+						<li><a href="links.php" class="menuLink">Links</a></li>
+						<li><a href="contact.php" class="menuLink">Contact</a></li>
+					</ul>
+					<!-- END MENU -->
 				<p><a href="http://sourceforge.net/projects/lejos/"><img src="r_media/images/sourceforgeButton.jpg" /></a></p>
 				<p><a href="http://www.java.net/"><img src="r_media/images/java.netButton.jpg" /></a></p>
 				</td>
@@ -74,8 +110,17 @@
 
 <tr>
 	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
+	<td class="n3t2r"><b>Nov 16, 2015 10:30 AM</b><br />
+		<b>leJOS EV3 0.9.1-beta</b> is available for <a href="https://sourceforge.net/projects/ev3.lejos.p/files/">download</a>.
+        <p>The instructions are on the <a href="https://sourceforge.net/p/lejos/wiki/Home/">Wiki</a>, and existing users should read the announcement on the EV3 Software forum</p>
+        <p>You should also update your leJOS EV3 Eclipse plugin to the latest 0.9.1 version</p>
+	</td>
+</tr>
+
+<tr>
+	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 	<td class="n3t2r"><b>Jan 10, 2015 10:30 AM</b><br />
-		<b>leJOS EV3 0.9.0-beta</b> is available for <a href="http://sourceforge.net/projects/ev3.lejos.p/files/">download</a>.
+		<b>leJOS EV3 0.9.0-beta</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
         <p>The instructions are on the <a href="https://sourceforge.net/p/lejos/wiki/Home/">Wiki</a>, and existing users should read the announcement on the EV3 Software forum</p>
 	</td>
 </tr>
@@ -83,7 +128,7 @@
 <tr>
 	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 	<td class="n3t2r"><b>April 18, 2014 3:30 PM</b><br />
-		<b>leJOS EV3 0.8.1-beta</b> is available for <a href="http://sourceforge.net/projects/ev3.lejos.p/files/">download</a>.
+		<b>leJOS EV3 0.8.1-beta</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
         <p>This is our first Beta release and the first release that does not require use of the Git repository</p> 
         <p>The instructions are on the <a href="https://sourceforge.net/p/lejos/wiki/Home/">Wiki</a>, and existing users should read the annoucement on the EV3 Software forum</p>
 
@@ -98,7 +143,7 @@
 <tr>
 	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 	<td class="n3t2r"><b>March 24, 2014 3:00 PM</b><br />
-		<b>leJOS EV3 0.8.0-alpha</b> is available for <a href="http://sourceforge.net/projects/ev3.lejos.p/files/">download</a>.
+		<b>leJOS EV3 0.8.0-alpha</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
 		To update 
 		<ol>
           <li>Create a new SD card or overwrite an existing one using Andy's new SD card installer that is introduced at this release.</li>
@@ -114,7 +159,7 @@
 <tr>
 	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 	<td class="n3t2r"><b>March 08, 2014 6:30 PM</b><br />
-		<b>leJOS EV3 0.7.0-alpha</b> is available for <a href="http://sourceforge.net/projects/ev3.lejos.p/files/">download</a>.
+		<b>leJOS EV3 0.7.0-alpha</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
 		To update 
 		<ol>
           <li>Create a new SD card from the download.</li>
@@ -128,7 +173,7 @@
 <tr>
 	<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 	<td class="n3t2r"><b>February 14, 2014 5:30 PM</b><br />
-		<b>leJOS EV3 0.6.0-alpha</b> is available for <a href="http://sourceforge.net/projects/ev3.lejos.p/files/">download</a>.
+		<b>leJOS EV3 0.6.0-alpha</b> is available for <a href="https://sourceforge.net/projects/lejos/files/lejos-EV3/">download</a>.
 		To update 
 		<ol>
           <li>Create a new SD card from the download.</li>
@@ -186,7 +231,7 @@
 							<td class="n3t2r"><img src="r_media/images/newsIcons/nxj.jpg" /></td>
 							<td class="n3t2r">
 							<b>May 16, 2011 1:46 PM</b><br />
-<b>After a long delay, leJOS NXJ 0.9</b> is available for <a href="http://sourceforge.net/projects/nxt.lejos.p/files/">download</a>. We owe Lawrie Griffiths a big thanks for all the time and work he put into making this release happen. Some of the new changes include preliminary Android OS support, a new icon-based menu system, updating the Java language to support such things as generics, and nanosecond support (see the System class)! We've also added many new classes to support new sensors, as well as reworking the navigation API to accomodate different robot types, object detection, and path finding.
+<b>After a long delay, leJOS NXJ 0.9</b> is available for <a href="http://sourceforge.net/projects/lejos/files/">download</a>. We owe Lawrie Griffiths a big thanks for all the time and work he put into making this release happen. Some of the new changes include preliminary Android OS support, a new icon-based menu system, updating the Java language to support such things as generics, and nanosecond support (see the System class)! We've also added many new classes to support new sensors, as well as reworking the navigation API to accomodate different robot types, object detection, and path finding.
 
 <p>We are very interested in having everyone test this release and provide comments as this will be our last revision cycle before the big 1.0 release. If you have any suggestions, now is the time to let us know in the <a href="forum/">forums</a>.</p>
 
