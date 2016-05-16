@@ -13,19 +13,20 @@ function my_resolve() {
 	fi
 }
 function my_readlink() {
-	local TMP1=$(dirname -- "$1")
-	local TMP2=$(readlink -- "$1")
+	local TMP1 TMP2
+	TMP1=$(dirname -- "$1")
+	TMP2=$(readlink -- "$1")
 	my_resolve "$TMP1" "$TMP2"
 }
 function my_build_cp() {
-	local DIR="$1"
+	local TMP_CP DIR="$1"
 	if [ ! -d "$DIR" ]; then
 		echo "Internal error. The following directory does not exist:" 1>&2
 		echo "  \"$DIR\""1>&2
 		return;
 	fi
 
-	local TMP_CP=$(find "$DIR" -name "*.jar" -print0 | tr "\0" "$SEP")
+	TMP_CP=$(find "$DIR" -name "*.jar" -print0 | tr "\0" "$SEP")
 	# remove last $SEP 
 	printf "%s" "${TMP_CP%?}"
 }
