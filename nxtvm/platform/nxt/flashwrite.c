@@ -12,7 +12,7 @@ static U32 get_ms()
    * NOTE: This function must be here (rather then in systick), because it is
    * called during a flash write and so must be located in ram, not flash rom.
    */
-  // We use the missed interupt count from the system timer
+  // We use the missed interrupt count from the system timer
   return (*AT91C_PITC_PIIR & AT91C_PITC_PICNT) >> 20;
 }
 
@@ -48,7 +48,7 @@ int flash_write(int page_num)
 {
   /* Write page to flash memory.
    * This function must run out of ram and while it executes no other code
-   * (especially any flash resident) code must run. This is becuase the
+   * (especially any flash resident) code must run. This is because the
    * flash memory is only a single plane and can not be accessed for both read
    * and write at the same time.
    */
