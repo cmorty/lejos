@@ -24,7 +24,7 @@
 			<li><a href="rcx-faq.php">FAQ</a></li>
 		</ul>
 	</li>
-	<li><a href="forum/">Forum</a></li>
+	<li><a href="https://lejos.sourceforge.io/forum/">Forum</a></li>
 	<li><a href="books.php">Books</a></li>
 	<li><a href="links.php">Links</a></li>
 	<li><a href="contact.php">Contact</a></li>

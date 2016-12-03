@@ -63,7 +63,7 @@
 
 						<tr>
 							<td>
-								<h1 class="title">leJOS EV3 Books</h1>
+								<h1 class="title">leJOS EV3</h1>
 							</td>
 							<td align="right"><a href="javascript:decreaseFontSize()"><img src="r_media/images/toolIcons/fuentemenos.gif" /></a><a href="javascript:increaseFontSize()"><img src="r_media/images/toolIcons/fuentemas.gif" /></a></td>
 						</tr>
@@ -91,9 +91,36 @@ The LEGO® Mindstorms™ EV3 set is the latest in robotics technology, allowing 
 </td>
 </tr>
 
+
+<tr>
+<td>
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/B00CWER3XY/lejos0e-20">LEGO Mindstorms EV3 Set<br /></a> <br /> by LEGO</p>
+<p>			
+This is the ultimate set for engineers and programmers-in-training. Create and command robots that walk, talk, think and do anything you can imagine. Follow the step-by-step 3D building instructions to bring your creation to life with an easy, intuitive and icon-based programming interface.
+</p>
+
+<ul>
+<li>Intelligent EV3 Brick with powerful ARM9 processor, Wi-Fi USB port and Internet connectivity, Micro SD card reader, back-lit buttons and 4 motor ports</li>
+<li>3 interactive servo motors, remote control, imp. and redesigned color sensor, redesigned touch sensor, infrared sensor, 550+ LEGO Technic elements</li>
+<li>Control your robot via the infrared sensor system; intuitive software (PC and Mac) with icon-based drag-and-drop programming interface</li>
+<li>Building instructions for 1 robot included.Download 4 more building instructions plus bonus building instructions developed by real fans and endrosed by LEGO at LEGO.com/mindstorms</li>
+<li>Control and command your robot with the enclosed remote control or download the free app for your smart device</li>
+</ul>
+<p><a href="http://www.amazon.com/exec/obidos/ASIN/B00CWER3XY/lejos0e-20">Order from Amazon</a></p>
+</td>
+
+<td>
+<a href="http://www.amazon.com/exec/obidos/ASIN/B00CWER3XY/lejos0e-20"><img src="r_media/images/books/ev3_kit.jpg" /></a>
+</td>
+</tr>
+
+
+
+
+
 						<tr>
 							<td>
-								<h1 class="title">leJOS NXJ Books</h1>
+								<h1 class="title">leJOS NXJ</h1>
 							</td>
 						</tr>
 				

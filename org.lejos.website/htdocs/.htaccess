@@ -8,19 +8,27 @@ RewriteRule ^index.html?$ / [L,R=permanent]
 
 # redirect every request to www.lejos.org
 RewriteCond %{HTTP_HOST} !=www.lejos.org
+RewriteCond %{REQUEST_URI} !^/forum/
 RewriteCond %{REQUEST_METHOD} =GET
-RewriteRule ^(.*) http://www.lejos.org/$1 [L,R=permanent]
-# exempt forum from redirect
-#RewriteRule ^(?!forum/)(.*) http://www.lejos.org/$1 [L,R]
+RewriteRule ^(.*) http://www.lejos.org/$1 [L,R]
 
-#RewriteCond %{HTTP_HOST} !=lejos.sourceforge.net
+# doesn't work for some reason,
+# it probably is overridden by the .htaccess inside /forum
+#RewriteCond %{HTTP_HOST} !=lejos.sourceforge.io
 #RewriteCond %{REQUEST_METHOD} =GET
-#RewriteRule ^forum/(.*) http://lejos.sourceforge.net/forum/$1 [R]
+#RewriteRule ^forum/(.*) https://lejos.sourceforge.io/forum/$1 [L,R]
 
 #RewriteCond %{REMOTE_HOST} !=78.46.94.24
-#RewriteCond %{HTTP:X-Remote-Addr} !=31.19.21.11
+#RewriteCond %{HTTP:X-Remote-Addr} !=188.98.73.137
 #RewriteRule ^forum/ /maintenance.php
 
 <ifModule mod_deflate.c>
-AddOutputFilterByType DEFLATE text/html text/plain text/javascript text/css
+#AddOutputFilterByType DEFLATE text/html text/plain text/javascript text/css
 </ifModule>
+
+# deny access to backup files created by editors which
+# may contain passwords (e.g. forum/config.php~)
+<FilesMatch "(~|\.bak)$">
+	Order Allow,Deny
+	Deny from all
+</FilesMatch>

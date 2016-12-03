@@ -49,46 +49,10 @@
 		<!-- Level 2: MK options -->
 		<table width="1000" cellpadding="0" cellspacing="0">
 			<tr>
-				<!-- MENU -->
 				<td rowspan="3" class="n2t1r1c1">
-					<ul class="menu">
-						<li>Home</li>
-						<li>EV3
-						<ul class="menu_l1">
-							<li><a href="ev3.php"  class="menuLink">leJOS EV3</a>
-							<ul class="menu_l2">
-							    <li><a href="http://sourceforge.net/p/lejos/wiki/Home/" class="menuLink">Wiki</a></li>
-								<li><a href="ev3/docs/" class="menuLink">API</a></li>
-								<li><a href="https://sourceforge.net/projects/ev3.lejos.p/files/" class="menuLink">Downloads</a></li>
-								<li><a href="http://lejosnews.wordpress.com/" class="menuLink" >Blog</a></li>								
-							</ul></li>
-						</ul></li>
-					   <li>NXT Brick
-						<ul class="menu_l1">
-							<li><a href="nxj.php"  class="menuLink">leJOS NXJ</a>
-							<ul class="menu_l2">
-								<li><a href="nxt/nxj/api/index.html" class="menuLink">API</a></li>
-								<li><a href="nxt/pc/api/index.html" class="menuLink">PC API</a></li>
-								<li><a href="nxt/nxj/tutorial/index.htm" class="menuLink" target="_blank">Tutorial</a></li>
-								<li><a href="nxj-downloads.php" class="menuLink" >Downloads</a></li>
-							</ul></li>
-						</ul></li>
-						<li>RCX Brick
-						<ul class="menu_l1">
-							<li><a href="rcx.php"  class="menuLink">leJOS RCX</a>
-							<ul class="menu_l2">
-								<li><a href="rcx/api/index.html" class="menuLink">API</a></li>
-								<li><a href="rcx/tutorial/index.html" class="menuLink">Tutorial</a></li>
-								<li><a class="menuLink" href="rcx-downloads.php" >Downloads</a></li>
-								<li><a href="rcx-faq.php"  class="menuLink">FAQ</a></li>
-							</ul></li>
-						</ul></li>
-						<li><a href="forum/" class="menuLink">Forum</a></li>
-						<li><a href="books.php" class="menuLink">Books</a></li>
-						<li><a href="links.php" class="menuLink">Links</a></li>
-						<li><a href="contact.php" class="menuLink">Contact</a></li>
-					</ul>
-					<!-- END MENU -->
+				<!-- MENU -->
+				<?php include 'menu.inc.php'; ?>
+				<!-- END MENU -->
 				<p><a href="http://sourceforge.net/projects/lejos/"><img src="r_media/images/sourceforgeButton.jpg" /></a></p>
 				<p><a href="http://www.java.net/"><img src="r_media/images/java.netButton.jpg" /></a></p>
 				</td>
