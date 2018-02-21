@@ -9,7 +9,7 @@ ROOT=$(pwd)
 SRCDIR=$ROOT/src
 BUILDDIR=$ROOT/build
 PREFIX=$ROOT/install
-MAKEOPTS=-j2
+MAKEOPTS=-j10
 
 GCC_VERSION=4.3.2
 GCC_URL=http://www.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.bz2
@@ -79,6 +79,7 @@ unpack_source $(basename -- "$NEWLIB_URL")
 #
 cat "$SCRIPTDIR/gcc01.patch" | patch -p0 -d "$SRCDIR/$GCC_DIR" || die
 cat "$SCRIPTDIR/gcc02.patch" | patch -p0 -d "$SRCDIR/$GCC_DIR" || die
+cat "$SCRIPTDIR/gcc03.patch" | patch -p0 -d "$SRCDIR/$GCC_DIR" || die
 
 #
 # Stage 1: Build binutils
